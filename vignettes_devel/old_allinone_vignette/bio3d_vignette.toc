@@ -1,0 +1,25 @@
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}
+\contentsline {paragraph}{Supporting Material:}{2}{section*.2}
+\contentsline {subsection}{\numberline {1.1}Getting Started}{2}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Example Data}{5}{subsection.1.2}
+\contentsline {subsubsection}{\numberline {1.2.1}The Kinesin Molecular Motor}{5}{subsubsection.1.2.1}
+\contentsline {paragraph}{Note:}{5}{section*.3}
+\contentsline {section}{\numberline {2}Sample Applications of bio3d}{6}{section.2}
+\contentsline {subsection}{\numberline {2.1}Comparative Structural Analysis}{6}{subsection.2.1}
+\contentsline {subsubsection}{\numberline {2.1.1}Interconformer Relationships with PCA}{6}{subsubsection.2.1.1}
+\contentsline {paragraph}{Sub-structure Superposition:}{6}{section*.4}
+\contentsline {paragraph}{Principal Component Analysis:}{9}{section*.5}
+\contentsline {paragraph}{Structure Interpolation:}{11}{section*.6}
+\contentsline {paragraph}{Conformer Clustering in PC space}{12}{section*.7}
+\contentsline {subsubsection}{\numberline {2.1.2}Further examples}{12}{subsubsection.2.1.2}
+\contentsline {subsection}{\numberline {2.2}Finding available sets of similar structures}{13}{subsection.2.2}
+\contentsline {paragraph}{Unfinished section of draft!}{13}{section*.8}
+\contentsline {paragraph}{Atom selection:}{13}{section*.9}
+\contentsline {paragraph}{Root mean square deviation (RMSD):}{13}{section*.10}
+\contentsline {paragraph}{Clustering:}{15}{section*.11}
+\contentsline {paragraph}{Root mean squared fluctuations (RMSF):}{16}{section*.12}
+\contentsline {paragraph}{Torsion/Dihedral analysis and Difference distance matrix analysis (DDM):}{17}{section*.13}
+\contentsline {subsection}{\numberline {2.3}Sequence Conservation Analysis}{20}{subsection.2.3}
+\contentsline {subsubsection}{\numberline {2.3.1}Sequence Alignment}{20}{subsubsection.2.3.1}
+\contentsline {subsubsection}{\numberline {2.3.2}Residue Conservation Analysis}{20}{subsubsection.2.3.2}
+\contentsline {subsection}{\numberline {2.4}Basic Trajectory Analysis}{22}{subsection.2.4}
