@@ -33,7 +33,7 @@ rmsip(pca.a, pca.b, subset=10, row.name=NULL, col.name=NULL)
    Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.   
    Amadei, A. et al. (1999) \emph{Proteins} \bold{36}, 19–-424.   
 }
-\author{ Lars Skjærven }
+\author{ Lars Skjaerven }
 \seealso{ \code{\link{overlap}}, \code{\link{pca.xyz}} }
 \examples{
      data(kinesin)

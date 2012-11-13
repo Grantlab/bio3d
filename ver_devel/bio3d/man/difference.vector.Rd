@@ -25,7 +25,7 @@ difference.vector(xyz, xyz.inds=NULL)
 \references{
    Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
    }
-\author{ Lars Skjærven }
+\author{ Lars Skjaerven }
 \seealso{ \code{\link{overlap}} }
 \examples{
      data(kinesin)

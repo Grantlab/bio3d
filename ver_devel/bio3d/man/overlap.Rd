@@ -33,7 +33,7 @@ overlap(pca, dv, num.modes=20)
 \references{
    Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
    }
-\author{ Lars Skjærven }
+\author{ Lars Skjaerven }
 \seealso{ \code{\link{rmsip}}, \code{\link{pca.xyz}} }
 \examples{
      data(kinesin)
