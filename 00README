@@ -18,6 +18,7 @@ Make your desired changes to the development version of the package
 
 Then follow these steps:
 - Update the version number in the file "bio3d/DESCRIPTION".
+- Update the version number in the file "bio3d/man/bio3d.package.Rd"
 - Remove the old tar.gz version of the package "rm bio3d_1.0-?.tar.gz"
 - Build a new version with "R CMD build bio3d"
 - Run "R CMD check bio3d"
@@ -47,12 +48,12 @@ Then follow these steps:
 
 - Update the package manual and other documentation.
 
-  To make the manual run "R CMD Rd2dvi --pdf --title="The bio3d Package" bio3d"
+  To make the manual run "R CMD Rd2pdf --pdf --title="The bio3d Package" bio3d"
   Copy this pdf to the web site
   "scp bio3d.pdf thegr020@shell.guardedhost.com:/webroot/t/h/thegr020/thegrantlab.org/www/bio3d/." and
   "scp bio3d.pdf  bgrant@chemcca3.ucsd.edu:~/public_html/bio3d/." 
 
-- Copy html doc pages to web site 
+- Copy html doc pages to web site *** UPDATE/EDIT THIS ***
   "cp /net/home/bgrant/software/R-local/R-2.7.2/library/bio3d/html/* ~/public_html/bio3d/html/."
 
 - Add links to new html doc pages on the main docs.tml web site page "emacs ~/public_html/bio3d/docs/docs.html &"

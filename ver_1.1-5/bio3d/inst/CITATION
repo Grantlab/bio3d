@@ -1,0 +1,12 @@
+citHeader("To cite bio3d in publications use:")
+citEntry(entry = "article",
+         author = "Grant B.J.,  Rodrigues A.P.C.,  ElSawy K.M.,  McCammon J.A.,  Caves L.S.D.",
+         title = "Bio3D: An R package for the comparative analysis of protein structures.",
+	 journal = "Bioinformatics",
+         year   = "2006",
+         volume = "22",
+         pages = "2695--2696",
+         month = "Nov",
+         organization = "University of California, San Diego, La Jolla, CA 92093, USA.",
+         textVersion = "Grant, B.J. et al. (2006) Bioinformatics 22, 2695--2696.")
+citFooter("Original article and updates are available from http://mccammon.ucsd.edu/~bgrant/bio3d/")

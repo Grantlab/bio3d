@@ -12,10 +12,10 @@ Utilities for the analysis of protein structure and sequence data.
 \tabular{ll}{
 Package: \tab bio3d\cr
 Type: \tab Package\cr
-Version: \tab 1.1-3\cr
-Date: \tab 2011-05-6\cr
+Version: \tab 1.1-6\cr
+Date: \tab DEVEL VERSION: 2012-11-13\cr
 License: \tab GPL version 2 or newer\cr
-URL: \tab \url{http://mccammon.ucsd.edu/~bgrant/bio3d/}\cr
+URL: \tab \url{http://thegrantlab.org/bio3d/}\cr
 }
 
 Features include the ability to read and write structure
@@ -52,10 +52,12 @@ manipulation and analysis of biological sequence and structural data
 \note{
 The latest version and further documentation can be obtained from the
 bio3d website:\cr
+\url{http://thegrantlab.org/bio3d/}.\cr
+Or its alternate site:\cr
 \url{http://mccammon.ucsd.edu/~bgrant/bio3d/}.
 }
 \author{
-Barry Grant <bgrant@mccammon.ucsd.edu>
+Barry Grant <bjgrant@umich.edu>
 }
 \references{
 Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
