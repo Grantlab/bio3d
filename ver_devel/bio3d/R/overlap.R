@@ -18,7 +18,7 @@
        
     normalize.vector <- function(v) {
       if(class(v)=='matrix')
-	return( v/sqrt( colSums(v**2) ) )
+	return( t(t(v)/sqrt( colSums(v**2)) ) )
       else	
 	return( v/sqrt( sum(v**2) ) )
     }

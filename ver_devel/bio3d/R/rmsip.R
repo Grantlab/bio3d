@@ -12,7 +12,7 @@
     }
     
     normalize.vector <- function(v) {
-      return( v/sqrt( colSums(v**2) ) )
+      return( t(t(v)/sqrt( colSums(v**2)) ) )
     }
     
     o <- ( t(normalize.vector(pca.a$U[,1:subset]))
