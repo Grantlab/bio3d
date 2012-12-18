@@ -9,9 +9,27 @@ function(fixed,
          outpath = "fitlsq/",
          het = FALSE,
          full.pdbs=FALSE,
+         ncore=1,
+         nseg.scale=1, # to resolve the memory problem in using multicore
          ...) {
 
+  # Parallelized by multicore package (Tue Dec 11 17:41:08 EST 2012)
+  if(ncore > 1) {
+     require(multicore) 
+     options(cores = ncore)
 
+     # Issue of serialization problem
+     # Maximal number of cells of a double-precision matrix
+     # that each core can serialize: (2^31-1-61)/8
+     R_NCELL_LIMIT_CORE = 2.68435448e8
+     R_NCELL_LIMIT = ncore * R_NCELL_LIMIT_CORE
+
+     if(nseg.scale < 1) {
+        warning("nseg.scale should be 1 or a larger integer\n")
+        nseg.scale=1
+     }
+  }
+ 
   ### Addation (Mon Jul 23 17:26:16 PDT 2007)
   if( is.null(fixed.inds) && is.null(mobile.inds) ) {
     if(is.list(mobile)) {
@@ -44,6 +62,7 @@ function(fixed,
        any(is.na(mobile[mobile.inds])) ) {
       stop(" NA elements selected for fitting (check indices)")
     }
+    
     fit <- rot.lsq(xx=mobile,
                    yy=fixed,
                    xfit=mobile.inds,
@@ -60,13 +79,30 @@ function(fixed,
         stop(" NA elements selected for fitting (check indices)")
       }
 
-      
-      fit <- t( apply(mobile$xyz, 1, rot.lsq,
-                      yy = fixed,
-                      xfit = mobile.inds,
-                      yfit = fixed.inds,
-                      verbose=verbose))
-
+      if(ncore>1 && is.matrix(mobile$xyz) ) {        # Parallelized
+         RLIMIT = floor(R_NCELL_LIMIT/ncol(mobile$xyz))
+         nDataSeg = floor((nrow(mobile$xyz)-1)/RLIMIT)+1
+         nDataSeg = floor(nDataSeg * nseg.scale)
+         lenSeg = floor(nrow(mobile$xyz)/nDataSeg)
+         fit = vector("list", nDataSeg)
+         for(i in 1:nDataSeg) {
+            istart = (i-1)*lenSeg + 1
+            iend = if(i<nDataSeg) i*lenSeg else nrow(mobile$xyz)
+            fit[[i]] <- mclapply(istart:iend, function(j) rot.lsq(xx=mobile$xyz[j,],
+               yy=fixed, xfit=mobile.inds, yfit=fixed.inds, verbose=verbose), 
+               mc.preschedule=TRUE)
+         }
+         fit <- matrix(unlist(fit), ncol=ncol(mobile$xyz), byrow=TRUE)
+         readChildren()
+      }
+      else {           # Single version
+         fit <- t( apply(mobile$xyz, 1, rot.lsq,
+                         yy = fixed,
+                         xfit = mobile.inds,
+                         yfit = fixed.inds,
+                         verbose=verbose))
+      }
+       
       if(full.pdbs) {        # FULL PDB fitting and output
         core.inds.atom = mobile.inds[seq(3,length(mobile.inds),by=3)]/3
         dir.create(outpath, FALSE)
@@ -146,11 +182,29 @@ function(fixed,
            any(is.na(mobile[,mobile.inds])) ) {
           stop("error: NA elements selected for fitting")
         }
-        fit <- t( apply(mobile, 1, rot.lsq,
-                        yy = fixed,
-                        xfit = mobile.inds,
-                        yfit = fixed.inds,
-                        verbose=verbose))
+
+        if(ncore > 1) {         # Parallelized
+           RLIMIT = floor(R_NCELL_LIMIT/ncol(mobile))
+           nDataSeg = floor((nrow(mobile)-1)/RLIMIT)+1
+           nDataSeg = floor(nDataSeg * nseg.scale)
+           lenSeg = floor(nrow(mobile)/nDataSeg)
+           fit = vector("list", nDataSeg)
+           for(i in 1:nDataSeg) {
+              istart = (i-1)*lenSeg + 1
+              iend = if(i<nDataSeg) i*lenSeg else nrow(mobile)
+              fit[[i]] <- mclapply(istart:iend, function(j) rot.lsq(xx=mobile[j,],
+                 yy=fixed, xfit=mobile.inds, yfit=fixed.inds, verbose=verbose), 
+                 mc.preschedule=TRUE)
+           }
+           fit <- matrix(unlist(fit), ncol=ncol(mobile), byrow=TRUE)
+           readChildren()
+        } else {         # Single version
+           fit <- t( apply(mobile, 1, rot.lsq,
+                           yy = fixed,
+                           xfit = mobile.inds,
+                           yfit = fixed.inds,
+                           verbose=verbose))
+        }
         return(fit)
       }
     }
