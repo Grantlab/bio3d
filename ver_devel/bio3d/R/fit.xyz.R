@@ -15,7 +15,10 @@ function(fixed,
 
   # Parallelized by multicore package (Tue Dec 11 17:41:08 EST 2012)
   if(ncore > 1) {
-     require(multicore) 
+     oops <- require(multicore) 
+     if(!oops)
+        stop("Please install the multicore package from CRAN")
+
      options(cores = ncore)
 
      # Issue of serialization problem

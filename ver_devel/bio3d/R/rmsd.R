@@ -13,7 +13,10 @@ function(a, b=NULL,
   # Parallelized by multicore package -Wed Dec 12 11:15:20 EST 2012
   # nseg.scale - to resolve the memory problem of using multicore
   if(ncore > 1) {
-     require(multicore)
+     oops <- require(multicore)
+     if(!oops)
+        stop("Please install the multicore package from CRAN")
+
      options(cores = ncore)
 
      # Issue of serialization problem

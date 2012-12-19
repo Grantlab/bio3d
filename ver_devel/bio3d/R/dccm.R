@@ -3,7 +3,10 @@ function(xyz, reference=apply(xyz,2,mean), ncore=1, nseg.scale=1) {
 
   # Parallelized by multicore package (Wed Dec 12 18:36:39 EST 2012)
   if(ncore > 1) { 
-     require(multicore)
+     oops <- require(multicore)
+     if(!oops)
+        stop("Please install the multicore package from CRAN")
+
      options(cores = ncore)
 
      # Issue of serialization problem
