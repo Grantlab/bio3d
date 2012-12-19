@@ -64,7 +64,7 @@ function(pdb, string=NULL,
     num3 <- unlist(strsplit( num1[ which(is.na(num2)) ], split=":"))
     ## Pair-up range elements in num3 to make num4
     num3 <- matrix(as.numeric(num3),nrow=2)
-    num4 <- unbound(num3[1,], num3[2,])
+    num4 <- if(length(num3)>=2) unbound(num3[1,], num3[2,]) else NULL
     ## join and order num2 with num4 
     return( sort(unique(c(na.omit(num2),num4))) )
   }
