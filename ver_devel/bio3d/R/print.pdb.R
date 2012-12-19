@@ -9,9 +9,11 @@
 
   ## Report on non-protein, possible ligand molecules
   i <- atom.select(p, "notprotein", verbose=F)
-  no <- rle2(as.numeric(p$atom[i$atom,"resno"]))
-  values <- (p$atom[i$atom,"resid"])[no$inds]
-
+  if( length(i$atom) > 0 ) {
+    no <- rle2(as.numeric(p$atom[i$atom,"resno"]))
+    values <- (p$atom[i$atom,"resid"])[no$inds]
+  } 
+  
   ## Report on components of full PDB and non-water atoms
   eleno <- as.numeric(x$atom[,"eleno"])
   elety <- table(x$atom[,"elety"])
@@ -71,7 +73,7 @@
   cat("\n\n")
 
   ## number of non-protein molecules
-  if(length(lig) > 0) {
+  if( length(i$atom) > 0 ) {
     cat("..| other (not protein or water) |..",sep="\n");
     cat("total # : ")
     cat( length(unique(values)),"\n")

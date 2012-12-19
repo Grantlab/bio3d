@@ -59,14 +59,16 @@ function(pdb, string=NULL,
     ##- Splitting function for numbers  - split on coma & colon
     num1 <- unlist( strsplit(num.sel.txt, split=",") )
     num2 <- suppressWarnings( as.numeric(num1) )
-
-    ## Split range elements (e.g. may have "10:100" = NA in num2)
-    num3 <- unlist(strsplit( num1[ which(is.na(num2)) ], split=":"))
-    ## Pair-up range elements in num3 to make num4
-    num3 <- matrix(as.numeric(num3),nrow=2)
-    num4 <- unbound(num3[1,], num3[2,])
-    ## join and order num2 with num4 
-    return( sort(unique(c(na.omit(num2),num4))) )
+    
+    if( any(is.na(num2)) ) {
+      ## Split range elements (e.g. may have "10:100" = NA in num2)
+      num3 <- unlist(strsplit( num1[ which(is.na(num2)) ], split=":"))
+      ## Pair-up range elements in num3 to make num4
+      num3 <- matrix(as.numeric(num3),nrow=2)
+      num4 <- unbound(num3[1,], num3[2,])
+      num2 <- c(num2, num4)
+    }
+    return( sort(unique(c(na.omit(num2)))) )
   }
   
   sel.txt2type <- function(type.sel.txt) {
@@ -86,7 +88,6 @@ function(pdb, string=NULL,
 
   ## No selection string or component, then just print PDB summary
   if( !any(got.string,  got.component) ) {
-    cat(paste( "in here", got.string,  got.component, all(!got.string,  !got.component)) )
     print.pdb(pdb) 
     return()
   }
@@ -117,10 +118,15 @@ function(pdb, string=NULL,
                    "SEP", "TPO", "MLY", "MSE", "IAS", "ABA", "CSO", "CSD", 
                    "CYM", "CME", "CSX", "CMT", "HIE", "HIP", "HID", "HSD", 
                    "HSE", "HSP", "DDE", "MHO", "ASX")
-
+      
       hoh <- c("H2O", "OH2", "HOH", "HHO", "OHH", "SOL", "WAT",
                "TIP", "TIP2", "TIP3", "TIP4")
 
+      not.prot.aa <- (aa[!aa %in% prot.aa])
+      ligand.aa <- not.prot.aa[!not.prot.aa %in% hoh]
+      if(length(not.prot.aa) == 0) { not.prot.aa = "xxxxx" }
+      if(length(ligand.aa) == 0) { ligand.aa = "xxxxx" }
+      
       if (string=="h") {
         h.atom <- which( substr(pdb$atom[,"elety"], 1, 1) %in% "H" )
         match <- list(atom=h.atom, xyz=atom2xyz(h.atom))
@@ -146,7 +152,8 @@ function(pdb, string=NULL,
                   back = "//////N,CA,C,O/",
                   all = "///////",
                   protein = paste("////",paste(prot.aa, collapse=","), "///",sep=""),
-                  notprotein = paste("////", paste(aa[!aa %in% prot.aa], collapse=","), "///",sep=""),
+                  notprotein = paste("////", paste(not.prot.aa, collapse=","), "///",sep=""),
+                  ligand = paste("////", paste(ligand.aa, collapse=","), "///",sep=""),
                   water = paste("////",paste(hoh, collapse=","), "///",sep=""),
                   notwater = paste("////", paste(aa[!aa %in% hoh], collapse=","), "///",sep=""),
                   #noh = "!H*",
@@ -160,7 +167,7 @@ function(pdb, string=NULL,
           ## Check if we have a valid selection sting
           stop("Not a valid selection string shortcut.\n\t Please use one of:
          'calpha' 'cbeta' 'backbone'
-         'protein' 'notprotein'
+         'protein' 'notprotein' 'ligand'
          'water' 'notwater'
          'h' 'noh'\n
         Or valid selection string:
