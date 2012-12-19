@@ -5,7 +5,7 @@
   Calculate the RMSD between coordinate sets.
 }
 \usage{
-rmsd(a, b=NULL, a.inds=NULL, b.inds=NULL, fit=FALSE)
+rmsd(a, b=NULL, a.inds=NULL, b.inds=NULL, fit=FALSE, ncore=1, nseg.scale=1)
 }
 \arguments{
   \item{a}{ a numeric vector containing the reference coordinate set for
@@ -21,6 +21,10 @@ rmsd(a, b=NULL, a.inds=NULL, b.inds=NULL, fit=FALSE)
     \code{b} upon which the calculation should be based. }
   \item{fit }{logical, if TRUE coordinate superposition is performed
     prior to RMSD calculation. }  
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires multicore package installed. } 
+  \item{nseg.scale }{ split input data into specified number of segments
+    prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
 }
 \details{
   RMSD is a standard measure of structural distance between

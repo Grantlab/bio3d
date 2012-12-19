@@ -11,7 +11,8 @@ fit.xyz(fixed, mobile,
         mobile.inds = NULL,
         verbose=FALSE,
         pdb.path = "", pdbext = "",
-        outpath = "fitlsq/", het=FALSE, full.pdbs=FALSE, ...)
+        outpath = "fitlsq/", het=FALSE, full.pdbs=FALSE, 
+        ncore = 1, nseg.scale = 1, ...)
 
 rot.lsq(xx, yy,
         xfit = rep(TRUE, length(xx)), yfit = xfit,
@@ -48,6 +49,10 @@ rot.lsq(xx, yy,
     fitting is to be performed. }
   \item{verbose}{ logical, if TRUE more details are printed. }
    \item{\dots}{ other parameters for \code{\link{read.pdb}}. }
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires multicore package installed. } 
+  \item{nseg.scale }{ split input data into specified number of segments
+    prior to running multiple core calculation. }
   
 }
 \details{
@@ -68,6 +73,13 @@ rot.lsq(xx, yy,
   obtained with the function \code{\link{read.fasta.pdb}}, since the
   components \code{id}, \code{resno} and \code{xyz} are required to
   establish correspondences.  See the examples below.
+
+  In dealing with large vector and matrix, running on multiple
+  cores, especially when \code{ncore>>1}, may ask for a large portion
+  of system memory. To avoid the overuse of memory, input data is first
+  split into segments (for xyz matrix, the splitting is along the row). 
+  The number of data segments is equal to \code{nseg.scale*nseg.base}, where
+  \code{nseg.base } is an integer determined by the dimension of the data.
 }
 \value{
   Returns moved coordinates.

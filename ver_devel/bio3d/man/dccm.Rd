@@ -5,13 +5,17 @@
   Determine the cross-correlations of atomic displacements.
 }
 \usage{
-dccm(xyz, reference = apply(xyz, 2, mean))
+dccm(xyz, reference = apply(xyz, 2, mean), ncore=1, nseg.scale=1)
 }
 \arguments{
   \item{xyz}{ a numeric matrix of Cartesian coordinates with a row per
     structure/frame. }
   \item{reference}{ The reference structure about which displacements are
     analysed. }
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires multicore package installed. } 
+  \item{nseg.scale }{ split input data into specified number of segments
+    prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
 }
 \details{
   The extent to which the atomic fluctuations/displacements of a system are
