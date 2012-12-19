@@ -15,7 +15,8 @@ pdb.summary(pdb)
   \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
     \code{\link{read.pdb}}. }
   \item{string}{ a character selection string with the following syntax:\cr
-    \code{/segid/chain/resno/resid/eleno/elety/}. }
+    \code{/segid/chain/resno/resid/eleno/elety/}. Or a single selection keyword from 
+    \code{calpha} \code{cbeta} \code{backbone} \code{protein} \code{notprotein} \code{ligand} \code{water} \code{notwater} \code{h} \code{noh} }
   \item{chain}{ a character vector of chain identifiers. }
   \item{resno}{ a numeric or character vector of residue numbers. }
   \item{resid}{ a character vector of chain identifiers. }
