@@ -1,5 +1,5 @@
 `dccm` <-
-function(xyz, reference=apply(xyz,2,mean), ncore=1, nseg.scale=1) {
+function(xyz, reference=apply(xyz,2,mean), grpby=NULL, ncore=1, nseg.scale=1) {
 
   # Parallelized by multicore package (Wed Dec 12 18:36:39 EST 2012)
   if(ncore > 1) { 
@@ -65,6 +65,40 @@ function(xyz, reference=apply(xyz,2,mean), ncore=1, nseg.scale=1) {
        }
      }
   }
+  if(is.null(grpby)) {
+    class(ccmat)=c("dccm","matrix")
+    return(ccmat)
+  } else {
+    ##- Group by concetive numbers in 'grpby'
+    if( ncol(xyz) != (length(grpby)*3) )
+      stop("dimension miss-match in 'xyz' and 'grpby', check lengths")
+    
+    ##- Bounds of 'grpby' numbers
+    inds <- bounds(grpby, dup=TRUE)
+    nres <- nrow(inds)
+
+    ##- Per-residue matrix
+    m <- matrix(, ncol=nres, nrow=nres)
+    ij <- pairwise(nres)
+
+    ##- Max (absolute value) per residue
+    for(k in 1 : nrow(ij) ) {
+      m[ij[k,1],ij[k,2]] <-
+        min( ccmat[ (inds[ij[k,1],"start"]:inds[ij[k,1],"end"]),
+                  (inds[ij[k,2],"start"]:inds[ij[k,2],"end"])],
+            na.rm=TRUE )
+      tmax <- max( ccmat[ (inds[ij[k,1],"start"]:inds[ij[k,1],"end"]),
+                  (inds[ij[k,2],"start"]:inds[ij[k,2],"end"])],
+            na.rm=TRUE )
+      if(tmax > abs(m[ij[k,1],ij[k,2]])) m[ij[k,1],ij[k,2]] = tmax 
+    }
+#    if( !mask.lower )
+    m[lower.tri(m)] = t(m)[lower.tri(m)]
+    diag(m) <- 1
+
+    class(m)=c("dccm","matrix")
+    return(m)
+  }
   ##- Which is quicker? system.time()  
 #  for(i in 2:natm) {
 #    for(j in 1:(i-1)) {
@@ -79,7 +113,5 @@ function(xyz, reference=apply(xyz,2,mean), ncore=1, nseg.scale=1) {
 ##      dotproductmean(dxyz,inds[i,1],inds[i,2])/
 ##        (sqrtdsq[ inds[i,1] ] * sqrtdsq[ inds[i,2] ])
 ##  }
-  class(ccmat)=c("dccm","matrix")
-  return(ccmat)
 }
 

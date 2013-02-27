@@ -5,13 +5,16 @@
   Determine the cross-correlations of atomic displacements.
 }
 \usage{
-dccm(xyz, reference = apply(xyz, 2, mean), ncore=1, nseg.scale=1)
+dccm(xyz, reference = apply(xyz, 2, mean), grpby=NULL, ncore=1, nseg.scale=1)
 }
 \arguments{
   \item{xyz}{ a numeric matrix of Cartesian coordinates with a row per
     structure/frame. }
   \item{reference}{ The reference structure about which displacements are
     analysed. }
+  \item{grpby}{ a vector counting connective duplicated elements that
+    indicate the elements of \code{xyz} that should be considered as a group
+    (e.g. atoms from a particular residue). }
   \item{ncore }{ number of CPU cores used to do the calculation.
     \code{ncore>1} requires multicore package installed. } 
   \item{nseg.scale }{ split input data into specified number of segments
