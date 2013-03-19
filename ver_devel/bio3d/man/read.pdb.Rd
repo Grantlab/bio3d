@@ -47,6 +47,8 @@ print.pdb(x, \dots)
     type sse, where start and end are residue numbers \dQuote{resno}. }
   \item{seqres }{ sequence from SEQRES field. }
   \item{xyz }{ a numeric vector of ATOM coordinate data. }
+  \item{xyz.models }{ a numeric matrix of ATOM coordinate data for
+    multi-model PDB files. }
   \item{calpha }{ logical vector with length equal to \code{nrow(atom)}
     with TRUE values indicating a C-alpha \dQuote{elety}. }
 }
