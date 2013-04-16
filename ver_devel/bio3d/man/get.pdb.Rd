@@ -5,7 +5,7 @@
   Downloads PDB coordinate files from the RCSB Protein Data Bank.
 }
 \usage{
-get.pdb(ids, path = "./", URLonly=FALSE)
+get.pdb(ids, path = "./", URLonly=FALSE, overwrite = FALSE)
 }
 \arguments{
   \item{ids}{ A character vector of one or more 4-letter PDB
@@ -15,7 +15,8 @@ get.pdb(ids, path = "./", URLonly=FALSE)
   \item{URLonly}{ logical, if TRUE a character vector containing the URL
     path to the online file is returned and files are not downloaded. If
     FALSE the files are downloaded. }
-  
+  \item{overwrite}{ logical, if FALSE the file will not be downloaded if
+    it alread exist. }
 }
 \details{
   This is a basic function to automate file download from the PDB.
