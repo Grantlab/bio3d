@@ -23,7 +23,8 @@ function(xyz=NULL, rmsd.mat=NULL, cutoff=0.5, fit=TRUE, verbose=TRUE) {
   if(verbose)
     cat("ide.filter(): N clusters @ cutoff = ", k, "\n")
   
-  ans <- as.vector(.Call("R_cutree", tree$merge, k, PACKAGE = "stats"))
+#  ans <- as.vector(.Call("R_cutree", tree$merge, k, PACKAGE = "stats"))
+  ans <- as.vector(cutree(tree, k))
   
   cluster.rep <- NULL
   for(i in 1:k) {
