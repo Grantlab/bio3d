@@ -1,8 +1,0 @@
-added a new print.pdb(), edited atom.select() and pdb.summary() to call this function.
-added new rle2() and print.rle2() functions.
-edited mktrj.pca() to interpolate along multiple PC's at once.
-Found a bug with this mktrj.pca() and put it back to the old one for now.
-Fixed the bug in pairwise RMSD calculation (the length of subset problem).
-Added PC overalp and rmsip functions from Lars.
-Updated version and date entries in files file "bio3d/DESCRIPTION" and "bio3d/man/bio3d.package.Rd".
-

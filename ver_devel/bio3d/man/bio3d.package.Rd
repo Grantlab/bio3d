@@ -12,7 +12,7 @@ Utilities for the analysis of protein structure and sequence data.
 \tabular{ll}{
 Package: \tab bio3d\cr
 Type: \tab Package\cr
-Version: \tab 1.1-6\cr
+Version: \tab 1.1-5\cr
 Date: \tab DEVEL VERSION: 2012-11-13\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab \url{http://thegrantlab.org/bio3d/}\cr
