@@ -4,7 +4,7 @@ function(vec, resno) {
   ## similar resno entries
 
   if(class(resno)=="pdb")
-    resno <- pdb$atom[,"resno"]
+    resno <- resno$atom[,"resno"]
 
   res.len <- rle(resno)$lengths
   if(length(vec) != length(res.len))

@@ -1,5 +1,12 @@
-Same as ver_1-1.5 as of Tue Nov 13 15:56:57 EST 2012
-Updated version to 1-1.6 this is now the devel version.
-Tue Dec 18 11:43:21 EST 2012 Parallelized rmsd.R, fit.xyz.R, and dccm.R
-                             also update according manuals
+
+Bio3D Version 1-1.6
+===================
+
+Based on ver_1-1.5, fix bugs:
+1. in ide.filter.R and rmsd.filter.R, calling 
+   the function "cutree" in the base package
+   "stat" with ".Call" causes problems in R 3.0.0
+2. dssp.R, seq2aln.R, seqaln.R, and stride.R 
+   don't work properly in Windows; fixed by
+   replacing "system" function with "shell"
 
