@@ -5,7 +5,12 @@ function(pdb,
   infile  <- tempfile()
   outfile <- tempfile()
   write.pdb(pdb, file=infile)
-  system( paste(exepath,"stride -f",outfile," ",infile,sep="") )
+  os1 <- .Platform$OS.type
+  if(os1 == "windows") {
+     shell( paste(exepath,"stride -f",outfile," ",infile,sep="") )
+  } else {
+     system( paste(exepath,"stride -f",outfile," ",infile,sep="") )
+  }
   raw.lines <- readLines(outfile)
   type <- substring(raw.lines, 1, 3)
   unlink(c(infile, outfile))
