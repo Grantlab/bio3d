@@ -27,7 +27,7 @@ function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE) {
       stop("dimension miss-match in 'xyz' and 'grpby', check lengths")
 
     ##- Bounds of 'grpby' numbers
-    inds <- bounds(grpby, dup=TRUE)
+    inds <- bounds(grpby, dup.inds=TRUE)
     nres <- nrow(inds)
     
     ##- Per-residue matrix
