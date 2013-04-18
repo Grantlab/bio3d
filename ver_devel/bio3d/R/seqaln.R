@@ -33,7 +33,8 @@ function(aln, id=NULL,
   cat(cmd)
   
   if (os1 == "windows") {
-    system(shQuote(cmd))
+#    system(shQuote(cmd))
+    shell(shQuote(cmd))
   } else {
     system(cmd)
   }

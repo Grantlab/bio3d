@@ -3,9 +3,14 @@ function (pdb, exepath = "", resno=TRUE) {
     infile <- tempfile()
     outfile <- tempfile()
     write.pdb(pdb, file = infile)
-    system(paste(exepath, "dssp -c ", infile, " ",
+    os1 <- .Platform$OS.type
+    if(os1 == "windows") {
+       shell(paste(exepath, "dssp ", infile, " ",
                  outfile, sep = ""), ignore.stderr = TRUE)
-
+    } else {
+       system(paste(exepath, "dssp -c ", infile, " ",
+                 outfile, sep = ""), ignore.stderr = TRUE)
+    }
 ##
 ## For Debug (Tue Aug  3 18:22:11 PDT 2010)
 ##  -- Following multi chain error report from Heiko Strathmann 
@@ -19,8 +24,13 @@ function (pdb, exepath = "", resno=TRUE) {
     raw.lines <- raw.lines[-(1:which(type == "  #"))]
     cha <- substring(raw.lines, 12, 12)
     sse <- substring(raw.lines, 17, 17)
-    phi <- as.numeric(substring(raw.lines, 96, 101))
-    psi <- as.numeric(substring(raw.lines, 102, 107))
+    if(os1 == "windows") {
+       phi <- as.numeric(substring(raw.lines, 104, 109))
+       psi <- as.numeric(substring(raw.lines, 110, 115))
+    } else {
+       phi <- as.numeric(substring(raw.lines, 96, 101))
+       psi <- as.numeric(substring(raw.lines, 102, 107))
+    }
     acc <- as.numeric(substring(raw.lines, 35, 38))
 
 
