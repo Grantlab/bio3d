@@ -50,8 +50,8 @@ pdb2aln(aln, pdb, inds, aln.id=NULL, id="seq", file="pdb2aln.fa")
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Xin-Qiu Yao & Barry Grant }
-\seealso{ \code{\link{rmsd}}, \code{\link{read.pdb}},
-  \code{\link{read.fasta.pdb}}, \code{\link{read.dcd}} }
+\seealso{ \code{\link{seq2aln}}, \code{\link{seqaln.pair}},
+       \code{\link{atom.select}} }
 \examples{
 \dontrun{
 ##--- Read aligned PDB coordinates (CA only)

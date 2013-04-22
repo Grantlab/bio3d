@@ -5,7 +5,7 @@
   Determines the interacting residues between two PDB entities.
 }
 \usage{
-binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cut=5, hydrogens=TRUE)
+binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cut=8, hydrogens=TRUE)
 }
 \arguments{
   \item{a}{ an object of class \code{pdb} as obtained from
@@ -41,7 +41,7 @@ binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cut=5, hydrogens=TRUE)
 \references{
    Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
-\author{ Lars Skjærven }
+\author{ Lars Skjaerven }
 \seealso{ \code{\link{read.pdb}}, \code{\link{atom.select}}, \code{\link{dm}} }
 \examples{
      pdb <- read.pdb('3dnd', het2atom=TRUE)

@@ -42,7 +42,7 @@ read.mol2(file, maxlines = -1L)
   For a description of the MOL2 format see:\cr
   \url{http://www.tripos.com/data/support/mol2.pdf}.
 }
-\author{ Lars Skjærven }
+\author{ Lars Skjaerven }
 \note{ 
   For \code{atom} list components the column names can be
   used as a convenient means of data access, namely:
