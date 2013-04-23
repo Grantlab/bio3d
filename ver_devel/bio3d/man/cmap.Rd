@@ -17,7 +17,7 @@ cmap(xyz, grpby=NULL, dcut = 4, scut = 3, pcut=1, mask.lower = TRUE,
     in contact. }
   \item{scut}{ a cuttoff neighbour value which has the effect of
     excluding atoms that are sequentially within this value. }
-  \item{pcut}{ a cutoff percentage of structures/frames showing a contact,
+  \item{pcut}{ a cutoff probability of structures/frames showing a contact,
     above which atoms are considered in contact with respect to the ensemble}
   \item{mask.lower}{ logical, if TRUE the lower matrix elements
     (i.e. those below the diagonal) are returned as NA.}
