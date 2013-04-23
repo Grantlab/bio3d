@@ -2,12 +2,14 @@
 \alias{cmap}
 \title{ Contact Map }
 \description{
-  Construct a Contact Map for a Given Protein Structure.}
+  Construct a Contact Map for Given Protein Structure(s).}
 \usage{
-cmap(xyz, grpby=NULL, dcut = 4, scut = 3, mask.lower = TRUE)
+cmap(xyz, grpby=NULL, dcut = 4, scut = 3, pcut=1, mask.lower = TRUE,
+         ncore=1, nseg.scale=1)
 }
 \arguments{
-  \item{xyz}{ numeric vector of xyz coordinates. }
+  \item{xyz}{ numeric vector of xyz coordinates or a numeric matrix of
+    coordinates with a row per structure/frame. }
   \item{grpby}{ a vector counting connective duplicated elements that
     indicate the elements of \code{xyz} that should be considered as a group
     (e.g. atoms from a particular residue). }  
@@ -15,8 +17,14 @@ cmap(xyz, grpby=NULL, dcut = 4, scut = 3, mask.lower = TRUE)
     in contact. }
   \item{scut}{ a cuttoff neighbour value which has the effect of
     excluding atoms that are sequentially within this value. }
+  \item{pcut}{ a cutoff percentage of structures/frames showing a contact,
+    above which atoms are considered in contact with respect to the ensemble}
   \item{mask.lower}{ logical, if TRUE the lower matrix elements
     (i.e. those below the diagonal) are returned as NA.}
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires multicore package installed. }
+  \item{nseg.scale }{ split input data into specified number of segments
+    prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
 }
 \details{
   A contact map is a simplified distance matrix. See the distance matrix
