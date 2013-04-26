@@ -5,13 +5,21 @@
   Read coordinate data from a binary netCDF trajectory file.
 }
 \usage{
-read.ncdf(trjfile, headonly = FALSE, verbose = TRUE)
+read.ncdf(trjfile, headonly = FALSE, verbose = TRUE, time = FALSE,
+          start = NULL, end = NULL)
 }
 \arguments{
-  \item{trjfile}{ name of trajectory file to read. }
+  \item{trjfile}{ name of trajectory file to read. A vector if treat
+    a batch of files }
   \item{headonly}{ logical, if TRUE only trajectory header information
     is returned. If FALSE only trajectory coordinate data is returned. }
   \item{verbose}{ logical, if TRUE print details of the reading process. }
+  \item{time}{ logical, if TRUE the \code{start} and \code{end} have the
+    time unit ps; Otherwise the unit is the frame number. }
+  \item{start}{ starting time or frame number to read; If NULL, start
+    from the begining of the file(s). }
+  \item{end}{ read data until \code{end} time or frame number; If NULL or
+    equal to -1, read until the end of the file(s). }
 }
 \details{
   Reads a AMBER netCDF format trajectory file with the help of David

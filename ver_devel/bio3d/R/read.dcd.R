@@ -1,5 +1,6 @@
 "read.dcd" <-
-function(trjfile, big=FALSE, verbose=TRUE){
+function(trjfile, big=FALSE, verbose=TRUE, time=FALSE, 
+          start=NULL, end=NULL){
 
   # Version 0.2 ... Tue Jan 18 14:20:12 PST 2011
   # Version 0.1 ... Thu Mar  9 21:18:54 PST 2005

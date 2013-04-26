@@ -8,7 +8,8 @@
 read.dcd(trjfile, big=FALSE, verbose = TRUE)
 }
 \arguments{
-  \item{trjfile}{ name of trajectory file to read. }
+  \item{trjfile}{ name of trajectory file to read. A vector if 
+    treat a batch of files }
   \item{big}{ logical, if TRUE attempt to read large files into a
     big.matrix object }
   \item{verbose}{ logical, if TRUE print details of the reading process. }

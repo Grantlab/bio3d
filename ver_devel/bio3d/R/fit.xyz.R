@@ -97,8 +97,7 @@ function(fixed,
          }
          fit <- matrix(unlist(fit), ncol=ncol(mobile$xyz), byrow=TRUE)
          readChildren()
-      }
-      else {           # Single version
+      } else {           # Single version
          fit <- t( apply(mobile$xyz, 1, rot.lsq,
                          yy = fixed,
                          xfit = mobile.inds,
@@ -115,9 +114,12 @@ function(fixed,
         } else {
           full.files  <- file.path(pdb.path, paste(mobile$id, pdbext, sep=""))
         }
+        
+        mylapply <- lapply 
+        if(ncore>1) mylapply <- mclapply
 
-        for(i in 1:length(mobile$id)) {
-
+#        for(i in 1:length(mobile$id)) {
+        mylapply(1:length(mobile$id), function(i) {
 ###          pdb  <- read.pdb( paste(pdb.path,"/",mobile$id[i],pdbext,sep=""), ... )
           pdb  <- read.pdb( full.files[i], ... )
           res.resno  <- mobile$resno[i,core.inds.atom]
@@ -170,8 +172,8 @@ function(fixed,
           write.pdb(xyz = xyz.fit, pdb = pdb, het = het, 
                     file = paste(outpath, basename(mobile$id[i]),
                       "_flsq.pdb",sep = "") )
-
-        }
+          return (NULL)
+        } )
       }
       return(fit)
     } else {

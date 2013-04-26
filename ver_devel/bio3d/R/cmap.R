@@ -31,7 +31,7 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
      }
      if(ncore > 1) {
         ni = nrow(xyz)
-        RLIMIT = R_NCELL_LIMIT
+        RLIMIT = floor(R_NCELL_LIMIT/(0.5*nres*(nres+1)))
         nDataSeg = floor((ni-1)/RLIMIT)+1
         nDataSeg = floor(nDataSeg * nseg.scale)
         lenSeg = floor(ni/nDataSeg)
