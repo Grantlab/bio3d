@@ -6,11 +6,32 @@ function(aln,
          stop.at   = 15,
          stop.vol  = 0.5,
          write.pdbs = FALSE,
-         outpath="core_pruned/") {
+         outpath="core_pruned/",
+         ncore = 1,
+         nseg.scale = 1) {
 
   ##  Itterative core deffination for lsq fit optimisation  
   ##  (core positions are those with low ellipsoid volume)
 
+  # Parallelized by multicore package (Fri Apr 26 16:49:38 EDT 2013)
+  if(ncore > 1) {
+     oops <- require(multicore)
+     if(!oops)
+        stop("Please install the multicore package from CRAN")
+
+     options(cores = ncore)
+
+     # Issue of serialization problem
+     # Maximal number of cells of a double-precision matrix
+     # that each core can serialize: (2^31-1-61)/8
+     R_NCELL_LIMIT_CORE = 2.68435448e8
+     R_NCELL_LIMIT = ncore * R_NCELL_LIMIT_CORE
+
+     if(nseg.scale < 1) {
+        warning("nseg.scale should be 1 or a larger integer\n")
+        nseg.scale=1
+     }
+  }
   
   error.ellipsoid<-function(pos.xyz) {
     S<-var(pos.xyz)
@@ -58,11 +79,13 @@ function(aln,
 
   fit.to = rep(FALSE,ncol(xyz.moved))        # Preliminary fitting 
   fit.to[ as.vector(xyz.still.in) ]<-TRUE    # on first structure 
-  xyz.tmp <- t(apply(xyz.moved, 1,           # to find mean structure
-                       rot.lsq,              # for next fitting
-                       yy=xyz.moved[1,],
-                       xfit=fit.to))
-
+#  xyz.tmp <- t(apply(xyz.moved, 1,           # to find mean structure
+#                       rot.lsq,              # for next fitting
+#                       yy=xyz.moved[1,],
+#                       xfit=fit.to))
+  xyz.tmp <- fit.xyz(xyz.moved[1,], xyz.moved, which(fit.to), which(fit.to),
+                      ncore=ncore, nseg.scale=nseg.scale) 
+  
   mean.xyz <- apply(xyz.tmp,2,mean)
   
   if(write.pdbs) { dir.create(outpath,FALSE)  }
@@ -72,22 +95,32 @@ function(aln,
     # Core fitting, (core => pdbnum[ res.still.in ]) 
     fit.to = rep(FALSE,ncol(xyz.moved))
     fit.to[ as.vector(xyz.still.in) ]<-TRUE
-    xyz.moved <- t(apply(xyz.moved, 1,
-                         rot.lsq,
-                         #yy=xyz.moved[1,],
-                         yy=mean.xyz,
-                         xfit=fit.to))
+#    xyz.moved <- t(apply(xyz.moved, 1,
+#                         rot.lsq,
+#                         #yy=xyz.moved[1,],
+#                         yy=mean.xyz,
+#                         xfit=fit.to))
+    xyz.moved <- fit.xyz(mean.xyz, xyz.moved, which(fit.to), which(fit.to),
+                    ncore=ncore, nseg.scale=nseg.scale)
 
     mean.xyz <- apply(xyz.moved,2,mean)
 
     i<-1; j<-3
     volume<-NULL # ellipsoid volume
-    while(j<=length( new.xyz.inds )) {
-      e<-error.ellipsoid(xyz.moved[,new.xyz.inds[i:j]])
-      volume<-c(volume,e$vol)
-      i<-i+3;j<-j+3
+    if(ncore > 1) {
+       e <- mclapply(1:(length(new.xyz.inds)/3), function(j) {
+          error.ellipsoid( xyz.moved[, new.xyz.inds[atom2xyz(j)]] )$vol
+       })
+       volume <- unlist(e)
+       readChildren() 
+    } else {
+       while(j<=length( new.xyz.inds )) {
+         e<-error.ellipsoid(xyz.moved[,new.xyz.inds[i:j]])
+         volume<-c(volume,e$vol)
+         i<-i+3;j<-j+3
+       }
     }
-
+     
     record <- cbind(res.still.in ,   # store indices and volumes
                     matrix(new.xyz.inds,ncol=3,byrow=3),
                     volume)

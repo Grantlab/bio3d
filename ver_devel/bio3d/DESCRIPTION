@@ -1,6 +1,6 @@
 Package: bio3d
 Title: Biological Structure Analysis
-Version: 1.1-6
+Version: 1.2
 Author: Barry Grant, Xin-Qiu Yao
 Suggests: ncdf, lattice, grid, bigmemory, multicore
 Description: The bio3d package contains utilities to process, organize and explore protein structure, sequence and dynamics data.  Features include the ability to read and write structure, sequence and dynamic trajectory data, perform database searches, atom summaries, atom selection, re-orientation, superposition, rigid core identification, clustering, torsion analysis, distance matrix analysis, structure and sequence conservation analysis, and principal component analysis (PCA).  In addition, various utility functions are provided to enable the statistical and graphical power of the R environment to work with biological sequence and structural data.  Please refer to the URL below for more information.

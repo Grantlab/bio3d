@@ -6,13 +6,18 @@
   coordinates, residue numbers, residue type and B-factors.
 }
 \usage{
-read.fasta.pdb(aln, pdb.path = "", pdbext = "", ...)
+read.fasta.pdb(aln, pdb.path = "", pdbext = "", 
+             ncore = 1, nseg.scale = 1, ...)
 }
 \arguments{
   \item{aln}{ an alignment data structure obtained with
     \code{\link{read.fasta}}. }
   \item{pdb.path}{ path to PDB files. }
   \item{pdbext}{ the file name extention of the PDB files. }
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires multicore package installed. }
+  \item{nseg.scale }{ split input data into specified number of segments
+    prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
   \item{\dots}{ other parameters for \code{\link{read.pdb}}. }  
 }
 \details{
