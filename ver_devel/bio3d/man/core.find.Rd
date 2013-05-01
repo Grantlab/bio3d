@@ -34,6 +34,7 @@ core.find(aln, shortcut = FALSE, rm.island = FALSE,
     \code{ncore>1} requires multicore package installed. }
   \item{nseg.scale }{ split input data into specified number of segments
     prior to running multiple core calculation. See \code{\link{fit.xyz}}.
+  }
 }
 \details{
   This function attempts to iteratively refine an initial structural
