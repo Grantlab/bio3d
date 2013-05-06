@@ -29,7 +29,7 @@ difference.vector(xyz, xyz.inds=NULL)
 \seealso{ \code{\link{overlap}} }
 \examples{
      data(kinesin)
-     attach(kinesin)
+     attach(kinesin, warn.conflicts=FALSE)
      
      # Ignore gap containing positions
      gaps.res <- gap.inspect(pdbs$ali)

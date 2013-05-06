@@ -39,7 +39,7 @@ write.crd(pdb = NULL, xyz = pdb$xyz, resno = NULL, resid = NULL, eleno = NULL, e
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 
   For a description of CHARMM CARD (CRD) format see:\cr
-  \url{http://www.charmm.org/document/Charmm/c32b2/io.html}.
+  \url{http://www.charmmtutorial.org/index.php/CHARMM:The_Basics}.
 }
 \author{ Barry Grant }
 \note{

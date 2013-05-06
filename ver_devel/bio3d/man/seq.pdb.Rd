@@ -38,7 +38,9 @@ seq.pdb(pdb, inds = NULL, aa1 = TRUE)
 \seealso{ \code{\link{read.pdb}}, \code{\link{atom.select}},
   \code{\link{aa321}}, \code{\link{read.fasta}} }
 \examples{
-##pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
-##seq.pdb(pdb)
+\dontrun{
+pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
+seq.pdb(pdb)
+}
 }
 \keyword{ utilities }

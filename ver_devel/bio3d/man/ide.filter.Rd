@@ -37,7 +37,7 @@ ide.filter(aln = NULL, ide = NULL, cutoff = 0.6, verbose = TRUE)
   \code{\link{identity}}, \code{\link{entropy}}, \code{\link{consensus}} }
 \examples{
 data(kinesin)
-attach(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
 ide.mat <- identity(aln)
 
 # Histogram of pairwise identity values

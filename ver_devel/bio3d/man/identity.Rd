@@ -33,7 +33,7 @@
 }
 
 data(kinesin)
-attach(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
 
 ide.mat <- identity(aln)
 

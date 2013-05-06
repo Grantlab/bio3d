@@ -35,8 +35,8 @@ trim.pdb(pdb, inds = NULL)
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
   
-  For a description of PDB format (version2.2) see:\cr
-  \url{http://www.rcsb.org/pdb/file_formats/pdb/pdbguide2.2/guide2.2_frame.html}
+  For a description of PDB format (version3.3) see:\cr
+  \url{http://www.wwpdb.org/documentation/format33/v3.3.html}.
 .
 }
 \author{ Barry Grant }
@@ -61,8 +61,10 @@ trim.pdb(pdb, inds = NULL)
   \code{\link{read.dcd}}, \code{\link{read.fasta.pdb}},
   \code{\link{read.fasta}} }
 \examples{
-## pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
-## npdb <- trim.pdb(pdb, inds=atom.select(pdb, "back")
-## write.pdb(npdb, file="backboneonly.pdb")
+\dontrun{
+ pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
+ npdb <- trim.pdb(pdb, inds=atom.select(pdb, "back"))
+ write.pdb(npdb, file="backboneonly.pdb")
+}
 }
 \keyword{ utilities }

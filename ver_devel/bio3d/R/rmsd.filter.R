@@ -10,7 +10,7 @@ function(xyz=NULL, rmsd.mat=NULL, cutoff=0.5, fit=TRUE, verbose=TRUE) {
     if(is.list(xyz))
       xyz=xyz$xyz
     gaps<-gap.inspect(xyz)
-    rmsd.mat <- rmsd( xyz[,gaps$f.inds],fit=fit )
+    rmsd.mat <- rmsd( xyz, a.inds=gaps$f.inds, fit=fit )
   }
   
   r.d  <- as.dist(rmsd.mat)

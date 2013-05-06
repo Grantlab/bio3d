@@ -47,7 +47,8 @@ pdbaln(files, pqr = FALSE, ...)
 }
 \examples{
 \dontrun{
-files <- get.pdb(c("4q21","5p21"), URLonly=TRUE)
+#files <- get.pdb(c("4q21","5p21"), URLonly=TRUE)
+files <- get.pdb(c("4q21","5p21"), path=tempdir())
 pdbaln(files)
 }
 }

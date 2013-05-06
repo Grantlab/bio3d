@@ -42,8 +42,8 @@ read.pqr(file, maxlines = 50000, multi = FALSE, rm.insert = FALSE,
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
   
-  For a description of PDB format (version2.2) see:\cr
-  \url{http://www.rcsb.org/pdb/file_formats/pdb/pdbguide2.2/guide2.2_frame.html}.
+  For a description of PDB format (version3.3) see:\cr
+  \url{http://www.wwpdb.org/documentation/format33/v3.3.html}.
 }
 \author{ Barry Grant }
 \note{ 
@@ -75,7 +75,7 @@ pdb$atom[1,]
 # Look at the first het atom
 pdb$het[1,]
 # Print some coordinate data
-pdb$atom[, c("x","y","z")]
+pdb$atom[1:20, c("x","y","z")]
 
 # Print C-alpha coordinates (can also use 'atom.select')
 ##pdb$xyz[pdb$calpha, c("resid","x","y","z")]

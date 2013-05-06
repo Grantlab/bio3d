@@ -22,9 +22,8 @@ split.pdb(pdb.files, path = "split_chain/")
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
   
-  For a description of PDB format (version2.2) see:\cr
-  \url{http://www.rcsb.org/pdb/file_formats/pdb/pdbguide2.2/guide2.2_frame.html}
-.
+  For a description of PDB format (version3.3) see:\cr
+  \url{http://www.wwpdb.org/documentation/format33/v3.3.html}.
 }
 \author{ Barry Grant }
 \note{
@@ -33,9 +32,10 @@ split.pdb(pdb.files, path = "split_chain/")
 \seealso{ \code{\link{read.pdb}}, \code{\link{atom.select}}, \code{\link{write.pdb}}. }
 \examples{
 \dontrun{
-pdbfiles <- list.files()
-split.pdb(pdbfiles)
-list.files("split_chain")
+#pdbfiles <- list.files()
+pdbfiles <- get.pdb(c("1bg2", "1cz7"), path=tempdir())
+split.pdb(pdbfiles, path=paste(tempdir(), "/split_chain/", sep=""))
+list.files(paste(tempdir(),"/split_chain",sep=""))
 }
 }
 \keyword{ utilities }

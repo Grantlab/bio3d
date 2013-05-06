@@ -27,7 +27,7 @@ read.crd(file, verbose = TRUE)
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 
   For a description of CHARMM CARD (CRD) format see:\cr
-  \url{http://www.charmm.org/document/Charmm/c32b2/io.html}.
+  \url{http://www.charmmtutorial.org/index.php/CHARMM:The_Basics}.
 }
 \author{ Barry Grant }
 \note{
@@ -50,10 +50,14 @@ read.crd(file, verbose = TRUE)
   \code{\link{read.dcd}}, \code{\link{read.fasta.pdb}},
   \code{\link{read.fasta}} }
 \examples{
-##
-## crd <- read.crd("somefile.crd")
-## crd$atom[crd$calpha,c("x","y","z")]
-## write.pdb(crd, file="somefile.pdb")
-##
+\dontrun{
+ pdb <- read.pdb("1bg2")
+ crdfile <- tempfile()
+ write.crd(pdb, file=crdfile)
+ crd <- read.crd(crdfile)
+ ca.inds <- which(crd$calpha)
+ crd$atom[ca.inds[1:20],c("x","y","z")]
+# write.pdb(crd, file=tempfile())
+}
 }
 \keyword{ IO }

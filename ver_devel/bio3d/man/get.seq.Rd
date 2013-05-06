@@ -36,7 +36,7 @@ get.seq(ids, outfile = "seqs.fasta", db = "nr")
 \author{ Barry Grant }
 \note{  
   For a description of FASTA format see:
-  \url{http://www.ebi.ac.uk/help/formats_frame.html}.
+  \url{http://www.ncbi.nlm.nih.gov/BLAST/blastcgihelp.shtml}.
   When reading alignment files, the dash \sQuote{-} is interpreted as
   the gap character.
 }
@@ -44,10 +44,14 @@ get.seq(ids, outfile = "seqs.fasta", db = "nr")
   \code{\link{read.fasta.pdb}}, \code{\link{get.pdb}}
 }
 \examples{
-##pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
-##blast <- blast.pdb( seq.pdb(pdb), database = "swiss" )
-##ids <- plot.blast( blast )
-##get.seq(ids)
+\dontrun{
+pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
+blast <- blast.pdb( seq.pdb(pdb), database = "swissprot" )
+ids <- plot.blast( blast )
+seq <- get.seq(ids$gi.id)
+seq$id[1:10]
+seq$ali[1:10,]
+}
 }
 \keyword{ IO }
 \keyword{ utilities }

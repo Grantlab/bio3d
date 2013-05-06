@@ -27,9 +27,8 @@ get.pdb(ids, path = "./", URLonly=FALSE)
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
   
-  For a description of PDB format (version2.2) see:\cr
-  \url{http://www.rcsb.org/pdb/file_formats/pdb/pdbguide2.2/guide2.2_frame.html}
-.
+  For a description of PDB format (version3.3) see:\cr
+  \url{http://www.wwpdb.org/documentation/format33/v3.3.html}.
 }
 \author{ Barry Grant }
 \seealso{ \code{\link{read.pdb}}, \code{\link{write.pdb}},

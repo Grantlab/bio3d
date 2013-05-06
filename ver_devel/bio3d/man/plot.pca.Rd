@@ -59,7 +59,7 @@ plot.pca.score(x, start.row = 1, end.row = nrow(x), col=rainbow(nrow(x)), lab = 
 \seealso{ \code{\link{pca.xyz}}, \code{\link{plot.bio3d}} }
 \examples{
 data(kinesin)
-attach(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
 
 plot(pc.xray)
 

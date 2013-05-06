@@ -3,7 +3,7 @@ function(aln, file = "alignment.html",
                      Entropy = 0.5,
                      append = TRUE,
                      caption.css = "color: gray; font-size: 9pt",
-                     caption = "Produced by <a href=\"http://mccammon.ucsd.edu/~bgrant/bio3d/\">Bio3D<a>",
+                     caption = "Produced by <a href=http://thegrantlab.org/bio3d/>Bio3D<a>",
                      fontsize = "11pt",
                      bgcolor = TRUE,
                      colorscheme="clustal") {

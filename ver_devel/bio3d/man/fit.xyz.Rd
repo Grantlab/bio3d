@@ -90,7 +90,7 @@ pdbs <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
 
 #-- OR Read previously saved kinesin data & Fit aligned structures
 data(kinesin)
-attach(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
 
 gaps <- gap.inspect(pdbs$xyz)
 

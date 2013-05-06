@@ -25,7 +25,7 @@ plot.pca.loadings(x, resnums = seq(1, (length(x[, 1])/3), 25), ...)
 \seealso{ \code{\link{pca.xyz}}, \code{\link{plot.pca}} }
 \examples{
 data(kinesin)
-attach(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
 plot.pca.loadings(pc.xray$U)
 }
 \keyword{ hplot }

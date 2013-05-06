@@ -37,7 +37,7 @@ rmsip(pca.a, pca.b, subset=10, row.name=NULL, col.name=NULL)
 \seealso{ \code{\link{overlap}}, \code{\link{pca.xyz}} }
 \examples{
      data(kinesin)
-     attach(kinesin)
+     attach(kinesin, warn.conflicts=FALSE)
      
      # Ignore gap containing positions
      gaps.pos <- gap.inspect(pdbs$xyz)

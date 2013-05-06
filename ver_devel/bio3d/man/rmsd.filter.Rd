@@ -40,7 +40,8 @@ rmsd.filter(xyz = NULL, rmsd.mat = NULL, cutoff = 0.5,
 \examples{
 \dontrun{
 data(kinesin)
-k <- rmsd.filter(pdbs,cutoff=0.5)
+attach(kinesin, warn.conflicts=FALSE)
+k <- rmsd.filter(xyz=pdbs,cutoff=0.5)
 aln$id[k$ind]
 plot(k$tree, ylab="RMSD")
 abline(h=0.5, col="gray")
