@@ -26,7 +26,7 @@ write.fasta(alignment=NULL, ids=NULL, seqs=alignment$ali, file, append = FALSE)
 \author{ Barry Grant }
 \note{
   For a description of FASTA format see:
-  \url{http://www.ebi.ac.uk/help/formats_frame.html}.
+  \url{http://www.ncbi.nlm.nih.gov/BLAST/blastcgihelp.shtml}.
 }
 \seealso{ \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}} }
 \examples{

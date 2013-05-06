@@ -25,7 +25,7 @@ rmsf(xyz)
   \code{\link{read.fasta.pdb}} }
 \examples{
 data(kinesin)
-attach(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
 
 r <- rmsf(xyz)
 plot( r[aln$ali["d1bg2__",]!="-"], typ="h", ylab="RMSF (A)")

@@ -73,7 +73,7 @@ sse <- dssp(pdb, resno=FALSE)
 
 ##-- Or load previous dataset
 data(kinesin)
-attach(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
 
 ## Plot of B-factor values along with secondary structure
 plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor")

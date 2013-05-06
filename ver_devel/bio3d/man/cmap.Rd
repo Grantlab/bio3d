@@ -42,9 +42,8 @@ cmap(xyz, grpby=NULL, dcut = 4, scut = 3, pcut=1, mask.lower = TRUE,
   \code{\link{dist.xyz}} }
 \examples{
 
-##- Read PDB and Traj files
+##- Read PDB file
 pdb <- read.pdb( system.file("examples/hivp.pdb", package="bio3d") )
-##trj <- read.dcd( system.file("examples/hivp.dcd", package="bio3d") )
 
 ## Atom Selection indices
 inds <- atom.select(pdb, "calpha")
@@ -54,6 +53,8 @@ ref.cont <- cmap( pdb$xyz[inds$xyz], dcut=6, scut=3 )
 plot.dmat(ref.cont)
 
 \dontrun{
+##- Read Traj file
+trj <- read.dcd( system.file("examples/hivp.dcd", package="bio3d") )
 ## For each frame of trajectory
 sum.cont <- NULL
 for(i in 1:nrow(trj)) {

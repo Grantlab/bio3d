@@ -13,7 +13,8 @@ function(pdb.files, path="split_chain/", multi=FALSE) {
     pdb.files <- pdb.files[toread]
   }
   
-  dir.create(path)
+  if(!file.exists(path)) 
+     dir.create(path)
   for (i in 1:length(pdb.files)) {
     pdb <- read.pdb(pdb.files[i], multi=multi, het2atom = TRUE, maxlines = -1)
     chains <- unique(pdb$atom[, "chain"])

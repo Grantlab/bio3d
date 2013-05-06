@@ -53,7 +53,7 @@ xyz <- fit.xyz( fixed = pdbs$xyz[1,],
 
 #-- OR Read previously saved kinesin data
 data(kinesin)
-attach(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
 
 # Remove outlier structures from kinesin alignment
 cut.seqs <- which(pdbs$id \%in\% c("d1n6mb_","d1ry6a_"))

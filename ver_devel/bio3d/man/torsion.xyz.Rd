@@ -77,7 +77,7 @@ plot(tor$phi, tor$psi)
 
 ## torsion analysis of a single coordinate vector 
 inds <- atom.select(pdb,"calpha")
-tor.ca <- torsion.xyz(pdb$xyz[inds$xyz], increment=3)
+tor.ca <- torsion.xyz(pdb$xyz[inds$xyz], atm.inc=3)
 }
 
 ##-- Compare two PDBs to highlight interesting residues

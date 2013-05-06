@@ -45,7 +45,7 @@ core <- core.find(pdbs,
 
 ##-- OR read previously saved kinesin data
 data(kinesin)
-attach(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
 
 col=rep("black", length(core$volume))
 col[core$volume<2]="pink"; col[core$volume<1]="red"

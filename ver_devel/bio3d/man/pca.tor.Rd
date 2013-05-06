@@ -31,13 +31,13 @@ pca.tor(data, subset = rep(TRUE, nrow(as.matrix(data))))
 \examples{
 ##-- PCA on torsion data for multiple PDBs 
 data(kinesin)
-attach(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
 
-gaps <- gap.inspect(pdbs)
+gaps <- gap.inspect(pdbs$ali)
 tgap.xyz <- atom2xyz(gaps$t.inds)
 fgap.xyz <- atom2xyz(gaps$f.inds)
 tor <- t(apply( pdbs$xyz[,fgap.xyz], 1, torsion.xyz, atm.inc=1))
-pc.tor <- pca.tor(tor[,-c(1,219,220)])
+pc.tor <- pca.tor(tor[,-c(1,218,219,220)])
 #plot(pc.tor)
 plot.pca.loadings(pc.tor)
 

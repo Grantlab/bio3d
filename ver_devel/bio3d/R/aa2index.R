@@ -12,8 +12,7 @@ function (aa, index = "KYTJ820101", window = 1) {
         if (index > length(names(aa.index))) {
             stop("aa2index: 'index' number does not exist")
         }
-    }
-    else {
+    } else {
         if (!is.element(index, names(aa.index))) {
             stop("aa2index: 'index' name does not exist")
         }
@@ -21,8 +20,7 @@ function (aa, index = "KYTJ820101", window = 1) {
     x <- aa.index[[index]]$I[aa]
     if (window == 1) {
         y <- x
-    }
-    else {
+    } else {
         n <- length(x)
         y <- rep(NA, n)
         w <- ceiling(window/2)
@@ -49,7 +47,7 @@ function (aa, index = "KYTJ820101", window = 1) {
                                 mean(x[(i - (w-1)): n], na.rm=TRUE))
         }
         y <- round(y,2)
-        names(y) <- seq
+        names(y) <- aa
     }
     return(y)
 }

@@ -71,12 +71,12 @@ pdb.path = system.file("examples",package="bio3d")
 sel <- c("N", "CA", "C", "O", "CB", "*G", "*D",  "*E", "*Z")
 pdbs <- read.all(aln, pdb.path = pdb.path, pdbext = ".ent", sel=sel)
 
-atm <- colnames(npdbs$all)
+atm <- colnames(pdbs$all)
 ca.ind  <- which(atm == "CA")
 core <- core.find(pdbs)
 core.ind <- c( matrix(ca.ind, nrow=3)[,core$c0.5A.atom] )
 
-nxyz <- fit.xyz(npdbs$all[1,], npdbs$all,
+nxyz <- fit.xyz(pdbs$all[1,], pdbs$all,
                fixed.inds  = core.ind,
                mobile.inds = core.ind)
 
@@ -85,9 +85,9 @@ npc.xray <- pca.xyz(nxyz[ ,ngap.col$f.inds])
 
 
 a <- mktrj.pca(npc.xray, pc=1, file="pc1-all.pdb",
-               elety=npdbs$all.elety[1,xyz2atom(ngap.col$f.inds)],
-               resid=npdbs$all.resid[1,xyz2atom(ngap.col$f.inds)],
-               resno=npdbs$all.resno[1,xyz2atom(ngap.col$f.inds)] )
+               elety=pdbs$all.elety[1,unique( ceiling(ngap.col$f.inds/3) )],
+               resid=pdbs$all.resid[1,unique( ceiling(ngap.col$f.inds/3) )],
+               resno=pdbs$all.resno[1,unique( ceiling(ngap.col$f.inds/3) )] )
 
 
 }

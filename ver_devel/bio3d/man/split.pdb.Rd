@@ -27,9 +27,8 @@ split.pdb(pdb.files, path = "split_chain/", multi=FALSE)
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
   
-  For a description of PDB format (version2.2) see:\cr
-  \url{http://www.rcsb.org/pdb/file_formats/pdb/pdbguide2.2/guide2.2_frame.html}
-.
+  For a description of PDB format (version3.3) see:\cr
+  \url{http://www.wwpdb.org/documentation/format33/v3.3.html}.
 }
 \author{ Barry Grant }
 \note{
@@ -40,15 +39,13 @@ split.pdb(pdb.files, path = "split_chain/", multi=FALSE)
 \examples{
   ## Fetch PDBs
   pdb.ids <- c("1YX5", "3NOB", "1P3Q", "2D3G","1F9J")
-  raw.files <- get.pdb(pdb.ids, path = "raw_pdbs")
+  outdir <- paste(tempdir(), "/raw_pdbs", sep="")
+  raw.files <- get.pdb(pdb.ids, path = outdir)
 
   ## Split PDBs by chain ID and multi-model records
-  all.files <- split.pdb(raw.files, path ="raw_pdbs/split_chain", multi=TRUE )
-
-  \dontrun{
-  pdbfiles <- list.files()
-  split.pdb(pdbfiles)
-  list.files("split_chain")
-  }
+  all.files <- split.pdb(raw.files,
+            path =paste(outdir, "/split_chain", sep=""), multi=TRUE )
+  
+  list.files(paste(outdir, "/split_chain", sep="")) 
 }
 \keyword{ utilities }

@@ -103,12 +103,12 @@ pdbs <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
 
 ##-- Or read previously saved kinesin data
 data(kinesin)
-attach(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
 
 ## Raw RMSD before superposition
 gaps <- gap.inspect(pdbs$xyz)
-rmsd( pdbs$xyz[,gaps$f.inds] )
-
+dd <- rmsd( pdbs$xyz[,gaps$f.inds] )
+dd[1:9, 1:9]
 ## RMSD after superposition on all positions
 #rmsd(pdbs$xyz[,gaps$f.inds],fit=TRUE)
 
@@ -132,8 +132,8 @@ xyz <- fit.xyz( fixed = pdbs$xyz[1,],
 
 
 # RMSD after superposition on 'core' positions
-rmsd( xyz[,gaps$f.inds] )
-
+dd <- rmsd( xyz[,gaps$f.inds] )
+dd[1:9, 1:9]
 
 \dontrun{
 # Fit structures and write out 'full' structures

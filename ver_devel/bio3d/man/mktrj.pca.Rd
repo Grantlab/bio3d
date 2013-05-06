@@ -39,7 +39,7 @@ mktrj.pca(pca = NULL, pc = 1, mag = 1, step = 0.125, file = NULL,  ...)
 \seealso{ \code{\link{pca.xyz}} }
 \examples{
 data(kinesin) # see pca.xyz for details
-attach(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
 
 # Ignore gap containing positions
 cut.seqs <- which(pdbs$id \%in\% c("d1n6mb_","d1ry6a_"))

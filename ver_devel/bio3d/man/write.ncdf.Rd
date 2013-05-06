@@ -24,7 +24,7 @@ write.ncdf(x, trjfile = "R.ncdf")
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
   \url{http://www.unidata.ucar.edu/packages/netcdf/}
   \url{http://cirrus.ucsd.edu/~pierce/ncdf/}
-  \url{http://amber.scripps.edu/netcdf/nctraj.html}
+  \url{http://ambermd.org/netcdf/nctraj.html}
 }
 \author{ Barry Grant }
 \note{ 

@@ -11,7 +11,9 @@
     if (URLonly) 
         return(get.files)
     put.files <- file.path(path, pdb.files)
-    dir.create(path)
+
+    if(!file.exists(path))
+       dir.create(path)
     rtn <- rep(NA, length(pdb.files))
     for (k in 1:length(pdb.files)) {
       

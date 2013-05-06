@@ -37,7 +37,7 @@ overlap(pca, dv, num.modes=20)
 \seealso{ \code{\link{rmsip}}, \code{\link{pca.xyz}} }
 \examples{
      data(kinesin)
-     attach(kinesin)
+     attach(kinesin, warn.conflicts=FALSE)
      
      # Ignore gap containing positions
      gaps.res <- gap.inspect(pdbs$ali)

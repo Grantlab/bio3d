@@ -75,8 +75,8 @@ function(pdb = NULL, xyz = pdb$xyz, resno = NULL, resid = NULL,
                     segid = segid[i], resno2 = resno2[i], b = b[i]))
     }
     cat("* CRD from bio3d", file = file, "\n")
-    cat("*", file = file, "\n")
-    cat(sprintf("%5g", natom), file = file, "\n")
+    cat("*", file = file, "\n", append = TRUE)
+    cat(sprintf("%5g", natom), file = file, "\n", append = TRUE)
     cat(lines, file = file, sep = "\n", append = TRUE)
     if (verbose)
       cat(" DONE", "\n")

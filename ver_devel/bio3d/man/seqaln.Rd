@@ -83,9 +83,13 @@ seqaln(aln, id=NULL, exepath="", file="aln.fa", protein=TRUE,
 
 \dontrun{
 ##-- Read a folder/directory of PDB files
-pdb.path <- "my_dir_of_pdbs"
+#pdb.path <- "my_dir_of_pdbs"
+#files  <- list.files(path=pdb.path ,
+#                     pattern=".pdb",
+#                     full.names=TRUE)
+pdb.path <- system.file("examples", package="bio3d")
 files  <- list.files(path=pdb.path ,
-                     pattern=".pdb",
+                     pattern=".ent",
                      full.names=TRUE)
 
 

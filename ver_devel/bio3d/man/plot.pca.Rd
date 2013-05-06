@@ -59,12 +59,13 @@ plot.pca.score(x, start.row = 1, end.row = nrow(x), col=rainbow(nrow(x)), lab = 
 \seealso{ \code{\link{pca.xyz}}, \code{\link{plot.bio3d}} }
 \examples{
 data(kinesin)
-attach(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
 
 plot(pc.xray)
 
 ## change colors
-plot(pc.xray,col=rainbow(length(pc.xray$z[,1])), cex=1.5)
+#plot(pc.xray,col=rainbow(length(pc.xray$z[,1])), cex=1.5)
+plot(pc.xray,col=rainbow(length(pc.xray$z[,1])))
 
 ## add labels
 

@@ -65,10 +65,10 @@ Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \keyword{ documentation }
 \examples{
-\dontrun{
-help(package="bio3d")  # list the functions within the package
+#help(package="bio3d")  # list the functions within the package
 lbio3d()  # list bio3d function names only
 
+\dontrun{
 ## See the individual functions for further documentation and examples.
 #help(read.pdb)
 
@@ -115,12 +115,14 @@ head(hits$hits)
 ## Download these with function "get.pdb()" 
 ## Split by chain with function "split.pdb()"
 ## and then align with function "pdbaln()"
-rawpdbs <- get.pdb(hits$pdb.id, "PDB_downloads")
-split.pdb(rawpdbs)
-hitfiles <- paste("split_chain/", hits$pdb.id, ".pdb", sep="")
+rawpdbs <- get.pdb(substr(hits$pdb.id,1,4), "PDB_downloads")
+split.pdb(rawpdbs, path="PDB_downloads/split_chain/")
+hitfiles <- paste("PDB_downloads/split_chain/", hits$pdb.id, ".pdb", sep="")
 hitfiles <- hitfiles[-grep("KIN",hitfiles)]
 pdbs <- pdbaln(hitfiles)
-xyz  <- fit.xyz( pdbs$xyz[1,], pdbs, full.pdbs=TRUE, het=TRUE)
+gaps.pos <- gap.inspect(pdbs$xyz)
+xyz  <- fit.xyz( pdbs$xyz[1,], pdbs, fixed.inds=gaps.pos$f.inds, 
+           mobile.inds=gaps.pos$f.inds, full.pdbs=TRUE, het=TRUE)
 
 ##-- Read an example FASTA alignment file
 aln <- read.fasta( system.file("examples/kinesin_xray.fa",package="bio3d") )

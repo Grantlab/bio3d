@@ -63,7 +63,30 @@ plot.dccm(x, sse = NULL, colorkey = TRUE, at = c(-1, -0.75, -0.5, -0.25, 0.25, 0
   plot.dccm(cij)
 
   ## SSE axis labs
-  sse <- dssp(pdb, resno=FALSE)
+  scopfile <- 
+   "http://scop.berkeley.edu/downloads/pdbstyle/pdbstyle-1.75/hh/d1hhpa_.ent"
+  outfile = tempfile()
+  download.file(scopfile, outfile)
+  pdbaa <- read.pdb(outfile)
+  sse <- dssp(pdbaa, resno=FALSE)
+
+  ## set as homodimer
+  sse <- lapply(sse, function(x) {
+      if(!is.null(names(x))) 
+         lapply(x, rep, 2)
+      else 
+         rep(x,2)
+      })
+  sse <- lapply(sse, function(x) {
+      if(length(grep("start", names(x)))>0) {
+         i=length(x$start)
+         x$start[(i/2+1):i] = x$start[(i/2+1):i]+ncol(cij)/2 
+         x$end[(i/2+1):i] = x$end[(i/2+1):i]+ncol(cij)/2 
+         return(x)
+      }
+      return (x)
+    })
+
   gridpoints <- c( sse$helix$start[sse$helix$length>4],
                   sse$sheet$start[sse$sheet$length>4])
   

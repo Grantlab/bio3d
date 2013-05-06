@@ -36,7 +36,7 @@ stride(pdb, exepath = "")
   Frishman and Argos (1995) \emph{Proteins.}  \bold{3}, 566--579.
 
   For information on obtaining the \sQuote{STRIDE} program, see:\cr
-  \url{http://www.embl-heidelberg.de/stride/stride_info.html},
+  \url{http://webclu.bio.wzw.tum.de/stride/},
   or copy it from an installation of VMD.
 }
 \author{ Barry Grant }
