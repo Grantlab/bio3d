@@ -64,7 +64,8 @@ attach(kinesin, warn.conflicts=FALSE)
 plot(pc.xray)
 
 ## change colors
-plot(pc.xray,col=rainbow(length(pc.xray$z[,1])), cex=1.5)
+#plot(pc.xray,col=rainbow(length(pc.xray$z[,1])), cex=1.5)
+plot(pc.xray,col=rainbow(length(pc.xray$z[,1])))
 
 ## add labels
 
