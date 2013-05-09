@@ -50,6 +50,7 @@ list(
         "pca.xyz2z",
         "pca.z2xyz",
         "pdbaln",
+        "rgyr",
         "rmsd",
         "rmsd.filter",
         "rmsf",
