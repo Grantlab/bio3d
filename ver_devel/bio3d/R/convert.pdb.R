@@ -105,16 +105,22 @@ function(pdb, type,
 
   ## Renumber 
   if(renumber) {
-    nums <- as.numeric(pdb$atom[,"resno"])
-    ##pdb$atom[,"resno"] <- nums - (nums[1] - first.resno)
     pdb$atom[,"eleno"] <- seq(first.eleno, length=nrow(pdb$atom))
+    s.ind <- which(!duplicated(pdb$atom[,"chain"]))
+    e.ind   <- c(s.ind[-1]-1, nrow(pdb$atom))
 
-    ## concetive residue numbers
-    tbl <- table(nums)
-    #new.nums <- first.resno:(first.resno+length(tbl))
-    new.nums <- first.resno:(first.resno+length(tbl)-1)
-    pdb$atom[,"resno"] <- rep(new.nums, tbl)
-    
+    ibase = 0
+    for (i in 1:length(s.ind)) {
+       nums <- as.numeric(pdb$atom[s.ind[i]:e.ind[i],"resno"])
+       ##pdb$atom[,"resno"] <- nums - (nums[1] - first.resno)
+   
+       ## concetive residue numbers
+       tbl <- table(nums)
+       #new.nums <- first.resno:(first.resno+length(tbl))
+       new.nums <- (first.resno+ibase):(first.resno+length(tbl)-1+ibase)
+       pdb$atom[s.ind[i]:e.ind[i],"resno"] <- rep(new.nums, tbl)
+       ibase = ibase + length(tbl)
+    }
   }
   
   ## (split by chain or segid)
