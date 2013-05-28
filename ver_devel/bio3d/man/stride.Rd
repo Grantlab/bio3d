@@ -5,13 +5,15 @@
   Secondary structure assignment according to the method of Frishman and Argos.
 }
 \usage{
-stride(pdb, exepath = "")
+stride(pdb, exepath = "", resno=TRUE)
 }
 \arguments{
   \item{pdb}{ a structure object of class '"pdb"', obtained from
    \code{\link{read.pdb}}. }
   \item{exepath}{ path to the \sQuote{STRIDE} program on your system  (i.e.
    the directory where \sQuote{STRIDE} is stored). }
+  \item{resno}{ logical, if TRUE output is in terms of residue numbers
+    rather than residue index (position in sequence). } 
 }
 \details{
   This function calls the \sQuote{STRIDE} program to define secondary
@@ -19,15 +21,17 @@ stride(pdb, exepath = "")
 }
 \value{
   Returns a list with the following components:
-  \item{helix}{ \sQuote{start}, \sQuote{end} and \sQuote{length} of H
-    type sse, where start and end are residue numbers \dQuote{resno}. }
+  \item{helix}{ \sQuote{start}, \sQuote{end}, \sQuote{length},
+    \sQuote{chain} and \sQuote{type} of helix, where start and end are
+    residue numbers or residue index positions depending on the value of
+    \dQuote{resno} input argument. }
   \item{sheet}{ \sQuote{start}, \sQuote{end} and \sQuote{length} of E
     type sse, where start and end are residue numbers \dQuote{resno}. }
   \item{turn}{ \sQuote{start}, \sQuote{end} and \sQuote{length} of T
     type sse, where start and end are residue numbers \dQuote{resno}. }
   \item{phi}{ a numeric vector of phi angles. }
   \item{psi}{ a numeric vector of psi angles. }
-
+  \item{acc}{ a numeric vector of solvent accessibility. } 
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
