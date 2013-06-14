@@ -6,7 +6,7 @@
 }
 \usage{
 read.ncdf(trjfile, headonly = FALSE, verbose = TRUE, time = FALSE,
-          start = NULL, end = NULL)
+          start = NULL, end = NULL, cell = FALSE)
 }
 \arguments{
   \item{trjfile}{ name of trajectory file to read. A vector if treat
@@ -20,15 +20,18 @@ read.ncdf(trjfile, headonly = FALSE, verbose = TRUE, time = FALSE,
     from the begining of the file(s). }
   \item{end}{ read data until \code{end} time or frame number; If NULL or
     equal to -1, read until the end of the file(s). }
+  \item{cell}{ logical, if TRUE and \code{headonly} is FALSE return cell 
+    information only. Otherwise, return header or coordinates.}
 }
 \details{
   Reads a AMBER netCDF format trajectory file with the help of David
   W. Pierce's (UCSD) ncdf package available from CRAN.
 }
 \value{
-   Either a list of trajectory header data or a numeric matrix of xyz
-   coordinates with a frame/structure per row and a Cartesian coordinate
-   per column.
+   A list of trajectory header data,  a numeric matrix of xyz
+   coordinates with a frame/structure per row and a Cartesian 
+   coordinate per column, or a numeric matrix of cell information 
+   with a frame/structure per row and lengths and angles per column.
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.

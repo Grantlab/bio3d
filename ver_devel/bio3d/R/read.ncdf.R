@@ -1,6 +1,6 @@
 `read.ncdf` <-
 function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
-         start = NULL, end = NULL){
+         start = NULL, end = NULL, cell = FALSE){
   
   # Currently file open in SHARE mode is not supported by NCDF
   # Multicore support for reading single file is supressed 
@@ -106,10 +106,20 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
                    "atoms"=nc$dim$atom$len))
      ##time  <- get.var.ncdf(nc,"time")
      }
-     coords <- get.var.ncdf(nc, "coordinates", c(1, 1, ss), 
+     if(cell) {
+        celldata <- get.var.ncdf(nc, "cell_lengths", c(1, ss), 
+                             c(-1, tlen))
+        celldata <- rbind(celldata, get.var.ncdf(nc, "cell_angles", 
+                         c(1, ss), c(-1, tlen)))
+        close.ncdf(nc)
+        return(t(celldata))
+     } else {
+        coords <- get.var.ncdf(nc, "coordinates", c(1, 1, ss), 
                              c(-1, -1, tlen))
-     close.ncdf(nc)
-     return(matrix(coords, ncol=(dim(coords)[2]*3),byrow=TRUE))
+        close.ncdf(nc)
+        return(matrix(coords, ncol=(dim(coords)[2]*3),byrow=TRUE))
+     }
+        
   } )
 
   if(headonly) {
