@@ -1,6 +1,6 @@
 "read.pdb" <-
-function (file, maxlines=50000, multi=FALSE,
-          rm.insert=FALSE, rm.alt=TRUE, het2atom=FALSE, verbose=TRUE) {
+  function (file, maxlines=50000, multi=FALSE,
+            rm.insert=FALSE, rm.alt=TRUE, het2atom=FALSE, verbose=TRUE) {
 
   if(missing(file)) {
     stop("read.pdb: please specify a PDB 'file' for reading")
