@@ -5,9 +5,9 @@
   Performs a sequence and structural alignment of two PDB entities.
 }
 \usage{
-align(fixed, mobile, fixed.inds=NULL, mobile.inds=NULL, 
-      write.pdbs=TRUE, prefix=c("a.fit", "b.fit"), 
-      max.cycles=10, cutoff=0.5, ... )
+struct.aln(fixed, mobile, fixed.inds=NULL, mobile.inds=NULL, 
+           write.pdbs=TRUE, prefix=c("a.fit", "b.fit"), 
+           max.cycles=10, cutoff=0.5, ... )
 }
 \arguments{
   \item{fixed}{ an object of class \code{pdb} as obtained from
