@@ -63,7 +63,7 @@ score 1 and diverse columns score 0.
 \seealso{ \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}} }
 \examples{
 ## Read an example alignment
-aln <- read.fasta(system.file("examples/kinesin_xray.fa",package="bio3d"))
+aln <- read.fasta(system.file("examples/hivp_xray.fa",package="bio3d"))
 
 ## Score conservation
 conserv(x=aln$ali, method="similarity", sub.matrix="bio3d")

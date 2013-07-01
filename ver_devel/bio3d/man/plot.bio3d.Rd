@@ -68,7 +68,7 @@ plot.bio3d(x, y = NULL, type = "h", main = "", sub = "", xlim = NULL, ylim = NUL
 \seealso{ \code{\link{plot.default}}, \code{\link{dssp}}, \code{\link{stride}} }
 \examples{
 ##-- SSE setup --#
-pdb <- read.pdb(  system.file("examples/1bg2.pdb", package="bio3d") )
+pdb <- read.pdb( "1bg2" )
 sse <- dssp(pdb, resno=FALSE)
 
 ##-- Or load previous dataset
@@ -78,39 +78,8 @@ attach(kinesin, warn.conflicts=FALSE)
 ## Plot of B-factor values along with secondary structure
 plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor")
 
+plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor", typ="l",
+col="blue", lwd=2)
 
-\dontrun{
-## Tidy short helices
-torm <- sse$helix$length < 4
-sse$helix$length <- sse$helix$length[!torm]
-sse$helix$start <- sse$helix$start[!torm]
-sse$helix$end <- sse$helix$end[!torm]
-
-
-##-- Read a FASTA alignment file
-aln <- read.fasta( system.file("examples/kinesin_xray.fa",package="bio3d") )
-
-## Plot of residue conservation (similarity) with secondary structure
-plot.bio3d( conserv(aln)[!is.gap(aln$ali[1,])],  sse=sse )
-
-
-
-##- Gaps relative to rep.stru
-data(kinesin)
-rep.stru <- 1
-gap.atom.inds <- which(aln$ali[rep.stru,] == "-")
-gap.xyz.inds  <- atom2xyz(gap.atom.inds)
-
-## RMSF and B-factors
-coords <- xyz[,-gap.xyz.inds]
-bfac <- pdbs$b[,-gap.atom.inds]
-r <- rmsf(coords)
-
-##- Plot
-plot.bio3d(r)
-plot.bio3d(r, type="o", sse=sse)
-plot.bio3d(r, sse=sse, helix.col="purple", sheet.col="orange")
-
-}
 }
 \keyword{ hplot }

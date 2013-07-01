@@ -12,7 +12,8 @@ read.dcd(trjfile, big=FALSE, verbose = TRUE)
     treat a batch of files }
   \item{big}{ logical, if TRUE attempt to read large files into a
     big.matrix object }
-  \item{verbose}{ logical, if TRUE print details of the reading process. }
+  \item{verbose}{ logical, if TRUE print details of the reading
+    process. }
 }
 \details{
   Reads a CHARMM or X-PLOR/NAMD binary trajectory file with either big-

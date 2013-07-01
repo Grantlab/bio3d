@@ -52,7 +52,7 @@ torsion.pdb(pdb)
   \code{\link{dssp}}, \code{\link{stride}}. }
 \examples{
 ##-- PDB torsion analysis
-pdb <- read.pdb( system.file("examples/1bg2.pdb", package="bio3d") )
+pdb <- read.pdb( "1bg2" )
 tor <- torsion.pdb(pdb)
 head(tor$tbl)
 

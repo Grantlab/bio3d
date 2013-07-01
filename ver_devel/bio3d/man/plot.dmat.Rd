@@ -70,7 +70,7 @@ plot.dmat(x, key = TRUE, resnum.1 = c(1:ncol(x)), resnum.2 = resnum.1,
 \examples{
 
 # Read PDB file
-pdb <- read.pdb(system.file("examples/1bg2.pdb",package="bio3d"))
+pdb <- read.pdb( "1bg2" )
 
 # DM
 d <- dm(pdb,"calpha")
@@ -84,16 +84,14 @@ plot(d,
      xlab="Residue Number", ylab="Residue Number")
 
 
-# Read alignment
-aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
-pdb.path = system.file("examples/",package="bio3d")
-pdbs <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
+# Downlaod and align two PDB files
+pdbs <- pdbaln( get.pdb( c( "4q21", "521p"), path=tempdir() ))
 
-# DMs
+# Get distance matrix
 a <- dm(pdbs$xyz[1,])
-b <- dm(pdbs$xyz[2,]) 
+b <- dm(pdbs$xyz[2,])
 
-# DDM: difference distance matrix (C-alpha)
+# Calculate DDM
 c <- a - b
 
 # Plot DDM
@@ -102,8 +100,9 @@ plot(c,key=FALSE, grid=FALSE)
 plot(c, axis.tick.space=10,
      resnum.1=pdbs$resno[1,],
      resnum.2=pdbs$resno[2,],
-     grid.col="gray",
-     xlab="Residue No. (1bg2)", ylab="Residue No. (2kin)")
+     grid.col="black",
+     xlab="Residue No. (4q21)", ylab="Residue No. (521p)")
+
 }
 }
 \keyword{ hplot }

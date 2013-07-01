@@ -72,7 +72,7 @@ append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE, file = "R.pdb")
 \examples{
 
 # Read a PDB file
-pdb <- read.pdb(system.file("examples/d1bg2__.ent", package="bio3d"))
+pdb <- read.pdb( "1bg2" )
 
 # Renumber residues
 nums <- as.numeric(pdb$atom[,"resno"])

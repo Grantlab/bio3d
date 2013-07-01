@@ -39,7 +39,7 @@ seq.pdb(pdb, inds = NULL, aa1 = TRUE)
   \code{\link{aa321}}, \code{\link{read.fasta}} }
 \examples{
 \dontrun{
-pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
+pdb <- read.pdb( "5p21" )
 seq.pdb(pdb)
 }
 }

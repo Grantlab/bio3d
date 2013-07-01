@@ -27,7 +27,7 @@ orient.pdb(pdb, atom.subset = NULL, verbose = TRUE)
 \seealso{ \code{\link{read.pdb}}, \code{\link{write.pdb}},
 \code{\link{fit.xyz}}, \code{\link{rot.lsq}} , \code{\link{atom.select}}}
 \examples{
-pdb <- read.pdb( system.file( "examples/1bg2.pdb", package = "bio3d") )
+pdb <- read.pdb( "1bg2" )
 xyz <- orient.pdb(pdb)
 #write.pdb(pdb, xyz = xyz, file = "mov1.pdb")
 

@@ -49,8 +49,7 @@ rmsd(a, b=NULL, a.inds=NULL, b.inds=NULL, fit=FALSE, ncore=1, nseg.scale=1)
 \examples{
 # -- Calculate RMSD between two or more structures
 aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
-pdb.path = system.file("examples",package="bio3d")
-pdbs <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
+pdbs <- read.fasta.pdb(aln)
 
 # Indices 
 gaps <- unique( which(is.na(pdbs$xyz),arr.ind=TRUE)[,2] )

@@ -1,6 +1,6 @@
 \name{binding.site}
 \alias{binding.site}
-\title{ Binding site residues }
+\title{ Binding Site Residues }
 \description{
   Determines the interacting residues between two PDB entities.
 }

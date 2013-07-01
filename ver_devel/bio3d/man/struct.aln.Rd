@@ -1,6 +1,6 @@
 \name{struct.aln}
 \alias{struct.aln}
-\title{ Structure Alignment of two PDB Files }
+\title{ Structure Alignment Of Two PDB Files }
 \description{
   Performs a sequence and structural alignment of two PDB entities.
 }
@@ -53,7 +53,7 @@ struct.aln(fixed, mobile, fixed.inds=NULL, mobile.inds=NULL,
 \references{
    Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
-\author{ Lars Skjærven }
+\author{ Lars Skjarven }
 \seealso{ \code{\link{rmsd}}, \code{\link{rot.lsq}},
   \code{\link{seqaln}}, \code{\link{pdbaln}} }
 \examples{

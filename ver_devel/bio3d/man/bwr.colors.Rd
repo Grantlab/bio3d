@@ -41,7 +41,7 @@ mono.colors(n)
 \examples{
 
 # Color a distance matrix
-pdb <- read.pdb( system.file("examples/1bg2.pdb", package = "bio3d") )
+pdb <- read.pdb( "1bg2" )
 d <- dm(pdb,"calpha")
 
 plot(d, color.palette=bwr.colors)

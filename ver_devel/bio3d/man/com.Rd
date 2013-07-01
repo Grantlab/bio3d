@@ -7,7 +7,7 @@
 }
 \usage{
 com(pdb, inds=NULL, use.mass=TRUE,
-    mass.custom=NULL, elety.custom=NULL, rescue=FALSE)
+    mass.custom=NULL, elety.custom=NULL, rescue=TRUE)
 com.xyz(xyz, mass=NULL)
 }
 \arguments{
@@ -51,7 +51,7 @@ com.xyz(xyz, mass=NULL)
 \references{
    Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
-\author{ Lars Skjærven }
+\author{ Lars Skjarven }
 \seealso{ \code{\link{read.pdb}}, \code{\link{atom.select}} }
 \examples{
 
@@ -60,7 +60,7 @@ pdb <- read.pdb("3dnd")
 
 ## Center of mass:
 mycom <- com(pdb)
-write.pdb(pdb = NULL, xyz=mycom$xyz, file="dummy-1.pdb", append=F)
+write.pdb(xyz=mycom$xyz, file="dummy-1.pdb")
 
 ## Center of mass of a selection
 inds <- atom.select(pdb, chain="I")
@@ -74,7 +74,7 @@ warnings()
 
 
 ## Map atom names manually
-pdb <- read.pdb("3RE0", het2atom=T)
+pdb <- read.pdb("3RE0", het2atom=TRUE)
 inds <- atom.select(pdb, resno=201)
 
 elety.cust <- list("CL2"="Cl", "PT1"="Pt")

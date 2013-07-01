@@ -58,11 +58,10 @@ file <- system.file("examples/kif1a.fa",package="bio3d")
 aln  <- read.fasta(file)
 
 # Read aligned PDBs
-pdb.path = system.file("examples",package="bio3d")
-pdbs <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
+pdbs <- read.fasta.pdb(aln)
 
 # Structure/sequence names/ids
-pdbs$id
+basename( pdbs$id )
 
 # Alignment positions 335 to 339
 pdbs$ali[,335:339]

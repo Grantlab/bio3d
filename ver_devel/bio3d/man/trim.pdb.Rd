@@ -62,7 +62,7 @@ trim.pdb(pdb, inds = NULL)
   \code{\link{read.fasta}} }
 \examples{
 \dontrun{
- pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
+ pdb <- read.pdb( "5p21" )
  npdb <- trim.pdb(pdb, inds=atom.select(pdb, "back"))
  write.pdb(npdb, file="backboneonly.pdb")
 }
