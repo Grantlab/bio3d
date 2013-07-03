@@ -47,7 +47,7 @@ pdbfit(pdbs, inds = NULL, outpath = NULL, ...)
 #files <- get.pdb(c("4q21","5p21"), URLonly=TRUE)
 files <- get.pdb(c("4q21","5p21"), path=tempdir())
 pdbs <- pdbaln(files)
-xyz <- pdbaln(pdbs)
+xyz <- pdbfit(pdbs)
 
 # Superpose again this time outputing PDBs
 xyz <- pdbaln( pdbs, outpath="fitted/" )
