@@ -19,7 +19,7 @@ pdb.summary(pdb)
     \code{calpha} \code{cbeta} \code{backbone} \code{protein} \code{notprotein} \code{ligand} \code{water} \code{notwater} \code{h} \code{noh} }
   \item{chain}{ a character vector of chain identifiers. }
   \item{resno}{ a numeric or character vector of residue numbers. }
-  \item{resid}{ a character vector of chain identifiers. }
+  \item{resid}{ a character vector of residue name identifiers. }
   \item{eleno}{ a numeric or character vector of element numbers. }
   \item{elety}{ a character vector of atom names. }
   \item{verbose}{ logical, if TRUE details of the selection are printed. }

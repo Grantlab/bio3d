@@ -68,7 +68,7 @@ read.pdcBD(file, maxlines = 50000, multi = FALSE, rm.insert = FALSE,
   \code{\link{read.fasta}} }
 \examples{
 # Read a PDB file
-pdb <- read.pdb( system.file("examples/1bg2.pdb", package="bio3d") )
+pdb <- read.pdb( "1bg2" )
   
 # Print data for the first atom
 pdb$atom[1,]

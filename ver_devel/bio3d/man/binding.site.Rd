@@ -1,11 +1,11 @@
 \name{binding.site}
 \alias{binding.site}
-\title{ Binding site residues }
+\title{ Binding Site Residues }
 \description{
   Determines the interacting residues between two PDB entities.
 }
 \usage{
-binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cut=8, hydrogens=TRUE)
+binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cut=5, hydrogens=TRUE)
 }
 \arguments{
   \item{a}{ an object of class \code{pdb} as obtained from

@@ -65,20 +65,18 @@ dm.xyz(xyz, grpby = NULL, scut = NULL, mask.lower = TRUE)
 \examples{
 
 ##--- Distance Matrix Plot
-pdb <- read.pdb( system.file("examples/d1bg2__.ent", package = "bio3d") )
+pdb <- read.pdb( "4q21" )
 k <- dm(pdb,selection="calpha")
-filled.contour(k, nlevels = 4)
+filled.contour(k, nlevels = 10)
 
 
 ##--- DDM: Difference Distance Matrix
-# Read aligned PDBs
-aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
-pdb.path=paste(system.file(package="bio3d"),"/examples/",sep="")
-m <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
+# Downlaod and align two PDB files
+pdbs <- pdbaln( get.pdb( c( "4q21", "521p"), path=tempdir() ))
 
 # Get distance matrix
-a <- dm(m$xyz[2,])
-b <- dm(m$xyz[3,])
+a <- dm(pdbs$xyz[1,])
+b <- dm(pdbs$xyz[2,])
 
 # Calculate DDM
 c <- a - b
@@ -87,47 +85,15 @@ c <- a - b
 plot(c,key=FALSE, grid=FALSE)
 
 plot(c, axis.tick.space=10,
-     resnum.1=m$resno[1,],
-     resnum.2=m$resno[2,],
-     grid.col="gray",
-     xlab="Residue No. (1i6i)", ylab="Residue No. (1i5s)")
+     resnum.1=pdbs$resno[1,],
+     resnum.2=pdbs$resno[2,],
+     grid.col="black",
+     xlab="Residue No. (4q21)", ylab="Residue No. (521p)")
 
 \dontrun{
 ##-- Residue-wise distance matrix based on the
 ##   minimal distance between all available atoms
 l <- dm.xyz(pdb$xyz, grpby=pdb$atom[,"resno"], scut=3)
-
-
-##--- Extract all-atom contacts
-pdb <- read.pdb( system.file("examples/d1bg2__.ent", package = "bio3d") )
-l <- dm(pdb,selection="all")
-l[upper.tri(l)]=NA  # make top diagonal NA
-
-# Find residues with contacting atoms (<=5 Angstrom)
-inds.stru <- which(l<=5, arr.ind=TRUE)   
-
-# Find non-consecutive residues (>5 residues sequence separation)
-seq.sep  <- abs(as.numeric(pdb$atom[inds.stru[,1],"resno"]) -
-               as.numeric(pdb$atom[inds.stru[,2],"resno"]))
-inds.seq <- which(seq.sep>5) # seperated by > 5 residues
-
-# All-atom contacts (indices)
-inds <- inds.stru[inds.seq,]
-
-# All-atom contacts (now in terms of residue numbers)
-tmp <- unique( paste(pdb$atom[inds[,1],"resno"],
-                     pdb$atom[inds[,2],"resno"], sep="#") )
-
-contacts <- matrix(as.numeric(unlist(strsplit(tmp,split="#"))),
-                   ncol=2, byrow=TRUE )
-
-# Plot residue contacts
-freq  <- table(contacts)
-xaxis <-as.vector(bounds(as.numeric(names(freq)))[,c(1,2)])
-x11()
-plot(freq, typ="h", xlab="Residue Number",
-     xaxt="n",ylab="Number of Contacts" )
-axis(1,at=xaxis,labels=xaxis)
 }
 }
 \keyword{ utilities }

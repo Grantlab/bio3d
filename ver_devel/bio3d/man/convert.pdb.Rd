@@ -73,7 +73,7 @@ convert.pdb(pdb, type, renumber = FALSE, first.resno = 1, first.eleno = 1, rm.h 
   \code{\link{read.fasta}} }
 \examples{
 # Read a PDB file
-pdb <- read.pdb( system.file("examples/1bg2.pdb", package="bio3d") )
+pdb <- read.pdb( "1bg2" )
 pdb.summary(pdb)
 # Convert to CHARMM format
 new <- convert.pdb(pdb, type="charmm")

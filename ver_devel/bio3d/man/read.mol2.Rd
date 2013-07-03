@@ -71,7 +71,7 @@ mol$atom
 head(mol$atom[, c("x","y","z")])
 
 ## Or coordinates as a numeric vector
-haed(mol$xyz)
+head(mol$xyz)
 
 ## Print atom charges
 head(mol$atom[, "charge")])

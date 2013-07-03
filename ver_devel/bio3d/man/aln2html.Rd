@@ -8,7 +8,7 @@
 \usage{
 aln2html(aln, file="alignment.html", Entropy=0.5, append=TRUE,
          caption.css="color: gray; font-size: 9pt",
-         caption="Produced by <a href=http://thegrantlab.org/bio3d/>Bio3D</a>",
+         caption="Produced by <a href=http://thegrantlab.org/bio3d/>Bio3D<a>",
          fontsize="11pt", bgcolor=TRUE, colorscheme="clustal")
 }
 \arguments{
@@ -42,7 +42,7 @@ aln2html(aln, file="alignment.html", Entropy=0.5, append=TRUE,
 \seealso{ \code{\link{read.fasta}}, \code{\link{write.fasta}}, \code{\link{seqaln}} }
 \examples{
 ## Read an example alignment
-aln <- read.fasta(system.file("examples/kinesin_xray.fa",package="bio3d"))
+aln <- read.fasta(system.file("examples/hivp_xray.fa",package="bio3d"))
 
 ## Produce a HTML file for this alignment
 aln2html(aln, append=FALSE, file="eg.html")

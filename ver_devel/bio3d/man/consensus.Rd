@@ -26,21 +26,12 @@
 \seealso{ \code{\link{read.fasta}} }
 \examples{
 
-#-- Read kinesin alignment
-aln <- read.fasta(system.file("examples/kinesin_xray.fa",package="bio3d"))
+#-- Read HIV protease alignment
+aln <- read.fasta(system.file("examples/hivp_xray.fa",package="bio3d"))
 
 # Generate consensus
 con <- consensus(aln)
 print(con$seq)
-
-# Generate consensus for sub-sequence
-con <- consensus(aln$ali[,330:474])
-print(con$seq)
-
-
-#-- Read HIV protease alignment
-aln <- read.fasta(system.file("examples/hivp_xray.fa",package="bio3d"))
-con <- consensus(aln$ali)
 
 # Plot residue frequency matrix
 ##png(filename = "freq.png", width = 1500, height = 780)

@@ -1,9 +1,9 @@
 "binding.site" <-
   function(a, b = NULL,a.inds = NULL, b.inds = NULL,
-           cut=8, hydrogens=TRUE) {
+           cut=5, hydrogens=TRUE) {
 
   if (missing(a))
-    stop("binding.site: must supply 'pdb' object, i.e. from 'read.pdb'")
+    stop("binding.site: must supply an input 'pdb' object 'a', i.e. from 'read.pdb'")
 
   if(!is.null(b)) {
 
