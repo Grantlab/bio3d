@@ -51,7 +51,7 @@ com.xyz(xyz, mass=NULL)
 \references{
    Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
-\author{ Lars Skjarven }
+\author{ Lars Skjaerven }
 \seealso{ \code{\link{read.pdb}}, \code{\link{atom.select}} }
 \examples{
 
@@ -82,9 +82,6 @@ mass.cust <- list("Cl"=35.45, "Pt"=195.08)
 
 mycom <- com(pdb, inds, elety.custom=elety.cust, mass.custom=mass.cust,
              rescue=TRUE)
-
-## Load data for atomic mass and atom names to element mapping
-data(atom.index)
 
 }
 \keyword{ utilities }
