@@ -31,7 +31,7 @@ write.fasta(alignment=NULL, ids=NULL, seqs=alignment$ali, file, append = FALSE)
 \seealso{ \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}} }
 \examples{
 ## Read a PDB file
-pdb <- read.pdb(system.file("examples/1bg2.pdb", package="bio3d"))
+pdb <- read.pdb("1bg2")
 
 ## Extract sequence from PDB file
 s <- aa321(pdb$seqres)                   # SEQRES
@@ -48,10 +48,10 @@ write.fasta(list( id=c("atom"),ali=a ), file="eg.fa", append=TRUE)
 #seqaln(seqbind(s,a))
 
 ## Read alignment
-aln<-read.fasta(system.file("examples/kinesin_xray.fa",package="bio3d"))
+aln<-read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
 
-## Cut all but positions 330 to 345
-aln$ali=aln$ali[,330:345]
+## Cut all but positions 130 to 245
+aln$ali=aln$ali[,130:245]
 
 write.fasta(aln, file="eg2.fa")
 

@@ -65,10 +65,9 @@ tor.ca <- torsion.xyz(pdb$xyz[inds$xyz], atm.inc=1)
 
 ##-- Compare two PDBs to highlight interesting residues
 aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
-pdb.path=paste(system.file(package="bio3d"),"/examples/",sep="")
-m <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
-a <- torsion.xyz(m$xyz[2,],1)
-b <- torsion.xyz(m$xyz[3,],1)
+m <- read.fasta.pdb(aln)
+a <- torsion.xyz(m$xyz[1,],1)
+b <- torsion.xyz(m$xyz[2,],1)
 d <- wrap.tor(a-b)
 plot(m$resno[1,],d, typ="h")
 }
