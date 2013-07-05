@@ -58,7 +58,7 @@ pdb.summary(pdb)
   alias to \code{atom.select} with \code{string=NULL} and \code{verbose=T}.
 }
 \value{
-  Returns a list of class \code{"selection"} with components:
+  Returns a list of class \code{"select"} with components:
   \item{atom }{atom indices of selected atoms.}
   \item{xyz }{xyz indices of selected atoms.}
 }
