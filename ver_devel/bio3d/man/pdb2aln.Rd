@@ -8,7 +8,7 @@
   CA atom indices in the PDB coordinates.
 }
 \usage{
-pdb2aln(aln, pdb, inds, aln.id=NULL, id="seq", file="pdb2aln.fa")
+pdb2aln(aln, pdb, inds, aln.id=NULL, id="seq.pdb", file="pdb2aln.fa")
 }
 \arguments{
   \item{aln}{ an alignment list object with \code{id} and \code{ali}

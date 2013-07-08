@@ -29,13 +29,18 @@ function(alignment=NULL,
   }
   nseqs <- length(ids)
   if (nseqs == 1) {
-    cat(">", ids, "\n", seqs, "\n", file = file,
-        append = TRUE, sep = "")
+     # change for shortening lines (<=60) - Xinqiu
+    cat(">", ids, "\n", file = file, append = TRUE, sep = "")
+    cat(seqs, file = file, append = TRUE, sep = "", fill = 60)
+#    cat(">", ids, "\n", seqs, "\n", file = file,
+#        append = TRUE, sep = "")
   }
   else {
     for (i in 1:nseqs) {
-      cat(">", ids[i], "\n", seqs[i,],
-          "\n", file = file, append = TRUE, sep = "")
+       cat(">", ids[i], "\n", file = file, append = TRUE, sep = "")
+       cat(seqs[i,], file = file, append = TRUE, sep = "", fill = 60)
+#      cat(">", ids[i], "\n", seqs[i,],
+#          "\n", file = file, append = TRUE, sep = "")
     }
   }
 }

@@ -3,11 +3,13 @@
 #  defined for the original alignment, return the equivalent 
 #  CA atom indices in the PDB coordinates.
 "pdb2aln" <-
-function(aln, pdb, inds, aln.id=NULL, id="seq", file="pdb2aln.fa") {
-   # build reference resno
-   resno.ref <- rep(NA, ncol(aln$ali))
-   ii <- which(!is.gap(aln$ali[1, ]))
-   resno.ref[ii] <- 1:length(ii)
+function(aln, pdb, inds, aln.id=NULL, id="seq.pdb", file="pdb2aln.fa") {
+   # Mask the gaps in the first sequence to get the 
+   # reference of original alignment positions 
+   aln$ali[1, is.gap(aln$ali[1,])] <- "X"
+   
+   # renumber atoms for later atom selection 
+   pdb <- convert.pdb(pdb, "pdb", renumber=TRUE, rm.h=FALSE, rm.wat=FALSE)
    aa1 <- seq.pdb(pdb)
    
    if(!is.null(aln.id)) findid <- grep(aln.id, aln$id)
@@ -25,18 +27,18 @@ function(aln, pdb, inds, aln.id=NULL, id="seq", file="pdb2aln.fa") {
       ##- Align seq to masked template from alignment
       tmp.msk <- aln$ali[idhit, ]
       tmp.msk[is.gap(tmp.msk)] <- "X"
-      seq2tmp <- seqaln.pair(seqbind(aa1, tmp.msk), id=c("seq","tmp"), file=file)
+      seq2tmp <- seqaln.pair(seqbind(tmp.msk, aa1), id=c(aln$id[idhit], id), file=file)
       
       ##- check sequence identity
-      ii <- which(seq2tmp$ali[2,]=='X' & is.gap(seq2tmp$ali[1,]))
-      idt <- identity(seq2tmp$ali[, -ii])[1,2]
-      if(idt < 0.4) {
+      ii <- which(seq2tmp$ali[1,]=='X')
+      ide <- identity(seq2tmp$ali[, -ii])[1,2]
+      if(ide < 0.4) {
          warning(paste("Sequence identity is too low (<40%).",
              "You may want profile alignment (aln.id=NULL)", sep=" "))
       }
  
       ##- Insert gaps to adjust alignment
-      ins <- which(is.gap( seq2tmp$ali[2,] ))
+      ins <- which(is.gap( seq2tmp$ali[1,] ))
       if( length(ins)==0 ) {
         ntmp <- aln$ali
       } else {
@@ -45,29 +47,26 @@ function(aln, pdb, inds, aln.id=NULL, id="seq", file="pdb2aln.fa") {
       }
     
       ## Add seq to bottom of adjusted alignment
-      naln.ali <- seqbind(ntmp, seq2tmp$ali[1,])
+      naln.ali <- seqbind(ntmp, seq2tmp$ali[2,])
       rownames(naln.ali) <- c(rownames(aln$ali), id)
-      naln <- list(id=c(aln$id, id), ali=naln.ali) 
+      naln <- list(id=c(aln$id, id), ali=naln.ali)
    }
 
-   # build reference resno after realignment
-   nresno.ref <- rep(NA, ncol(naln$ali))
-   nresno.ref[!is.gap(naln$ali[1, ])] <- resno.ref[!is.na(resno.ref)]
    # resno for PDB after realignment
-   nresno <- rep(NA, ncol(naln$ali))
+   resno <- rep(NA, ncol(naln$ali))
    ca.inds <- atom.select(pdb, elety="CA") 
-   nresno[!is.gap(naln$ali[nrow(naln$ali), ])] <- pdb$atom[ca.inds$atom, "resno"]
+   resno[!is.gap(naln$ali[nrow(naln$ali), ])] <- pdb$atom[ca.inds$atom, "resno"]
   
    # use list to get indices in batch 
    if(!is.list(inds)) inds <- list(inds)
    new.inds.all <- lapply(inds, function(i){
-      new.inds.ref <- which(nresno.ref %in% resno.ref[i])
-      nresno.i <- nresno[new.inds.ref]
-      if(any(is.na(nresno.i))) {
+      ninds <- which(!is.gap(naln$ali[1, ]))[i]
+      nresno <- resno[ninds]
+      if(any(is.na(nresno))) {
          warning(paste("Gaps are found in finding equivalent positions in PDB.",
                   "Ignore gaps...", sep=" "))
       }
-      new.inds <- atom.select(pdb, resno=nresno.i[!is.na(nresno.i)], elety="CA")
+      new.inds <- atom.select(pdb, resno=nresno[!is.na(nresno)], elety="CA")
    } )
    if(length(new.inds.all) == 1) new.inds.all <- new.inds.all[[1]]
    return (new.inds.all)

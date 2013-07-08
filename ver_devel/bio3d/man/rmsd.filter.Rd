@@ -6,7 +6,8 @@
 }
 \usage{
 rmsd.filter(xyz = NULL, rmsd.mat = NULL, cutoff = 0.5,
-            fit = TRUE, verbose = TRUE)
+            fit = TRUE, verbose = TRUE, inds = NULL, 
+            ncore = 1, nseg.scale = 1)
 }
 \arguments{
   \item{xyz}{ a numeric matrix or list object containing multiple
@@ -16,6 +17,13 @@ rmsd.filter(xyz = NULL, rmsd.mat = NULL, cutoff = 0.5,
   \item{fit}{ logical, if TRUE coordinate superposition is performed
     prior to RMSD calculation. }
   \item{verbose}{ logical, if TRUE progress details are printed. }
+  \item{inds}{ a vector of indices that selects the elements of
+    \code{xyz} upon which the calculation should be based. By default, 
+    all the non-gap sites in \code{xyz}. }
+  \item{ncore}{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires multicore package installed. } 
+  \item{nseg.scale }{ split input data into specified number of segments
+    prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
 }
 \details{
   This function performs hierarchical cluster analysis of a given matrix of

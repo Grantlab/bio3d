@@ -5,15 +5,15 @@
   Write coordinate data to a binary netCDF trajectory file.
 }
 \usage{
-write.ncdf(x, cell = NULL, trjfile = "R.ncdf")
+write.ncdf(x, trjfile = "R.ncdf", cell = NULL)
 }
 \arguments{
   \item{x}{ A numeric matrix of xyz coordinates with a frame/structure
     per row and a Cartesian coordinate per column. }
+  \item{trjfile}{ name of the output trajectory file. }
   \item{cell}{ A numeric matrix of cell information with a frame/structure
     per row and a cell length or angle per column. If NULL cell will not
     be written. }
-  \item{trjfile}{ name of the output trajectory file. }
 }
 \details{
   Writes an AMBER netCDF (Network Common Data Form) format trajectory

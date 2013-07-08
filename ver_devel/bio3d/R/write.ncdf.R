@@ -1,5 +1,5 @@
 `write.ncdf` <-
-function(x, cell=NULL, trjfile="R.ncdf"){
+function(x, trjfile="R.ncdf", cell=NULL){
 
   ##- Load ncdf package
   oops <- require(ncdf)
@@ -72,7 +72,10 @@ function(x, cell=NULL, trjfile="R.ncdf"){
   }
 
   ## Write data to file
-  put.var.ncdf(ncw, time, c(1:nframe), start=1, count=nframe)
+  if(is.null(rownames(x)))
+     put.var.ncdf(ncw, time, c(1:nframe), start=1, count=nframe)
+  else
+     put.var.ncdf(ncw, time, as.numeric(rownames(x)), start=1, count=nframe)
   put.var.ncdf( ncw, coor, t(x), start=c(1,1,1), count=c(3,natom,nframe))
   if(!is.null(cell)) {
      put.var.ncdf( ncw, cell_lengths, t(cell[,1:3]), start=c(1,1), count=c(3,nframe))
@@ -84,6 +87,6 @@ function(x, cell=NULL, trjfile="R.ncdf"){
   att.put.ncdf(ncw, varid=0, attname="ConventionVersion", attval="1.0")
   att.put.ncdf(ncw, varid=0, attname="program",attval="bio3d")
   att.put.ncdf(ncw, varid=0, attname="programVersion", attval="1.2")
-  close.ncdf(ncw)
+  null <- close.ncdf(ncw)
 }
 

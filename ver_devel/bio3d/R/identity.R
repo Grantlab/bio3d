@@ -1,6 +1,26 @@
 "identity" <-
-function( alignment , normalize=TRUE) {
-  
+function( alignment , normalize=TRUE, ncore=1, nseg.scale=1) {
+
+  # Parallelized by multicore package (Sun Jul  7 17:35:38 EDT 2013)
+  if(ncore > 1) {
+     oops <- require(multicore)
+     if(!oops)
+        stop("Please install the multicore package from CRAN")
+
+     options(cores = ncore)
+
+     # Issue of serialization problem
+     # Maximal number of cells of a double-precision matrix
+     # that each core can serialize: (2^31-1-61)/8
+     R_NCELL_LIMIT_CORE = 2.68435448e8
+     R_NCELL_LIMIT = ncore * R_NCELL_LIMIT_CORE
+
+     if(nseg.scale < 1) {
+        warning("nseg.scale should be 1 or a larger integer\n")
+        nseg.scale=1
+     }
+  }
+ 
   if(is.list(alignment)) alignment <- alignment$ali
   alignment[is.gap(alignment)] = NA
 
@@ -20,12 +40,29 @@ function( alignment , normalize=TRUE) {
   nseq <- nrow(alignment)
   inds <- pairwise( nseq )
   ni <- nrow(inds)
-  s <- rep(NA, ni)
-  
-  for(i in 1:ni) {
-    s[i]<-ide(alignment[inds[i,1],], alignment[inds[i,2],])
-  }
 
+  if(ncore > 1) {
+     RLIMIT = R_NCELL_LIMIT
+     nDataSeg = floor((ni-1)/RLIMIT) + 1
+     nDataSeg = floor(nDataSeg * nseg.scale)
+     lenSeg = floor(ni/nDataSeg)
+     s = NULL
+     for(i in 1:nDataSeg) {
+        istart = (i-1)*lenSeg + 1
+        iend = if(i<nDataSeg) i*lenSeg else ni
+        s <- c(s, mclapply(istart:iend, function(j) {
+           ide(alignment[inds[j,1],], alignment[inds[j,2],])
+          }) )
+     }
+     s <- unlist(s)
+     readChildren()
+  } else {
+     s <- rep(NA, ni)
+   
+     for(i in 1:ni) {
+       s[i]<-ide(alignment[inds[i,1],], alignment[inds[i,2],])
+     }
+  }
   ## make 's' into matrix 'sm'
   sm <- matrix(1, ncol=nseq,nrow=nseq)
   sm[inds]<-s

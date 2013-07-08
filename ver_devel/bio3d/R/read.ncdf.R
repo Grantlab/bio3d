@@ -1,6 +1,6 @@
 `read.ncdf` <-
 function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
-         start = NULL, end = NULL, cell = FALSE){
+         first = NULL, last= NULL, stride = 1, cell = FALSE){
   
   # Currently file open in SHARE mode is not supported by NCDF
   # Multicore support for reading single file is supressed 
@@ -43,10 +43,10 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
      return(nc)
   })
   
-  # prepare frame start and end No for each file
+  # prepare frame first and last No for each file
   # for time range selection
   frange <- NULL
-  if(!all(is.null(c(start, end))) && !time) {
+  if(!is.null(c(first, last)) && !time) {
      flen <- unlist(lapply(nc, function(n) return(n$dim$frame$len)))
      frange <- matrix(c(1, cumsum(flen[-length(nc)])+1, cumsum(flen)), 
                     nrow=length(nc))
@@ -60,17 +60,20 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
      if(!is.null(frange)) frange <- frange[inc,]
      ss = 1
      ee = nc$dim$frame$len
-     if (!all(is.null(c(start, end)))) {
+     if (!is.null(c(first, last))) {
+
         #check frame No or time
-        btime = frange[1]
-        etime = frange[2]
         if(time) {
            btime <- get.var.ncdf(nc, "time", 1, 1)
            etime <- get.var.ncdf(nc, "time", nc$dim$frame$len, 1)
+        } else {
+           btime = frange[1]
+           etime = frange[2]
         }
-        if((!is.null(start) && (etime < start)) || 
-              (!is.null(end) && end >=0 && btime > end) ||
-             (!is.null(start) && !is.null(end) && end >=0 && end < start) ) {
+
+        if((!is.null(first) && (etime < first)) || 
+              (!is.null(last) && last >=0 && btime > last) ||
+             (!is.null(first) && !is.null(last) && last >=0 && last < first) ) {
            if(verbose) print(paste("Skip file", nc$filename))
            close.ncdf(nc)
            return()
@@ -78,11 +81,12 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
         if(!headonly) {
            timeall <- btime:etime
            if(time) timeall <- get.var.ncdf(nc, "time")
-           ss <- if(is.null(start)) 1 else which((timeall - start) >=0 )[1]
-           if(is.null(end) || end < 0 || end > etime) {
+
+           ss <- if(is.null(first)) 1 else which((timeall - first) >=0 )[1]
+           if(is.null(last) || last < 0 || last > etime) {
               ee = nc$dim$frame$len
            } else {
-              ee <- which((timeall - end) <= 0) 
+              ee <- which((timeall - last) <= 0) 
               ee <- ee[length(ee)]
            }
         }
@@ -109,23 +113,28 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
      if(cell) {
         celldata <- get.var.ncdf(nc, "cell_lengths", c(1, ss), 
                              c(-1, tlen))
-        celldata <- rbind(celldata, get.var.ncdf(nc, "cell_angles", 
-                         c(1, ss), c(-1, tlen)))
+        celldata <- t( rbind(celldata, get.var.ncdf(nc, "cell_angles", 
+                         c(1, ss), c(-1, tlen))) )
+        if(time)
+           rownames(celldata) <- get.var.ncdf(nc, "time", ss, tlen)
         close.ncdf(nc)
-        return(t(celldata))
-     } else {
-        coords <- get.var.ncdf(nc, "coordinates", c(1, 1, ss), 
-                             c(-1, -1, tlen))
-        close.ncdf(nc)
-        return(matrix(coords, ncol=(dim(coords)[2]*3),byrow=TRUE))
-     }
-        
+        return( celldata )
+     } 
+     coords <- get.var.ncdf(nc, "coordinates", c(1, 1, ss), 
+                          c(-1, -1, tlen))
+     coords <- matrix( coords, ncol=(dim(coords)[2]*3), byrow=TRUE )
+     if(time)
+        rownames(coords) <- get.var.ncdf(nc, "time", ss, tlen)
+     close.ncdf(nc)
+     return( coords )
   } )
 
   if(headonly) {
      retval <- do.call("c", retval)
   } else {
      retval <- do.call(rbind, retval)
+     # take every "stride" frame
+     retval <- subset(retval, (1:nrow(retval)) %in% seq(1, nrow(retval), stride))
   }
   return(retval)
 }

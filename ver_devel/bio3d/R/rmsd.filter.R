@@ -1,5 +1,6 @@
 "rmsd.filter" <-
-function(xyz=NULL, rmsd.mat=NULL, cutoff=0.5, fit=TRUE, verbose=TRUE) {
+function(xyz=NULL, rmsd.mat=NULL, cutoff=0.5, fit=TRUE, verbose=TRUE,
+    inds=NULL, ncore=1, nseg.scale=1) {
 
   # k<-rmsd.filter(xyz=pdbs$xyz, cutoff=0.5)
   # k<-rmsd.filter(rmsd.mat=k$rmsd.mat, cutoff=2.0)
@@ -9,8 +10,12 @@ function(xyz=NULL, rmsd.mat=NULL, cutoff=0.5, fit=TRUE, verbose=TRUE) {
       stop("Must provide either an alignment 'aln' or identity matrix 'ide'")
     if(is.list(xyz))
       xyz=xyz$xyz
-    gaps<-gap.inspect(xyz)
-    rmsd.mat <- rmsd( xyz, a.inds=gaps$f.inds, fit=fit )
+    if(is.null(inds)) {
+       gaps <- gap.inspect(xyz)
+       inds <- gaps$f.inds
+    }
+    rmsd.mat <- rmsd( xyz, a.inds=inds, fit=fit, 
+                     ncore=ncore, nseg.scale=nseg.scale )
   }
   
   r.d  <- as.dist(rmsd.mat)
