@@ -5,7 +5,7 @@
   Print method for core.find objects.
 }
 \usage{
-print.core(x, vol = NULL, ...)
+\method{print}{core}(x, vol = NULL, ...)
 }
 \arguments{
   \item{x}{ a list object obtained with the function

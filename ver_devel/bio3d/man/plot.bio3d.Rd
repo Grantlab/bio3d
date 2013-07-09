@@ -6,7 +6,7 @@
   marginal regions.
 }
 \usage{
-plot.bio3d(x, y = NULL, type = "h", main = "", sub = "", xlim = NULL, ylim = NULL, 
+\method{plot}{bio3d}(x, y = NULL, type = "h", main = "", sub = "", xlim = NULL, ylim = NULL, 
                  ylim2zero = TRUE, xlab = NULL, ylab = NULL, axes = TRUE, 
                  ann = par("ann"), col = par("col"), sse = NULL, top = TRUE, bot = TRUE, 
                  helix.col = "gray20", sheet.col = "gray80", sse.border = FALSE, ...)
@@ -69,7 +69,7 @@ plot.bio3d(x, y = NULL, type = "h", main = "", sub = "", xlim = NULL, ylim = NUL
 \examples{
 ##-- SSE setup --#
 pdb <- read.pdb( "1bg2" )
-sse <- dssp(pdb, resno=FALSE)
+sse <- stride(pdb, resno=FALSE)
 
 ##-- Or load previous dataset
 data(kinesin)

@@ -6,7 +6,7 @@
   from the match statistics of a BLAST result.
 }
 \usage{
-plot.blast(x, cutoff = NULL, cut.seed=110, mar=c(4, 4, 1, 2), cex.lab=1.5, ...)
+ \method{plot}{blast}(x, cutoff = NULL, cut.seed=110, mar=c(4, 4, 1, 2), cex.lab=1.5, ...)
 }
 \arguments{
   \item{x}{ BLAST results as obtained from the function

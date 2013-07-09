@@ -5,7 +5,7 @@
   Plot a dynamical cross-correlation matrix.
 }
 \usage{
-plot.dccm(x, sse = NULL, colorkey = TRUE, at = c(-1, -0.75, -0.5, -0.25, 0.25, 0.5, 0.75, 1), main = "Residue Cross Correlation", helix.col = "gray20", sheet.col = "gray80", inner.box = TRUE, outer.box = FALSE, xlab = "Residue No.", ylab = "Residue No.", ...)
+\method{plot}{dccm}(x, sse = NULL, colorkey = TRUE, at = c(-1, -0.75, -0.5, -0.25, 0.25, 0.5, 0.75, 1), main = "Residue Cross Correlation", helix.col = "gray20", sheet.col = "gray80", inner.box = TRUE, outer.box = FALSE, xlab = "Residue No.", ylab = "Residue No.", ...)
 }
 \arguments{
   \item{x}{ a numeric matrix of atom-wise cross-correlations as output by

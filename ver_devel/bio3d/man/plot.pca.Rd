@@ -8,13 +8,13 @@
   (scree plot).
 }
 \usage{
-plot.pca(x, pch = 16, col = par("col"), cex=0.8, mar=c(4, 4, 1, 1),...)
-plot.pca.scree(x, y = NULL, type = "o", pch = 18,
+\method{plot}{pca}(x, pch = 16, col = par("col"), cex=0.8, mar=c(4, 4, 1, 1),...)
+\method{plot}{pca.scree}(x, y = NULL, type = "o", pch = 18,
          main = "", sub = "", xlim = c(0, 20), ylim = NULL,
          ylab = "Proporton of Variance (\%)",
          xlab = "Eigenvalue Rank", axes = TRUE, ann = par("ann"),
          col = par("col"), lab = TRUE, ...)
-plot.pca.score(x, start.row = 1, end.row = nrow(x), col=rainbow(nrow(x)), lab = "", ...)
+\method{plot}{pca.score}(x, start.row = 1, end.row = nrow(x), col=rainbow(nrow(x)), lab = "", ...)
 
 }
 \arguments{

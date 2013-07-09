@@ -8,7 +8,7 @@
 \usage{
 read.pdb(file, maxlines = 50000, multi = FALSE, rm.insert = FALSE,
          rm.alt = TRUE, het2atom=FALSE, verbose = TRUE)
-print.pdb(x, \dots)
+\method{print}{pdb}(x, \dots)
 }
 \arguments{
   \item{file}{ a single element character vector containing the name of

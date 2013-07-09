@@ -5,7 +5,7 @@
   Plot a distance matrix (DM) or a difference distance matrix (DDM).
 }
 \usage{
-plot.dmat(x, key = TRUE, resnum.1 = c(1:ncol(x)), resnum.2 = resnum.1,
+\method{plot}{dmat}(x, key = TRUE, resnum.1 = c(1:ncol(x)), resnum.2 = resnum.1,
           axis.tick.space = 20, zlim = range(x, finite = TRUE),
           nlevels = 20, levels = pretty(zlim, nlevels),
           color.palette = bwr.colors,

@@ -6,7 +6,7 @@
    of \code{loadings}.
  }
 \usage{
-plot.pca.loadings(x, resnums = seq(1, (length(x[, 1])/3), 25), ...)
+\method{plot}{pca.loadings}(x, resnums = seq(1, (length(x[, 1])/3), 25), ...)
 }
 \arguments{
   \item{x}{ the results of principal component analysis obtained
