@@ -41,15 +41,24 @@
 \seealso{ \code{\link{core.find}}, \code{\link{print.core}}}
 \examples{
 \dontrun{
-##-- Read kinesin alignment and structures
-aln <- read.fasta(system.file("examples/kinesin_xray.fa",package="bio3d"))
-pdb.path = system.file("examples/",package="bio3d")
-pdbs <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
+
+pdbfiles <- get.pdb(c("1i6i","1i5s"), URLonly=TRUE)
+pdbs <- pdbaln(pdbfiles)
+
+##-- Read small kinesin alignment and corresponding structures
+aln  <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
+pdbs <- read.fasta.pdb(aln)
 
 ## Find core
-core <- core.find(pdbs,
-                  #write.pdbs = TRUE,
-                  verbose=TRUE)
+core <- core.find(pdbs)
+
+xyz <- pdbfit(pdbs, print(core), outpath="corefit2/")
+
+##id <- get.pdb("1mkj", URLonly=TRUE)
+##pdb <- read.pdb(id)
+##aln<-seq2aln(seq.pdb(pdb), aln, id = id)
+##pdbs <- read.fasta.pdb(aln)
+
 }
 
 \dontrun{

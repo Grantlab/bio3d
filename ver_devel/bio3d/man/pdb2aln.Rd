@@ -56,19 +56,21 @@ pdb2aln(aln, pdb, inds, aln.id=NULL, id="seq.pdb", file="pdb2aln.fa")
 \dontrun{
 ##--- Read aligned PDB coordinates (CA only)
 aln  <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
-pdb.path = system.file("examples",package="bio3d")
-pdbs <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
+pdbs <- read.fasta.pdb(aln)
 
-##--- Read PDB coordinate for one structure (all atoms)
-id <- "d2kin.1"
-pdb <- read.pdb(system.file(paste("examples/", id, ".ent", sep=""), package="bio3d"))
+##--- Read PDB coordinate for a new structure (all atoms)
+id <- get.pdb("2kin", URLonly=TRUE)
+pdb <- read.pdb(id)
 
 # map the non-gap positions
-pc.inds <- gap.inspect(pdbs$resno)
-npc.inds <- pdb2aln(aln=pdbs, pdb=pdb, inds=pc.inds$f.inds, id=id)
+gap.inds <- gap.inspect(pdbs$resno)
+npc.inds <- pdb2aln(aln=pdbs, pdb=pdb, inds=gap.inds$f.inds, id=id)
 
 ##--- fit the atomic coordinates to the aligned X-ray structure
-xyz <- fit.xyz(pdbs$xyz[1,], pdb$xyz, atom2xyz(pc.inds$f.inds), npc.inds$xyz)
+xyz <- fit.xyz(pdbs$xyz[1,], pdb$xyz, atom2xyz(gap.inds$f.inds), npc.inds$xyz)
+
+## seq2aln(seq.pdb(pdb), aln, id = id)
+## do we get the same result
 
 }
 

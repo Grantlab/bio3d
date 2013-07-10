@@ -38,18 +38,16 @@ is.gap(x, gap.char = c("-", "."))
 is.gap( c("G",".","X","-","G","K","S","T") )
 
 \dontrun{
-aln <- read.fasta( system.file("examples/kinesin_xray.fa",
+aln <- read.fasta( system.file("examples/kif1a.fa",
                    package = "bio3d") )
 
-##- Mask gaps with an "X"
+##- Mask existing gaps with an "X"
 xaln <- aln
 xaln$ali[ is.gap(xaln$ali) ]="X"
 
-##- Read a PDB and align its sequence to the existing alignment
-pdb <- read.pdb( system.file("examples/1bg2.pdb", package="bio3d") )
-pdbseq <- aa321(pdb$atom[pdb$calpha,"resid"])
-
-seqaln.pair(seqbind(xaln$ali[1,], pdbseq))
+##- Read a new PDB and align its sequence to the existing alignment
+pdb <- read.pdb( "1mkj" )
+seq2aln(seq.pdb(pdb), xaln, id = "1mkj")
 }
 }
 \keyword{ utilities }
