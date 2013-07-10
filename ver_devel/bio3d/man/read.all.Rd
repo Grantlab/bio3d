@@ -62,33 +62,32 @@ read.all(aln, pdb.path = "", pdbext = "", sel = NULL, ...)
 \examples{
 # still working on speeding this guy up
 \dontrun{
-# Read sequence alignment
+## Read sequence alignment
 file <- system.file("examples/kif1a.fa",package="bio3d")
 aln  <- read.fasta(file)
 
-# Read aligned PDBs
-pdb.path = system.file("examples",package="bio3d")
+## Read aligned PDBs storing all data for 'sel'
 sel <- c("N", "CA", "C", "O", "CB", "*G", "*D",  "*E", "*Z")
-pdbs <- read.all(aln, pdb.path = pdb.path, pdbext = ".ent", sel=sel)
+pdbs <- read.all(aln, sel=sel)
 
 atm <- colnames(pdbs$all)
 ca.ind  <- which(atm == "CA")
 core <- core.find(pdbs)
 core.ind <- c( matrix(ca.ind, nrow=3)[,core$c0.5A.atom] )
 
+## Fit structures
 nxyz <- fit.xyz(pdbs$all[1,], pdbs$all,
                fixed.inds  = core.ind,
                mobile.inds = core.ind)
 
 ngap.col <- gap.inspect(nxyz)
-npc.xray <- pca.xyz(nxyz[ ,ngap.col$f.inds])
 
+#npc.xray <- pca.xyz(nxyz[ ,ngap.col$f.inds])
 
-a <- mktrj.pca(npc.xray, pc=1, file="pc1-all.pdb",
-               elety=pdbs$all.elety[1,unique( ceiling(ngap.col$f.inds/3) )],
-               resid=pdbs$all.resid[1,unique( ceiling(ngap.col$f.inds/3) )],
-               resno=pdbs$all.resno[1,unique( ceiling(ngap.col$f.inds/3) )] )
-
+#a <- mktrj.pca(npc.xray, pc=1, file="pc1-all.pdb",
+#               elety=pdbs$all.elety[1,unique( ceiling(ngap.col$f.inds/3) )],
+#               resid=pdbs$all.resid[1,unique( ceiling(ngap.col$f.inds/3) )],
+#               resno=pdbs$all.resno[1,unique( ceiling(ngap.col$f.inds/3) )] )
 
 }
 

@@ -32,27 +32,19 @@ print.core(x, vol = NULL, ...)
 \examples{
 
 \dontrun{
-##-- Read kinesin alignment and structures
-aln <- read.fasta(system.file("examples/kinesin_xray.fa",package="bio3d"))
-pdb.path = system.file("examples/",package="bio3d")
-pdbs <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
+##-- Generate a small kinesin alignment and read corresponding structures
+pdbfiles <- get.pdb(c("1bg2","2ncd","1i6i","1i5s"), URLonly=TRUE)
+pdbs <- pdbaln(pdbfiles)
 
-## Find core
-core <- core.find(pdbs,
-                  #write.pdbs = TRUE,
-                  verbose=TRUE)
-}
+##-- Find 'core' positions
+core <- core.find(pdbs)
+plot(core)
 
-##-- OR read previously saved kinesin data
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+##-- Fit on these relatively invarient subset of positions 
+core.inds <- print(core, vol=0.5)
 
-col=rep("black", length(core$volume))
-col[core$volume<2]="pink"; col[core$volume<1]="red"
-plot(core, col=col)
-
-inds.1 <- print(core, vol=1)
-inds.0.5 <- print(core, vol=0.5)
+print(core, vol=0.7)
+print(core, vol=1.0)
 
 
 }

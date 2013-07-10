@@ -83,30 +83,29 @@ seqaln(aln, id=NULL, exepath="", file="aln.fa", protein=TRUE,
 
 \dontrun{
 ##-- Read a folder/directory of PDB files
-#pdb.path <- "my_dir_of_pdbs"
+#pdb.path <- "my_dir_of_pdbs/"
 #files  <- list.files(path=pdb.path ,
 #                     pattern=".pdb",
 #                     full.names=TRUE)
-pdb.path <- system.file("examples", package="bio3d")
-files  <- list.files(path=pdb.path ,
-                     pattern=".ent",
-                     full.names=TRUE)
 
+##-- Use online files
+files <- get.pdb(c("4q21","1ftn"), URLonly=TRUE)
 
-##-- Extract sequences
+##-- Extract and store sequences
 raw <- NULL
 for(i in 1:length(files)) {
   pdb <- read.pdb(files[i])
-  raw <- seqbind(raw, aa321(pdb$atom[pdb$calpha,"resid"]))
+  raw <- seqbind(raw, seq.pdb(pdb) )
 }
 
+##-- Align these sequences
+aln <- seqaln(raw, id=files, file="seqaln.fa")
 
-##-- Align sequences
-aln <- seqaln(raw, id=basename(files),
-              file="seqaln.fa")
+##-- Read Aligned PDBs storing coordinate data
+pdbs <- read.fasta.pdb(aln) 
 
-##-- Read Aligned PDBs
-pdbs <- read.fasta.pdb(aln, pdb.path=pdb.path, pdbext = "")
+## Sequence identity
+identity(aln)
 
 ## Do further analysis...
 ## Note that all the above can be done with the pdbaln() function.
