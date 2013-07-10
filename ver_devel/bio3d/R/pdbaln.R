@@ -34,12 +34,28 @@ function(files, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
      }
   }
 
-  missing <- !file.exists(files)
+
+  ## Check if input PDB files exist localy or online
+  toread.local <- file.exists(files)
+  toread.online <- (substr(files,1,4)=="http")
+  toread.id <- rep(FALSE, length(files))
+  toread <- as.logical(toread.local + toread.online)
+
+  ## Check for 4 letter code and possible online file
+  if(any(!toread)) {
+    toread.id <- ((nchar(files)==4) + (!toread) == 2)
+    files[toread.id] <-  get.pdb(files[toread.id], URLonly=TRUE)
+    cat("  Note: Accessing online PDB files using 4 letter PDBID\n")
+  }
+
+  ## Exit if we still have missing files
+  missing <- !as.logical(toread + toread.id)
   if(any(missing)) {
-    stop(paste(" ** Missing files:\n",
+    stop(paste(" ** Missing files: check filenames\n",
                paste( files[c(missing)], collapse="\n"),"\n",sep="") )
   }
-  cat("Reading PDB files:")
+  cat("Reading PDB files:",files, sep="\n")
+  
   mylapply <- lapply
   if(ncore > 1) mylapply <- mclapply
   pdb.list <- mylapply(1:length(files), function(i) {
