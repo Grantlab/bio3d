@@ -93,43 +93,34 @@ rot.lsq(xx, yy,
 \seealso{ \code{\link{rmsd}}, \code{\link{read.pdb}},
   \code{\link{read.fasta.pdb}}, \code{\link{read.dcd}} }
 \examples{
-\dontrun{
 ##--- Read an alignment & Fit aligned structures
 aln  <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
-pdb.path = system.file("examples",package="bio3d")
-pdbs <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
-}
-
-#-- OR Read previously saved kinesin data & Fit aligned structures
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+pdbs <- read.fasta.pdb(aln)
 
 gaps <- gap.inspect(pdbs$xyz)
+rmsd( pdbs$xyz[, gaps$f.inds] )
 
 xyz <- fit.xyz( fixed  = pdbs$xyz[1,],
                mobile = pdbs$xyz,
                fixed.inds  = gaps$f.inds,
                mobile.inds = gaps$f.inds )
 
-# Use indices from 'core.find()' for improved fitting 
-#core <- core.find(pdbs) # see ?core.find
+rmsd( xyz[, gaps$f.inds] )
 
-# Superpose again this time outputing PDBs
+##-- Superpose again this time outputing PDBs
 \dontrun{
 xyz <- fit.xyz( fixed = pdbs$xyz[1,],
                mobile = pdbs,
                fixed.inds  = gaps$f.inds,
                mobile.inds = gaps$f.inds,
-               pdb.path = system.file("examples/",package="bio3d"),
-               pdbext = ".ent",
                outpath = "rough_fit/",
                full.pdbs = TRUE)
 
 ##--- Fit two PDBs
-A <- read.pdb(system.file("examples/d1bg2__.ent",package="bio3d"))
+A <- read.pdb("1bg2")
 A.ind <- atom.select(A, "///256:269///CA/")
 
-B <- read.pdb(system.file("examples/d2kin.1.ent",package="bio3d"))
+B <- read.pdb("2kin")
 B.ind <- atom.select(B, "///257:270///CA/")
 
 xyz <- fit.xyz(fixed=A$xyz, mobile=B$xyz,

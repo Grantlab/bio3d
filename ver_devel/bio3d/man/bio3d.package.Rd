@@ -53,25 +53,31 @@ manipulation and analysis of biological sequence and structural data
 The latest version and further documentation can be obtained from the
 bio3d website:\cr
 \url{http://thegrantlab.org/bio3d/}.\cr
-Or its alternate site:\cr
-\url{http://mccammon.ucsd.edu/~bgrant/bio3d/}.
+\url{http://thegrantlab.org/bio3d/html/}.
 }
 \author{
 Barry Grant <bjgrant@umich.edu>
 Xin-Qiu Yao <xinqyao@umich.edu>
+Lars Skjaerven <larsss@gmail.com>
 }
 \references{
 Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \keyword{ documentation }
 \examples{
-#help(package="bio3d")  # list the functions within the package
-lbio3d()  # list bio3d function names only
+help(package="bio3d")     # list the functions within the package
+lbio3d()                  # list bio3d function names only
+
+## Or visit:
+##   http://thegrantlab.org/bio3d/html/
+
+## See the individual functions for further documentation and examples, e.g.
+help(read.pdb)
+
+## Or online:
+##    http://thegrantlab.org/bio3d/html/read.pdb.html
 
 \dontrun{
-## See the individual functions for further documentation and examples.
-#help(read.pdb)
-
 ##-- Read a PDB file
 pdb <- read.pdb("1BG2")
 
@@ -112,29 +118,31 @@ plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor")
 blast <- blast.pdb( seq.pdb(pdb) )
 hits  <- plot.blast(blast)
 head(hits$hits)
-## Download these with function "get.pdb()" 
-## Split by chain with function "split.pdb()"
-## and then align with function "pdbaln()"
-rawpdbs <- get.pdb(substr(hits$pdb.id,1,4), "PDB_downloads")
-split.pdb(rawpdbs, path="PDB_downloads/split_chain/")
-hitfiles <- paste("PDB_downloads/split_chain/", hits$pdb.id, ".pdb", sep="")
-hitfiles <- hitfiles[-grep("KIN",hitfiles)]
-pdbs <- pdbaln(hitfiles)
-gaps.pos <- gap.inspect(pdbs$xyz)
-xyz  <- fit.xyz( pdbs$xyz[1,], pdbs, fixed.inds=gaps.pos$f.inds, 
-           mobile.inds=gaps.pos$f.inds, full.pdbs=TRUE, het=TRUE)
+## Download these with function "get.pdb()"
+#rawpdbs <- get.pdb( hits$pdb.id, "PDB_downloads")
 
-##-- Read an example FASTA alignment file
-aln <- read.fasta( system.file("examples/kinesin_xray.fa",package="bio3d") )
+## Split by chain with function "split.pdb()"
+#split.pdb(rawpdbs, path="PDB_downloads/split_chain/")
+
+## and then align with function "pdbaln()"
+#hitfiles <- paste0("PDB_downloads/split_chain/", hits$pdb.id, ".pdb")
+#pdbs <- pdbaln(hitfiles)
+#xyz  <- pdbfit(pdbs)
+
+##-- Read an example FASTA alignment from PFAM
+infile <- "http://pfam.sanger.ac.uk/family/PF00071/alignment/seed/format?format=fasta"
+
+aln <- read.fasta( infile )
 
 ## Entropy score for alignment positions
 h <- entropy(aln)    # see also the "conserv()" function
+plot(h$H.norm, typ="h", ylab="Normalized entropy score")
+plot(new=TRUE)
+plot( conserv(aln), typ="h", col="red")
 
 # Alignment consensus
 con <- consensus(aln)
-
-## Plot of residue conservation (similarity) with secondary structure
-plot.bio3d( conserv(aln)[!is.gap(aln$ali[1,])],  sse=sse )
+con$seq
 
 ## Render the alignment as coloured HTML
 aln2html(aln, append=FALSE, file="eg.html")
