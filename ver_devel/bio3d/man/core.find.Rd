@@ -95,67 +95,35 @@ core.find(aln, shortcut = FALSE, rm.island = FALSE,
   \code{\link{fit.xyz}} }
 \examples{
 \dontrun{
-##--  Read kinesin alignment and respective PDB structures
-aln <- read.fasta(system.file("examples/kinesin_xray.fa",package="bio3d"))
-pdb.path = system.file("examples",package="bio3d")
-pdbs <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
-}
+##-- Generate a small kinesin alignment and read corresponding structures
+pdbfiles <- get.pdb(c("1bg2","2ncd","1i6i","1i5s"), URLonly=TRUE)
+pdbs <- pdbaln(pdbfiles)
 
-##-- Or read previously saved kinesin data
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
-
-## Raw RMSD before superposition
-gaps <- gap.inspect(pdbs$xyz)
-dd <- rmsd( pdbs$xyz[,gaps$f.inds] )
-dd[1:9, 1:9]
-## RMSD after superposition on all positions
-#rmsd(pdbs$xyz[,gaps$f.inds],fit=TRUE)
-
-## Run core.find
-core <- core.find(pdbs,
-                  #write.pdbs = TRUE,
-                  verbose=TRUE)
-
-
-## Plot volume vs length
+##-- Find 'core' positions
+core <- core.find(pdbs)
 plot(core)
 
-## Print 0.5A^3 core and store indices
-inds <- print(core, vol=0.5)
+##-- Fit on these relatively invarient subset of positions 
+#core.inds <- print(core, vol=1)
+core.inds <- print(core, vol=0.5)
+xyz <- pdbfit(pdbs, core.inds, outpath="corefit_structures/")
 
-## Fit structures onto first structure based on core indices (inds$xyz)
-xyz <- fit.xyz( fixed = pdbs$xyz[1,],
-                mobile = pdbs,
-                fixed.inds  = inds$xyz,
-                mobile.inds = inds$xyz)
+##-- Compare to fitting on all equivalent positions
+xyz2 <- pdbfit(pdbs)
 
+## Note that overall RMSD will be higher but RMSF will
+##  be lower in core regions, which may equate to a
+##  'better fit' for certain applications
+gaps <- gap.inspect(pdbs$xyz)
+rmsd(xyz[,gaps$f.inds])
+rmsd(xyz2[,gaps$f.inds])
 
-# RMSD after superposition on 'core' positions
-dd <- rmsd( xyz[,gaps$f.inds] )
-dd[1:9, 1:9]
+plot(rmsf(xyz[,gaps$f.inds]), typ="l", col="blue", ylim=c(0,9))
+points(rmsf(xyz2[,gaps$f.inds]), typ="l", col="red")
+
 
 \dontrun{
-# Fit structures and write out 'full' structures
-xyz <- fit.xyz( fixed = pdbs$xyz[1,],
-                mobile = pdbs,
-                fixed.inds  = core$c0.5A.xyz,
-                mobile.inds = core$c0.5A.xyz,
-                pdb.path = system.file("examples/",package="bio3d"),
-                pdbext = ".ent",
-                outpath = "fitlsq/",
-                full.pdbs = TRUE)
-
-gaps  <- unique(which( is.na(xyz),arr.ind=TRUE )[,2])
-
-# core fitted RMSD
-rmsd(xyz[1,-gaps], xyz[,-gaps])
-
-# original RMSD
-rmsd(xyz[1,-gaps], xyz[,-gaps], fit=TRUE)
-
-
-##-- Try core.find() on a trajectory
+##-- Run core.find() on a trajectory
 trtfile <- system.file("examples/hivp.dcd", package="bio3d")
 trj <- read.dcd(trtfile)
 

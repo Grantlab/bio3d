@@ -42,35 +42,32 @@
 \examples{
 \dontrun{
 
-pdbfiles <- get.pdb(c("1i6i","1i5s"), URLonly=TRUE)
+##-- Generate a small kinesin alignment and read corresponding structures
+pdbfiles <- get.pdb(c("1bg2","2ncd","1i6i","1i5s"), URLonly=TRUE)
 pdbs <- pdbaln(pdbfiles)
 
-##-- Read small kinesin alignment and corresponding structures
-aln  <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
-pdbs <- read.fasta.pdb(aln)
-
-## Find core
+##-- Find 'core' positions
 core <- core.find(pdbs)
+plot(core)
 
-xyz <- pdbfit(pdbs, print(core), outpath="corefit2/")
+##-- Fit on these relatively invarient subset of positions 
+core.inds <- print(core)
+xyz <- pdbfit(pdbs, core.inds, outpath="corefit_structures/")
 
-##id <- get.pdb("1mkj", URLonly=TRUE)
-##pdb <- read.pdb(id)
-##aln<-seq2aln(seq.pdb(pdb), aln, id = id)
-##pdbs <- read.fasta.pdb(aln)
+##-- Compare to fitting on all equivalent positions
+xyz2 <- pdbfit(pdbs)
+
+## Note that overall RMSD will be higher but RMSF will
+##  be lower in core regions, which may equate to a
+##  'better fit' for certain applications
+gaps <- gap.inspect(pdbs$xyz)
+rmsd(xyz[,gaps$f.inds])
+rmsd(xyz2[,gaps$f.inds])
+
+plot(rmsf(xyz[,gaps$f.inds]), typ="l", col="blue", ylim=c(0,9))
+points(rmsf(xyz2[,gaps$f.inds]), typ="l", col="red")
 
 }
 
-\dontrun{
-##-- OR read previously saved kinesin data
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
-
-col=rep("black", length(core$volume))
-col[core$volume<2]="pink"; col[core$volume<1]="red"
-plot(core, col=col)
-
-print(core)
-}
 }
 \keyword{ hplot }
