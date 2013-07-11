@@ -24,7 +24,8 @@ function (pdb, exepath = "", resno=TRUE) {
     raw.lines <- raw.lines[-(1:which(type == "  #"))]
     # delete chain breaking lines
     aa <- substring(raw.lines, 14, 14)
-    raw.lines <- raw.lines[-which(aa == "!")]
+    if(any(aa == "!"))
+       raw.lines <- raw.lines[-which(aa == "!")]
     cha <- substring(raw.lines, 12, 12)
     sse <- substring(raw.lines, 17, 17)
     if(os1 == "windows") {
