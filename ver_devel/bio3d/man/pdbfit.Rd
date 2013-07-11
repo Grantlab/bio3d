@@ -50,7 +50,7 @@ pdbs <- pdbaln(files)
 xyz <- pdbfit(pdbs)
 
 # Superpose again this time outputing PDBs
-xyz <- pdbaln( pdbs, outpath="fitted/" )
+#xyz <- pdbaln( files, outpath="fitted/" )
 }
 }
 \keyword{ utilities }

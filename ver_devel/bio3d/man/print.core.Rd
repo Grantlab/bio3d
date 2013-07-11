@@ -46,7 +46,7 @@ core.inds <- print(core, vol=0.5)
 print(core, vol=0.7)
 print(core, vol=1.0)
 
-
+}
 }
 \keyword{ utilities }
 

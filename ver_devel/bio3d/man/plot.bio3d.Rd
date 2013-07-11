@@ -67,9 +67,11 @@
 }
 \seealso{ \code{\link{plot.default}}, \code{\link{dssp}}, \code{\link{stride}} }
 \examples{
+\dontrun{
 ##-- SSE setup --#
 pdb <- read.pdb( "1bg2" )
 sse <- stride(pdb, resno=FALSE)
+}
 
 ##-- Or load previous dataset
 data(kinesin)

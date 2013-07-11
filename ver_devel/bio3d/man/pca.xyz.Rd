@@ -35,9 +35,8 @@ pca.xyz(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))))
 
 \dontrun{
 #-- Read kinesin alignment and structures
-aln <- read.fasta(system.file("examples/kinesin_xray.fa",package="bio3d"))
-pdb.path = system.file("examples/",package="bio3d")
-pdbs <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
+aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
+pdbs <- read.fasta.pdb(aln)
 
 # Find core
 core <- core.find(pdbs,
