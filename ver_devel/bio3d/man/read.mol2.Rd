@@ -59,6 +59,7 @@ read.mol2(file, maxlines = -1L)
 }
 \seealso{ \code{\link{atom.select}}, \code{\link{read.pdb}} }
 \examples{
+cat("\n")
 \dontrun{
 ## Read a single entry MOL2 file
 ## (returns a single object)

@@ -80,18 +80,8 @@ seqaln(aln, id=NULL, exepath="", file="aln.fa", protein=TRUE,
   \code{\link{seqbind}}
 }
 \examples{
-
 \dontrun{
-##-- Read a folder/directory of PDB files
-#pdb.path <- "my_dir_of_pdbs"
-#files  <- list.files(path=pdb.path ,
-#                     pattern=".pdb",
-#                     full.names=TRUE)
-pdb.path <- system.file("examples", package="bio3d")
-files  <- list.files(path=pdb.path ,
-                     pattern=".ent",
-                     full.names=TRUE)
-
+files <- c("1bg2", "1i6i", "1i5s")
 
 ##-- Extract sequences
 raw <- NULL
@@ -106,7 +96,8 @@ aln <- seqaln(raw, id=basename(files),
               file="seqaln.fa")
 
 ##-- Read Aligned PDBs
-pdbs <- read.fasta.pdb(aln, pdb.path=pdb.path, pdbext = "")
+aln$id <- paste("http://www.rcsb.org/pdb/files/", files, ".pdb", sep="")
+pdbs <- read.fasta.pdb(aln)
 
 ## Do further analysis...
 ## Note that all the above can be done with the pdbaln() function.

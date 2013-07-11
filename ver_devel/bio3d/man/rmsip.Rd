@@ -39,13 +39,12 @@ rmsip(pca.a, pca.b, subset=10, row.name=NULL, col.name=NULL)
      data(kinesin)
      attach(kinesin, warn.conflicts=FALSE)
      
+     \dontrun{
      # Ignore gap containing positions
      gaps.pos <- gap.inspect(pdbs$xyz)
      
      # Do PCA
      pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
-     
-     \dontrun{
      # Read in MD trajectory
      sim <- NULL
      sim$trj <- read.ncdf("300ns_CA.nc")

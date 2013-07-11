@@ -61,6 +61,7 @@ read.all(aln, pdb.path = "", pdbext = "", sel = NULL, ...)
   \code{\link{core.find}}, \code{\link{fit.xyz}}  }
 \examples{
 # still working on speeding this guy up
+cat("\n")
 \dontrun{
 # Read sequence alignment
 file <- system.file("examples/kif1a.fa",package="bio3d")

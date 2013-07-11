@@ -26,8 +26,8 @@ seqbind(a, b, blank = "-")
 \examples{
 \dontrun{
 ## Read two pdbs
-a.pdb <- read.pdb( system.file("examples/1bg2.pdb", package="bio3d") )
-b.pdb <- read.pdb( system.file("examples/d1goja_.ent", package="bio3d") )
+a.pdb <- read.pdb("1bg2")
+b.pdb <- read.pdb("1goj")
 
 seqs <- seqbind(aa321(a.pdb$atom[a.pdb$calpha,"resid"]),
                 aa321(b.pdb$atom[b.pdb$calpha,"resid"]))

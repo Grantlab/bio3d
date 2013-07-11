@@ -45,7 +45,7 @@ pdbfit(pdbs, inds = NULL, outpath = NULL, ...)
 \examples{
 \dontrun{
 #files <- get.pdb(c("4q21","5p21"), URLonly=TRUE)
-files <- get.pdb(c("4q21","5p21"), path=tempdir())
+files <- get.pdb(c("4q21","5p21"), path=tempdir(), overwrite=TRUE)
 pdbs <- pdbaln(files)
 xyz <- pdbfit(pdbs)
 

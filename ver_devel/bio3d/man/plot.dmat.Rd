@@ -85,7 +85,7 @@ plot(d,
 
 
 # Downlaod and align two PDB files
-pdbs <- pdbaln( get.pdb( c( "4q21", "521p"), path=tempdir() ))
+pdbs <- pdbaln( get.pdb( c( "4q21", "521p"), path=tempdir(), overwrite=TRUE))
 
 # Get distance matrix
 a <- dm(pdbs$xyz[1,])

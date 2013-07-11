@@ -69,7 +69,7 @@ plot(range(xyz), range(xyz), xlab="", ylab="", typ="n", axes=FALSE)
 
 \dontrun{
 ##-- PDB torsion analysis
-pdb <- read.pdb( system.file("examples/1bg2.pdb", package="bio3d") )
+pdb <- read.pdb("1bg2")
 tor <- torsion.pdb(pdb)
 ## basic Ramachandran plot
 plot(tor$phi, tor$psi)

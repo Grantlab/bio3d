@@ -48,7 +48,7 @@ get.seq(ids, outfile = "seqs.fasta", db = "nr")
 pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
 blast <- blast.pdb( seq.pdb(pdb), database = "swissprot" )
 ids <- plot.blast( blast )
-seq <- get.seq(ids$gi.id)
+seq <- get.seq(ids$gi.id, outfile=tempfile())
 seq$id[1:10]
 seq$ali[1:10,]
 }

@@ -53,6 +53,7 @@ pdb2aln(aln, pdb, inds, aln.id=NULL, id="seq.pdb", file="pdb2aln.fa")
 \seealso{ \code{\link{seq2aln}}, \code{\link{seqaln.pair}},
        \code{\link{atom.select}} }
 \examples{
+cat("\n")
 \dontrun{
 ##--- Read aligned PDB coordinates (CA only)
 aln  <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))

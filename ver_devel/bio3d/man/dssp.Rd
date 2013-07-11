@@ -54,7 +54,7 @@ dssp(pdb, exepath = "", resno=TRUE)
 \examples{
 \dontrun{
 # Read a PDB file
-pdb <- read.pdb(system.file("examples/d1bg2__.ent", package="bio3d"))
+pdb <- read.pdb("1bg2")
 sse <- dssp(pdb)
 
 # Helix data
