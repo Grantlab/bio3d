@@ -121,7 +121,7 @@ rmsd(xyz2[,gaps$f.inds])
 plot(rmsf(xyz[,gaps$f.inds]), typ="l", col="blue", ylim=c(0,9))
 points(rmsf(xyz2[,gaps$f.inds]), typ="l", col="red")
 
-}
+
 \dontrun{
 ##-- Run core.find() on a trajectory
 trtfile <- system.file("examples/hivp.dcd", package="bio3d")
@@ -152,6 +152,7 @@ xyz <- fit.xyz( fixed = pdb$xyz,
 
 ##write.pdb(pdb=pdb, xyz=xyz, file="new_trj.pdb")
 ##write.ncdf(xyz, "new_trj.nc")
+
 }
 
 }
