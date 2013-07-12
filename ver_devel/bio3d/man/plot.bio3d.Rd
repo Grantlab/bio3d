@@ -67,21 +67,20 @@
 }
 \seealso{ \code{\link{plot.default}}, \code{\link{dssp}}, \code{\link{stride}} }
 \examples{
-\dontrun{
-##-- SSE setup --#
+
+## Plot of B-factor values along with secondary structure from PDB
 pdb <- read.pdb( "1bg2" )
-sse <- stride(pdb, resno=FALSE)
-}
+plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=pdb, ylab="B-factor")
 
-##-- Or load previous dataset
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+\dontrun{
+## Calculate secondary structure
+#sse <- stride(pdb, resno=FALSE)
+sse <- dssp(pdb, resno=FALSE)
 
-## Plot of B-factor values along with secondary structure
-plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor")
-
+## Plot of B-factor values along with calculated secondary structure
 plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor", typ="l",
 col="blue", lwd=2)
+}
 
 }
 \keyword{ hplot }
