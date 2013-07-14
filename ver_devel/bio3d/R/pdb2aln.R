@@ -1,21 +1,25 @@
-#  Find the best alignment between a PDB structure and an 
-#  existing alignment. Then, given a set of residue indices
-#  defined for the original alignment, return the equivalent 
-#  CA atom indices in the PDB coordinates.
+
+#  Add a PDB sequence to an existing alignment. 
+#  Return an object containing id, ali, and ref.
+#  id and ali are the components of the new alignment.
+#  ref is an integer matrix containing the indices
+#  of original alignment and CA indices of the PDB file. 
 "pdb2aln" <-
-function(aln, pdb, inds, aln.id=NULL, id="seq.pdb", file="pdb2aln.fa") {
+function(aln, pdb, id="seq.pdb", aln.id=NULL, 
+     exepath = "", file="pdb2aln.fa") {
    # Mask the gaps in the first sequence to get the 
    # reference of original alignment positions 
    aln$ali[1, is.gap(aln$ali[1,])] <- "X"
    
    # renumber atoms for later atom selection 
-   pdb <- convert.pdb(pdb, "pdb", renumber=TRUE, rm.h=FALSE, rm.wat=FALSE)
+#   pdb <- convert.pdb(pdb, "pdb", renumber=TRUE, rm.h=FALSE, rm.wat=FALSE)
    aa1 <- seq.pdb(pdb)
    
    if(!is.null(aln.id)) findid <- grep(aln.id, aln$id)
    if(is.null(aln.id) || length(findid)==0) {
       # do sequence-profile alignment
-      naln <- seq2aln(seq2add=aa1, aln=aln, id=id, file=file)
+      naln <- seq2aln(seq2add=aa1, aln=aln, id=id, 
+            exepath=exepath, file=tempfile())
    } else {
       # do pairwise sequence alignment     
       if(length(findid) > 1) {
@@ -27,47 +31,41 @@ function(aln, pdb, inds, aln.id=NULL, id="seq.pdb", file="pdb2aln.fa") {
       ##- Align seq to masked template from alignment
       tmp.msk <- aln$ali[idhit, ]
       tmp.msk[is.gap(tmp.msk)] <- "X"
-      seq2tmp <- seqaln.pair(seqbind(tmp.msk, aa1), id=c(aln$id[idhit], id), file=file)
+      seq2tmp <- seqaln.pair(seqbind(tmp.msk, aa1), file=tempfile(), exepath=exepath)
       
       ##- check sequence identity
-      ii <- which(seq2tmp$ali[1,]=='X')
-      ide <- identity(seq2tmp$ali[, -ii])[1,2]
+      ii <- seq2tmp$ali[1,]=='X'
+      ide <- identity(seq2tmp$ali[, !ii])[1,2]
+        
       if(ide < 0.4) {
          warning(paste("Sequence identity is too low (<40%).",
              "You may want profile alignment (aln.id=NULL)", sep=" "))
       }
  
       ##- Insert gaps to adjust alignment
-      ins <- which(is.gap( seq2tmp$ali[1,] ))
-      if( length(ins)==0 ) {
-        ntmp <- aln$ali
-      } else {
-        ntmp <- matrix("-", nrow=nrow(aln$ali), ncol=(ncol(aln$ali)+length(ins)))
-        ntmp[,-ins] <- aln$ali
-      }
+      ins <- is.gap( seq2tmp$ali[1,] )
+      ntmp <- matrix("-", nrow=nrow(aln$ali), ncol=(ncol(aln$ali)+sum(ins)))
+      ntmp[,!ins] <- aln$ali
     
       ## Add seq to bottom of adjusted alignment
       naln.ali <- seqbind(ntmp, seq2tmp$ali[2,])
       rownames(naln.ali) <- c(rownames(aln$ali), id)
       naln <- list(id=c(aln$id, id), ali=naln.ali)
    }
-
-   # resno for PDB after realignment
-   resno <- rep(NA, ncol(naln$ali))
-   ca.inds <- atom.select(pdb, elety="CA") 
-   resno[!is.gap(naln$ali[nrow(naln$ali), ])] <- pdb$atom[ca.inds$atom, "resno"]
-  
-   # use list to get indices in batch 
-   if(!is.list(inds)) inds <- list(inds)
-   new.inds.all <- lapply(inds, function(i){
-      ninds <- which(!is.gap(naln$ali[1, ]))[i]
-      nresno <- resno[ninds]
-      if(any(is.na(nresno))) {
-         warning(paste("Gaps are found in finding equivalent positions in PDB.",
-                  "Ignore gaps...", sep=" "))
-      }
-      new.inds <- atom.select(pdb, resno=nresno[!is.na(nresno)], elety="CA")
-   } )
-   if(length(new.inds.all) == 1) new.inds.all <- new.inds.all[[1]]
-   return (new.inds.all)
+   
+   # original alignment positions (include gaps)
+   # and CA indices of PDB
+   ref <- matrix(NA, nrow=2, ncol=ncol(naln$ali))
+   rownames(ref) <- c("ali.pos", "ca.inds")
+   ref[1, !is.gap(naln$ali[1,])] <- 1:ncol(aln$ali)
+   ref[2, !is.gap(naln$ali[id,])] <- atom.select(pdb, "//////CA/", verbose=FALSE)$atom
+   
+   # remove X
+   naln$ali[1, naln$ali[1,]=="X"] <- "-"
+ 
+   if(!is.null(file)) 
+      write.fasta(naln, file=file)
+   out <- list(id=naln$id, ali=naln$ali, ref=ref)
+   
+   return (out)
 }

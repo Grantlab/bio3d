@@ -31,7 +31,7 @@ seq2aln(seq2add, aln, id = "seq", exepath = "", file = "aln.fa")
   A list with two components:
   \item{ali}{ an alignment character matrix with a row per sequence and
     a column per equivalent aminoacid/nucleotide. }
-  \item{ids}{ sequence names as identifers.}
+  \item{id}{ sequence names as identifers.}
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.

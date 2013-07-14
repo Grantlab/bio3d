@@ -4,7 +4,7 @@ function(pdb, inds=NULL, aa1=TRUE) {
   ## seq.pdb(pdb, b.inds)
 
   if(is.null(inds))
-    inds <- atom.select(pdb, "//////CA/")$atom
+    inds <- atom.select(pdb, "//////CA/", verbose=FALSE)$atom
 
   if(is.list(inds))
     inds <- inds$atom
