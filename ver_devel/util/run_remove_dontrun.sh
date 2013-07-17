@@ -11,7 +11,6 @@ for i in ../bio3d/man/*.Rd; do
       [ `basename $i` != "read.mol2.Rd" ] && \
       [ `basename $i` != "bio3d.package.Rd" ] && \
       [ `basename $i` != "binding.site.Rd" ] && \
-      [ `basename $i` != "!!!pdb2aln.Rd" ] && \
       [ `basename $i` != "plot.bio3d.Rd" ] && \
       echo $i
       # find and delete tags \dontrun{ and }
