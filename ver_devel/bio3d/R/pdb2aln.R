@@ -11,8 +11,6 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
    # reference of original alignment positions 
    aln$ali[1, is.gap(aln$ali[1,])] <- "X"
    
-   # renumber atoms for later atom selection 
-#   pdb <- convert.pdb(pdb, "pdb", renumber=TRUE, rm.h=FALSE, rm.wat=FALSE)
    aa1 <- seq.pdb(pdb)
    
    if(!is.null(aln.id)) findid <- grep(aln.id, aln$id)
@@ -20,6 +18,9 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
       # do sequence-profile alignment
       naln <- seq2aln(seq2add=aa1, aln=aln, id=id, 
             exepath=exepath, file=tempfile())
+      # check if the old alignment doesn't change
+      if(!identical(aln$ali, naln$ali[1:(nrow(naln$ali)-1), !is.gap(naln$ali[1,])])) 
+         warning("Alignment changed! Try aln.id with the closest sequence ID in the alignment")
    } else {
       # do pairwise sequence alignment     
       if(length(findid) > 1) {
