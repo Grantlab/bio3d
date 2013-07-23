@@ -6,8 +6,9 @@ function (aa, index = "KYTJ820101", window = 1) {
         stop("aa2index: 'window' must be numeric and positive")
     if (window >= length(aa)) 
         stop("aa2index: 'window' must be smaller than the sequence length")
-    if (!exists("aa.index")) 
-        data(aa.index)
+     # Use LazyData to import data - changed Jul 23, 2013
+#    if (!exists("aa.index")) 
+#        data(aa.index)
     if (is.numeric(index)) {
         if (index > length(names(aa.index))) {
             stop("aa2index: 'index' number does not exist")

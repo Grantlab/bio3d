@@ -49,7 +49,8 @@
     }
     
     if(use.mass) {
-      data(atom.index)
+      # Use LazyData to import data - changed Jul 23, 2013
+#      data(atom.index)
       if(!is.null(elety.custom)) {
         if(class(elety.custom)!="list")
           stop("com: elety.custom must be of class 'list'")
