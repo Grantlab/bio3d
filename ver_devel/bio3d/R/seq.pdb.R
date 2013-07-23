@@ -1,4 +1,4 @@
-`seq.pdb` <-
+`pdbseq` <-
 function(pdb, inds=NULL, aa1=TRUE) {
   ## b.inds <- atom.select(pdb, "//B////CA/")
   ## seq.pdb(pdb, b.inds)

@@ -45,7 +45,7 @@ and structural (\code{\link{pdbaln}}, \code{\link{rmsd}},
 In addition, various utility functions are provided to facilitate
 manipulation and analysis of biological sequence and structural data
 (e.g. \code{\link{get.pdb}}, \code{\link{get.seq}}, \code{\link{aa123}},
-\code{\link{aa321}}, \code{\link{seq.pdb}}, \code{\link{aln2html}}, \code{\link{atom.select}},
+\code{\link{aa321}}, \code{\link{pdbseq}}, \code{\link{aln2html}}, \code{\link{atom.select}},
 \code{\link{rot.lsq}},  \code{\link{fit.xyz}}, \code{\link{is.gap}}, \code{\link{gap.inspect}},
 \code{\link{orient.pdb}} and \code{\link{pairwise}}).
 }
@@ -89,7 +89,7 @@ plot(k)
 s <- aa321(pdb$seqres)
 
 ## Extract ATOM PDB sequence
-s2 <- seq.pdb(pdb)
+s2 <- pdbseq(pdb)
 
 ## write a FASTA format sequence file
 write.fasta(seqs=seqbind(s, s2), id=c("seqres","atom"), file="eg.fa")
@@ -115,14 +115,14 @@ plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor")
 
 
 ##-- Search for related structures in the PDB database
-blast <- blast.pdb( seq.pdb(pdb) )
+blast <- blast.pdb( pdbseq(pdb) )
 hits  <- plot.blast(blast)
 head(hits$hits)
 ## Download these with function "get.pdb()"
 #rawpdbs <- get.pdb( hits$pdb.id, "PDB_downloads")
 
-## Split by chain with function "split.pdb()"
-#split.pdb(rawpdbs, path="PDB_downloads/split_chain/")
+## Split by chain with function "pdbsplit()"
+#pdbsplit(rawpdbs, path="PDB_downloads/split_chain/")
 
 ## and then align with function "pdbaln()"
 #hitfiles <- paste0("PDB_downloads/split_chain/", hits$pdb.id, ".pdb")

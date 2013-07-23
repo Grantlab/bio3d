@@ -11,7 +11,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
    # reference of original alignment positions 
    aln$ali[1, is.gap(aln$ali[1,])] <- "X"
    
-   aa1 <- seq.pdb(pdb)
+   aa1 <- pdbseq(pdb)
    
    if(!is.null(aln.id)) findid <- grep(aln.id, aln$id)
    if(is.null(aln.id) || length(findid)==0) {

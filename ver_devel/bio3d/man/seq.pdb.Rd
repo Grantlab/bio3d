@@ -1,12 +1,12 @@
-\name{seq.pdb}
-\alias{seq.pdb}
+\name{pdbseq}
+\alias{pdbseq}
 \title{ Extract The Aminoacid Sequence From A PDB Object }
 \description{
   Return a vector of the one-letter IUPAC or three-letter PDB
   style aminoacid codes from a given PDB object.
 }
 \usage{
-seq.pdb(pdb, inds = NULL, aa1 = TRUE)
+pdbseq(pdb, inds = NULL, aa1 = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,7 +40,7 @@ seq.pdb(pdb, inds = NULL, aa1 = TRUE)
 \examples{
 \dontrun{
 pdb <- read.pdb( "5p21" )
-seq.pdb(pdb)
+pdbseq(pdb)
 }
 }
 \keyword{ utilities }

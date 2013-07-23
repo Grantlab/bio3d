@@ -110,7 +110,7 @@
     pdb.list[[2]] <- b
     
     ## Sequence alignment
-    s <- lapply(pdb.list, seq.pdb)
+    s <- lapply(pdb.list, pdbseq)
     s <- t(sapply(s, `[`, 1:max(sapply(s, length))))
     s[is.na(s)] <- "-"
     s <- seqaln(s, id = c("fixed", "mobile"), ...)

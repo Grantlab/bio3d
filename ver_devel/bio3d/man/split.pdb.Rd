@@ -1,12 +1,12 @@
-\name{split.pdb}
-\alias{split.pdb}
+\name{pdbsplit}
+\alias{pdbsplit}
 \title{ Split a PDB File Into Separate Files, One For Each Chain. }
 \description{
   Split a Protein Data Bank (PDB) coordinate file into new separate
   files with one file for each chain.
 }
 \usage{
-split.pdb(pdb.files, path = "split_chain/", multi=FALSE)
+pdbsplit(pdb.files, path = "split_chain/", multi=FALSE)
 }
 \arguments{
    \item{pdb.files}{ a character vector of PDB file names. }
@@ -43,7 +43,7 @@ split.pdb(pdb.files, path = "split_chain/", multi=FALSE)
   raw.files <- get.pdb(pdb.ids, path = outdir)
 
   ## Split PDBs by chain ID and multi-model records
-  all.files <- split.pdb(raw.files,
+  all.files <- pdbsplit(raw.files,
             path =paste(outdir, "/split_chain", sep=""), multi=TRUE )
   
   list.files(paste(outdir, "/split_chain", sep="")) 

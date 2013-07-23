@@ -75,7 +75,7 @@ blast.pdb(seq, database = "pdb")
 \seealso{ \code{\link{seqaln}} }
 \examples{
 pdb <- read.pdb("1bg2")
-blast <- blast.pdb( seq.pdb(pdb) )
+blast <- blast.pdb( pdbseq(pdb) )
 
 head(blast$hit.tbl)
 top.hits <- plot(blast)

@@ -81,7 +81,7 @@ function(files, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
   cat("\n\nExtracting sequences\n")
   
 #  s <- lapply(pdb.list, seq.pdb)
-  s <- mylapply(pdb.list, seq.pdb)
+  s <- mylapply(pdb.list, pdbseq)
   if(ncore > 1) readChildren()
 
   s <- t(sapply(s, `[`, 1:max(sapply(s, length))))

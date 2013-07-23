@@ -114,8 +114,8 @@ pdb$seqres
 aa321(pdb$seqres)
 
 ## Where is the P-loop motif in the ATOM sequence
-inds.seq <- motif.find("G....GKT", seq.pdb(pdb))
-seq.pdb(pdb)[inds.seq]
+inds.seq <- motif.find("G....GKT", pdbseq(pdb))
+pdbseq(pdb)[inds.seq]
 
 ## Where is it in the structure
 inds.pdb <- atom.select(pdb,resno=inds.seq, elety="CA")

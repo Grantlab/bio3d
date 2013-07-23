@@ -1,4 +1,4 @@
-`split.pdb` <-
+`pdbsplit` <-
 function(pdb.files, path="split_chain/", multi=FALSE) {
   out <- c()
   toread <- file.exists(pdb.files)

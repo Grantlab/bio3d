@@ -54,9 +54,9 @@ seq2aln(seq2add, aln, id = "seq", exepath = "", file = "aln.fa")
 \examples{
 
 \dontrun{
-aa.1 <- seq.pdb( read.pdb("1bg2") )
-aa.2 <- seq.pdb( read.pdb("3dc4") )
-aa.3 <- seq.pdb( read.pdb("1mkj") )
+aa.1 <- pdbseq( read.pdb("1bg2") )
+aa.2 <- pdbseq( read.pdb("3dc4") )
+aa.3 <- pdbseq( read.pdb("1mkj") )
 
 aln <- seqaln( seqbind(aa.1,aa.2) )
 
