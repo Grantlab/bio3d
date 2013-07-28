@@ -6,22 +6,24 @@
 }
 \usage{
 struct.aln(fixed, mobile, fixed.inds=NULL, mobile.inds=NULL, 
-           write.pdbs=TRUE, prefix=c("a.fit", "b.fit"), 
-           max.cycles=10, cutoff=0.5, ... )
+           write.pdbs=TRUE, outpath = "fitlsq/", prefix=c("fixed",
+           "mobile"), max.cycles=10, cutoff=0.5, ... )
 }
 \arguments{
   \item{fixed}{ an object of class \code{pdb} as obtained from
     function \code{read.pdb}. }
   \item{mobile}{ an object of class \code{pdb} as obtained from
     function \code{read.pdb}. }
-  \item{fixed.inds}{ atom and xyz coordinate indices obtained from \code{atom.select}
-    that selects the elements of \code{fixed} upon which the calculation
-    should be based.}
-  \item{mobile.inds}{ atom and xyz coordinate indices obtained from \code{atom.select}
-    that selects the elements of \code{mobile} upon which the calculation
-    should be based.}
+  \item{fixed.inds}{ atom and xyz coordinate indices obtained from
+    \code{atom.select} that selects the elements of \code{fixed} upon
+    which the calculation should be based.}
+  \item{mobile.inds}{ atom and xyz coordinate indices obtained from
+    \code{atom.select} that selects the elements of \code{mobile} upon
+    which the calculation should be based.}
   \item{write.pdbs}{ logical, if TRUE the aligned structures are written
     to PDB files.}
+  \item{outpath}{ character string specifing the output directory when
+    \code{write.pdbs} is TRUE. }
   \item{prefix}{ a character vector of length 2 containing the filename
     prefix in which the fitted structures should be written. }
   \item{max.cycles}{ maximum number of refinement cycles.}
@@ -33,12 +35,13 @@ struct.aln(fixed, mobile, fixed.inds=NULL, mobile.inds=NULL,
   This function performs a sequence alignment followed by a structural
   alignment of the two PDB entities. Cycles of refinement steps of the
   structural alignment are performed to improve the fit by removing
-  atoms with a high structural deviation. The primary purpose of the function
-  is to allow rapid structural alignment (and RMSD analysis) for protein
-  structures with unequal, but related sequences.
+  atoms with a high structural deviation. The primary purpose of the
+  function is to allow rapid structural alignment (and RMSD analysis)
+  for protein structures with unequal, but related sequences.
 
   The function reports the residues of \code{fixed} and \code{mobile}
-  included in the final structural alignment, as well as the related RMSD values.
+  included in the final structural alignment, as well as the related
+  RMSD values.
   
   This function makes use of the underlying functions \code{seqaln},
   \code{rot.lsq}, and \code{rmsd}.
@@ -47,6 +50,7 @@ struct.aln(fixed, mobile, fixed.inds=NULL, mobile.inds=NULL,
   Returns a list with the following components:
   \item{a.inds}{ atom and xyz indices of \code{fixed}. }
   \item{b.inds}{ atom and xyz indices of \code{mobile}. }
+  \item{xyz}{ fitted xyz coordinates of \code{mobile}. }
   \item{rmsd}{ a numeric vector of RMSD values after each cycle of
     refinement. }
 }
