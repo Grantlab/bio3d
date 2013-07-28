@@ -35,9 +35,9 @@ pdb <- read.pdb("1hel")
 modes <- nma(pdb)
 
 ## Fluctuations
-f <- fluct.nma(modes, temp=300)
+f <- fluct.nma(modes)
 
 ## Fluctuations of first non-trivial mode
-f <- fluct.nma(modes, temp=300, mode.inds=7)
+f <- fluct.nma(modes, mode.inds=7)
 }
 \keyword{ analysis }

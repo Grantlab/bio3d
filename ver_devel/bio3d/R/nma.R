@@ -33,7 +33,7 @@
       if (ff=="anm")  {
         if(normalize){
           warning("nma: set 'normalize=TRUE' when using force field 'anm'")
-          ##normalize=FALSE
+          ##normalize <- FALSE
         }
         "ff.anm" <- function(r, rc=cutoff, g=gamma) {
           if(r>rc)
@@ -46,7 +46,7 @@
       
       ## Hinsen "C-alpha"-ff
       else if (ff=="calpha")  {
-        normalize=TRUE
+        normalize <- TRUE
         "ff.calpha" <- function(r) {
           a <- 1e-1; b <- 1; c <- 1e6;
           if( r < 4.0) {
@@ -62,7 +62,7 @@
       
       ## Hinsen "deformation"-ff - deprecated
       else if (ff=="deformation")  {
-        normalize=TRUE
+        normalize <- TRUE
         "ff.deformation" <- function(r, c=1) {
           range <- 7;  c <- 1;
           k <- c * exp(-((r**2-0.01) / (range**2)))
