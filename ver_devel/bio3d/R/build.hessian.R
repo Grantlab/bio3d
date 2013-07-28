@@ -1,21 +1,15 @@
-
-
-"build.hessian" <- function(xyz, pfc.fun, normalize=TRUE)  {
+"build.hessian" <-
+  function(xyz, pfc.fun, normalize=TRUE)  {
 
     if (!is.function(pfc.fun))
-        stop("build.hessian: 'fc.fun' must be a function")
-
-    "normalize.vector" <- function(v) {
-        l <- sqrt(v[1]**2 + v[2]**2 + v[3]**2)
-        return( v / l)
-    }
-
+      stop("build.hessian: 'pfc.fun' must be a function")
+    
     ## Coordinates
     x <- xyz[ seq(1, length(xyz), by=3) ]
     y <- xyz[ seq(2, length(xyz), by=3) ]
     z <- xyz[ seq(3, length(xyz), by=3) ]
     natoms <- length(x)
-
+    
     ## Distance matrix and pair force constants (ff dependent)
     dist.mat <- dm.xyz(xyz, mask.lower=F)
     pfc <- matrix(mapply(pfc.fun, dist.mat), ncol=natoms)
@@ -48,7 +42,7 @@
                 l <- 0
                 v <- c(0,0,0)
             }
-
+            
             H[m  , n  ] <- v[1] * v[1] * l
             H[m  , n+1] <- v[1] * v[2] * l
             H[m  , n+2] <- v[1] * v[3] * l
@@ -60,6 +54,9 @@
             H[m+2, n  ] <- v[3] * v[1] * l
             H[m+2, n+1] <- v[3] * v[2] * l
             H[m+2, n+2] <- v[3] * v[3] * l
+
+            ## Same as:
+            ##H[m:(m+2), n:(n+2)] <- (v%o%v) * l
         }
     }
 

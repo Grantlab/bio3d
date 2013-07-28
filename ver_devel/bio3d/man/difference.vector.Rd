@@ -5,13 +5,15 @@
   Define a difference vector between two conformational states.
 }
 \usage{
-difference.vector(xyz, xyz.inds=NULL)
+difference.vector(xyz, xyz.inds=NULL, normalize=FALSE)
 }
 \arguments{
   \item{xyz}{ numeric matrix of Cartesian coordinates with a row per
       structure. } 
   \item{xyz.inds}{ a vector of indices that selects the elements of columns upon
-          which the calculation should be based. }
+    which the calculation should be based. }
+  \item{normalize}{ logical, if TRUE the difference vector is
+    normalized. }
 }
 \details{
   Squared overlap (or dot product) is used to measure the similiarity 
@@ -20,34 +22,31 @@ difference.vector(xyz, xyz.inds=NULL)
   or normal modes analysis. 
 }
 \value{
-  Returns a numeric vector (normalized) of the structural difference.
+  Returns a numeric vector of the structural difference (normalized if desired).
 }
 \references{
-   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
-   }
+  Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
+}
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{overlap}} }
 \examples{
-     data(kinesin)
-     attach(kinesin, warn.conflicts=FALSE)
+data(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
      
-     # Ignore gap containing positions
-     gaps.res <- gap.inspect(pdbs$ali)
-     gaps.pos <- gap.inspect(pdbs$xyz)
+# Ignore gap containing positions
+gaps.pos <- gap.inspect(pdbs$xyz)
      
-     #-- Do PCA
-     pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
+#-- Do PCA
+pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
      
-     # Plot results (conformer plots & scree plot)
-     plot(pc.xray)
+# Define a difference vector between two structural states
+diff.inds <- c(grep("d1v8ja", pdbs$id), 
+               grep("d1goja", pdbs$id))
 
-    # Define a difference vector between two structural states
-    diff.inds <- c(grep("d1v8ja", pdbs$id), 
-                   grep("d1goja", pdbs$id))
+## Calculate the difference vector
+dv <- difference.vector( xyz[diff.inds,], gaps.pos$f.inds )
 
-    dv <- difference.vector( xyz[diff.inds,], gaps.pos$f.inds )
-
-    # Calculate the squared overlap between the PCs and the difference vector  
-    o <- overlap(pc.xray, dv)
+# Calculate the squared overlap between the PCs and the difference vector  
+o <- overlap(pc.xray, dv)
 }
 \keyword{ utilities }
