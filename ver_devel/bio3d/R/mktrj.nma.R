@@ -6,9 +6,11 @@
                         ... ) {      # args for write.pdb
 
   ## make a trjactory of atomic displacments along a given mode
-  if(class(nma)!="nma") {
-    stop("input should be a list object of class 'nma' (from 'nma')")
-  }
+  if(!"nma" %in% class(nma))
+    stop("mktrj.nma: must supply 'nma' object, i.e. from 'nma'")
+
+  if(is.null(file))
+    file <- paste("mode_", mode, ".pdb", sep="")
 
   nstep <- c(seq(step, to=mag, by=step))
   zcoor <- cbind(1) %*% nstep

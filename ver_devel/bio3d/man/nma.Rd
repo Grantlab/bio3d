@@ -1,6 +1,7 @@
 \name{nma}
 \alias{nma}
 \alias{build.hessian}
+\alias{print.nma}
 \title{ Normal Modes Analysis }
 \description{
   Perform elastic network model (ENM) C-alpha normal modes calculation
@@ -11,6 +12,7 @@ nma(pdb, inds = NULL, ff = 'calpha', pfc.fun = NULL,
     normalize = TRUE, mass = TRUE, temp = 300.0, compiler = TRUE,
     cutoff = 15, gamma = 1)
 build.hessian(xyz, pfc.fun, normalize=TRUE)
+\method{print}{nma}(x, nmodes=6, \dots)
 }
 \arguments{
   \item{pdb}{ an object of class \code{pdb} as obtained from
@@ -20,7 +22,7 @@ build.hessian(xyz, pfc.fun, normalize=TRUE)
     should be based.}
   \item{ff}{ character string specifying the force field to use:
     \sQuote{calpha} or \sQuote{anm}. }
-  \item{pfc.fun}{ customized energy function for the pair force constants. }
+  \item{pfc.fun}{ customized pair force constant function. }
   \item{normalize}{ logical, if TRUE distance vectors will be normalized. }
   \item{mass}{ logical, if TRUE the calculation will be mass
     weighted. }
@@ -33,6 +35,9 @@ build.hessian(xyz, pfc.fun, normalize=TRUE)
   \item{gamma}{ numerical, global scaling factor  (applies to
     \sQuote{anm}-FF only). }
   \item{xyz}{ a numeric vector of Cartesian coordinates. }
+  \item{x}{ an \code{nma} object obtained from \code{\link{nma}}. }
+  \item{nmodes}{ numeric, number of modes to be printed. }
+  \item{...}{ additional arguments to \sQuote{print}. }
 }
 \details{
   This function calculates the normal modes of a C-alpha model of a
@@ -50,7 +55,7 @@ build.hessian(xyz, pfc.fun, normalize=TRUE)
   simplified spring force constant based on the pair-wise
   distance.
 
-  By default \sQuote{nma()} will diagonalize the mass-weighted Hessian
+  By default \code{nma()} will diagonalize the mass-weighted Hessian
   matrix. The resulting mode vectors are moreover scaled by the thermal
   fluctuation amplitudes.
 
@@ -67,10 +72,18 @@ build.hessian(xyz, pfc.fun, normalize=TRUE)
     frequencies corresponding to each mode (for \code{mass=TRUE}). }
   \item{force.constants}{ numeric vector containing the force constants
     corresponding to each mode (for \code{mass=FALSE)}). }
+  \item{fluctuations}{ numeric vector of atomic fluctuations . }
   \item{U}{ numeric vector containing the raw eigenvectors. }
   \item{L}{ numeric vector containing the raw eigenvalues. }
   \item{xyz}{ numeric vector of the cartesian coordinates in which the
     calculation was performed. }
+  \item{mass}{ numeric vector containing the residue masses used for the 
+    mass-weighting. }
+  \item{temp}{ numerical, temperature at which the atomic vectors are
+    calculated. }
+  \item{triv.modes}{ number of trivial modes. }
+  \item{natoms}{ number of C-alpha atoms. }
+  \item{call}{ the matched call. }
 }
 \references{
   Hinsen, K. et al. (2000) \emph{Chemical Physics} \bold{261}, 25--37.
@@ -78,13 +91,20 @@ build.hessian(xyz, pfc.fun, normalize=TRUE)
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Lars Skjaerven }
-\seealso{ \code{\link{read.pdb}}, \code{\link{mktrj.nma}} }
+\seealso{ \code{\link{fluct.nma}}, \code{\link{mktrj.nma}},
+  \code{\link{dccm.nma}}, \code{\link{overlap}}  }
 \examples{
 ## Fetch stucture
 pdb <- read.pdb("1hel")
 
-## Calculate (vibrational) normal modes
+## Calculate normal modes
 modes <- nma(pdb)
+
+## Print modes
+print(modes)
+
+## Plot modes
+plot(modes)
 
 ## Visualize modes
 m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
@@ -100,6 +120,7 @@ modes <- nma(pdb, ff="anm", mass=FALSE, temp=NULL, normalize=FALSE)
     return(1 / (r**2))
 }
 
+## Modes with a new funny energy function
 modes <- nma(pdb, pfc.fun=my.ff)
 
 }
