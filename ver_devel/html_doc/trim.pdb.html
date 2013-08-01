@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>trim.pdb. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Trim a PDB Object To A Subset of Atoms. </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>trim.pdb(pdb, inds = NULL)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>pdb</dt>
+      <dd> a PDB structure object obtained from
+    <code><a href='read.pdb.html'>read.pdb</a></code>. </dd>
+      <dt>inds</dt>
+      <dd> a list object of ATOM and XYZ indices as obtained from
+    <code><a href='atom.select.html'>atom.select</a></code>. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Produce a new smaller PDB object, containing a subset of atoms, from a given larger PDB object.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This is a basic utility function for selecting a subset of a PDB object.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list of class <code>"pdb"</code> with the following components:
+  atom a character matrix containing all atomic coordinate ATOM data, 
+  with a row per ATOM and a column per record type.  See below for details
+  of the record type naming convention (useful for accessing columns). 
+  het  a character matrix containing atomic coordinate records
+    for atoms within &#147;non-standard&#148; HET groups (see <code>atom</code>). 
+  helix  &#145;start&#146;, &#145;end&#146; and &#145;length&#146; of H
+    type sse, where start and end are residue numbers &#147;resno&#148;. 
+  sheet  &#145;start&#146;, &#145;end&#146; and &#145;length&#146; of E
+    type sse, where start and end are residue numbers &#147;resno&#148;. 
+  seqres  sequence from SEQRES field. 
+  xyz  a numeric vector of ATOM coordinate data. 
+  calpha  logical vector with length equal to <code>nrow(atom)</code>
+    with TRUE values indicating a C-alpha &#147;elety&#148;.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+      <p>For a description of PDB format (version3.3) see:
+  <a href = 'http://www.wwpdb.org/documentation/format33/v3.3.html'>http://www.wwpdb.org/documentation/format33/v3.3.html</a>.
+.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>For both <code>atom</code> and <code>het</code> list components the column names can be
+  used as a convenient means of data access, namely:
+  Atom serial number &#147;eleno&#148; ,
+  Atom type &#147;elety&#148;,
+  Alternate location indicator &#147;alt&#148;,
+  Residue name &#147;resid&#148;,
+  Chain identifier &#147;chain&#148;,
+  Residue sequence number &#147;resno&#148;,
+  Code for insertion of residues &#147;insert&#148;,
+  Orthogonal coordinates &#147;x&#148;,
+  Orthogonal coordinates &#147;y&#148;,
+  Orthogonal coordinates &#147;z&#148;,
+  Occupancy &#147;o&#148;, and
+  Temperature factor &#147;b&#148;.
+  See examples for further details.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'> pdb <- read.pdb( "5p21" )
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    ONCOGENE PROTEIN                        30-APR-90   5P21               
+</div>
+<div class='input'> npdb <- trim.pdb(pdb, inds=atom.select(pdb, "back"))
+</div>
+<div class='output'>
+Build selection from input string
+
+
+ Using selection 'string' keyword shortcut: back = //////N,CA,C,O/ 
+
+      segid  chain  resno  resid  eleno  elety     
+Stest ""     ""     ""     ""     ""     "N,CA,C,O"
+Natom "1323" "1323" "1323" "1323" "1323" "664"     
+ *  Selected a total of: 664 intersecting atoms  *
+</div>
+<div class='input'> write.pdb(npdb, file="backboneonly.pdb")
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>trim.pdb</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='atom.select.html'>atom.select</a></code>, <code><a href='write.pdb.html'>write.pdb</a></code>,
+  <code><a href='read.dcd.html'>read.dcd</a></code>, <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>,
+  <code><a href='read.fasta.html'>read.fasta</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=trim.pdb'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

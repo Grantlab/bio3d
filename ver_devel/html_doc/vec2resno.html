@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>vec2resno. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Replicate Per-residue Vector Values </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>vec2resno(vec, resno)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>vec</dt>
+      <dd> a vector of values to be replicated.</dd>
+      <dt>resno</dt>
+      <dd> a reference vector or a PDB structure object, obtained
+    from <code><a href='read.pdb.html'>read.pdb</a></code>, upon which replication is based. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Replicate values in one vector based on consecutive entries in a second
+  vector. Useful for adding per-residue data to all-atom PDB files.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This function can aid in mapping data to PDB structure files. For
+  example, residue conservation per position (or any other one value per
+  residue data) can be replicated to fit the B-factor field of an all
+  atom PDB file which can then be rendered according to this field in a
+  molecular viewer.</p>
+  
+      <p>A basic check is made to ensure that the number of consecutively
+  unique entries in the reference vector equals the length of the vector
+  to be replicated.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a vector of replicated values.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>vec2resno(c("a","b"), c(1,1,1,1,2,2))
+</div>
+<div class='output'>[1] "a" "a" "a" "a" "b" "b"
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>vec2resno</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='read.pdb.html'>read.pdb</a></code>, <code><a href='atom.select.html'>atom.select</a></code>,
+  <code><a href='write.pdb.html'>write.pdb</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=vec2resno'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

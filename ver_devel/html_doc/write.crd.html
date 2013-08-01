@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>write.crd. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Write CRD File </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>write.crd(pdb = NULL, xyz = pdb$xyz, resno = NULL, resid = NULL, eleno = NULL, elety = NULL, 
+  segid = NULL, resno2 = NULL, b = NULL, verbose = FALSE, file = "R.crd")</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>pdb</dt>
+      <dd> a structure object obtained from <code><a href='read.pdb.html'>read.pdb</a></code> or
+    <code><a href='read.crd.html'>read.crd</a></code>. </dd>
+      <dt>xyz</dt>
+      <dd> Cartesian coordinates as a vector or 3xN matrix. </dd>
+      <dt>resno</dt>
+      <dd> vector of residue numbers of length equal to
+    length(xyz)/3. </dd>
+      <dt>resid</dt>
+      <dd> vector of residue types/ids of length equal to
+    length(xyz)/3. </dd>
+      <dt>eleno</dt>
+      <dd> vector of element/atom numbers of length equal to
+    length(xyz)/3. </dd>
+      <dt>elety</dt>
+      <dd> vector of element/atom types of length equal to
+    length(xyz)/3. </dd>
+      <dt>segid</dt>
+      <dd> vector of segment identifiers with length equal to
+    length(xyz)/3. </dd>
+      <dt>resno2</dt>
+      <dd> vector of alternate residue numbers of length equal to
+    length(xyz)/3. </dd>
+      <dt>b</dt>
+      <dd> vector of weighting factors of length equal to length(xyz)/3. </dd>
+      <dt>verbose</dt>
+      <dd> logical, if TRUE progress details are printed. </dd>
+      <dt>file</dt>
+      <dd> the output file name. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Write a CHARMM CARD (CRD) coordinate file.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>Only the <code>xyz</code> argument is strictly required.  Other arguments
+  assume a default poly-ALA C-alpha structure with a blank segid and
+  B-factors equal to 0.00.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Called for its effect.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+      <p>For a description of CHARMM CARD (CRD) format see:
+  <a href = 'http://www.charmmtutorial.org/index.php/CHARMM:The_Basics'>http://www.charmmtutorial.org/index.php/CHARMM:The_Basics</a>.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>Check that <code>resno</code> and <code>eleno</code> do not exceed &#147;9999&#148;.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'># Read a PDB file
+pdb <- read.pdb( "1bg2" )
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
+</div>
+<div class='input'>pdb.summary(pdb)
+</div>
+<div class='output'>..| segid |..
+total #: 1 
+values : NA 
+
+
+..| chain |..
+total protein #: 1 
+values : A 
+
+
+..| resno |..
+total protein #: 323 
+in segments: 
+
+  start end length
+1     3 325    323
+
+
+..| resid |..
+total #: 19 ( diff types from 323 )
+values : 
+
+ALA ARG ASN ASP CYS GLN GLU GLY HIS ILE LEU LYS MET PHE PRO SER THR TYR VAL 
+ 15  14  19  20   8  11  24  20   7  22  22  25   7  11   8  31  20  14  25 
+
+
+..| eleno |..
+total # : 2527 
+in segments: 
+
+  start  end length
+1     1 2527   2527
+
+
+..| elety |..
+total # : 31 ( diff types from 2527 )
+values : 
+
+  C  CA  CB  CD CD1 CD2  CE CE1 CE2  CG CG1 CG2  CZ   N ND1 ND2  NE NE2 NH1 NH2 
+323 323 303  81  69  54  32  32  25 181  47  67  38 323   7  19  13  18  13  13 
+ NZ   O OD1 OD2 OE1 OE2  OG OG1  OH  SD  SG 
+ 25 323  39  20  35  24  31  20  14   7   8 
+
+
+..| water |..
+total # : 0 
+
+
+..| summary |..
+atom     #: 2527 
+xyz      #: 7581 
+calpha   #: 323 
+sequence #: DLAECNIKVMCRFRPLNESEVNRGDKYIAKFQGEDTVVIASKPYAFDRVFQSSTSQEQVYNDCAKKIVKDVLEGYNGTIFAYGQTSSGKTHTMEGKLHDPEGMGIIPRIVQDIFNYIYSMDENLEFHIKVSYFEIYLDKIRDLLDVSKTNLSVHEDKNRVPYVKGCTERFVCSPDEVMDTIDEGKSNRHVAVTNMNEHSSRSHSIFLINVKQENTQTEQKLSGKLYLVDLAGSEKVSKTGAEGAVLDEAKNINKSLSALGNVISALAEGSTYVPYRDSKMTRILQDSLGGNCRTTIVICCSPSSYNESETKSTLLFGQRAKTI 
+</div>
+<div class='input'># Convert to CHARMM format
+new <- convert.pdb(pdb, type="charmm")
+</div>
+<div class='output'> Converting to charmm format 
+</div>
+<div class='input'>pdb.summary(new)
+</div>
+<div class='output'>..| segid |..
+total #: 1 
+values : NA 
+
+
+..| chain |..
+total protein #: 1 
+values : NA 
+
+
+..| resno |..
+total protein #: 323 
+in segments: 
+
+  start end length
+1     3 325    323
+
+
+..| resid |..
+total #: 19 ( diff types from 323 )
+values : 
+
+ALA ARG ASN ASP CYS GLN GLU GLY HSD ILE LEU LYS MET PHE PRO SER THR TYR VAL 
+ 15  14  19  20   8  11  24  20   7  22  22  25   7  11   8  31  20  14  25 
+
+
+..| eleno |..
+total # : 2527 
+in segments: 
+
+  start  end length
+1     1 2527   2527
+
+
+..| elety |..
+total # : 31 ( diff types from 2527 )
+values : 
+
+  C  CA  CB  CD CD1 CD2  CE CE1 CE2  CG CG1 CG2  CZ   N ND1 ND2  NE NE2 NH1 NH2 
+323 323 303 103  47  54  32  32  25 181  47  67  38 323   7  19  13  18  13  13 
+ NZ   O OD1 OD2 OE1 OE2  OG OG1  OH  SD  SG 
+ 25 323  39  20  35  24  31  20  14   7   8 
+
+
+..| water |..
+total # : 0 
+
+
+..| summary |..
+atom     #: 2527 
+xyz      #: 7581 
+calpha   #: 323 
+sequence #: DLAECNIKVMCRFRPLNESEVNRGDKYIAKFQGEDTVVIASKPYAFDRVFQSSTSQEQVYNDCAKKIVKDVLEGYNGTIFAYGQTSSGKTHTMEGKLHDPEGMGIIPRIVQDIFNYIYSMDENLEFHIKVSYFEIYLDKIRDLLDVSKTNLSVHEDKNRVPYVKGCTERFVCSPDEVMDTIDEGKSNRHVAVTNMNEHSSRSHSIFLINVKQENTQTEQKLSGKLYLVDLAGSEKVSKTGAEGAVLDEAKNINKSLSALGNVISALAEGSTYVPYRDSKMTRILQDSLGGNCRTTIVICCSPSSYNESETKSTLLFGQRAKTI 
+</div>
+<div class='input'># Write a CRD file
+write.crd(new, file="4charmm.crd")
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>write.crd</li>
+    </ul>
+    <ul>
+      <li> IO </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='read.crd.html'>read.crd</a></code>, <code><a href='read.pdb.html'>read.pdb</a></code>,
+  <code><a href='atom.select.html'>atom.select</a></code>, <code><a href='write.pdb.html'>write.pdb</a></code>,
+  <code><a href='read.dcd.html'>read.dcd</a></code>, <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>,
+  <code><a href='read.fasta.html'>read.fasta</a></code>
+
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=write.crd'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

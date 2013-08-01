@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>overlap. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Overlap analysis </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>overlap(modes, dv, nmodes = 20)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>modes</dt>
+      <dd> an object of class <code>"pca"</code> or <code>"nma"</code> as obtained from
+    function <code>pca.xyz</code> or <code>nma</code>. Alternatively a 3NxM matrix
+    of eigenvectors can be provided. </dd>
+      <dt>dv</dt>
+      <dd> a displacement vector of length 3N. </dd>
+      <dt>nmodes</dt>
+      <dd> the number of modes in which the calculation should be based. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Calculate the Squared Overlap between sets of vectors.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>Squared overlap (or dot product) is used to measure the similiarity 
+  between a displacement vector (e.g. a difference vector between two 
+  conformational states) and mode vectors obtained from principal component 
+  or normal modes analysis.</p>
+  
+      <p>By definition the cumulative sum of the overlap values equals to one.</p>
+  
+      <p>Structure <code>modes$U</code> (or alternatively, the 3NxM matrix of eigenvectors)
+  should be of same length (3N) as <code>dv</code>.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list with the following components:
+  overlap a numeric vector of the squared dot products (overlap values)
+    between the (normalized) vector (<code>dv</code>) and each mode in <code>mode</code>. 
+  overlap.cum a numeric vector of the cumulative squared overlap values.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Skjaerven, L. et al. (2011) <em>Proteins</em> <b>79</b>, 232--243.
+  Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>data(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
+     
+# Ignore gap containing positions
+##gaps.res <- gap.inspect(pdbs$ali)
+gaps.pos <- gap.inspect(pdbs$xyz)
+     
+#-- Do PCA
+pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
+    
+# Define a difference vector between two structural states
+diff.inds <- c(grep("d1v8ja", pdbs$id), 
+               grep("d1goja", pdbs$id))
+
+dv <- difference.vector( xyz[diff.inds,], gaps.pos$f.inds )
+
+# Calculate the squared overlap between the PCs and the difference vector  
+o <- overlap(pc.xray, dv)
+o <- overlap(pc.xray$U, dv)
+
+
+## Calculate overlap from NMA
+pdb.a <- read.pdb("1cmk")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    TRANSFERASE/TRANSFERASE INHIBITOR       18-NOV-93   1CMK               
+   PDB has ALT records, taking A only, rm.alt=TRUE
+</div>
+<div class='input'>pdb.b <- read.pdb("3dnd")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    TRANSFERASE/TRANSFERASE INHIBITOR       02-JUL-08   3DND               
+   PDB has ALT records, taking A only, rm.alt=TRUE
+</div>
+<div class='input'>
+## Fetch CA coordinates
+sele.a <- atom.select(pdb.a, "//E/15:350///CA")
+</div>
+<div class='output'>
+Build selection from input string
+
+      segid  chain  resno    resid  eleno  elety
+Stest ""     "E"    "15:350" ""     ""     "CA" 
+Natom "3009" "2853" "2810"   "3009" "3009" "368"
+ *  Selected a total of: 334 intersecting atoms  *
+</div>
+<div class='input'>sele.b <- atom.select(pdb.b, "//A/1:350///CA")
+</div>
+<div class='output'>
+Build selection from input string
+
+      segid  chain  resno   resid  eleno  elety
+Stest ""     "A"    "1:350" ""     ""     "CA" 
+Natom "2916" "2759" "2916"  "2916" "2916" "354"
+ *  Selected a total of: 334 intersecting atoms  *
+</div>
+<div class='input'>
+xyz <- rbind(pdb.a$xyz[sele.a$xyz],
+             pdb.b$xyz[sele.b$xyz])
+
+## Superimpose
+xyz[2,] <- fit.xyz(xyz[1,], xyz[2,])
+</div>
+<strong class='warning'>Warning message:
+No fitting indices provided, using the 334 non NA positions
+</strong>
+<div class='input'>
+## The difference between the two conformations
+dv <- difference.vector( xyz )
+
+## Calculate normal modes
+modes <- nma(pdb.a, inds=sele.a)
+</div>
+<div class='output'> Building Hessian...		Done in 5.759 seconds.
+ Diagonalizing Hessian...	Done in 2.033 seconds.
+</div>
+<div class='input'>
+# Calculate the squared overlap between the normal modes 
+# and the difference vector  
+o <- overlap(modes, dv)
+
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>overlap</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='rmsip.html'>rmsip</a></code>, <code><a href='pca.xyz.html'>pca.xyz</a></code>, <code><a href='nma.html'>nma</a></code>,
+  <code><a href='difference.vector.html'>difference.vector</a></code> 
+    
+    <h2>Author</h2>
+     Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=overlap'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

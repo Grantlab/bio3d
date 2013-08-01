@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>plot.bio3d. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Plots with marginal SSE annotation </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>plot(x, y = NULL, type = "h", main = "", sub = "", xlim = NULL, ylim = NULL, ylim2zero = TRUE, 
+  xlab = NULL, ylab = NULL, axes = TRUE, ann = par("ann"), col = par("col"), sse = NULL, 
+      top = TRUE, bot = TRUE, helix.col = "gray20", sheet.col = "gray80", sse.border = FALSE, 
+      ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>x</dt>
+      <dd> the x coordinates for the plot.  Any reasonable way of
+    defining the coordinates is acceptable.  See the function
+    &#145;xy.coords&#146; for details. </dd>
+      <dt>y</dt>
+      <dd> the y coordinates for the plot, see above. </dd>
+      <dt>type</dt>
+      <dd> one-character string giving the type of plot desired.  The
+    following values are possible, (for details, see &#145;plot&#146;): &#145;p&#146;
+    for points, &#145;l&#146; for lines, &#145;o&#146; for overplotted points and
+    lines, &#145;b&#146;, &#145;c&#146;) for points joined by lines,
+    &#145;s&#146; and &#145;S&#146; for stair steps and &#145;h&#146; for
+    histogram-like vertical lines.  Finally, &#145;n&#146; does not produce
+    any points or lines. </dd>
+      <dt>main</dt>
+      <dd> a main title for the plot, see also &#145;title&#146;. </dd>
+      <dt>sub</dt>
+      <dd> a sub-title for the plot. </dd>
+      <dt>xlim</dt>
+      <dd> the x limits (x1,x2) of the plot.  Note that x1 > x2 is
+          allowed and leads to a reversed axis. </dd>
+      <dt>ylim</dt>
+      <dd> the y limits of the plot. </dd>
+      <dt>ylim2zero</dt>
+      <dd> logical, if TRUE the y-limits are forced to start at zero. </dd>
+      <dt>xlab</dt>
+      <dd> a label for the x axis, defaults to a description of &#145;x&#146;. </dd>
+      <dt>ylab</dt>
+      <dd> a label for the y axis, defaults to a description of &#145;y&#146;. </dd>
+      <dt>axes</dt>
+      <dd> a logical value indicating whether both axes should be drawn
+    on the plot.  Use graphical parameter &#145;xaxt&#146; or
+    &#145;yaxt&#146; to suppress just one of the axes. </dd>
+      <dt>ann</dt>
+      <dd> a logical value indicating whether the default annotation
+    (title and x and y axis labels) should appear on the plot. </dd>
+      <dt>col</dt>
+      <dd> The colors for lines and points.  Multiple colours can be
+    specified so that each point is given its own color.  If there are
+    fewer colors than points they are recycled in the standard fashion.
+    Lines are plotted in the first colour specified. </dd>
+      <dt>sse</dt>
+      <dd> secondary structure object as returned from
+    <code><a href='dssp.html'>dssp</a></code> or <code><a href='stride.html'>stride</a></code>. </dd>
+      <dt>top</dt>
+      <dd> logical, if TRUE rectangles for each sse are drawn towards
+    the top of the plotting region.  </dd>
+      <dt>bot</dt>
+      <dd> logical, if TRUE rectangles for each sse are drawn towards
+    the bottom of the plotting region. </dd>
+      <dt>helix.col</dt>
+      <dd> The colors for rectangles representing alpha helices. </dd>
+      <dt>sheet.col</dt>
+      <dd> The colors for rectangles representing beta strands. </dd>
+      <dt>sse.border</dt>
+      <dd> The border color for all sse rectangles. </dd>
+      <dt>...</dt>
+      <dd> other graphical parameters. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Draw a standard scatter plot with optional secondary structure in the
+  marginal regions.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>See the functions &#145;plot.default&#146;, <code><a href='dssp.html'>dssp</a></code> and <code><a href='stride.html'>stride</a></code> 
+  for further details.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Called for its effect.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>Be sure to check the correspondence of your &#145;sse&#146; object with the
+  &#145;x&#146; values being plotted as no internal checks are performed.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>
+## Plot of B-factor values along with secondary structure from PDB
+pdb <- read.pdb( "1bg2" )
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
+</div>
+<div class='input'>plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=pdb, ylab="B-factor")
+</div>
+<p><img src='plot.bio3d-4.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+## <strong>Not run</strong>: 
+# ## Calculate secondary structure
+# #sse <- stride(pdb, resno=FALSE)
+# sse <- dssp(pdb, resno=FALSE)
+# 
+# ## Plot of B-factor values along with calculated secondary structure
+# plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor", typ="l",
+# col="blue", lwd=2)
+# ## <strong>End(Not run)</strong>
+
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>plot.bio3d</li>
+    </ul>
+    <ul>
+      <li> hplot </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='http://www.inside-r.org/r-doc/graphics/plot.default'>plot.default</a></code>, <code><a href='dssp.html'>dssp</a></code>, <code><a href='stride.html'>stride</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=plot.bio3d'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

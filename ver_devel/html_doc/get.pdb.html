@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>get.pdb. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Download PDB Coordinate Files </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>get.pdb(ids, path = "./", URLonly = FALSE, overwrite = FALSE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>ids</dt>
+      <dd> A character vector of one or more 4-letter PDB
+    codes/identifiers of the files to be downloaded. </dd>
+      <dt>path</dt>
+      <dd> The destination path/directory where files are to be
+    written. </dd>
+      <dt>URLonly</dt>
+      <dd> logical, if TRUE a character vector containing the URL
+    path to the online file is returned and files are not downloaded. If
+    FALSE the files are downloaded. </dd>
+      <dt>overwrite</dt>
+      <dd> logical, if FALSE the file will not be downloaded if
+    it alread exist. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Downloads PDB coordinate files from the RCSB Protein Data Bank.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This is a basic function to automate file download from the PDB.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list of successfully downloaded files. Or optionally if URLonly
+  is TRUE a list of URLs for said files.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+      <p>For a description of PDB format (version3.3) see:
+  <a href = 'http://www.wwpdb.org/documentation/format33/v3.3.html'>http://www.wwpdb.org/documentation/format33/v3.3.html</a>.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>## PDB file paths
+get.pdb( c("1poo", "1moo"), URLonly=TRUE )
+</div>
+<div class='output'>[1] "http://www.rcsb.org/pdb/files/1poo.pdb"
+[2] "http://www.rcsb.org/pdb/files/1moo.pdb"
+</div>
+<div class='input'>
+## These URLs can be used by 'read.pdb'
+pdb <- read.pdb( get.pdb("5p21", URL=TRUE) )
+</div>
+<div class='output'>  HEADER    ONCOGENE PROTEIN                        30-APR-90   5P21               
+</div>
+<div class='input'>pdb.summary(pdb)
+</div>
+<div class='output'>..| segid |..
+total #: 1 
+values : NA 
+
+
+..| chain |..
+total protein #: 1 
+values : A 
+
+
+..| resno |..
+total protein #: 166 
+in segments: 
+
+  start end length
+1     1 166    166
+
+
+..| resid |..
+total #: 19 ( diff types from 166 )
+values : 
+
+ALA ARG ASN ASP CYS GLN GLU GLY HIS ILE LEU LYS MET PHE PRO SER THR TYR VAL 
+ 11  11   4  14   3  11  13  11   3  11  11   8   4   5   3   8  11   9  15 
+
+
+..| eleno |..
+total # : 1323 
+in segments: 
+
+  start  end length
+1     1 1323   1323
+
+
+..| elety |..
+total # : 32 ( diff types from 1323 )
+values : 
+
+  C  CA  CB  CD CD1 CD2  CE CE1 CE2  CG CG1 CG2  CZ   N ND1 ND2  NE NE2 NH1 NH2 
+166 166 155  46  36  28  12  17  14  96  26  37  25 166   3   4  11  14  11  11 
+ NZ   O OD1 OD2 OE1 OE2  OG OG1  OH OXT  SD  SG 
+  8 166  18  14  24  13   8  11   9   1   4   3 
+
+
+..| water |..
+total # : 0 
+
+
+..| summary |..
+atom     #: 1323 
+xyz      #: 3969 
+calpha   #: 166 
+sequence #: MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIEDSYRKQVVIDGETCLLDILDTAGQEEYSAMRDQYMRTGEGFLCVFAINNTKSFEDIHQYREQIKRVKDSDDVPMVLVGNKCDLAARTVESRQAQDLARSYGIPYIETSAKTRQGVEDAFYTLVREIRQH 
+</div>
+<div class='input'>
+## Download PDB file
+## get.pdb("5p21")
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>get.pdb</li>
+    </ul>
+    <ul>
+      <li>utilities</li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='read.pdb.html'>read.pdb</a></code>, <code><a href='write.pdb.html'>write.pdb</a></code>,
+  <code><a href='atom.select.html'>atom.select</a></code>, <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>,
+  <code><a href='read.fasta.html'>read.fasta</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=get.pdb'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

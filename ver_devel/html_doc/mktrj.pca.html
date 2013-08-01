@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>mktrj.pca. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> PCA Atomic Displacement Trajectory </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>mktrj.pca(pca = NULL, pc = 1, mag = 1, step = 0.125, file = NULL, ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>pca</dt>
+      <dd> a list object of class <code>"pca"</code> (obtained with
+    <code><a href='pca.xyz.html'>pca.xyz</a></code>).</dd>
+      <dt>pc</dt>
+      <dd> the PC number along which displacements should be made.</dd>
+      <dt>mag</dt>
+      <dd> a magnification factor for scaling the displacements. </dd>
+      <dt>step</dt>
+      <dd> the step size by which to increment along the <code>pc</code>. </dd>
+      <dt>file</dt>
+      <dd> a character vector giving the output PDB file name. </dd>
+      <dt>...</dt>
+      <dd> extra arguments to be passed to the function write.pdb. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Make a trajectory of atomic displacments along a given principal component.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>Trajectory frames are built from reconstructed Cartesian coordinates
+  produced by interpolating from the mean structure along a given
+  <code>pc</code>, in increments of <code>step</code>.</p>
+  
+      <p>An optional magnification factor can be used to amplify
+  displacements.  This involves scaling by <code>mag</code>-times the standard
+  deviation of the conformer distribution along the given <code>pc</code>
+  (i.e. the square root of the associated eigenvalue).</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a numeric matrix of interpolated coordinates with a row per structure.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>The molecular graphics software VMD is useful for viewing
+  trajectories see: 
+  <a href = 'http://www.ks.uiuc.edu/Research/vmd/'>http://www.ks.uiuc.edu/Research/vmd/</a>.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>data(kinesin) # see pca.xyz for details
+attach(kinesin, warn.conflicts=FALSE)
+
+# Ignore gap containing positions
+cut.seqs <- which(pdbs$id %in% c("d1n6mb_","d1ry6a_"))
+gaps <- gap.inspect(pdbs$ali[-cut.seqs,])
+
+# Write PC trajectory
+a <- mktrj.pca(pc.xray, pc=1, file="pc1.pdb",
+               resno = pdbs$resno[1, gaps$f.inds],
+               resid = aa123(pdbs$ali[1, gaps$f.inds]) )
+
+b <- mktrj.pca(pc.xray, pc=2, file="pc2.pdb",
+               resno = pdbs$resno[1, gaps$f.inds],
+               resid = aa123(pdbs$ali[1, gaps$f.inds]) )
+
+c <- mktrj.pca(pc.xray, pc=3, file="pc3.pdb",
+               resno = pdbs$resno[1, gaps$f.inds],
+               resid = aa123(pdbs$ali[1, gaps$f.inds]) )
+
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>mktrj.pca</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='pca.xyz.html'>pca.xyz</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=mktrj.pca'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>read.pdb. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Read PDB File </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>read.pdb(file, maxlines = 50000, multi = FALSE, rm.insert = FALSE, rm.alt = TRUE, 
+  het2atom = FALSE, verbose = TRUE)
+
+print(x, ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>file</dt>
+      <dd> a single element character vector containing the name of
+    the PDB file to be read, or the four letter PDB identifier for
+    online file access. </dd>
+      <dt>maxlines</dt>
+      <dd> the maximum number of lines to read before giving up
+    with large files. Default is 50,000 lines. </dd>
+      <dt>multi</dt>
+      <dd> logical, if TRUE multiple ATOM records are read for all
+    models in multi-model files. </dd>
+      <dt>rm.insert</dt>
+      <dd> logical, if TRUE PDB insert records are ignored. </dd>
+      <dt>rm.alt</dt>
+      <dd> logical, if TRUE PDB alternate records are ignored. </dd>
+      <dt>het2atom</dt>
+      <dd> logical, if TRUE HETATM PDB records are stored as
+    ATOM records and returned in the output as such, this should be used
+    with caution. </dd>
+      <dt>verbose</dt>
+      <dd> print details of the reading process. </dd>
+      <dt>x</dt>
+      <dd> a PDB structure object obtained from
+    <code><a href='read.pdb.html'>read.pdb</a></code>.  </dd>
+      <dt>...</dt>
+      <dd> additional arguments to &#145;print&#146;. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Read a Protein Data Bank (PDB) coordinate file.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p><code>maxlines</code> may require increasing for some large multi-model files.
+  The preferred means of reading such data is via binary DCD format 
+  trajectory files (see the <code><a href='read.dcd.html'>read.dcd</a></code> function).</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list of class <code>"pdb"</code> with the following components:
+  atom a character matrix containing all atomic coordinate ATOM data, 
+  with a row per ATOM and a column per record type.  See below for details
+  of the record type naming convention (useful for accessing columns). 
+  het  a character matrix containing atomic coordinate records
+    for atoms within &#147;non-standard&#148; HET groups (see <code>atom</code>). 
+  helix  &#145;start&#146;, &#145;end&#146; and &#145;length&#146; of H
+    type sse, where start and end are residue numbers &#147;resno&#148;. 
+  sheet  &#145;start&#146;, &#145;end&#146; and &#145;length&#146; of E
+    type sse, where start and end are residue numbers &#147;resno&#148;. 
+  seqres  sequence from SEQRES field. 
+  xyz  a numeric vector of ATOM coordinate data. 
+  xyz.models  a numeric matrix of ATOM coordinate data for
+    multi-model PDB files. 
+  calpha  logical vector with length equal to <code>nrow(atom)</code>
+    with TRUE values indicating a C-alpha &#147;elety&#148;.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+      <p>For a description of PDB format (version3.3) see:
+  <a href = 'http://www.wwpdb.org/documentation/format33/v3.3.html'>http://www.wwpdb.org/documentation/format33/v3.3.html</a>.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>For both <code>atom</code> and <code>het</code> list components the column names can be
+  used as a convenient means of data access, namely:
+  Atom serial number &#147;eleno&#148; ,
+  Atom type &#147;elety&#148;,
+  Alternate location indicator &#147;alt&#148;,
+  Residue name &#147;resid&#148;,
+  Chain identifier &#147;chain&#148;,
+  Residue sequence number &#147;resno&#148;,
+  Code for insertion of residues &#147;insert&#148;,
+  Orthogonal coordinates &#147;x&#148;,
+  Orthogonal coordinates &#147;y&#148;,
+  Orthogonal coordinates &#147;z&#148;,
+  Occupancy &#147;o&#148;, and
+  Temperature factor &#147;b&#148;.
+  See examples for further details.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>## Read a PDB file from the RCSB online database
+pdb <- read.pdb("1bg2")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
+</div>
+<div class='input'>
+## Read a PDB file from those included with the package
+###pdb <- read.pdb( system.file("examples/1bg2.pdb", package="bio3d") )
+  
+## Print data for the first atom
+pdb$atom[1,]
+</div>
+<div class='output'>   eleno    elety      alt    resid    chain    resno   insert        x 
+     "1"      "N"       NA    "ASP"      "A"      "3"       NA "43.743" 
+       y        z        o        b    segid 
+"-2.106" "39.408"   "1.00" "100.00"       NA 
+</div>
+<div class='input'>
+## Look at the first het atom
+pdb$het[1,]
+</div>
+<div class='output'>   eleno    elety      alt    resid    chain    resno   insert        x 
+  "2529"     "MG"       NA     "MG"      "A"    "402"       NA "15.166" 
+       y        z        o        b    segid 
+"12.165" "39.274"   "1.00"  "24.10"       NA 
+</div>
+<div class='input'>
+## Print some coordinate data
+head(pdb$atom[, c("x","y","z")])
+</div>
+<div class='output'>     x        y        z       
+[1,] "43.743" "-2.106" "39.408"
+[2,] "45.053" "-2.661" "39.856"
+[3,] "45.305" "-2.401" "41.340"
+[4,] "46.119" "-3.083" "41.957"
+[5,] "46.204" "-2.067" "39.034"
+[6,] "45.912" "-2.039" "37.542"
+</div>
+<div class='input'>
+## Or coordinates as a numeric vector
+head(pdb$xyz)
+</div>
+<div class='output'>[1] 43.743 -2.106 39.408 45.053 -2.661 39.856
+</div>
+<div class='input'>
+## Print C-alpha coordinates (can also use 'atom.select' function)
+head(pdb$atom[pdb$calpha, c("resid","elety","x","y","z")])
+</div>
+<div class='output'>     resid elety x        y        z       
+[1,] "ASP" "CA"  "45.053" "-2.661" "39.856"
+[2,] "LEU" "CA"  "44.791" "-1.079" "43.319"
+[3,] "ALA" "CA"  "42.451" "-3.691" "44.790"
+[4,] "GLU" "CA"  "40.334" "-4.572" "41.737"
+[5,] "CYS" "CA"  "36.711" "-3.532" "42.171"
+[6,] "ASN" "CA"  "36.940" "-0.636" "44.620"
+</div>
+<div class='input'>
+## Print SSE data (for helix and sheet),
+##  see also dssp and stride functions
+pdb$helix
+</div>
+<div class='output'>$start
+ [1]  20  58  67  91 107 176 197 256 277 281 306
+
+$end
+ [1]  25  65  74  95 122 191 203 269 279 288 321
+
+$chain
+ [1] "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A"
+
+$type
+ [1] "1" "1" "1" "1" "1" "1" "1" "1" "5" "1" "5"
+
+</div>
+<div class='input'>pdb$sheet$start
+</div>
+<div class='output'> [1]  50   8 295  79 222 205 126 171  32  38  44 135 141 155 163
+</div>
+<div class='input'>  
+## Print SEQRES data
+pdb$seqres
+</div>
+<div class='output'>    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"MET" "ALA" "ASP" "LEU" "ALA" "GLU" "CYS" "ASN" "ILE" "LYS" "VAL" "MET" "CYS" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ARG" "PHE" "ARG" "PRO" "LEU" "ASN" "GLU" "SER" "GLU" "VAL" "ASN" "ARG" "GLY" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ASP" "LYS" "TYR" "ILE" "ALA" "LYS" "PHE" "GLN" "GLY" "GLU" "ASP" "THR" "VAL" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"VAL" "ILE" "ALA" "SER" "LYS" "PRO" "TYR" "ALA" "PHE" "ASP" "ARG" "VAL" "PHE" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"GLN" "SER" "SER" "THR" "SER" "GLN" "GLU" "GLN" "VAL" "TYR" "ASN" "ASP" "CYS" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ALA" "LYS" "LYS" "ILE" "VAL" "LYS" "ASP" "VAL" "LEU" "GLU" "GLY" "TYR" "ASN" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"GLY" "THR" "ILE" "PHE" "ALA" "TYR" "GLY" "GLN" "THR" "SER" "SER" "GLY" "LYS" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"THR" "HIS" "THR" "MET" "GLU" "GLY" "LYS" "LEU" "HIS" "ASP" "PRO" "GLU" "GLY" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"MET" "GLY" "ILE" "ILE" "PRO" "ARG" "ILE" "VAL" "GLN" "ASP" "ILE" "PHE" "ASN" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"TYR" "ILE" "TYR" "SER" "MET" "ASP" "GLU" "ASN" "LEU" "GLU" "PHE" "HIS" "ILE" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"LYS" "VAL" "SER" "TYR" "PHE" "GLU" "ILE" "TYR" "LEU" "ASP" "LYS" "ILE" "ARG" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ASP" "LEU" "LEU" "ASP" "VAL" "SER" "LYS" "THR" "ASN" "LEU" "SER" "VAL" "HIS" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"GLU" "ASP" "LYS" "ASN" "ARG" "VAL" "PRO" "TYR" "VAL" "LYS" "GLY" "CYS" "THR" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"GLU" "ARG" "PHE" "VAL" "CYS" "SER" "PRO" "ASP" "GLU" "VAL" "MET" "ASP" "THR" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ILE" "ASP" "GLU" "GLY" "LYS" "SER" "ASN" "ARG" "HIS" "VAL" "ALA" "VAL" "THR" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ASN" "MET" "ASN" "GLU" "HIS" "SER" "SER" "ARG" "SER" "HIS" "SER" "ILE" "PHE" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"LEU" "ILE" "ASN" "VAL" "LYS" "GLN" "GLU" "ASN" "THR" "GLN" "THR" "GLU" "GLN" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"LYS" "LEU" "SER" "GLY" "LYS" "LEU" "TYR" "LEU" "VAL" "ASP" "LEU" "ALA" "GLY" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"SER" "GLU" "LYS" "VAL" "SER" "LYS" "THR" "GLY" "ALA" "GLU" "GLY" "ALA" "VAL" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"LEU" "ASP" "GLU" "ALA" "LYS" "ASN" "ILE" "ASN" "LYS" "SER" "LEU" "SER" "ALA" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"LEU" "GLY" "ASN" "VAL" "ILE" "SER" "ALA" "LEU" "ALA" "GLU" "GLY" "SER" "THR" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"TYR" "VAL" "PRO" "TYR" "ARG" "ASP" "SER" "LYS" "MET" "THR" "ARG" "ILE" "LEU" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"GLN" "ASP" "SER" "LEU" "GLY" "GLY" "ASN" "CYS" "ARG" "THR" "THR" "ILE" "VAL" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ILE" "CYS" "CYS" "SER" "PRO" "SER" "SER" "TYR" "ASN" "GLU" "SER" "GLU" "THR" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"LYS" "SER" "THR" "LEU" "LEU" "PHE" "GLY" "GLN" "ARG" "ALA" "LYS" "THR" "ILE" 
+</div>
+<div class='input'>
+## SEQRES as one leter code
+aa321(pdb$seqres)
+</div>
+<div class='output'>  [1] "M" "A" "D" "L" "A" "E" "C" "N" "I" "K" "V" "M" "C" "R" "F" "R" "P" "L"
+ [19] "N" "E" "S" "E" "V" "N" "R" "G" "D" "K" "Y" "I" "A" "K" "F" "Q" "G" "E"
+ [37] "D" "T" "V" "V" "I" "A" "S" "K" "P" "Y" "A" "F" "D" "R" "V" "F" "Q" "S"
+ [55] "S" "T" "S" "Q" "E" "Q" "V" "Y" "N" "D" "C" "A" "K" "K" "I" "V" "K" "D"
+ [73] "V" "L" "E" "G" "Y" "N" "G" "T" "I" "F" "A" "Y" "G" "Q" "T" "S" "S" "G"
+ [91] "K" "T" "H" "T" "M" "E" "G" "K" "L" "H" "D" "P" "E" "G" "M" "G" "I" "I"
+[109] "P" "R" "I" "V" "Q" "D" "I" "F" "N" "Y" "I" "Y" "S" "M" "D" "E" "N" "L"
+[127] "E" "F" "H" "I" "K" "V" "S" "Y" "F" "E" "I" "Y" "L" "D" "K" "I" "R" "D"
+[145] "L" "L" "D" "V" "S" "K" "T" "N" "L" "S" "V" "H" "E" "D" "K" "N" "R" "V"
+[163] "P" "Y" "V" "K" "G" "C" "T" "E" "R" "F" "V" "C" "S" "P" "D" "E" "V" "M"
+[181] "D" "T" "I" "D" "E" "G" "K" "S" "N" "R" "H" "V" "A" "V" "T" "N" "M" "N"
+[199] "E" "H" "S" "S" "R" "S" "H" "S" "I" "F" "L" "I" "N" "V" "K" "Q" "E" "N"
+[217] "T" "Q" "T" "E" "Q" "K" "L" "S" "G" "K" "L" "Y" "L" "V" "D" "L" "A" "G"
+[235] "S" "E" "K" "V" "S" "K" "T" "G" "A" "E" "G" "A" "V" "L" "D" "E" "A" "K"
+[253] "N" "I" "N" "K" "S" "L" "S" "A" "L" "G" "N" "V" "I" "S" "A" "L" "A" "E"
+[271] "G" "S" "T" "Y" "V" "P" "Y" "R" "D" "S" "K" "M" "T" "R" "I" "L" "Q" "D"
+[289] "S" "L" "G" "G" "N" "C" "R" "T" "T" "I" "V" "I" "C" "C" "S" "P" "S" "S"
+[307] "Y" "N" "E" "S" "E" "T" "K" "S" "T" "L" "L" "F" "G" "Q" "R" "A" "K" "T"
+[325] "I"
+</div>
+<div class='input'>
+## Where is the P-loop motif in the ATOM sequence
+inds.seq <- motif.find("G....GKT", pdbseq(pdb))
+pdbseq(pdb)[inds.seq]
+</div>
+<div class='output'> 85  86  87  88  89  90  91  92 
+"G" "Q" "T" "S" "S" "G" "K" "T" 
+</div>
+<div class='input'>
+## Where is it in the structure
+inds.pdb <- atom.select(pdb,resno=inds.seq, elety="CA")
+</div>
+<div class='output'>
+Build selection from input components
+
+      segid  chain  resno                     resid  eleno  elety
+Stest ""     ""     "83,84,85,86,87,88,89,90" ""     ""     "CA" 
+Natom "2527" "2527" "53"                      "2527" "2527" "323"
+ *  Selected a total of: 8 intersecting atoms  *
+</div>
+<div class='input'>pdb$atom[inds.pdb$atom,]
+</div>
+<div class='output'>     eleno elety alt resid chain resno insert x        y       z        o     
+[1,] "642" "CA"  NA  "ALA" "A"   "83"  NA     "22.486" "7.057" "42.404" "1.00"
+[2,] "647" "CA"  NA  "TYR" "A"   "84"  NA     "20.443" "3.943" "41.550" "1.00"
+[3,] "659" "CA"  NA  "GLY" "A"   "85"  NA     "16.802" "3.137" "42.223" "1.00"
+[4,] "663" "CA"  NA  "GLN" "A"   "86"  NA     "13.211" "3.286" "41.082" "1.00"
+[5,] "672" "CA"  NA  "THR" "A"   "87"  NA     "11.589" "6.598" "40.181" "1.00"
+[6,] "679" "CA"  NA  "SER" "A"   "88"  NA     "10.892" "8.739" "43.249" "1.00"
+[7,] "685" "CA"  NA  "SER" "A"   "89"  NA     "13.318" "6.688" "45.344" "1.00"
+[8,] "691" "CA"  NA  "GLY" "A"   "90"  NA     "15.586" "9.633" "46.049" "1.00"
+     b       segid
+[1,] "13.72" NA   
+[2,] "13.26" NA   
+[3,] "8.52"  NA   
+[4,] "16.62" NA   
+[5,] "19.36" NA   
+[6,] "18.70" NA   
+[7,] "17.21" NA   
+[8,] "12.83" NA   
+</div>
+<div class='input'>pdb$xyz[inds.pdb$xyz]
+</div>
+<div class='output'> [1] 22.486  7.057 42.404 20.443  3.943 41.550 16.802  3.137 42.223 13.211
+[11]  3.286 41.082 11.589  6.598 40.181 10.892  8.739 43.249 13.318  6.688
+[21] 45.344 15.586  9.633 46.049
+</div>
+<div class='input'>
+
+## Renumber residues 
+nums <- as.numeric(pdb$atom[,"resno"])
+pdb$atom[,"resno"] <- nums - (nums[1] - 1)
+
+## Write out renumbered PDB file
+###write.pdb(pdb=pdb,file="eg.pdb")
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>read.pdb</li><li>print.pdb</li>
+    </ul>
+    <ul>
+      <li> IO </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='atom.select.html'>atom.select</a></code>, <code><a href='write.pdb.html'>write.pdb</a></code>,
+  <code><a href='read.dcd.html'>read.dcd</a></code>, <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>,
+  <code><a href='read.fasta.html'>read.fasta</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=read.pdb'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

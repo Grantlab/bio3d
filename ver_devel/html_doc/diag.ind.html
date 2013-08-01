@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>diag.ind. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Diagonal Indices of a Matrix </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>diag.ind(x, n = 1, diag = TRUE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>x</dt>
+      <dd> a matrix. </dd>
+      <dt>n</dt>
+      <dd> the number of elements from the diagonal to include. </dd>
+      <dt>diag</dt>
+      <dd> logical. Should the diagonal be included? </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Returns a matrix of logicals the same size of a given matrix with
+  entries 'TRUE' in the upper triangle close to the diagonal.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>Basic function useful for masking elements close to the diagonal of a
+  given matrix.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a matrix of logicals the same size of a given matrix with
+  entries 'TRUE' in the upper triangle close to the diagonal.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>diag.ind( matrix(,ncol=5,nrow=5), n=3 )
+</div>
+<div class='output'>      [,1]  [,2]  [,3]  [,4]  [,5]
+[1,]  TRUE  TRUE  TRUE FALSE FALSE
+[2,] FALSE  TRUE  TRUE  TRUE FALSE
+[3,] FALSE FALSE  TRUE  TRUE  TRUE
+[4,] FALSE FALSE FALSE  TRUE  TRUE
+[5,] FALSE FALSE FALSE FALSE  TRUE
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>diag.ind</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='http://www.inside-r.org/r-doc/base/diag'>diag</a></code>,  <code><a href='http://www.inside-r.org/r-doc/base/lower.tri'>lower.tri</a></code>,
+  <code><a href='http://www.inside-r.org/r-doc/base/lower.tri'>upper.tri</a></code>, <code><a href='http://www.inside-r.org/r-doc/base/matrix'>matrix</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=diag.ind'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

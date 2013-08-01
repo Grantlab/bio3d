@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>pca.project. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Karim ElSawy and Barry Grant">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Project Data onto Principal Components </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>pca.project(data, pca, angular = FALSE)
+
+pca.z2xyz(z.coord, pca)
+
+pca.xyz2z(xyz.coord, pca)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>data</dt>
+      <dd> a numeric vector or row-wise matrix of data to be projected. </dd>
+      <dt>pca</dt>
+      <dd> an object of class <code>"pca"</code> as obtained from
+    functions <code>pca.xyz</code> or <code>pca.tor</code>. </dd>
+      <dt>angular</dt>
+      <dd> logical, if TRUE the data to be projected is treated
+    as torsion angle data. </dd>
+      <dt>xyz.coord</dt>
+      <dd> a numeric vector or row-wise matrix of data to be projected. </dd>
+      <dt>z.coord</dt>
+      <dd> a numeric vector or row-wise matrix of PC scores
+    (i.e. the z-scores which are centered and rotated versions of the
+    origional data projected onto the PCs) for conversion to xyz coordinates. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Projects data onto principal components.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>A numeric vector or matrix of projected PC scores.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>data(kinesin)
+gaps.pos <- gap.inspect(pdbs$xyz)
+
+#-- Do PCA without structures 1 and 2
+pc.xray <- pca.xyz(xyz[-c(1:2), gaps.pos$f.inds])
+d <- pca.project(xyz[1:2, gaps.pos$f.inds], pc.xray)
+
+plot(pc.xray$z[,1], pc.xray$z[,2],col="gray")
+</div>
+<p><img src='pca.project-2.png' alt='' width='400' height='400' /></p>
+<div class='input'>points(d[,1],d[,2], col="red")
+</div>
+<p><img src='pca.project-4.png' alt='' width='400' height='400' /></p></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>pca.project</li><li>pca.z2xyz</li><li>pca.xyz2z</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='pca.xyz.html'>pca.xyz</a></code>, <code><a href='pca.tor.html'>pca.tor</a></code> 
+    
+    <h2>Author</h2>
+     Karim ElSawy and Barry Grant
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=pca.project'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

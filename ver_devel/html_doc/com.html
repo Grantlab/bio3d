@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>com. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Center of Mass </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>com(pdb, inds = NULL, use.mass = TRUE, mass.custom = NULL, elety.custom = NULL, rescue = TRUE)
+
+com.xyz(xyz, mass = NULL)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>pdb</dt>
+      <dd> an object of class <code>pdb</code> as obtained from
+    function <code>read.pdb</code>. </dd>
+      <dt>inds</dt>
+      <dd> atom and xyz coordinate indices obtained from <code>atom.select</code>
+    that selects the elements of <code>pdb</code> upon which the calculation
+    should be based.</dd>
+      <dt>use.mass</dt>
+      <dd> logical, if TRUE the calculation will be mass
+    weighted (center of mass). </dd>
+      <dt>mass.custom</dt>
+      <dd> a list of atom elements and their corresponding masses. </dd>
+      <dt>elety.custom</dt>
+      <dd> a list of atom names to element symbol mapping. </dd>
+      <dt>rescue</dt>
+      <dd> logical, if TRUE the atom element will be mapped to the
+    first character of the atom name. </dd>
+      <dt>xyz</dt>
+      <dd> a numeric vector of Cartesian coordinates. </dd>
+      <dt>mass</dt>
+      <dd> a numeric vector containing the masses of each atom in
+    <code>xyz</code>. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Calculate the center of mass of a PDB object.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This function calculates the center of mass of the provided PDB
+  structure. Atom names found in standard amino acids in the PDB are
+  mapped to atom elements and their corresponding relative atomic masses.</p>
+  
+      <p>In the case of an unknown atom name <code>elety.custom</code> and
+  <code>mass.custom</code> can be used to map an atom to the correct
+  atomic mass. See examples for more details.</p>
+  
+      <p>Alternatively, the atom name will be mapped automatically to the
+  element corresponding to the first character of the atom name. Atom
+  names starting with character <code>H</code> will be mapped to hydrogen
+  atoms.</p>
+  
+      <p>The function reports the atomic masses in which the calculation is
+  based and the corresponding center of mass.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list with the following components:
+  mass a numeric vector of atomic masses. 
+  xyz Cartesian coordinates of the center of mass.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>
+## Stucture of PKA:
+pdb <- read.pdb("3dnd")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    TRANSFERASE/TRANSFERASE INHIBITOR       02-JUL-08   3DND               
+   PDB has ALT records, taking A only, rm.alt=TRUE
+</div>
+<div class='input'>
+## Center of mass:
+mycom <- com(pdb)
+write.pdb(xyz=mycom$xyz, file="dummy-1.pdb")
+
+## Center of mass of a selection
+inds <- atom.select(pdb, chain="I")
+</div>
+<div class='output'>
+Build selection from input components
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     "I"   ""     ""     ""     ""    
+Natom "2916" "157" "2916" "2916" "2916" "2916"
+ *  Selected a total of: 157 intersecting atoms  *
+</div>
+<div class='input'>mycom <- com(pdb, inds)
+
+## Unknown atom names
+pdb <- read.pdb("3dnd", het2atom=TRUE)
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    TRANSFERASE/TRANSFERASE INHIBITOR       02-JUL-08   3DND               
+   PDB has ALT records, taking A only, rm.alt=TRUE
+</div>
+<div class='input'>inds <- atom.select(pdb, resid="LL2")
+</div>
+<div class='output'>
+Build selection from input components
+
+      segid  chain  resno  resid eleno  elety 
+Stest ""     ""     ""     "LL2" ""     ""    
+Natom "3214" "3214" "3214" "13"  "3214" "3214"
+ *  Selected a total of: 13 intersecting atoms  *
+</div>
+<div class='input'>mycom <- com(pdb, inds, rescue=TRUE)
+</div>
+<strong class='warning'>Warning message:
+unknown element: mapped C8 to C</strong>
+<strong class='warning'>Warning message:
+unknown element: mapped C11 to C</strong>
+<strong class='warning'>Warning message:
+unknown element: mapped C13 to C</strong>
+<strong class='warning'>Warning message:
+unknown element: mapped C12 to C</strong>
+<strong class='warning'>Warning message:
+unknown element: mapped C9 to C</strong>
+<strong class='warning'>Warning message:
+unknown element: mapped C5 to C</strong>
+<strong class='warning'>Warning message:
+unknown element: mapped C2 to C</strong>
+<strong class='warning'>Warning message:
+unknown element: mapped C1 to C</strong>
+<strong class='warning'>Warning message:
+unknown element: mapped S4 to S</strong>
+<strong class='warning'>Warning message:
+unknown element: mapped C3 to C</strong>
+<strong class='warning'>Warning message:
+unknown element: mapped N6 to N</strong>
+<strong class='warning'>Warning message:
+unknown element: mapped C7 to C</strong>
+<strong class='warning'>Warning message:
+unknown element: mapped N10 to N</strong>
+<div class='input'>warnings()
+</div>
+<div class='output'>NULL
+</div>
+<div class='input'>
+
+## Map atom names manually
+pdb <- read.pdb("3RE0", het2atom=TRUE)
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    OXIDOREDUCTASE                          02-APR-11   3RE0               
+   PDB has ALT records, taking A only, rm.alt=TRUE
+</div>
+<div class='input'>inds <- atom.select(pdb, resno=201)
+</div>
+<div class='output'>
+Build selection from input components
+
+      segid  chain  resno resid  eleno  elety 
+Stest ""     ""     "201" ""     ""     ""    
+Natom "4131" "4131" "4"   "4131" "4131" "4131"
+ *  Selected a total of: 4 intersecting atoms  *
+</div>
+<div class='input'>
+elety.cust <- list("CL2"="Cl", "PT1"="Pt")
+mass.cust <- list("Cl"=35.45, "Pt"=195.08)
+
+mycom <- com(pdb, inds, elety.custom=elety.cust, mass.custom=mass.cust,
+             rescue=TRUE)
+</div>
+<strong class='warning'>Warning message:
+unknown element: mapped N1 to N</strong>
+<strong class='warning'>Warning message:
+unknown element: mapped N2 to N</strong>
+<div class='input'></div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>com</li><li>com.xyz</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='read.pdb.html'>read.pdb</a></code>, <code><a href='atom.select.html'>atom.select</a></code> 
+    
+    <h2>Author</h2>
+     Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=com'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>read.all. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Read Aligned Structure Data</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>read.all(aln, pdb.path = "", pdbext = "", sel = NULL, ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>aln</dt>
+      <dd> an alignment data structure obtained with
+    <code><a href='read.fasta.html'>read.fasta</a></code>. </dd>
+      <dt>pdb.path</dt>
+      <dd> path to PDB files. </dd>
+      <dt>pdbext</dt>
+      <dd> the file name extention of the PDB files. </dd>
+      <dt>sel</dt>
+      <dd> a selection string detailing the atom type data to store
+    (see function store.atom) </dd>
+      <dt>...</dt>
+      <dd> other parameters for <code><a href='read.pdb.html'>read.pdb</a></code>. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Read aligned PDB structures and store their equalvalent atom data, including xyz
+  coordinates, residue numbers, residue type and B-factors.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>The input <code>aln</code>, produced with <code><a href='read.fasta.html'>read.fasta</a></code>, must
+  have identifers (i.e. sequence names) that match the PDB file
+  names. For example the sequence corresponding to the structure
+  file &#147;mypdbdir/1bg2.pdb&#148; should have the identifer
+  &#145;mypdbdir/1bg2.pdb&#146; or &#145;1bg2&#146; if input &#145;pdb.path&#146;
+  and &#145;pdbext&#146; equal &#145;mypdbdir/&#146; and &#145;pdb&#146;. See the
+  examples below.</p>
+  
+      <p>Sequence miss-matches will generate errors.  Thus, care should be taken
+  to ensure that the sequences in the alignment match the sequences in
+  their associated PDB files.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list of class <code>"3dalign"</code> with the following five
+  components:
+  xyznumeric matrix of aligned C-alpha coordinates.
+  resnocharacter matrix of aligned residue numbers.
+  bnumeric matrix of aligned B-factor values.
+  chaincharacter matrix of aligned chain identifiers.
+  idcharacter vector of PDB sequence/structure names.
+  alicharacter matrix of aligned sequences.
+  all numeric matrix of aligned equalvelent atom coordinates. 
+  all.eletynumeric matrix of aligned atom element types. 
+  all.residnumeric matrix of aligned three-letter residue codes. 
+  all.resnonumeric matrix of aligned residue numbers.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>This function is still in development and is NOT part of the
+  offical bio3d package.</p>
+  
+      <p>The sequence character &#145;X&#146; is useful for masking unusual
+  or unknown residues, as it can match any other residue type.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'># still working on speeding this guy up
+## Read sequence alignment
+file <- system.file("examples/kif1a.fa",package="bio3d")
+aln  <- read.fasta(file)
+
+## Read aligned PDBs storing all data for 'sel'
+sel <- c("N", "CA", "C", "O", "CB", "*G", "*D",  "*E", "*Z")
+pdbs <- read.all(aln, sel=sel)
+</div>
+<div class='output'>pdb/seq: 1   name: http://www.rcsb.org/pdb/files/1bg2.pdb 
+pdb/seq: 2   name: http://www.rcsb.org/pdb/files/1i6i.pdb 
+   PDB has ALT records, taking A only, rm.alt=TRUE
+pdb/seq: 3   name: http://www.rcsb.org/pdb/files/1i5s.pdb 
+   PDB has ALT records, taking A only, rm.alt=TRUE
+pdb/seq: 4   name: http://www.rcsb.org/pdb/files/2ncd.pdb 
+</div>
+<div class='input'>
+atm <- colnames(pdbs$all)
+ca.ind  <- which(atm == "CA")
+core <- core.find(pdbs)
+</div>
+<div class='output'> core size 292 of 293  vol = 514.143 
+ core size 291 of 293  vol = 447.731 
+ core size 290 of 293  vol = 387.435 
+ core size 289 of 293  vol = 331.593 
+ core size 288 of 293  vol = 283.574 
+ core size 287 of 293  vol = 246.623 
+ core size 286 of 293  vol = 208.274 
+ core size 285 of 293  vol = 182.781 
+ core size 284 of 293  vol = 164.601 
+ core size 283 of 293  vol = 157.327 
+ core size 282 of 293  vol = 146.487 
+ core size 281 of 293  vol = 137.838 
+ core size 280 of 293  vol = 129.921 
+ core size 279 of 293  vol = 122.179 
+ core size 278 of 293  vol = 116.368 
+ core size 277 of 293  vol = 111.555 
+ core size 276 of 293  vol = 106.687 
+ core size 275 of 293  vol = 101.363 
+ core size 274 of 293  vol = 96.687 
+ core size 273 of 293  vol = 92.348 
+ core size 272 of 293  vol = 88.677 
+ core size 271 of 293  vol = 85.5 
+ core size 270 of 293  vol = 81.406 
+ core size 269 of 293  vol = 77.912 
+ core size 268 of 293  vol = 73.995 
+ core size 267 of 293  vol = 71.051 
+ core size 266 of 293  vol = 68.092 
+ core size 265 of 293  vol = 64.752 
+ core size 264 of 293  vol = 61.491 
+ core size 263 of 293  vol = 58.734 
+ core size 262 of 293  vol = 56.747 
+ core size 261 of 293  vol = 53.924 
+ core size 260 of 293  vol = 51.475 
+ core size 259 of 293  vol = 49.091 
+ core size 258 of 293  vol = 47.43 
+ core size 257 of 293  vol = 45.099 
+ core size 256 of 293  vol = 43.041 
+ core size 255 of 293  vol = 41.104 
+ core size 254 of 293  vol = 39.221 
+ core size 253 of 293  vol = 37.911 
+ core size 252 of 293  vol = 36.38 
+ core size 251 of 293  vol = 34.692 
+ core size 250 of 293  vol = 32.866 
+ core size 249 of 293  vol = 31.75 
+ core size 248 of 293  vol = 30.327 
+ core size 247 of 293  vol = 28.967 
+ core size 246 of 293  vol = 28.206 
+ core size 245 of 293  vol = 27.182 
+ core size 244 of 293  vol = 26.445 
+ core size 243 of 293  vol = 25.876 
+ core size 242 of 293  vol = 24.76 
+ core size 241 of 293  vol = 23.847 
+ core size 240 of 293  vol = 23.584 
+ core size 239 of 293  vol = 22.868 
+ core size 238 of 293  vol = 22.379 
+ core size 237 of 293  vol = 22.256 
+ core size 236 of 293  vol = 21.211 
+ core size 235 of 293  vol = 20.348 
+ core size 234 of 293  vol = 19.714 
+ core size 233 of 293  vol = 19.157 
+ core size 232 of 293  vol = 18.434 
+ core size 231 of 293  vol = 17.773 
+ core size 230 of 293  vol = 17.077 
+ core size 229 of 293  vol = 16.26 
+ core size 228 of 293  vol = 15.425 
+ core size 227 of 293  vol = 14.781 
+ core size 226 of 293  vol = 13.973 
+ core size 225 of 293  vol = 13.56 
+ core size 224 of 293  vol = 12.684 
+ core size 223 of 293  vol = 11.916 
+ core size 222 of 293  vol = 11.147 
+ core size 221 of 293  vol = 10.837 
+ core size 220 of 293  vol = 10.517 
+ core size 219 of 293  vol = 10.302 
+ core size 218 of 293  vol = 10.037 
+ core size 217 of 293  vol = 9.923 
+ core size 216 of 293  vol = 9.398 
+ core size 215 of 293  vol = 9.084 
+ core size 214 of 293  vol = 8.86 
+ core size 213 of 293  vol = 8.49 
+ core size 212 of 293  vol = 8.102 
+ core size 211 of 293  vol = 7.917 
+ core size 210 of 293  vol = 7.719 
+ core size 209 of 293  vol = 7.474 
+ core size 208 of 293  vol = 7.049 
+ core size 207 of 293  vol = 7.118 
+ core size 206 of 293  vol = 6.873 
+ core size 205 of 293  vol = 6.696 
+ core size 204 of 293  vol = 6.544 
+ core size 203 of 293  vol = 6.415 
+ core size 202 of 293  vol = 6.25 
+ core size 201 of 293  vol = 5.867 
+ core size 200 of 293  vol = 5.741 
+ core size 199 of 293  vol = 5.587 
+ core size 198 of 293  vol = 5.444 
+ core size 197 of 293  vol = 5.363 
+ core size 196 of 293  vol = 5.232 
+ core size 195 of 293  vol = 5.167 
+ core size 194 of 293  vol = 5.041 
+ core size 193 of 293  vol = 4.921 
+ core size 192 of 293  vol = 4.657 
+ core size 191 of 293  vol = 4.415 
+ core size 190 of 293  vol = 4.304 
+ core size 189 of 293  vol = 4.176 
+ core size 188 of 293  vol = 4.062 
+ core size 187 of 293  vol = 3.899 
+ core size 186 of 293  vol = 3.784 
+ core size 185 of 293  vol = 3.717 
+ core size 184 of 293  vol = 3.586 
+ core size 183 of 293  vol = 3.499 
+ core size 182 of 293  vol = 3.429 
+ core size 181 of 293  vol = 3.33 
+ core size 180 of 293  vol = 3.177 
+ core size 179 of 293  vol = 3.069 
+ core size 178 of 293  vol = 3.002 
+ core size 177 of 293  vol = 2.929 
+ core size 176 of 293  vol = 2.87 
+ core size 175 of 293  vol = 2.786 
+ core size 174 of 293  vol = 2.586 
+ core size 173 of 293  vol = 2.497 
+ core size 172 of 293  vol = 2.427 
+ core size 171 of 293  vol = 2.38 
+ core size 170 of 293  vol = 2.328 
+ core size 169 of 293  vol = 2.288 
+ core size 168 of 293  vol = 2.254 
+ core size 167 of 293  vol = 2.226 
+ core size 166 of 293  vol = 2.174 
+ core size 165 of 293  vol = 2.138 
+ core size 164 of 293  vol = 2.089 
+ core size 163 of 293  vol = 2.046 
+ core size 162 of 293  vol = 1.993 
+ core size 161 of 293  vol = 1.939 
+ core size 160 of 293  vol = 1.906 
+ core size 159 of 293  vol = 1.872 
+ core size 158 of 293  vol = 1.829 
+ core size 157 of 293  vol = 1.794 
+ core size 156 of 293  vol = 1.769 
+ core size 155 of 293  vol = 1.689 
+ core size 154 of 293  vol = 1.628 
+ core size 153 of 293  vol = 1.567 
+ core size 152 of 293  vol = 1.53 
+ core size 151 of 293  vol = 1.477 
+ core size 150 of 293  vol = 1.434 
+ core size 149 of 293  vol = 1.377 
+ core size 148 of 293  vol = 1.349 
+ core size 147 of 293  vol = 1.333 
+ core size 146 of 293  vol = 1.276 
+ core size 145 of 293  vol = 1.266 
+ core size 144 of 293  vol = 1.258 
+ core size 143 of 293  vol = 1.234 
+ core size 142 of 293  vol = 1.219 
+ core size 141 of 293  vol = 1.185 
+ core size 140 of 293  vol = 1.167 
+ core size 139 of 293  vol = 1.136 
+ core size 138 of 293  vol = 1.098 
+ core size 137 of 293  vol = 1.076 
+ core size 136 of 293  vol = 1.043 
+ core size 135 of 293  vol = 1.013 
+ core size 134 of 293  vol = 0.99 
+ core size 133 of 293  vol = 0.968 
+ core size 132 of 293  vol = 0.963 
+ core size 131 of 293  vol = 0.954 
+ core size 130 of 293  vol = 0.947 
+ core size 129 of 293  vol = 0.919 
+ core size 128 of 293  vol = 0.909 
+ core size 127 of 293  vol = 0.893 
+ core size 126 of 293  vol = 0.87 
+ core size 125 of 293  vol = 0.851 
+ core size 124 of 293  vol = 0.828 
+ core size 123 of 293  vol = 0.813 
+ core size 122 of 293  vol = 0.803 
+ core size 121 of 293  vol = 0.792 
+ core size 120 of 293  vol = 0.783 
+ core size 119 of 293  vol = 0.775 
+ core size 118 of 293  vol = 0.757 
+ core size 117 of 293  vol = 0.745 
+ core size 116 of 293  vol = 0.743 
+ core size 115 of 293  vol = 0.7 
+ core size 114 of 293  vol = 0.687 
+ core size 113 of 293  vol = 0.677 
+ core size 112 of 293  vol = 0.647 
+ core size 111 of 293  vol = 0.638 
+ core size 110 of 293  vol = 0.642 
+ core size 109 of 293  vol = 0.629 
+ core size 108 of 293  vol = 0.598 
+ core size 107 of 293  vol = 0.571 
+ core size 106 of 293  vol = 0.573 
+ core size 105 of 293  vol = 0.551 
+ core size 104 of 293  vol = 0.538 
+ core size 103 of 293  vol = 0.523 
+ core size 102 of 293  vol = 0.504 
+ core size 101 of 293  vol = 0.49 
+ FINISHED: Min vol ( 0.5 ) reached
+</div>
+<div class='input'>core.ind <- c( matrix(ca.ind, nrow=3)[,core$c0.5A.atom] )
+
+## Fit structures
+nxyz <- fit.xyz(pdbs$all[1,], pdbs$all,
+               fixed.inds  = core.ind,
+               mobile.inds = core.ind)
+
+ngap.col <- gap.inspect(nxyz)
+
+#npc.xray <- pca.xyz(nxyz[ ,ngap.col$f.inds])
+
+#a <- mktrj.pca(npc.xray, pc=1, file="pc1-all.pdb",
+#               elety=pdbs$all.elety[1,unique( ceiling(ngap.col$f.inds/3) )],
+#               resid=pdbs$all.resid[1,unique( ceiling(ngap.col$f.inds/3) )],
+#               resno=pdbs$all.resno[1,unique( ceiling(ngap.col$f.inds/3) )] )
+
+
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>read.all</li>
+    </ul>
+    <ul>
+      <li> IO </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+    
+  <code><a href='read.fasta.html'>read.fasta</a></code>, <code><a href='read.pdb.html'>read.pdb</a></code>,
+  <code><a href='core.find.html'>core.find</a></code>, <code><a href='fit.xyz.html'>fit.xyz</a></code>  
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=read.all'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

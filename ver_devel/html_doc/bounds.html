@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>bounds. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Bounds of a Numeric Vector </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>bounds(nums, dup.inds = FALSE, pre.sort = TRUE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>nums</dt>
+      <dd> a numeric vector. </dd>
+      <dt>dup.inds</dt>
+      <dd> logical, if TRUE the bounds of consecutive duplicated
+    elements are returned. </dd>
+      <dt>pre.sort</dt>
+      <dd> logical, if TRUE the input vector is ordered prior to
+    bounds determination. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Find the &#145;bounds&#146; (i.e. start, end and length) of consecutive
+  numbers within a larger set of numbers in a given vector.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This is a simple utility function useful for summarizing the contents
+   of a numeric vector. For example: find the start position, end
+   position and lengths of secondary structure elements given a vector
+   of residue numbers obtained from a DSSP secondary structure
+   prediction.</p>
+  
+      <p>By setting &#145;dup.inds&#146; to TRUE then the indices of the first
+   (start) and last (end) duplicated elements of the vector are
+   returned. For example: find the indices of atoms belonging to a particular
+   residue given a vector of residue numbers (see below).</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a three column matrix listing starts, ends and lengths.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>,
+  2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'> test <- c(seq(1,5,1),8,seq(10,15,1))
+ bounds(test)
+</div>
+<div class='output'>  start end length
+1     1   5      5
+2     8   8      1
+3    10  15      6
+</div>
+<div class='input'>
+ test <- rep(c(1,2,4), times=c(2,3,4))
+ bounds(test, dup.ind=TRUE)
+</div>
+<div class='output'>       start end length
+[1,] 1     1   2      2
+[2,] 2     3   5      3
+[3,] 3     6   9      4
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>bounds</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=bounds'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

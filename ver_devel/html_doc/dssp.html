@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>dssp. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Secondary Structure Analysis with DSSP </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>dssp(pdb, exepath = "", resno = TRUE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>pdb</dt>
+      <dd> a structure object of class <code>"pdb"</code>, obtained from
+    <code><a href='read.pdb.html'>read.pdb</a></code>. </dd>
+      <dt>exepath</dt>
+      <dd> path to the &#145;DSSP&#146; program on your system
+    (i.e. the directory where &#145;DSSP&#146; is stored). </dd>
+      <dt>resno</dt>
+      <dd> logical, if TRUE output is in terms of residue numbers
+    rather than residue index (position in sequence). </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Secondary structure assignment according to the method of Kabsch and Sander.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This function calls the &#145;DSSP&#146; program to define secondary
+  structure and psi and phi torsion angles.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list with the following components:
+  helix &#145;start&#146;, &#145;end&#146;, &#145;length&#146;,
+    &#145;chain&#146; and &#145;type&#146; of helix, where start and end are
+    residue numbers or residue index positions depending on the value of
+    &#147;resno&#148; input argument. 
+  sheet &#145;start&#146;, &#145;end&#146; and &#145;length&#146; of E
+    type sse, where start and end are residue numbers &#147;resno&#148;. 
+  turn &#145;start&#146;, &#145;end&#146; and &#145;length&#146; of T
+    type sse, where start and end are residue numbers &#147;resno&#148;. 
+  phi a numeric vector of phi angles. 
+  psi a numeric vector of psi angles. 
+  acc a numeric vector of solvent accessibility.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+      <p>&#145;DSSP&#146; is the work of Kabsch and Sander:  
+  Kabsch and Sander (1983) <em>Biopolymers.</em>  <b>12</b>, 2577--2637.</p>
+  
+      <p>For information on obtaining &#145;DSSP&#146;, see: 
+  <a href = 'http://swift.cmbi.ru.nl/gv/dssp/'>http://swift.cmbi.ru.nl/gv/dssp/</a>.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>A system call is made to the &#145;DSSP&#146; program, which must be
+  installed on your system and in the search path for executables.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'># Read a PDB file
+pdb <- read.pdb("1bg2")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
+</div>
+<div class='input'>sse <- dssp(pdb)
+
+# Helix data
+sse$helix
+</div>
+<div class='output'>$start
+  1   2   3   4   5   6   7   8   9  10  11  12  13 
+ 20  58  67  91 107 176 197 256 281 309 277 286 306 
+
+$end
+  1   2   3   4   5   6   7   8   9  10  11  12  13 
+ 25  65  74  95 122 189 203 269 285 320 279 288 308 
+
+$length
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 
+ 6  8  8  5 16 14  7 14  5 12  3  3  3 
+
+$chain
+  1   2   3   4   5   6   7   8   9  10  11  12  13 
+"A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" 
+
+$type
+  1   2   3   4   5   6   7   8   9  10  11  12  13 
+"H" "H" "H" "H" "H" "H" "H" "H" "H" "H" "G" "G" "G" 
+
+</div>
+<div class='input'>
+# Precent SSE content
+sum(sse$helix$length)/sum(pdb$calpha) * 100
+</div>
+<div class='output'>[1] 32.19814
+</div>
+<div class='input'>sum(sse$sheet$length)/sum(pdb$calpha) * 100
+</div>
+<div class='output'>[1] 26.00619
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>dssp</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='read.pdb.html'>read.pdb</a></code>, <code><a href='stride.html'>stride</a></code>,
+  <code><a href='torsion.pdb.html'>torsion.pdb</a></code>, <code><a href='torsion.xyz.html'>torsion.xyz</a></code>,
+  <code><a href='plot.bio3d.html'>plot.bio3d</a></code>
+
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=dssp'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

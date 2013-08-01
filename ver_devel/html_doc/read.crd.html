@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>read.crd. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Read CRD File </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>read.crd(file, verbose = TRUE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>file</dt>
+      <dd> the name of the CRD file to be read.  </dd>
+      <dt>verbose</dt>
+      <dd> print details of the reading process. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Read a CHARMM CARD (CRD) coordinate file.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>See the function <code><a href='read.pdb.html'>read.pdb</a></code> for more details.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list with the following components:
+  atom a character matrix containing all atomic coordinate data,
+  with a row per atom and a column per record type.  See below for details
+  of the record type naming convention (useful for accessing columns). 
+  xyz  a numeric vector of coordinate data. 
+  calpha  logical vector with length equal to <code>nrow(atom)</code>
+    with TRUE values indicating a C-alpha &#147;elety&#148;.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+      <p>For a description of CHARMM CARD (CRD) format see:
+  <a href = 'http://www.charmmtutorial.org/index.php/CHARMM:The_Basics'>http://www.charmmtutorial.org/index.php/CHARMM:The_Basics</a>.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>Similar to the output of <code><a href='read.pdb.html'>read.pdb</a></code>, the column names of
+  <code>atom</code> can be used as a convenient means of data access, namely:
+  Atom serial number &#147;eleno&#148;,
+  Atom type &#147;elety&#148;,
+  Alternate location indicator &#147;alt&#148;,
+  Residue name &#147;resid&#148;,
+  Residue sequence number &#147;resno&#148;,
+  Code for insertion of residues &#147;insert&#148;,
+  Orthogonal coordinates &#147;x&#148;,
+  Orthogonal coordinates &#147;y&#148;,
+  Orthogonal coordinates &#147;z&#148;,
+  Weighting factor &#147;b&#148;.
+  See examples for further details.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'> pdb <- read.pdb("1bg2")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
+</div>
+<div class='input'> crdfile <- tempfile()
+ write.crd(pdb, file=crdfile)
+ crd <- read.crd(crdfile)
+</div>
+<div class='output'>    1    3 ASP  N     43.74300  -2.10600  39.40800 A    3    100.00000
+    2    3 ASP  CA    45.05300  -2.66100  39.85600 A    3    100.00000
+    3    3 ASP  C     45.30500  -2.40100  41.34000 A    3    100.00000
+</div>
+<div class='input'> ca.inds <- which(crd$calpha)
+ crd$atom[ca.inds[1:20],c("x","y","z")]
+</div>
+<div class='output'>      x          y          z         
+ [1,] "45.05300" "-2.66100" "39.85600"
+ [2,] "44.79100" "-1.07900" "43.31900"
+ [3,] "42.45100" "-3.69100" "44.79000"
+ [4,] "40.33400" "-4.57200" "41.73700"
+ [5,] "36.71100" "-3.53200" "42.17100"
+ [6,] "36.94000" "-0.63600" "44.62000"
+ [7,] "33.15200" "-0.58800" "44.61500"
+ [8,] "31.26600" "0.46900"  "47.71900"
+ [9,] "27.50600" "0.28400"  "47.95400"
+[10,] "25.35400" "2.27500"  "50.35700"
+[11,] "21.59500" "1.82500"  "50.57400"
+[12,] "19.61700" "4.96000"  "51.35900"
+[13,] "15.98900" "4.74800"  "52.41800"
+[14,] "13.92000" "7.91100"  "52.27800"
+[15,] "10.89400" "8.75300"  "54.46100"
+[16,] "7.47700"  "7.51800"  "53.37300"
+[17,] "5.89100"  "10.27900" "51.32200"
+[18,] "2.41200"  "11.71600" "51.73100"
+[19,] "1.16300"  "9.79300"  "48.69700"
+[20,] "2.30600"  "6.49900"  "50.21400"
+</div>
+<div class='input'># write.pdb(crd, file=tempfile())
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>read.crd</li>
+    </ul>
+    <ul>
+      <li> IO </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='write.crd.html'>write.crd</a></code>, <code><a href='read.pdb.html'>read.pdb</a></code>,
+  <code><a href='atom.select.html'>atom.select</a></code>, <code><a href='write.pdb.html'>write.pdb</a></code>,
+  <code><a href='read.dcd.html'>read.dcd</a></code>, <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>,
+  <code><a href='read.fasta.html'>read.fasta</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=read.crd'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>
