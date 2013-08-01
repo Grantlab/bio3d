@@ -20,7 +20,7 @@ pdbaln(files, pqr = FALSE, ncore = 1, nseg.scale = 1, ...)
 }
 \details{
   This wrapper function calls the underlying functions \code{read.pdb},
-  \code{seq.pdb}, \code{seqaln} and \code{read.fasta.pdb} returning a
+  \code{pdbseq}, \code{seqaln} and \code{read.fasta.pdb} returning a
   list of class \code{"3dalign"} similar to that returned by
   \code{read.fasta.pdb}.
 
@@ -45,7 +45,7 @@ pdbaln(files, pqr = FALSE, ncore = 1, nseg.scale = 1, ...)
 \author{ Barry Grant }
 \note{ See recommendation in details section above. }
 \seealso{
-  \code{\link{read.pdb}}, \code{\link{seq.pdb}}, \code{\link{seqaln}},
+  \code{\link{read.pdb}}, \code{\link{pdbseq}}, \code{\link{seqaln}},
   \code{\link{read.fasta}},\code{\link{read.fasta.pdb}},
   \code{\link{core.find}}, \code{\link{fit.xyz}}, \code{\link{read.all}}
 }

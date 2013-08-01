@@ -84,7 +84,7 @@ npc.inds <- npc.inds[!is.na(npc.inds)]
 ##--- fit the atomic coordinates to the aligned X-ray structure
 xyz <- fit.xyz(pdbs$xyz[1,], pdb$xyz, atom2xyz(ngap.f.inds), atom2xyz(npc.inds))
 
-## seq2aln(seq.pdb(pdb), aln, id = id)
+## seq2aln(pdbseq(pdb), aln, id = id)
 ## do we get the same result
 
 }

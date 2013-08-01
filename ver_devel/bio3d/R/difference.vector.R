@@ -1,5 +1,5 @@
 "difference.vector" <-
-  function(xyz, xyz.inds=NULL) {
+  function(xyz, xyz.inds=NULL, normalize=FALSE) {
 
   xyz <- as.matrix(xyz)
   if (dim(xyz)[1L] < 2)
@@ -11,10 +11,6 @@
     warning("xyz has more than two rows - using only the two first")
   }
   
-  normalize.vector <- function(v) {
-    return( v/sqrt( sum(v**2) ) )
-  }
-
   if ( is.null(xyz.inds) )
     xyz.inds <- seq(1, ncol(xyz))
   
@@ -26,8 +22,10 @@
 
   if (length(a)!=length(b))
     stop("unequal lengths of the two coordinate sets")
+
+  diff <- b-a
+  if(normalize)
+    diff <- normalize.vector(diff)
   
-  diff <- normalize.vector(b-a)
   return( diff )
-  
 }

@@ -59,19 +59,19 @@
 }
 \seealso{ \code{\link{blast.pdb}} }
 \examples{
-b2 <-  blast.pdb( seq.pdb(read.pdb( get.pdb("4q21", URLonly=TRUE) )) )
+b2 <-  blast.pdb( pdbseq(read.pdb( get.pdb("4q21", URLonly=TRUE) )) )
 raw.hits <- plot.blast(b2)
 top.hits <- plot.blast(b2, 188)
 head(top.hits$hits)
 
 \dontrun{
-blast <- blast.pdb( seq.pdb(read.pdb( get.pdb("2BN3", URLonly=TRUE) )))
+blast <- blast.pdb( pdbseq(read.pdb( get.pdb("2BN3", URLonly=TRUE) )))
 raw.hits <- plot(blast)
 top.hits <- plot(blast, cut.seed=20)
 
 head(top.hits$pdb.id)
 #pdbFiles <- get.pdb(substr(top.hits$pdb.id, 1, 4), path="downloadedPDBs/")
-#split.pdb(pdbFiles, path="downloadedPDBs/PDB_chains/")
+#pdbsplit(pdbFiles, path="downloadedPDBs/PDB_chains/")
 }
 }
 \keyword{ hplot }

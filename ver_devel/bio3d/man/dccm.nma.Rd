@@ -1,0 +1,56 @@
+\name{dccm.nma}
+\alias{dccm.nma}
+\title{ Dynamic Cross-Correlation from Normal Modes Analysis }
+\description{
+  Calculate the cross-correlation matrix from Normal Modes Analysis.
+}
+\usage{
+dccm.nma(nma, nmodes=NULL)
+}
+\arguments{
+  \item{nma}{ an object of class \code{nma} as obtained from
+    function \code{nma}. }
+  \item{nmodes}{ numerical, number of modes to consider. }
+}
+\details{
+  This function calculates the cross-correlation matrix from Normal
+  Modes Analysis (NMA) obtained from \code{nma} of a protein
+  structure.  It returns a matrix of residue-wise cross-correlations
+  whose elements, Cij, may be displayed in a graphical
+  representation frequently termed a dynamical cross-correlation
+  map, or DCCM.
+
+  If Cij = 1 the fluctuations of residues i and j are completely
+  correlated (same period and same phase), if Cij = -1 the
+  fluctuations of residues i and j are completely anticorrelated (same
+  period and opposite phase), and if Cij = 0 the fluctuations of i
+  and j are not correlated.
+}
+\value{
+  Returns a cross-correlation matrix.
+}
+\references{
+  Skjaerven, L. et al. (2011) \emph{Proteins} \bold{79}, 232--243.
+  Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
+}
+\author{ Lars Skjaerven }
+\seealso{ \code{\link{nma}}, \code{\link{plot.dccm}} }
+\examples{
+## Fetch stucture
+pdb <- read.pdb("1hel")
+
+## Calculate normal modes
+modes <- nma(pdb)
+
+## Calculate correlation matrix
+cm <- dccm.nma(modes)
+
+## Plot matrix
+plot(cm)
+
+## An alternative pretty map:
+Labpalette = colorRampPalette(c("blue", "white", "red"), space = "Lab")
+filled.contour( x=1:nrow(cm), y=1:ncol(cm), z=cm,
+                color = Labpalette, levels = pretty( c(-1,1), 20))
+}
+\keyword{ analysis }

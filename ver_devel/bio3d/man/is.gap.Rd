@@ -47,7 +47,7 @@ xaln$ali[ is.gap(xaln$ali) ]="X"
 
 ##- Read a new PDB and align its sequence to the existing alignment
 pdb <- read.pdb( "1mkj" )
-seq2aln(seq.pdb(pdb), xaln, id = "1mkj")
+seq2aln(pdbseq(pdb), xaln, id = "1mkj")
 }
 }
 \keyword{ utilities }

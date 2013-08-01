@@ -46,7 +46,7 @@ get.seq(ids, outfile = "seqs.fasta", db = "nr")
 \examples{
 \dontrun{
 pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
-blast <- blast.pdb( seq.pdb(pdb), database = "swissprot" )
+blast <- blast.pdb( pdbseq(pdb), database = "swissprot" )
 ids <- plot.blast( blast )
 seq <- get.seq(ids$gi.id, outfile=tempfile())
 seq$id[1:10]

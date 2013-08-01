@@ -24,10 +24,10 @@ motif.find(motif, sequence)
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Barry Grant }
-\seealso{ \code{\link{regexpr}}, \code{\link{read.fasta}}, \code{\link{seq.pdb}} 
+\seealso{ \code{\link{regexpr}}, \code{\link{read.fasta}}, \code{\link{pdbseq}} 
 }
 \examples{
-aa.seq <- seq.pdb( read.pdb( get.pdb("4q21", URLonly=TRUE) ) )
+aa.seq <- pdbseq( read.pdb( get.pdb("4q21", URLonly=TRUE) ) )
 motif = c("G....GKS")
 motif.find(motif, aa.seq)
 }

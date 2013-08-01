@@ -1,7 +1,7 @@
-
 "struct.aln" <-
   function(fixed, mobile, fixed.inds  = NULL, mobile.inds = NULL,
-           write.pdbs = TRUE, prefix = c("a.fit", "b.fit"),
+           write.pdbs = TRUE, outpath = "fitlsq/",
+           prefix = c("fixed", "mobile"),
            max.cycles = 10, cutoff = 0.5, ... ) {
     
     if (missing(fixed)) 
@@ -43,11 +43,6 @@
       mobile.inds <- atom.select(mobile, 'all')
     }
 
-    "xyz2atom" <- function(num) {
-      tmp <- seq(3, length(num), by=3)
-      num[tmp]/3
-    }
-
     "xyz.dist" <- function(v) {
       a <- v[1:3]; b <- v[4:6]
       sqrt(sum((a-b)**2))
@@ -68,10 +63,10 @@
         return( NULL )
       }
       else {
-        print(paste("Mean: ", round(m,1),
-                    " Std: ", round(std,1),
-                    " Cut: ", round(cut,1)))
-        print(paste( length(inds), " atoms rejected during cycle ", cycle))
+        cat( " Cycle ", i, ": ", length(inds), " atoms rejected", "\n", sep="")
+        cat("  Mean: ", round(m,1),
+            " Std: ", round(std,1),
+            " Cut: ", round(cut,1), "\n", sep="" )
         return(inds)
       }
     }
@@ -110,7 +105,7 @@
     pdb.list[[2]] <- b
     
     ## Sequence alignment
-    s <- lapply(pdb.list, seq.pdb)
+    s <- lapply(pdb.list, pdbseq)
     s <- t(sapply(s, `[`, 1:max(sapply(s, length))))
     s[is.na(s)] <- "-"
     s <- seqaln(s, id = c("fixed", "mobile"), ...)
@@ -129,19 +124,27 @@
     b.inds.full <- remap.inds(mobile, mobile.inds, at.b)
 
     ## Perform the initial fitting
-    fit <- rot.lsq(mobile$xyz, fixed$xyz, xfit=b.inds.full$logical, yfit=a.inds.full$logical)
-    rmsd.init <- rmsd(fixed$xyz, fit, a.inds=a.inds.full$xyz, b.inds=b.inds.full$xyz)
-    print(paste("RMSD (", length(gaps$f.inds), " atoms): ", rmsd.init, sep=""))
+    fit <- rot.lsq(mobile$xyz, fixed$xyz,
+                   xfit=b.inds.full$logical, yfit=a.inds.full$logical)
+    rmsd.init <- rmsd(fixed$xyz, fit,
+                      a.inds=a.inds.full$xyz, b.inds=b.inds.full$xyz)
+    cat("\n")
+    cat(" Initial RMSD (", length(gaps$f.inds), " atoms): ", rmsd.init,
+        "\n", sep="")
     
-    if ( write.pdbs ) 
-      write.pdb(mobile, xyz=fit, file=paste(prefix[2], 0, "pdb", sep="."))
+    if ( write.pdbs ) {
+      dir.create(outpath, FALSE)
+      fname <- paste(outpath, prefix[2], "_", 0, ".pdb", sep="")
+      write.pdb(mobile, xyz=fit, file=fname)
+    }
 
     ## Refinement process 
     rmsd.all <- c(rmsd.init)
     for ( i in seq(1,max.cycles) ) {
 
       ## Find residues with largest structural deviation
-      exc <- resi.dev(fixed$xyz[a.inds.full$xyz], fit[b.inds.full$xyz], cycle = i, cutoff = cutoff)
+      exc <- resi.dev(fixed$xyz[a.inds.full$xyz], fit[b.inds.full$xyz],
+                      cycle = i, cutoff = cutoff)
 
       if ( is.null(exc) ) {
         break
@@ -166,27 +169,34 @@
         b.inds.full$atom <- xyz2atom(b.inds.full$xyz)
         
         ## Fit based on new indices
-        fit <- rot.lsq(mobile$xyz, fixed$xyz, xfit=b.inds.full$logical, yfit=a.inds.full$logical)
+        fit <- rot.lsq(mobile$xyz, fixed$xyz,
+                       xfit=b.inds.full$logical, yfit=a.inds.full$logical)
 
-        if ( write.pdbs )
-          write.pdb(mobile, xyz=fit, file=paste(prefix[2], i, "pdb", sep="."))
+        if ( write.pdbs ) {
+          fname <- paste(outpath, prefix[2], "_", i, ".pdb", sep="")
+          write.pdb(mobile, xyz=fit, file=fname)
+        }
         
         ## Calculate RMSD 
         tmp.rmsd <- rmsd(fixed$xyz, fit, a.inds=a.inds.full$xyz, b.inds.full$xyz)
         rmsd.all <- c(rmsd.all, tmp.rmsd)
         num.resi <- length(which(a.inds.full$logical))/3
         
-        print(paste("RMSD (", num.resi, " of ", length(gaps$f.inds), " atoms): ", tmp.rmsd, sep=""))
+        cat("  RMSD (", num.resi, " of ", length(gaps$f.inds), " atoms): ",
+            tmp.rmsd, "\n", sep="")
       }
     }
 
-    if ( write.pdbs )
-      write.pdb(fixed, file=paste(prefix[1], "pdb", sep="."))
+    if ( write.pdbs ) {
+      fname <- paste(outpath, prefix[1], ".pdb", sep="")
+      write.pdb(fixed, file=fname)
+    }
 
     a.inds.full$logical <- NULL
     b.inds.full$logical <- NULL
     
-    out <- list("a.inds"=a.inds.full, "b.inds"=b.inds.full, rmsd=rmsd.all)
+    out <- list("a.inds"=a.inds.full, "b.inds"=b.inds.full,
+                xyz=fit, rmsd=rmsd.all)
     
     return(out)     
   }

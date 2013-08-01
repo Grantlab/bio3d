@@ -94,7 +94,7 @@ files <- get.pdb(c("4q21","1ftn"), URLonly=TRUE)
 raw <- NULL
 for(i in 1:length(files)) {
   pdb <- read.pdb(files[i])
-  raw <- seqbind(raw, seq.pdb(pdb) )
+  raw <- seqbind(raw, pdbseq(pdb) )
 }
 
 ##-- Align these sequences
