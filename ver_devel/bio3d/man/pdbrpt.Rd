@@ -5,7 +5,7 @@
   Get customizable reports for query results from PDB in csv format.  
 }
 \usage{
-pdbrpt(ids, file="pdbrpt.csv", terms)
+pdbrpt(ids, file="pdbrpt.csv", terms=NULL)
 }
 \arguments{
  \item{ids}{ A charater vector of one or more 4-letter PDB codes/identifiers of the files for query. }
@@ -14,7 +14,7 @@ pdbrpt(ids, file="pdbrpt.csv", terms)
 }
 }
 \details{
- Given a list of PDB IDs and query terms, this function will download the required information from PDB, remove redundant information and generate a report in csv format. 
+ Given a list of PDB IDs and query terms, this function will download the required information from PDB, remove redundant information and generate a report in csv format. Require XML package. 
 }
 \value{
  No returns

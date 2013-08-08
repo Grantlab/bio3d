@@ -5,8 +5,9 @@
 
 ## pdbrpt can return pdb reports in csv form.
 
-pdbrpt <- function(ids, file="pdbrpt.csv", terms) 
+pdbrpt <- function(ids, file="pdbrpt.csv", terms=NULL) 
 {
+    require(XML)
     if (missing(ids)) 
     {
         stop("please specify PDB ids for reporting")
@@ -84,6 +85,7 @@ pdbrpt <- function(ids, file="pdbrpt.csv", terms)
     new.tbl <- cbind(new.tbl, citation)
     rownames(new.tbl) <- new.tbl[, "structureId"]
     allterms <- c("structureId", "experimentalTechnique", "resolution", "chainId", "ligandId", "ligandName", "source", "scopDomain", "classification", "compound", "title", "citation", "citationAuthor", "journalName", "publicationYear")
+    if(is.null(terms))  terms <- allterms
     terms <- match.arg(terms, allterms, several.ok=TRUE)
     out.tbl <- as.matrix(new.tbl[, terms])
     colnames(out.tbl) <- terms
