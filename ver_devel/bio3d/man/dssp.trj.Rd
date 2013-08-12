@@ -12,7 +12,7 @@ dssp.trj(pdb, trj, skip=1000, threshold=3, file.head="")
     \code{\link{read.pdb}}. }
   \item{trj}{ a trajectory object of class \code{"trj"}, obtained from \code{\link{read.ncdf}},  \code{\link{read.dcd}}, \code{\link{read.crd}}. }
   \item{skip} { a number indicating the frame frequency in the trajectory indicated; default = 1000. }
-  \item{threshold} { a number indicating the threshold to be used for the analysis: higher numbers will increase the threshold, allowing to accept structures with larger structural differences, with respect of the reference \item{pdb} structure; default = 3}
+  \item{threshold} { a number indicating the threshold to be used for the analysis: higher numbers will decrease the threshold, allowing to accept structures with smaller secondary structure differences, with respect of the reference \item{pdb} structure; default = 3}
   \item{file.head} { a path where to save the structures with possible unfolding events. }
 }
 \details{
