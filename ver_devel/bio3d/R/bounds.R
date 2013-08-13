@@ -13,9 +13,8 @@ function (nums, dup.inds=FALSE, pre.sort=TRUE) {
         stop("must supply a numeric vector")
     if (length(nums)==0)
       return(nums)
-    if (length(nums) <= 2) {
-      bounds <- sort(nums)
-      bounds <- c(bounds, (bounds[2]-bounds[1]+1))
+    if (length(nums) == 1) {
+      bounds <- c(nums, nums, 1)
       names(bounds) <- c("start", "end", "length")
       ## Edit here to return matrix (not vector) 
       ## following dssp bug report from Yun Liu
