@@ -5,9 +5,16 @@
 
 ## pdbrpt can return pdb reports in csv form.
 
-pdbrpt <- function(ids, file="pdbrpt.csv", terms=NULL) 
+pdbrpt <- function(ids, anno.terms=NULL) 
 {
-    require(XML)
+    oops <- require(XML)
+    if(!oops)
+        stop("Please install the XML package from CRAN")
+
+    anno.allterms <- c("structureId", "experimentalTechnique", "resolution", "chainId", "ligandId", "ligandName", "source", "scopDomain", "classification", "compound", "title", "citation", "citationAuthor", "journalName", "publicationYear")
+    if(is.null(anno.terms))  anno.terms <- anno.allterms
+    anno.terms <- match.arg(anno.terms, anno.allterms, several.ok=TRUE)
+
     if (missing(ids)) 
     {
         stop("please specify PDB ids for reporting")
@@ -19,24 +26,30 @@ pdbrpt <- function(ids, file="pdbrpt.csv", terms=NULL)
     }
     
     ids <- unique(ids)
-    ids <- paste(ids, collapse=",")
-    c = c("structureId", "experimentalTechnique", "resolution", "chainId", "ligandId", "ligandName", "source", "scopDomain", "classification", "compound", "title", "citationAuthor", "journalName", "publicationYear")
+    ids1 <- paste(ids, collapse=",")
+    query = c("structureId", "experimentalTechnique", "resolution", "chainId", "ligandId", "ligandName", "source", "scopDomain", "classification", "compound", "title", "citationAuthor", "journalName", "publicationYear")
     
-    c1 <- paste(c, collapse=",")
-    cmd <- paste("http://www.rcsb.org/pdb/rest/customReport?pdbids=", ids, "&customReportColumns=", c1, "&ssa=n&primaryOnly=1", sep = "")
+    query1 <- paste(query, collapse=",")
+    cmd <- paste("http://www.rcsb.org/pdb/rest/customReport?pdbids=", ids1, "&customReportColumns=", query1, "&ssa=n&primaryOnly=1", sep = "")
     tmpfile <- tempfile()
     test <- download.file(cmd, tmpfile)
     if(test!=0) stop("Files could not be downloaded from PDB, check returned value")
+
+# parse the xml file
     doc = xmlRoot(xmlTreeParse(tmpfile))
     tmp1 = xmlApply(doc, function(x) xmlApply(x, xmlValue))
     tmp2 <- tmp1[[1]]
-    for(i in 2:length(tmp1))
+    if(length(tmp1)>=2)
     {
-        tmp2 <- mapply(c, tmp2, tmp1[[i]], SIMPLIFY=FALSE)
-    }
-
+        for(i in 2:length(tmp1))
+        {
+            tmp2 <- mapply(c, tmp2, tmp1[[i]], SIMPLIFY=FALSE)
+        }
 # list tmp2 to matrix tmp3
     tmp3 <- sapply(tmp2, unlist)
+    }
+    if(length(tmp1)==1)
+    tmp3 <- t(as.matrix(tmp2))
 
 # information of unique ids
     pdb.ids <- as.vector(tmp2[[1]])
@@ -46,27 +59,27 @@ pdbrpt <- function(ids, file="pdbrpt.csv", terms=NULL)
 
 # if there was only one unique id, we need the transformation of the matrix new.tbl
     if(length(unq.ids)==1)
-    {
         new.tbl <- t(new.tbl)
-    }
-    dup.rows <- bounds(which(duplicated(pdb.ids)))
 
-# information of duplicated ids
-    for( i in 1:nrow(dup.rows))
+    if(length(which(duplicated(pdb.ids))) >= 1)
     {
-        l <- tmp3[ (dup.rows[i,"start"]-1):dup.rows[i,"end"], ]
-        row.store <- NULL
-        for(j in 1:ncol(l))
+    dup.rows <- bounds(which(duplicated(pdb.ids)))
+# information of duplicated ids
+        for( i in 1:nrow(dup.rows))
         {
-         row.store <- c(row.store, paste(unique(as.vector(l[,j])), collapse=", "))
+            l <- tmp3[ (dup.rows[i,"start"]-1):dup.rows[i,"end"], ]
+            row.store <- NULL
+            for(j in 1:ncol(l))
+            {
+             row.store <- c(row.store, paste(unique(as.vector(l[,j])), collapse=", "))
+            }
+        new.tbl <- rbind(new.tbl, row.store)
         }
-    new.tbl <- rbind(new.tbl, row.store)
     }
-
 # format the colnames
     colnames(new.tbl) <- colnames(tmp3)
 
-# change colnames (dimEntity.structureId -> structureId)
+# change colnames (e.g. dimEntity.structureId -> structureId)
     for( i in 1:ncol(l))
     {
     a <- unlist(strsplit(colnames(new.tbl)[i], "\\."))
@@ -80,17 +93,23 @@ pdbrpt <- function(ids, file="pdbrpt.csv", terms=NULL)
 
     for(i in 1:length(lig.auth))
     {
-        citation <- c(citation, paste( unlist(strsplit(lig.auth[i], ","))[1], " et al. ", lig.jnal[i], " (", lig.year[i],")",sep=""))
+        citation <- c(citation, paste( unlist(strsplit(lig.auth[[i]], ","))[1], " et al. ", lig.jnal[i], " (", lig.year[i],")",sep=""))
     }
     new.tbl <- cbind(new.tbl, citation)
     rownames(new.tbl) <- new.tbl[, "structureId"]
-    allterms <- c("structureId", "experimentalTechnique", "resolution", "chainId", "ligandId", "ligandName", "source", "scopDomain", "classification", "compound", "title", "citation", "citationAuthor", "journalName", "publicationYear")
-    if(is.null(terms))  terms <- allterms
-    terms <- match.arg(terms, allterms, several.ok=TRUE)
-    out.tbl <- as.matrix(new.tbl[, terms])
-    colnames(out.tbl) <- terms
-# output csv file
-    write.csv(out.tbl, row.names=TRUE, file=file)
-}
 
+    out.tbl <- as.matrix(new.tbl[, anno.terms])
+
+# again, we need the transformation of the matrix out.tbl
+    if(length(ids)==1)
+    {
+        out.tbl <- t(out.tbl)
+    }
+ 
+
+    colnames(out.tbl) <- anno.terms
+
+# return a matrix of required annotation
+    return(out.tbl)
+}
 
