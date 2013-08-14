@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>bio3d-package. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="
+Barry Grant &lt;bjgrant@umich.edu&gt;
+Xin-Qiu Yao &lt;xinqyao@umich.edu&gt;
+Lars Skjaerven &lt;larsss@gmail.com&gt;
+">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>
+Biological Structure Analysis
+</h1>
+
+<div class="row">
+  <div class="span8">
+        
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Utilities for the analysis of protein structure and sequence data.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p><table><tr><td>
+Package: </td>
+<td> bio3d</td>
+</tr><tr><td>
+Type: </td>
+<td> Package</td>
+</tr><tr><td>
+Version: </td>
+<td> 1.2</td>
+</tr><tr><td>
+Date: </td>
+<td> DEVEL VERSION: 2013-04-18</td>
+</tr><tr><td>
+License: </td>
+<td> GPL version 2 or newer</td>
+</tr><tr><td>
+URL: </td>
+<td> <a href = 'http://thegrantlab.org/bio3d/'>http://thegrantlab.org/bio3d/</a></td>
+</tr></table></p>
+  
+      <p>Features include the ability to read and write structure
+(<code><a href='read.pdb.html'>read.pdb</a></code>,  <code><a href='write.pdb.html'>write.pdb</a></code>, 
+<code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>),  sequence (<code><a href='read.fasta.html'>read.fasta</a></code>, 
+<code><a href='write.fasta.html'>write.fasta</a></code>) and dynamics trajectory data
+(<code><a href='read.dcd.html'>read.dcd</a></code>, <code><a href='read.ncdf.html'>read.ncdf</a></code>, <code><a href='write.ncdf.html'>write.ncdf</a></code>).</p>
+  
+      <p>Perform sequence database searches (<code><a href='blast.pdb.html'>blast.pdb</a></code>), atom
+summaries (<code><a href='atom.select.html'>pdb.summary</a></code>),  atom selection
+(<code><a href='atom.select.html'>atom.select</a></code>),  re-orientation (<code><a href='orient.pdb.html'>orient.pdb</a></code>),
+superposition (<code><a href='fit.xyz.html'>rot.lsq</a></code>,  <code><a href='fit.xyz.html'>fit.xyz</a></code>), rigid core
+identification (<code><a href='core.find.html'>core.find</a></code>,  <code><a href='plot.core.html'>plot.core</a></code>, 
+<code><a href='fit.xyz.html'>fit.xyz</a></code>), torsion/dihedral analysis
+(<code><a href='torsion.pdb.html'>torsion.pdb</a></code>,  <code><a href='torsion.xyz.html'>torsion.xyz</a></code>), clustering (via
+<code><a href='http://www.inside-r.org/r-doc/stats/hclust'>hclust</a></code>), principal component analysis
+(<code><a href='pca.xyz.html'>pca.xyz</a></code>,  <code><a href='pca.tor.html'>pca.tor</a></code>,  <code><a href='plot.pca.html'>plot.pca</a></code>,
+<code><a href='plot.pca.loadings.html'>plot.pca.loadings</a></code>,  <code><a href='mktrj.pca.html'>mktrj.pca</a></code>) and dynamical
+cross-correlation analysis (<code><a href='dccm.html'>dccm</a></code>, <code><a href='plot.dccm.html'>plot.dccm</a></code>)
+of structure data.</p>
+  
+      <p>Perform conservation analysis of sequence (<code><a href='seqaln.html'>seqaln</a></code>, <code><a href='conserv.html'>conserv</a></code>, 
+<code><a href='identity.html'>identity</a></code>,  <code><a href='entropy.html'>entropy</a></code>,  <code><a href='consensus.html'>consensus</a></code>)
+and structural (<code><a href='pdbaln.html'>pdbaln</a></code>, <code><a href='rmsd.html'>rmsd</a></code>,
+<code><a href='rmsf.html'>rmsf</a></code>, <code><a href='core.find.html'>core.find</a></code>) data.</p>
+  
+      <p>In addition, various utility functions are provided to facilitate
+manipulation and analysis of biological sequence and structural data
+(e.g. <code><a href='get.pdb.html'>get.pdb</a></code>, <code><a href='get.seq.html'>get.seq</a></code>, <code><a href='aa123.html'>aa123</a></code>,
+<code><a href='aa123.html'>aa321</a></code>, <code><a href='seq.pdb.html'>pdbseq</a></code>, <code><a href='aln2html.html'>aln2html</a></code>, <code><a href='atom.select.html'>atom.select</a></code>,
+<code><a href='fit.xyz.html'>rot.lsq</a></code>,  <code><a href='fit.xyz.html'>fit.xyz</a></code>, <code><a href='is.gap.html'>is.gap</a></code>, <code><a href='gap.inspect.html'>gap.inspect</a></code>,
+<code><a href='orient.pdb.html'>orient.pdb</a></code> and <code><a href='pairwise.html'>pairwise</a></code>).</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>The latest version and further documentation can be obtained from the
+bio3d website:
+<a href = 'http://thegrantlab.org/bio3d/'>http://thegrantlab.org/bio3d/</a>.
+<a href = 'http://thegrantlab.org/bio3d/html/'>http://thegrantlab.org/bio3d/html/</a>.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>help(package="bio3d")     # list the functions within the package
+lbio3d()                  # list bio3d function names only
+</div>
+<div class='output'>  [1] "aa.index"          "aa123"             "aa2index"         
+  [4] "aa321"             "aln2html"          "angle.xyz"        
+  [7] "atom.index"        "atom.select"       "atom2xyz"         
+ [10] "binding.site"      "blast.pdb"         "bounds"           
+ [13] "build.hessian"     "bwr.colors"        "chain.pdb"        
+ [16] "cmap"              "com"               "com.xyz"          
+ [19] "combine.sel"       "consensus"         "conserv"          
+ [22] "convert.pdb"       "core.find"         "dccm"             
+ [25] "dccm.nma"          "diag.ind"          "difference.vector"
+ [28] "dist.xyz"          "dm"                "dm.xyz"           
+ [31] "dssp"              "entropy"           "fit.xyz"          
+ [34] "fluct.nma"         "gap.inspect"       "get.pdb"          
+ [37] "get.seq"           "ide.filter"        "identity"         
+ [40] "inner.prod"        "is.gap"            "kinesin"          
+ [43] "lbio3d"            "mktrj.nma"         "mktrj.pca"        
+ [46] "mono.colors"       "motif.find"        "nma"              
+ [49] "normalize.vector"  "orient.pdb"        "overlap"          
+ [52] "pairwise"          "pca.project"       "pca.tor"          
+ [55] "pca.xyz"           "pca.xyz2z"         "pca.z2xyz"        
+ [58] "pdb.summary"       "pdb2aln"           "pdb2aln.ind"      
+ [61] "pdbaln"            "pdbfit"            "pdbseq"           
+ [64] "pdbsplit"          "plot.bio3d"        "plot.blast"       
+ [67] "plot.core"         "plot.dccm"         "plot.dmat"        
+ [70] "plot.nma"          "plot.pca"          "plot.pca.loadings"
+ [73] "plot.pca.score"    "plot.pca.scree"    "print.core"       
+ [76] "print.nma"         "print.pdb"         "print.rle2"       
+ [79] "read.all"          "read.crd"          "read.dcd"         
+ [82] "read.fasta"        "read.fasta.pdb"    "read.mol2"        
+ [85] "read.ncdf"         "read.pdb"          "read.pdcBD"       
+ [88] "read.pqr"          "rgyr"              "rle2"             
+ [91] "rmsd"              "rmsd.filter"       "rmsf"             
+ [94] "rmsip"             "rot.lsq"           "seq2aln"          
+ [97] "seqaln"            "seqaln.pair"       "seqbind"          
+[100] "store.atom"        "stride"            "struct.aln"       
+[103] "torsion.pdb"       "torsion.xyz"       "trim.pdb"         
+[106] "unbound"           "vec2resno"         "wiki.tbl"         
+[109] "wrap.tor"          "write.crd"         "write.fasta"      
+[112] "write.ncdf"        "write.pdb"         "write.pqr"        
+[115] "xyz2atom"         
+</div>
+<div class='input'>
+## Or visit:
+##   http://thegrantlab.org/bio3d/html/
+
+## See the individual functions for further documentation and examples, e.g.
+help(read.pdb)
+</div>
+<div class='output'>No documentation for ‘read.pdb’ in specified packages and libraries:
+you could try ‘??read.pdb’
+</div>
+<div class='input'>
+## Or online:
+##    http://thegrantlab.org/bio3d/html/read.pdb.html
+
+## <strong>Not run</strong>: 
+# ##-- Read a PDB file
+# pdb <- read.pdb("1BG2")
+# 
+# ##-- Distance matrix
+# k <- dm(pdb, selection="calpha")
+# plot(k)
+# 
+# ## Extract SEQRES PDB sequence
+# s <- aa321(pdb$seqres)
+# 
+# ## Extract ATOM PDB sequence
+# s2 <- pdbseq(pdb)
+# 
+# ## write a FASTA format sequence file
+# write.fasta(seqs=seqbind(s, s2), id=c("seqres","atom"), file="eg.fa")
+# 
+# 
+# 
+# ## Reorient and write a new PDB file
+# xyz <- orient.pdb(pdb)
+# write.pdb(pdb, xyz = xyz, file = "mov1.pdb")
+# 
+# 
+# ##-- Torsion angle analysis and basic Ramachandran plot
+# tor <- torsion.pdb(pdb)
+# plot(tor$phi, tor$psi)
+# 
+# 
+# ##-- Secondary structure assignment with DSSP
+# sse <- dssp(pdb, resno=FALSE)
+# 
+# ## Plot of B-factor values along with secondary structure
+# plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor")
+# 
+# 
+# 
+# ##-- Search for related structures in the PDB database
+# blast <- blast.pdb( pdbseq(pdb) )
+# hits  <- plot.blast(blast)
+# head(hits$hits)
+# ## Download these with function "get.pdb()"
+# #rawpdbs <- get.pdb( hits$pdb.id, "PDB_downloads")
+# 
+# ## Split by chain with function "pdbsplit()"
+# #pdbsplit(rawpdbs, path="PDB_downloads/split_chain/")
+# 
+# ## and then align with function "pdbaln()"
+# #hitfiles <- paste0("PDB_downloads/split_chain/", hits$pdb.id, ".pdb")
+# #pdbs <- pdbaln(hitfiles)
+# #xyz  <- pdbfit(pdbs)
+# 
+# ##-- Read an example FASTA alignment from PFAM
+# infile <- "http://pfam.sanger.ac.uk/family/PF00071/alignment/seed/format?format=fasta"
+# 
+# aln <- read.fasta( infile )
+# 
+# ## Entropy score for alignment positions
+# h <- entropy(aln)    # see also the "conserv()" function
+# plot(h$H.norm, typ="h", ylab="Normalized entropy score")
+# plot(new=TRUE)
+# plot( conserv(aln), typ="h", col="red")
+# 
+# # Alignment consensus
+# con <- consensus(aln)
+# con$seq
+# 
+# ## Render the alignment as coloured HTML
+# aln2html(aln, append=FALSE, file="eg.html")
+# 
+# 
+# 
+# ##-- Read an alignment of sequences and their corresponding structures
+# aln  <- read.fasta( system.file("examples/kif1a.fa", package="bio3d") )
+# pdbs <- read.fasta.pdb( aln, pdbext = ".ent",
+#                pdb.path = system.file("examples",package="bio3d") )
+# 
+# 
+# ##-- DDM: Difference Distance Matrix
+# a <- dm(pdbs$xyz[2,])
+# b <- dm(pdbs$xyz[3,])
+# ddm <- a - b
+# plot(ddm,key=FALSE, grid=FALSE)
+# 
+# 
+# ##-- Superpose structures on non gap positions
+# gaps <- gap.inspect(pdbs$xyz)
+# 
+# xyz  <- fit.xyz( fixed  = pdbs$xyz[1,],
+#                 mobile = pdbs$xyz,
+#                 fixed.inds  = gaps$f.inds,
+#                 mobile.inds = gaps$f.inds )
+# 
+# 
+# ##-- RMSD
+# rmsd(pdbs$xyz[1,gaps$f.inds], pdbs$xyz[,gaps$f.inds])
+# rmsd(pdbs$xyz[1,gaps$f.inds], pdbs$xyz[,gaps$f.inds], fit=TRUE)
+# 
+# 
+# 
+# ##-- Rigid 'core' identification
+# aln <- read.fasta(system.file("examples/kinesin_xray.fa",package="bio3d"))
+# pdb.path = system.file("examples/",package="bio3d")
+# pdbs <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
+# 
+# core <- core.find(pdbs,
+#                   #write.pdbs=TRUE,
+#                   rm.island=TRUE,
+#                   verbose=TRUE)
+# 
+# ## Plot core volume vs length
+# plot(core)
+# 
+# ## Core fit the structures (superpose on rigid zones)
+# xyz <- fit.xyz( fixed = pdbs$xyz[1,],
+#                 mobile = pdbs,
+#               #  full.pdbs = TRUE,
+#               #  pdb.path = pdb.path,
+#               #  pdbext = ".ent",
+#               #  outpath = "fitlsq/",
+#                 fixed.inds  = core$c0.5A.xyz,
+#                 mobile.inds = core$c0.5A.xyz)
+# 
+# 
+# ##-- PCA of structures
+# cut.seqs <- which(pdbs$id %in% c("d1n6mb_","d1ry6a_"))
+# # Ignore gap containing positions
+# gaps.res <- gap.inspect(pdbs$ali[-cut.seqs,])
+# gaps.pos <- gap.inspect(pdbs$xyz[-cut.seqs,])
+# 
+# 
+# ##-- Do PCA
+# pc.xray <- pca.xyz(xyz[-cut.seqs, gaps.pos$f.inds])
+# 
+# ## Plot results
+# plot(pc.xray)
+# 
+# #x11()
+# plot.pca.loadings(pc.xray$U)
+# 
+# ## Write PC trajectory
+# a <- mktrj.pca(pc.xray, pc=1, file="pc1.pdb",
+#                resno = pdbs$resno[1, gaps.res$f.inds],
+#                resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
+# 
+# 
+# 
+# 
+# 
+# ##-- Read a CHARMM/X-PLOR/NAMD trajectory file
+# trtfile <- system.file("examples/hivp.dcd", package="bio3d")
+# trj <- read.dcd(trtfile)
+# 
+# ## Read the starting PDB file to determine atom correspondence
+# pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
+# pdb <- read.pdb(pdbfile)
+# 
+# ## Fit trj on PDB based on residues 23 to 31 and 84 to 87 in both chains
+# ##inds <- atom.select(pdb,"///23:31,84:87///CA/")
+# inds <- atom.select(pdb, resno=c(23:31,84:87), elety="CA")
+# fit.xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
+# 
+# ##-- RMSD of trj frames from PDB
+# r <- rmsd(a=pdb, b=fit.xyz)
+# 
+# ##-- PCA of trj
+# pc.trj <- pca.xyz(fit.xyz)
+# 
+# plot.pca.loadings(pc.trj)
+# 
+# ## Write PC trajectory for viewing as tube in VMD
+# a <- mktrj.pca(pc.trj, pc=1, file="pc1_trj.pdb")
+# 
+# ## <strong>End(Not run)</strong>
+## other examples include: sdm, alignment, clustering etc...
+
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>bio3d-package</li><li>bio3d</li>
+    </ul>
+    <ul>
+      <li> documentation </li>
+    </ul> -->
+      
+    
+    <h2>Author</h2>
+    
+Barry Grant <bjgrant@umich.edu>
+Xin-Qiu Yao <xinqyao@umich.edu>
+Lars Skjaerven <larsss@gmail.com>
+
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=bio3d-package'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

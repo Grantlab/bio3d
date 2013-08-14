@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>motif.find. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Find Sequence Motifs. </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>motif.find(motif, sequence)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>motif</dt>
+      <dd> a character vector of the short sequence motif. </dd>
+      <dt>sequence</dt>
+      <dd> a character vector of the larger sequence. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Return Position Indices of a Short Sequence Motif Within a Larger Sequence.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>The sequence and the motif can be given as a either a multiple or
+  single element character vector. The dot character and other valid
+  <code>regexpr</code> characters are allowed in the motif, see examples.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a vector of position indices within the sequence where the
+  motif was found, see examples.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>aa.seq <- pdbseq( read.pdb( get.pdb("4q21", URLonly=TRUE) ) )
+</div>
+<div class='output'>  HEADER    ONCOGENE PROTEIN                        25-SEP-91   4Q21               
+</div>
+<div class='input'>motif = c("G....GKS")
+motif.find(motif, aa.seq)
+</div>
+<div class='output'>[1] 10 11 12 13 14 15 16 17
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>motif.find</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='http://www.inside-r.org/r-doc/base/grep'>regexpr</a></code>, <code><a href='read.fasta.html'>read.fasta</a></code>, <code><a href='seq.pdb.html'>pdbseq</a></code> 
+
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=motif.find'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

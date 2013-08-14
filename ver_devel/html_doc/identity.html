@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>identity. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Percent Identity</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>identity(alignment, normalize = TRUE, ncore = 1, nseg.scale = 1)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>alignment</dt>
+      <dd> sequence alignment obtained from
+    <code><a href='read.fasta.html'>read.fasta</a></code> or an alignment character matrix. </dd>
+      <dt>normalize</dt>
+      <dd> logical, if TRUE output is normalized to values
+    between 0 and 1 otherwise percent identity is returned. </dd>
+      <dt>ncore</dt>
+      <dd> number of CPU cores used to do the calculation.
+    <code>ncore>1</code> requires multicore package installed. </dd>
+      <dt>nseg.scale</dt>
+      <dd> split input data into specified number of segments
+    prior to running multiple core calculation. See <code><a href='fit.xyz.html'>fit.xyz</a></code>. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Determine the percent identity scores for aligned sequences.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>The percent identity value is a single numeric score determined for
+  each pair of aligned sequences.  It measures the number of identical
+  residues (&#147;matches&#148;) in relation to the length of the alignment.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a numeric matrix with all pairwise identity values.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>#aln <- read.fasta( system.file("examples/kinesin_xray.fa",
+#                     package = "bio3d") )
+
+data(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
+
+ide.mat <- identity(aln)
+
+# Plot identity matrix
+plot.dmat(ide.mat, color.palette=mono.colors,
+          main="Sequence Identity", xlab="Structure No.",
+          ylab="Structure No.")
+</div>
+<p><img src='identity-3.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+# Histogram of pairwise identity values
+hist(ide.mat[upper.tri(ide.mat)], breaks=30,xlim=c(0,1),
+     main="Sequence Identity", xlab="Identity")
+</div>
+<p><img src='identity-5.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+# Compare two sequences
+identity( rbind(aln$ali[1,], aln$ali[20,]) )
+</div>
+<div class='output'>      [,1]  [,2]
+[1,] 1.000 0.458
+[2,] 0.458 1.000
+</div>
+<div class='input'></div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>identity</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='read.fasta.html'>read.fasta</a></code>, <code><a href='ide.filter.html'>ide.filter</a></code>, <code><a href='entropy.html'>entropy</a></code>, <code><a href='consensus.html'>consensus</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=identity'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

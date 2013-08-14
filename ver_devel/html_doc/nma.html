@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>nma. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Normal Modes Analysis </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>nma(pdb, inds = NULL, ff = "calpha", pfc.fun = NULL, normalize = TRUE, mass = TRUE, 
+  temp = 300, compiler = TRUE, cutoff = 15, gamma = 1)
+
+build.hessian(xyz, pfc.fun, normalize = TRUE)
+
+print(x, nmodes = 6, ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>pdb</dt>
+      <dd> an object of class <code>pdb</code> as obtained from
+    function <code>read.pdb</code>. </dd>
+      <dt>inds</dt>
+      <dd> atom and xyz coordinate indices obtained from <code>atom.select</code>
+    that selects the elements of <code>pdb</code> upon which the calculation
+    should be based.</dd>
+      <dt>ff</dt>
+      <dd> character string specifying the force field to use:
+    &#145;calpha&#146; or &#145;anm&#146;. </dd>
+      <dt>pfc.fun</dt>
+      <dd> customized pair force constant function. </dd>
+      <dt>normalize</dt>
+      <dd> logical, if TRUE distance vectors will be normalized. </dd>
+      <dt>mass</dt>
+      <dd> logical, if TRUE the calculation will be mass
+    weighted. </dd>
+      <dt>temp</dt>
+      <dd> numerical, temperature at which the atomic vectors are
+    calculated. </dd>
+      <dt>compiler</dt>
+      <dd> logical, if TRUE code for building the Hessian matrix
+    will be byte compiled for efficiency. </dd>
+      <dt>cutoff</dt>
+      <dd> numerical, cutoff for pair-wise interactions (applies to
+    &#145;anm&#146;-FF only). </dd>
+      <dt>gamma</dt>
+      <dd> numerical, global scaling factor  (applies to
+    &#145;anm&#146;-FF only). </dd>
+      <dt>xyz</dt>
+      <dd> a numeric vector of Cartesian coordinates. </dd>
+      <dt>x</dt>
+      <dd> an <code>nma</code> object obtained from <code><a href='nma.html'>nma</a></code>. </dd>
+      <dt>nmodes</dt>
+      <dd> numeric, number of modes to be printed. </dd>
+      <dt>...</dt>
+      <dd> additional arguments to &#145;print&#146;. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Perform elastic network model (ENM) C-alpha normal modes calculation
+  of a protein structure.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This function calculates the normal modes of a C-alpha model of a
+  protein structure. Two force fields are implemented - both employing
+  the elastic network model (ENM).</p>
+  
+      <p>The &#145;Calpha&#146; force field - originally developed by Konrad
+  Hinsen - is the recommended one for most applications. It employs a
+  spring force constant differentiating between nearest-neighbour pairs
+  along the backbone and all other pairs. The force constant is
+  obtained by fitting to a local minimum of the AMBER94 force field.</p>
+  
+      <p>The implementation of the &#145;ANM&#146; (Anisotropic Network Model)
+  force field originates from the lab of Ivet Bahar. It uses a
+  simplified spring force constant based on the pair-wise
+  distance.</p>
+  
+      <p>By default <code>nma()</code> will diagonalize the mass-weighted Hessian
+  matrix. The resulting mode vectors are moreover scaled by the thermal
+  fluctuation amplitudes.</p>
+  
+      <p>The implementation under default arguments reproduces the calculation
+  of normal modes (VibrationalModes) in the Molecular Modeling Toolkit
+  (MMTK) package. To reproduce ANM modes set <code>ff='anm'</code>,
+  <code>mass=FALSE</code>, <code>temp=NULL</code>, and <code>normalize=FALSE</code>.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns an object of class &#145;nma&#146; with the following components:
+  modes numeric matrix containing the normal mode vectors
+    (converted to unweighted Cartesian coordinates). 
+  frequencies numeric vector containing the vibrational
+    frequencies corresponding to each mode (for <code>mass=TRUE</code>). 
+  force.constants numeric vector containing the force constants
+    corresponding to each mode (for <code>mass=FALSE)</code>). 
+  fluctuations numeric vector of atomic fluctuations . 
+  U numeric vector containing the raw eigenvectors. 
+  L numeric vector containing the raw eigenvalues. 
+  xyz numeric vector of the cartesian coordinates in which the
+    calculation was performed. 
+  mass numeric vector containing the residue masses used for the 
+    mass-weighting. 
+  temp numerical, temperature at which the atomic vectors are
+    calculated. 
+  triv.modes number of trivial modes. 
+  natoms number of C-alpha atoms. 
+  call the matched call.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Hinsen, K. et al. (2000) <em>Chemical Physics</em> <b>261</b>, 25--37.
+  Atilgan, A.R. et al. (2001) <em>Biophysical Journal</em> <b>80</b>, 505--515.
+  Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>## Fetch stucture
+pdb <- read.pdb("1hel")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    HYDROLASE(O-GLYCOSYL)                   10-JAN-92   1HEL               
+</div>
+<div class='input'>
+## Calculate normal modes
+modes <- nma(pdb)
+</div>
+<div class='output'> Building Hessian...		Done in 0.898 seconds.
+ Diagonalizing Hessian...	Done in 0.141 seconds.
+</div>
+<div class='input'>
+## Print modes
+print(modes)
+</div>
+<div class='output'>
+Call:
+  nma(pdb = pdb)
+
+Class:
+  VibrationalModes (nma)
+
+Number of modes:
+  387 (6 trivial)
+
+Frequencies:
+  Mode 7: 	0.184
+  Mode 8: 	0.188
+  Mode 9: 	0.238
+  Mode 10: 	0.256
+  Mode 11: 	0.28
+  Mode 12: 	0.294
+
+</div>
+<div class='input'>
+## Plot modes
+plot(modes)
+</div>
+<p><img src='nma-8.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+## Visualize modes
+m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
+
+## Calculate 'energetic' modes
+modes <- nma(pdb, mass=FALSE)
+</div>
+<div class='output'> Building Hessian...		Done in 0.876 seconds.
+ Diagonalizing Hessian...	Done in 0.142 seconds.
+</div>
+<div class='input'>
+## Use Anisotropic Network Model
+modes <- nma(pdb, ff="anm", mass=FALSE, temp=NULL, normalize=FALSE)
+</div>
+<div class='output'> Building Hessian...		Done in 0.414 seconds.
+ Diagonalizing Hessian...	Done in 0.144 seconds.
+</div>
+<div class='input'>
+## Customize energy function
+"my.ff" <- function(r) {
+    return(1 / (r**2))
+}
+
+## Modes with a new funny energy function
+modes <- nma(pdb, pfc.fun=my.ff)
+</div>
+<div class='output'> Building Hessian...		Done in 0.689 seconds.
+ Diagonalizing Hessian...	Done in 0.142 seconds.
+</div>
+<div class='input'></div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>nma</li><li>build.hessian</li><li>print.nma</li>
+    </ul>
+    <ul>
+      <li> analysis </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='fluct.nma.html'>fluct.nma</a></code>, <code><a href='mktrj.nma.html'>mktrj.nma</a></code>,
+  <code><a href='dccm.nma.html'>dccm.nma</a></code>, <code><a href='overlap.html'>overlap</a></code>  
+    
+    <h2>Author</h2>
+     Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=nma'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

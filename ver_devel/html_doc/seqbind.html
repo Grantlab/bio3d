@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>seqbind. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Combine Sequences by Rows Without Recycling </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>seqbind(a, b, blank = "-")</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>a</dt>
+      <dd> a vector or matrix. </dd>
+      <dt>b</dt>
+      <dd> a vector or matrix to be appended to <code>a</code>. </dd>
+      <dt>blank</dt>
+      <dd> a character to add to the shorter argument, to achieve the
+    same length as the longer argument. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Take a pair of vector or matrix arguments and combine them row-wise without
+  recycling the shorter argument (as is the case with <code><a href='http://www.inside-r.org/r-doc/base/cbind'>rbind</a></code>).</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>A matrix combining the <code>a</code> and <code>b</code> input arguments row-wise.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>## Read two pdbs
+a.pdb <- read.pdb("1bg2")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
+</div>
+<div class='input'>b.pdb <- read.pdb("1goj")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    MOTOR PROTEIN                           21-OCT-01   1GOJ               
+</div>
+<div class='input'>
+seqs <- seqbind(aa321(a.pdb$atom[a.pdb$calpha,"resid"]),
+                aa321(b.pdb$atom[b.pdb$calpha,"resid"]))
+
+# seqaln(seqs)
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>seqbind</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='seqaln.html'>seqaln</a></code>, <code><a href='read.fasta.html'>read.fasta</a></code>,
+  <code><a href='read.pdb.html'>read.pdb</a></code>, <code><a href='write.fasta.html'>write.fasta</a></code>, <code><a href='http://www.inside-r.org/r-doc/base/cbind'>rbind</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=seqbind'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

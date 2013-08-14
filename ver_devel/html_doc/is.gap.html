@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>is.gap. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Gap Characters </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>is.gap(x, gap.char = c("-", "."))</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>x</dt>
+      <dd> an R object to be tested. </dd>
+      <dt>gap.char</dt>
+      <dd> a character vector containing the gap character types
+    to test for. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Test for the presence of gap characters.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a logical vector with the same length as the input &#145;x&#146;,
+  with TRUE elements corresponding to &#145;gap.char&#146; matches.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>During alignment, gaps are introduced into sequences that are believed
+  to have undergone deletions or insertions with respect to other
+  sequences in the alignment.  These gaps, often referred to as
+  indels, can be represented with &#145;NA&#146;, &#145;-&#146; or
+  &#145;.&#146; characters.</p>
+  
+      <p>This function provides a simple test for the presence of such
+  characters, or indeed any set of user defined characters set by
+  the &#145;gap.char&#146; argument.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>
+is.gap( c("G",".","X","-","G","K","S","T") )
+</div>
+<div class='output'>[1] FALSE  TRUE FALSE  TRUE FALSE FALSE FALSE FALSE
+</div>
+<div class='input'>
+aln <- read.fasta( system.file("examples/kif1a.fa",
+                   package = "bio3d") )
+
+##- Mask existing gaps with an "X"
+xaln <- aln
+xaln$ali[ is.gap(xaln$ali) ]="X"
+
+##- Read a new PDB and align its sequence to the existing alignment
+pdb <- read.pdb( "1mkj" )
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    TRANSPORT PROTEIN                       29-AUG-02   1MKJ               
+</div>
+<div class='input'>seq2aln(pdbseq(pdb), xaln, id = "1mkj")
+</div>
+<div class='output'>muscle -profile -in1 /tmp/RtmpesXLkY/file5d6e354bd4ba -in2 /tmp/RtmpesXLkY/file5d6e493d2453 -out aln.fa</div>
+<div class='output'>$id
+[1] "http://www.rcsb.org/pdb/files/1bg2.pdb"
+[2] "http://www.rcsb.org/pdb/files/1i6i.pdb"
+[3] "http://www.rcsb.org/pdb/files/1i5s.pdb"
+[4] "http://www.rcsb.org/pdb/files/2ncd.pdb"
+[5] "1mkj"                                  
+
+$ali
+                                       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]
+http://www.rcsb.org/pdb/files/1bg2.pdb "-"  "-"  "-"  "-"  "-"  "-"  "N"  "I" 
+http://www.rcsb.org/pdb/files/1i6i.pdb "-"  "-"  "-"  "-"  "-"  "-"  "S"  "V" 
+http://www.rcsb.org/pdb/files/1i5s.pdb "-"  "-"  "-"  "-"  "-"  "-"  "S"  "V" 
+http://www.rcsb.org/pdb/files/2ncd.pdb "-"  "-"  "-"  "-"  "-"  "-"  "N"  "I" 
+1mkj                                   "A"  "D"  "L"  "A"  "E"  "C"  "N"  "I" 
+                                       [,9] [,10] [,11] [,12] [,13] [,14] [,15]
+http://www.rcsb.org/pdb/files/1bg2.pdb "K"  "V"   "M"   "C"   "R"   "F"   "R"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "K"  "V"   "A"   "V"   "R"   "V"   "R"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "K"  "V"   "A"   "V"   "R"   "V"   "R"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "R"  "V"   "F"   "C"   "R"   "I"   "R"  
+1mkj                                   "K"  "V"   "M"   "C"   "R"   "F"   "R"  
+                                       [,16] [,17] [,18] [,19] [,20] [,21]
+http://www.rcsb.org/pdb/files/1bg2.pdb "P"   "L"   "N"   "E"   "S"   "E"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "P"   "F"   "N"   "S"   "R"   "E"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "P"   "F"   "N"   "S"   "R"   "E"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "P"   "P"   "L"   "E"   "S"   "E"  
+1mkj                                   "P"   "L"   "N"   "E"   "S"   "E"  
+                                       [,22] [,23] [,24] [,25] [,26] [,27]
+http://www.rcsb.org/pdb/files/1bg2.pdb "V"   "N"   "R"   "G"   "D"   "K"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "M"   "S"   "R"   "D"   "S"   "K"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "M"   "S"   "R"   "D"   "S"   "K"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "E"   "N"   "R"   "M"   "C"   "X"  
+1mkj                                   "V"   "N"   "R"   "G"   "D"   "K"  
+                                       [,28] [,29] [,30] [,31] [,32] [,33]
+http://www.rcsb.org/pdb/files/1bg2.pdb "Y"   "I"   "A"   "K"   "F"   "Q"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "C"   "I"   "I"   "Q"   "M"   "S"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "C"   "I"   "I"   "Q"   "M"   "S"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "C"   "T"   "W"   "T"   "Y"   "H"  
+1mkj                                   "Y"   "I"   "A"   "K"   "F"   "Q"  
+                                       [,34] [,35] [,36] [,37] [,38] [,39]
+http://www.rcsb.org/pdb/files/1bg2.pdb "G"   "E"   "D"   "T"   "V"   "X"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "G"   "S"   "T"   "T"   "T"   "X"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "G"   "S"   "T"   "T"   "T"   "X"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "D"   "E"   "S"   "T"   "V"   "E"  
+1mkj                                   "G"   "E"   "D"   "T"   "V"   "V"  
+                                       [,40] [,41] [,42] [,43] [,44] [,45]
+http://www.rcsb.org/pdb/files/1bg2.pdb "X"   "X"   "X"   "V"   "I"   "A"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "X"   "X"   "X"   "I"   "V"   "N"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "X"   "X"   "X"   "I"   "V"   "N"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "L"   "Q"   "S"   "I"   "D"   "A"  
+1mkj                                   "I"   "A"   "S"   "-"   "-"   "-"  
+                                       [,46] [,47] [,48] [,49] [,50] [,51]
+http://www.rcsb.org/pdb/files/1bg2.pdb "S"   "K"   "X"   "X"   "X"   "X"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "P"   "K"   "Q"   "P"   "K"   "E"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "P"   "K"   "Q"   "P"   "K"   "E"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "Q"   "A"   "K"   "S"   "K"   "M"  
+1mkj                                   "-"   "-"   "-"   "-"   "-"   "-"  
+                                       [,52] [,53] [,54] [,55] [,56] [,57]
+http://www.rcsb.org/pdb/files/1bg2.pdb "X"   "X"   "X"   "P"   "Y"   "A"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "T"   "P"   "K"   "S"   "F"   "S"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "T"   "P"   "K"   "S"   "F"   "S"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "G"   "Q"   "Q"   "I"   "F"   "S"  
+1mkj                                   "-"   "-"   "K"   "P"   "Y"   "A"  
+                                       [,58] [,59] [,60] [,61] [,62] [,63]
+http://www.rcsb.org/pdb/files/1bg2.pdb "F"   "D"   "R"   "V"   "F"   "Q"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "F"   "D"   "Y"   "S"   "Y"   "W"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "F"   "D"   "Y"   "S"   "Y"   "W"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "F"   "D"   "Q"   "V"   "F"   "H"  
+1mkj                                   "F"   "D"   "R"   "V"   "F"   "Q"  
+                                       [,64] [,65] [,66] [,67] [,68] [,69]
+http://www.rcsb.org/pdb/files/1bg2.pdb "S"   "S"   "X"   "X"   "X"   "X"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "S"   "H"   "T"   "S"   "P"   "E"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "S"   "H"   "T"   "S"   "P"   "E"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "P"   "L"   "X"   "X"   "X"   "X"  
+1mkj                                   "S"   "S"   "T"   "S"   "Q"   "E"  
+                                       [,70] [,71] [,72] [,73] [,74] [,75]
+http://www.rcsb.org/pdb/files/1bg2.pdb "X"   "X"   "X"   "X"   "T"   "S"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "D"   "I"   "N"   "Y"   "A"   "S"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "D"   "I"   "N"   "Y"   "A"   "S"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "X"   "X"   "X"   "X"   "S"   "S"  
+1mkj                                   "Q"   "V"   "-"   "-"   "-"   "-"  
+                                       [,76] [,77] [,78] [,79] [,80] [,81]
+http://www.rcsb.org/pdb/files/1bg2.pdb "Q"   "E"   "Q"   "V"   "Y"   "N"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "Q"   "K"   "Q"   "V"   "Y"   "R"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "Q"   "K"   "Q"   "V"   "Y"   "R"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "Q"   "S"   "D"   "I"   "F"   "X"  
+1mkj                                   "-"   "-"   "-"   "-"   "Y"   "N"  
+                                       [,82] [,83] [,84] [,85] [,86] [,87]
+http://www.rcsb.org/pdb/files/1bg2.pdb "D"   "C"   "A"   "K"   "K"   "I"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "D"   "I"   "G"   "E"   "E"   "M"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "D"   "I"   "G"   "E"   "E"   "M"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "E"   "M"   "V"   "S"   "P"   "L"  
+1mkj                                   "D"   "C"   "A"   "K"   "K"   "I"  
+                                       [,88] [,89] [,90] [,91] [,92] [,93]
+http://www.rcsb.org/pdb/files/1bg2.pdb "V"   "K"   "D"   "V"   "L"   "E"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "L"   "Q"   "H"   "A"   "F"   "E"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "L"   "Q"   "H"   "A"   "F"   "E"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "I"   "Q"   "S"   "A"   "L"   "D"  
+1mkj                                   "V"   "K"   "D"   "V"   "L"   "E"  
+                                       [,94] [,95] [,96] [,97] [,98] [,99]
+http://www.rcsb.org/pdb/files/1bg2.pdb "G"   "Y"   "N"   "G"   "T"   "I"  
+http://www.rcsb.org/pdb/files/1i6i.pdb "G"   "Y"   "N"   "V"   "C"   "I"  
+http://www.rcsb.org/pdb/files/1i5s.pdb "G"   "Y"   "N"   "V"   "C"   "I"  
+http://www.rcsb.org/pdb/files/2ncd.pdb "G"   "Y"   "N"   "I"   "C"   "I"  
+1mkj                                   "G"   "Y"   "N"   "G"   "T"   "I"  
+                                       [,100] [,101] [,102] [,103] [,104]
+http://www.rcsb.org/pdb/files/1bg2.pdb "F"    "A"    "Y"    "G"    "Q"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "F"    "A"    "Y"    "G"    "Q"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "F"    "A"    "Y"    "G"    "Q"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "F"    "A"    "Y"    "G"    "Q"   
+1mkj                                   "F"    "A"    "Y"    "G"    "Q"   
+                                       [,105] [,106] [,107] [,108] [,109]
+http://www.rcsb.org/pdb/files/1bg2.pdb "T"    "S"    "S"    "G"    "K"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "T"    "G"    "A"    "G"    "K"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "T"    "G"    "A"    "G"    "K"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "T"    "G"    "S"    "G"    "K"   
+1mkj                                   "T"    "S"    "S"    "G"    "K"   
+                                       [,110] [,111] [,112] [,113] [,114]
+http://www.rcsb.org/pdb/files/1bg2.pdb "T"    "H"    "T"    "M"    "E"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "S"    "Y"    "T"    "M"    "M"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "S"    "Y"    "T"    "M"    "M"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "T"    "Y"    "T"    "M"    "D"   
+1mkj                                   "T"    "H"    "T"    "M"    "E"   
+                                       [,115] [,116] [,117] [,118] [,119]
+http://www.rcsb.org/pdb/files/1bg2.pdb "G"    "K"    "L"    "H"    "D"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "G"    "K"    "Q"    "E"    "K"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "G"    "K"    "Q"    "E"    "K"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "G"    "V"    "X"    "X"    "X"   
+1mkj                                   "G"    "K"    "L"    "H"    "D"   
+                                       [,120] [,121] [,122] [,123] [,124]
+http://www.rcsb.org/pdb/files/1bg2.pdb "P"    "E"    "G"    "M"    "G"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "X"    "D"    "Q"    "Q"    "G"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "X"    "D"    "Q"    "Q"    "G"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "P"    "E"    "S"    "V"    "G"   
+1mkj                                   "P"    "E"    "G"    "M"    "G"   
+                                       [,125] [,126] [,127] [,128] [,129]
+http://www.rcsb.org/pdb/files/1bg2.pdb "I"    "I"    "P"    "R"    "I"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "I"    "I"    "P"    "Q"    "L"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "I"    "I"    "P"    "Q"    "L"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "V"    "I"    "P"    "R"    "T"   
+1mkj                                   "I"    "I"    "P"    "R"    "I"   
+                                       [,130] [,131] [,132] [,133] [,134]
+http://www.rcsb.org/pdb/files/1bg2.pdb "V"    "Q"    "D"    "I"    "F"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "C"    "E"    "D"    "L"    "F"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "C"    "E"    "D"    "L"    "F"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "V"    "D"    "L"    "L"    "F"   
+1mkj                                   "V"    "Q"    "D"    "I"    "F"   
+                                       [,135] [,136] [,137] [,138] [,139]
+http://www.rcsb.org/pdb/files/1bg2.pdb "N"    "Y"    "I"    "Y"    "S"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "S"    "R"    "I"    "N"    "D"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "S"    "R"    "I"    "N"    "D"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "D"    "S"    "I"    "R"    "G"   
+1mkj                                   "N"    "Y"    "I"    "Y"    "S"   
+                                       [,140] [,141] [,142] [,143] [,144]
+http://www.rcsb.org/pdb/files/1bg2.pdb "M"    "D"    "E"    "N"    "L"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "T"    "T"    "N"    "D"    "N"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "T"    "T"    "N"    "D"    "N"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "Y"    "R"    "N"    "L"    "G"   
+1mkj                                   "M"    "D"    "E"    "N"    "-"   
+                                       [,145] [,146] [,147] [,148] [,149]
+http://www.rcsb.org/pdb/files/1bg2.pdb "X"    "E"    "F"    "H"    "I"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "M"    "S"    "Y"    "S"    "V"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "M"    "S"    "Y"    "S"    "V"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "W"    "E"    "Y"    "E"    "I"   
+1mkj                                   "L"    "E"    "F"    "H"    "I"   
+                                       [,150] [,151] [,152] [,153] [,154]
+http://www.rcsb.org/pdb/files/1bg2.pdb "K"    "V"    "S"    "Y"    "F"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "E"    "V"    "S"    "Y"    "M"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "E"    "V"    "S"    "Y"    "M"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "K"    "A"    "T"    "F"    "L"   
+1mkj                                   "K"    "V"    "S"    "Y"    "F"   
+                                       [,155] [,156] [,157] [,158] [,159]
+http://www.rcsb.org/pdb/files/1bg2.pdb "E"    "I"    "Y"    "L"    "D"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "E"    "I"    "Y"    "C"    "E"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "E"    "I"    "Y"    "C"    "E"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "E"    "I"    "Y"    "N"    "E"   
+1mkj                                   "E"    "I"    "Y"    "L"    "D"   
+                                       [,160] [,161] [,162] [,163] [,164]
+http://www.rcsb.org/pdb/files/1bg2.pdb "K"    "I"    "R"    "D"    "L"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "R"    "V"    "R"    "D"    "L"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "R"    "V"    "R"    "D"    "L"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "V"    "L"    "Y"    "D"    "L"   
+1mkj                                   "K"    "I"    "R"    "D"    "L"   
+                                       [,165] [,166] [,167] [,168] [,169]
+http://www.rcsb.org/pdb/files/1bg2.pdb "L"    "X"    "D"    "V"    "S"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "L"    "X"    "N"    "P"    "K"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "L"    "X"    "N"    "P"    "K"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "L"    "S"    "N"    "E"    "Q"   
+1mkj                                   "L"    "D"    "-"    "-"    "V"   
+                                       [,170] [,171] [,172] [,173] [,174]
+http://www.rcsb.org/pdb/files/1bg2.pdb "K"    "T"    "X"    "N"    "L"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "N"    "K"    "G"    "N"    "L"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "N"    "K"    "G"    "N"    "L"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "K"    "D"    "M"    "E"    "I"   
+1mkj                                   "S"    "K"    "T"    "N"    "L"   
+                                       [,175] [,176] [,177] [,178] [,179]
+http://www.rcsb.org/pdb/files/1bg2.pdb "S"    "V"    "H"    "E"    "D"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "R"    "V"    "R"    "E"    "H"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "R"    "V"    "R"    "E"    "H"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "R"    "M"    "A"    "K"    "N"   
+1mkj                                   "S"    "V"    "H"    "E"    "D"   
+                                       [,180] [,181] [,182] [,183] [,184]
+http://www.rcsb.org/pdb/files/1bg2.pdb "K"    "N"    "R"    "V"    "P"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "P"    "L"    "L"    "G"    "P"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "P"    "L"    "L"    "G"    "P"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "N"    "K"    "N"    "D"    "I"   
+1mkj                                   "K"    "N"    "R"    "V"    "P"   
+                                       [,185] [,186] [,187] [,188] [,189]
+http://www.rcsb.org/pdb/files/1bg2.pdb "Y"    "V"    "K"    "G"    "C"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "Y"    "V"    "E"    "D"    "L"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "Y"    "V"    "E"    "D"    "L"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "Y"    "V"    "S"    "N"    "I"   
+1mkj                                   "Y"    "V"    "K"    "G"    "C"   
+                                       [,190] [,191] [,192] [,193] [,194]
+http://www.rcsb.org/pdb/files/1bg2.pdb "T"    "E"    "R"    "F"    "V"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "S"    "K"    "L"    "A"    "V"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "S"    "K"    "L"    "A"    "V"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "T"    "E"    "E"    "T"    "V"   
+1mkj                                   "T"    "E"    "R"    "F"    "V"   
+                                       [,195] [,196] [,197] [,198] [,199]
+http://www.rcsb.org/pdb/files/1bg2.pdb "C"    "S"    "P"    "D"    "E"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "T"    "S"    "Y"    "N"    "D"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "T"    "S"    "Y"    "N"    "D"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "L"    "D"    "P"    "N"    "H"   
+1mkj                                   "C"    "S"    "P"    "D"    "E"   
+                                       [,200] [,201] [,202] [,203] [,204]
+http://www.rcsb.org/pdb/files/1bg2.pdb "V"    "M"    "D"    "T"    "I"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "I"    "Q"    "D"    "L"    "M"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "I"    "Q"    "D"    "L"    "M"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "L"    "R"    "H"    "L"    "M"   
+1mkj                                   "V"    "M"    "D"    "T"    "I"   
+                                       [,205] [,206] [,207] [,208] [,209]
+http://www.rcsb.org/pdb/files/1bg2.pdb "D"    "E"    "G"    "K"    "S"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "D"    "S"    "G"    "N"    "K"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "D"    "S"    "G"    "N"    "K"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "H"    "T"    "A"    "K"    "M"   
+1mkj                                   "D"    "E"    "G"    "K"    "S"   
+                                       [,210] [,211] [,212] [,213] [,214]
+http://www.rcsb.org/pdb/files/1bg2.pdb "N"    "R"    "H"    "V"    "A"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "A"    "R"    "T"    "V"    "A"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "A"    "R"    "T"    "V"    "A"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "N"    "R"    "A"    "T"    "A"   
+1mkj                                   "N"    "R"    "H"    "V"    "A"   
+                                       [,215] [,216] [,217] [,218] [,219]
+http://www.rcsb.org/pdb/files/1bg2.pdb "V"    "T"    "N"    "M"    "N"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "A"    "T"    "N"    "M"    "N"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "A"    "T"    "N"    "M"    "N"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "S"    "T"    "A"    "G"    "N"   
+1mkj                                   "V"    "T"    "N"    "M"    "N"   
+                                       [,220] [,221] [,222] [,223] [,224]
+http://www.rcsb.org/pdb/files/1bg2.pdb "E"    "H"    "S"    "S"    "R"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "E"    "T"    "S"    "S"    "R"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "E"    "T"    "S"    "S"    "R"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "E"    "R"    "S"    "S"    "R"   
+1mkj                                   "E"    "H"    "S"    "S"    "R"   
+                                       [,225] [,226] [,227] [,228] [,229]
+http://www.rcsb.org/pdb/files/1bg2.pdb "S"    "H"    "S"    "I"    "F"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "S"    "H"    "A"    "V"    "F"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "S"    "H"    "A"    "V"    "F"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "S"    "H"    "A"    "V"    "T"   
+1mkj                                   "S"    "H"    "S"    "I"    "F"   
+                                       [,230] [,231] [,232] [,233] [,234]
+http://www.rcsb.org/pdb/files/1bg2.pdb "L"    "I"    "N"    "V"    "K"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "N"    "I"    "I"    "F"    "T"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "N"    "I"    "I"    "F"    "T"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "K"    "L"    "E"    "L"    "I"   
+1mkj                                   "L"    "I"    "N"    "V"    "K"   
+                                       [,235] [,236] [,237] [,238] [,239]
+http://www.rcsb.org/pdb/files/1bg2.pdb "Q"    "E"    "N"    "T"    "Q"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "Q"    "K"    "R"    "H"    "D"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "Q"    "K"    "R"    "H"    "D"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "G"    "R"    "H"    "A"    "E"   
+1mkj                                   "Q"    "E"    "N"    "T"    "Q"   
+                                       [,240] [,241] [,242] [,243] [,244]
+http://www.rcsb.org/pdb/files/1bg2.pdb "T"    "X"    "X"    "X"    "X"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "A"    "E"    "T"    "N"    "I"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "A"    "E"    "T"    "N"    "I"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "K"    "X"    "X"    "X"    "X"   
+1mkj                                   "T"    "E"    "Q"    "K"    "L"   
+                                       [,245] [,246] [,247] [,248] [,249]
+http://www.rcsb.org/pdb/files/1bg2.pdb "E"    "Q"    "K"    "L"    "S"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "T"    "T"    "E"    "K"    "V"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "T"    "T"    "E"    "K"    "V"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "Q"    "E"    "I"    "S"    "V"   
+1mkj                                   "S"    "-"    "-"    "-"    "-"   
+                                       [,250] [,251] [,252] [,253] [,254]
+http://www.rcsb.org/pdb/files/1bg2.pdb "G"    "K"    "L"    "Y"    "L"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "S"    "K"    "I"    "S"    "L"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "S"    "K"    "I"    "S"    "L"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "G"    "S"    "I"    "N"    "L"   
+1mkj                                   "G"    "K"    "L"    "Y"    "L"   
+                                       [,255] [,256] [,257] [,258] [,259]
+http://www.rcsb.org/pdb/files/1bg2.pdb "V"    "D"    "L"    "A"    "G"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "V"    "D"    "L"    "A"    "G"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "V"    "D"    "L"    "A"    "G"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "V"    "D"    "L"    "A"    "G"   
+1mkj                                   "V"    "D"    "L"    "A"    "G"   
+                                       [,260] [,261] [,262] [,263] [,264]
+http://www.rcsb.org/pdb/files/1bg2.pdb "S"    "E"    "K"    "V"    "S"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "S"    "E"    "X"    "X"    "X"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "S"    "E"    "R"    "X"    "X"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "S"    "E"    "S"    "X"    "X"   
+1mkj                                   "S"    "E"    "K"    "V"    "A"   
+                                       [,265] [,266] [,267] [,268] [,269]
+http://www.rcsb.org/pdb/files/1bg2.pdb "K"    "T"    "G"    "A"    "E"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "X"    "X"    "X"    "X"    "X"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "X"    "X"    "X"    "A"    "K"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "X"    "X"    "X"    "X"    "X"   
+1mkj                                   "K"    "-"    "-"    "-"    "-"   
+                                       [,270] [,271] [,272] [,273] [,274]
+http://www.rcsb.org/pdb/files/1bg2.pdb "G"    "A"    "V"    "L"    "D"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "X"    "X"    "X"    "X"    "X"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "G"    "T"    "R"    "L"    "K"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "X"    "X"    "X"    "X"    "X"   
+1mkj                                   "-"    "-"    "-"    "-"    "-"   
+                                       [,275] [,276] [,277] [,278] [,279]
+http://www.rcsb.org/pdb/files/1bg2.pdb "E"    "A"    "K"    "N"    "I"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "X"    "X"    "A"    "N"    "I"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "E"    "G"    "A"    "N"    "I"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "X"    "X"    "P"    "N"    "I"   
+1mkj                                   "-"    "-"    "-"    "N"    "I"   
+                                       [,280] [,281] [,282] [,283] [,284]
+http://www.rcsb.org/pdb/files/1bg2.pdb "N"    "K"    "S"    "L"    "S"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "N"    "K"    "S"    "L"    "T"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "N"    "K"    "S"    "L"    "T"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "N"    "R"    "S"    "L"    "S"   
+1mkj                                   "N"    "K"    "S"    "L"    "S"   
+                                       [,285] [,286] [,287] [,288] [,289]
+http://www.rcsb.org/pdb/files/1bg2.pdb "A"    "L"    "G"    "N"    "V"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "T"    "L"    "G"    "K"    "V"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "T"    "L"    "G"    "K"    "V"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "E"    "L"    "T"    "N"    "V"   
+1mkj                                   "A"    "L"    "G"    "N"    "V"   
+                                       [,290] [,291] [,292] [,293] [,294]
+http://www.rcsb.org/pdb/files/1bg2.pdb "I"    "S"    "A"    "L"    "A"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "I"    "S"    "A"    "L"    "A"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "I"    "S"    "A"    "L"    "A"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "I"    "L"    "A"    "L"    "L"   
+1mkj                                   "I"    "S"    "A"    "L"    "A"   
+                                       [,295] [,296] [,297] [,298] [,299]
+http://www.rcsb.org/pdb/files/1bg2.pdb "E"    "G"    "S"    "T"    "Y"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "E"    "M"    "D"    "X"    "F"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "E"    "M"    "D"    "X"    "X"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "Q"    "K"    "Q"    "D"    "H"   
+1mkj                                   "E"    "G"    "S"    "T"    "Y"   
+                                       [,300] [,301] [,302] [,303] [,304]
+http://www.rcsb.org/pdb/files/1bg2.pdb "V"    "P"    "Y"    "R"    "D"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "I"    "P"    "Y"    "R"    "D"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "I"    "P"    "Y"    "R"    "D"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "I"    "P"    "Y"    "R"    "N"   
+1mkj                                   "V"    "P"    "Y"    "R"    "D"   
+                                       [,305] [,306] [,307] [,308] [,309]
+http://www.rcsb.org/pdb/files/1bg2.pdb "S"    "K"    "M"    "T"    "R"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "S"    "V"    "L"    "T"    "W"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "S"    "V"    "L"    "T"    "W"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "S"    "K"    "L"    "T"    "H"   
+1mkj                                   "S"    "K"    "M"    "T"    "R"   
+                                       [,310] [,311] [,312] [,313] [,314]
+http://www.rcsb.org/pdb/files/1bg2.pdb "I"    "L"    "Q"    "D"    "S"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "L"    "L"    "R"    "E"    "N"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "L"    "L"    "R"    "E"    "N"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "L"    "L"    "M"    "P"    "S"   
+1mkj                                   "I"    "L"    "Q"    "D"    "S"   
+                                       [,315] [,316] [,317] [,318] [,319]
+http://www.rcsb.org/pdb/files/1bg2.pdb "L"    "G"    "G"    "N"    "C"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "L"    "G"    "G"    "N"    "S"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "L"    "G"    "G"    "N"    "S"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "L"    "G"    "G"    "N"    "S"   
+1mkj                                   "L"    "G"    "G"    "N"    "C"   
+                                       [,320] [,321] [,322] [,323] [,324]
+http://www.rcsb.org/pdb/files/1bg2.pdb "R"    "T"    "T"    "I"    "V"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "R"    "T"    "A"    "M"    "V"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "R"    "T"    "A"    "M"    "V"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "K"    "T"    "L"    "M"    "F"   
+1mkj                                   "R"    "T"    "T"    "I"    "V"   
+                                       [,325] [,326] [,327] [,328] [,329]
+http://www.rcsb.org/pdb/files/1bg2.pdb "I"    "C"    "C"    "S"    "P"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "A"    "A"    "L"    "S"    "P"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "A"    "A"    "L"    "S"    "P"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "I"    "N"    "V"    "S"    "P"   
+1mkj                                   "I"    "C"    "C"    "S"    "P"   
+                                       [,330] [,331] [,332] [,333] [,334]
+http://www.rcsb.org/pdb/files/1bg2.pdb "S"    "S"    "Y"    "N"    "E"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "A"    "D"    "I"    "N"    "Y"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "A"    "D"    "I"    "N"    "Y"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "F"    "Q"    "D"    "C"    "F"   
+1mkj                                   "S"    "S"    "Y"    "N"    "E"   
+                                       [,335] [,336] [,337] [,338] [,339]
+http://www.rcsb.org/pdb/files/1bg2.pdb "S"    "E"    "T"    "K"    "S"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "D"    "E"    "T"    "L"    "S"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "D"    "E"    "T"    "L"    "S"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "Q"    "E"    "S"    "V"    "K"   
+1mkj                                   "S"    "E"    "T"    "K"    "S"   
+                                       [,340] [,341] [,342] [,343] [,344]
+http://www.rcsb.org/pdb/files/1bg2.pdb "T"    "L"    "L"    "F"    "G"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "T"    "L"    "R"    "Y"    "A"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "T"    "L"    "R"    "Y"    "A"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "S"    "L"    "R"    "F"    "A"   
+1mkj                                   "T"    "L"    "L"    "F"    "G"   
+                                       [,345] [,346] [,347] [,348] [,349]
+http://www.rcsb.org/pdb/files/1bg2.pdb "Q"    "R"    "A"    "K"    "T"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "D"    "R"    "A"    "K"    "Q"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "D"    "R"    "A"    "K"    "X"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "A"    "S"    "V"    "N"    "S"   
+1mkj                                   "Q"    "R"    "A"    "K"    "T"   
+                                       [,350] [,351] [,352] [,353] [,354]
+http://www.rcsb.org/pdb/files/1bg2.pdb "I"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "I"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "X"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "C"    "-"    "-"    "-"    "-"   
+1mkj                                   "I"    "K"    "N"    "T"    "V"   
+                                       [,355] [,356] [,357] [,358] [,359]
+http://www.rcsb.org/pdb/files/1bg2.pdb "-"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "-"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "-"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "-"    "-"    "-"    "-"    "-"   
+1mkj                                   "C"    "V"    "N"    "V"    "E"   
+                                       [,360] [,361] [,362] [,363] [,364]
+http://www.rcsb.org/pdb/files/1bg2.pdb "-"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "-"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "-"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "-"    "-"    "-"    "-"    "-"   
+1mkj                                   "L"    "T"    "A"    "E"    "Q"   
+                                       [,365] [,366] [,367] [,368] [,369]
+http://www.rcsb.org/pdb/files/1bg2.pdb "-"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "-"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "-"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "-"    "-"    "-"    "-"    "-"   
+1mkj                                   "W"    "K"    "K"    "K"    "Y"   
+                                       [,370] [,371] [,372] [,373] [,374]
+http://www.rcsb.org/pdb/files/1bg2.pdb "-"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/1i6i.pdb "-"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/1i5s.pdb "-"    "-"    "-"    "-"    "-"   
+http://www.rcsb.org/pdb/files/2ncd.pdb "-"    "-"    "-"    "-"    "-"   
+1mkj                                   "E"    "K"    "E"    "K"    "E"   
+
+attr(,"class")
+[1] "fasta"
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>is.gap</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='gap.inspect.html'>gap.inspect</a></code>, <code><a href='read.fasta.html'>read.fasta</a></code>,
+  <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>, <code><a href='seqaln.html'>seqaln</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=is.gap'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

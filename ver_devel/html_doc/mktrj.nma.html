@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>mktrj.nma. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant, Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> NMA Atomic Displacement Trajectory </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>mktrj.nma(nma = NULL, mode = 7, mag = 100, step = 12.5, file = NULL, ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>nma</dt>
+      <dd> a list object of class <code>"nma"</code> (obtained with
+    <code><a href='nma.html'>nma</a></code>).</dd>
+      <dt>mode</dt>
+      <dd> the mode number along which displacements should be made.</dd>
+      <dt>mag</dt>
+      <dd> a magnification factor for scaling the displacements. </dd>
+      <dt>step</dt>
+      <dd> the step size by which to increment along the <code>pc</code>. </dd>
+      <dt>file</dt>
+      <dd> a character vector giving the output PDB file name. </dd>
+      <dt>...</dt>
+      <dd> extra arguments to be passed to the function write.pdb. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Make a trajectory of atomic displacments along a given normal mode
+  vector.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>Trajectory frames are built from reconstructed Cartesian coordinates
+  produced by interpolating from the mean structure along a given
+  <code>normal mode</code>, in increments of <code>step</code>.</p>
+  
+      <p>An optional magnification factor can be used to amplify
+  displacements.  This involves scaling the mode vector by
+  <code>mag</code>-times.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a numeric matrix of interpolated coordinates with a row per structure.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>The molecular graphics software VMD is useful for viewing
+  trajectories see: 
+  <a href = 'http://www.ks.uiuc.edu/Research/vmd/'>http://www.ks.uiuc.edu/Research/vmd/</a>.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>## Fetch stucture
+pdb <- read.pdb("1hel")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    HYDROLASE(O-GLYCOSYL)                   10-JAN-92   1HEL               
+</div>
+<div class='input'>
+## Calculate (vibrational) normal modes
+modes <- nma(pdb)
+</div>
+<div class='output'> Building Hessian...		Done in 0.833 seconds.
+ Diagonalizing Hessian...	Done in 0.142 seconds.
+</div>
+<div class='input'>
+## Visualize modes
+m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>mktrj.nma</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='nma.html'>nma</a> </code> 
+    
+    <h2>Author</h2>
+     Barry Grant, Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=mktrj.nma'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

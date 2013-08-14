@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>pca.tor. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="  Barry Grant and Karim ElSawy ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Principal Component Analysis </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>pca.tor(data, subset = rep(TRUE, nrow(as.matrix(data))))</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>data</dt>
+      <dd> numeric matrix of torsion angles with a row per structure. </dd>
+      <dt>subset</dt>
+      <dd> an optional vector of numeric indices that selects a
+    subset of rows (e.g. experimental structures vs molecular dynamics
+    trajectory structures) from the full <code>data</code> matrix. Note: the
+    full <code>data</code> is projected onto this subspace.</dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Performs principal components analysis (PCA) on torsion angle <code>data</code>.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list with the following components:
+  L eigenvalues.
+  U eigenvectors (i.e. the variable loadings).
+  z.u scores of the supplied <code>data</code> on the pcs.
+  sdev the standard deviations of the pcs.
+  mean the means that were subtracted.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>##-- PCA on torsion data for multiple PDBs 
+data(kinesin)
+attach(kinesin, warn.conflicts=FALSE)
+
+gaps <- gap.inspect(pdbs$ali)
+tgap.xyz <- atom2xyz(gaps$t.inds)
+fgap.xyz <- atom2xyz(gaps$f.inds)
+tor <- t(apply( pdbs$xyz[,fgap.xyz], 1, torsion.xyz, atm.inc=1))
+pc.tor <- pca.tor(tor[,-c(1,218,219,220)])
+#plot(pc.tor)
+plot.pca.loadings(pc.tor)
+</div>
+<p><img src='pca.tor-3.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+##-- PCA on torsion data from an MD trajectory
+trj <- read.dcd( system.file("examples/hivp.dcd", package="bio3d") )
+</div>
+<div class='output'> NATOM = 198 
+ NFRAME= 351 
+ ISTART= 0 
+ last  = 351 
+ nstep = 351 
+ nfile = 351 
+ NSAVE = 1 
+ NDEGF = 0 
+ version 24 
+Reading (x100)...done
+</div>
+<div class='input'>tor <- t(apply(trj, 1, torsion.xyz, atm.inc=1))
+gaps <- gap.inspect(tor)
+pc.tor <- pca.tor(tor[,gaps$f.inds])
+plot.pca.loadings(pc.tor)
+</div>
+<p><img src='pca.tor-7.png' alt='' width='400' height='400' /></p></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>pca.tor</li>
+    </ul>
+    <ul>
+      <li> utilities </li><li> multivariate </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='torsion.xyz.html'>torsion.xyz</a></code>, <code><a href='plot.pca.html'>plot.pca</a></code>,
+  <code><a href='plot.pca.loadings.html'>plot.pca.loadings</a></code>, <code><a href='pca.xyz.html'>pca.xyz</a></code> 
+    
+    <h2>Author</h2>
+      Barry Grant and Karim ElSawy 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=pca.tor'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

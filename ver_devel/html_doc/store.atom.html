@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>store.atom. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Store all-atom data from a PDB object </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>store.atom(pdb)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>pdb</dt>
+      <dd> A pdb object as obtained from read.pdb </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Not intended for public usage</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This function was requested by a user and has not been extensively
+  tested.  Hence it is not yet recommended for public usage.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a matrix of all-atom data</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>This function is still in development and is NOT part of the
+  offical bio3d package</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
+</div>
+<div class='output'>  HEADER    ONCOGENE PROTEIN                        30-APR-90   5P21               
+</div>
+<div class='input'>a <- store.atom(pdb)
+a[,,1:2]
+</div>
+<div class='output'>, , res = 1.A
+
+        type
+atom     N        CA       C        O        CB       *G       *G1 *G2 *D      
+  eleno  "1"      "2"      "3"      "4"      "5"      "6"      NA  NA  "7"     
+  elety  "N"      "CA"     "C"      "O"      "CB"     "CG"     NA  NA  "SD"    
+  alt    NA       NA       NA       NA       NA       NA       NA  NA  NA      
+  resid  "MET"    "MET"    "MET"    "MET"    "MET"    "MET"    NA  NA  "MET"   
+  chain  "A"      "A"      "A"      "A"      "A"      "A"      NA  NA  "A"     
+  resno  "1"      "1"      "1"      "1"      "1"      "1"      NA  NA  "1"     
+  insert NA       NA       NA       NA       NA       NA       NA  NA  NA      
+  x      "-7.186" "-5.921" "-5.845" "-6.600" "-4.673" "-4.633" NA  NA  "-3.115"
+  y      "32.862" "32.127" "31.045" "31.083" "33.058" "33.804" NA  NA  "34.766"
+  z      "-6.632" "-6.684" "-5.621" "-4.636" "-6.502" "-5.188" NA  NA  "-4.908"
+  o      "1.00"   "1.00"   "1.00"   "1.00"   "1.00"   "1.00"   NA  NA  "1.00"  
+  b      "13.92"  "17.10"  "16.74"  "16.60"  "17.00"  "18.08"  NA  NA  "19.73" 
+  segid  NA       NA       NA       NA       NA       NA       NA  NA  NA      
+        type
+atom     *D1 *D2 *E       *E1 *E2 *Z NH1 NH2 OH
+  eleno  NA  NA  "8"      NA  NA  NA NA  NA  NA
+  elety  NA  NA  "CE"     NA  NA  NA NA  NA  NA
+  alt    NA  NA  NA       NA  NA  NA NA  NA  NA
+  resid  NA  NA  "MET"    NA  NA  NA NA  NA  NA
+  chain  NA  NA  "A"      NA  NA  NA NA  NA  NA
+  resno  NA  NA  "1"      NA  NA  NA NA  NA  NA
+  insert NA  NA  NA       NA  NA  NA NA  NA  NA
+  x      NA  NA  "-3.019" NA  NA  NA NA  NA  NA
+  y      NA  NA  "35.851" NA  NA  NA NA  NA  NA
+  z      NA  NA  "-6.310" NA  NA  NA NA  NA  NA
+  o      NA  NA  "1.00"   NA  NA  NA NA  NA  NA
+  b      NA  NA  "20.41"  NA  NA  NA NA  NA  NA
+  segid  NA  NA  NA       NA  NA  NA NA  NA  NA
+
+, , res = 2.A
+
+        type
+atom     N        CA       C        O        CB       *G *G1      *G2      *D
+  eleno  "9"      "10"     "11"     "12"     "13"     NA "14"     "15"     NA
+  elety  "N"      "CA"     "C"      "O"      "CB"     NA "OG1"    "CG2"    NA
+  alt    NA       NA       NA       NA       NA       NA NA       NA       NA
+  resid  "THR"    "THR"    "THR"    "THR"    "THR"    NA "THR"    "THR"    NA
+  chain  "A"      "A"      "A"      "A"      "A"      NA "A"      "A"      NA
+  resno  "2"      "2"      "2"      "2"      "2"      NA "2"      "2"      NA
+  insert NA       NA       NA       NA       NA       NA NA       NA       NA
+  x      "-4.910" "-4.661" "-4.230" "-3.338" "-3.557" NA "-4.059" "-3.193" NA
+  y      "30.095" "29.030" "29.655" "30.501" "28.107" NA "27.565" "26.983" NA
+  z      "-5.820" "-4.859" "-3.547" "-3.537" "-5.401" NA "-6.629" "-4.443" NA
+  o      "1.00"   "1.00"   "1.00"   "1.00"   "1.00"   NA "1.00"   "1.00"   NA
+  b      "14.70"  "16.92"  "14.78"  "13.93"  "18.03"  NA "20.42"  "18.51"  NA
+  segid  NA       NA       NA       NA       NA       NA NA       NA       NA
+        type
+atom     *D1 *D2 *E *E1 *E2 *Z NH1 NH2 OH
+  eleno  NA  NA  NA NA  NA  NA NA  NA  NA
+  elety  NA  NA  NA NA  NA  NA NA  NA  NA
+  alt    NA  NA  NA NA  NA  NA NA  NA  NA
+  resid  NA  NA  NA NA  NA  NA NA  NA  NA
+  chain  NA  NA  NA NA  NA  NA NA  NA  NA
+  resno  NA  NA  NA NA  NA  NA NA  NA  NA
+  insert NA  NA  NA NA  NA  NA NA  NA  NA
+  x      NA  NA  NA NA  NA  NA NA  NA  NA
+  y      NA  NA  NA NA  NA  NA NA  NA  NA
+  z      NA  NA  NA NA  NA  NA NA  NA  NA
+  o      NA  NA  NA NA  NA  NA NA  NA  NA
+  b      NA  NA  NA NA  NA  NA NA  NA  NA
+  segid  NA  NA  NA NA  NA  NA NA  NA  NA
+
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>store.atom</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=store.atom'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

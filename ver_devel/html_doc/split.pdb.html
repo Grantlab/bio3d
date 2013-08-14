@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>pdbsplit. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Split a PDB File Into Separate Files, One For Each Chain. </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>pdbsplit(pdb.files, path = "split_chain/", multi = FALSE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>pdb.files</dt>
+      <dd> a character vector of PDB file names. </dd>
+      <dt>path</dt>
+      <dd> output path for chain-split files. </dd>
+      <dt>multi</dt>
+      <dd> logical, if TRUE atom records for all models in
+    multi-model files are splitted. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Split a Protein Data Bank (PDB) coordinate file into new separate
+  files with one file for each chain.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This function will produce single chain PDB files from multi-chain
+  input files.</p>
+  
+      <p>Multi model atom records will be splitted into individual PDB files if
+  <code>multi=TRUE</code>, else they are omitted.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a character vector of file names.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+      <p>For a description of PDB format (version3.3) see:
+  <a href = 'http://www.wwpdb.org/documentation/format33/v3.3.html'>http://www.wwpdb.org/documentation/format33/v3.3.html</a>.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>To Be Improved.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>  ## Fetch PDBs
+  pdb.ids <- c("1YX5", "3NOB", "1P3Q", "2D3G","1F9J")
+  outdir <- paste(tempdir(), "/raw_pdbs", sep="")
+  raw.files <- get.pdb(pdb.ids, path = outdir)
+
+  ## Split PDBs by chain ID and multi-model records
+  all.files <- pdbsplit(raw.files,
+            path =paste(outdir, "/split_chain", sep=""), multi=TRUE )
+</div>
+<div class='output'>[1] "PDB has multiple END/ENDMDL records"
+[1] "multi=TRUE: 'read.dcd' will be quicker!"
+  HEADER    HYDROLASE                               19-FEB-05   1YX5               
+
+Build selection from input string
+
+      segid  chain  resno  resid  eleno  elety 
+Stest ""     " A "  ""     ""     ""     ""    
+Natom "2847" "1617" "2847" "2847" "2847" "2847"
+ *  Selected a total of: 1617 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain  resno  resid  eleno  elety 
+Stest ""     " B "  ""     ""     ""     ""    
+Natom "2847" "1230" "2847" "2847" "2847" "2847"
+ *  Selected a total of: 1230 intersecting atoms  *
+  HEADER    PROTEIN BINDING                         25-JUN-10   3NOB               
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " A " ""     ""     ""     ""    
+Natom "5005" "659" "5005" "5005" "5005" "5005"
+ *  Selected a total of: 659 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " B " ""     ""     ""     ""    
+Natom "5005" "628" "5005" "5005" "5005" "5005"
+ *  Selected a total of: 628 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " C " ""     ""     ""     ""    
+Natom "5005" "628" "5005" "5005" "5005" "5005"
+ *  Selected a total of: 628 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " D " ""     ""     ""     ""    
+Natom "5005" "620" "5005" "5005" "5005" "5005"
+ *  Selected a total of: 620 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " E " ""     ""     ""     ""    
+Natom "5005" "626" "5005" "5005" "5005" "5005"
+ *  Selected a total of: 626 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " F " ""     ""     ""     ""    
+Natom "5005" "609" "5005" "5005" "5005" "5005"
+ *  Selected a total of: 609 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " G " ""     ""     ""     ""    
+Natom "5005" "614" "5005" "5005" "5005" "5005"
+ *  Selected a total of: 614 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " H " ""     ""     ""     ""    
+Natom "5005" "621" "5005" "5005" "5005" "5005"
+ *  Selected a total of: 621 intersecting atoms  *
+  HEADER    TRANSLATION                             18-APR-03   1P3Q               
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " Q " ""     ""     ""     ""    
+Natom "1958" "361" "1958" "1958" "1958" "1958"
+ *  Selected a total of: 361 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " R " ""     ""     ""     ""    
+Natom "1958" "274" "1958" "1958" "1958" "1958"
+ *  Selected a total of: 274 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " U " ""     ""     ""     ""    
+Natom "1958" "676" "1958" "1958" "1958" "1958"
+ *  Selected a total of: 676 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " V " ""     ""     ""     ""    
+Natom "1958" "647" "1958" "1958" "1958" "1958"
+ *  Selected a total of: 647 intersecting atoms  *
+  HEADER    PROTEIN TRANSPORT                       28-SEP-05   2D3G               
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " A " ""     ""     ""     ""    
+Natom "1392" "623" "1392" "1392" "1392" "1392"
+ *  Selected a total of: 623 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " B " ""     ""     ""     ""    
+Natom "1392" "623" "1392" "1392" "1392" "1392"
+ *  Selected a total of: 623 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " P " ""     ""     ""     ""    
+Natom "1392" "146" "1392" "1392" "1392" "1392"
+ *  Selected a total of: 146 intersecting atoms  *
+  HEADER    CHAPERONE                               10-JUL-00   1F9J               
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " A " ""     ""     ""     ""    
+Natom "1183" "601" "1183" "1183" "1183" "1183"
+ *  Selected a total of: 601 intersecting atoms  *
+
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     " B " ""     ""     ""     ""    
+Natom "1183" "582" "1183" "1183" "1183" "1183"
+ *  Selected a total of: 582 intersecting atoms  *
+</div>
+<div class='input'>  
+  list.files(paste(outdir, "/split_chain", sep="")) 
+</div>
+<div class='output'> [1] "1F9J_A.pdb"    "1F9J_B.pdb"    "1P3Q_Q.pdb"    "1P3Q_R.pdb"   
+ [5] "1P3Q_U.pdb"    "1P3Q_V.pdb"    "1YX5_A.01.pdb" "1YX5_A.02.pdb"
+ [9] "1YX5_A.03.pdb" "1YX5_A.04.pdb" "1YX5_A.05.pdb" "1YX5_A.06.pdb"
+[13] "1YX5_A.07.pdb" "1YX5_A.08.pdb" "1YX5_A.09.pdb" "1YX5_A.10.pdb"
+[17] "1YX5_A.11.pdb" "1YX5_A.12.pdb" "1YX5_A.13.pdb" "1YX5_A.14.pdb"
+[21] "1YX5_A.15.pdb" "1YX5_A.16.pdb" "1YX5_A.17.pdb" "1YX5_A.18.pdb"
+[25] "1YX5_B.01.pdb" "1YX5_B.02.pdb" "1YX5_B.03.pdb" "1YX5_B.04.pdb"
+[29] "1YX5_B.05.pdb" "1YX5_B.06.pdb" "1YX5_B.07.pdb" "1YX5_B.08.pdb"
+[33] "1YX5_B.09.pdb" "1YX5_B.10.pdb" "1YX5_B.11.pdb" "1YX5_B.12.pdb"
+[37] "1YX5_B.13.pdb" "1YX5_B.14.pdb" "1YX5_B.15.pdb" "1YX5_B.16.pdb"
+[41] "1YX5_B.17.pdb" "1YX5_B.18.pdb" "2D3G_A.pdb"    "2D3G_B.pdb"   
+[45] "2D3G_P.pdb"    "3NOB_A.pdb"    "3NOB_B.pdb"    "3NOB_C.pdb"   
+[49] "3NOB_D.pdb"    "3NOB_E.pdb"    "3NOB_F.pdb"    "3NOB_G.pdb"   
+[53] "3NOB_H.pdb"   
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>pdbsplit</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='read.pdb.html'>read.pdb</a></code>, <code><a href='atom.select.html'>atom.select</a></code>,
+  <code><a href='write.pdb.html'>write.pdb</a></code>, <code><a href='get.pdb.html'>get.pdb</a></code>. 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=pdbsplit'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

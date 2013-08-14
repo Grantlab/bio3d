@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>combine.sel. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Xin-Qiu Yao ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Combine Atom Selections From PDB Structure </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>combine.sel(sel1 = NULL, sel2 = NULL, op = "AND")</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>sel1</dt>
+      <dd> an atom selection object of class <code>"select"</code>, obtained from
+    <code><a href='atom.select.html'>atom.select</a></code>. </dd>
+      <dt>sel2</dt>
+      <dd> a second atom selection object of class <code>"select"</code>, obtained 
+    from <code><a href='atom.select.html'>atom.select</a></code>. </dd>
+      <dt>op</dt>
+      <dd> name of the logical operation. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Do "and", "or", or "not" logical operations between two atom 
+  selections made by <code><a href='atom.select.html'>atom.select</a></code></p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>The value of <code>op</code> should be one of following:
+  (1) "AND", "and", or "&" for set intersection, 
+  (2) "OR", "or", "|", or "+" for set union,
+  (3) "NOT", "not", "!", or "-" for set difference <code>sel1 - sel2</code>.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list of class <code>"select"</code> with components:
+  atom atom indices of selected atoms.
+  xyz xyz indices of selected atoms.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>
+# Read a PDB file
+pdb <- read.pdb( "http://www.rcsb.org/pdb/files/1BG2.pdb" )
+</div>
+<div class='output'>  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
+</div>
+<div class='input'>
+# Select all C-alpha atoms
+ca.inds <- atom.select(pdb, elety="CA")
+</div>
+<div class='output'>
+Build selection from input components
+
+      segid  chain  resno  resid  eleno  elety
+Stest ""     ""     ""     ""     ""     "CA" 
+Natom "2527" "2527" "2527" "2527" "2527" "323"
+ *  Selected a total of: 323 intersecting atoms  *
+</div>
+<div class='input'>
+# Select all atoms with residues numbers between 65 and 143
+res.inds <- atom.select(pdb, resno=65:143)
+</div>
+<div class='output'>
+Build selection from input components
+
+      segid  chain 
+Stest ""     ""    
+Natom "2527" "2527"
+      resno                                                                                                                                                                                                                                                                                     
+Stest "65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143"
+Natom "641"                                                                                                                                                                                                                                                                                     
+      resid  eleno  elety 
+Stest ""     ""     ""    
+Natom "2527" "2527" "2527"
+ *  Selected a total of: 641 intersecting atoms  *
+</div>
+<div class='input'>
+# Select all C-beta atoms with residues numbers between 65 and 143
+cb.inds <- atom.select(pdb, resno=65:143, elety="CB")
+</div>
+<div class='output'>
+Build selection from input components
+
+      segid  chain 
+Stest ""     ""    
+Natom "2527" "2527"
+      resno                                                                                                                                                                                                                                                                                     
+Stest "65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143"
+Natom "641"                                                                                                                                                                                                                                                                                     
+      resid  eleno  elety
+Stest ""     ""     "CB" 
+Natom "2527" "2527" "303"
+ *  Selected a total of: 72 intersecting atoms  *
+</div>
+<div class='input'>
+# Intersection
+inds <- combine.sel(ca.inds, res.inds, op="AND")
+</div>
+<div class='output'>Intersection of sel1 and sel2
+ *  Selected a total of: 79 atoms  *
+</div>
+<div class='input'>print( pdb$atom[ inds$atom, "resid" ] )
+</div>
+<div class='output'> [1] "CYS" "ALA" "LYS" "LYS" "ILE" "VAL" "LYS" "ASP" "VAL" "LEU" "GLU" "GLY"
+[13] "TYR" "ASN" "GLY" "THR" "ILE" "PHE" "ALA" "TYR" "GLY" "GLN" "THR" "SER"
+[25] "SER" "GLY" "LYS" "THR" "HIS" "THR" "MET" "GLU" "GLY" "LYS" "LEU" "HIS"
+[37] "ASP" "PRO" "GLU" "GLY" "MET" "GLY" "ILE" "ILE" "PRO" "ARG" "ILE" "VAL"
+[49] "GLN" "ASP" "ILE" "PHE" "ASN" "TYR" "ILE" "TYR" "SER" "MET" "ASP" "GLU"
+[61] "ASN" "LEU" "GLU" "PHE" "HIS" "ILE" "LYS" "VAL" "SER" "TYR" "PHE" "GLU"
+[73] "ILE" "TYR" "LEU" "ASP" "LYS" "ILE" "ARG"
+</div>
+<div class='input'>print( pdb$xyz[ inds$xyz ] )
+</div>
+<div class='output'>  [1] 29.755  8.195 50.250 31.784 10.933 48.496 34.253 12.741 50.777 37.111
+ [11] 10.242 50.274 36.540  9.970 46.515 36.902 13.765 46.227 40.240 13.449
+ [21] 48.016 41.320 10.780 45.523 40.411 13.011 42.576 42.520 15.800 44.066
+ [31] 45.141 13.097 44.633 45.014 12.582 40.863 42.766  9.520 40.571 39.460
+ [41]  8.938 38.776 36.188  7.987 40.379 32.494  7.434 39.877 29.455  7.860
+ [51] 42.113 26.018  6.597 41.065 22.486  7.057 42.404 20.443  3.943 41.550
+ [61] 16.802  3.137 42.223 13.211  3.286 41.082 11.589  6.598 40.181 10.892
+ [71]  8.739 43.249 13.318  6.688 45.344 15.586  9.633 46.049 18.269  9.671
+ [81] 43.333 18.144 13.392 42.452 17.626 14.417 46.090 20.805 12.462 46.825
+ [91] 22.952 13.606 43.879 21.948 17.270 43.912 19.154 18.032 46.380 18.650
+[101] 21.790 46.855 21.621 23.121 44.899 21.912 26.316 46.930 20.654 25.301
+[111] 50.362 23.660 24.686 52.673 21.664 22.048 54.578 19.595 20.558 51.768
+[121] 22.227 20.414 49.030 23.160 16.971 47.683 26.444 15.252 46.840 27.350
+[131] 17.372 43.813 27.082 20.798 45.520 29.070 19.503 48.499 31.761 18.078
+[141] 46.193 32.183 21.362 44.291 32.346 23.160 47.615 35.103 20.854 48.871
+[151] 37.132 21.013 45.679 37.352 24.797 45.672 37.877 24.993 49.455 40.804
+[161] 22.615 49.093 42.154 24.732 46.217 41.903 27.880 48.360 43.970 26.185
+[171] 51.079 46.583 25.245 48.486 47.021 28.397 46.372 50.796 28.344 46.876
+[181] 52.765 26.450 44.223 49.835 24.556 42.704 48.091 25.795 39.552 44.595
+[191] 24.339 39.176 42.296 24.004 36.171 38.744 22.702 36.534 36.619 21.774
+[201] 33.521 33.088 20.403 33.635 30.826 18.584 31.181 27.136 17.824 31.556
+[211] 25.353 15.373 29.266 22.470 12.910 29.275 21.839  9.447 27.851 18.361
+[221]  8.691 26.550 17.694  5.594 24.407 21.455  4.961 24.391 21.952  8.310
+[231] 22.618 24.092 11.106 24.104 22.940 14.746 24.169
+</div>
+<div class='input'>
+# Union
+inds2 <- combine.sel(inds, cb.inds, op="+")
+</div>
+<div class='output'>Union of sel1 and sel2
+ *  Selected a total of: 151 atoms  *
+</div>
+<div class='input'>
+# Not
+inds3 <- combine.sel(res.inds, ca.inds, op="-")
+</div>
+<div class='output'>Sel2 is subtracted from sel1
+ *  Selected a total of: 562 atoms  *
+</div>
+<div class='input'></div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>combine.sel</li>
+    </ul>
+    <ul>
+      <li>utilities</li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='atom.select.html'>atom.select</a></code> 
+    
+    <h2>Author</h2>
+     Xin-Qiu Yao 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=combine.sel'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

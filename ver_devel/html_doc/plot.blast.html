@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>plot.blast. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Plot a Summary of BLAST Hit Statistics. </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>plot(x, cutoff = NULL, cut.seed = 110, mar = c(4, 4, 1, 2), cex.lab = 1.5, ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>x</dt>
+      <dd> BLAST results as obtained from the function
+    <code><a href='blast.pdb.html'>blast.pdb</a></code>. </dd>
+      <dt>cutoff</dt>
+      <dd> A numeric cutoff value, in terms of minus the log of
+    the evalue, for returned hits.  If null then the function will
+  try to find a suitable cutoff near &#145;cut.seed&#146; which can be used
+  as an initial guide (see below). </dd>
+      <dt>cut.seed</dt>
+      <dd> A numeric seed cutoff value, used for initial
+    cutoff estimation. </dd>
+      <dt>mar</dt>
+      <dd> A numerical vector of the form c(bottom, left, top, right)
+    which gives the number of lines of margin to be specified on the
+    four sides of the plot.</dd>
+      <dt>cex.lab</dt>
+      <dd> a numerical single element vector giving the amount by
+    which plot labels should be magnified relative to the default. </dd>
+      <dt>...</dt>
+      <dd> extra plotting arguments. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Produces a number of basic plots that should facilitate hit selection
+  from the match statistics of a BLAST result.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>Examining plots of BLAST alignment lengths, scores, E-values and normalized
+  scores (-log(E-Value), see &#145;blast.pdb&#146; function) can aid in the
+  identification sensible hit similarity thresholds.</p>
+  
+      <p>If a &#145;cutoff&#146; value is not supplied then a basic hierarchical
+  clustering of normalized scores is performed with initial group partitioning
+  implemented at a hopefully sensible point in the vicinity of
+  &#145;h=cut.seed&#146;. Inspection of the resultant plot can then be use
+  to refine the value of &#145;cut.seed&#146; or indeed
+  &#145;cutoff&#146;. As the &#145;cutoff&#146; value can vary depending on
+  the desired application and indeed the properties of the system under
+  study it is envisaged that &#145;plot.blast&#146; will be called multiple
+  times to aid selection of a suitable &#145;cutoff&#146; value. See the
+  examples below for further details.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Produces a plot on the active graphics device and returns a three
+  component list object:
+  hits an ordered matrix detailing the subset of hits with a normalized
+    score above the chosen cutoff. Database identifiers are listed along
+    with their cluster group number. 
+  pdb.id a character vector containing the PDB database identifier of
+    each hit above the chosen threshold. 
+  gi.id a character vector containing the gi database identifier of
+    each hit above the chosen threshold.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>TO BE IMPROVED.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>b2 <-  blast.pdb( pdbseq(read.pdb( get.pdb("4q21", URLonly=TRUE) )) )
+</div>
+<div class='output'>  HEADER    ONCOGENE PROTEIN                        25-SEP-91   4Q21               
+ Searching ... please wait (updates every 5 seconds) RID = ZJK0TN2C01R 
+ ..
+ Reporting 270 hits
+</div>
+<div class='input'>raw.hits <- plot.blast(b2)
+</div>
+<div class='output'>  * Possible cutoff values include:
+		 237 60 
+    Yielding Nhits:
+		 147 270  
+
+ ** Chosen cutoff value of:
+		 60 
+    Yielding Nhits:
+		 270  
+</div>
+<p><img src='plot.blast-6.png' alt='' width='400' height='400' /></p>
+<div class='input'>top.hits <- plot.blast(b2, 188)
+</div>
+<div class='output'>  * Possible cutoff values include:
+		 237 60 
+    Yielding Nhits:
+		 147 270  
+
+</div>
+<p><img src='plot.blast-9.png' alt='' width='400' height='400' /></p>
+<div class='input'>head(top.hits$hits)
+</div>
+<div class='output'>  pdb.id   gi.id       group
+1 "6Q21_A" "231226"    "1"  
+2 "6Q21_B" "231227"    "1"  
+3 "6Q21_C" "231228"    "1"  
+4 "6Q21_D" "231229"    "1"  
+5 "1IOZ_A" "15988032"  "1"  
+6 "1AA9_A" "157829765" "1"  
+</div>
+<div class='input'>
+blast <- blast.pdb( pdbseq(read.pdb( get.pdb("2BN3", URLonly=TRUE) )))
+</div>
+<div class='output'>  HEADER    RADIATION DAMAGE                        18-MAR-05   2BN3               
+   PDB has ALT records, taking A only, rm.alt=TRUE
+ Searching ... please wait (updates every 5 seconds) RID = ZJK18BR801R 
+ ...
+ Reporting 1174 hits
+</div>
+<div class='input'>raw.hits <- plot(blast)
+</div>
+<div class='output'>  * Possible cutoff values include:
+		 -3 
+    Yielding Nhits:
+		 1174  
+
+ ** Chosen cutoff value of:
+		 -3 
+    Yielding Nhits:
+		 1174  
+</div>
+<p><img src='plot.blast-16.png' alt='' width='400' height='400' /></p>
+<div class='input'>top.hits <- plot(blast, cut.seed=20)
+</div>
+<div class='output'>  * Possible cutoff values include:
+		 21 -3 
+    Yielding Nhits:
+		 550 1174  
+
+ ** Chosen cutoff value of:
+		 21 
+    Yielding Nhits:
+		 550  
+</div>
+<p><img src='plot.blast-19.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+head(top.hits$pdb.id)
+</div>
+<div class='output'>[1] "1APH_B" "1BPH_B" "1CPH_B" "1DPH_B" "4INS_B" "4INS_D"
+</div>
+<div class='input'>#pdbFiles <- get.pdb(substr(top.hits$pdb.id, 1, 4), path="downloadedPDBs/")
+#pdbsplit(pdbFiles, path="downloadedPDBs/PDB_chains/")
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>plot.blast</li>
+    </ul>
+    <ul>
+      <li> hplot </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='blast.pdb.html'>blast.pdb</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=plot.blast'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>
