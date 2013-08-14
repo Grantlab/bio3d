@@ -9,9 +9,10 @@
 }
 \usage{
 nma(pdb, inds = NULL, ff = 'calpha', pfc.fun = NULL,
-    normalize = TRUE, mass = TRUE, temp = 300.0, compiler = TRUE,
-    cutoff = 15, gamma = 1)
-build.hessian(xyz, pfc.fun, normalize=TRUE)
+    normalize = TRUE, mass = TRUE, temp = 300.0, keep = NULL,
+    compiler = FALSE, ncore = 1, cutoff = 15, gamma = 1)
+build.hessian(xyz, pfc.fun, normalize = TRUE, mass.weights = NULL, 
+    compiler = FALSE, ncore = 1)
 \method{print}{nma}(x, nmodes=6, \dots)
 }
 \arguments{
@@ -28,13 +29,19 @@ build.hessian(xyz, pfc.fun, normalize=TRUE)
     weighted. }
   \item{temp}{ numerical, temperature at which the atomic vectors are
     calculated. }
-  \item{compiler}{ logical, if TRUE code for building the Hessian matrix
-    will be byte compiled for efficiency. }
+  \item{keep}{ numerical, final number of modes to be stored. Note that
+    all subsequent analysis are limited to this subset of modes. }
+  \item{compiler}{ logical, if TRUE parts of code for building the
+    Hessian matrix will be byte compiled for efficiency. Requires
+    compiler package installed. } 
+  \item{ncore}{ number of CPU cores used to build the Hessian matrix.
+    Requires multicore package installed. }
   \item{cutoff}{ numerical, cutoff for pair-wise interactions (applies to
     \sQuote{anm}-FF only). }
   \item{gamma}{ numerical, global scaling factor  (applies to
     \sQuote{anm}-FF only). }
   \item{xyz}{ a numeric vector of Cartesian coordinates. }
+  \item{mass.weights}{ a numeric vector of atom weights. }
   \item{x}{ an \code{nma} object obtained from \code{\link{nma}}. }
   \item{nmodes}{ numeric, number of modes to be printed. }
   \item{...}{ additional arguments to \sQuote{print}. }
@@ -85,6 +92,21 @@ build.hessian(xyz, pfc.fun, normalize=TRUE)
   \item{natoms}{ number of C-alpha atoms. }
   \item{call}{ the matched call. }
 }
+\note{
+  The current version provides an efficent implementation of NMA with
+  execution time comparable (or even faster) to similar software (when
+  the entire Hessian is diagonalized).
+
+  The main (speed related) bottleneck is currently the diagonalization
+  of the Hessian matrix which is performed with the core R function
+  \sQuote{eigen}. For computing a few (5-20) approximate modes the user
+  can consult package \sQuote{irlba}.
+
+  NMA is memory extensive and users should be cautions when running
+  larger proteins (>3000 residues). Use \sQuote{keep} to reduce the
+  amount of memory needed to store the final \sQuote{nma} object (the
+  full 3Nx3N Hessian matrix still needs to be allocated). 
+}
 \references{
   Hinsen, K. et al. (2000) \emph{Chemical Physics} \bold{261}, 25--37.
   Atilgan, A.R. et al. (2001) \emph{Biophysical Journal} \bold{80}, 505--515.
@@ -92,7 +114,7 @@ build.hessian(xyz, pfc.fun, normalize=TRUE)
 }
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{fluct.nma}}, \code{\link{mktrj.nma}},
-  \code{\link{dccm.nma}}, \code{\link{overlap}}  }
+  \code{\link{dccm.nma}}, \code{\link{overlap}}, \code{\link{rmsip}}  }
 \examples{
 ## Fetch stucture
 pdb <- read.pdb("1hel")
@@ -116,12 +138,24 @@ modes <- nma(pdb, mass=FALSE)
 modes <- nma(pdb, ff="anm", mass=FALSE, temp=NULL, normalize=FALSE)
 
 ## Customize energy function
+## Note - r is a vector of distances !
 "my.ff" <- function(r) {
     return(1 / (r**2))
 }
 
 ## Modes with a new funny energy function
 modes <- nma(pdb, pfc.fun=my.ff)
+
+
+## A more manual approach
+"anm.ff" <- function(r) {
+  ifelse( r>15, 0, 1/(r**2) )
+}
+
+sele <- atom.select(pdb, "//A////CA/")
+xyz <- pdb$xyz[sele$xyz]
+hessian <- build.hessian(xyz, anm.ff, normalize=FALSE)
+modes <- eigen(hessian)
 
 }
 \keyword{ analysis }

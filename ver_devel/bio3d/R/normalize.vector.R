@@ -1,12 +1,18 @@
 "normalize.vector" <-
-  function(v, mass=NULL) {
+  function(x, mass=NULL) {
+    x <- as.matrix(x);
+    dx <- dim(x); 
+    
+    if(dx[2]==1)
+      x <- as.numeric(x)
+    
     if(!is.null(mass)) {
-      if (nrow(as.matrix(v)) != (length(mass)*3)) 
-        stop("unequal vector lengths")
+      if (dx[1] != (length(mass)*3))
+        stop("normalize.vector: incorrect length of mass")
     }
 
-    if(class(v)=='matrix')
-      return(t( t(v) / sqrt(inner.prod(v,v,mass))))
+    if(is.matrix(x))
+      return(t( t(x) / sqrt(inner.prod(x,x,mass))))
     else
-      return(v / sqrt(inner.prod(v,v,mass)))
+      return(x / sqrt(inner.prod(x,x,mass))) 
   }

@@ -38,6 +38,6 @@ modes <- nma(pdb)
 f <- fluct.nma(modes)
 
 ## Fluctuations of first non-trivial mode
-f <- fluct.nma(modes, mode.inds=7)
+f <- fluct.nma(modes, mode.inds=c(7,8))
 }
 \keyword{ analysis }

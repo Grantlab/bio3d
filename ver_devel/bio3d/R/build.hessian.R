@@ -1,79 +1,166 @@
 "build.hessian" <-
-  function(xyz, pfc.fun, normalize=TRUE)  {
+  function(xyz, pfc.fun, normalize=TRUE, mass.weights=NULL,
+           compiler=FALSE, ncore=1)  {
 
+    if(missing(xyz))
+      stop("build.hessian: 'xyz' coordinates must be provided")
+    
     if (!is.function(pfc.fun))
       stop("build.hessian: 'pfc.fun' must be a function")
+
+    if(!is.null(mass.weights)) {
+      if((length(xyz)/3)!=length(mass.weights))
+        stop("build.hessian: 'mass.weights' and number of atoms does not match")
+    }
     
-    ## Coordinates
-    x <- xyz[ seq(1, length(xyz), by=3) ]
-    y <- xyz[ seq(2, length(xyz), by=3) ]
-    z <- xyz[ seq(3, length(xyz), by=3) ]
-    natoms <- length(x)
-    
-    ## Distance matrix and pair force constants (ff dependent)
-    dist.mat <- dm.xyz(xyz, mask.lower=F)
-    pfc <- matrix(mapply(pfc.fun, dist.mat), ncol=natoms)
-
-    ## Allocate a 3Nx3N matrix
-    H <- matrix(0, nrow=3*natoms, ncol=3*natoms)
-
-    ## Double for-loop - re-implement for effiency
-    inds <- seq(1, natoms*3, by=3)
-    for ( i in 1:natoms ) {
-        m <- inds[i]
-
-        for ( j in 1:natoms ) {
-            n <- inds[j]
-            k <- pfc[i,j]
-
-            if (i!=j) {
-                l <- -k
-                a <- x[j]-x[i]
-                b <- y[j]-y[i]
-                c <- z[j]-z[i]
-
-                ## normalize distance vector
-                if (normalize)
-                    v <- normalize.vector(c(a,b,c))
-                else
-                    v <- c(a,b,c)
-            }
-            else {
-                l <- 0
-                v <- c(0,0,0)
-            }
-            
-            H[m  , n  ] <- v[1] * v[1] * l
-            H[m  , n+1] <- v[1] * v[2] * l
-            H[m  , n+2] <- v[1] * v[3] * l
-
-            H[m+1, n  ] <- v[2] * v[1] * l
-            H[m+1, n+1] <- v[2] * v[2] * l
-            H[m+1, n+2] <- v[2] * v[3] * l
-
-            H[m+2, n  ] <- v[3] * v[1] * l
-            H[m+2, n+1] <- v[3] * v[2] * l
-            H[m+2, n+2] <- v[3] * v[3] * l
-
-            ## Same as:
-            ##H[m:(m+2), n:(n+2)] <- (v%o%v) * l
-        }
+    ## Check if compiler package is available
+    if(compiler) {
+      oops <- require(compiler)
+      if (!oops) {
+        warning("compiler package missing (requires R version => 2.13.0)")
+        compiler <- FALSE
+      }
+    }
+ 
+    ## Check for multiple cores
+    if(is.null(ncore) || ncore>1) {
+      oops <- require(multicore)
+      if (oops) {
+        if(is.null(ncore))
+          ncore <- multicore:::detectCores()
+      }
+      else {
+        warning("multicore package missing")
+        ncore <- 1
+      }
     }
 
+    build.submatrix <- function(xyz, rinds, inds.x, inds.y, inds.z,
+                                mass.weights, natoms, normalize) {
+      
+      ## Sub-matrix of the full Hessian
+      Hsm <- matrix(0, ncol=3*length(rinds), nrow=natoms*3)
+      
+      ## indices relating atoms and colums in the sub-hessian
+      col.inds <- seq(1, ncol(Hsm), by=3)
+      ## weight indices
+      inds <- rep(1:natoms, each=3)
+            
+      for ( i in 1:length(rinds) ) {
+        ## atom number
+        n <- rinds[i]
 
-    i <- 0; j <- 0;
+        ## Calculate difference vectors and force constants
+        diff.vect <- t(t(xyz) - xyz[n,])
+        
+        ##dists <- apply(diff.vect, 1, function(x) sqrt(sum(x**2)))
+        dists <- sqrt(rowSums(diff.vect**2))  ## quicker !
 
-    ## Calculate diagonal super-elements of H
-    for ( i in 1:nrow(H) ) {
-        m <- sum(H[i, inds  ]) # x
-        n <- sum(H[i, inds+1]) # y
-        o <- sum(H[i, inds+2]) # z
+        ## Previous version pfc.fun was not vectorized
+        ##force.constants <- apply(diff.vect, 1, calc.fc, pfc.fun) * (-1)
 
-        j <- rep(inds, each=3)[i]
-        H[i, j  ] <- m * (-1)
-        H[i, j+1] <- n * (-1)
-        H[i, j+2] <- o * (-1)
+        ## pfc.fun takes a vector of distances 
+        force.constants <- pfc.fun(dists) * (-1)
+
+        ## ensure that its not 'Inf'
+        force.constants[n] <- 0
+
+        ## Check efficiency of 'normalize.vector'
+        if(normalize) {
+          diff.vect <- t(normalize.vector(t(diff.vect)))
+          diff.vect[n,] <- 0 
+        }
+        
+        ## Hessian elements
+        dxx <- diff.vect[,1] * diff.vect[,1] * force.constants
+        dyy <- diff.vect[,2] * diff.vect[,2] * force.constants
+        dzz <- diff.vect[,3] * diff.vect[,3] * force.constants
+        
+        dxy <- diff.vect[,1] * diff.vect[,2] * force.constants
+        dxz <- diff.vect[,1] * diff.vect[,3] * force.constants
+        dyz <- diff.vect[,2] * diff.vect[,3] * force.constants
+
+        ## Place the elements
+        m <- col.inds[i]
+        
+        ## Off-diagonals 
+        Hsm[inds.x, m   ] <- dxx
+        Hsm[inds.y, m+1 ] <- dyy
+        Hsm[inds.z, m+2 ] <- dzz
+
+        Hsm[inds.y, m   ] <- dxy
+        Hsm[inds.z, m   ] <- dxz
+        
+        Hsm[inds.x, m+1 ] <- dxy
+        Hsm[inds.z, m+1 ] <- dyz
+        
+        Hsm[inds.x, m+2 ] <- dxz
+        Hsm[inds.y, m+2 ] <- dyz
+
+        ## Diagonal super elements
+        Hsm[inds.x[n], m] <- sum(Hsm[inds.x, m]) * (-1)
+        Hsm[inds.y[n], m] <- sum(Hsm[inds.y, m]) * (-1)
+        Hsm[inds.z[n], m] <- sum(Hsm[inds.z, m]) * (-1)
+
+        Hsm[inds.x[n], m+1] <- sum(Hsm[inds.x, m+1]) * (-1)
+        Hsm[inds.y[n], m+1] <- sum(Hsm[inds.y, m+1]) * (-1)
+        Hsm[inds.z[n], m+1] <- sum(Hsm[inds.z, m+1]) * (-1)
+
+        Hsm[inds.x[n], m+2] <- sum(Hsm[inds.x, m+2]) * (-1)
+        Hsm[inds.y[n], m+2] <- sum(Hsm[inds.y, m+2]) * (-1)
+        Hsm[inds.z[n], m+2] <- sum(Hsm[inds.z, m+2]) * (-1)
+
+        ## Mass weight Hessian
+        if(!is.null(mass.weights)) {
+          m.tmp <- mass.weights[n] ## mass of atom n
+          Hsm[,m:(m+2)] <- Hsm[,m:(m+2)] * (1/m.tmp)
+          Hsm[,m:(m+2)] <- Hsm[,m:(m+2)] * (1/mass.weights[inds])
+        }
+      }
+      return(Hsm)
+    }
+
+    ## Compile modules? Probably not needed anymore
+    if(compiler) {
+      pfc.fun <- cmpfun(pfc.fun)
+    }
+
+    ## Coordinates
+    xyz <- matrix(xyz, ncol=3, byrow=TRUE)
+    natoms <- nrow(xyz)
+    
+    ## Convenient indices for accessing the hessian
+    inds.x <- seq(1, natoms*3, by=3)
+    inds.y <- inds.x+1
+    inds.z <- inds.x+2
+
+    ## Divide the job to multiple cores
+    ## Possibly mclapply instead of a for-loop is more efficient
+    if(ncore>1) {
+      thread.ids <- sort( rep(1:ncore, length.out=natoms) )
+      ncore <- length(unique(thread.ids))
+      jobs <- list()
+    
+      for ( i in 1:ncore ) {
+        rinds <- which(thread.ids==i)
+        jobs[[i]] <- multicore::parallel( build.submatrix(xyz, rinds,
+                                     inds.x, inds.y, inds.z,
+                                     mass.weights, natoms, normalize) )
+      }
+      
+      res <- multicore::collect(jobs, wait=TRUE)
+      
+      H <- NULL
+      for ( job in res ) {
+        H <- cbind(H, job)
+      }
+    }
+    else {
+      rinds <- seq(1, natoms)
+      H <- build.submatrix(xyz, rinds,
+                           inds.x, inds.y, inds.z,
+                           mass.weights, natoms, normalize)
     }
 
     return(H)
-}
+  }

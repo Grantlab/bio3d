@@ -2,7 +2,8 @@
 \alias{trim.pdb}
 \title{ Trim a PDB Object To A Subset of Atoms. }
 \description{
-  Produce a new smaller PDB object, containing a subset of atoms, from a given larger PDB object.
+  Produce a new smaller PDB object, containing a subset of atoms, from a
+  given larger PDB object. 
 }
 \usage{
 trim.pdb(pdb, inds = NULL)
@@ -14,7 +15,8 @@ trim.pdb(pdb, inds = NULL)
     \code{\link{atom.select}}. }
 }
 \details{
-  This is a basic utility function for selecting a subset of a PDB object.
+  This is a basic utility function for creating a new PDB object based
+  on a selection of atoms.
 }
 \value{
   Returns a list of class \code{"pdb"} with the following components:
@@ -39,8 +41,11 @@ trim.pdb(pdb, inds = NULL)
   \url{http://www.wwpdb.org/documentation/format33/v3.3.html}.
 .
 }
-\author{ Barry Grant }
-\note{ 
+\author{ Barry Grant, Lars Skjaerven }
+\note{
+  \code{het}, \code{helix}, \code{sheet}, and \code{seqres} list
+  components are returned unmodified.
+  
   For both \code{atom} and \code{het} list components the column names can be
   used as a convenient means of data access, namely:
   Atom serial number \dQuote{eleno} ,
@@ -57,14 +62,21 @@ trim.pdb(pdb, inds = NULL)
   Temperature factor \dQuote{b}.
   See examples for further details.
 }
-\seealso{ \code{\link{atom.select}}, \code{\link{write.pdb}},
-  \code{\link{read.dcd}}, \code{\link{read.fasta.pdb}},
-  \code{\link{read.fasta}} }
+\seealso{ \code{\link{read.pdb}}, \code{\link{atom.select}},
+  \code{\link{write.pdb}} }
 \examples{
 \dontrun{
- pdb <- read.pdb( "5p21" )
- npdb <- trim.pdb(pdb, inds=atom.select(pdb, "back"))
- write.pdb(npdb, file="backboneonly.pdb")
+## Read a PDB file from the RCSB online database
+pdb <- read.pdb("1bg2")
+
+## Select calpha atoms
+sele <- atom.select(pdb, "calpha")
+
+## Trim PDB
+new.pdb <- trim.pdb(pdb, inds=sele)
+
+## Write to file
+write.pdb(new.pdb, file="calpha.pdb")
 }
 }
 \keyword{ utilities }

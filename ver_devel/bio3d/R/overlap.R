@@ -1,7 +1,7 @@
 "overlap" <-
   function(modes, dv, nmodes=20) {
     if(missing(modes))
-      stop("overlap: 'a' must be prodivded")
+      stop("overlap: 'modes' must be prodivded")
     if(missing(dv))
       stop("overlap: 'dv' must be prodivded")
 
@@ -46,4 +46,3 @@
     
     return(out)
   }
-    

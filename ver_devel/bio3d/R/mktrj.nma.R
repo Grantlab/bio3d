@@ -12,6 +12,9 @@
   if(is.null(file))
     file <- paste("mode_", mode, ".pdb", sep="")
 
+  if(nma$L[mode]<=0)
+    stop("Mode with eigenvalue <=0 detected. Check 'mode' index.")
+
   nstep <- c(seq(step, to=mag, by=step))
   zcoor <- cbind(1) %*% nstep
 
