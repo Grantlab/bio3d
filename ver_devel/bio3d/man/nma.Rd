@@ -8,11 +8,11 @@
   of a protein structure.
 }
 \usage{
-nma(pdb, inds = NULL, ff = 'calpha', pfc.fun = NULL,
-    normalize = TRUE, mass = TRUE, temp = 300.0, keep = NULL,
-    compiler = FALSE, ncore = 1, cutoff = 15, gamma = 1)
-build.hessian(xyz, pfc.fun, normalize = TRUE, mass.weights = NULL, 
-    compiler = FALSE, ncore = 1)
+nma(pdb, inds = NULL, ff = 'calpha', pfc.fun = NULL, fc.weights = NULL,
+    mass = TRUE, temp = 300.0, keep = NULL, cutoff = 15, gamma = 1,
+    ncore = 1 )
+build.hessian(xyz, pfc.fun, mass.weights = NULL, fc.weights = NULL,
+    ncore = 1 ) 
 \method{print}{nma}(x, nmodes=6, \dots)
 }
 \arguments{
@@ -23,17 +23,19 @@ build.hessian(xyz, pfc.fun, normalize = TRUE, mass.weights = NULL,
     should be based.}
   \item{ff}{ character string specifying the force field to use:
     \sQuote{calpha} or \sQuote{anm}. }
-  \item{pfc.fun}{ customized pair force constant function. }
-  \item{normalize}{ logical, if TRUE distance vectors will be normalized. }
-  \item{mass}{ logical, if TRUE the calculation will be mass
-    weighted. }
-  \item{temp}{ numerical, temperature at which the atomic vectors are
-    calculated. }
+  \item{pfc.fun}{ customized pair force constant (\sQuote{pfc})
+    function. The provided function should take a vector of distances as
+    an argument to return a vector of force constants. If provided,
+    'pfc.fun' will override argument \code{ff}. }
+  \item{fc.weights}{ a numeric matrix of size NxN (where N is the number
+    of calpha atoms) containg scaling factors for the pariwise force
+    constants. }
+  \item{mass}{ logical, if TRUE the Hessian will be mass-weighted. }
+  \item{temp}{ numerical, temperature for which the amplitudes for
+    scaling the atomic displacement vectors are calculated. Set
+    \sQuote{temp=NULL} to avoid scaling. }
   \item{keep}{ numerical, final number of modes to be stored. Note that
-    all subsequent analysis are limited to this subset of modes. }
-  \item{compiler}{ logical, if TRUE parts of code for building the
-    Hessian matrix will be byte compiled for efficiency. Requires
-    compiler package installed. } 
+    all subsequent analyses are limited to this subset of modes. }
   \item{ncore}{ number of CPU cores used to build the Hessian matrix.
     Requires multicore package installed. }
   \item{cutoff}{ numerical, cutoff for pair-wise interactions (applies to
@@ -51,11 +53,12 @@ build.hessian(xyz, pfc.fun, normalize = TRUE, mass.weights = NULL,
   protein structure. Two force fields are implemented - both employing
   the elastic network model (ENM).
 
-  The \sQuote{Calpha} force field - originally developed by Konrad
+  The \sQuote{calpha} force field - originally developed by Konrad
   Hinsen - is the recommended one for most applications. It employs a
   spring force constant differentiating between nearest-neighbour pairs
-  along the backbone and all other pairs. The force constant is
-  obtained by fitting to a local minimum of the AMBER94 force field.
+  along the backbone and all other pairs. The force constant function
+  was parameterized by fitting to a local minimum of a crambin model
+  using the AMBER94 force field. 
 
   The implementation of the \sQuote{ANM} (Anisotropic Network Model)
   force field originates from the lab of Ivet Bahar. It uses a
@@ -69,33 +72,37 @@ build.hessian(xyz, pfc.fun, normalize = TRUE, mass.weights = NULL,
   The implementation under default arguments reproduces the calculation
   of normal modes (VibrationalModes) in the Molecular Modeling Toolkit
   (MMTK) package. To reproduce ANM modes set \code{ff='anm'},
-  \code{mass=FALSE}, \code{temp=NULL}, and \code{normalize=FALSE}.
+  \code{mass=FALSE}, and \code{temp=NULL}.
 }
 \value{
   Returns an object of class \sQuote{nma} with the following components:
-  \item{modes}{ numeric matrix containing the normal mode vectors
-    (converted to unweighted Cartesian coordinates). }
+  \item{modes}{ numeric matrix  with columns containing the normal mode
+    vectors. Mode vectors are converted to unweighted Cartesian
+    coordinates  when \code{mass=TRUE}. Note that the 6 first trivial
+    eigenvectos appear in columns one to six. }
   \item{frequencies}{ numeric vector containing the vibrational
     frequencies corresponding to each mode (for \code{mass=TRUE}). }
   \item{force.constants}{ numeric vector containing the force constants
     corresponding to each mode (for \code{mass=FALSE)}). }
-  \item{fluctuations}{ numeric vector of atomic fluctuations . }
-  \item{U}{ numeric vector containing the raw eigenvectors. }
+  \item{fluctuations}{ numeric vector of atomic fluctuations. }
+  \item{U}{ numeric vector containing the raw eigenvectors. Equals to
+    the \code{modes} component when \code{mass=FALSE} and
+    \code{temp=NULL}. }
   \item{L}{ numeric vector containing the raw eigenvalues. }
   \item{xyz}{ numeric vector of the cartesian coordinates in which the
     calculation was performed. }
   \item{mass}{ numeric vector containing the residue masses used for the 
     mass-weighting. }
-  \item{temp}{ numerical, temperature at which the atomic vectors are
-    calculated. }
+  \item{temp}{ numerical, temperature for which the amplitudes for
+    scaling the atomic displacement vectors are calculated. }
   \item{triv.modes}{ number of trivial modes. }
   \item{natoms}{ number of C-alpha atoms. }
   \item{call}{ the matched call. }
 }
 \note{
   The current version provides an efficent implementation of NMA with
-  execution time comparable (or even faster) to similar software (when
-  the entire Hessian is diagonalized).
+  execution time comparable to similar software (when the entire Hessian
+  is diagonalized).
 
   The main (speed related) bottleneck is currently the diagonalization
   of the Hessian matrix which is performed with the core R function
@@ -105,7 +112,7 @@ build.hessian(xyz, pfc.fun, normalize = TRUE, mass.weights = NULL,
   NMA is memory extensive and users should be cautions when running
   larger proteins (>3000 residues). Use \sQuote{keep} to reduce the
   amount of memory needed to store the final \sQuote{nma} object (the
-  full 3Nx3N Hessian matrix still needs to be allocated). 
+  full 3Nx3N Hessian matrix still needs to be allocated).
 }
 \references{
   Hinsen, K. et al. (2000) \emph{Chemical Physics} \bold{261}, 25--37.
@@ -135,26 +142,25 @@ m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
 modes <- nma(pdb, mass=FALSE)
 
 ## Use Anisotropic Network Model
-modes <- nma(pdb, ff="anm", mass=FALSE, temp=NULL, normalize=FALSE)
+modes <- nma(pdb, ff="anm", mass=FALSE, temp=NULL)
 
 ## Customize energy function
 ## Note - r is a vector of distances !
 "my.ff" <- function(r) {
-    return(1 / (r**2))
+    return(1/r)
 }
 
 ## Modes with a new funny energy function
 modes <- nma(pdb, pfc.fun=my.ff)
 
-
 ## A more manual approach
 "anm.ff" <- function(r) {
-  ifelse( r>15, 0, 1/(r**2) )
+  ifelse( r>15, 0, 1 )
 }
 
 sele <- atom.select(pdb, "//A////CA/")
 xyz <- pdb$xyz[sele$xyz]
-hessian <- build.hessian(xyz, anm.ff, normalize=FALSE)
+hessian <- build.hessian(xyz, anm.ff)
 modes <- eigen(hessian)
 
 }

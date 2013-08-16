@@ -1,7 +1,6 @@
 "nma" <-
-  function(pdb, inds=NULL, ff='calpha', pfc.fun=NULL,
-           normalize=TRUE, mass=TRUE, temp=300.0, keep=NULL,
-           compiler=FALSE, ncore=1, cutoff=15, gamma=1  ) {
+  function(pdb, inds=NULL, ff='calpha', pfc.fun=NULL, fc.weights=NULL,
+           mass=TRUE, temp=300.0, keep=NULL, cutoff=15, gamma=1, ncore=1 ) {
     
     if (missing(pdb))
       stop("nma: must supply 'pdb' object, i.e. from 'read.pdb'")
@@ -14,8 +13,6 @@
     ## Trim PDB to match user selection
     if ( !is.null(inds) ) {
       pdb <- trim.pdb(pdb, inds)
-      ## can be removed with new version of trim.pdb
-      ##pdb$calpha <- as.logical(pdb$atom[,"elety"] == "CA")
     }
     
     ## Define force field
@@ -23,22 +20,14 @@
       
       ## Bahar "ANM"-ff
       if (ff=="anm")  {
-        if(normalize){
-          warning("nma: set 'normalize=FALSE' when using force field 'anm'")
-          ##normalize <- FALSE
-        }
         "ff.anm" <- function(r, rc=cutoff, g=gamma) {
-          ifelse( r>rc, 0, g/(r**2) )
+          ifelse( r>rc, 0, g )
         }
         ff <- ff.anm
       }
       
       ## Hinsen "C-alpha"-ff
       else if (ff=="calpha")  {
-        if(!normalize){
-          warning("nma: set 'normalize=TRUE' when using force field 'calpha'")
-          ##normalize <- TRUE
-        }
         "ff.calpha" <- function(r) {
           a <- 1e-1; b <- 1; c <- 1e6;
           ifelse( r<4.0,
@@ -54,6 +43,8 @@
     }
     else {
       ## Use customized force field
+      if(!is.function(pfc.fun))
+        stop("'pfc.fun' must be a function")
       ff <- pfc.fun
     }
     
@@ -62,7 +53,7 @@
     w <- c( 71.079018, 157.196106, 114.104059, 114.080689, 103.143407,
            128.107678, 128.131048,  57.05203,  137.141527, 113.159985,
            113.159985, 129.18266,  131.197384, 147.177144,  97.117044,
-           87.078323, 101.105312, 186.213917, 163.176449,  99.132996)
+            87.078323, 101.105312, 186.213917, 163.176449,  99.132996)
     
     aa <- c("ALA", "ARG", "ASN", "ASP", "CYS",
             "GLU", "GLN", "GLY", "HIS", "ILE",
@@ -98,8 +89,7 @@
     ## Build the Hessian Matrix - use byte compiled code if possible
     cat(" Building Hessian...")
     ptm <- proc.time()
-    H <- build.hessian(xyz, ff, normalize=normalize, mass.weights=wts, 
-                       compiler=compiler, ncore=ncore)
+    H <- build.hessian(xyz, ff, mass.weights=wts, fc.weights=fc.weights, ncore=ncore)
     t <- proc.time() - ptm
     cat("\t\tDone in", t[[3]], "seconds.\n")
   
@@ -121,7 +111,7 @@
     
     ## Raw eigenvalues
     ei$values <- round(ei$values,6)
-    triv.modes <- which(ei$values==0) ## indicies !!
+    triv.modes <- which(ei$values<=0) ## indicies !!
     
     ## Frequencies are given by
     if (mass)  {
@@ -177,7 +167,7 @@
     ## Check if first modes are zero-modes
     if(ei$values[1]<0) {
       warning("Negative eigenvalue(s) detected! \
-               This is useually an indication of an unphysical input structure.")
+              This is useually an indication of an unphysical input structure.")
     }
         
     ## Output to class "nma"

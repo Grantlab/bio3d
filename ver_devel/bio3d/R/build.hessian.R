@@ -1,6 +1,5 @@
 "build.hessian" <-
-  function(xyz, pfc.fun, normalize=TRUE, mass.weights=NULL,
-           compiler=FALSE, ncore=1)  {
+  function(xyz, pfc.fun, mass.weights=NULL, fc.weights=NULL, ncore=1 )  {
 
     if(missing(xyz))
       stop("build.hessian: 'xyz' coordinates must be provided")
@@ -13,30 +12,17 @@
         stop("build.hessian: 'mass.weights' and number of atoms does not match")
     }
     
-    ## Check if compiler package is available
-    if(compiler) {
-      oops <- require(compiler)
-      if (!oops) {
-        warning("compiler package missing (requires R version => 2.13.0)")
-        compiler <- FALSE
-      }
-    }
- 
-    ## Check for multiple cores
-    if(is.null(ncore) || ncore>1) {
+    ## Check for multicore package
+    if(ncore>1) {
       oops <- require(multicore)
-      if (oops) {
-        if(is.null(ncore))
-          ncore <- multicore:::detectCores()
-      }
-      else {
+      if (!oops) {
         warning("multicore package missing")
         ncore <- 1
       }
     }
 
     build.submatrix <- function(xyz, rinds, inds.x, inds.y, inds.z,
-                                mass.weights, natoms, normalize) {
+                                mass.weights, natoms, fc.weights=NULL) {
       
       ## Sub-matrix of the full Hessian
       Hsm <- matrix(0, ncol=3*length(rinds), nrow=natoms*3)
@@ -59,17 +45,20 @@
         ## Previous version pfc.fun was not vectorized
         ##force.constants <- apply(diff.vect, 1, calc.fc, pfc.fun) * (-1)
 
-        ## pfc.fun takes a vector of distances 
-        force.constants <- pfc.fun(dists) * (-1)
+        ## pfc.fun takes a vector of distances
+        force.constants <- pfc.fun(dists)
+
+        if(!is.null(fc.weights)) {
+          force.constants <- force.constants * fc.weights[n,]
+        }
+
+        force.constants <- (-1) * force.constants / (dists**2)
 
         ## ensure that its not 'Inf'
         force.constants[n] <- 0
 
-        ## Check efficiency of 'normalize.vector'
-        if(normalize) {
-          diff.vect <- t(normalize.vector(t(diff.vect)))
-          diff.vect[n,] <- 0 
-        }
+        ##diff.vect <- t(normalize.vector(t(diff.vect)))
+        diff.vect[n,] <- 0 
         
         ## Hessian elements
         dxx <- diff.vect[,1] * diff.vect[,1] * force.constants
@@ -120,14 +109,18 @@
       return(Hsm)
     }
 
-    ## Compile modules? Probably not needed anymore
-    if(compiler) {
-      pfc.fun <- cmpfun(pfc.fun)
-    }
-
     ## Coordinates
     xyz <- matrix(xyz, ncol=3, byrow=TRUE)
     natoms <- nrow(xyz)
+
+    if(!is.null(fc.weights)) {
+      if(!is.matrix(fc.weights))
+        stop("'fc.weights' must be a numeric matrix")
+      
+      if((nrow(fc.weights) != natoms) ||
+         (ncol(fc.weights) != natoms) )
+        stop("'fc.weights' must be numeric matrix with dimensions NxN")
+    }
     
     ## Convenient indices for accessing the hessian
     inds.x <- seq(1, natoms*3, by=3)
@@ -145,7 +138,7 @@
         rinds <- which(thread.ids==i)
         jobs[[i]] <- multicore::parallel( build.submatrix(xyz, rinds,
                                      inds.x, inds.y, inds.z,
-                                     mass.weights, natoms, normalize) )
+                                     mass.weights, natoms, fc.weights) )
       }
       
       res <- multicore::collect(jobs, wait=TRUE)
@@ -159,7 +152,7 @@
       rinds <- seq(1, natoms)
       H <- build.submatrix(xyz, rinds,
                            inds.x, inds.y, inds.z,
-                           mass.weights, natoms, normalize)
+                           mass.weights, natoms, fc.weights)
     }
 
     return(H)
