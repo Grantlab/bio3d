@@ -1,20 +1,6 @@
 "bounds" <-
 function (nums, dup.inds=FALSE, pre.sort=TRUE) {
 
-  if(FALSE){
-  if (length(nums) <= 2) {
-    bounds <- sort(nums)
-    bounds <- c(bounds, (bounds[2] - bounds[1] + 1))
-    names(bounds) <- c("start", "end", "length")
-    return(t(as.matrix(bounds)))
-  }
-  if (length(nums) == 1) {
-    bounds <- c(nums, nums, 1)
-    names(bounds) <- c("start", "end", "length")
-    return(t(as.matrix(bounds)))
-  }
-}
-  
   if(dup.inds) {
     ## bounds of concetive duplicated numbers 
     s.ind <- which(!duplicated(nums))
@@ -33,11 +19,8 @@ function (nums, dup.inds=FALSE, pre.sort=TRUE) {
       ## Edit here to return matrix (not vector) 
       ## following dssp bug report from Yun Liu
       ## Fri, Apr 29, 2011
-      return( t(as.matrix(bounds)) )
+     return( t(as.matrix(bounds)) )
     }
-
-    if (length(nums) == 2)
-      nums <- c(nums[1], nums)
 
     if(pre.sort) {
       ## should we pre-sort...
