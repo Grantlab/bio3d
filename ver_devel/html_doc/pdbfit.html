@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>pdbfit. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> PDB File Coordinate Superposition </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>pdbfit(pdbs, inds = NULL, outpath = NULL, ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>pdbs</dt>
+      <dd> a list of class <code>"3dalign"</code> containing PDB file
+    data, as obtained from <code>read.fasta.pdb</code> or
+    <code>pdbaln</code>. </dd>
+      <dt>inds</dt>
+      <dd> a vector of indices that selects the coordinate
+    positions, in terms of x, y and z elements, upon which fitting
+    should be based. This defults to all equivalent non-gap positions. </dd>
+      <dt>outpath</dt>
+      <dd> character string specifing the output directory for
+    optional coordinate file output. Note that full files (i.e. all atom
+    files) are written, seebelow. </dd>
+      <dt>...</dt>
+      <dd> extra arguments passed to <code>fit.xyz</code> function. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Protein Databank Bank file coordinate superposition with
+  the Kabsch algorithm.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>The function <code>pdbfit</code> is a wrapper for the function
+  <code>fit.xyz</code>, wherein full details of the superposition procedure
+  are documented.</p>
+  
+      <p>Input to this function should be a list object obtained with the
+  function <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code> or  <code><a href='pdbaln.html'>pdbaln</a></code>.  See
+  the examples below.</p>
+  
+      <p>The reference frame for supperposition (i.e. the fixed structure to
+  which others are superposed) is the first entry in the input
+  <code>"pdbs"</code> object. For finer control use <code><a href='fit.xyz.html'>fit.xyz</a></code>.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns moved coordinates.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+      <p>Kabsch <em>Acta Cryst</em> (1978) <b>A34</b>, 827--828.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>#files <- get.pdb(c("4q21","5p21"), URLonly=TRUE)
+files <- get.pdb(c("4q21","5p21"), path=tempdir(), overwrite=TRUE)
+pdbs <- pdbaln(files)
+</div>
+<div class='output'>Reading PDB files:
+/tmp/RtmpesXLkY/4q21.pdb
+/tmp/RtmpesXLkY/5p21.pdb
+  HEADER    ONCOGENE PROTEIN                        25-SEP-91   4Q21               
+.  HEADER    ONCOGENE PROTEIN                        30-APR-90   5P21               
+.
+
+Extracting sequences
+muscle -in /tmp/RtmpesXLkY/file5d6e78eefb8 -out aln.fa  -seqtype proteinpdb/seq: 1   name: /tmp/RtmpesXLkY/4q21.pdb 
+pdb/seq: 2   name: /tmp/RtmpesXLkY/5p21.pdb 
+</div>
+<div class='input'>xyz <- pdbfit(pdbs)
+
+# Superpose again this time outputing PDBs
+#xyz <- pdbaln( files, outpath="fitted/" )
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>pdbfit</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='pdbaln.html'>pdbaln</a></code>, <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>,
+  <code><a href='fit.xyz.html'>fit.xyz</a></code>, <code><a href='rmsd.html'>rmsd</a></code>, <code><a href='read.pdb.html'>read.pdb</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=pdbfit'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

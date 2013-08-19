@@ -30,7 +30,7 @@
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
-\author{ Barry Grant }
+\author{ Lars Skjaerven }
 \seealso{ \code{\link{nma}}, \code{\link{plot.bio3d}} }
 \examples{
 ## Fetch structure

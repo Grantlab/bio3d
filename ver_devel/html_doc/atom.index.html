@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>atom.index. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Index of Atomic Masses </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>data(atom.index)</pre>
+        
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>A dictonary of atomic masses and PDB atom names to atom elements
+  mapping.</p>
+  
+    </div>
+
+    <div class="Format">
+      <h2>Format</h2>
+      
+      <p>A list with the following components:
+ <ol>
+<li>elety list: PDB atom name indices and associated atom
+    element types. 
+  </li>
+<li>mass list: relative atomic masses. 
+</li>
+</ol></p>
+  
+      <p></p>
+  
+    </div>
+
+    <div class=" Index of Atomic Masses ">
+      <h2> Index of Atomic Masses </h2>
+      
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>## Load atom index data
+data(atom.index)
+
+# Examine the masses
+atom.index$mass
+</div>
+<div class='output'>$H
+[1] 1.008
+
+$C
+[1] 12.01
+
+$N
+[1] 14.01
+
+$O
+[1] 16
+
+$P
+[1] 30.97
+
+$S
+[1] 32.07
+
+$F
+[1] 19
+
+$Mg
+[1] 24.31
+
+$K
+[1] 39.1
+
+$Ca
+[1] 40.08
+
+$Cl
+[1] 35.45
+
+$Zn
+[1] 65.39
+
+</div>
+<div class='input'>
+# Fetch mass for an atom element
+atom.index$mass[["C"]]
+</div>
+<div class='output'>[1] 12.01
+</div>
+<div class='input'>
+# Examine atom name to atom element mappings
+atom.index$elety
+</div>
+<div class='output'>$H
+[1] "H"
+
+$C
+[1] "C"
+
+$CA
+[1] "C"
+
+$CB
+[1] "C"
+
+$CD
+[1] "C"
+
+$CD1
+[1] "C"
+
+$CD2
+[1] "C"
+
+$CE
+[1] "C"
+
+$CE1
+[1] "C"
+
+$CE2
+[1] "C"
+
+$CE3
+[1] "C"
+
+$CG
+[1] "C"
+
+$CG1
+[1] "C"
+
+$CG2
+[1] "C"
+
+$CH2
+[1] "C"
+
+$CZ
+[1] "C"
+
+$CZ2
+[1] "C"
+
+$CZ3
+[1] "C"
+
+$N
+[1] "N"
+
+$ND1
+[1] "N"
+
+$ND2
+[1] "N"
+
+$NE
+[1] "N"
+
+$NE1
+[1] "N"
+
+$NE2
+[1] "N"
+
+$NH1
+[1] "N"
+
+$NH2
+[1] "N"
+
+$NZ
+[1] "N"
+
+$O
+[1] "O"
+
+$OD1
+[1] "O"
+
+$OD2
+[1] "O"
+
+$OE1
+[1] "O"
+
+$OE2
+[1] "O"
+
+$OG
+[1] "O"
+
+$OG1
+[1] "O"
+
+$OH
+[1] "O"
+
+$OXT
+[1] "O"
+
+$S
+[1] "S"
+
+$SD
+[1] "S"
+
+$SG
+[1] "S"
+
+$P
+[1] "P"
+
+$MG
+[1] "Mg"
+
+$K
+[1] "K"
+
+$CL
+[1] "Cl"
+
+$ZN
+[1] "Zn"
+
+</div>
+<div class='input'>
+# Fetch atom element for a specific PDB atom name
+atom.index$elety[["SD"]]
+</div>
+<div class='output'>[1] "S"
+</div>
+<div class='input'></div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>atom.index</li>
+    </ul>
+    <ul>
+      <li>datasets</li>
+    </ul> -->
+      
+        
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=atom.index'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -1,7 +1,6 @@
 "nma" <-
-  function(pdb, inds=NULL, ff='calpha', pfc.fun=NULL,
-           normalize=TRUE, mass=TRUE, temp=300.0,
-           compiler=TRUE, cutoff=15, gamma=1 ) {
+  function(pdb, inds=NULL, ff='calpha', pfc.fun=NULL, fc.weights=NULL,
+           mass=TRUE, temp=300.0, keep=NULL, cutoff=15, gamma=1, ncore=1 ) {
     
     if (missing(pdb))
       stop("nma: must supply 'pdb' object, i.e. from 'read.pdb'")
@@ -11,19 +10,9 @@
     ## Log the call
     cl <- match.call()
     
-    ## Check if compiler package is available
-    if(compiler) {
-      oops <- require(compiler)
-      if (!oops) {
-        warning("compiler package missing (requires R version => 2.13.0)")
-        compiler <- FALSE
-      }
-    }
-    
     ## Trim PDB to match user selection
     if ( !is.null(inds) ) {
       pdb <- trim.pdb(pdb, inds)
-      pdb$calpha <- as.logical(pdb$atom[,"elety"] == "CA")
     }
     
     ## Define force field
@@ -31,44 +20,21 @@
       
       ## Bahar "ANM"-ff
       if (ff=="anm")  {
-        if(normalize){
-          warning("nma: set 'normalize=TRUE' when using force field 'anm'")
-          ##normalize <- FALSE
-        }
         "ff.anm" <- function(r, rc=cutoff, g=gamma) {
-          if(r>rc)
-            return(0)
-          else
-            return(g / (r**2))
+          ifelse( r>rc, 0, g )
         }
         ff <- ff.anm
       }
       
       ## Hinsen "C-alpha"-ff
       else if (ff=="calpha")  {
-        normalize <- TRUE
         "ff.calpha" <- function(r) {
           a <- 1e-1; b <- 1; c <- 1e6;
-          if( r < 4.0) {
-            k <- (a*8.6*(10**5)*r) - (b*2.39*(10**5))
-          }
-          else {
-            k <- c*128 * r**(-6)
-          }
-          return(k)
+          ifelse( r<4.0,
+                 (a*8.6*(10**5)*r) - (b*2.39*(10**5)), 
+                 c*128 * r**(-6) )
         }
         ff <- ff.calpha
-      }
-      
-      ## Hinsen "deformation"-ff - deprecated
-      else if (ff=="deformation")  {
-        normalize <- TRUE
-        "ff.deformation" <- function(r, c=1) {
-          range <- 7;  c <- 1;
-          k <- c * exp(-((r**2-0.01) / (range**2)))
-          return(k)
-        }
-        ff <- ff.deformation
       }
       
       else
@@ -77,6 +43,8 @@
     }
     else {
       ## Use customized force field
+      if(!is.function(pfc.fun))
+        stop("'pfc.fun' must be a function")
       ff <- pfc.fun
     }
     
@@ -85,12 +53,20 @@
     w <- c( 71.079018, 157.196106, 114.104059, 114.080689, 103.143407,
            128.107678, 128.131048,  57.05203,  137.141527, 113.159985,
            113.159985, 129.18266,  131.197384, 147.177144,  97.117044,
-           87.078323, 101.105312, 186.213917, 163.176449,  99.132996)
+            87.078323, 101.105312, 186.213917, 163.176449,  99.132996)
     
     aa <- c("ALA", "ARG", "ASN", "ASP", "CYS",
             "GLU", "GLN", "GLY", "HIS", "ILE",
             "LEU", "LYS", "MET", "PHE", "PRO",
             "SER", "THR", "TRP", "TYR", "VAL")
+
+    "res2wt" <- function(x, w, aa) {
+      ind <- which(aa==x)
+      if(length(ind)==1)
+        return(w[ind])
+      else
+        return(NA)
+    } 
     
     ## Only C-alpha ENM NMA is implemented
     ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
@@ -101,66 +77,63 @@
     
     ## If mass-weighted force constant matrix
     if (mass) {
-      sequ <- pdb$atom[pdb$calpha,"resid"]
-      w <- unlist(lapply(sequ, function(x, w, aa) return( w[which(aa==x)] ), w, aa))
-      w <- sqrt(w)
+      sequ <- pdb$atom[ca.inds$atom,"resid"]
+      wts <- unlist(lapply(sequ, res2wt, w, aa))
+      if(NA%in%wts)
+        stop("nma: unknown residue type")
+      wts <- sqrt(wts)
     } else {
-      w <- NULL
+      wts <- NULL
     }
     
     ## Build the Hessian Matrix - use byte compiled code if possible
     cat(" Building Hessian...")
     ptm <- proc.time()
-    if(compiler) {
-      build.hessian.cmp <- cmpfun(build.hessian)
-      H <- build.hessian.cmp(xyz, ff, normalize)
-    }
-    else {
-      H <- build.hessian(xyz, ff, normalize)
-    }
-
-    ## Build matrix for Mass-weighting
-    if(!is.null(w)) {
-      inds <- rep(1:natoms, each=3)
-      M <- matrix(0, nrow=3*natoms, ncol=3*natoms)
-      diag(M) <- 1 / w[inds]
-      
-      ## Mass-weighted Hessian
-      H <- M %*% H %*% M
-    }
+    H <- build.hessian(xyz, ff, mass.weights=wts, fc.weights=fc.weights, ncore=ncore)
     t <- proc.time() - ptm
-    cat("\t\tDone in", t[[1]], "seconds.\n")
+    cat("\t\tDone in", t[[3]], "seconds.\n")
   
     ## Diagonalize matrix
     cat(" Diagonalizing Hessian...")
     ptm <- proc.time()
     ei <- eigen(H, symmetric=TRUE)
     t <- proc.time() - ptm
-    cat("\tDone in", t[[1]], "seconds.\n")
+    cat("\tDone in", t[[3]], "seconds.\n")
+
+    if(!is.null(keep)) {
+      if(keep>ncol(ei$vectors))
+        keep <- ncol(ei$vectors)
+      keep <- keep-1
+      keep.inds <- seq(ncol(ei$vectors)-keep, ncol(ei$vectors))
+      ei$vectors <- ei$vectors[,keep.inds]
+      ei$values <- ei$values[keep.inds]
+    }
     
     ## Raw eigenvalues
-    L <- round(ei$values,6)  
-    triv.modes <- which(L==0) ## indicies !!
+    ei$values <- round(ei$values,6)
+    triv.modes <- which(ei$values<=0) ## indicies !!
     
     ## Frequencies are given by
     if (mass)  {
       pi <- 3.14159265359
-      freq <- sqrt(abs(L)) / (2 * pi)
+      freq <- sqrt(abs(ei$values)) / (2 * pi)
       force.constants <- NULL
     } else {
       freq <- NULL
-      force.constants <- L
+      force.constants <- ei$values
     }
     
-    ## Store raw unmodified eigenvectors:
-    U <- ei$vectors
+    ## Raw unmodified eigenvectors:
+    ## ei$vectors
     
     ## V holds the eigenvectors converted to unweighted Cartesian coords:
-    V <- U
+    V <- ei$vectors
 
     ## Change to non-mass-weighted eigenvectors
-    if(mass)
-      V <- M %*% V
+    if(mass) {
+      tri.inds <- rep(1:natoms, each=3)
+      V <- apply(V, 2, '*', 1 / wts[tri.inds])
+    }
     
     ## Temperature scaling
     kb <- 0.00831447086363271
@@ -179,9 +152,9 @@
     }
     
     ## Trivial modes first (reverse matrix!)
-    U <- U[, seq(natoms*3,1)]
-    V <- V[, seq(natoms*3,1)]
-    L <- rev( L )
+    ei$vectors <- ei$vectors[, seq(ncol(ei$vectors),1)]
+    V <- V[, seq(ncol(ei$vectors),1)]
+    ei$values <- rev( ei$values )
     freq <- rev(freq)
     force.constants <- rev(force.constants)
     amplitudes <- rev(amplitudes)
@@ -190,27 +163,33 @@
     for ( i in (length(triv.modes)+1):ncol(V) ) {
       V[,i] <- (V[,i] * amplitudes[i])
     }
-    
+
+    ## Check if first modes are zero-modes
+    if(ei$values[1]<0) {
+      warning("Negative eigenvalue(s) detected! \
+              This is useually an indication of an unphysical input structure.")
+    }
+        
     ## Output to class "nma"
     nma <- list(modes=V,
                 frequencies=NULL,
                 force.constants=NULL,
                 fluctuations=NULL,
-                U=U, L=L,
+                U=ei$vectors, L=ei$values,
                 
                 xyz=xyz,
-                mass=w,
+                mass=wts,
                 temp=temp,
                 triv.modes=length(triv.modes),
                 natoms=natoms,
                 call=cl)
     
     if(mass) {
-      class(nma) = c("VibrationalModes", "nma")
+      class(nma) <- c("VibrationalModes", "nma")
       nma$frequencies <- freq
     }
     else {
-      class(nma) = c("EnergeticModes", "nma")
+      class(nma) <- c("EnergeticModes", "nma")
       nma$force.constants <- force.constants
     }
     

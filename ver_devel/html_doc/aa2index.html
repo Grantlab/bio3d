@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>aa2index. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Ana Rodrigues ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Convert an Aminoacid Sequence to AAIndex Values </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>aa2index(aa, index = "KYTJ820101", window = 1)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>aa</dt>
+      <dd> a protein sequence character vector. </dd>
+      <dt>index</dt>
+      <dd> an index name or number (default: &#147;KYTJ820101&#148;,
+    hydropathy index by Kyte-Doolittle, 1982). </dd>
+      <dt>window</dt>
+      <dd> a positive numeric value, indicating the window size
+    for smoothing with a sliding window average (default: 1, i.e. no
+    smoothing). </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Converts sequences to aminoacid indeces from the &#145;AAindex&#146; database.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>By default, this function simply returns the index values for each
+  amino acid in the sequence. It can also be set to perform a crude
+  sliding window average through the <code>window</code> argument.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a numeric vector.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+      <p>&#145;AAIndex&#146; is the work of Kanehisa and co-workers:
+Kawashima and Kanehisa (2000) <em>Nucleic Acids Res.</em> <b>28</b>, 374;
+Tomii and Kanehisa (1996) <em>Protein Eng.</em> <b>9</b>, 27--36;
+Nakai, Kidera and Kanehisa (1988) <em>Protein Eng.</em> <b>2</b>, 93--100.</p>
+  
+      <p>For a description of the &#145;AAindex&#146; database see: 
+<a href = 'http://www.genome.jp/aaindex/'>http://www.genome.jp/aaindex/</a> or the <code><a href='aa.index.html'>aa.index</a></code> documentation.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>## Residue hydropathy values
+seq <- c("R","S","D","X","-","X","R","H","Q","V","L")
+aa2index(seq)
+</div>
+<div class='output'>   R    S    D <NA> <NA> <NA>    R    H    Q    V    L 
+-4.5 -0.8 -3.5   NA   NA   NA -4.5 -3.2 -3.5  4.2  3.8 
+</div>
+<div class='input'>
+## Use a sliding window average
+aa2index(aa=seq, index=22, window=3)
+</div>
+<div class='output'>   R    S    D    X    -    X    R    H    Q    V    L 
+0.18 0.15 0.08 0.10  NaN 0.29 0.26 0.23 0.18 0.17 0.16 
+</div>
+<div class='input'>
+## Use an alignment
+
+aln  <- read.fasta(system.file("examples/hivp_xray.fa",package="bio3d"))
+prop <- t(apply(aln$ali, 1, aa2index, window=1))
+
+## find and use indices for volume calculations
+i <- which(sapply(aa.index,
+       function(x) length(grep("volume", x$D, ignore.case=TRUE)) != 0))
+sapply(i, function(x) aa2index(aa=seq, index=x, window=5)) 
+</div>
+<div class='output'>  BIGC670101 BULH740102 CHOC750101 COHE430101 FAUJ880103 GOLD730102 GRAR740103
+R      77.47       0.63     141.87       0.66       3.50     126.90      70.00
+S      77.47       0.63     141.87       0.66       3.50     126.90      70.00
+D      77.47       0.63     141.87       0.66       3.50     126.90      70.00
+X      61.65       0.58     111.80       0.64       2.19      99.75      43.00
+-      88.75       0.64     163.25       0.65       4.46     146.00      89.00
+X     100.50       0.69     184.65       0.68       5.39     166.90     110.00
+R      96.90       0.67     176.80       0.68       4.91     160.83     101.67
+H      93.95       0.70     168.03       0.72       4.44     155.97      97.25
+Q      95.56       0.73     168.00       0.76       4.35     158.48     100.00
+V      92.17       0.73     159.50       0.78       3.90     152.80      94.00
+L      92.27       0.76     156.90       0.81       3.65     152.87      93.33
+  KRIW790103 TSAJ990101 TSAJ990102 HARY940101 PONJ960101
+R      58.10     132.97     135.57     134.70     144.43
+S      58.10     132.97     135.57     134.70     144.43
+D      58.10     132.97     135.57     134.70     144.43
+X      34.65     104.30     106.35     105.65     118.60
+-      72.50     152.35     155.65     154.95     165.65
+X      92.00     173.90     177.00     176.05     179.65
+R      88.23     164.90     167.80     167.17     171.90
+H      84.05     158.22     160.60     160.15     163.53
+Q      85.94     159.20     161.28     161.04     163.50
+V      81.17     151.43     153.10     153.10     155.35
+L      81.90     149.40     150.80     151.03     152.73
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>aa2index</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='aa.index.html'>aa.index</a></code>, <code><a href='read.fasta.html'>read.fasta</a></code> 
+    
+    <h2>Author</h2>
+     Ana Rodrigues 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=aa2index'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

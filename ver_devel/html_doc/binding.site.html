@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>binding.site. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Binding Site Residues </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>binding.site(a, b = NULL, a.inds = NULL, b.inds = NULL, cut = 5, hydrogens = TRUE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>a</dt>
+      <dd> an object of class <code>pdb</code> as obtained from
+    function <code>read.pdb</code>. </dd>
+      <dt>b</dt>
+      <dd> an object of class <code>pdb</code> as obtained from
+    function <code>read.pdb</code>. </dd>
+      <dt>a.inds</dt>
+      <dd> atom and xyz coordinate indices obtained from <code>atom.select</code>
+    that selects the elements of <code>a</code> upon which the calculation
+    should be based.</dd>
+      <dt>b.inds</dt>
+      <dd> atom and xyz coordinate indices obtained from <code>atom.select</code>
+    that selects the elements of <code>b</code> upon which the calculation
+    should be based.</dd>
+      <dt>cut</dt>
+      <dd> distance cutoff </dd>
+      <dt>hydrogens</dt>
+      <dd> logical, if FALSE hydrogen atoms are omitted from
+    the calculation. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Determines the interacting residues between two PDB entities.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This function reports the residues of <code>a</code> closer than a cutoff to
+  <code>b</code>. This is a wrapper function calling the underlying function
+  <code>dm.xyz</code>.</p>
+  
+      <p>If <code>b=NULL</code> then <code>b.inds</code> should be elements of <code>a</code>
+  upon which the calculation is based (typically chain A and B of the
+  same PDB file).</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list with the following components:
+  atom.inds atom indices of <code>a</code>. 
+  xyz.inds xyz indices of <code>a</code>. 
+  resnames a character vector of interacting residues. 
+  resno a numeric vector of interacting residues numbers.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>     pdb <- read.pdb('3dnd', het2atom=TRUE)
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    TRANSFERASE/TRANSFERASE INHIBITOR       02-JUL-08   3DND               
+   PDB has ALT records, taking A only, rm.alt=TRUE
+</div>
+<div class='input'>
+     # Binding site residues
+     rec.inds <- atom.select(pdb, string='//A/1:350////')
+</div>
+<div class='output'>
+Build selection from input string
+
+      segid  chain  resno   resid  eleno  elety 
+Stest ""     "A"    "1:350" ""     ""     ""    
+Natom "3214" "3031" "2963"  "3214" "3214" "3214"
+ *  Selected a total of: 2780 intersecting atoms  *
+</div>
+<div class='input'>     lig.inds <- atom.select(pdb, string='//A/351////')
+</div>
+<div class='output'>
+Build selection from input string
+
+      segid  chain  resno resid  eleno  elety 
+Stest ""     "A"    "351" ""     ""     ""    
+Natom "3214" "3031" "13"  "3214" "3214" "3214"
+ *  Selected a total of: 13 intersecting atoms  *
+</div>
+<div class='input'>     bs <- binding.site(pdb, a.inds=rec.inds, b.inds=lig.inds)
+</div>
+<div class='output'>
+Build selection from input string
+
+      segid  chain  resno  resid  eleno  elety 
+Stest ""     ""     ""     ""     ""     ""    
+Natom "2780" "2780" "2780" "2780" "2780" "2780"
+ *  Selected a total of: 2780 intersecting atoms  *
+
+Build selection from input string
+
+      segid chain resno resid eleno elety
+Stest ""    ""    ""    ""    ""    ""   
+Natom "13"  "13"  "13"  "13"  "13"  "13" 
+ *  Selected a total of: 13 intersecting atoms  *
+</div>
+<div class='input'>
+     # Interaction between peptide and protein
+     rec.inds <- atom.select(pdb, string='//A/1:350////')
+</div>
+<div class='output'>
+Build selection from input string
+
+      segid  chain  resno   resid  eleno  elety 
+Stest ""     "A"    "1:350" ""     ""     ""    
+Natom "3214" "3031" "2963"  "3214" "3214" "3214"
+ *  Selected a total of: 2780 intersecting atoms  *
+</div>
+<div class='input'>     lig.inds <- atom.select(pdb, string='//I/5:24////')
+</div>
+<div class='output'>
+Build selection from input string
+
+      segid  chain resno  resid  eleno  elety 
+Stest ""     "I"   "5:24" ""     ""     ""    
+Natom "3214" "183" "238"  "3214" "3214" "3214"
+ *  Selected a total of: 157 intersecting atoms  *
+</div>
+<div class='input'>     bs <- binding.site(pdb, a.inds=rec.inds, b.inds=lig.inds)
+</div>
+<div class='output'>
+Build selection from input string
+
+      segid  chain  resno  resid  eleno  elety 
+Stest ""     ""     ""     ""     ""     ""    
+Natom "2780" "2780" "2780" "2780" "2780" "2780"
+ *  Selected a total of: 2780 intersecting atoms  *
+
+Build selection from input string
+
+      segid chain resno resid eleno elety
+Stest ""    ""    ""    ""    ""    ""   
+Natom "157" "157" "157" "157" "157" "157"
+ *  Selected a total of: 157 intersecting atoms  *
+</div>
+<div class='input'>
+     ## <strong>Not run</strong>: 
+#      # Interaction between two PDB entities
+#      rec <- read.pdb("receptor.pdb")
+#      lig <- read.pdb("ligand.pdb")
+#      bs <- binding.site(rec, lig, hydrogens=FALSE)
+#      ## <strong>End(Not run)</strong>
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>binding.site</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='read.pdb.html'>read.pdb</a></code>, <code><a href='atom.select.html'>atom.select</a></code>, <code><a href='dm.html'>dm</a></code> 
+    
+    <h2>Author</h2>
+     Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=binding.site'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

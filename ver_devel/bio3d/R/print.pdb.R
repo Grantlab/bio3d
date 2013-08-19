@@ -3,6 +3,11 @@
   ## This is adapted from the old "atom.select()" and
   ## "pdb.summary()" functions.
 
+  if(!(nrow(x$atom)>0)) {
+    cat("\n PDB object is empty. \n")
+    return(NULL)
+  }
+
   ## Update to seperate water from sequence report
   y <- trim.pdb(x, atom.select(x, "water", verbose=F))
   p <- trim.pdb(x, atom.select(x, "notwater", verbose=F))

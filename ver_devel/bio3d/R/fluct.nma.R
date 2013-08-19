@@ -14,19 +14,27 @@
     
     if(is.null(mode.inds))
       mode.inds <- seq(nma$triv.modes+1, length(nma$L))
+
+    if(min(mode.inds)<=nma$triv.modes)
+      stop("'mode.inds' should not contain indices to trivial modes")
+
+    f <- apply(nma$U, 2, function(x) { rowSums(matrix(x, ncol=3, byrow=TRUE)**2) })
     
-    f <- rep(0, nma$natoms)
-    for ( i in mode.inds ) {
-      mode <- matrix(nma$U[,i], ncol=3, byrow=TRUE)
-      l <- apply(mode, 1, function(x) x%*%x)
-      
-      if(mass)
-        l <- l/(nma$frequencies[i]**2)
-      else
-        l <- l/(nma$force.constants[i])
-      f <- f+l
+    if(mass)
+      freq <- nma$frequencies**2
+    else
+      freq <- nma$force.constants**2
+
+
+    for ( i in mode.inds )  {
+      f[,i] <- f[,i] / freq[i]
     }
-    
+
+    if(length(mode.inds)>1)
+      f <- rowSums(f[,mode.inds])
+    else
+      f <- f[,mode.inds]
+  
     if(mass) {
       f <- f / nma$mass**2
       s <- 1/(2*pi)**2

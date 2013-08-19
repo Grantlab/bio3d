@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>rle2. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Run Length Encoding with Indices</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>rle2(x)
+
+print(x, digits = getOption("digits"), prefix = "", ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>x</dt>
+      <dd>an atomic vector for <code>rle()</code>; an object of class
+    <code>"rle"</code> for <code>inverse.rle()</code>.</dd>
+      <dt>...</dt>
+      <dd>further arguments; ignored here.</dd>
+      <dt>digits</dt>
+      <dd>number of significant digits for printing, see
+    <code><a href='http://www.inside-r.org/r-doc/base/print.default'>print.default</a></code>.</dd>
+      <dt>prefix</dt>
+      <dd>character string, prepended to each printed line.</dd>
+    </dl>
+    
+    <div class="Run Length Encoding with Indices">
+      <h2>Run Length Encoding with Indices</h2>
+      
+    </div>
+
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Compute the lengths, values and indices of runs of equal values in a
+  vector. This is a modifed version of base function <code>rle()</code>.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>Missing values are regarded as unequal to the previous value, even if
+  that is also missing.</p>
+  
+      <p><code>inverse.rle()</code> is the inverse function of <code>rle2()</code> and <code>rle()</code>,
+  reconstructing <code>x</code> from the runs.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p><code>rle()</code> returns an object of class <code>"rle"</code> which is a list
+  with components:
+  lengthsan integer vector containing the length of each run.
+  valuesa vector of the same length as <code>lengths</code> with the
+    corresponding values.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>x <- rev(rep(6:10, 1:5))
+rle(x)
+</div>
+<div class='output'>Run Length Encoding
+  lengths: int [1:5] 5 4 3 2 1
+  values : int [1:5] 10 9 8 7 6
+</div>
+<div class='input'>## lengths [1:5]  5 4 3 2 1
+## values  [1:5] 10 9 8 7 6
+rle2
+</div>
+<div class='output'>function (x) {
+  ## This is a modified version of base function "rle()"
+  if (!is.vector(x) && !is.list(x)) 
+    stop("'x' must be an atomic vector")
+  n <- length(x)
+  if (n == 0L) 
+    return(structure(list(lengths = integer(), values = x, inds=integer), class = "rle2"))
+  y <- x[-1L] != x[-n]
+  i <- c(which(y | is.na(y)), n)
+  structure(list(lengths = diff(c(0L, i)), values = x[i], inds=i), class = "rle2")
+}
+<environment: namespace:bio3d>
+</div>
+<div class='input'>## lengths: int [1:5] 5 4 3 2 1
+## values : int [1:5] 10 9 8 7 6
+## indices: int [1:5] 5 9 12 14 15
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>rle2</li><li>print.rle2</li>
+    </ul>
+    <ul>
+      <li>manip</li>
+    </ul> -->
+      
+        
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=rle2'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

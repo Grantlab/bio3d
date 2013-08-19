@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>read.mol2. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Read MOL2 File </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>read.mol2(file, maxlines = -1L)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>file</dt>
+      <dd> a single element character vector containing the name of
+    the MOL2 file to be read. </dd>
+      <dt>maxlines</dt>
+      <dd> the maximum number of lines to read before giving up
+    with large files. Default is all lines. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Read a Sybyl MOL2 file</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>Basic functionality to parse a MOL2 file. The current version omits
+  bond information, and only <code>@<TRIPOS>MOLECULE</code> and
+  <code>@<TRIPOS>ATOM</code> records are stored.</p>
+  
+      <p>In the case of a multi-molecule MOL2 file, each molecule will be stored
+  as an individual object in a list. Conversely, if the multi-molecule
+  MOL2 file contains identical molecules in different conformations
+  (typically a dockin run), then the output will be one object
+  with an <code>atom</code> and <code>xyz</code> component (xyz in
+  matrix representation; row-wise coordinates).</p>
+  
+      <p>See examples for further details.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list of molecules containing the following components:
+  atom a character matrix containing all atomic coordinate ATOM data, 
+  with a row per ATOM and a column per record type.  See below for details
+  of the record type naming convention (useful for accessing columns). 
+  xyz a numeric vector or matrix of ATOM coordinate data. 
+  info a numeric vector of MOL2 info data. 
+  name a single element character vector containing the molecule name.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+      <p>For a description of the MOL2 format see:
+  <a href = 'http://www.tripos.com/data/support/mol2.pdf'>http://www.tripos.com/data/support/mol2.pdf</a>.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>For <code>atom</code> list components the column names can be
+  used as a convenient means of data access, namely:
+  Atom serial number &#147;eleno&#148;,
+  Atom name &#147;elena&#148;,
+  Orthogonal coordinates &#147;x&#148;,
+  Orthogonal coordinates &#147;y&#148;,
+  Orthogonal coordinates &#147;z&#148;,
+  Atom type &#147;elety&#148;,
+  Residue name &#147;resid&#148;,
+  Atom charge &#147;charge&#148;,
+  Status bit &#147;statbit&#148;,
+  See examples for further details.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>cat("\n")
+</div>
+<div class='output'>
+</div>
+<div class='input'>## <strong>Not run</strong>: 
+# ## Read a single entry MOL2 file
+# ## (returns a single object)
+# mol <- read.mol2("single.mol2")
+# 
+# ## ATOM records
+# mol$atom
+# 
+# ## Print some coordinate data
+# head(mol$atom[, c("x","y","z")])
+# 
+# ## Or coordinates as a numeric vector
+# head(mol$xyz)
+# 
+# ## Print atom charges
+# head(mol$atom[, "charge")])
+# 
+# 
+# 
+# ## Read a multi-molecule MOL2 file
+# ## (returns a list of objects)
+# multi.mol <- read.mol2("zinc.mol2")
+# 
+# ## Number of molecules described in file
+# length(multi.mol)
+# 
+# ## Access ATOM records for the first molecule
+# multi.mol[[1]]$atom
+# 
+# ## Or coordinates for the second molecule
+# multi.mol[[2]]$xyz
+# 
+# 
+# 
+# ## Process output from docking (e.g. DOCK)
+# ## (typically one molecule with many conformations)
+# ## (returns one object, but xyz in matrix format)
+# dock <- read.mol2("dock.mol2")
+# 
+# ## Reference PDB file (e.g. X-ray structure)
+# pdb <- read.pdb("dock_ref.pdb", het2atom=T)
+# 
+# ## Calculate RMSD of docking modes
+# sele <- atom.select(dock, "noh")
+# rmsd(pdb$xyz, dock$xyz, b.inds=sele$xyz)
+# ## <strong>End(Not run)</strong>
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>read.mol2</li>
+    </ul>
+    <ul>
+      <li> IO </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='atom.select.html'>atom.select</a></code>, <code><a href='read.pdb.html'>read.pdb</a></code> 
+    
+    <h2>Author</h2>
+     Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=read.mol2'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>read.pdcBD. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Read PQR output from pdcBD File </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>read.pdcBD(file, maxlines = 50000, multi = FALSE, rm.insert = FALSE, rm.alt = TRUE, 
+  verbose = TRUE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>file</dt>
+      <dd> the name of the pdcBD PQR file to be read. </dd>
+      <dt>maxlines</dt>
+      <dd> the maximum number of lines to read before giving up
+    with large files. Default is 50,000 lines. </dd>
+      <dt>multi</dt>
+      <dd> logical, if TRUE multiple ATOM records are read for all
+    models in multi-model files. </dd>
+      <dt>rm.insert</dt>
+      <dd> logical, if TRUE PDB insert records are ignored. </dd>
+      <dt>rm.alt</dt>
+      <dd> logical, if TRUE PDB alternate records are ignored. </dd>
+      <dt>verbose</dt>
+      <dd> print details of the reading process. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Read a pdcBD PQR coordinate file.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p><code>maxlines</code> may require increasing for some large multi-model files.
+  The preferred means of reading such data is via binary DCD format 
+  trajectory files (see the <code><a href='read.dcd.html'>read.dcd</a></code> function).</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list of class <code>"pdb"</code> with the following components:
+  atom a character matrix containing all atomic coordinate ATOM data, 
+  with a row per ATOM and a column per record type.  See below for details
+  of the record type naming convention (useful for accessing columns). 
+  het  a character matrix containing atomic coordinate records
+    for atoms within &#147;non-standard&#148; HET groups (see <code>atom</code>). 
+  helix  &#145;start&#146;, &#145;end&#146; and &#145;length&#146; of H
+    type sse, where start and end are residue numbers &#147;resno&#148;. 
+  sheet  &#145;start&#146;, &#145;end&#146; and &#145;length&#146; of E
+    type sse, where start and end are residue numbers &#147;resno&#148;. 
+  seqres  sequence from SEQRES field. 
+  xyz  a numeric vector of ATOM coordinate data. 
+  calpha  logical vector with length equal to <code>nrow(atom)</code>
+    with TRUE values indicating a C-alpha &#147;elety&#148;.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+      <p>For a description of PDB format (version3.3) see:
+  <a href = 'http://www.wwpdb.org/documentation/format33/v3.3.html'>http://www.wwpdb.org/documentation/format33/v3.3.html</a>.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>For both <code>atom</code> and <code>het</code> list components the column names can be
+  used as a convenient means of data access, namely:
+  Atom serial number &#147;eleno&#148; ,
+  Atom type &#147;elety&#148;,
+  Alternate location indicator &#147;alt&#148;,
+  Residue name &#147;resid&#148;,
+  Chain identifier &#147;chain&#148;,
+  Residue sequence number &#147;resno&#148;,
+  Code for insertion of residues &#147;insert&#148;,
+  Orthogonal coordinates &#147;x&#148;,
+  Orthogonal coordinates &#147;y&#148;,
+  Orthogonal coordinates &#147;z&#148;,
+  Occupancy &#147;o&#148;, and
+  Temperature factor &#147;b&#148;.
+  See examples for further details.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'># Read a PDB file
+pdb <- read.pdb( "1bg2" )
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
+</div>
+<div class='input'>  
+# Print data for the first atom
+pdb$atom[1,]
+</div>
+<div class='output'>   eleno    elety      alt    resid    chain    resno   insert        x 
+     "1"      "N"       NA    "ASP"      "A"      "3"       NA "43.743" 
+       y        z        o        b    segid 
+"-2.106" "39.408"   "1.00" "100.00"       NA 
+</div>
+<div class='input'># Look at the first het atom
+pdb$het[1,]
+</div>
+<div class='output'>   eleno    elety      alt    resid    chain    resno   insert        x 
+  "2529"     "MG"       NA     "MG"      "A"    "402"       NA "15.166" 
+       y        z        o        b    segid 
+"12.165" "39.274"   "1.00"  "24.10"       NA 
+</div>
+<div class='input'># Print some coordinate data
+pdb$atom[1:20, c("x","y","z")]
+</div>
+<div class='output'>      x        y        z       
+ [1,] "43.743" "-2.106" "39.408"
+ [2,] "45.053" "-2.661" "39.856"
+ [3,] "45.305" "-2.401" "41.340"
+ [4,] "46.119" "-3.083" "41.957"
+ [5,] "46.204" "-2.067" "39.034"
+ [6,] "45.912" "-2.039" "37.542"
+ [7,] "45.455" "-3.066" "36.993"
+ [8,] "46.136" "-0.978" "36.920"
+ [9,] "44.627" "-1.402" "41.903"
+[10,] "44.791" "-1.079" "43.319"
+[11,] "44.313" "-2.242" "44.183"
+[12,] "45.079" "-2.800" "44.969"
+[13,] "44.015" "0.191"  "43.679"
+[14,] "44.010" "0.584"  "45.160"
+[15,] "45.430" "0.779"  "45.663"
+[16,] "43.202" "1.850"  "45.351"
+[17,] "43.039" "-2.590" "44.037"
+[18,] "42.451" "-3.691" "44.790"
+[19,] "41.508" "-4.495" "43.904"
+[20,] "41.084" "-5.588" "44.275"
+</div>
+<div class='input'>
+# Print C-alpha coordinates (can also use 'atom.select')
+##pdb$xyz[pdb$calpha, c("resid","x","y","z")]
+
+# Print SSE data (for helix and sheet)
+pdb$helix
+</div>
+<div class='output'>$start
+ [1]  20  58  67  91 107 176 197 256 277 281 306
+
+$end
+ [1]  25  65  74  95 122 191 203 269 279 288 321
+
+$chain
+ [1] "A" "A" "A" "A" "A" "A" "A" "A" "A" "A" "A"
+
+$type
+ [1] "1" "1" "1" "1" "1" "1" "1" "1" "5" "1" "5"
+
+</div>
+<div class='input'>pdb$sheet$start
+</div>
+<div class='output'> [1]  50   8 295  79 222 205 126 171  32  38  44 135 141 155 163
+</div>
+<div class='input'>  
+# Print SEQRES data
+pdb$seqres
+</div>
+<div class='output'>    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"MET" "ALA" "ASP" "LEU" "ALA" "GLU" "CYS" "ASN" "ILE" "LYS" "VAL" "MET" "CYS" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ARG" "PHE" "ARG" "PRO" "LEU" "ASN" "GLU" "SER" "GLU" "VAL" "ASN" "ARG" "GLY" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ASP" "LYS" "TYR" "ILE" "ALA" "LYS" "PHE" "GLN" "GLY" "GLU" "ASP" "THR" "VAL" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"VAL" "ILE" "ALA" "SER" "LYS" "PRO" "TYR" "ALA" "PHE" "ASP" "ARG" "VAL" "PHE" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"GLN" "SER" "SER" "THR" "SER" "GLN" "GLU" "GLN" "VAL" "TYR" "ASN" "ASP" "CYS" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ALA" "LYS" "LYS" "ILE" "VAL" "LYS" "ASP" "VAL" "LEU" "GLU" "GLY" "TYR" "ASN" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"GLY" "THR" "ILE" "PHE" "ALA" "TYR" "GLY" "GLN" "THR" "SER" "SER" "GLY" "LYS" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"THR" "HIS" "THR" "MET" "GLU" "GLY" "LYS" "LEU" "HIS" "ASP" "PRO" "GLU" "GLY" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"MET" "GLY" "ILE" "ILE" "PRO" "ARG" "ILE" "VAL" "GLN" "ASP" "ILE" "PHE" "ASN" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"TYR" "ILE" "TYR" "SER" "MET" "ASP" "GLU" "ASN" "LEU" "GLU" "PHE" "HIS" "ILE" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"LYS" "VAL" "SER" "TYR" "PHE" "GLU" "ILE" "TYR" "LEU" "ASP" "LYS" "ILE" "ARG" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ASP" "LEU" "LEU" "ASP" "VAL" "SER" "LYS" "THR" "ASN" "LEU" "SER" "VAL" "HIS" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"GLU" "ASP" "LYS" "ASN" "ARG" "VAL" "PRO" "TYR" "VAL" "LYS" "GLY" "CYS" "THR" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"GLU" "ARG" "PHE" "VAL" "CYS" "SER" "PRO" "ASP" "GLU" "VAL" "MET" "ASP" "THR" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ILE" "ASP" "GLU" "GLY" "LYS" "SER" "ASN" "ARG" "HIS" "VAL" "ALA" "VAL" "THR" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ASN" "MET" "ASN" "GLU" "HIS" "SER" "SER" "ARG" "SER" "HIS" "SER" "ILE" "PHE" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"LEU" "ILE" "ASN" "VAL" "LYS" "GLN" "GLU" "ASN" "THR" "GLN" "THR" "GLU" "GLN" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"LYS" "LEU" "SER" "GLY" "LYS" "LEU" "TYR" "LEU" "VAL" "ASP" "LEU" "ALA" "GLY" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"SER" "GLU" "LYS" "VAL" "SER" "LYS" "THR" "GLY" "ALA" "GLU" "GLY" "ALA" "VAL" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"LEU" "ASP" "GLU" "ALA" "LYS" "ASN" "ILE" "ASN" "LYS" "SER" "LEU" "SER" "ALA" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"LEU" "GLY" "ASN" "VAL" "ILE" "SER" "ALA" "LEU" "ALA" "GLU" "GLY" "SER" "THR" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"TYR" "VAL" "PRO" "TYR" "ARG" "ASP" "SER" "LYS" "MET" "THR" "ARG" "ILE" "LEU" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"GLN" "ASP" "SER" "LEU" "GLY" "GLY" "ASN" "CYS" "ARG" "THR" "THR" "ILE" "VAL" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"ILE" "CYS" "CYS" "SER" "PRO" "SER" "SER" "TYR" "ASN" "GLU" "SER" "GLU" "THR" 
+    A     A     A     A     A     A     A     A     A     A     A     A     A 
+"LYS" "SER" "THR" "LEU" "LEU" "PHE" "GLY" "GLN" "ARG" "ALA" "LYS" "THR" "ILE" 
+</div>
+<div class='input'>
+# Renumber residues 
+nums <- as.numeric(pdb$atom[,"resno"])
+pdb$atom[,"resno"] <- nums - (nums[1] - 1)
+
+# Write out renumbered PDB file
+write.pdb(pdb=pdb,file="eg.pdb")
+
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>read.pdcBD</li>
+    </ul>
+    <ul>
+      <li> IO </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='atom.select.html'>atom.select</a></code>, <code><a href='write.pdb.html'>write.pdb</a></code>,
+  <code><a href='read.dcd.html'>read.dcd</a></code>, <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>,
+  <code><a href='read.fasta.html'>read.fasta</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=read.pdcBD'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

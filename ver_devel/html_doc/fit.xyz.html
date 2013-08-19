@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>fit.xyz. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant with &lt;code&gt;rot.lsq&lt;/code&gt; contributions from Leo Caves ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Coordinate Superposition </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>fit.xyz(fixed, mobile, fixed.inds = NULL, mobile.inds = NULL, verbose = FALSE, pdb.path = "", 
+  pdbext = "", outpath = "fitlsq/", het = FALSE, full.pdbs = FALSE, ncore = 1, 
+      nseg.scale = 1, ...)
+
+rot.lsq(xx, yy, xfit = rep(TRUE, length(xx)), yfit = xfit, verbose = FALSE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>fixed </dt>
+      <dd> numeric vector of xyz coordinates.</dd>
+      <dt>mobile</dt>
+      <dd> numeric vector, numeric matrix, or an object with an
+    <code>xyz</code> component containing one or more coordinate sets. </dd>
+      <dt>fixed.inds</dt>
+      <dd> a vector of indices that selects the elements of
+    <code>fixed</code> upon which fitting should be based.</dd>
+      <dt>mobile.inds</dt>
+      <dd>  a vector of indices that selects the elements
+    of <code>mobile</code> upon which fitting should be based.</dd>
+      <dt>full.pdbs</dt>
+      <dd> logical, if TRUE &#147;full&#148; coordinate files
+    (i.e. all atoms) are written to the location specified by
+    <code>outpath</code>. </dd>
+      <dt>het</dt>
+      <dd> logical, if TRUE &#145;HETATM&#146; records from full PDB
+    files are written to output superposed PDB files.  Only required if
+    <code>full.pdbs</code> is TRUE. </dd>
+      <dt>pdb.path</dt>
+      <dd> path to the &#147;full&#148; input PDB files.  Only
+        required if <code>full.pdbs</code> is TRUE. </dd>
+      <dt>pdbext</dt>
+      <dd> the file name extension of the input PDB files. </dd>
+      <dt>outpath</dt>
+      <dd> character string specifing the output directory when
+    <code>full.pdbs</code> is TRUE. </dd>
+      <dt>xx</dt>
+      <dd> numeric vector corresponding to the moving &#145;subject&#146;
+    coordinate set. </dd>
+      <dt>yy</dt>
+      <dd> numeric vector corresponding to the fixed &#145;target&#146;
+    coordinate set. </dd>
+      <dt>xfit</dt>
+      <dd> logical vector with the same length as <code>xx</code>,  with
+    TRUE elements corresponding to the subset of positions upon which
+    fitting is to be performed. </dd>
+      <dt>yfit</dt>
+      <dd> logical vector with the same length as <code>yy</code>,  with
+    TRUE elements corresponding to the subset of positions upon which
+    fitting is to be performed. </dd>
+      <dt>verbose</dt>
+      <dd> logical, if TRUE more details are printed. </dd>
+      <dt>...</dt>
+      <dd> other parameters for <code><a href='read.pdb.html'>read.pdb</a></code>. </dd>
+      <dt>ncore </dt>
+      <dd> number of CPU cores used to do the calculation.
+    <code>ncore>1</code> requires multicore package installed. </dd>
+      <dt>nseg.scale </dt>
+      <dd> split input data into specified number of segments
+    prior to running multiple core calculation. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Coordinate superposition with the Kabsch algorithm.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>The function <code>fit.xyz</code> is a wrapper for the function
+  <code>rot.lsq</code>, which performs the actual coordinate superposition.
+  The function <code>rot.lsq</code> is an implementation of the Kabsch
+  algorithm (Kabsch, 1978) and evaluates the optimal rotation matrix
+  to minimize the RMSD between two structures.</p>
+  
+      <p>Since the Kabsch algorithm assumes that the number of points are the
+  same in the two input structures, care should be taken to ensure that
+  consistent atom sets are selected with <code>fixed.inds</code> and
+  <code>mobile.inds</code>.</p>
+  
+      <p>Optionally, &#147;full&#148; PDB file superposition and output can be
+  accomplished by setting  <code>full.pdbs=TRUE</code>.  In that case, the
+  input (<code>mobile</code>) passed to <code>fit.xyz</code> should be a list object
+  obtained with the function <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>, since the
+  components <code>id</code>, <code>resno</code> and <code>xyz</code> are required to
+  establish correspondences.  See the examples below.</p>
+  
+      <p>In dealing with large vector and matrix, running on multiple
+  cores, especially when <code>ncore>>1</code>, may ask for a large portion
+  of system memory. To avoid the overuse of memory, input data is first
+  split into segments (for xyz matrix, the splitting is along the row). 
+  The number of data segments is equal to <code>nseg.scale*nseg.base</code>, where
+  <code>nseg.base </code> is an integer determined by the dimension of the data.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns moved coordinates.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+      <p>Kabsch <em>Acta Cryst</em> (1978) <b>A34</b>, 827--828.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>##--- Read an alignment & Fit aligned structures
+aln  <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
+pdbs <- read.fasta.pdb(aln)
+</div>
+<div class='output'>pdb/seq: 1   name: http://www.rcsb.org/pdb/files/1bg2.pdb 
+pdb/seq: 2   name: http://www.rcsb.org/pdb/files/1i6i.pdb 
+   PDB has ALT records, taking A only, rm.alt=TRUE
+pdb/seq: 3   name: http://www.rcsb.org/pdb/files/1i5s.pdb 
+   PDB has ALT records, taking A only, rm.alt=TRUE
+pdb/seq: 4   name: http://www.rcsb.org/pdb/files/2ncd.pdb 
+</div>
+<div class='input'>
+gaps <- gap.inspect(pdbs$xyz)
+rmsd( pdbs$xyz[, gaps$f.inds] )
+</div>
+<div class='output'>       [,1]   [,2]   [,3]   [,4]
+[1,]  0.000 48.901 48.533 63.343
+[2,] 48.901  0.000 58.171 53.186
+[3,] 48.533 58.171  0.000 88.198
+[4,] 63.343 53.186 88.198  0.000
+</div>
+<div class='input'>
+xyz <- fit.xyz( fixed  = pdbs$xyz[1,],
+               mobile = pdbs$xyz,
+               fixed.inds  = gaps$f.inds,
+               mobile.inds = gaps$f.inds )
+
+rmsd( xyz[, gaps$f.inds] )
+</div>
+<div class='output'>      [,1]  [,2]  [,3]  [,4]
+[1,] 0.000 2.654 2.412 2.775
+[2,] 2.654 0.000 2.202 3.063
+[3,] 2.412 2.202 0.000 2.905
+[4,] 2.775 3.063 2.905 0.000
+</div>
+<div class='input'>
+##-- Superpose again this time outputing PDBs
+xyz <- fit.xyz( fixed = pdbs$xyz[1,],
+               mobile = pdbs,
+               fixed.inds  = gaps$f.inds,
+               mobile.inds = gaps$f.inds,
+               outpath = "rough_fit/",
+               full.pdbs = TRUE)
+</div>
+<div class='output'>  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
+  HEADER    TRANSPORT PROTEIN                       02-MAR-01   1I6I               
+   PDB has ALT records, taking A only, rm.alt=TRUE
+  HEADER    TRANSPORT PROTEIN                       28-FEB-01   1I5S               
+   PDB has ALT records, taking A only, rm.alt=TRUE
+  HEADER    CONTRACTILE PROTEIN                     04-JUN-99   2NCD               
+</div>
+<div class='input'>
+##--- Fit two PDBs
+A <- read.pdb("1bg2")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
+</div>
+<div class='input'>A.ind <- atom.select(A, "///256:269///CA/")
+</div>
+<div class='output'>
+Build selection from input string
+
+      segid  chain  resno     resid  eleno  elety
+Stest ""     ""     "256:269" ""     ""     "CA" 
+Natom "2527" "2527" "93"      "2527" "2527" "323"
+ *  Selected a total of: 14 intersecting atoms  *
+</div>
+<div class='input'>
+B <- read.pdb("2kin")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    MOTOR PROTEIN                           28-APR-97   2KIN               
+   PDB has ALT records, taking A only, rm.alt=TRUE
+</div>
+<div class='input'>B.ind <- atom.select(B, "///257:270///CA/")
+</div>
+<div class='output'>
+Build selection from input string
+
+      segid  chain  resno     resid  eleno  elety
+Stest ""     ""     "257:270" ""     ""     "CA" 
+Natom "2677" "2677" "93"      "2677" "2677" "338"
+ *  Selected a total of: 14 intersecting atoms  *
+</div>
+<div class='input'>
+xyz <- fit.xyz(fixed=A$xyz, mobile=B$xyz,
+               fixed.inds=A.ind$xyz,
+               mobile.inds=B.ind$xyz)
+
+# Write out moved PDB
+C <- B; C$xyz = xyz
+write.pdb(pdb=C, file = "moved.pdb")
+
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>fit.xyz</li><li>rot.lsq</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='rmsd.html'>rmsd</a></code>, <code><a href='read.pdb.html'>read.pdb</a></code>,
+  <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>, <code><a href='read.dcd.html'>read.dcd</a></code> 
+    
+    <h2>Author</h2>
+     Barry Grant with <code>rot.lsq</code> contributions from Leo Caves 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=fit.xyz'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

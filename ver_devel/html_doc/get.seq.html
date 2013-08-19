@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>get.seq. bio3d 1.2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Download FASTA Sequence Files </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>get.seq(ids, outfile = "seqs.fasta", db = "nr")</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>ids</dt>
+      <dd> A character vector of one or more appropriate database
+    codes/identifiers of the files to be downloaded. </dd>
+      <dt>outfile</dt>
+      <dd> A single element character vector specifying the name
+    of the local file to which sequences will be written. </dd>
+      <dt>db</dt>
+      <dd> A single element character vector specifying the database
+    from which sequences are to be obtained. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Downloads FASTA sequence files from the NR, or SWISSPROT/UNIPROT
+  databases.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This is a basic function to automate sequence file download from the
+  NR and SWISSPROT/UNIPROT databases.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>If all files are successfully downloaded a list object with two
+  components is returned:
+  ali  an alignment character matrix with a row per sequence and
+    a column per equivalent aminoacid/nucleotide. 
+  ids  sequence names as identifiers.
+  This is similar to that returned by <code><a href='read.fasta.html'>read.fasta</a></code>. However,
+  if some files were not successfully downloaded then a vector detailing
+  which ids were not found is returned.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>For a description of FASTA format see:
+  <a href = 'http://www.ncbi.nlm.nih.gov/BLAST/blastcgihelp.shtml'>http://www.ncbi.nlm.nih.gov/BLAST/blastcgihelp.shtml</a>.
+  When reading alignment files, the dash &#145;-&#146; is interpreted as
+  the gap character.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
+</div>
+<div class='output'>  HEADER    ONCOGENE PROTEIN                        30-APR-90   5P21               
+</div>
+<div class='input'>blast <- blast.pdb( pdbseq(pdb), database = "swissprot" )
+</div>
+<div class='output'> Searching ... please wait (updates every 5 seconds) RID = ZJJXF51B014 
+ .....
+ Reporting 127 hits
+</div>
+<div class='input'>ids <- plot.blast( blast )
+</div>
+<div class='output'>  * Possible cutoff values include:
+		 175 115 
+    Yielding Nhits:
+		 49 127  
+
+ ** Chosen cutoff value of:
+		 115 
+    Yielding Nhits:
+		 127  
+</div>
+<p><img src='get.seq-8.png' alt='' width='400' height='400' /></p>
+<div class='input'>seq <- get.seq(ids$gi.id, outfile=tempfile())
+seq$id[1:10]
+</div>
+<div class='output'> [1] "gi|131869|sp|P01112.1|RASH_HUMAN"    "gi|341941795|sp|Q61411.2|RASH_MOUSE"
+ [3] "gi|341941798|sp|P20171.2|RASH_RAT"   "gi|131872|sp|P23175.1|RASH_MSVNS"   
+ [5] "gi|131868|sp|P08642.1|RASH_CHICK"    "gi|131870|sp|P01113.1|RASH_MSVMO"   
+ [7] "gi|131871|sp|P01115.1|RASH_MSVHA"    "gi|131874|sp|P01114.1|RASH_RRASV"   
+ [9] "gi|131877|sp|P01117.1|RASK_MSVKI"    "gi|2500064|sp|P79800.1|RASK_MELGA"  
+</div>
+<div class='input'>seq$ali[1:10,]
+</div>
+<div class='output'>                                    [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]
+gi|131869|sp|P01112.1|RASH_HUMAN    "M"  "T"  "E"  "Y"  "K"  "L"  "V"  "V" 
+gi|341941795|sp|Q61411.2|RASH_MOUSE "M"  "T"  "E"  "Y"  "K"  "L"  "V"  "V" 
+gi|341941798|sp|P20171.2|RASH_RAT   "M"  "T"  "E"  "Y"  "K"  "L"  "V"  "V" 
+gi|131872|sp|P23175.1|RASH_MSVNS    "M"  "T"  "E"  "Y"  "K"  "L"  "V"  "V" 
+gi|131868|sp|P08642.1|RASH_CHICK    "M"  "T"  "E"  "Y"  "K"  "L"  "V"  "V" 
+gi|131870|sp|P01113.1|RASH_MSVMO    "M"  "T"  "E"  "Y"  "K"  "L"  "V"  "V" 
+gi|131871|sp|P01115.1|RASH_MSVHA    "M"  "P"  "A"  "A"  "R"  "A"  "A"  "P" 
+gi|131874|sp|P01114.1|RASH_RRASV    "M"  "G"  "Q"  "S"  "L"  "T"  "T"  "P" 
+gi|131877|sp|P01117.1|RASK_MSVKI    "M"  "T"  "E"  "Y"  "K"  "L"  "V"  "V" 
+gi|2500064|sp|P79800.1|RASK_MELGA   "M"  "T"  "E"  "Y"  "K"  "L"  "V"  "V" 
+                                    [,9] [,10] [,11] [,12] [,13] [,14] [,15]
+gi|131869|sp|P01112.1|RASH_HUMAN    "V"  "G"   "A"   "G"   "G"   "V"   "G"  
+gi|341941795|sp|Q61411.2|RASH_MOUSE "V"  "G"   "A"   "G"   "G"   "V"   "G"  
+gi|341941798|sp|P20171.2|RASH_RAT   "V"  "G"   "A"   "G"   "G"   "V"   "G"  
+gi|131872|sp|P23175.1|RASH_MSVNS    "V"  "G"   "A"   "R"   "G"   "V"   "G"  
+gi|131868|sp|P08642.1|RASH_CHICK    "V"  "G"   "A"   "G"   "G"   "V"   "G"  
+gi|131870|sp|P01113.1|RASH_MSVMO    "V"  "G"   "A"   "K"   "G"   "V"   "G"  
+gi|131871|sp|P01115.1|RASH_MSVHA    "A"  "A"   "D"   "E"   "P"   "M"   "R"  
+gi|131874|sp|P01114.1|RASH_RRASV    "L"  "S"   "L"   "T"   "L"   "D"   "H"  
+gi|131877|sp|P01117.1|RASK_MSVKI    "V"  "G"   "A"   "S"   "G"   "V"   "G"  
+gi|2500064|sp|P79800.1|RASK_MELGA   "V"  "G"   "A"   "G"   "G"   "V"   "G"  
+                                    [,16] [,17] [,18] [,19] [,20] [,21] [,22]
+gi|131869|sp|P01112.1|RASH_HUMAN    "K"   "S"   "A"   "L"   "T"   "I"   "Q"  
+gi|341941795|sp|Q61411.2|RASH_MOUSE "K"   "S"   "A"   "L"   "T"   "I"   "Q"  
+gi|341941798|sp|P20171.2|RASH_RAT   "K"   "S"   "A"   "L"   "T"   "I"   "Q"  
+gi|131872|sp|P23175.1|RASH_MSVNS    "K"   "S"   "A"   "L"   "T"   "I"   "Q"  
+gi|131868|sp|P08642.1|RASH_CHICK    "K"   "S"   "A"   "L"   "T"   "I"   "Q"  
+gi|131870|sp|P01113.1|RASH_MSVMO    "K"   "S"   "A"   "L"   "T"   "I"   "Q"  
+gi|131871|sp|P01115.1|RASH_MSVHA    "D"   "P"   "V"   "A"   "P"   "V"   "R"  
+gi|131874|sp|P01114.1|RASH_RRASV    "W"   "K"   "D"   "V"   "R"   "D"   "R"  
+gi|131877|sp|P01117.1|RASK_MSVKI    "K"   "S"   "A"   "L"   "T"   "I"   "Q"  
+gi|2500064|sp|P79800.1|RASK_MELGA   "K"   "S"   "A"   "L"   "T"   "I"   "Q"  
+                                    [,23] [,24] [,25] [,26] [,27] [,28] [,29]
+gi|131869|sp|P01112.1|RASH_HUMAN    "L"   "I"   "Q"   "N"   "H"   "F"   "V"  
+gi|341941795|sp|Q61411.2|RASH_MOUSE "L"   "I"   "Q"   "N"   "H"   "F"   "V"  
+gi|341941798|sp|P20171.2|RASH_RAT   "L"   "I"   "Q"   "N"   "H"   "F"   "V"  
+gi|131872|sp|P23175.1|RASH_MSVNS    "L"   "I"   "Q"   "N"   "H"   "F"   "V"  
+gi|131868|sp|P08642.1|RASH_CHICK    "L"   "I"   "Q"   "N"   "H"   "F"   "V"  
+gi|131870|sp|P01113.1|RASH_MSVMO    "L"   "I"   "Q"   "N"   "H"   "F"   "V"  
+gi|131871|sp|P01115.1|RASH_MSVHA    "A"   "P"   "A"   "L"   "P"   "R"   "P"  
+gi|131874|sp|P01114.1|RASH_RRASV    "A"   "R"   "D"   "Q"   "S"   "V"   "E"  
+gi|131877|sp|P01117.1|RASK_MSVKI    "L"   "I"   "Q"   "N"   "H"   "F"   "V"  
+gi|2500064|sp|P79800.1|RASK_MELGA   "L"   "I"   "Q"   "N"   "H"   "F"   "V"  
+                                    [,30] [,31] [,32] [,33] [,34] [,35] [,36]
+gi|131869|sp|P01112.1|RASH_HUMAN    "D"   "E"   "Y"   "D"   "P"   "T"   "I"  
+gi|341941795|sp|Q61411.2|RASH_MOUSE "D"   "E"   "Y"   "D"   "P"   "T"   "I"  
+gi|341941798|sp|P20171.2|RASH_RAT   "D"   "E"   "Y"   "D"   "P"   "T"   "I"  
+gi|131872|sp|P23175.1|RASH_MSVNS    "D"   "E"   "Y"   "D"   "P"   "T"   "I"  
+gi|131868|sp|P08642.1|RASH_CHICK    "D"   "E"   "Y"   "D"   "P"   "T"   "I"  
+gi|131870|sp|P01113.1|RASH_MSVMO    "D"   "E"   "Y"   "D"   "P"   "T"   "I"  
+gi|131871|sp|P01115.1|RASH_MSVHA    "A"   "P"   "G"   "A"   "V"   "A"   "P"  
+gi|131874|sp|P01114.1|RASH_RRASV    "I"   "K"   "K"   "G"   "P"   "L"   "R"  
+gi|131877|sp|P01117.1|RASK_MSVKI    "D"   "E"   "Y"   "D"   "P"   "T"   "I"  
+gi|2500064|sp|P79800.1|RASK_MELGA   "D"   "E"   "Y"   "D"   "P"   "T"   "I"  
+                                    [,37] [,38] [,39] [,40] [,41] [,42] [,43]
+gi|131869|sp|P01112.1|RASH_HUMAN    "E"   "D"   "S"   "Y"   "R"   "K"   "Q"  
+gi|341941795|sp|Q61411.2|RASH_MOUSE "E"   "D"   "S"   "Y"   "R"   "K"   "Q"  
+gi|341941798|sp|P20171.2|RASH_RAT   "E"   "D"   "S"   "Y"   "R"   "K"   "Q"  
+gi|131872|sp|P23175.1|RASH_MSVNS    "E"   "D"   "S"   "Y"   "R"   "K"   "Q"  
+gi|131868|sp|P08642.1|RASH_CHICK    "E"   "D"   "S"   "Y"   "R"   "K"   "Q"  
+gi|131870|sp|P01113.1|RASH_MSVMO    "E"   "D"   "S"   "Y"   "R"   "K"   "Q"  
+gi|131871|sp|P01115.1|RASH_MSVHA    "A"   "S"   "G"   "G"   "A"   "R"   "A"  
+gi|131874|sp|P01114.1|RASH_RRASV    "R"   "S"   "G"   "T"   "V"   "A"   "P"  
+gi|131877|sp|P01117.1|RASK_MSVKI    "Q"   "D"   "S"   "Y"   "R"   "K"   "Q"  
+gi|2500064|sp|P79800.1|RASK_MELGA   "E"   "D"   "S"   "Y"   "R"   "K"   "Q"  
+                                    [,44] [,45] [,46] [,47] [,48] [,49] [,50]
+gi|131869|sp|P01112.1|RASH_HUMAN    "V"   "V"   "I"   "D"   "G"   "E"   "T"  
+gi|341941795|sp|Q61411.2|RASH_MOUSE "V"   "V"   "I"   "D"   "G"   "E"   "T"  
+gi|341941798|sp|P20171.2|RASH_RAT   "V"   "V"   "I"   "D"   "G"   "E"   "T"  
+gi|131872|sp|P23175.1|RASH_MSVNS    "V"   "V"   "I"   "D"   "G"   "E"   "T"  
+gi|131868|sp|P08642.1|RASH_CHICK    "V"   "V"   "I"   "D"   "G"   "E"   "T"  
+gi|131870|sp|P01113.1|RASH_MSVMO    "V"   "V"   "I"   "D"   "G"   "E"   "T"  
+gi|131871|sp|P01115.1|RASH_MSVHA    "P"   "G"   "L"   "A"   "A"   "P"   "V"  
+gi|131874|sp|P01114.1|RASH_RRASV    "A"   "S"   "G"   "G"   "A"   "G"   "A"  
+gi|131877|sp|P01117.1|RASK_MSVKI    "V"   "V"   "I"   "D"   "G"   "E"   "T"  
+gi|2500064|sp|P79800.1|RASK_MELGA   "V"   "V"   "I"   "D"   "G"   "E"   "T"  
+                                    [,51] [,52] [,53] [,54] [,55] [,56] [,57]
+gi|131869|sp|P01112.1|RASH_HUMAN    "C"   "L"   "L"   "D"   "I"   "L"   "D"  
+gi|341941795|sp|Q61411.2|RASH_MOUSE "C"   "L"   "L"   "D"   "I"   "L"   "D"  
+gi|341941798|sp|P20171.2|RASH_RAT   "C"   "L"   "L"   "D"   "I"   "L"   "D"  
+gi|131872|sp|P23175.1|RASH_MSVNS    "C"   "L"   "L"   "D"   "I"   "L"   "D"  
+gi|131868|sp|P08642.1|RASH_CHICK    "C"   "L"   "L"   "D"   "I"   "L"   "D"  
+gi|131870|sp|P01113.1|RASH_MSVMO    "C"   "L"   "L"   "D"   "I"   "L"   "D"  
+gi|131871|sp|P01115.1|RASH_MSVHA    "E"   "A"   "M"   "T"   "E"   "Y"   "K"  
+gi|131874|sp|P01114.1|RASH_RRASV    "P"   "G"   "L"   "A"   "A"   "P"   "V"  
+gi|131877|sp|P01117.1|RASK_MSVKI    "C"   "L"   "L"   "D"   "I"   "L"   "D"  
+gi|2500064|sp|P79800.1|RASK_MELGA   "C"   "L"   "L"   "D"   "I"   "L"   "D"  
+                                    [,58] [,59] [,60] [,61] [,62] [,63] [,64]
+gi|131869|sp|P01112.1|RASH_HUMAN    "T"   "A"   "G"   "Q"   "E"   "E"   "Y"  
+gi|341941795|sp|Q61411.2|RASH_MOUSE "T"   "A"   "G"   "Q"   "E"   "E"   "Y"  
+gi|341941798|sp|P20171.2|RASH_RAT   "T"   "A"   "G"   "Q"   "E"   "E"   "Y"  
+gi|131872|sp|P23175.1|RASH_MSVNS    "T"   "A"   "G"   "Q"   "E"   "E"   "Y"  
+gi|131868|sp|P08642.1|RASH_CHICK    "T"   "A"   "G"   "Q"   "E"   "E"   "Y"  
+gi|131870|sp|P01113.1|RASH_MSVMO    "T"   "A"   "G"   "Q"   "E"   "E"   "Y"  
+gi|131871|sp|P01115.1|RASH_MSVHA    "L"   "V"   "V"   "V"   "G"   "A"   "R"  
+gi|131874|sp|P01114.1|RASH_RRASV    "E"   "A"   "M"   "T"   "E"   "Y"   "K"  
+gi|131877|sp|P01117.1|RASK_MSVKI    "T"   "T"   "G"   "Q"   "E"   "E"   "Y"  
+gi|2500064|sp|P79800.1|RASK_MELGA   "T"   "A"   "G"   "Q"   "E"   "E"   "Y"  
+                                    [,65] [,66] [,67] [,68] [,69] [,70] [,71]
+gi|131869|sp|P01112.1|RASH_HUMAN    "S"   "A"   "M"   "R"   "D"   "Q"   "Y"  
+gi|341941795|sp|Q61411.2|RASH_MOUSE "S"   "A"   "M"   "R"   "D"   "Q"   "Y"  
+gi|341941798|sp|P20171.2|RASH_RAT   "S"   "A"   "M"   "R"   "D"   "Q"   "Y"  
+gi|131872|sp|P23175.1|RASH_MSVNS    "S"   "A"   "M"   "R"   "D"   "Q"   "Y"  
+gi|131868|sp|P08642.1|RASH_CHICK    "S"   "A"   "M"   "R"   "D"   "Q"   "Y"  
+gi|131870|sp|P01113.1|RASH_MSVMO    "S"   "A"   "M"   "R"   "D"   "Q"   "Y"  
+gi|131871|sp|P01115.1|RASH_MSVHA    "G"   "V"   "G"   "K"   "S"   "A"   "L"  
+gi|131874|sp|P01114.1|RASH_RRASV    "L"   "V"   "V"   "V"   "G"   "A"   "R"  
+gi|131877|sp|P01117.1|RASK_MSVKI    "S"   "A"   "M"   "R"   "D"   "Q"   "Y"  
+gi|2500064|sp|P79800.1|RASK_MELGA   "S"   "A"   "M"   "R"   "D"   "Q"   "Y"  
+                                    [,72] [,73] [,74] [,75] [,76] [,77] [,78]
+gi|131869|sp|P01112.1|RASH_HUMAN    "M"   "R"   "T"   "G"   "E"   "G"   "F"  
+gi|341941795|sp|Q61411.2|RASH_MOUSE "M"   "R"   "T"   "G"   "E"   "G"   "F"  
+gi|341941798|sp|P20171.2|RASH_RAT   "M"   "R"   "T"   "G"   "E"   "G"   "F"  
+gi|131872|sp|P23175.1|RASH_MSVNS    "M"   "R"   "T"   "G"   "E"   "G"   "F"  
+gi|131868|sp|P08642.1|RASH_CHICK    "M"   "R"   "T"   "G"   "E"   "G"   "F"  
+gi|131870|sp|P01113.1|RASH_MSVMO    "M"   "R"   "T"   "G"   "E"   "G"   "F"  
+gi|131871|sp|P01115.1|RASH_MSVHA    "T"   "I"   "Q"   "L"   "I"   "Q"   "N"  
+gi|131874|sp|P01114.1|RASH_RRASV    "G"   "V"   "G"   "K"   "S"   "A"   "L"  
+gi|131877|sp|P01117.1|RASK_MSVKI    "M"   "R"   "T"   "G"   "E"   "G"   "F"  
+gi|2500064|sp|P79800.1|RASK_MELGA   "M"   "R"   "T"   "G"   "E"   "G"   "F"  
+                                    [,79] [,80] [,81] [,82] [,83] [,84] [,85]
+gi|131869|sp|P01112.1|RASH_HUMAN    "L"   "C"   "V"   "F"   "A"   "I"   "N"  
+gi|341941795|sp|Q61411.2|RASH_MOUSE "L"   "C"   "V"   "F"   "A"   "I"   "N"  
+gi|341941798|sp|P20171.2|RASH_RAT   "L"   "C"   "V"   "F"   "A"   "I"   "N"  
+gi|131872|sp|P23175.1|RASH_MSVNS    "L"   "C"   "V"   "F"   "A"   "I"   "N"  
+gi|131868|sp|P08642.1|RASH_CHICK    "L"   "C"   "V"   "F"   "A"   "I"   "N"  
+gi|131870|sp|P01113.1|RASH_MSVMO    "L"   "C"   "V"   "F"   "A"   "I"   "N"  
+gi|131871|sp|P01115.1|RASH_MSVHA    "H"   "F"   "V"   "D"   "E"   "Y"   "D"  
+gi|131874|sp|P01114.1|RASH_RRASV    "T"   "I"   "Q"   "L"   "I"   "Q"   "N"  
+gi|131877|sp|P01117.1|RASK_MSVKI    "L"   "C"   "V"   "F"   "A"   "I"   "N"  
+gi|2500064|sp|P79800.1|RASK_MELGA   "L"   "C"   "V"   "F"   "A"   "I"   "N"  
+                                    [,86] [,87] [,88] [,89] [,90] [,91] [,92]
+gi|131869|sp|P01112.1|RASH_HUMAN    "N"   "T"   "K"   "S"   "F"   "E"   "D"  
+gi|341941795|sp|Q61411.2|RASH_MOUSE "N"   "T"   "K"   "S"   "F"   "E"   "D"  
+gi|341941798|sp|P20171.2|RASH_RAT   "N"   "T"   "K"   "S"   "F"   "E"   "D"  
+gi|131872|sp|P23175.1|RASH_MSVNS    "N"   "T"   "K"   "S"   "F"   "E"   "D"  
+gi|131868|sp|P08642.1|RASH_CHICK    "N"   "T"   "K"   "S"   "F"   "E"   "D"  
+gi|131870|sp|P01113.1|RASH_MSVMO    "N"   "T"   "K"   "S"   "F"   "E"   "D"  
+gi|131871|sp|P01115.1|RASH_MSVHA    "P"   "T"   "I"   "E"   "D"   "S"   "Y"  
+gi|131874|sp|P01114.1|RASH_RRASV    "H"   "F"   "V"   "D"   "E"   "Y"   "D"  
+gi|131877|sp|P01117.1|RASK_MSVKI    "N"   "T"   "K"   "S"   "F"   "E"   "D"  
+gi|2500064|sp|P79800.1|RASK_MELGA   "N"   "T"   "K"   "S"   "F"   "E"   "D"  
+                                    [,93] [,94] [,95] [,96] [,97] [,98] [,99]
+gi|131869|sp|P01112.1|RASH_HUMAN    "I"   "H"   "Q"   "Y"   "R"   "E"   "Q"  
+gi|341941795|sp|Q61411.2|RASH_MOUSE "I"   "H"   "Q"   "Y"   "R"   "E"   "Q"  
+gi|341941798|sp|P20171.2|RASH_RAT   "I"   "H"   "Q"   "Y"   "R"   "E"   "Q"  
+gi|131872|sp|P23175.1|RASH_MSVNS    "I"   "H"   "Q"   "Y"   "R"   "E"   "Q"  
+gi|131868|sp|P08642.1|RASH_CHICK    "I"   "H"   "Q"   "Y"   "R"   "E"   "Q"  
+gi|131870|sp|P01113.1|RASH_MSVMO    "I"   "H"   "Q"   "Y"   "R"   "E"   "Q"  
+gi|131871|sp|P01115.1|RASH_MSVHA    "R"   "K"   "Q"   "V"   "V"   "I"   "D"  
+gi|131874|sp|P01114.1|RASH_RRASV    "P"   "T"   "I"   "E"   "D"   "S"   "Y"  
+gi|131877|sp|P01117.1|RASK_MSVKI    "I"   "H"   "H"   "Y"   "R"   "E"   "Q"  
+gi|2500064|sp|P79800.1|RASK_MELGA   "I"   "H"   "H"   "Y"   "R"   "E"   "Q"  
+                                    [,100] [,101] [,102] [,103] [,104] [,105]
+gi|131869|sp|P01112.1|RASH_HUMAN    "I"    "K"    "R"    "V"    "K"    "D"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "I"    "K"    "R"    "V"    "K"    "D"   
+gi|341941798|sp|P20171.2|RASH_RAT   "I"    "K"    "R"    "V"    "K"    "D"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "I"    "K"    "R"    "V"    "K"    "D"   
+gi|131868|sp|P08642.1|RASH_CHICK    "I"    "K"    "R"    "V"    "K"    "D"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "I"    "K"    "R"    "V"    "K"    "D"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "G"    "E"    "T"    "C"    "L"    "L"   
+gi|131874|sp|P01114.1|RASH_RRASV    "R"    "K"    "Q"    "V"    "V"    "I"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "L"    "K"    "R"    "V"    "K"    "D"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "I"    "K"    "R"    "V"    "K"    "D"   
+                                    [,106] [,107] [,108] [,109] [,110] [,111]
+gi|131869|sp|P01112.1|RASH_HUMAN    "S"    "D"    "D"    "V"    "P"    "M"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "S"    "D"    "D"    "V"    "P"    "M"   
+gi|341941798|sp|P20171.2|RASH_RAT   "S"    "D"    "D"    "V"    "P"    "M"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "S"    "D"    "D"    "V"    "P"    "M"   
+gi|131868|sp|P08642.1|RASH_CHICK    "S"    "D"    "D"    "V"    "P"    "M"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "S"    "D"    "D"    "V"    "P"    "M"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "D"    "I"    "L"    "D"    "T"    "T"   
+gi|131874|sp|P01114.1|RASH_RRASV    "D"    "G"    "E"    "T"    "C"    "L"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "S"    "E"    "D"    "V"    "P"    "M"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "S"    "E"    "D"    "V"    "P"    "M"   
+                                    [,112] [,113] [,114] [,115] [,116] [,117]
+gi|131869|sp|P01112.1|RASH_HUMAN    "V"    "L"    "V"    "G"    "N"    "K"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "V"    "L"    "V"    "G"    "N"    "K"   
+gi|341941798|sp|P20171.2|RASH_RAT   "V"    "L"    "V"    "G"    "N"    "K"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "V"    "L"    "V"    "G"    "N"    "K"   
+gi|131868|sp|P08642.1|RASH_CHICK    "V"    "L"    "V"    "G"    "N"    "K"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "V"    "L"    "V"    "G"    "N"    "K"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "G"    "Q"    "E"    "E"    "Y"    "S"   
+gi|131874|sp|P01114.1|RASH_RRASV    "L"    "D"    "I"    "L"    "D"    "T"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "V"    "L"    "V"    "G"    "N"    "K"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "V"    "L"    "V"    "G"    "N"    "K"   
+                                    [,118] [,119] [,120] [,121] [,122] [,123]
+gi|131869|sp|P01112.1|RASH_HUMAN    "C"    "D"    "L"    "A"    "A"    "R"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "C"    "D"    "L"    "A"    "A"    "R"   
+gi|341941798|sp|P20171.2|RASH_RAT   "C"    "D"    "L"    "A"    "A"    "R"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "C"    "D"    "L"    "A"    "A"    "R"   
+gi|131868|sp|P08642.1|RASH_CHICK    "C"    "D"    "L"    "P"    "A"    "R"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "C"    "D"    "L"    "A"    "A"    "R"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "A"    "M"    "R"    "D"    "Q"    "Y"   
+gi|131874|sp|P01114.1|RASH_RRASV    "A"    "G"    "Q"    "E"    "E"    "Y"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "C"    "D"    "L"    "P"    "S"    "R"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "C"    "D"    "L"    "P"    "S"    "R"   
+                                    [,124] [,125] [,126] [,127] [,128] [,129]
+gi|131869|sp|P01112.1|RASH_HUMAN    "T"    "V"    "E"    "S"    "R"    "Q"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "T"    "V"    "E"    "S"    "R"    "Q"   
+gi|341941798|sp|P20171.2|RASH_RAT   "T"    "V"    "E"    "S"    "R"    "Q"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "T"    "V"    "E"    "S"    "R"    "Q"   
+gi|131868|sp|P08642.1|RASH_CHICK    "T"    "V"    "E"    "T"    "R"    "Q"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "T"    "V"    "E"    "S"    "R"    "Q"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "M"    "R"    "T"    "G"    "E"    "G"   
+gi|131874|sp|P01114.1|RASH_RRASV    "S"    "A"    "M"    "R"    "D"    "Q"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "T"    "V"    "D"    "T"    "K"    "Q"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "T"    "V"    "D"    "T"    "K"    "Q"   
+                                    [,130] [,131] [,132] [,133] [,134] [,135]
+gi|131869|sp|P01112.1|RASH_HUMAN    "A"    "Q"    "D"    "L"    "A"    "R"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "A"    "Q"    "D"    "L"    "A"    "R"   
+gi|341941798|sp|P20171.2|RASH_RAT   "A"    "Q"    "D"    "L"    "A"    "R"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "A"    "Q"    "D"    "L"    "A"    "R"   
+gi|131868|sp|P08642.1|RASH_CHICK    "A"    "Q"    "D"    "L"    "A"    "R"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "A"    "Q"    "D"    "L"    "A"    "R"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "F"    "L"    "C"    "V"    "F"    "A"   
+gi|131874|sp|P01114.1|RASH_RRASV    "Y"    "M"    "R"    "T"    "G"    "E"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "A"    "Q"    "E"    "L"    "A"    "R"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "A"    "Q"    "D"    "L"    "A"    "R"   
+                                    [,136] [,137] [,138] [,139] [,140] [,141]
+gi|131869|sp|P01112.1|RASH_HUMAN    "S"    "Y"    "G"    "I"    "P"    "Y"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "S"    "Y"    "G"    "I"    "P"    "Y"   
+gi|341941798|sp|P20171.2|RASH_RAT   "S"    "Y"    "G"    "I"    "P"    "Y"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "S"    "Y"    "G"    "I"    "P"    "Y"   
+gi|131868|sp|P08642.1|RASH_CHICK    "S"    "Y"    "G"    "I"    "P"    "Y"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "S"    "Y"    "G"    "I"    "P"    "Y"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "I"    "N"    "N"    "T"    "K"    "S"   
+gi|131874|sp|P01114.1|RASH_RRASV    "G"    "F"    "L"    "C"    "V"    "F"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "S"    "Y"    "G"    "I"    "P"    "F"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "S"    "Y"    "G"    "I"    "P"    "F"   
+                                    [,142] [,143] [,144] [,145] [,146] [,147]
+gi|131869|sp|P01112.1|RASH_HUMAN    "I"    "E"    "T"    "S"    "A"    "K"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "I"    "E"    "T"    "S"    "A"    "K"   
+gi|341941798|sp|P20171.2|RASH_RAT   "I"    "E"    "T"    "S"    "A"    "K"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "I"    "E"    "T"    "S"    "A"    "K"   
+gi|131868|sp|P08642.1|RASH_CHICK    "I"    "E"    "T"    "S"    "A"    "K"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "I"    "K"    "T"    "S"    "A"    "K"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "F"    "E"    "D"    "I"    "H"    "Q"   
+gi|131874|sp|P01114.1|RASH_RRASV    "A"    "I"    "N"    "N"    "T"    "K"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "I"    "E"    "T"    "S"    "A"    "K"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "I"    "E"    "T"    "S"    "A"    "K"   
+                                    [,148] [,149] [,150] [,151] [,152] [,153]
+gi|131869|sp|P01112.1|RASH_HUMAN    "T"    "R"    "Q"    "G"    "V"    "E"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "T"    "R"    "Q"    "G"    "V"    "E"   
+gi|341941798|sp|P20171.2|RASH_RAT   "T"    "R"    "Q"    "G"    "V"    "E"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "T"    "R"    "Q"    "G"    "V"    "E"   
+gi|131868|sp|P08642.1|RASH_CHICK    "T"    "R"    "Q"    "G"    "V"    "E"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "T"    "R"    "Q"    "G"    "V"    "E"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "Y"    "R"    "E"    "Q"    "I"    "K"   
+gi|131874|sp|P01114.1|RASH_RRASV    "S"    "F"    "E"    "D"    "I"    "H"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "T"    "R"    "Q"    "R"    "V"    "E"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "T"    "R"    "Q"    "G"    "V"    "D"   
+                                    [,154] [,155] [,156] [,157] [,158] [,159]
+gi|131869|sp|P01112.1|RASH_HUMAN    "D"    "A"    "F"    "Y"    "T"    "L"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "D"    "A"    "F"    "Y"    "T"    "L"   
+gi|341941798|sp|P20171.2|RASH_RAT   "D"    "A"    "F"    "Y"    "T"    "L"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "D"    "A"    "F"    "Y"    "T"    "L"   
+gi|131868|sp|P08642.1|RASH_CHICK    "D"    "A"    "F"    "Y"    "T"    "L"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "D"    "A"    "F"    "Y"    "T"    "L"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "R"    "V"    "K"    "D"    "S"    "D"   
+gi|131874|sp|P01114.1|RASH_RRASV    "Q"    "Y"    "R"    "E"    "Q"    "I"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "D"    "A"    "F"    "Y"    "T"    "L"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "D"    "A"    "F"    "Y"    "T"    "L"   
+                                    [,160] [,161] [,162] [,163] [,164] [,165]
+gi|131869|sp|P01112.1|RASH_HUMAN    "V"    "R"    "E"    "I"    "R"    "Q"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "V"    "R"    "E"    "I"    "R"    "Q"   
+gi|341941798|sp|P20171.2|RASH_RAT   "V"    "R"    "E"    "I"    "R"    "Q"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "V"    "R"    "E"    "I"    "R"    "Q"   
+gi|131868|sp|P08642.1|RASH_CHICK    "V"    "R"    "E"    "I"    "R"    "Q"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "V"    "R"    "E"    "I"    "R"    "Q"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "D"    "V"    "P"    "M"    "V"    "L"   
+gi|131874|sp|P01114.1|RASH_RRASV    "K"    "R"    "V"    "K"    "D"    "S"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "V"    "R"    "E"    "I"    "R"    "Q"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "V"    "R"    "E"    "I"    "R"    "K"   
+                                    [,166] [,167] [,168] [,169] [,170] [,171]
+gi|131869|sp|P01112.1|RASH_HUMAN    "H"    "K"    "L"    "R"    "K"    "L"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "H"    "K"    "L"    "R"    "K"    "L"   
+gi|341941798|sp|P20171.2|RASH_RAT   "H"    "K"    "L"    "R"    "K"    "L"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "H"    "K"    "L"    "R"    "K"    "L"   
+gi|131868|sp|P08642.1|RASH_CHICK    "H"    "K"    "L"    "R"    "K"    "L"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "H"    "K"    "L"    "R"    "K"    "L"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "V"    "G"    "N"    "K"    "C"    "D"   
+gi|131874|sp|P01114.1|RASH_RRASV    "D"    "D"    "V"    "P"    "M"    "V"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "Y"    "R"    "L"    "K"    "K"    "I"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "H"    "K"    "E"    "K"    "M"    "S"   
+                                    [,172] [,173] [,174] [,175] [,176] [,177]
+gi|131869|sp|P01112.1|RASH_HUMAN    "N"    "P"    "P"    "D"    "E"    "S"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "N"    "P"    "P"    "D"    "E"    "S"   
+gi|341941798|sp|P20171.2|RASH_RAT   "N"    "P"    "P"    "D"    "E"    "S"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "N"    "P"    "P"    "D"    "E"    "S"   
+gi|131868|sp|P08642.1|RASH_CHICK    "N"    "P"    "P"    "D"    "E"    "S"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "N"    "P"    "P"    "D"    "E"    "S"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "L"    "A"    "G"    "R"    "T"    "V"   
+gi|131874|sp|P01114.1|RASH_RRASV    "L"    "V"    "G"    "N"    "K"    "C"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "S"    "K"    "E"    "E"    "K"    "T"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "K"    "D"    "G"    "K"    "K"    "K"   
+                                    [,178] [,179] [,180] [,181] [,182] [,183]
+gi|131869|sp|P01112.1|RASH_HUMAN    "G"    "P"    "G"    "C"    "M"    "S"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "G"    "P"    "G"    "C"    "M"    "S"   
+gi|341941798|sp|P20171.2|RASH_RAT   "G"    "P"    "G"    "C"    "M"    "S"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "G"    "P"    "G"    "C"    "M"    "S"   
+gi|131868|sp|P08642.1|RASH_CHICK    "G"    "P"    "G"    "C"    "M"    "N"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "G"    "P"    "G"    "C"    "M"    "S"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "E"    "S"    "R"    "Q"    "A"    "Q"   
+gi|131874|sp|P01114.1|RASH_RRASV    "D"    "L"    "A"    "A"    "H"    "T"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "P"    "G"    "C"    "V"    "K"    "I"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "K"    "K"    "K"    "T"    "K"    "T"   
+                                    [,184] [,185] [,186] [,187] [,188] [,189]
+gi|131869|sp|P01112.1|RASH_HUMAN    "C"    "K"    "C"    "V"    "L"    "S"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "C"    "K"    "C"    "V"    "L"    "S"   
+gi|341941798|sp|P20171.2|RASH_RAT   "C"    "K"    "C"    "V"    "L"    "S"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "C"    "K"    "C"    "V"    "L"    "S"   
+gi|131868|sp|P08642.1|RASH_CHICK    "C"    "K"    "C"    "V"    "I"    "S"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "C"    "K"    "C"    "V"    "L"    "S"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "D"    "L"    "A"    "R"    "S"    "Y"   
+gi|131874|sp|P01114.1|RASH_RRASV    "V"    "E"    "S"    "R"    "Q"    "A"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "K"    "K"    "C"    "V"    "I"    "M"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "K"    "C"    "I"    "I"    "M"    "-"   
+                                    [,190] [,191] [,192] [,193] [,194] [,195]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "G"    "I"    "P"    "Y"    "I"    "E"   
+gi|131874|sp|P01114.1|RASH_RRASV    "Q"    "D"    "L"    "A"    "R"    "S"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,196] [,197] [,198] [,199] [,200] [,201]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "T"    "S"    "A"    "K"    "T"    "R"   
+gi|131874|sp|P01114.1|RASH_RRASV    "Y"    "G"    "I"    "P"    "Y"    "I"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,202] [,203] [,204] [,205] [,206] [,207]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "Q"    "G"    "V"    "E"    "D"    "A"   
+gi|131874|sp|P01114.1|RASH_RRASV    "E"    "T"    "S"    "A"    "K"    "T"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,208] [,209] [,210] [,211] [,212] [,213]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "F"    "Y"    "T"    "L"    "V"    "R"   
+gi|131874|sp|P01114.1|RASH_RRASV    "R"    "P"    "G"    "V"    "E"    "D"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,214] [,215] [,216] [,217] [,218] [,219]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "E"    "I"    "R"    "Q"    "H"    "K"   
+gi|131874|sp|P01114.1|RASH_RRASV    "A"    "F"    "Y"    "T"    "L"    "V"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,220] [,221] [,222] [,223] [,224] [,225]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "L"    "R"    "K"    "L"    "N"    "P"   
+gi|131874|sp|P01114.1|RASH_RRASV    "R"    "E"    "I"    "R"    "Q"    "H"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,226] [,227] [,228] [,229] [,230] [,231]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "P"    "D"    "E"    "S"    "G"    "P"   
+gi|131874|sp|P01114.1|RASH_RRASV    "K"    "L"    "R"    "K"    "L"    "N"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,232] [,233] [,234] [,235] [,236] [,237]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "G"    "C"    "M"    "S"    "C"    "K"   
+gi|131874|sp|P01114.1|RASH_RRASV    "P"    "P"    "D"    "E"    "S"    "G"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,238] [,239] [,240] [,241] [,242] [,243]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "C"    "V"    "L"    "S"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "P"    "G"    "C"    "M"    "S"    "C"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,244] [,245] [,246] [,247] [,248] [,249]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "K"    "C"    "V"    "L"    "S"    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,250] [,251] [,252] [,253] [,254] [,255]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,256] [,257] [,258] [,259] [,260] [,261]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,262] [,263] [,264] [,265] [,266] [,267]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,268] [,269] [,270] [,271] [,272] [,273]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,274] [,275] [,276] [,277] [,278] [,279]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,280] [,281] [,282] [,283] [,284] [,285]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,286] [,287] [,288] [,289] [,290] [,291]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,292] [,293] [,294] [,295] [,296] [,297]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,298] [,299] [,300] [,301] [,302] [,303]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,304] [,305] [,306] [,307] [,308] [,309]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,310] [,311] [,312] [,313] [,314] [,315]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,316] [,317] [,318] [,319] [,320] [,321]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"    "-"    "-"    "-"    "-"    "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"    "-"    "-"    "-"    "-"    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"    "-"    "-"    "-"    "-"    "-"   
+                                    [,322]
+gi|131869|sp|P01112.1|RASH_HUMAN    "-"   
+gi|341941795|sp|Q61411.2|RASH_MOUSE "-"   
+gi|341941798|sp|P20171.2|RASH_RAT   "-"   
+gi|131872|sp|P23175.1|RASH_MSVNS    "-"   
+gi|131868|sp|P08642.1|RASH_CHICK    "-"   
+gi|131870|sp|P01113.1|RASH_MSVMO    "-"   
+gi|131871|sp|P01115.1|RASH_MSVHA    "-"   
+gi|131874|sp|P01114.1|RASH_RRASV    "-"   
+gi|131877|sp|P01117.1|RASK_MSVKI    "-"   
+gi|2500064|sp|P79800.1|RASK_MELGA   "-"   
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>get.seq</li>
+    </ul>
+    <ul>
+      <li> IO </li><li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='blast.pdb.html'>blast.pdb</a></code>, <code><a href='read.fasta.html'>read.fasta</a></code>,
+  <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>, <code><a href='get.pdb.html'>get.pdb</a></code>
+
+    
+    <h2>Author</h2>
+     Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=get.seq'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>
