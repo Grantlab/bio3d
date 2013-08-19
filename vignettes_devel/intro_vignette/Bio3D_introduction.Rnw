@@ -29,26 +29,220 @@ ue,linkcolor=black]{hyperref}
 \maketitle
 
 
-\section{Introduction}
-The aim of this document, termed a vignette\footnote{This vignette contains executable examples, see \texttt{help(vignette)} for further details.} in R parlance, is to provide a brief introduction to the bio3d R package \citep{grant06}.  A number of other bio3d package vignettes are available, including: \texttt{Comparative protein structure analysis with Bio3D}, \texttt{Introduction to sequence conservation analysis with Bio3D} and \texttt{Basic trajectory analysis with Bio3D}.  In this vignette we will demonstrate ...
+\section{Bio3D provides interactive tools for structural bioinformatics}
+Bio3D is an R package containing utilities for the analysis of biomolecular
+structure, sequence and trajectory data \citep{grant06}.  Features include the ability
+to read and write biomolecular structure, sequence and dynamic trajectory data,
+perform atom selection, re-orientation, superposition, rigid core
+identification, clustering, distance matrix analysis, conservation
+analysis, normal mode analysis and principal component analysis. Bio3d
+takes advantage of the extensive graphical and statistical capabilities of the R environment (\url{http://www.r-project.org}) and thus represents a useful framework for exploratory analysis of structural data.
 
+\subsection{Using this vignette}
+The aim of this document, termed a vignette\footnote{This vignette
+  contains executable examples, see \texttt{help(vignette)} for
+  further details.} in R parlance, is to provide instalation
+instructctions and a brief overview of Bio3D.  A number of other Bio3D package vignettes are
+available, including:
+\begin{itemize}
+\item \texttt{Comparative protein structure analysis with Bio3D},
+\item \texttt{Introduction to sequence conservation analysis with Bio3D}, 
+\item \texttt{Basic trajectory analysis with Bio3D}
+\item \texttt{Principal component analysis with Bio3D}, 
+\item \texttt{Dynamic network analysis with Bio3D} and
+\item \texttt{Normal mode analysis with Bio3D}
+\end{itemize}
 
 \paragraph{Supporting Material:}
-The latest version, full documentation and furhter vignettes can be obtained from the bio3d website: \href{http://mccammon.ucsd.edu/~bgrant/bio3d/}{http://mccammon.ucsd.edu/$\sim$bgrant/bio3d/} and wiki: \href{http://bio3d.pbwiki.com/}{http://bio3d.pbwiki.com/}.
+The latest version of the package, full documentation and furhter vignettes can be obtained from the bio3d website: \href{http://thegrantlab.org/bio3d/index.html}{http://thegrantlab.org/bio3d/} and wiki: \href{http://bio3d.pbwiki.com/}{http://bio3d.pbwiki.com/}.
+
+\paragraph{Bio3D deveolpment:} We are always interested in adding additional functionality to
+Bio3D. If you have ideas, sugestions or code that you would like to
+distribute as part of this package, please contact us. You are also
+encouraged to contribute your code or issues directely to our
+\href{https://bitbucket.org/Grantlab/bio3d/overview}{bitbucket
+  repository} for incoporation into the development version of the
+package. Please do get in touch -- we would like to hear from you!
+
+
+\section{Installation Prequisites}
+Before you attempt to install bio3d you should have a relatively
+recent version of R installed and working on your system. Detailed instructions for obtaining and installing R on various platforms can be found on the \href{http://www.r-project.org}{R home page}. 
+
+\subsection{Do I need to know R?}
+To get the most out of Bio3D you should be quite familiar with basic R
+usage. There are several on--line resources that can help you get
+started using R. Again they can be found from the
+\href{http://www.r-project.org}{main R website}. 
+
+\paragraph{Learning R:} Some users find this a steep learning curve;
+your experience may be similar. However, if you have mastered basic
+vectors and matrices you should feel confident about getting stuck into
+using the Bio3D package.
+
+\subsection{Addational utilities}
+There are a number of additional packages and programs that will
+either interfae with Bio3D or that we consider generally invaluable for
+working with biomolecular structure (e.g. VMD) and sequence
+(e.g. Seaview) data. A brief description of how to obtain these
+additional packages is given below.
+
+\paragraph{Addational R Packages}
+Recommended additional R packages include filehash, bigmemory and ncdf. These can be most easily installed from within R with the command:
+
+<<eval=FALSE>>= 
+install.packages(c("filehash", "bigmemory", "ncdf"), dependencies=TRUE)
+@
+
+\paragraph{MUSCLE}
+Muscle is a fast multiple sequence alignment program available from the muscle home page. The bio3d 'seqaln()' function currently calls the 'MUSCLE' program, hence MUSCLE MUST BE INSTALLED on your system and in the search path for executables.
+
+A note for Mac users from Valeriya Simeonova: 
+After downloading MUSCLE, it should be unzipped and renamed just to "muscle" and placed in a directory such as "/usr/sbin/" 
+ 
+
+\paragraph{VMD}
+VMD is a molecular visualization program for displaying, animating, and analyzing large biomolecular systems using 3-D graphics. Visit the VMD website for download information and documentation.
+Along with the standard documentation you may find my VMD cheat sheet useful. I have also included a link to my .vmdrc file which includes a number of timesaving customizations (see the cheat sheet for full details).
+
+
+\paragraph{Stride}
+Stride is a secondary structure analysis program available from the EMBL-Heidelberg. Stride is similar in functionality to the more prevalent dssp (see below). However, stride is much easer to setup as you may be able to simply copy or link to the stride executable distributed within every version of VMD (see above).
+
+ 
+\paragraph{DSSP}
+Dssp is another secondary structure analysis program available from ... look on google. 
+Again this should be installed on your system as an executable called "dssp" and be in the search path for executables. 
+
+ 
+\paragraph{Seaview}
+Seaview is a graphical multiple sequence alignment editor. Download information and documentation are available here. I use Seaview to manually check and edit protein sequence alignment files pior to detailed analysis. I believe this should be done with every alignment regardless of how accurate the various automatic tools are supposed to be.
+
+
+\section{Obtaining Bio3D}
+The Bio3D package is distributed in two forms from the package
+homepage: \href{http://thegrantlab.org/bio3d/index.html}{http://thegrantlab.org/bio3d/}  
+
+\begin{itemize}
+\item \href{http://thegrantlab.org/bio3d/download/download.html}{as platform independent source code} (intended primiraly for mac and unix systems), 
+\item \href{http://thegrantlab.org/bio3d/download/download.html}{as a compiled binary for windows}.
+\end{itemize}
+
+To install from source requires that your machine has standard compilers and tools such as Perl 5.004 or later. If you run into problems with source installation please refer to section 6.1 of the \href{http://cran.r-project.org/doc/manuals/R-admin.html}{R Installation and Administration Manual}. 
+
+
+\subsection{Unix Installation}
+
+To install the bio3d package in a Unix enviroment download the source tar.gz file from above. At the shell command prompt type: 
+<<eval=FALSE>>=
+# R CMD INSTALL bio3d_*.tar.gz 
+@
+
+This will only work if you have permission to write files to the standard package installation location. If you would rather install to a different location you can set the \texttt{R\_LIBS} enviroment variable to a location of your choice. For example, if you use tcsh then add a line similar to the following to your .tcshrc file: 
+
+setenv R\_LIBS /net/home/bgrant/software/R/lib/R/library 
+
+Changing the path to a directory of your choice. 
+
+
+\subsection{MacOS X Installation}
+
+R on Mac OS X can be used either on the command-line, like on other
+Unix systems, or via the R.app GUI. If you prefer to use the command
+line based R system then simply follow the Unix installation
+instructions above. Alternatively, you can use the Packages and Data menu of the GUI, in particular the sub-item Package Installer. 
+Download the source tar.gz file from above. In the R GUI select Packages and Data, Package Installer, Local Source Package and press the Install button. Select the bio3d tar file and press Open. 
+
+
+\subsection{Windows Installation}
+
+To install the bio3d package on Windows download the compiled binary .zip file from above. 
+Start R and from GUI click Packages and then Install Package(s) from local zip file then simply select your downloaded bio3 zip file (something like bio3d_1.0-3.zip) and click Open to finish the installation. You should now be able to load the bio3d library into your current R session by typing the usual library(bio3d)command at the R Console. 
 
 
 
-\section{Prequisites}
+%---
+\section{Getting started with Bio3D}
+Start R (type R at the comand prompt or, on Windows, double click on the R icon) and load the bio3d package by typing library(bio3d) at the R console prompt. 
+Then use the command lbio3d() to list the functions within the package. 
+<<>>=
+library(bio3d)
+lbio3d()
+@ 
+ 
+<<>>=
+help(package="bio3d")
+@ 
 
-Bio3D is a project to develop innovative software tools for use in computational biology.  It is based on the R language ({\url www.r-project.org}).  You should already be quite familiar with R before using Bio3D. There are several on--line resources that can help you get started using R. They can be found from the R website.  Some users find this a very steep learning curve; your experience may be similar.
+\subsection{Finding Help}
+To get help on a particular function try ?function or help(function). 
+For example, ?pca.xyz 
 
-Bio3D provides flexible interactive tools for carrying out a number of different structural bioinformatics tasks. Some of these may not be as fast as other analysis tools (since they are interactive) and often reflect current ideas. Most can be improved and interested users should file bug reports and feature requests on the Bio3D mailing list.
+<<eval=FALSE>>=
+# ?pca.xyz
+@ 
+
+To search the help system for documentation matching a particular word or topic use the command help.search("topic"). For example, help.search("pdb") 
+
+ <<eval=FALSE>>=
+# help.search(''pdb'')
+@ 
+
+Typing help.start() will start a local HTML interface. After initiating 'help.start()' in a session the '?function' commands will open as HTML pages. 
+To execute examples for a particular function use the command example(function). To run examples for the read.dcd function try example(read.dcd) 
 
 
-We welcome collaboration in many different forms. These include fixes or additions to the package and help on different projects that are currently underway.
+
+\subsection{Quitting and Bailing out}
+R is generally very tolerant, and can be interrupted by Ctrl-C (i.e. hold down the key marked Control and hit the C key). This will interrupt the current operation and return to the R prompt. 
+
+To quit R all-together, type q() 
+
+Note the option to save your work for future use: "save workspace image [y/n/c]". 
+Answering yes to this question will result in a binary .RData file being written to the current directory. This file contains details of all objects created in your current session. This file is read the next time R is executed in this directory, providing access to all your previous objects. To avoid this, answer "n" at quit time, or erase the .RData file before re-starting R. 
 
 
-\subsection{How to report a bug}
+
+
+\subsection{Saving your work}
+You can save an external representation of any R objects to a specified file using the save() command.  The objects can be read back from the file at a later time by using the function load(). 
+
+<<eval=FALSE>>=
+save(x, y, pdb, blast, file="myresults.RData")
+@ 
+To save all objects in your current session use the save.image() command. 
+
+
+
+
+\subsection{Bio3d Demo}
+Run the command demo(bio3d) to obtain a quick overview.
+
+%<<eval=FLASE>>=
+%# demo(bio3d)
+%@ 
+
+The bio3d package consists of input/output functions, conversion and manipulation functions, analysis functions, and graphics functions all of which are fully documented. Remember that you can get help on any particular function by using the command ?function or help(function) from within R. 
+
+<<>>=
+help(pca.xyz)
+@ 
+
+
+\subsection{Example Function Usage}
+To better understand how a particular function operates it is often helpful to view and execute an example. Every function within the bio3d package is documented with example code that you can view by issuing the help command. 
+
+Running the command example(function) will directly execute the example for a given function. 
+In addition, a numer of worked examples are available as short Tutorials on the bio3d wiki. 
+
+<<fig=TRUE>>=
+example(plot.bio3d)
+@ 
+
+
+%----
+
+\section{How to report a bug}
 
 Please provide enough information for us to help you. This typically
 includes the platform (windows, Unix, Macintosh) that you are using as
@@ -64,30 +258,6 @@ Please note:
 \item bugs in R should be reported to the R community
 \item missing features are not bugs -- they are feature requests.
 \end{itemize}
-
-\section{Bioconductor Design}
-
-Bio3D relies on the R package system to distribute code and
-data. Most functions use S3 or, more recently, S4 methods and classes (as described in {\em
-  Programming with Data} by J. M. Chambers). This adherence to object
-oriented programming makes it easier to build component software and
-helps to deal with the complexity of the data.
-
-
-\subsection{Getting Started}
-Start R, load the bio3d package and use the command \texttt{lbio3d()} to list th
-e current functions available within the package:
-
-<<>>=
-library(bio3d)
-lbio3d()
-@
-Detailed documentation and example code for each function can be accessed via th
-e \texttt{help()} and \texttt{example()} commands (e.g. \texttt{help(read.pdb)})
-.  You can also copy and paste any of the example code from the documentation of
- a particular function, or indeed this vignette, directly into your R session.
-
-\section{Reading Example Trajectory Data}
 
 
 \section{Session Information}
