@@ -6,13 +6,15 @@
   given larger PDB object. 
 }
 \usage{
-trim.pdb(pdb, inds = NULL)
+trim.pdb(pdb, inds = NULL, sse = TRUE)
 }
 \arguments{
   \item{pdb}{ a PDB structure object obtained from
     \code{\link{read.pdb}}. }
   \item{inds}{ a list object of ATOM and XYZ indices as obtained from
     \code{\link{atom.select}}. }
+  \item{sse}{ logical, if \sQuote{FALSE} helix and sheet components are
+    omitted from output. }
 }
 \details{
   This is a basic utility function for creating a new PDB object based
@@ -31,6 +33,8 @@ trim.pdb(pdb, inds = NULL)
     type sse, where start and end are residue numbers \dQuote{resno}. }
   \item{seqres }{ sequence from SEQRES field. }
   \item{xyz }{ a numeric vector of ATOM coordinate data. }
+  \item{xyz.models }{ a numeric matrix of ATOM coordinate data for
+    multi-model PDB files. }
   \item{calpha }{ logical vector with length equal to \code{nrow(atom)}
     with TRUE values indicating a C-alpha \dQuote{elety}. }
 }
@@ -43,12 +47,11 @@ trim.pdb(pdb, inds = NULL)
 }
 \author{ Barry Grant, Lars Skjaerven }
 \note{
-  \code{het}, \code{helix}, \code{sheet}, and \code{seqres} list
-  components are returned unmodified.
+  \code{het} and \code{seqres} list components are returned unmodified.
   
   For both \code{atom} and \code{het} list components the column names can be
   used as a convenient means of data access, namely:
-  Atom serial number \dQuote{eleno} ,
+  Atom serial number \dQuote{eleno},
   Atom type \dQuote{elety},
   Alternate location indicator \dQuote{alt},
   Residue name \dQuote{resid},
