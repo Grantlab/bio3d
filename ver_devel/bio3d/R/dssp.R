@@ -1,3 +1,6 @@
+## NOTE: 
+##   We do not support old-version DSSP any longer
+##   Please update your DSSP program to the newest version
 "dssp" <-
 function (pdb, exepath = "", resno=TRUE) {
     infile <- tempfile()
@@ -8,7 +11,7 @@ function (pdb, exepath = "", resno=TRUE) {
        shell(paste(exepath, "dssp ", infile, " ",
                  outfile, sep = ""), ignore.stderr = TRUE)
     } else {
-       system(paste(exepath, "dssp -c ", infile, " ",
+       system(paste(exepath, "dssp ", infile, " ",
                  outfile, sep = ""), ignore.stderr = TRUE)
     }
 ##
@@ -28,13 +31,12 @@ function (pdb, exepath = "", resno=TRUE) {
        raw.lines <- raw.lines[-which(aa == "!")]
     cha <- substring(raw.lines, 12, 12)
     sse <- substring(raw.lines, 17, 17)
-    if(os1 == "windows") {
-       phi <- as.numeric(substring(raw.lines, 104, 109))
-       psi <- as.numeric(substring(raw.lines, 110, 115))
-    } else {
-       phi <- as.numeric(substring(raw.lines, 96, 101))
-       psi <- as.numeric(substring(raw.lines, 102, 107))
-    }
+
+    # column numbers of phi and psi are different between 
+    # the old and new versions of DSSP 
+    phi <- as.numeric(substring(raw.lines, 104, 109))
+    psi <- as.numeric(substring(raw.lines, 110, 115))
+
     acc <- as.numeric(substring(raw.lines, 35, 38))
 
 

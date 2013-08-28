@@ -8,10 +8,11 @@ for i in ../bio3d/man/*.Rd; do
    # we may think of another consistent example in future 
    if [ `basename $i` != "rmsip.Rd" ] && \
       [ `basename $i` != "pca.xyz.Rd" ] && \
+      [ `basename $i` != "dssp.trj.Rd" ] && \
       [ `basename $i` != "read.mol2.Rd" ] && \
-      [ `basename $i` != "bio3d.package.Rd" ] && \
+      [ `basename $i` != "##bio3d.package.Rd" ] && \
       [ `basename $i` != "binding.site.Rd" ] && \
-      [ `basename $i` != "plot.bio3d.Rd" ]; then
+      [ `basename $i` != "##plot.bio3d.Rd" ]; then
       echo $i
       # find and delete tags \dontrun{ and }
       awk 'BEGIN{bok=0; n=0} 
