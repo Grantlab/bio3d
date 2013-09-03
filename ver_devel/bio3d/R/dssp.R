@@ -119,5 +119,6 @@ function (pdb, exepath = "", resno=TRUE) {
        turn <- lapply(turn, function(x) {names(x) <- 1:length(turn$start); return(x)})
 
     out <- list(helix = helix, sheet = sheet,
-                turn = turn, phi = phi, psi = psi, acc = acc)
+                turn = turn, phi = phi, psi = psi, acc = acc,
+                sse = sse)
 }
