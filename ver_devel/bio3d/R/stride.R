@@ -130,6 +130,6 @@ function(pdb, exepath = "", resno=TRUE) {
 #                chain = chain[t.ind])
 #  }
   out <- list(helix = helix, sheet=sheet, turn=turn,
-              phi = phi, psi = psi, acc = acc)
+              phi=phi, psi=psi, acc=acc, sse=sse)
 }
 

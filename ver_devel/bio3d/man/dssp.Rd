@@ -31,7 +31,8 @@ dssp(pdb, exepath = "", resno=TRUE)
     type sse, where start and end are residue numbers \dQuote{resno}. }
   \item{phi}{ a numeric vector of phi angles. }
   \item{psi}{ a numeric vector of psi angles. }
-  \item{acc}{ a numeric vector of solvent accessibility. } 
+  \item{acc}{ a numeric vector of solvent accessibility. }
+  \item{sse}{ a character vector of secondary structure type per residue. } 
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
