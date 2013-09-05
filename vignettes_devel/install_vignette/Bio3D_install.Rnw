@@ -31,7 +31,7 @@ Available Bio3D package vignettes include:
 \item \texttt{Installing Bio3D}
 \item \texttt{Getting started with Bio3D}
 \item \texttt{Comparative protein structure analysis with Bio3D}
-\item \texttt{Introduction to sequence conservation analysis with Bio3D} 
+\item \texttt{Sequence conservation analysis with Bio3D} 
 \item \texttt{Basic trajectory analysis with Bio3D}
 \item \texttt{Principal component analysis with Bio3D} 
 \item \texttt{Dynamic network analysis with Bio3D}
