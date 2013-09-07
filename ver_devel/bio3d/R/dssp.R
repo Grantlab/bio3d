@@ -31,6 +31,7 @@ function (pdb, exepath = "", resno=TRUE) {
        raw.lines <- raw.lines[-which(aa == "!")]
     cha <- substring(raw.lines, 12, 12)
     sse <- substring(raw.lines, 17, 17)
+    res.name <- substring(raw.lines, 14, 14)
 
     # column numbers of phi and psi are different between 
     # the old and new versions of DSSP 
@@ -39,11 +40,17 @@ function (pdb, exepath = "", resno=TRUE) {
 
     acc <- as.numeric(substring(raw.lines, 35, 38))
 
+    res.num <- as.numeric(substring(raw.lines, 6, 10))
+    res.ind <- 1:length(res.num)
 
-    h.ind <- bounds(which(sse == "H"), pre.sort=FALSE)
-    g.ind <- bounds(which(sse == "G"), pre.sort=FALSE)
-    e.ind <- bounds(which(sse == "E"), pre.sort=FALSE)
-    t.ind <- bounds(which(sse == "T"), pre.sort=FALSE)
+    sseInfo <- cbind(resIndex = res.ind, resNumber = res.num,
+                     resName = res.name, sse = sse)
+
+
+    h.ind <- bounds(res.num[which(sse == "H")], pre.sort=FALSE)
+    g.ind <- bounds(res.num[which(sse == "G")], pre.sort=FALSE)
+    e.ind <- bounds(res.num[which(sse == "E")], pre.sort=FALSE)
+    t.ind <- bounds(res.num[which(sse == "T")], pre.sort=FALSE)
     
     h.res <- h.ind;    g.res <- g.ind
     e.res <- e.ind;    t.res <- t.ind
@@ -120,5 +127,5 @@ function (pdb, exepath = "", resno=TRUE) {
 
     out <- list(helix = helix, sheet = sheet,
                 turn = turn, phi = phi, psi = psi, acc = acc,
-                sse = sse)
+                sse = sse, sseInfo = sseInfo)
 }
