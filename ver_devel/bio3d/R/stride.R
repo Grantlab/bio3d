@@ -26,11 +26,16 @@ function(pdb, exepath = "", resno=TRUE) {
   cha <- substring(raw.tor, 10,10)
   acc <- as.numeric(substring(raw.tor, 65, 69))
 
-  h.ind <- bounds(which(sse == "H"), pre.sort=FALSE)
-  g.ind <- bounds(which(sse == "G"), pre.sort=FALSE)
-  e.ind <- bounds(which(sse == "E"), pre.sort=FALSE)
-  t.ind <- bounds(which(sse == "T"), pre.sort=FALSE)
+  res.num  <- as.numeric(substring(raw.tor, 12, 15))
+  res.name <- as.numeric(substring(raw.tor, 6, 8))
+  h.ind <- bounds(res.num[which(sse == "H")], pre.sort=FALSE)
+  g.ind <- bounds(res.num[which(sse == "G")], pre.sort=FALSE)
+  e.ind <- bounds(res.num[which(sse == "E")], pre.sort=FALSE)
+  t.ind <- bounds(res.num[which(sse == "T")], pre.sort=FALSE)
 
+  sseInfo <- cbind(resIndex=res.ind, resNumber=res.num,
+                   resName=res.name, sse=sse)
+  
 #  start <- as.numeric(substring(raw.loc, 23,27))
 #  end   <- as.numeric(substring(raw.loc, 42,45))
 #  chain <- substring(raw.loc, 29,29)
@@ -130,6 +135,7 @@ function(pdb, exepath = "", resno=TRUE) {
 #                chain = chain[t.ind])
 #  }
   out <- list(helix = helix, sheet=sheet, turn=turn,
-              phi=phi, psi=psi, acc=acc, sse=sse)
+              phi=phi, psi=psi, acc=acc, sse=sse,
+              sseInfo=sseInfo)
 }
 
