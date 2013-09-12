@@ -13,7 +13,7 @@ function(pdb, ca.dist=4, blank="X", rtn.vec=TRUE) {
   ## Distance between concetive C-alphas
   ca <- atom.select(pdb, "calpha", verbose=FALSE)
   xyz <- matrix(pdb$xyz[ca$xyz], nrow=3)
-  d <- sqrt( rowSums( apply(xyz , 1, diff)^2 )/3 )
+  d <- sqrt( rowSums( apply(xyz , 1, diff)^2 ) )
 
   ## Chain break distance check
   ind <- which(d > ca.dist)
