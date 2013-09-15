@@ -6,8 +6,7 @@
   Calculate the center of mass of a PDB object.
 }
 \usage{
-com(pdb, inds=NULL, use.mass=TRUE,
-    mass.custom=NULL, elety.custom=NULL, rescue=TRUE)
+com(pdb, inds=NULL, use.mass=TRUE, ...)
 com.xyz(xyz, mass=NULL)
 }
 \arguments{
@@ -18,10 +17,7 @@ com.xyz(xyz, mass=NULL)
     should be based.}
   \item{use.mass}{ logical, if TRUE the calculation will be mass
     weighted (center of mass). }
-  \item{mass.custom}{ a list of atom elements and their corresponding masses. }
-  \item{elety.custom}{ a list of atom names to element symbol mapping. }
-  \item{rescue}{ logical, if TRUE the atom element will be mapped to the
-    first character of the atom name. }
+  \item{...}{ additional arguments to \code{atom2mass}. }
   \item{xyz}{ a numeric vector of Cartesian coordinates. }
   \item{mass}{ a numeric vector containing the masses of each atom in
     \code{xyz}. }
@@ -44,15 +40,13 @@ com.xyz(xyz, mass=NULL)
   based and the corresponding center of mass. 
 }
 \value{
-  Returns a list with the following components:
-  \item{mass}{ a numeric vector of atomic masses. }
-  \item{xyz}{ Cartesian coordinates of the center of mass. }
+  Returns the Cartesian coordinates at the center of mass.
 }
 \references{
    Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Lars Skjaerven }
-\seealso{ \code{\link{read.pdb}}, \code{\link{atom.select}} }
+\seealso{ \code{\link{atom2mass}} }
 \examples{
 
 ## Stucture of PKA:
