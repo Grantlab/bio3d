@@ -111,14 +111,19 @@ function(pdb, type,
 
     ibase = 0
     for (i in 1:length(s.ind)) {
-       nums <- as.numeric(pdb$atom[s.ind[i]:e.ind[i],"resno"])
+       # the combination of resno and insertion code specifically define a residue - wwpdb.org
+       resno0 <- paste(pdb$atom[s.ind[i]:e.ind[i], "resno"], 
+                       pdb$atom[s.ind[i]:e.ind[i], "insert"], sep="")
+#       nums <- as.numeric(resno0)
        ##pdb$atom[,"resno"] <- nums - (nums[1] - first.resno)
    
        ## concetive residue numbers
-       tbl <- table(nums)
+#       tbl <- table(nums)
+       tbl <- table(resno0)
+       
        #new.nums <- first.resno:(first.resno+length(tbl))
        new.nums <- (first.resno+ibase):(first.resno+length(tbl)-1+ibase)
-       pdb$atom[s.ind[i]:e.ind[i],"resno"] <- rep(new.nums, tbl)
+       pdb$atom[s.ind[i]:e.ind[i],"resno"] <- rep(new.nums, tbl[unique(resno0)])
        ibase = ibase + length(tbl)
     }
   }
