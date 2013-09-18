@@ -2,7 +2,7 @@
 ##   We do not support old-version DSSP any longer
 ##   Please update your DSSP program to the newest version
 "dssp" <-
-function (pdb, exepath = "", resno=TRUE) {
+function (pdb, exepath = "", resno=TRUE, full=FALSE) {
     infile <- tempfile()
     outfile <- tempfile()
     write.pdb(pdb, file = infile)
@@ -14,13 +14,27 @@ function (pdb, exepath = "", resno=TRUE) {
        system(paste(exepath, "dssp ", infile, " ",
                  outfile, sep = ""), ignore.stderr = TRUE)
     }
+
 ##
 ## For Debug (Tue Aug  3 18:22:11 PDT 2010)
 ##  -- Following multi chain error report from Heiko Strathmann 
 ##    outfile <- "2jk2.dssp"
 ##    outfile <- "4q21.dssp"
 ##
-    
+       
+    trim <- function(s) {
+        s <- sub("^ +", "", s)
+        s <- sub(" +$", "", s)
+        s[(s == "")] <- NA
+        s
+      }
+
+    split.line <- function(x, split=" ") {
+      tmp <- unlist(strsplit(x, split=split))
+      inds <- which(tmp!="")
+      return(trim(tmp[inds]))
+    }
+
     raw.lines <- readLines(outfile)
     unlink(c(infile, outfile))
     type <- substring(raw.lines, 1, 3)
@@ -31,7 +45,40 @@ function (pdb, exepath = "", resno=TRUE) {
        raw.lines <- raw.lines[-which(aa == "!")]
     cha <- substring(raw.lines, 12, 12)
     sse <- substring(raw.lines, 17, 17)
-    res.name <- substring(raw.lines, 14, 14)
+
+    if(full) {
+      res.id  <- as.numeric(substring(raw.lines, 1, 5))
+
+      ## beta bridge partner resnum
+      bp1 <- as.numeric(substring(raw.lines, 26, 29))
+      bp2 <- as.numeric(substring(raw.lines, 30, 33))
+
+      ## beta bridge labels
+      bpl1            <- substring(raw.lines, 24, 24)
+      bpl2            <- substring(raw.lines, 25, 25)
+      bpl1[bpl1==" "] <- NA
+      bpl2[bpl2==" "] <- NA
+      
+      excl.inds       <- which(bp1==0)
+      bp1[excl.inds]  <- NA
+      excl.inds       <- which(bp2==0)
+      bp2[excl.inds]  <- NA
+      bp              <- cbind(bp1, bp2)
+
+      ## H-bond records
+      hbonds <- split.line(split.line(substring(raw.lines, 40, 83), split=","),split=" ")
+      hbonds <- matrix(as.numeric(hbonds),  ncol=8, byrow=TRUE)
+
+      ## Convert from relative to absolute residue numbering
+      for(i in seq(1,7,by=2)) {
+        hbonds[which(hbonds[,i]==0), i] <- NA
+        hbonds[,i] <- res.id + hbonds[,i]
+      }
+    }
+    else {
+      bp <- NULL
+      hbonds <- NULL
+    }
 
     # column numbers of phi and psi are different between 
     # the old and new versions of DSSP 
@@ -40,17 +87,11 @@ function (pdb, exepath = "", resno=TRUE) {
 
     acc <- as.numeric(substring(raw.lines, 35, 38))
 
-    res.num <- as.numeric(substring(raw.lines, 6, 10))
-    res.ind <- 1:length(res.num)
 
-    sseInfo <- cbind(resIndex = res.ind, resNumber = res.num,
-                     resName = res.name, sse = sse)
-
-
-    h.ind <- bounds(res.num[which(sse == "H")], pre.sort=FALSE)
-    g.ind <- bounds(res.num[which(sse == "G")], pre.sort=FALSE)
-    e.ind <- bounds(res.num[which(sse == "E")], pre.sort=FALSE)
-    t.ind <- bounds(res.num[which(sse == "T")], pre.sort=FALSE)
+    h.ind <- bounds(which(sse == "H"), pre.sort=FALSE)
+    g.ind <- bounds(which(sse == "G"), pre.sort=FALSE)
+    e.ind <- bounds(which(sse == "E"), pre.sort=FALSE)
+    t.ind <- bounds(which(sse == "T"), pre.sort=FALSE)
     
     h.res <- h.ind;    g.res <- g.ind
     e.res <- e.ind;    t.res <- t.ind
@@ -125,7 +166,6 @@ function (pdb, exepath = "", resno=TRUE) {
     if(length(turn$start) > 0)
        turn <- lapply(turn, function(x) {names(x) <- 1:length(turn$start); return(x)})
 
-    out <- list(helix = helix, sheet = sheet,
-                turn = turn, phi = phi, psi = psi, acc = acc,
-                sse = sse, sseInfo = sseInfo)
+    out <- list(helix = helix, sheet = sheet, bp=bp, hbonds=hbonds,
+                turn = turn, phi = phi, psi = psi, acc = acc)
 }
