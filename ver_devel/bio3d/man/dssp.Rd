@@ -5,7 +5,7 @@
   Secondary structure assignment according to the method of Kabsch and Sander.
 }
 \usage{
-dssp(pdb, exepath = "", resno=TRUE)
+dssp(pdb, exepath = "", resno=TRUE, full=FALSE)
 }
 \arguments{
   \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
@@ -13,7 +13,9 @@ dssp(pdb, exepath = "", resno=TRUE)
   \item{exepath}{ path to the \sQuote{DSSP} program on your system
     (i.e. the directory where \sQuote{DSSP} is stored). }
   \item{resno}{ logical, if TRUE output is in terms of residue numbers
-    rather than residue index (position in sequence). } 
+    rather than residue index (position in sequence). }
+  \item{full}{ logical, if TRUE bridge pairs and hbonds columns are
+    parsed. }
 }
 \details{
   This function calls the \sQuote{DSSP} program to define secondary
@@ -33,6 +35,8 @@ dssp(pdb, exepath = "", resno=TRUE)
   \item{psi}{ a numeric vector of psi angles. }
   \item{acc}{ a numeric vector of solvent accessibility. }
   \item{sse}{ a character vector of secondary structure type per residue. } 
+  \item{hbonds}{ a ten column matrix contain the bridge pair records as
+    well as backbone C=O - N-H H-bond records. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
