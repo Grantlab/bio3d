@@ -35,9 +35,8 @@ dssp(pdb, exepath = "", resno=TRUE, full=FALSE)
   \item{psi}{ a numeric vector of psi angles. }
   \item{acc}{ a numeric vector of solvent accessibility. }
   \item{sse}{ a character vector of secondary structure type per residue. } 
-  \item{bp}{ a two column matrix containg the sheet bridge pairs records. }
-  \item{hbonds}{ a eight column matrix contain the backbone C=O - N-H
-    H-bond records. }
+  \item{hbonds}{ a ten column matrix contain the bridge pair records as
+    well as backbone C=O - N-H H-bond records. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
