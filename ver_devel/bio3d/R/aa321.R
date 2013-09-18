@@ -10,14 +10,14 @@ function (aa) {
            "R","S","T","V","W","Y",
            "S","T","K","M","D","C","C","C","C","C","C","C","C",
            "H","H","H","H","H","H","H",
-           "M", "D")
+           "M", "D", "R", "Y")
   aa3 <- c("---", "---","UNK",
            "ALA", "CYS", "ASP", "GLU", "PHE", "GLY",
            "HIS", "ILE", "LYS", "LEU", "MET", "ASN", "PRO", "GLN",
-           "ARG", "SER", "THR", "VAL", "TRP", "TYR",
+           "ARG", "SER", "THR", "VAL", "TRP", "TYR", 
            "SEP", "TPO", "MLY", "MSE", "IAS", "ABA","CSO","CSD","CYM","CME","CSX","CMT","CYX",
            "HIE", "HIP", "HID", "HSD", "HSE", "HSP","DDE",
-           "MHO", "ASX")
+           "MHO", "ASX", "CIR", "PFF")
     convert <- function(x) {
       if(is.na(x)) return(NA)
       if (all(x != aa3)) {

@@ -63,6 +63,7 @@
     if(sse) {
       ## What's left after trimming
       trimmed <- atom[calpha,c("resno", "chain")]
+      if(!is.matrix(trimmed)) trimmed <- t(as.matrix(trimmed))
 
       ## Build a string identifier for easy comparison
       strid <- apply(trimmed, 1, function(x) paste(x, collapse="_"))
