@@ -80,39 +80,45 @@ function (pdb, exepath = "", resno=TRUE, full=FALSE) {
     res.num <- as.numeric(substring(raw.lines, 6, 10))
     res.ind <- 1:length(res.num)
 
-    sseInfo <- cbind(resIndex = res.ind, resNumber = res.num,
-                     resName = res.name, sse = sse)
+#    sseInfo <- cbind(resIndex = res.ind, resNumber = res.num,
+#                     resName = res.name, sse = sse)
 
 
-    h.ind <- bounds(res.num[which(sse == "H")], pre.sort=FALSE)
-    g.ind <- bounds(res.num[which(sse == "G")], pre.sort=FALSE)
-    e.ind <- bounds(res.num[which(sse == "E")], pre.sort=FALSE)
-    t.ind <- bounds(res.num[which(sse == "T")], pre.sort=FALSE)
-    
-    h.res <- h.ind;    g.res <- g.ind
-    e.res <- e.ind;    t.res <- t.ind
-    
-    if(resno) {
-      res.num  <- as.numeric(substring(raw.lines, 6, 10))
-      if(length(h.ind) > 0) {
-        h.res[,"start"] <- res.num[h.ind[,"start"]]
-        h.res[,"end"] <- res.num[h.ind[,"end"]]
-      }
-      
-      if(length(g.ind) > 0) {    
-        g.res[,"start"] <- res.num[g.ind[,"start"]]
-        g.res[,"end"] <- res.num[g.ind[,"end"]]
-      }
-      
-      if(length(e.ind) > 0) {
-        e.res[,"start"] <- res.num[e.ind[,"start"]]
-        e.res[,"end"] <- res.num[e.ind[,"end"]]
-      }
-      
-      if(length(t.ind) > 0) {
-        t.res[,"start"] <- res.num[t.ind[,"start"]]
-        t.res[,"end"] <- res.num[t.ind[,"end"]]
-      }
+    h.res <- bounds(res.num[which(sse == "H")], pre.sort=FALSE)
+    g.res <- bounds(res.num[which(sse == "G")], pre.sort=FALSE)
+    e.res <- bounds(res.num[which(sse == "E")], pre.sort=FALSE)
+    t.res <- bounds(res.num[which(sse == "T")], pre.sort=FALSE)
+   
+    h.ind <- h.res;    g.ind <- g.res
+    e.ind <- e.res;    t.ind <- t.res
+
+    if(length(h.res) > 0) {
+       res.ind <- which(sse == "H")
+       h.ind[, "end"] <- res.ind[cumsum(h.res[, "length"])]
+       h.ind[, "start"] <- h.ind[, "end"] - h.res[, "length"] + 1
+    }
+
+    if(length(g.res) > 0) {
+       res.ind <- which(sse == "G")
+       g.ind[, "end"] <- res.ind[cumsum(g.res[, "length"])]
+       g.ind[, "start"] <- g.ind[, "end"] - g.res[, "length"] + 1
+    }
+
+    if(length(e.res) > 0) {
+       res.ind <- which(sse == "E")
+       e.ind[, "end"] <- res.ind[cumsum(e.res[, "length"])]
+       e.ind[, "start"] <- e.ind[, "end"] - e.res[, "length"] + 1
+    }
+
+    if(length(t.res) > 0) {
+       res.ind <- which(sse == "T")
+       t.ind[, "end"] <- res.ind[cumsum(t.res[, "length"])]
+       t.ind[, "start"] <- t.ind[, "end"] - t.res[, "length"] + 1
+    }
+
+    if(!resno) {
+       h.res <- h.ind;    g.res <- g.ind
+       e.res <- e.ind;    t.res <- t.ind
     }
 
     sheet = list(start=NULL, end=NULL, length=NULL, chain=NULL)
@@ -164,5 +170,5 @@ function (pdb, exepath = "", resno=TRUE, full=FALSE) {
 
     out <- list(helix = helix, sheet = sheet, hbonds=hbonds,
                 turn = turn, phi = phi, psi = psi, acc = acc,
-                sse = sse, sseInfo = sseInfo)
+                sse = sse)
 }
