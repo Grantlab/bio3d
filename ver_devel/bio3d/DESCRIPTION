@@ -1,6 +1,6 @@
 Package: bio3d
 Title: Biological Structure Analysis
-Version: 1.2
+Version: 2.0
 Author: Barry Grant, Xin-Qiu Yao, Lars Skjaerven
 Suggests: ncdf, lattice, grid, bigmemory, multicore, XML
 Depends: R (>= 2.10)
