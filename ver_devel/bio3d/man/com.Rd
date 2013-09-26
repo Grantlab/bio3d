@@ -54,7 +54,7 @@ pdb <- read.pdb("3dnd")
 
 ## Center of mass:
 mycom <- com(pdb)
-write.pdb(xyz=mycom$xyz, file="dummy-1.pdb")
+write.pdb(xyz=mycom, file="dummy-1.pdb")
 
 ## Center of mass of a selection
 inds <- atom.select(pdb, chain="I")

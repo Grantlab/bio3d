@@ -1,7 +1,7 @@
 "mktrj.nma" <- function(nma=NULL,    # nma data structure
                         mode=7,      # which mode to move along
-                        mag=100,     # magnification factor
-                        step=12.5,   # step size
+                        mag=10,      # magnification factor
+                        step=1.25,   # step size
                         file=NULL,   # output pdb file
                         ... ) {      # args for write.pdb
 

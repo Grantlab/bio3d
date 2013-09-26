@@ -6,21 +6,21 @@
   vector.
 }
 \usage{
-mktrj.nma(nma = NULL, mode = 7, mag = 100, step = 12.5, file = NULL,  ...)
+mktrj.nma(nma = NULL, mode = 7, mag = 10, step = 1.25, file = NULL,  ...)
 }
 \arguments{
   \item{nma}{ a list object of class \code{"nma"} (obtained with
     \code{\link{nma}}).}
   \item{mode}{ the mode number along which displacements should be made.}
   \item{mag}{ a magnification factor for scaling the displacements. }
-  \item{step}{ the step size by which to increment along the \code{pc}. }
+  \item{step}{ the step size by which to increment along the mode. }
   \item{file}{ a character vector giving the output PDB file name. }
   \item{...}{ extra arguments to be passed to the function write.pdb. }
 }
 \details{
   Trajectory frames are built from reconstructed Cartesian coordinates
-  produced by interpolating from the mean structure along a given
-  \code{normal mode}, in increments of \code{step}.
+  produced by interpolating from the structure along a given mode
+  vector, in increments of \code{step}.
 
   An optional magnification factor can be used to amplify
   displacements.  This involves scaling the mode vector by

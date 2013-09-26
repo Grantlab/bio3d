@@ -1,5 +1,6 @@
 "build.hessian" <-
-  function(xyz, pfc.fun, mass.weights=NULL, fc.weights=NULL, ncore=1 )  {
+  function(xyz, pfc.fun, aa.mass=NULL, fc.weights=NULL,
+           sse=NULL, sequ=NULL, ss.bonds=NULL, ... )  {
 
     if(missing(xyz))
       stop("build.hessian: 'xyz' coordinates must be provided")
@@ -7,59 +8,64 @@
     if (!is.function(pfc.fun))
       stop("build.hessian: 'pfc.fun' must be a function")
 
-    if(!is.null(mass.weights)) {
-      if((length(xyz)/3)!=length(mass.weights))
-        stop("build.hessian: 'mass.weights' and number of atoms does not match")
+    if(!is.null(aa.mass)) {
+      if((length(xyz)/3)!=length(aa.mass))
+        stop("build.hessian: 'aa.mass' and number of atoms does not match")
     }
     
-    ## Check for multicore package
-    if(ncore>1) {
-      oops <- require(multicore)
-      if (!oops) {
-        warning("multicore package missing")
-        ncore <- 1
-      }
+    ## Check provided weight matrix
+    if(!is.null(fc.weights)) {
+      if(!is.matrix(fc.weights))
+        stop("'fc.weights' must be a numeric matrix")
+      
+      if((nrow(fc.weights) != natoms) ||
+         (ncol(fc.weights) != natoms) )
+        stop("'fc.weights' must be numeric matrix with dimensions NxN")
     }
 
-    build.submatrix <- function(xyz, rinds, inds.x, inds.y, inds.z,
-                                mass.weights, natoms, fc.weights=NULL) {
+    build.submatrix <- function(xyz, natoms, 
+                                aa.mass=NULL, fc.weights=NULL, 
+                                struct.prop=NULL, ...) {
+     
+      ## Full Hessian
+      Hsm <- matrix(0, ncol=3*natoms, nrow=3*natoms)
       
-      ## Sub-matrix of the full Hessian
-      Hsm <- matrix(0, ncol=3*length(rinds), nrow=natoms*3)
-      
-      ## indices relating atoms and colums in the sub-hessian
+      ## Indices relating atoms and columns in the sub-hessian
       col.inds <- seq(1, ncol(Hsm), by=3)
-      ## weight indices
-      inds <- rep(1:natoms, each=3)
-            
-      for ( i in 1:length(rinds) ) {
-        ## atom number
-        n <- rinds[i]
 
+      ## Weight indices
+      inds <- rep(1:natoms, each=3)
+
+      ## Convenient indices for accessing the hessian
+      inds.x <- seq(1, natoms*3, by=3)
+      inds.y <- inds.x+1
+      inds.z <- inds.x+2
+            
+      for ( i in 1:natoms ) {
         ## Calculate difference vectors and force constants
-        diff.vect <- t(t(xyz) - xyz[n,])
+        diff.vect <- t(t(xyz) - xyz[i,])
         
         ##dists <- apply(diff.vect, 1, function(x) sqrt(sum(x**2)))
         dists <- sqrt(rowSums(diff.vect**2))  ## quicker !
 
-        ## Previous version pfc.fun was not vectorized
-        ##force.constants <- apply(diff.vect, 1, calc.fc, pfc.fun) * (-1)
-
         ## pfc.fun takes a vector of distances
-        force.constants <- pfc.fun(dists)
-
+        if("struct.prop" %in% names(formals( pfc.fun )) &&
+           "atom.id"     %in% names(formals( pfc.fun )) )
+          force.constants <- pfc.fun(dists, atom.id=i, struct.prop=struct.prop, ...)
+        else 
+          force.constants <- pfc.fun(dists, ...)
+          
+        ## Scale the force constants
         if(!is.null(fc.weights)) {
-          force.constants <- force.constants * fc.weights[n,]
+          force.constants <- force.constants * fc.weights[i,]
         }
-
+        
         force.constants <- (-1) * force.constants / (dists**2)
 
-        ## ensure that its not 'Inf'
-        force.constants[n] <- 0
+        ## since we divide on zero, ensure no Inf values
+        force.constants[i] <- 0
+        diff.vect[i,] <- 0
 
-        ##diff.vect <- t(normalize.vector(t(diff.vect)))
-        diff.vect[n,] <- 0 
-        
         ## Hessian elements
         dxx <- diff.vect[,1] * diff.vect[,1] * force.constants
         dyy <- diff.vect[,2] * diff.vect[,2] * force.constants
@@ -87,73 +93,96 @@
         Hsm[inds.y, m+2 ] <- dyz
 
         ## Diagonal super elements
-        Hsm[inds.x[n], m] <- sum(Hsm[inds.x, m]) * (-1)
-        Hsm[inds.y[n], m] <- sum(Hsm[inds.y, m]) * (-1)
-        Hsm[inds.z[n], m] <- sum(Hsm[inds.z, m]) * (-1)
+        Hsm[inds.x[i], m] <- sum(Hsm[inds.x, m]) * (-1)
+        Hsm[inds.y[i], m] <- sum(Hsm[inds.y, m]) * (-1)
+        Hsm[inds.z[i], m] <- sum(Hsm[inds.z, m]) * (-1)
 
-        Hsm[inds.x[n], m+1] <- sum(Hsm[inds.x, m+1]) * (-1)
-        Hsm[inds.y[n], m+1] <- sum(Hsm[inds.y, m+1]) * (-1)
-        Hsm[inds.z[n], m+1] <- sum(Hsm[inds.z, m+1]) * (-1)
+        Hsm[inds.x[i], m+1] <- sum(Hsm[inds.x, m+1]) * (-1)
+        Hsm[inds.y[i], m+1] <- sum(Hsm[inds.y, m+1]) * (-1)
+        Hsm[inds.z[i], m+1] <- sum(Hsm[inds.z, m+1]) * (-1)
 
-        Hsm[inds.x[n], m+2] <- sum(Hsm[inds.x, m+2]) * (-1)
-        Hsm[inds.y[n], m+2] <- sum(Hsm[inds.y, m+2]) * (-1)
-        Hsm[inds.z[n], m+2] <- sum(Hsm[inds.z, m+2]) * (-1)
+        Hsm[inds.x[i], m+2] <- sum(Hsm[inds.x, m+2]) * (-1)
+        Hsm[inds.y[i], m+2] <- sum(Hsm[inds.y, m+2]) * (-1)
+        Hsm[inds.z[i], m+2] <- sum(Hsm[inds.z, m+2]) * (-1)
 
         ## Mass weight Hessian
-        if(!is.null(mass.weights)) {
-          m.tmp <- mass.weights[n] ## mass of atom n
+        if(!is.null(aa.mass)) {
+          m.tmp <- aa.mass[i] ## mass of atom n
           Hsm[,m:(m+2)] <- Hsm[,m:(m+2)] * (1/m.tmp)
-          Hsm[,m:(m+2)] <- Hsm[,m:(m+2)] * (1/mass.weights[inds])
+          Hsm[,m:(m+2)] <- Hsm[,m:(m+2)] * (1/aa.mass[inds])
         }
       }
       return(Hsm)
     }
-
+    
     ## Coordinates
     xyz <- matrix(xyz, ncol=3, byrow=TRUE)
     natoms <- nrow(xyz)
 
-    if(!is.null(fc.weights)) {
-      if(!is.matrix(fc.weights))
-        stop("'fc.weights' must be a numeric matrix")
-      
-      if((nrow(fc.weights) != natoms) ||
-         (ncol(fc.weights) != natoms) )
-        stop("'fc.weights' must be numeric matrix with dimensions NxN")
-    }
+    ## Mass weights should be the sqrt of residue masses
+    if(!is.null(aa.mass))
+      aa.mass <- sqrt(aa.mass)
     
-    ## Convenient indices for accessing the hessian
-    inds.x <- seq(1, natoms*3, by=3)
-    inds.y <- inds.x+1
-    inds.z <- inds.x+2
+    ## Sequence-structure properties in a list
+    struct.prop <- list()
 
-    ## Divide the job to multiple cores
-    ## Possibly mclapply instead of a for-loop is more efficient
-    if(ncore>1) {
-      thread.ids <- sort( rep(1:ncore, length.out=natoms) )
-      ncore <- length(unique(thread.ids))
-      jobs <- list()
-    
-      for ( i in 1:ncore ) {
-        rinds <- which(thread.ids==i)
-        jobs[[i]] <- multicore::parallel( build.submatrix(xyz, rinds,
-                                     inds.x, inds.y, inds.z,
-                                     mass.weights, natoms, fc.weights) )
-      }
-      
-      res <- multicore::collect(jobs, wait=TRUE)
-      
-      H <- NULL
-      for ( job in res ) {
-        H <- cbind(H, job)
-      }
+    ## Sequence
+    if(!is.null(sequ)) {
+      if(nchar(sequ[1])>1)
+        sequ <-  aa321(sequ)
+      struct.prop$seq <- sequ
+    } else {
+      struct.prop$seq <- NULL
+    }
+
+    ## SSE
+    if(!is.null(sse)) {
+      if((sse$call$resno=="F" || sse$call$resno=="FALSE") &&
+         (sse$call$full=="T"  || sse$call$full=="TRUE"  ))
+        use.sse <- TRUE
+      else
+        use.sse <- FALSE
+
+      struct.prop$sse <- sse
+      if(!use.sse)
+        warning("use 'dssp' with 'resno=FALSE and full=TRUE'")
     }
     else {
-      rinds <- seq(1, natoms)
-      H <- build.submatrix(xyz, rinds,
-                           inds.x, inds.y, inds.z,
-                           mass.weights, natoms, fc.weights)
+      use.sse <- FALSE
+      struct.prop$sse <- NULL
+    }
+    
+    ## SS-bonds
+    if(!is.null(ss.bonds)) {
+      if(class(ss.bonds)!="matrix")
+        stop("ss.bonds must be two a column matrix")
+      if(ncol(ss.bonds)!=2)
+        stop("ss.bonds must be two a column matrix")
+      struct.prop$ss.bonds <- rbind(ss.bonds, ss.bonds[,2:1])
+    }
+    else {
+      struct.prop$ss.bonds <- NULL
     }
 
+    ## Identify bridge pairs
+    if(use.sse) {
+      ## Helix 1-4 interactions
+      struct.prop$helix14      <- sse.bridges(sse, type="helix", hbond=TRUE, energy.cut=-1.0)
+      struct.prop$helix14      <- rbind(struct.prop$helix14, struct.prop$helix14[,2:1])
+      
+      ## Beta bridges
+      struct.prop$beta.bridges <- sse.bridges(sse, type="sheet", hbond=TRUE, energy.cut=-1.0)
+      struct.prop$beta.bridges <- rbind(struct.prop$beta.bridges, struct.prop$beta.bridges[,2:1])
+    }      
+    else {
+      struct.prop$helix14      <- NULL
+      struct.prop$beta.bridges <- NULL
+    }
+
+    H <- build.submatrix(xyz=xyz, natoms=natoms,
+                         aa.mass=aa.mass,
+                         fc.weights=fc.weights,
+                         struct.prop=struct.prop, ... )
+    
     return(H)
   }

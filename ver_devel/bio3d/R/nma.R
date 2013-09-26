@@ -1,98 +1,89 @@
 "nma" <-
-  function(pdb, inds=NULL, ff='calpha', pfc.fun=NULL, fc.weights=NULL,
-           mass=TRUE, temp=300.0, keep=NULL, cutoff=15, gamma=1, ncore=1 ) {
+  function(pdb, inds=NULL, ff='calpha', pfc.fun=NULL, mass=TRUE,
+           temp=300.0, keep=NULL,  ... ) {
     
-    if (missing(pdb))
+    if(missing(pdb))
       stop("nma: must supply 'pdb' object, i.e. from 'read.pdb'")
     if(class(pdb)!="pdb")
       stop("nma: 'pdb' must be of type 'pdb'")
-    
+
     ## Log the call
     cl <- match.call()
+
+    ## Passing arguments to functions build.hessian and aa2mass
+    bh.names <- names(formals( build.hessian ))
+    am.names <- names(formals( aa2mass ))
     
+    dots <- list(...)
+    bh.args <- dots[names(dots) %in% bh.names]
+    am.args <- dots[names(dots) %in% am.names]   
+
     ## Trim PDB to match user selection
     if ( !is.null(inds) ) {
       pdb <- trim.pdb(pdb, inds)
     }
-    
+
     ## Define force field
     if (is.null(pfc.fun)) {
-      
-      ## Bahar "ANM"-ff
-      if (ff=="anm")  {
-        "ff.anm" <- function(r, rc=cutoff, g=gamma) {
-          ifelse( r>rc, 0, g )
-        }
-        ff <- ff.anm
-      }
-      
-      ## Hinsen "C-alpha"-ff
-      else if (ff=="calpha")  {
-        "ff.calpha" <- function(r) {
-          a <- 1e-1; b <- 1; c <- 1e6;
-          ifelse( r<4.0,
-                 (a*8.6*(10**5)*r) - (b*2.39*(10**5)), 
-                 c*128 * r**(-6) )
-        }
-        ff <- ff.calpha
-      }
-      
-      else
-        stop("nma: options for 'ff' is 'calpha' or 'anm'")
-      
+      ff <- load.enmff(ff)
     }
     else {
       ## Use customized force field
       if(!is.function(pfc.fun))
         stop("'pfc.fun' must be a function")
+      bh.args <- bh.args[ !('pfc.fun' %in% names(bh.args)) ]
       ff <- pfc.fun
     }
-    
-    ## Define residues masses
-    ## Source: MMTK (for reproduction purposes!)
-    w <- c( 71.079018, 157.196106, 114.104059, 114.080689, 103.143407,
-           128.107678, 128.131048,  57.05203,  137.141527, 113.159985,
-           113.159985, 129.18266,  131.197384, 147.177144,  97.117044,
-            87.078323, 101.105312, 186.213917, 163.176449,  99.132996)
-    
-    aa <- c("ALA", "ARG", "ASN", "ASP", "CYS",
-            "GLU", "GLN", "GLY", "HIS", "ILE",
-            "LEU", "LYS", "MET", "PHE", "PRO",
-            "SER", "THR", "TRP", "TYR", "VAL")
 
-    "res2wt" <- function(x, w, aa) {
-      ind <- which(aa==x)
-      if(length(ind)==1)
-        return(w[ind])
-      else
-        return(NA)
-    } 
-    
+    ## Check for optional arguments to pfc.fun
+    ff.names <- names(formals( ff ))
+    ff.args  <- dots[names(dots) %in% ff.names]
+
+    ## Redirect them to build.hessian
+    bh.args  <- c(bh.args, ff.args)
+
+    ## Arguments without destination
+    all.names <- unique(c(bh.names, am.names, ff.names))
+    if(!all(names(dots) %in% all.names)) {
+      oops <- names(dots)[!(names(dots) %in% all.names)]
+      stop(paste("argument mismatch:", oops))
+    }
+
     ## Only C-alpha ENM NMA is implemented
     ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
-    natoms <- length(ca.inds$atom)
+    sequ    <- pdb$atom[ca.inds$atom,"resid"]
+    natoms  <- length(ca.inds$atom)
     if (natoms<3)
       stop("nma: insufficient number of CA atoms in structure")
     xyz <- pdb$xyz[ca.inds$xyz]
-    
-    ## If mass-weighted force constant matrix
-    if (mass) {
-      sequ <- pdb$atom[ca.inds$atom,"resid"]
-      wts <- unlist(lapply(sequ, res2wt, w, aa))
-      if(NA%in%wts)
-        stop("nma: unknown residue type")
-      wts <- sqrt(wts)
-    } else {
-      wts <- NULL
+
+    ## Use aa2mass to fetch residue mass
+    if (mass && is.null(bh.args$aa.mass) ) {
+      masses <- do.call('aa2mass', c(list(pdb=sequ, inds=NULL), am.args))
     }
-    
-    ## Build the Hessian Matrix - use byte compiled code if possible
+
+    ## Residue mass is provided by user
+    else if (!is.null(bh.args$aa.mass)) {
+      masses <- bh.args$aa.mass
+      bh.args <- bh.args[ !('aa.mass' %in% names(bh.args)) ]
+      if(!mass) {
+        warning("incompatible arguments: forcing mass weighting")
+        mass <- TRUE
+      }
+    }
+
+    ## No mass-weighting
+    else {
+      masses <- NULL
+    }
+
+    ## Build the Hessian Matrix
     cat(" Building Hessian...")
     ptm <- proc.time()
-    H <- build.hessian(xyz, ff, mass.weights=wts, fc.weights=fc.weights, ncore=ncore)
+    H <- do.call('build.hessian', c(list(xyz=xyz, pfc.fun=ff, sequ=sequ, aa.mass=masses), bh.args))
     t <- proc.time() - ptm
     cat("\t\tDone in", t[[3]], "seconds.\n")
-  
+
     ## Diagonalize matrix
     cat(" Diagonalizing Hessian...")
     ptm <- proc.time()
@@ -108,11 +99,11 @@
       ei$vectors <- ei$vectors[,keep.inds]
       ei$values <- ei$values[keep.inds]
     }
-    
+
     ## Raw eigenvalues
     ei$values <- round(ei$values,6)
     triv.modes <- which(ei$values<=0) ## indicies !!
-    
+
     ## Frequencies are given by
     if (mass)  {
       pi <- 3.14159265359
@@ -122,19 +113,20 @@
       freq <- NULL
       force.constants <- ei$values
     }
-    
+
     ## Raw unmodified eigenvectors:
     ## ei$vectors
-    
+
     ## V holds the eigenvectors converted to unweighted Cartesian coords:
     V <- ei$vectors
 
     ## Change to non-mass-weighted eigenvectors
     if(mass) {
+      wts.sqrt <- sqrt(masses)
       tri.inds <- rep(1:natoms, each=3)
-      V <- apply(V, 2, '*', 1 / wts[tri.inds])
+      V <- apply(V, 2, '*', 1 / wts.sqrt[tri.inds])
     }
-    
+
     ## Temperature scaling
     kb <- 0.00831447086363271
     if ( !is.null(temp) ) {
@@ -150,7 +142,7 @@
     } else {
       amplitudes <- rep(1, times=3*natoms)
     }
-    
+
     ## Trivial modes first (reverse matrix!)
     ei$vectors <- ei$vectors[, seq(ncol(ei$vectors),1)]
     V <- V[, seq(ncol(ei$vectors),1)]
@@ -158,7 +150,7 @@
     freq <- rev(freq)
     force.constants <- rev(force.constants)
     amplitudes <- rev(amplitudes)
-    
+
     ## Temperature scaling of eigenvectors
     for ( i in (length(triv.modes)+1):ncol(V) ) {
       V[,i] <- (V[,i] * amplitudes[i])
@@ -169,21 +161,21 @@
       warning("Negative eigenvalue(s) detected! \
               This is useually an indication of an unphysical input structure.")
     }
-        
+
     ## Output to class "nma"
     nma <- list(modes=V,
                 frequencies=NULL,
                 force.constants=NULL,
                 fluctuations=NULL,
                 U=ei$vectors, L=ei$values,
-                
+
                 xyz=xyz,
-                mass=wts,
+                mass=masses,
                 temp=temp,
                 triv.modes=length(triv.modes),
                 natoms=natoms,
                 call=cl)
-    
+
     if(mass) {
       class(nma) <- c("VibrationalModes", "nma")
       nma$frequencies <- freq
@@ -192,18 +184,18 @@
       class(nma) <- c("EnergeticModes", "nma")
       nma$force.constants <- force.constants
     }
-    
+
     ## Calculate mode fluctuations
     nma$fluctuations <- fluct.nma(nma, mode.inds=NULL)
-    
+
     ## Notes:
     ## U are the raw unmodified eigenvectors
     ## These mode vectors are in mass-weighted coordinates and not
     ## scaled by the thermal amplitudes, so they are orthonormal.
-    
+
     ## V holds the eigenvectors converted to unweighted Cartesian
     ## coordinates.  Unless you set temp=NULL, the modes are
     ## also scaled by the thermal fluctuation amplitudes.
-       
+
     return(nma)
   }
