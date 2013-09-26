@@ -1,22 +1,29 @@
-## NOTE: 
+## NOTE:
 ##   We do not support old-version DSSP any longer
 ##   Please update your DSSP program to the newest version
 "dssp" <-
-function (pdb, exepath = "", resno=TRUE, full=FALSE) {
+function (pdb, exepath = "", resno=TRUE, full=FALSE, verbose=FALSE) {
+
+    ## Log the call
+    cl <- match.call()
+
     infile <- tempfile()
     outfile <- tempfile()
     write.pdb(pdb, file = infile)
     os1 <- .Platform$OS.type
     if(os1 == "windows") {
        shell(paste(exepath, "dssp ", infile, " ",
-                 outfile, sep = ""), ignore.stderr = TRUE)
+                 outfile, sep = ""), ignore.stderr = !verbose, ignore.stdout = !verbose)
     } else {
-       system(paste(exepath, "dssp ", infile, " ",
-                 outfile, sep = ""), ignore.stderr = TRUE)
+      success <- system(paste(exepath, "dssp ", infile, " ",
+                 outfile, sep = ""), ignore.stderr = !verbose, ignore.stdout = !verbose)
+      if(success==1)
+        stop("an error occurred")
     }
+
 ##
 ## For Debug (Tue Aug  3 18:22:11 PDT 2010)
-##  -- Following multi chain error report from Heiko Strathmann 
+##  -- Following multi chain error report from Heiko Strathmann
 ##    outfile <- "2jk2.dssp"
 ##    outfile <- "4q21.dssp"
 ##
@@ -26,69 +33,127 @@ function (pdb, exepath = "", resno=TRUE, full=FALSE) {
       s[(s == "")] <- NA
       s
     }
-    
+
     split.line <- function(x, split=" ") {
       tmp <- unlist(strsplit(x, split=split))
       inds <- which(tmp!="")
       return(trim(tmp[inds]))
     }
-    
+
     raw.lines <- readLines(outfile)
     unlink(c(infile, outfile))
     type <- substring(raw.lines, 1, 3)
     raw.lines <- raw.lines[-(1:which(type == "  #"))]
-    # delete chain breaking lines
+
+    ## delete chain breaking lines
     aa <- substring(raw.lines, 14, 14)
     if(any(aa == "!"))
        raw.lines <- raw.lines[-which(aa == "!")]
-    cha <- substring(raw.lines, 12, 12)
-    sse <- substring(raw.lines, 17, 17)
+
+    cha      <- substring(raw.lines, 12, 12)
+    sse      <- substring(raw.lines, 17, 17)
     res.name <- substring(raw.lines, 14, 14)
+    
+    res.id  <- as.numeric(substring(raw.lines, 1, 5))   ## dssp residue IDs
+    res.num <- as.numeric(substring(raw.lines, 6, 10))  ## Residue numbers
+    res.ind <- 1:length(res.num)                        ## Internal indices
 
     if(full) {
-      res.id  <- as.numeric(substring(raw.lines, 1, 5))
-      
-      ## beta bridge partner resnum
-      bp1 <- as.numeric(substring(raw.lines, 26, 29))
-      bp2 <- as.numeric(substring(raw.lines, 30, 33))
+      ## Difference between sse res id and internal res indices
+      diff        <- res.id - res.ind
+      names(diff) <- res.id
+
+      ## Beta bridge partner residue ids
+      bp1         <- as.numeric(substring(raw.lines, 26, 29))
+      bp2         <- as.numeric(substring(raw.lines, 30, 33))
       bp1[bp1==0] <- NA
       bp2[bp2==0] <- NA
 
-      ## H-bond records
-      hbonds <- split.line(split.line(substring(raw.lines, 40, 83), split=","),split=" ")
-      hbonds <- matrix(as.numeric(hbonds),  ncol=8, byrow=TRUE)
+      ## Convert from dssp SSE residue IDs to internal residue indices
+      bp1[ !is.na(bp1) ] <- as.vector(bp1[ !is.na(bp1) ] - diff[as.character(bp1[!is.na(bp1)])])
+      bp2[ !is.na(bp2) ] <- as.vector(bp2[ !is.na(bp2) ] - diff[as.character(bp2[!is.na(bp2)])])
 
-      ## Convert from relative to absolute residue numbering
+      ## H-bond records
+      hbonds <- split.line(split.line(substring(raw.lines, 40, 83), split=","), split=" ")
+      hbonds <- matrix(as.numeric(hbonds), ncol=8, byrow=TRUE)
+      
       for(i in seq(1,7,by=2)) {
         hbonds[which(hbonds[,i]==0), i] <- NA
-        hbonds[,i] <- res.id + hbonds[,i]
+        
+        ## Convert from relative to absolute residue numbering
+        hmm <- res.id + hbonds[,i]
+        
+        ## Convert from dssp SSE residue IDs to internal residue indices
+        hbonds[!is.na(hmm),i] <- as.vector(hmm[ !is.na(hmm) ] -
+                                           diff[as.character(hmm[!is.na(hmm)])])
       }
+      
+      ## Bind bridge pair and H-bond records to one matrix
       hbonds <- cbind(bp1, bp2, hbonds)
-      colnames(hbonds) <- c("BP1", "BP2", "NH-O", "E1", "O-HN", "E2", "NH-O", "E3", "O-HN", "E4")
+      cnames <- c("BP1", "BP2", "NH-O.1", "E1", "O-HN.1", "E2", "NH-O.2", "E3", "O-HN.2", "E4")
+      colnames(hbonds) <- cnames
+
+      if(resno) {
+        ## 2 col matrix mapping the res.ind's to res.num and chain id
+        tmp.map            <- cbind(res.num, cha)
+        row.names(tmp.map) <- res.ind
+
+
+        ## Add an additional matrix holding the Chain IDs
+        hbonds           <- cbind(hbonds, matrix(NA, ncol=6, nrow=nrow(tmp.map)))
+        colnames(hbonds) <- c(cnames,
+                              "ChainBP1", "ChainBP2", "Chain1", "Chain2", "Chain3", "Chain4")
+
+        ## Add chain IDs for each entry
+        tmp.inds                    <- which(!is.na(hbonds[,"BP1"]))
+        tmp.names                   <- as.character(hbonds[tmp.inds,"BP1"])
+        hbonds[tmp.inds,"BP1"]      <- tmp.map[tmp.names, "res.num"]
+        hbonds[tmp.inds,"ChainBP1"] <- tmp.map[tmp.names, "cha"]
+
+        tmp.inds                    <- which(!is.na(hbonds[,"BP2"]))
+        tmp.names                   <- as.character(hbonds[tmp.inds,"BP2"])
+        hbonds[tmp.inds,"BP2"]      <- tmp.map[tmp.names, "res.num"]
+        hbonds[tmp.inds,"ChainBP2"] <- tmp.map[tmp.names, "cha"]
+
+        tmp.inds                    <- which(!is.na(hbonds[,"NH-O.1"]))
+        tmp.names                   <- as.character(hbonds[tmp.inds,"NH-O.1"])
+        hbonds[tmp.inds,"NH-O.1"]   <- tmp.map[tmp.names, "res.num"]
+        hbonds[tmp.inds,"Chain1"]   <- tmp.map[tmp.names, "cha"]
+
+        tmp.inds                    <- which(!is.na(hbonds[,"O-HN.1"]))
+        tmp.names                   <- as.character(hbonds[tmp.inds,"O-HN.1"])
+        hbonds[tmp.inds,"O-HN.1"]   <- tmp.map[tmp.names, "res.num"]
+        hbonds[tmp.inds,"Chain2"]   <- tmp.map[tmp.names, "cha"]
+
+        tmp.inds                    <- which(!is.na(hbonds[,"NH-O.2"]))
+        tmp.names                   <- as.character(hbonds[tmp.inds,"NH-O.2"])
+        hbonds[tmp.inds,"NH-O.2"]   <- tmp.map[tmp.names, "res.num"]
+        hbonds[tmp.inds,"Chain3"]   <- tmp.map[tmp.names, "cha"]
+
+        tmp.inds                    <- which(!is.na(hbonds[,"O-HN.2"]))
+        tmp.names                   <- as.character(hbonds[tmp.inds,"O-HN.2"])
+        hbonds[tmp.inds,"O-HN.2"]   <- tmp.map[tmp.names, "res.num"]
+        hbonds[tmp.inds,"Chain4"]   <- tmp.map[tmp.names, "cha"]
+
+        ## Set row names to "RESNUM-CHAINID"
+        row.names(hbonds)           <- apply(tmp.map, 1, paste, collapse="-")
+      }
     }
     else {
       hbonds <- NULL
     }
 
-    # column numbers of phi and psi are different between 
-    # the old and new versions of DSSP 
+    # column numbers of phi and psi are different between
+    # the old and new versions of DSSP
     phi <- as.numeric(substring(raw.lines, 104, 109))
     psi <- as.numeric(substring(raw.lines, 110, 115))
-
     acc <- as.numeric(substring(raw.lines, 35, 38))
-
-    res.num <- as.numeric(substring(raw.lines, 6, 10))
-    res.ind <- 1:length(res.num)
-
-#    sseInfo <- cbind(resIndex = res.ind, resNumber = res.num,
-#                     resName = res.name, sse = sse)
-
 
     h.res <- bounds(res.num[which(sse == "H")], pre.sort=FALSE)
     g.res <- bounds(res.num[which(sse == "G")], pre.sort=FALSE)
     e.res <- bounds(res.num[which(sse == "E")], pre.sort=FALSE)
     t.res <- bounds(res.num[which(sse == "T")], pre.sort=FALSE)
-   
+
     h.ind <- h.res;    g.ind <- g.res
     e.ind <- e.res;    t.ind <- t.res
 
@@ -126,7 +191,7 @@ function (pdb, exepath = "", resno=TRUE, full=FALSE) {
     turn = sheet
 
     ## ToDo: Add "type" for turns and strands too...
-    
+
     if(length(h.res)>1) {
 #      if(is.null(nrow(h.res)))
 #        h.s <- as.matrix(t(h.res))
@@ -168,7 +233,10 @@ function (pdb, exepath = "", resno=TRUE, full=FALSE) {
     if(length(turn$start) > 0)
        turn <- lapply(turn, function(x) {names(x) <- 1:length(turn$start); return(x)})
 
-    out <- list(helix = helix, sheet = sheet, hbonds=hbonds,
+    out <- list(helix = helix, sheet = sheet, hbonds = hbonds,
                 turn = turn, phi = phi, psi = psi, acc = acc,
-                sse = sse)
+                sse = sse, call=cl)
+
+    class(out) <- "dssp"
+    return(out)
 }
