@@ -66,15 +66,15 @@ pdb <- read.pdb(pdbfile)
 inds <- atom.select(pdb,"///24:27,85:90///CA/")
 
 ## lsq fit of trj on pdb
-fit.xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
+xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
 
 ##-- RMSD of trj frames from PDB
-r1 <- rmsd(a=pdb, b=fit.xyz)
+r1 <- rmsd(a=pdb, b=xyz)
 
 \dontrun{
 # Pairwise RMSD of trj frames for positions 47 to 54
 flap.inds <- atom.select(pdb,"///47:54///CA/")
-p <- rmsd(fit.xyz[,flap.inds$xyz])
+p <- rmsd(xyz[,flap.inds$xyz])
 # plot highlighting flap opening?
 plot.dmat(p, color.palette = mono.colors)
 }
