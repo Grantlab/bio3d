@@ -57,7 +57,7 @@
       w <- 0.15
     }
     else {
-      chains <- "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      chains <- "ABCDEFGHIJKLMNOPQRSTUVWXYZ" # colud use inbuild 'LETTERS' vector
       m <- 0
     }
 
@@ -174,7 +174,9 @@
         shell(shQuote(cmd))
       }
       else {
-        system(cmd)
+        if(Sys.info()["sysname"]=="Darwin") {
+          system(paste("open -a MacPyMOL", outfile))
+        } else { system(cmd) }
       }
     }
   }
