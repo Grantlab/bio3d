@@ -5,7 +5,8 @@
   Structural visualization of a cross-correlation matrix. 
 }
 \usage{
-view.dccm(dccm, pdb, step=0.2, omit=0.2, type="pymol", outprefix="corr")
+view.dccm(dccm, pdb, step=0.2, omit=0.2, type="pymol", outprefix="corr",
+          launch=FALSE)
 }
 \arguments{
   \item{dccm}{ an object of class \code{dccm} as obtained from
@@ -20,6 +21,7 @@ view.dccm(dccm, pdb, step=0.2, omit=0.2, type="pymol", outprefix="corr")
     \sQuote{pymol} or \sQuote{pdb}. }
   \item{outprefix}{ character string specifying the file prefix. If
     \code{NULL} the temp directory will be used. }
+  \item{launch}{ logical, if TRUE PyMol will be launched. }
 }
 \details{
   This function generates a PyMOL (python) script or a PDB that will

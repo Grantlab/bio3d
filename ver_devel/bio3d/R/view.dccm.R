@@ -1,6 +1,6 @@
 "view.dccm" <-
   function(dccm, pdb, step=0.2, omit=0.2, type="pymol",
-           outprefix="corr") {
+           outprefix="corr", launch=FALSE) {
 
     if(class(pdb)=="pdb") {
       ca.inds <- atom.select(pdb, 'calpha', verbose=FALSE)
@@ -32,7 +32,10 @@
     }
     else {
       pdbfile <- paste(outprefix, ".inpcrd.pdb", sep="")
-      outfile <- paste(outprefix, ".pdb", sep="")
+      if(type=="pymol")
+        outfile <- paste(outprefix, ".py", sep="")
+      else
+        outfile <- paste(outprefix, ".pdb", sep="")
     }
 
     ## Build the new PDB or pymol script in a vector
@@ -101,7 +104,7 @@
         if(x==y)
           next
 
-        val <- dccm[x,y]         ## corr coeff
+        val <- dccm[x,y]           ## corr coeff
         k   <- atom2xyz(inds[j,1]) ## resi 1
         l   <- atom2xyz(inds[j,2]) ## resi 2
         
@@ -153,21 +156,25 @@
       }
     }
     
-    ## write pymol script file and PDB file
+    ## Write PDB structure file
     if(class(pdb)=="pdb")
       write.pdb(pdb, file=pdbfile)
     else
       write.pdb(xyz=xyz, file=pdbfile)
+
+    ## Write python script or PDB with conect records
     write(scr, file=outfile, sep="\n")
-
-    ## Open pymol
-    cmd <- paste('pymol', outfile)
-
-    os1 <- .Platform$OS.type
-    if (os1 == "windows") {
-      shell(shQuote(cmd))
-    }
-    else {
-      system(cmd)
+    
+    if(launch) {
+      ## Open pymol
+      cmd <- paste('pymol', outfile)
+      
+      os1 <- .Platform$OS.type
+      if (os1 == "windows") {
+        shell(shQuote(cmd))
+      }
+      else {
+        system(cmd)
+      }
     }
   }
