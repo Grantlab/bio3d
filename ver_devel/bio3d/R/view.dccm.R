@@ -4,7 +4,14 @@
 
     if(class(pdb)=="pdb") {
       ca.inds <- atom.select(pdb, 'calpha', verbose=FALSE)
+      bb.inds <- atom.select(pdb, 'backbone', verbose=FALSE)
       xyz <- pdb$xyz[ca.inds$xyz]
+      
+      ## If more than CA atoms are provided, assume its enough to draw cartoon in pymol
+      if(length(pdb$xyz[bb.inds$xyz])==length(xyz))
+        ca.pdb <- TRUE
+      else
+        ca.pdb <- FALSE
     }
     else {
       xyz <- pdb
@@ -48,7 +55,7 @@
       scr <- c(scr, paste("cmd.load('", pdbfile, "', 'prot')", sep=""))
       scr <- c(scr, "cmd.show('cartoon')")
 
-      if(class(pdb)!="pdb")
+      if(class(pdb)!="pdb" || ca.pdb)
         scr <- c(scr, "cmd.set('cartoon_trace_atoms', 1)")
       
       ## define color range 
@@ -57,7 +64,6 @@
       w <- 0.15
     }
     else {
-      chains <- "ABCDEFGHIJKLMNOPQRSTUVWXYZ" # colud use inbuild 'LETTERS' vector
       m <- 0
     }
 
@@ -94,8 +100,8 @@
         scr <- c(scr, "obj=[]")
       }
       else {
-        m <- m+1 
-        chain <- substr(chains, m,m)
+        m <- m+1
+        chain <- LETTERS[m]
       }
       
       for ( j in 1:nrow(inds) ) {
