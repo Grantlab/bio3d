@@ -27,6 +27,7 @@ function(pdb, exepath = "", resno=TRUE) {
   acc <- as.numeric(substring(raw.tor, 65, 69))
 
   res.num  <- as.numeric(substring(raw.tor, 12, 15))
+  res.ind <- 1:length(res.num)
   res.name <- as.numeric(substring(raw.tor, 6, 8))
   h.ind <- bounds(res.num[which(sse == "H")], pre.sort=FALSE)
   g.ind <- bounds(res.num[which(sse == "G")], pre.sort=FALSE)
