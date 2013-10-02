@@ -3,14 +3,15 @@ function(data, pca, angular=FALSE, fit=FALSE, ...) {
   
   if(angular)
     data <- wrap.tor(data)
-  if(fit) data <- fit.xyz(pca$mean, data, ...)
   if(is.null(dim(data))) {
     if(ncol(pca$U) != length(data))
       stop("Dimensionality mismatch:  length(data)!=ncol(pca$U)")
+    if(fit) data <- fit.xyz(pca$mean, data, ...)
     z <- (data - pca$mean) %*% pca$U
   } else {
     if(ncol(pca$U) != ncol(data))
       stop("Dimensionality mismatch:  ncol(data)!=ncol(pca$U)")
+    if(fit) data <- fit.xyz(pca$mean, data, ...)
     z <- sweep(data, 2, pca$mean) %*% pca$U
   }
   return(z)
