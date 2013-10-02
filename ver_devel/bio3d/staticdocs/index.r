@@ -40,7 +40,7 @@ list(
         "entropy",
         "fit.xyz",
         "ide.filter",
-        "seq.identity",
+        "seqidentity",
         "mktrj.pca",
         "motif.find",
         "overlap",

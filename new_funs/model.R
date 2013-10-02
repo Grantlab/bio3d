@@ -1099,7 +1099,7 @@ ide.group <- function(aln=NULL, ide=NULL, cutoff=0.6) {
   if(is.null(ide)) {
     if(is.null(aln)) 
       stop("Must provide either an alignment 'aln' or identity matrix 'ide'")
-    ide  <- seq.identity(aln)
+    ide  <- seqidentity(aln)
   }
   tree <- hclust( as.dist(1-ide) )
   grps <- cutree(tree, k = NULL, h = (1-cutoff))

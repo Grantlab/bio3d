@@ -11,7 +11,7 @@ function(aln=NULL, ide=NULL, cutoff=0.6, verbose=TRUE, ncore=1, nseg.scale=1) {
   if(is.null(ide)) {
     if(is.null(aln)) 
       stop("Must provide either an alignment 'aln' or identity matrix 'ide'")
-    ide  <- seq.identity(aln, ncore=ncore, nseg.scale=nseg.scale)
+    ide  <- seqidentity(aln, ncore=ncore, nseg.scale=nseg.scale)
   }
   i.d  <- as.dist(1-ide)
   tree <- hclust(i.d)
