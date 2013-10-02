@@ -47,9 +47,9 @@ ff.reach(r, atom.id, ssdat=NULL, ...)
   The implementation of the \sQuote{ANM} (Anisotropic Network Model)
   force field originates from the lab of Ivet Bahar. It uses a
   simplified (step function) spring force constant based on the
-  pair-wise distance. A variant of this is the so-called \sQuote{pfANM}
-  (parameter free ANM) with interactions that fall off with the square
-  of the distance. 
+  pair-wise distance. A variant of this from the Jernigan lab is the
+  so-called \sQuote{pfANM} (parameter free ANM) with interactions that
+  fall off with the square of the distance.
   
   The \sQuote{calphax} force field is an extension of the original
   \sQuote{calpha} force field by Hinsen. In this implementation we have
