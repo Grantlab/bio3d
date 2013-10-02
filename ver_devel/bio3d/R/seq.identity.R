@@ -1,4 +1,4 @@
-"identity" <-
+"seq.identity" <-
 function( alignment , normalize=TRUE, ncore=1, nseg.scale=1) {
 
   # Parallelized by multicore package (Sun Jul  7 17:35:38 EDT 2013)

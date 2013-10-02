@@ -19,7 +19,7 @@ pairwise(N)
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Barry Grant }
-\seealso{ \code{\link{identity}} }
+\seealso{ \code{\link{seq.identity}} }
 \examples{
   pairwise(3)
   pairwise(20)

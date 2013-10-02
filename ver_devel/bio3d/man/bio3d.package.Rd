@@ -38,7 +38,7 @@ cross-correlation analysis (\code{\link{dccm}}, \code{\link{plot.dccm}})
 of structure data.
 
 Perform conservation analysis of sequence (\code{\link{seqaln}}, \code{\link{conserv}}, 
-\code{\link{identity}},  \code{\link{entropy}},  \code{\link{consensus}})
+\code{\link{seq.identity}},  \code{\link{entropy}},  \code{\link{consensus}})
 and structural (\code{\link{pdbaln}}, \code{\link{rmsd}},
 \code{\link{rmsf}}, \code{\link{core.find}}) data.
 

@@ -104,7 +104,7 @@ aln <- seqaln(raw, id=files, file="seqaln.fa")
 pdbs <- read.fasta.pdb(aln) 
 
 ## Sequence identity
-identity(aln)
+seq.identity(aln)
 
 ## Do further analysis...
 ## Note that all the above can be done with the pdbaln() function.

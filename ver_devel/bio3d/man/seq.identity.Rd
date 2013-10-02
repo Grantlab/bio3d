@@ -1,11 +1,11 @@
-\name{identity}
-\alias{identity}
+\name{seq.identity}
+\alias{seq.identity}
 \title{ Percent Identity}
 \description{
   Determine the percent identity scores for aligned sequences.
 }
 \usage{
-  identity(alignment, normalize=TRUE, ncore=1, nseg.scale=1)
+  seq.identity(alignment, normalize=TRUE, ncore=1, nseg.scale=1)
 }
 \arguments{
   \item{alignment}{ sequence alignment obtained from
@@ -39,7 +39,7 @@
 data(kinesin)
 attach(kinesin, warn.conflicts=FALSE)
 
-ide.mat <- identity(aln)
+ide.mat <- seq.identity(aln)
 
 # Plot identity matrix
 plot.dmat(ide.mat, color.palette=mono.colors,
@@ -51,7 +51,7 @@ hist(ide.mat[upper.tri(ide.mat)], breaks=30,xlim=c(0,1),
      main="Sequence Identity", xlab="Identity")
 
 # Compare two sequences
-identity( rbind(aln$ali[1,], aln$ali[20,]) )
+seq.identity( rbind(aln$ali[1,], aln$ali[20,]) )
 
 }
 \keyword{ utilities }

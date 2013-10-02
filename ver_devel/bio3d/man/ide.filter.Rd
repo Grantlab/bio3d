@@ -12,7 +12,7 @@ ide.filter(aln = NULL, ide = NULL, cutoff = 0.6, verbose = TRUE, ncore=1, nseg.s
     \code{\link{seqaln}} or \code{\link{read.fasta}}, or an alignment
     character matrix. Not used if \sQuote{ide} is given.}
   \item{ide}{ an optional identity matrix obtained from
-    \code{\link{identity}}. }
+    \code{\link{seq.identity}}. }
   \item{cutoff}{ a numeric identity cutoff value ranging between 0 and 1. }
   \item{verbose}{ logical, if TRUE print details of the clustering process. }
   \item{ncore}{ number of CPU cores used to do the calculation.
@@ -38,11 +38,11 @@ ide.filter(aln = NULL, ide = NULL, cutoff = 0.6, verbose = TRUE, ncore=1, nseg.s
 }
 \author{ Barry Grant }
 \seealso{ \code{\link{read.fasta}}, \code{\link{seqaln}},
-  \code{\link{identity}}, \code{\link{entropy}}, \code{\link{consensus}} }
+  \code{\link{seq.identity}}, \code{\link{entropy}}, \code{\link{consensus}} }
 \examples{
 data(kinesin)
 attach(kinesin, warn.conflicts=FALSE)
-ide.mat <- identity(aln)
+ide.mat <- seq.identity(aln)
 
 # Histogram of pairwise identity values
 par(mfrow=c(2,1))
@@ -50,7 +50,7 @@ hist(ide.mat[upper.tri(ide.mat)], breaks=30,xlim=c(0,1),
      main="Sequence Identity", xlab="Identity")
 
 k <- ide.filter(ide=ide.mat, cutoff=0.6)
-ide.cut <- identity(aln$ali[k$ind,])
+ide.cut <- seq.identity(aln$ali[k$ind,])
 hist(ide.cut[upper.tri(ide.cut)], breaks=10, xlim=c(0,1),
      main="Sequence Identity", xlab="Identity")
 

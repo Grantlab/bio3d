@@ -7,7 +7,7 @@ function(aln, extra.args = "", ...) {
                 "-gapextend -0.5",
                 "-center 0.0", extra.args), ... )
 
-  if(!all((identity(l))==1)) {
+  if(!all((seq.identity(l))==1)) {
     warning("Sequences are not identical, use seqaln()")
   }
   return(l)

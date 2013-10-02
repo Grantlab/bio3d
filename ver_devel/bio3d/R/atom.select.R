@@ -89,8 +89,8 @@ function(pdb, string=NULL,
                   "PHE", "GLY", "HIS", "ILE", "LYS", "LEU", "MET", "ASN", 
                   "PRO", "GLN", "ARG", "SER", "THR", "VAL", "TRP", "TYR", 
                   "SEP", "TPO", "MLY", "MSE", "IAS", "ABA", "CSO", "CSD", 
-                  "CYM", "CME", "CSX", "CMT", "HIE", "HIP", "HID", "HSD", 
-                  "HSE", "HSP", "DDE", "MHO", "ASX")
+                  "CYM", "CME", "CSX", "CMT", "CYX", "HIE", "HIP", "HID", 
+                  "HSD", "HSE", "HSP", "DDE", "MHO", "ASX", "CIR", "PFF")
      
      hoh <- c("H2O", "OH2", "HOH", "HHO", "OHH", "SOL", "WAT",
               "TIP", "TIP2", "TIP3", "TIP4")

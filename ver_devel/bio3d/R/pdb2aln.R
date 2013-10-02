@@ -36,7 +36,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
       
       ##- check sequence identity
       ii <- seq2tmp$ali[1,]=='X'
-      ide <- identity(seq2tmp$ali[, !ii])[1,2]
+      ide <- seq.identity(seq2tmp$ali[, !ii])[1,2]
         
       if(ide < 0.4) {
          warning(paste("Sequence identity is too low (<40%).",
