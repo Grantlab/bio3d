@@ -273,13 +273,15 @@ function(trjfile, big=FALSE, verbose=TRUE){
   store <- NULL
   
   # fill xyz with frame coords
+  if(verbose) pb <- txtProgressBar(1, nframes, style=3)
   for(i in 1:nframes) {
     curr.pos <- seek(trj, where=0, origin= "current")
     if (curr.pos <= head$end.pos) {
       coords<-dcd.frame(trj,head)
       xyz[i,] <- coords
       if (verbose) {
-        if(i %% 100==0) { cat(".") }
+        setTxtProgressBar(pb, i)
+#        if(i %% 100==0) { cat(".") }
       }
 #      print(paste("frame:",i,"pos:",curr.pos))
       store<-cbind(store,curr.pos)
@@ -290,7 +292,8 @@ function(trjfile, big=FALSE, verbose=TRUE){
       break
     }
   }
-  if(verbose) { cat("done",sep="\n") }
+#  if(verbose) { cat("done",sep="\n") }
+  if(verbose) { cat("\n") }
   close(trj)
   ##class(xyz)="trj"
   return(xyz) 
