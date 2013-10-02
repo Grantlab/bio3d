@@ -3,7 +3,7 @@ function(data, pca, angular=FALSE, fit=FALSE, ...) {
   
   if(angular)
     data <- wrap.tor(data)
-  if(fit) data <- fit.xyz(pca$mean, data, ...:
+  if(fit) data <- fit.xyz(pca$mean, data, ...)
   if(is.null(dim(data))) {
     if(ncol(pca$U) != length(data))
       stop("Dimensionality mismatch:  length(data)!=ncol(pca$U)")
