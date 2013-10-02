@@ -8,9 +8,17 @@
     if (!is.function(pfc.fun))
       stop("build.hessian: 'pfc.fun' must be a function")
 
+    ## Coordinates
+    xyz    <- matrix(xyz, ncol=3, byrow=TRUE)
+    natoms <- nrow(xyz)
+
+    ## Check provided vector of residue masses
     if(!is.null(aa.mass)) {
-      if((length(xyz)/3)!=length(aa.mass))
+      if(natoms!=length(aa.mass))
         stop("build.hessian: 'aa.mass' and number of atoms does not match")
+
+      ## Mass weights should be the sqrt of residue masses
+      aa.mass <- sqrt(aa.mass)
     }
     
     ## Check provided weight matrix
@@ -25,7 +33,7 @@
 
     build.submatrix <- function(xyz, natoms, 
                                 aa.mass=NULL, fc.weights=NULL, 
-                                struct.prop=NULL, ...) {
+                                ssdat=NULL, ...) {
      
       ## Full Hessian
       Hsm <- matrix(0, ncol=3*natoms, nrow=3*natoms)
@@ -49,9 +57,9 @@
         dists <- sqrt(rowSums(diff.vect**2))  ## quicker !
 
         ## pfc.fun takes a vector of distances
-        if("struct.prop" %in% names(formals( pfc.fun )) &&
+        if("ssdat" %in% names(formals( pfc.fun )) &&
            "atom.id"     %in% names(formals( pfc.fun )) )
-          force.constants <- pfc.fun(dists, atom.id=i, struct.prop=struct.prop, ...)
+          force.constants <- pfc.fun(dists, atom.id=i, ssdat=ssdat, ...)
         else 
           force.constants <- pfc.fun(dists, ...)
           
@@ -115,24 +123,18 @@
       return(Hsm)
     }
     
-    ## Coordinates
-    xyz <- matrix(xyz, ncol=3, byrow=TRUE)
-    natoms <- nrow(xyz)
-
-    ## Mass weights should be the sqrt of residue masses
-    if(!is.null(aa.mass))
-      aa.mass <- sqrt(aa.mass)
-    
+ 
+     
     ## Sequence-structure properties in a list
-    struct.prop <- list()
+    ssdat <- list()
 
     ## Sequence
     if(!is.null(sequ)) {
       if(nchar(sequ[1])>1)
         sequ <-  aa321(sequ)
-      struct.prop$seq <- sequ
+      ssdat$seq <- sequ
     } else {
-      struct.prop$seq <- NULL
+      ssdat$seq <- NULL
     }
 
     ## SSE
@@ -143,13 +145,13 @@
       else
         use.sse <- FALSE
 
-      struct.prop$sse <- sse
+      ssdat$sse <- sse
       if(!use.sse)
         warning("use 'dssp' with 'resno=FALSE and full=TRUE'")
     }
     else {
       use.sse <- FALSE
-      struct.prop$sse <- NULL
+      ssdat$sse <- NULL
     }
     
     ## SS-bonds
@@ -158,31 +160,31 @@
         stop("ss.bonds must be two a column matrix")
       if(ncol(ss.bonds)!=2)
         stop("ss.bonds must be two a column matrix")
-      struct.prop$ss.bonds <- rbind(ss.bonds, ss.bonds[,2:1])
+      ssdat$ss.bonds <- rbind(ss.bonds, ss.bonds[,2:1])
     }
     else {
-      struct.prop$ss.bonds <- NULL
+      ssdat$ss.bonds <- NULL
     }
 
     ## Identify bridge pairs
     if(use.sse) {
       ## Helix 1-4 interactions
-      struct.prop$helix14      <- sse.bridges(sse, type="helix", hbond=TRUE, energy.cut=-1.0)
-      struct.prop$helix14      <- rbind(struct.prop$helix14, struct.prop$helix14[,2:1])
+      ssdat$helix14      <- sse.bridges(sse, type="helix", hbond=TRUE, energy.cut=-1.0)
+      ssdat$helix14      <- rbind(ssdat$helix14, ssdat$helix14[,2:1])
       
       ## Beta bridges
-      struct.prop$beta.bridges <- sse.bridges(sse, type="sheet", hbond=TRUE, energy.cut=-1.0)
-      struct.prop$beta.bridges <- rbind(struct.prop$beta.bridges, struct.prop$beta.bridges[,2:1])
+      ssdat$beta.bridges <- sse.bridges(sse, type="sheet", hbond=TRUE, energy.cut=-1.0)
+      ssdat$beta.bridges <- rbind(ssdat$beta.bridges, ssdat$beta.bridges[,2:1])
     }      
     else {
-      struct.prop$helix14      <- NULL
-      struct.prop$beta.bridges <- NULL
+      ssdat$helix14      <- NULL
+      ssdat$beta.bridges <- NULL
     }
 
     H <- build.submatrix(xyz=xyz, natoms=natoms,
                          aa.mass=aa.mass,
                          fc.weights=fc.weights,
-                         struct.prop=struct.prop, ... )
+                         ssdat=ssdat, ... )
     
     return(H)
   }

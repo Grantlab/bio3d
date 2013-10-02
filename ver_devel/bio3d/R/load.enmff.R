@@ -2,6 +2,13 @@
   ifelse( r>cutoff, 0, gamma )
 }
 
+"ff.pfanm" <- function(r, cutoff=NULL, ...) {
+  if(is.null(cutoff))
+    return(r^(-2))
+  else
+    ifelse( r>cutoff, 0, r^(-2))
+}
+
 "ff.calpha" <- function(r, ...) {
   ## MMTK Units: kJ / mol / nm^2
   ##a <- 128; b <- 8.6 * 10^5; c <- 2.39 * 10^5;
@@ -12,7 +19,7 @@
          a*(r)^(-6) )
 }
 
-"ff.calphax" <- function(r, atom.id, struct.prop=NULL, verbose=FALSE, ...) {
+"ff.calphax" <- function(r, atom.id, ssdat=NULL, verbose=FALSE, ...) {
   
   ## C-alpha FF (converted to kJ/mol/A**2)
   a <- 128 * 10^4
@@ -35,21 +42,21 @@
   ## Calculate default interactions
   ks <- ifelse( r<4.0, b * r - c, a * r^(-6))
   
-  if(is.null(struct.prop)) {
+  if(is.null(ssdat)) {
     return(ks)
   }
   else {
     ## type 1: helix 1-4 interactions
-    tmp.inds <- which(struct.prop$helix14[,1]==atom.id)
-    inds.a   <- struct.prop$helix14[tmp.inds, 2]
+    tmp.inds <- which(ssdat$helix14[,1]==atom.id)
+    inds.a   <- ssdat$helix14[tmp.inds, 2]
         
     ## type 2: beta bridges and strong hbonds
-    tmp.inds <- which(struct.prop$beta.bridges[,1]==atom.id)
-    inds.b   <- struct.prop$beta.bridges[tmp.inds, 2]
+    tmp.inds <- which(ssdat$beta.bridges[,1]==atom.id)
+    inds.b   <- ssdat$beta.bridges[tmp.inds, 2]
     
     ## type 3: ss-bonds
-    tmp.inds <- which(struct.prop$ss.bonds[,1]==atom.id)
-    inds.c   <- struct.prop$ss.bonds[tmp.inds, 2]
+    tmp.inds <- which(ssdat$ss.bonds[,1]==atom.id)
+    inds.c   <- ssdat$ss.bonds[tmp.inds, 2]
   }
   
   if ( length(inds.a) > 0 ) {
@@ -141,13 +148,13 @@
   return(ks)
 }
 
-"ff.sdenm" <- function(r, atom.id, struct.prop=NULL, ...) {
+"ff.sdenm" <- function(r, atom.id, ssdat=NULL, ...) {
   ## sdENM by lazyload. contains columns:
   ## aa1 aa2 min max   k
   ## and row names: AA1 AA2 etc.
   
-  aa.now   <- struct.prop$seq[atom.id]
-  ids.tmp  <- cbind(aa.now, struct.prop$seq)
+  aa.now   <- ssdat$seq[atom.id]
+  ids.tmp  <- cbind(aa.now, ssdat$seq)
   ids.tmp  <- t(apply(ids.tmp, 1, sort))
   pair.ids <- apply(ids.tmp, 1, function(x) paste(x, collapse=""))
       
@@ -184,7 +191,7 @@
 }
 
 
-"ff.reach" <- function(r, atom.id, struct.prop=NULL, ...) {
+"ff.reach" <- function(r, atom.id, ssdat=NULL, ...) {
   natoms <- length(r)
   
   ## units in kJ/mol/A^2
@@ -223,9 +230,14 @@
   if (ff=="anm")  {
     ff <- ff.anm
   }
+
+  ## Yang Song and Jernigan (PNAS 2009)
+  else if (ff=="pfanm") {
+    ff <- ff.pfanm
+  }
   
   ## Hinsen "C-alpha"-ff
-  else if (ff=="calpha")  {
+  else if (ff=="calpha") {
     ff <- ff.calpha
   }
   

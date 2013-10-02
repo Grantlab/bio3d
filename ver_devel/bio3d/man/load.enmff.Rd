@@ -3,6 +3,7 @@
 \alias{ff.calpha}
 \alias{ff.calphax}
 \alias{ff.anm}
+\alias{ff.pfanm}
 \alias{ff.sdenm}
 \alias{ff.reach}
 \title{ ENM Force Field Loader }
@@ -13,20 +14,20 @@
 load.enmff(ff = 'calpha')
 ff.calpha(r, ...)
 ff.anm(r, cutoff=15, gamma=1, ...)
-ff.calphax(r, atom.id, struct.prop=NULL, verbose=FALSE, ...)
-ff.sdenm(r, atom.id, struct.prop=NULL, ...)
-ff.reach(r, atom.id, struct.prop=NULL, ...)
+ff.pfanm(r, cutoff=NULL, ...)
+ff.calphax(r, atom.id, ssdat=NULL, verbose=FALSE, ...)
+ff.sdenm(r, atom.id, ssdat=NULL, ...)
+ff.reach(r, atom.id, ssdat=NULL, ...)
 }
 \arguments{
   \item{ff}{ a character string specifying the force field to use:
-    \sQuote{calpha}, \sQuote{anm}, \sQuote{calphax}, \sQuote{reach}, or
-    \sQuote{sdenm}. }
+    \sQuote{calpha}, \sQuote{anm}, \sQuote{pfanm}, \sQuote{calphax},
+    \sQuote{reach}, or  \sQuote{sdenm}. }
   \item{r}{ a numeric vector of c-alpha distances. }
   \item{cutoff}{ numerical, cutoff for pair-wise interactions. }
   \item{gamma}{ numerical, global scaling factor. }
   \item{atom.id}{ atomic index. }
-  \item{struct.prop}{ sequence and structural properties of the protein
-    structure. }
+  \item{ssdat}{ sequence and structure data. }
   \item{verbose}{ logical, if TRUE interaction details are printed. }
   \item{...}{ additional arguments (for technical reasons). }
 }
@@ -46,27 +47,32 @@ ff.reach(r, atom.id, struct.prop=NULL, ...)
   The implementation of the \sQuote{ANM} (Anisotropic Network Model)
   force field originates from the lab of Ivet Bahar. It uses a
   simplified (step function) spring force constant based on the
-  pair-wise distance. 
-
+  pair-wise distance. A variant of this is the so-called \sQuote{pfANM}
+  (parameter free ANM) with interactions that fall off with the square
+  of the distance. 
+  
   The \sQuote{calphax} force field is an extension of the original
   \sQuote{calpha} force field by Hinsen. In this implementation we have
   included specific force constants for disulfide bridges, helix 1-4
   interactions, and beta sheet bridges.
 
-  The \sQuote{sdenm} (by Dehouck and Mikhailov) employs residue specific
+  The \sQuote{sdENM} (by Dehouck and Mikhailov) employs residue specific
   spring force constants. It has been parameterized through a
-  statistical analysis of a total of 1500 NMR ensembles. Finally, the
-  \sQuote{reach} force field (by Moritsugu and Smith) is parameterized
-  based on a set of MD simulations.
+  statistical analysis of a total of 1500 NMR ensembles.
+
+  The \sQuote{REACH} force field (by Moritsugu and Smith) is
+  parameterized based on variance-covariance matrices obtained from MD
+  simulations. It employs force constants that fall off exponentially
+  with distance for non-bonded pairs.
 
   See references for more details on the individual force fields.
 }
 \note{
-  The arguments \sQuote{atom.id} and \sQuote{struct.prop} are used
+  The arguments \sQuote{atom.id} and \sQuote{ssdat} are used
   from within function \sQuote{build.hessian} for functions that are not
   simply a function of the pair-wise distance. e.g. the force constants
   in the \sQuote{calphax} model is a function of c-alpha distances, SSE 
-  information and SS-bonds, while the \sQuote{sdenm} force field
+  information and SS-bonds, while the \sQuote{sdENM} force field
   computes the force constants based on a function of the residue types
   and calpha distance.
 }
@@ -79,7 +85,8 @@ ff.reach(r, atom.id, struct.prop=NULL, ...)
   Hinsen, K. et al. (2000) \emph{Chemical Physics} \bold{261}, 25--37.
   Atilgan, A.R. et al. (2001) \emph{Biophysical Journal} \bold{80}, 505--515.
   Dehouck Y. & Mikhailov A.S. (2013) \emph{PLoS Comput Biol} \bold{9}:e1003209.
-  Moritsugu K. & Smith J.C. (2008) \emph{Biophysical Journal} \bold{95}, 1639--1648. 
+  Moritsugu K. & Smith J.C. (2008) \emph{Biophysical Journal} \bold{95}, 1639--1648.
+  Yang, L. et al. (2009) \emph{PNAS} \bold{104}, 12347-52.
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Lars Skjaerven }
