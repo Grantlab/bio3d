@@ -34,8 +34,8 @@ function(pdb, exepath = "", resno=TRUE) {
   e.ind <- bounds(res.num[which(sse == "E")], pre.sort=FALSE)
   t.ind <- bounds(res.num[which(sse == "T")], pre.sort=FALSE)
 
-  sseInfo <- cbind(resIndex=res.ind, resNumber=res.num,
-                   resName=res.name, sse=sse)
+##  sseInfo <- cbind(resIndex=res.ind, resNumber=res.num,
+##                   resName=res.name, sse=sse)
   
 #  start <- as.numeric(substring(raw.loc, 23,27))
 #  end   <- as.numeric(substring(raw.loc, 42,45))
@@ -136,7 +136,6 @@ function(pdb, exepath = "", resno=TRUE) {
 #                chain = chain[t.ind])
 #  }
   out <- list(helix = helix, sheet=sheet, turn=turn,
-              phi=phi, psi=psi, acc=acc, sse=sse,
-              sseInfo=sseInfo)
+              phi=phi, psi=psi, acc=acc, sse=sse)
 }
 
