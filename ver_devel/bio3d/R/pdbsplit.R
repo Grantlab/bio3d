@@ -1,5 +1,5 @@
 `pdbsplit` <-
-function(pdb.files, path="split_chain/", multi=FALSE) {
+function(pdb.files, ids=NULL, path="split_chain/", multi=FALSE) {
   out <- c()
   toread <- file.exists(pdb.files)
   toread[substr(pdb.files, 1, 4) == "http"] <- TRUE
@@ -54,5 +54,8 @@ function(pdb.files, path="split_chain/", multi=FALSE) {
       }
     }
   }
+
+  if(!is.null(ids))
+    out <- out[ unlist(lapply(ids, grep, out)) ]
   return(out)
 }
