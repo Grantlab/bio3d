@@ -71,13 +71,13 @@ struct.aln(fixed, mobile, fixed.inds=NULL, mobile.inds=NULL,
      ## Align and fit b on to a:
      aln <- struct.aln(a, b)
 
-     ## Should be the same as aln$rmsd
+     ## Should be the same as aln$rmsd (when using aln$a.inds and aln$b.inds)
      rmsd(a$xyz, b$xyz, aln$a.inds$xyz, aln$b.inds$xyz, fit=TRUE)
 
-
+\dontrun{
      ## Align two subunits of GroEL (open and closed states)
-     a <- read.pdb("1sx4", maxlines=70000)
-     b <- read.pdb("1xck", maxlines=70000)
+     a <- read.pdb("1sx4")
+     b <- read.pdb("1xck")
 
      ## Select chain A only
      a.inds <- atom.select(a, chain="A")
@@ -85,6 +85,6 @@ struct.aln(fixed, mobile, fixed.inds=NULL, mobile.inds=NULL,
 
      ## Align and fit:
      aln <- struct.aln(a,b, a.inds, b.inds)
-
+}
 }
 \keyword{ utilities }

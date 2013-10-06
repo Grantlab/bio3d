@@ -26,7 +26,7 @@
     }
     else {
       a <- fixed
-      fixed.inds <- atom.select(fixed, 'all')
+      fixed.inds <- atom.select(fixed, 'all', verbose=FALSE)
     }
     
     if ( !is.null(mobile.inds) ) {
@@ -40,7 +40,7 @@
     }
     else {
       b <- mobile
-      mobile.inds <- atom.select(mobile, 'all')
+      mobile.inds <- atom.select(mobile, 'all', verbose=FALSE)
     }
 
     "xyz.dist" <- function(v) {
@@ -141,6 +141,8 @@
     ## Refinement process 
     rmsd.all <- c(rmsd.init)
     for ( i in seq(1,max.cycles) ) {
+      if(i>max.cycles)
+        break
 
       ## Find residues with largest structural deviation
       exc <- resi.dev(fixed$xyz[a.inds.full$xyz], fit[b.inds.full$xyz],
