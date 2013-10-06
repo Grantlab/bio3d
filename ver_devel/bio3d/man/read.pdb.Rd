@@ -6,7 +6,7 @@
   Read a Protein Data Bank (PDB) coordinate file.
 }
 \usage{
-read.pdb(file, maxlines = 50000, multi = FALSE, rm.insert = FALSE,
+read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
          rm.alt = TRUE, het2atom=FALSE, verbose = TRUE)
 \method{print}{pdb}(x, \dots)
 }
@@ -15,7 +15,8 @@ read.pdb(file, maxlines = 50000, multi = FALSE, rm.insert = FALSE,
     the PDB file to be read, or the four letter PDB identifier for
     online file access. }
   \item{maxlines}{ the maximum number of lines to read before giving up
-    with large files. Default is 50,000 lines. }
+    with large files. By default if will read up to the end of input on
+    the connection. }
   \item{multi}{ logical, if TRUE multiple ATOM records are read for all
     models in multi-model files. }
   \item{rm.insert}{ logical, if TRUE PDB insert records are ignored. }
