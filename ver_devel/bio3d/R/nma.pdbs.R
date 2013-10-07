@@ -39,7 +39,8 @@
 
   if(nrow(bounds(f.inds$res))>1 && strip)
     warning("NOTE: Truncated pdbs at non-terminus positions. \n\t - Fluctuations at neighboring positions may be affected.")
-  
+
+  xyz <- NULL
   if(fit) {
     #if(!is.null(xyz))
     #  warning("'pdbs$xyz' issued to re-fitting since 'fit=TRUE'")
