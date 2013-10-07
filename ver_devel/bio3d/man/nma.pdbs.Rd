@@ -5,11 +5,11 @@
   Perform NMA on an ensemble of aligned protein structures.
 }
 \usage{
-nma.pdbs(aln, fit=FALSE, full=FALSE, trim.inds=NULL,
+nma.pdbs(pdbs, fit=FALSE, full=FALSE, trim.inds=NULL,
          outpath="pdbs_nma/", \dots)
 }
 \arguments{
-  \item{aln}{ a numeric matrix of aligned C-alpha xyz Cartesian
+  \item{pdbs}{ a numeric matrix of aligned C-alpha xyz Cartesian
     coordinates. For example an alignment data structure obtained with
     \code{\link{read.fasta.pdb}} or \code{\link{pdbaln}}. }
   \item{fit}{ logical, if TRUE coordinate superposition is performed
@@ -32,7 +32,7 @@ nma.pdbs(aln, fit=FALSE, full=FALSE, trim.inds=NULL,
   aligned atomic fluctuations and mode vectors in an automated fashion. 
 
   NOTE: The normal modes are calculated on the full structures as provided 
-  by object \sQuote{aln}. With the input argument \sQuote{full=TRUE} the 
+  by object \sQuote{pdbs}. With the input argument \sQuote{full=TRUE} the 
   output \sQuote{modes.array} provides mode vectors in which unaligned atoms 
   are ommited. Thus, these mode vectors might not be orthogonal anymore.
   
@@ -54,7 +54,7 @@ nma.pdbs(aln, fit=FALSE, full=FALSE, trim.inds=NULL,
 \seealso{ \code{\link{nma}}, \code{\link{read.fasta.pdb}} }
 \examples{
 ## Fetch PDB files and split to chain A only PDB files
-ids <- c("1a70_A", "1czp_A", "1frd_A")
+ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
 raw.files <- get.pdb(ids, path = "raw_pdbs")
 files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain/")
 
@@ -74,6 +74,11 @@ all.modes <- nma.pdbs(pdbs, fit=TRUE, full=TRUE)
 
 ## Compare modes between two structures 
 rmsip(all.modes$modes.array[,,1], all.modes$modes.array[,,2])
+
+
+## Use indices to trim structures prior to NMA
+gaps.res <- gap.inspect(pdbs$ali)
+all.modes <- nma.pdbs(pdbs, fit=TRUE, full=TRUE, trim.inds=gaps.res$f.inds)
 
 }
 \keyword{ utilities }

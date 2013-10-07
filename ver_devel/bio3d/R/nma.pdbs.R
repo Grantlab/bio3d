@@ -1,13 +1,13 @@
-"nma.pdbs" <- function(aln, fit=FALSE, full=FALSE, 
+"nma.pdbs" <- function(pdbs, fit=FALSE, full=FALSE, 
                        trim.inds=NULL, outpath = "pdbs_nma/", ...) {
 
-  if(class(aln)!="3dalign")
-    stop("input 'aln' should be a list object as obtained from 'read.fasta.pdb'")
+  if(class(pdbs)!="3dalign")
+    stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
 
   #if(!is.null(xyz)) {
   #  if(class(xyz)=="matrix") {
-  #    if(!identical(dim(aln$xyz), dim(xyz.core)))
-  #      stop("dimension mismatch: input 'xyz' should have same dimensions as 'aln$xyz'")
+  #    if(!identical(dim(pdbs$xyz), dim(xyz.core)))
+  #      stop("dimension mismatch: input 'xyz' should have same dimensions as 'pdbs$xyz'")
   #  }
   #  else
   #    stop("input 'xyz' should be of type 'matrix'")
@@ -15,10 +15,9 @@
   
   if(!is.null(outpath))
     dir.create(outpath, FALSE)
-
-  keep <- 20
-  gaps.res <- gap.inspect(aln$ali)
-  gaps.pos <- gap.inspect(aln$xyz)
+  
+  gaps.res <- gap.inspect(pdbs$ali)
+  gaps.pos <- gap.inspect(pdbs$xyz)
   
   f.inds <- NULL
   if(!is.null(trim.inds)) {
@@ -34,14 +33,18 @@
     f.inds$pos <- gaps.pos$f.inds
   }
 
+  keep <- 20
+  if ((length(f.inds$res)*3) < (keep+6))
+    keep <- length(f.inds$res)*3 - 6
+
   if(nrow(bounds(f.inds$res))>1 && strip)
     warning("truncated pdbs at non-terminus positions")
   
   if(fit) {
     #if(!is.null(xyz))
-    #  warning("'aln$xyz' issued to re-fitting since 'fit=TRUE'")
+    #  warning("'pdbs$xyz' issued to re-fitting since 'fit=TRUE'")
 
-    xyz <- fit.xyz(fixed = aln$xyz[1, ], mobile = aln,
+    xyz <- fit.xyz(fixed = pdbs$xyz[1, ], mobile = pdbs,
                    fixed.inds = f.inds$pos, mobile.inds = f.inds$pos)
                    ##pdb.path = "", pdbext = "", outpath = "core_fitlsq/", full.pdbs = TRUE, het2atom = TRUE)
   }
@@ -68,37 +71,41 @@
   if(is.null(outpath))
     fname <- tempfile(fileext = "pdb")
 
-  
-  for ( i in 1:nrow(aln$xyz) ) {
+  ## Loop through each structure in 'pdbs'
+  for ( i in 1:nrow(pdbs$xyz) ) {
     if(!strip) {
       f.inds <- NULL
       f.inds$res <- which(gaps.res$bin[i,]==0)
       f.inds$pos <- atom2xyz(f.inds$res)
     }
     
-    resno <- aln$resno[i,f.inds$res]
-    chain <- aln$chain[i,f.inds$res]
-    resid <- aa123(aln$ali[i,f.inds$res])
+    resno <- pdbs$resno[i,f.inds$res]
+    chain <- pdbs$chain[i,f.inds$res]
+    resid <- aa123(pdbs$ali[i,f.inds$res])
     
     if(is.null(xyz))
-      tmp.xyz <- aln$xyz[i, f.inds$pos]
+      tmp.xyz <- pdbs$xyz[i, f.inds$pos]
     else
       tmp.xyz <- xyz[i, f.inds$pos]
 
     if(!is.null(outpath))
-      fname <- paste(outpath, basename(aln$id[i]), sep="")
-    
+      fname <- paste(outpath, basename(pdbs$id[i]), sep="")
+
+    ## Make the PDB object
     write.pdb(pdb=NULL, xyz=tmp.xyz, resno=resno, chain=chain,
               resid=resid, file=fname)
     tmp.pdb <- read.pdb(fname)
     
+    print(length(tmp.xyz))
+    
     if(is.null(outpath))
        unlink(fname)
-    
+
+    ## Calculate normal modes
     modes <- nma(tmp.pdb, ...)
 
     if(full) {
-      new.modes <- matrix(NA, ncol=keep, nrow=ncol(aln$xyz))
+      new.modes <- matrix(NA, ncol=keep, nrow=ncol(pdbs$xyz))
       
       j <- 1
       for(k in 7:(keep+6)) {
@@ -122,7 +129,7 @@
       flucts[i, ] <- modes$fluctuations
   }
   
-  row.names(flucts) <- row.names(aln$xyz)
+  row.names(flucts) <- row.names(pdbs$xyz)
   out <- list(fluctuations=flucts, modes.array=modes.array, all.modes=all.modes)
       
   return(out)
