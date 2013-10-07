@@ -5,13 +5,13 @@
   Secondary structure assignment according to the method of Frishman and Argos.
 }
 \usage{
-stride(pdb, exepath = "", resno=TRUE)
+stride(pdb, exefile = "stride", resno=TRUE)
 }
 \arguments{
   \item{pdb}{ a structure object of class '"pdb"', obtained from
    \code{\link{read.pdb}}. }
-  \item{exepath}{ path to the \sQuote{STRIDE} program on your system  (i.e.
-   the directory where \sQuote{STRIDE} is stored). }
+  \item{exefile}{ file path to the \sQuote{STRIDE} program on your system  (i.e.
+   how is \sQuote{STRIDE} invoked). }
   \item{resno}{ logical, if TRUE output is in terms of residue numbers
     rather than residue index (position in sequence). } 
 }

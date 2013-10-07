@@ -1069,11 +1069,11 @@ interp <- function(start, end, nbeads=25) {
 
 
 ##-- Define a new functions (an easy fit.xyz wrapper)
-fit <- function(pdbs, inds, outpath=NULL, pdb.path = "", pdbext = "") {
+fit <- function(pdbs, inds, outpath=NULL, prefix = "", pdbext = "") {
   full <- ifelse(is.null(outpath), FALSE, TRUE)
   return( fit.xyz( fixed=pdbs$xyz[1,], mobile=pdbs,
                   fixed.inds  = inds, mobile.inds = inds,
-                  pdb.path = pdb.path, pdbext = pdbext,
+                  prefix = prefix, pdbext = pdbext,
                   outpath = outpath, full.pdbs = full,het=TRUE ))
 }
 

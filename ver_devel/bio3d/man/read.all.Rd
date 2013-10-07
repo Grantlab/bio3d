@@ -6,13 +6,13 @@
   coordinates, residue numbers, residue type and B-factors.
 }
 \usage{
-read.all(aln, pdb.path = "", pdbext = "", sel = NULL, ...)
+read.all(aln, prefix = "", pdbext = "", sel = NULL, ...)
 }
 
 \arguments{
   \item{aln}{ an alignment data structure obtained with
     \code{\link{read.fasta}}. }
-  \item{pdb.path}{ path to PDB files. }
+  \item{prefix}{ prefix to aln$id to locate PDB files. }
   \item{pdbext}{ the file name extention of the PDB files. }
   \item{sel}{ a selection string detailing the atom type data to store
     (see function store.atom) }
@@ -23,7 +23,7 @@ read.all(aln, pdb.path = "", pdbext = "", sel = NULL, ...)
   have identifers (i.e. sequence names) that match the PDB file
   names. For example the sequence corresponding to the structure
   file \dQuote{mypdbdir/1bg2.pdb} should have the identifer
-  \sQuote{mypdbdir/1bg2.pdb} or \sQuote{1bg2} if input \sQuote{pdb.path}
+  \sQuote{mypdbdir/1bg2.pdb} or \sQuote{1bg2} if input \sQuote{prefix}
   and \sQuote{pdbext} equal \sQuote{mypdbdir/} and \sQuote{pdb}. See the
   examples below.
 

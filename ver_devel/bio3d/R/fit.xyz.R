@@ -4,7 +4,7 @@ function(fixed,
          fixed.inds  = NULL,
          mobile.inds = NULL,
          verbose = FALSE,
-         pdb.path = "",
+         prefix = "",
          pdbext = "",
          outpath = "fitlsq",
          het = FALSE,
@@ -109,10 +109,7 @@ function(fixed,
         core.inds.atom = mobile.inds[seq(3,length(mobile.inds),by=3)]/3
         dir.create(outpath, FALSE)
         
-        if(pdb.path == "") 
-           full.files  <- paste(mobile$id, pdbext, sep="")
-        else
-           full.files  <- file.path(pdb.path, paste(mobile$id, pdbext, sep=""))
+        full.files  <- paste(prefix, mobile$id, pdbext, sep="")
         
         mylapply <- lapply 
         if(ncore>1) mylapply <- mclapply

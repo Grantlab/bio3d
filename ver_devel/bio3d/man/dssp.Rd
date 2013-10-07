@@ -6,14 +6,14 @@
   Secondary structure assignment according to the method of Kabsch and Sander.
 }
 \usage{
-dssp(pdb, exepath = "", resno=TRUE, full=FALSE, verbose=FALSE)
+dssp(pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE)
 \method{print}{dssp}(x, \dots)
 }
 \arguments{
   \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
     \code{\link{read.pdb}}. }
-  \item{exepath}{ path to the \sQuote{DSSP} program on your system
-    (i.e. the directory where \sQuote{DSSP} is stored). }
+  \item{exefile}{ file path to the \sQuote{DSSP} program on your system
+    (i.e. how is \sQuote{DSSP} invoked). }
   \item{resno}{ logical, if TRUE output is in terms of residue numbers
     rather than residue index (position in sequence). }
   \item{full}{ logical, if TRUE bridge pairs and hbonds columns are

@@ -6,7 +6,7 @@
   according to the method of Edgar.
 }
 \usage{
-seqaln(aln, id=NULL, exepath="", file="aln.fa", protein=TRUE,
+seqaln(aln, id=NULL, exefile="muscle", file="aln.fa", protein=TRUE,
        seqgroup=FALSE, refine=FALSE, extra.args="")
 }
 \arguments{
@@ -14,8 +14,8 @@ seqaln(aln, id=NULL, exepath="", file="aln.fa", protein=TRUE,
     \code{\link{seqbind}}, or an alignment list object as obtained from
       \code{\link{read.fasta}}. }
   \item{id}{ a vector of sequence names to serve as sequence identifers. }
-  \item{exepath}{ path to the \sQuote{MUSCLE} program on your system (i.e.
-    the directory where \sQuote{MUSCLE} is stored). }
+  \item{exefile}{ file path to the \sQuote{MUSCLE} program on your system (i.e.
+    how is \sQuote{MUSCLE} invoked). }
   \item{file}{ name of \sQuote{FASTA} output file to which alignment
     should be written. }
   \item{protein}{ logical, if TRUE the input sequences are assumed to be

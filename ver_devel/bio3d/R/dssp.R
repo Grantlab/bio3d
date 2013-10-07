@@ -2,7 +2,7 @@
 ##   We do not support old-version DSSP any longer
 ##   Please update your DSSP program to the newest version
 "dssp" <-
-function (pdb, exepath = "", resno=TRUE, full=FALSE, verbose=FALSE) {
+function (pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE) {
 
     ## Log the call
     cl <- match.call()
@@ -10,14 +10,12 @@ function (pdb, exepath = "", resno=TRUE, full=FALSE, verbose=FALSE) {
     infile <- tempfile()
     outfile <- tempfile()
     write.pdb(pdb, file = infile)
-    if(exepath == "") exepath <- "dssp"
-    else exepath <- file.path(exepath, "dssp")
     os1 <- .Platform$OS.type
     if(os1 == "windows") {
-       shell(paste(exepath, infile, outfile), 
+       shell(paste(exefile, infile, outfile), 
                  ignore.stderr = !verbose, ignore.stdout = !verbose)
     } else {
-      success <- system(paste(exepath, infile, outfile), 
+      success <- system(paste(exefile, infile, outfile), 
                  ignore.stderr = !verbose, ignore.stdout = !verbose)
       if(success==1)
         stop("an error occurred")

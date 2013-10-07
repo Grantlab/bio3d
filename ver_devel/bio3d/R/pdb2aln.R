@@ -6,7 +6,7 @@
 #  of original alignment and CA indices of the PDB file. 
 "pdb2aln" <-
 function(aln, pdb, id="seq.pdb", aln.id=NULL, 
-     exepath = "", file="pdb2aln.fa") {
+     exefile = "muscle", file="pdb2aln.fa") {
    # Mask the gaps in the first sequence to get the 
    # reference of original alignment positions 
    aln$ali[1, is.gap(aln$ali[1,])] <- "X"
@@ -17,7 +17,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
    if(is.null(aln.id) || length(findid)==0) {
       # do sequence-profile alignment
       naln <- seq2aln(seq2add=aa1, aln=aln, id=id, 
-            exepath=exepath, file=tempfile())
+            exefile = exefile, file=tempfile())
       # check if the old alignment doesn't change
       if(!identical(aln$ali, naln$ali[1:(nrow(naln$ali)-1), !is.gap(naln$ali[1,])])) 
          warning("Alignment changed! Try aln.id with the closest sequence ID in the alignment")
@@ -32,7 +32,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
       ##- Align seq to masked template from alignment
       tmp.msk <- aln$ali[idhit, ]
       tmp.msk[is.gap(tmp.msk)] <- "X"
-      seq2tmp <- seqaln.pair(seqbind(tmp.msk, aa1), file=tempfile(), exepath=exepath)
+      seq2tmp <- seqaln.pair(seqbind(tmp.msk, aa1), file=tempfile(), exefile=exefile)
       
       ##- check sequence identity
       ii <- seq2tmp$ali[1,]=='X'
