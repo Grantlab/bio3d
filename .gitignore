@@ -6,7 +6,6 @@ cache*
 figure*
 *.txt
 *.md
-*.html
 *.Rmd
 *.Rnw
 *.tex
