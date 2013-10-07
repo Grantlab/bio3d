@@ -1,6 +1,6 @@
 `pdbsplit` <-
 function(pdb.files, ids=NULL, path="split_chain", multi=FALSE) {
-  out <- c()
+  out <- c(); nohits <- c()
   toread <- file.exists(pdb.files)
   toread[substr(pdb.files, 1, 4) == "http"] <- TRUE
   if (all(!toread)) 
@@ -9,7 +9,6 @@ function(pdb.files, ids=NULL, path="split_chain", multi=FALSE) {
     warning(paste("Missing files:\n\t",
                   paste(pdb.files[!toread], 
                         collapse = "\n\t"), sep = ""))
-    
     pdb.files <- pdb.files[toread]
   }
   
@@ -18,6 +17,20 @@ function(pdb.files, ids=NULL, path="split_chain", multi=FALSE) {
   for (i in 1:length(pdb.files)) {
     pdb <- read.pdb(pdb.files[i], multi=multi, het2atom = TRUE, maxlines = -1)
     chains <- unique(pdb$atom[, "chain"])
+    
+    if(!is.null(ids)) {
+      tmp.names <- paste(substr(basename(pdb.files[i]), 
+                                1, 4), "_", chains, sep = "")
+      tmp.inds <- which(tmp.names %in% ids)
+      if(length(tmp.inds)==0) {
+        nohits <- c(nohits, substr(basename(pdb.files[i]), 1, 4))
+        chains <- c()
+      }
+      else {
+        chains <- chains[tmp.inds]
+      }
+    }
+    
     if (length(chains) > 0) {
       for (j in 1:length(chains)) {
         if (!is.na(chains[j])) {
@@ -54,8 +67,12 @@ function(pdb.files, ids=NULL, path="split_chain", multi=FALSE) {
       }
     }
   }
-
-  if(!is.null(ids))
-    out <- out[ unlist(lapply(ids, grep, out)) ]
+  
+  if(!is.null(ids)) {
+    if(length(nohits)>0) {
+      nohits <- paste(nohits, collapse=", ")
+      warning(paste("no matched chain ids for pdb files:", nohits))
+    }
+  }
   return(out)
 }
