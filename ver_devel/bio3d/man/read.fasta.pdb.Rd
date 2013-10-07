@@ -6,7 +6,7 @@
   coordinates, residue numbers, residue type and B-factors.
 }
 \usage{
-read.fasta.pdb(aln, pdb.path = ".", pdbext = "", 
+read.fasta.pdb(aln, pdb.path = "", pdbext = "", 
              ncore = 1, nseg.scale = 1, ...)
 }
 \arguments{

@@ -4,7 +4,7 @@ function(fixed,
          fixed.inds  = NULL,
          mobile.inds = NULL,
          verbose = FALSE,
-         pdb.path = ".",
+         pdb.path = "",
          pdbext = "",
          outpath = "fitlsq",
          het = FALSE,
@@ -108,8 +108,11 @@ function(fixed,
       if(full.pdbs) {        # FULL PDB fitting and output
         core.inds.atom = mobile.inds[seq(3,length(mobile.inds),by=3)]/3
         dir.create(outpath, FALSE)
-
-        full.files  <- file.path(pdb.path, paste(mobile$id, pdbext, sep=""))
+        
+        if(pdb.path == "") 
+           full.files  <- paste(mobile$id, pdbext, sep="")
+        else
+           full.files  <- file.path(pdb.path, paste(mobile$id, pdbext, sep=""))
         
         mylapply <- lapply 
         if(ncore>1) mylapply <- mclapply

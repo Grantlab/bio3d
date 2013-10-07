@@ -6,7 +6,7 @@
   coordinates, residue numbers, residue type and B-factors.
 }
 \usage{
-read.all(aln, pdb.path = ".", pdbext = "", sel = NULL, ...)
+read.all(aln, pdb.path = "", pdbext = "", sel = NULL, ...)
 }
 
 \arguments{

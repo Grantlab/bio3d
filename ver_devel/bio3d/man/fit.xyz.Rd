@@ -10,7 +10,7 @@ fit.xyz(fixed, mobile,
         fixed.inds  = NULL,
         mobile.inds = NULL,
         verbose=FALSE,
-        pdb.path = ".", pdbext = "",
+        pdb.path = "", pdbext = "",
         outpath = "fitlsq", het=FALSE, full.pdbs=FALSE, 
         ncore = 1, nseg.scale = 1, ...)
 
