@@ -11,13 +11,15 @@ nma.pdbs(aln, fit=FALSE, full=FALSE, trim.inds=NULL,
 \arguments{
   \item{aln}{ a numeric matrix of aligned C-alpha xyz Cartesian
     coordinates. For example an alignment data structure obtained with
-    \code{\link{read.fasta.pdb}}. }
+    \code{\link{read.fasta.pdb}} or \code{\link{pdbaln}}. }
   \item{fit}{ logical, if TRUE coordinate superposition is performed
     prior to normal mode calculations. }
-  \item{full}{ logical, if TRUE return the complete \sQuote{nma}
-    objects. By default, only aligned fluctuation data is provided. }
-  \item{trim.inds}{ a vector of indices that selects the elements upon
-    which the calculation should be based. If provided, the PDB
+  \item{full}{ logical, if TRUE return the complete, full structure, 
+    \sQuote{nma} objects. By default, only fluctuation data for aligned 
+    positions in all structures is returned. }
+  \item{trim.inds}{ a vector of alignment column indices that selects the 
+    positions and corresponding coordinates in all aligned structures upon 
+    which NMA will be performed. If provided, the PDB
     structures will be trimmed to obtain equal lengths. }
   \item{outpath}{ character string specifing the output directory to
     which the PDB structures should be written. }
@@ -26,13 +28,13 @@ nma.pdbs(aln, fit=FALSE, full=FALSE, trim.inds=NULL,
 \details{
   This function performs normal mode analysis (NMA) on a set of aligned
   protein structures obtained with function
-  \code{read.fasta.pdb}. The main purpose is to provide aligned
-  atomic fluctuations and mode vectors in an automated fashion. 
+  \code{read.fasta.pdb} or \code{pdbaln}. The main purpose is to provide 
+  aligned atomic fluctuations and mode vectors in an automated fashion. 
 
-  The normal modes are calculated on the full structures as provided by 
-  object \sQuote{aln}. When \sQuote{full=TRUE} \sQuote{modes.array}
-  provides mode vectors in which unaligned atoms are ommited. Thus,
-  these mode vectors might not be orthogonal anymore.
+  NOTE: The normal modes are calculated on the full structures as provided 
+  by object \sQuote{aln}. With the input argument \sQuote{full=TRUE} the 
+  output \sQuote{modes.array} provides mode vectors in which unaligned atoms 
+  are ommited. Thus, these mode vectors might not be orthogonal anymore.
   
   See examples for more details. 
  }
@@ -51,28 +53,21 @@ nma.pdbs(aln, fit=FALSE, full=FALSE, trim.inds=NULL,
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{nma}}, \code{\link{read.fasta.pdb}} }
 \examples{
-## pdbIDs-chainIDs
-ids <- c("1a70_a", "1czp_a", "1frd_a")
-
-pdb.ids <- substr(ids, 1, 4)
-cha.ids <- toupper(substr(ids, 6, 6))
-ids     <- paste(pdb.ids, cha.ids, sep="_")
-
-## Fetch and split PDB files
-raw.files <- get.pdb(pdb.ids, path = "raw_pdbs")
+## Fetch PDB files and split to chain A only PDB files
+ids <- c("1a70_A", "1czp_A", "1frd_A")
+raw.files <- get.pdb(ids, path = "raw_pdbs")
 files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain/")
 
-## Sequence alignement
-aln <- pdbaln(files)
-pdbs <- read.fasta.pdb(aln, "", "", het2atom = T)
+## Sequence Alignement
+pdbs <- pdbaln(files)
 
 ## Normal mode analysis on aligned data
 all.modes <- nma.pdbs(pdbs, fit=TRUE)
 
 ## Plot fluctuation data
-plot.bio3d(all.modes$fluctuations[1,])
-lines(all.modes$fluctuations[2,], type='b', col=2)
-lines(all.modes$fluctuations[3,], type='b', col=3)
+plot.bio3d(all.modes$fluctuations[1,], typ="o", xlab="Residue Position")
+lines(all.modes$fluctuations[2,], type='o', col=2)
+lines(all.modes$fluctuations[3,], type='o', col=3)
 
 ## Provide full mode objects
 all.modes <- nma.pdbs(pdbs, fit=TRUE, full=TRUE)
