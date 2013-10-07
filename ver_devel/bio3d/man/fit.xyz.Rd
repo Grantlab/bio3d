@@ -10,8 +10,8 @@ fit.xyz(fixed, mobile,
         fixed.inds  = NULL,
         mobile.inds = NULL,
         verbose=FALSE,
-        pdb.path = "", pdbext = "",
-        outpath = "fitlsq/", het=FALSE, full.pdbs=FALSE, 
+        pdb.path = ".", pdbext = "",
+        outpath = "fitlsq", het=FALSE, full.pdbs=FALSE, 
         ncore = 1, nseg.scale = 1, ...)
 
 rot.lsq(xx, yy,
@@ -113,7 +113,7 @@ xyz <- fit.xyz( fixed = pdbs$xyz[1,],
                mobile = pdbs,
                fixed.inds  = gaps$f.inds,
                mobile.inds = gaps$f.inds,
-               outpath = "rough_fit/",
+               outpath = "rough_fit",
                full.pdbs = TRUE)
 
 ##--- Fit two PDBs

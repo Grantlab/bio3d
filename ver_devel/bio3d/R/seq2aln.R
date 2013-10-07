@@ -18,8 +18,11 @@ function(seq2add, aln, id="seq", exepath = "", file = "aln.fa") {
       write.fasta(seq2add, file=toaln)
     }
   }
-  
-  cmd <- paste(exepath, "muscle -profile -in1 ",
+ 
+  if(exepath == "") exepath <- "muscle"
+  else exepath <- file.path(exepath, "muscle")
+
+  cmd <- paste(exepath, " -profile -in1 ",
                basealn, " -in2 ", toaln,
                " -out ", file, sep="")
   cat(cmd)

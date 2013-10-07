@@ -10,13 +10,15 @@ function (pdb, exepath = "", resno=TRUE, full=FALSE, verbose=FALSE) {
     infile <- tempfile()
     outfile <- tempfile()
     write.pdb(pdb, file = infile)
+    if(exepath == "") exepath <- "dssp"
+    else exepath <- file.path(exepath, "dssp")
     os1 <- .Platform$OS.type
     if(os1 == "windows") {
-       shell(paste(exepath, "dssp ", infile, " ",
-                 outfile, sep = ""), ignore.stderr = !verbose, ignore.stdout = !verbose)
+       shell(paste(exepath, infile, outfile), 
+                 ignore.stderr = !verbose, ignore.stdout = !verbose)
     } else {
-      success <- system(paste(exepath, "dssp ", infile, " ",
-                 outfile, sep = ""), ignore.stderr = !verbose, ignore.stdout = !verbose)
+      success <- system(paste(exepath, infile, outfile), 
+                 ignore.stderr = !verbose, ignore.stdout = !verbose)
       if(success==1)
         stop("an error occurred")
     }

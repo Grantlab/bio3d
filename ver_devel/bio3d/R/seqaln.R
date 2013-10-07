@@ -27,8 +27,11 @@ function(aln, id=NULL,
   if(protein) {
     extra.args <- paste(extra.args,"-seqtype protein")
   } else { extra.args <- paste(extra.args,"-seqtype dna") }
+   
+  if(exepath == "") exepath <- "muscle"
+  else exepath <- file.path(exepath, "muscle")
   
-  cmd <- paste(exepath, "muscle -in ",toaln," -out ",
+  cmd <- paste(exepath, " -in ",toaln," -out ",
                file," ",extra.args, sep="")
   cat(cmd)
   

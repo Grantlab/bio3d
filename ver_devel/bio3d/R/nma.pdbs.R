@@ -1,5 +1,5 @@
 "nma.pdbs" <- function(pdbs, fit=FALSE, full=FALSE, 
-                       trim.inds=NULL, outpath = "pdbs_nma/", ...) {
+                       trim.inds=NULL, outpath = "pdbs_nma", ...) {
 
   if(class(pdbs)!="3dalign")
     stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
@@ -46,7 +46,7 @@
 
     xyz <- fit.xyz(fixed = pdbs$xyz[1, ], mobile = pdbs,
                    fixed.inds = f.inds$pos, mobile.inds = f.inds$pos)
-                   ##pdb.path = "", pdbext = "", outpath = "core_fitlsq/", full.pdbs = TRUE, het2atom = TRUE)
+                   ##pdb.path = ".", pdbext = "", outpath = "core_fitlsq", full.pdbs = TRUE, het2atom = TRUE)
   }
   
   if(strip) {
@@ -89,7 +89,7 @@
       tmp.xyz <- xyz[i, f.inds$pos]
 
     if(!is.null(outpath))
-      fname <- paste(outpath, basename(pdbs$id[i]), sep="")
+      fname <- file.path(outpath, basename(pdbs$id[i]))
 
     ## Make the PDB object
     write.pdb(pdb=NULL, xyz=tmp.xyz, resno=resno, chain=chain,

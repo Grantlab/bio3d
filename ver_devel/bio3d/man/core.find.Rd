@@ -8,7 +8,7 @@
 \usage{
 core.find(aln, shortcut = FALSE, rm.island = FALSE,
           verbose = TRUE, stop.at = 15, stop.vol = 0.5,
-          write.pdbs = FALSE, outpath="core_pruned/",
+          write.pdbs = FALSE, outpath="core_pruned",
           ncore = 1, nseg.scale = 1)
 }
 \arguments{
@@ -106,7 +106,7 @@ plot(core)
 ##-- Fit on these relatively invarient subset of positions 
 #core.inds <- print(core, vol=1)
 core.inds <- print(core, vol=0.5)
-xyz <- pdbfit(pdbs, core.inds, outpath="corefit_structures/")
+xyz <- pdbfit(pdbs, core.inds, outpath="corefit_structures")
 
 ##-- Compare to fitting on all equivalent positions
 xyz2 <- pdbfit(pdbs)

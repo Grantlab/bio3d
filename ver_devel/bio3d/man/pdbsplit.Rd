@@ -6,7 +6,7 @@
   files with one file for each chain.
 }
 \usage{
-pdbsplit(pdb.files, ids = NULL, path = "split_chain/", multi=FALSE)
+pdbsplit(pdb.files, ids = NULL, path = "split_chain", multi=FALSE)
 }
 \arguments{
   \item{pdb.files}{ a character vector of PDB file names. }

@@ -70,8 +70,8 @@ raw.hits <- plot(blast)
 top.hits <- plot(blast, cut.seed=20)
 
 head(top.hits$pdb.id)
-#pdbFiles <- get.pdb(substr(top.hits$pdb.id, 1, 4), path="downloadedPDBs/")
-#pdbsplit(pdbFiles, path="downloadedPDBs/PDB_chains/")
+#pdbFiles <- get.pdb(substr(top.hits$pdb.id, 1, 4), path="downloadedPDBs")
+#pdbsplit(pdbFiles, path="downloadedPDBs/PDB_chains")
 }
 }
 \keyword{ hplot }

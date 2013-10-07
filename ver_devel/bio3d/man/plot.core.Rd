@@ -52,7 +52,7 @@ plot(core)
 
 ##-- Fit on these relatively invarient subset of positions 
 core.inds <- print(core)
-xyz <- pdbfit(pdbs, core.inds, outpath="corefit_structures/")
+xyz <- pdbfit(pdbs, core.inds, outpath="corefit_structures")
 
 ##-- Compare to fitting on all equivalent positions
 xyz2 <- pdbfit(pdbs)

@@ -1,6 +1,6 @@
 "struct.aln" <-
   function(fixed, mobile, fixed.inds  = NULL, mobile.inds = NULL,
-           write.pdbs = TRUE, outpath = "fitlsq/",
+           write.pdbs = TRUE, outpath = "fitlsq",
            prefix = c("fixed", "mobile"),
            max.cycles = 10, cutoff = 0.5, ... ) {
     
@@ -134,7 +134,7 @@
     
     if ( write.pdbs ) {
       dir.create(outpath, FALSE)
-      fname <- paste(outpath, prefix[2], "_", 0, ".pdb", sep="")
+      fname <- file.path(outpath, paste(prefix[2], "_", 0, ".pdb", sep=""))
       write.pdb(mobile, xyz=fit, file=fname)
     }
 
@@ -175,7 +175,7 @@
                        xfit=b.inds.full$logical, yfit=a.inds.full$logical)
 
         if ( write.pdbs ) {
-          fname <- paste(outpath, prefix[2], "_", i, ".pdb", sep="")
+          fname <- file.path(outpath, paste(prefix[2], "_", i, ".pdb", sep=""))
           write.pdb(mobile, xyz=fit, file=fname)
         }
         
@@ -190,7 +190,7 @@
     }
 
     if ( write.pdbs ) {
-      fname <- paste(outpath, prefix[1], ".pdb", sep="")
+      fname <- file.path(outpath, paste(prefix[1], ".pdb", sep=""))
       write.pdb(fixed, file=fname)
     }
 

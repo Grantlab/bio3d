@@ -4,9 +4,9 @@ function(fixed,
          fixed.inds  = NULL,
          mobile.inds = NULL,
          verbose = FALSE,
-         pdb.path = "",
+         pdb.path = ".",
          pdbext = "",
-         outpath = "fitlsq/",
+         outpath = "fitlsq",
          het = FALSE,
          full.pdbs=FALSE,
          ncore=1,
@@ -109,11 +109,7 @@ function(fixed,
         core.inds.atom = mobile.inds[seq(3,length(mobile.inds),by=3)]/3
         dir.create(outpath, FALSE)
 
-        if(pdb.path=="") {
-          full.files  <- file.path(paste(mobile$id, pdbext, sep=""))
-        } else {
-          full.files  <- file.path(pdb.path, paste(mobile$id, pdbext, sep=""))
-        }
+        full.files  <- file.path(pdb.path, paste(mobile$id, pdbext, sep=""))
         
         mylapply <- lapply 
         if(ncore>1) mylapply <- mclapply
@@ -170,8 +166,8 @@ function(fixed,
                              yfit=fixed.inds)
 
           write.pdb(xyz = xyz.fit, pdb = pdb, het = het, 
-                    file = paste(outpath, basename(mobile$id[i]),
-                      "_flsq.pdb",sep = "") )
+                    file = file.path(outpath, paste(basename(mobile$id[i]),
+                      "_flsq.pdb",sep = "")) )
           return (NULL)
         } )
       }

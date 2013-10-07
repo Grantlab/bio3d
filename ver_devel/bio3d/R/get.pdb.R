@@ -1,5 +1,5 @@
 "get.pdb" <-
-  function (ids, path = "./", URLonly = FALSE, overwrite = FALSE ) 
+  function (ids, path = ".", URLonly = FALSE, overwrite = FALSE ) 
 {
     if (any(nchar(ids) != 4)) {
         warning("ids should be standard 4 character PDB formart: trying first 4 char...")
