@@ -20,7 +20,7 @@ nma.pdbs(pdbs, fit=FALSE, full=FALSE, trim.inds=NULL,
   \item{trim.inds}{ a vector of alignment column indices that selects the 
     positions and corresponding coordinates in all aligned structures upon 
     which NMA will be performed. If provided, the PDB
-    structures will be trimmed to obtain equal lengths. }
+    structures will be trimmed to an equal length before NMA. }
   \item{outpath}{ character string specifing the output directory to
     which the PDB structures should be written. }
   \item{...}{ additional arguments to \code{nma}. }
