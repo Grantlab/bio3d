@@ -97,7 +97,7 @@
               resid=resid, file=fname)
     tmp.pdb <- read.pdb(fname)
     
-    print(length(tmp.xyz))
+    ##print(length(tmp.xyz))
     
     if(is.null(outpath))
        unlink(fname)
@@ -129,9 +129,32 @@
     else
       flucts[i, ] <- modes$fluctuations
   }
+
+
+  rmsip.test <- function(x) {
+    n <- dim(x)[3]
+    mat <- matrix(NA, n, n)
+    inds <- pairwise(n)
+    ## Could use apply over rows of inds here
+    for(i in 1:nrow(inds)) { 
+      mat[inds[i,1], inds[i,2]] <- rmsip(x[,,inds[i,1]],
+                                         x[,,inds[i,2]])$rmsip
+    }
+    mat[ inds[,c(2,1)] ] = mat[ inds ]
+    diag(mat) <- 1
+    return(round(mat, 4))
+  }
+
+  rmsip.map <- NULL
+  if(full) {
+    rmsip.map <- rmsip.test(modes.array)
+    rownames(rmsip.map) <- basename(rownames(pdbs$xyz))
+    colnames(rmsip.map) <- basename(rownames(pdbs$xyz))
+  }
   
-  row.names(flucts) <- row.names(pdbs$xyz)
-  out <- list(fluctuations=flucts, modes.array=modes.array, all.modes=all.modes)
+  rownames(flucts) <- basename(rownames(pdbs$xyz))
+  out <- list(fluctuations=flucts, modes.array=modes.array, all.modes=all.modes,
+              rmsip.map=rmsip.map)
       
   return(out)
 }

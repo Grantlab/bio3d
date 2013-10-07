@@ -42,6 +42,8 @@ nma.pdbs(pdbs, fit=FALSE, full=FALSE, trim.inds=NULL,
   Returns a list with the following components:
   \item{fluctuations }{ a numeric matrix with aligned atomic
     fluctuations. }
+  \item{rmsip.map}{ a numeric matrix of RMSIP values between all pairs
+    of mode subsets. }
   \item{modes.array }{ a three-dimensional array with aligned mode
     vectors. }
   \item{all.modes }{ a list with a \code{nma} object for each input
@@ -65,7 +67,7 @@ pdbs <- pdbaln(files)
 all.modes <- nma.pdbs(pdbs, fit=TRUE)
 
 ## Plot fluctuation data
-plot.bio3d(all.modes$fluctuations[1,], typ="o", xlab="Residue Position")
+plot.bio3d(all.modes$fluctuations[1,], type="o", xlab="Residue Position")
 lines(all.modes$fluctuations[2,], type='o', col=2)
 lines(all.modes$fluctuations[3,], type='o', col=3)
 
