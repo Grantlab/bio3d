@@ -38,7 +38,7 @@
     keep <- length(f.inds$res)*3 - 6
 
   if(nrow(bounds(f.inds$res))>1 && strip)
-    warning("truncated pdbs at non-terminus positions")
+    warning("NOTE: Truncated pdbs at non-terminus positions. \n\t - Fluctuations at neighboring positions may be affected.")
   
   if(fit) {
     #if(!is.null(xyz))
