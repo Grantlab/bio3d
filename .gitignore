@@ -1,0 +1,15 @@
+.R*
+*.tar.gz
+*bio3d.Rcheck*
+*sandbox*
+cache*
+figure*
+*.txt
+*.md
+*.html
+*.Rmd
+*.Rnw
+*.tex
+*.log
+*.out
+tmp*
