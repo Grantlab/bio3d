@@ -1,11 +1,20 @@
 \name{plot.dccm}
 \alias{plot.dccm}
+\alias{plot.dccm2}
 \title{ DCCM Plot }
 \description{
   Plot a dynamical cross-correlation matrix.
 }
 \usage{
 \method{plot}{dccm}(x, sse = NULL, colorkey = TRUE, at = c(-1, -0.75, -0.5, -0.25, 0.25, 0.5, 0.75, 1), main = "Residue Cross Correlation", helix.col = "gray20", sheet.col = "gray80", inner.box = TRUE, outer.box = FALSE, xlab = "Residue No.", ylab = "Residue No.", ...)
+
+  \method{plot}{dccm}(x, sse=NULL, colorkey=TRUE,
+                     at=c(-1, -0.75, -0.5,  -0.25, 0.25, 0.5, 0.75, 1),
+                     main="Residue Cross Correlation",
+                     helix.col = "gray20", sheet.col = "gray80",
+                     inner.box=TRUE, outer.box=FALSE,
+                     xlab="Residue No.", ylab="Residue No.",
+                     margin.segments=NULL, segment.col=NULL, ...)
 }
 \arguments{
   \item{x}{ a numeric matrix of atom-wise cross-correlations as output by
@@ -21,6 +30,11 @@
   \item{outer.box}{ logical, if TRUE an outer box is drawn. }
   \item{xlab}{ a label for the x axis. } 
   \item{ylab}{ a label for the y axis. }
+  \item{margin.segments}{ a numeric vector of cluster membership as 
+     obtained from cutree() or other community detection method. This 
+     will be used for bottom and left margin annotation. }
+  \item{segment.col}{ a vector of colors used for each cluster group in 
+     margin.segments. }
   \item{\dots}{ additional graphical parameters for image. }
 }
 \details{
@@ -99,6 +113,9 @@
   ## Plot with changed colors
   plot.dccm(cij, col.regions=rev(heat.colors(12)))
 
+  ## Plot with cluster annotation from dynamic network analysis
+  #net <- igraph.comms(cij)
+  # plot.dccm2(cij, margin.segments=net$membership, segment.col=c("red","blue","green","purple", "orange", "black"))
 }
 
 }
