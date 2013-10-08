@@ -131,6 +131,8 @@
     
     if(rm.gaps) {
       ## Build the hessian of the complete structure
+      cat(" Building Hessian...")
+      ptm <- proc.time()
       hess    <- build.hessian(tmp.pdb$xyz, pfc.fun, aa.mass=masses)
 
       ## Effective hessian for atoms in the aligned core
@@ -144,12 +146,14 @@
       else {
         k <- hess
       }
-
+      t <- proc.time() - ptm
+      cat("\t\tDone in", t[[3]], "seconds.\n")
+      
       ## Second PDB - containing only the aligned atoms
       tmp2.pdb <- NULL
       tmp2.pdb$atom <- tmp.pdb$atom[inds.inc,]
-      tmp2.pdb$xyz <-  tmp2.pdb$xyz[inds.inc.xyz]
-      tmp2.pdb$alpha <- as.logical(tmp2.pdb$atom[,"elety"]=="CA")
+      tmp2.pdb$xyz <-  tmp.pdb$xyz[inds.inc.xyz]
+      tmp2.pdb$alpha <- as.logical(tmp.pdb$atom[,"elety"]=="CA")
       class(tmp2.pdb) <- "pdb"
 
       if(mass)
