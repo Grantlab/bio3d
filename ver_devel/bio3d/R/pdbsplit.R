@@ -1,7 +1,6 @@
 `pdbsplit` <-
 function(pdb.files, ids=NULL, path="split_chain", multi=FALSE) {
   out <- c(); unused <- c()
-  matched <- c()
   toread <- file.exists(pdb.files)
   toread[substr(pdb.files, 1, 4) == "http"] <- TRUE
   if (all(!toread)) 

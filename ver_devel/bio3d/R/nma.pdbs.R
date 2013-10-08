@@ -1,62 +1,74 @@
-"nma.pdbs" <- function(pdbs, fit=FALSE, full=FALSE, 
-                       trim.inds=NULL, outpath = "pdbs_nma", ...) {
+## Two options - both calculating modes on the FULL structure:
+## 1 -  use k <- kaa - ((kaq %*% kqq.inv) %*% kqa) to derive hessian for core atoms
+## 2 - return the full objects
+
+"nma.pdbs" <- function(pdbs, fit=TRUE, full=TRUE, 
+                       rm.gaps=TRUE, outpath = "pdbs_nma", ...) {
 
   if(class(pdbs)!="3dalign")
     stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
-
-  #if(!is.null(xyz)) {
-  #  if(class(xyz)=="matrix") {
-  #    if(!identical(dim(pdbs$xyz), dim(xyz.core)))
-  #      stop("dimension mismatch: input 'xyz' should have same dimensions as 'pdbs$xyz'")
-  #  }
-  #  else
-  #    stop("input 'xyz' should be of type 'matrix'")
-  #}
   
   if(!is.null(outpath))
     dir.create(outpath, FALSE)
+
+  ## Passing arguments to functions aa2mass and nma
+  am.names <- names(formals( aa2mass ))
+  nm.names <- names(formals( nma ))
   
+  dots <- list(...)
+  am.args <- dots[names(dots) %in% am.names]
+  nm.args <- dots[names(dots) %in% nm.names]
+
+  ## Limiting input 
+  if("mass" %in% names(nm.args))
+    mass <- nm.args$mass
+  else
+    mass <- TRUE
+  if("ff" %in% names(nm.args))
+    ff <- nm.args$ff
+  else
+    ff <- 'calpha'
+  if("temp" %in% names(nm.args))
+    temp <- nm.args$temp
+  else
+    temp <- 300
+  if("keep" %in% names(nm.args))
+    nm.keep <- nm.args$temp
+  else
+    nm.keep <- NULL
+  
+  if(!all((names(nm.args) %in% c("mass", "ff", "temp", "keep")))) {
+    war <- paste(names(nm.args)[! names(nm.args) %in% c("mass", "ff", "temp", "keep") ], collapse=", ")
+    warning(paste("ignoring arguments:", war))
+  }
+  
+  ## Set indicies
   gaps.res <- gap.inspect(pdbs$ali)
   gaps.pos <- gap.inspect(pdbs$xyz)
+
+  ## Use for later indexing
+  pdbs$inds <- matrix(NA, ncol=ncol(pdbs$resno), nrow=nrow(pdbs$resno))
   
-  f.inds <- NULL
-  if(!is.null(trim.inds)) {
-    strip <- TRUE
-    ##f.inds$res <- intersect(gaps.res$f.inds, trim.inds)
-    f.inds$res <- trim.inds
-    f.inds$pos <- atom2xyz(f.inds$res)
-  }
-  else {
-    strip <- FALSE
-    ## indices only used for fit.xyz
-    f.inds$res <- gaps.res$f.inds
-    f.inds$pos <- gaps.pos$f.inds
-  }
-
+  ## Number of modes to keep  
   keep <- 20
-  if ((length(f.inds$res)*3) < (keep+6))
-    keep <- length(f.inds$res)*3 - 6
+  if (length(gaps.pos$f.inds) < (keep+6))
+    keep <- length(gaps.pos$f.inds)*3 - 6
 
-  if(nrow(bounds(f.inds$res))>1 && strip)
-    warning("NOTE: Truncated pdbs at non-terminus positions. \n\t - Fluctuations at neighboring positions may be affected.")
-
-  xyz <- NULL
+  ## Coordiantes - fit or not
   if(fit) {
-    #if(!is.null(xyz))
-    #  warning("'pdbs$xyz' issued to re-fitting since 'fit=TRUE'")
-
     xyz <- fit.xyz(fixed = pdbs$xyz[1, ], mobile = pdbs,
-                   fixed.inds = f.inds$pos, mobile.inds = f.inds$pos)
+                   fixed.inds = gaps.pos$f.inds, mobile.inds = gaps.pos$f.inds)
                    ##pdb.path = ".", pdbext = "", outpath = "core_fitlsq", full.pdbs = TRUE, het2atom = TRUE)
   }
+  else
+    xyz <- pdbs$xyz
   
-  if(strip) {
-    flucts <- matrix(NA, nrow=nrow(gaps.res$bin), ncol=length(f.inds$res))
-  }
-  else {
+  ## Fluctuations for each structure
+  if(rm.gaps)
+    flucts <- matrix(NA, nrow=nrow(gaps.res$bin), ncol=length(gaps.res$f.inds))
+  else
     flucts <- matrix(NA, nrow=nrow(gaps.res$bin), ncol=ncol(gaps.res$bin))
-  }
-
+  
   ## List object to store each modes object
   all.modes <- NULL
 
@@ -65,7 +77,10 @@
   
   if(full) {
     ## 3N x Num-modes x Num-structs
-    modes.array <- array(NA, dim=c(length(f.inds$pos), keep, nrow(gaps.res$bin)))
+    if(rm.gaps)
+      modes.array <- array(NA, dim=c(length(gaps.pos$f.inds), keep, nrow(gaps.res$bin)))
+    else
+      modes.array <- array(NA, dim=c(length(pdbs$xyz), keep, nrow(gaps.res$bin)))
     all.modes <- list()
   }
     
@@ -74,20 +89,27 @@
 
   ## Loop through each structure in 'pdbs'
   for ( i in 1:nrow(pdbs$xyz) ) {
-    if(!strip) {
-      f.inds <- NULL
-      f.inds$res <- which(gaps.res$bin[i,]==0)
-      f.inds$pos <- atom2xyz(f.inds$res)
-    }
+
+    ## Set indices for this structure only
+    f.inds <- NULL
+    f.inds$res <- which(gaps.res$bin[i,]==0)
+    f.inds$pos <- atom2xyz(f.inds$res)
+
+    ## similar to $resno but sequential indices
+    pdbs$inds[i, f.inds$res] <- seq(1, length(f.inds$res))
     
+    ## Indices to extract from Hessian
+    inds.inc <- pdbs$inds[i, gaps.res$f.inds]
+    inds.exc <- pdbs$inds[i, gaps.res$t.inds][ !is.na(pdbs$inds[i, gaps.res$t.inds]) ]
+
+    inds.inc.xyz <- atom2xyz(inds.inc)
+    inds.exc.xyz <- atom2xyz(inds.exc)
+
+    ## Generate content of PDB object
     resno <- pdbs$resno[i,f.inds$res]
     chain <- pdbs$chain[i,f.inds$res]
     resid <- aa123(pdbs$ali[i,f.inds$res])
-    
-    if(is.null(xyz))
-      tmp.xyz <- pdbs$xyz[i, f.inds$pos]
-    else
-      tmp.xyz <- xyz[i, f.inds$pos]
+    tmp.xyz <- xyz[i, f.inds$pos]
 
     if(!is.null(outpath))
       fname <- file.path(outpath, basename(pdbs$id[i]))
@@ -96,42 +118,81 @@
     write.pdb(pdb=NULL, xyz=tmp.xyz, resno=resno, chain=chain,
               resid=resid, file=fname)
     tmp.pdb <- read.pdb(fname)
-    
-    ##print(length(tmp.xyz))
-    
+        
     if(is.null(outpath))
-       unlink(fname)
+      unlink(fname)
 
-    ## Calculate normal modes
-    modes <- nma(tmp.pdb, ...)
+    if(mass)
+      masses <- do.call('aa2mass', c(list(pdb=tmp.pdb, inds=NULL), am.args))
+    else
+      masses <- NULL
+    
+    pfc.fun <- load.enmff(ff)
+    
+    if(rm.gaps) {
+      ## Build the hessian of the complete structure
+      hess    <- build.hessian(tmp.pdb$xyz, pfc.fun, aa.mass=masses)
+
+      ## Effective hessian for atoms in the aligned core
+      if(length(inds.exc)>0) {
+        kaa     <- hess[inds.inc.xyz, inds.inc.xyz]
+        kqq.inv <- solve(hess[inds.exc.xyz, inds.exc.xyz])
+        kaq     <- hess[inds.inc.xyz, inds.exc.xyz]
+        kqa     <- t(kaq)
+        k <- kaa - ((kaq %*% kqq.inv) %*% kqa)
+      }
+      else {
+        k <- hess
+      }
+
+      ## Second PDB - containing only the aligned atoms
+      tmp2.pdb <- NULL
+      tmp2.pdb$atom <- tmp.pdb$atom[inds.inc,]
+      tmp2.pdb$xyz <-  tmp2.pdb$xyz[inds.inc.xyz]
+      tmp2.pdb$alpha <- as.logical(tmp2.pdb$atom[,"elety"]=="CA")
+      class(tmp2.pdb) <- "pdb"
+
+      if(mass)
+        masses <- do.call('aa2mass', c(list(pdb=tmp2.pdb, inds=NULL), am.args))
+      else
+        masses <- NULL
+
+      ## Calculate the modes
+      modes <- nma(tmp2.pdb, ff=ff, mass=mass, temp=temp, keep=nm.keep, hessian=k, aa.mass=masses)
+    }
+    else {
+      ## Calculate the modes
+      modes <- nma(pdb=tmp.pdb, ff=ff, mass=mass, temp=temp, keep=nm.keep, aa.mass=masses)
+    }
 
     if(full) {
-      new.modes <- matrix(NA, ncol=keep, nrow=ncol(pdbs$xyz))
+      if(rm.gaps)
+        modes.mat <- matrix(NA, ncol=keep, nrow=nrow(modes$U))
+      else
+        modes.mat <- matrix(NA, ncol=keep, nrow=ncol(pdbs$xyz))
       
       j <- 1
       for(k in 7:(keep+6)) {
-        new.modes[f.inds$pos, j] <- modes$U[,k]
+        if(rm.gaps)
+          modes.mat[, j] <- modes$U[,k]
+        else
+          modes.mat[f.inds$pos, j] <- modes$U[,k]
         j <- j+1
       }
       
-      ##print(dim(new.modes))
-      
       all.modes[[i]] <- modes
-      if(strip)
-        modes.array[,,i] <- new.modes[f.inds$pos,]
-      else
-        modes.array[,,i] <- new.modes[gaps.pos$f.inds,]
-      
+      modes.array[,,i] <- modes.mat
     }
-    
-    if(!strip)
-      flucts[i, f.inds$res] <- modes$fluctuations
-    else
+
+    if(rm.gaps)
       flucts[i, ] <- modes$fluctuations
+    else
+      flucts[i, f.inds$res] <- modes$fluctuations
+
   }
 
 
-  rmsip.test <- function(x) {
+  calc.rmsip <- function(x) {
     n <- dim(x)[3]
     mat <- matrix(NA, n, n)
     inds <- pairwise(n)
@@ -141,20 +202,20 @@
                                          x[,,inds[i,2]])$rmsip
     }
     mat[ inds[,c(2,1)] ] = mat[ inds ]
-    diag(mat) <- 1
+    diag(mat) <- 1 ## could be better to calculate it
     return(round(mat, 4))
   }
-
+  
   rmsip.map <- NULL
-  if(full) {
-    rmsip.map <- rmsip.test(modes.array)
+  if(full && fit && rm.gaps) {
+    rmsip.map <- calc.rmsip(modes.array)
     rownames(rmsip.map) <- basename(rownames(pdbs$xyz))
     colnames(rmsip.map) <- basename(rownames(pdbs$xyz))
   }
   
   rownames(flucts) <- basename(rownames(pdbs$xyz))
-  out <- list(fluctuations=flucts, modes.array=modes.array, all.modes=all.modes,
-              rmsip.map=rmsip.map)
+  out <- list(fluctuations=flucts, rmsip.map=rmsip.map,
+              modes.array=modes.array, full.nma=all.modes )
       
   return(out)
 }

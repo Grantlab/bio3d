@@ -1,6 +1,6 @@
 "nma" <-
   function(pdb, inds=NULL, ff='calpha', pfc.fun=NULL, mass=TRUE,
-           temp=300.0, keep=NULL,  ... ) {
+           temp=300.0, keep=NULL, hessian=NULL,  ... ) {
     
     if(missing(pdb))
       stop("nma: must supply 'pdb' object, i.e. from 'read.pdb'")
@@ -9,7 +9,7 @@
 
     ## Log the call
     cl <- match.call()
-
+    
     ## Passing arguments to functions build.hessian and aa2mass
     bh.names <- names(formals( build.hessian ))
     am.names <- names(formals( aa2mass ))
@@ -78,11 +78,18 @@
     }
 
     ## Build the Hessian Matrix
-    cat(" Building Hessian...")
-    ptm <- proc.time()
-    H <- do.call('build.hessian', c(list(xyz=xyz, pfc.fun=ff, sequ=sequ, aa.mass=masses), bh.args))
-    t <- proc.time() - ptm
-    cat("\t\tDone in", t[[3]], "seconds.\n")
+    if(is.null(hessian)) {
+      cat(" Building Hessian...")
+      ptm <- proc.time()
+      H <- do.call('build.hessian', c(list(xyz=xyz, pfc.fun=ff, sequ=sequ, aa.mass=masses), bh.args))
+      t <- proc.time() - ptm
+      cat("\t\tDone in", t[[3]], "seconds.\n")
+    }
+    
+    else {
+      H <- hessian
+    }
+       
 
     ## Diagonalize matrix
     cat(" Diagonalizing Hessian...")

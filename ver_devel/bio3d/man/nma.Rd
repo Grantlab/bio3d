@@ -9,7 +9,7 @@
 }
 \usage{
 nma(pdb, inds = NULL, ff = 'calpha', pfc.fun = NULL, mass = TRUE,
-    temp = 300.0, keep = NULL, \dots )
+    temp = 300.0, keep = NULL, hessian = NULL, \dots )
 build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
     sequ = NULL, ss.bonds = NULL, \dots)
 \method{print}{nma}(x, nmodes=6, \dots)
@@ -33,6 +33,8 @@ build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
     \sQuote{temp=NULL} to avoid scaling. }
   \item{keep}{ numerical, final number of modes to be stored. Note that
     all subsequent analyses are limited to this subset of modes. }
+  \item{hessian}{ hessian matrix as obtained from
+    \code{build.hessian}. Not intended for public use. }
   \item{xyz}{ a numeric vector of Cartesian coordinates. }
   \item{aa.mass}{ a numeric vector of amino acid residue masses. }
   \item{fc.weights}{ a numeric matrix of size NxN (where N is the number
