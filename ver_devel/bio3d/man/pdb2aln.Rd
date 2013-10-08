@@ -7,7 +7,7 @@
   keep intact.
 }
 \usage{
-pdb2aln(aln, pdb, id="seq.pdb", aln.id=NULL, exepath="", file="pdb2aln.fa")
+pdb2aln(aln, pdb, id="seq.pdb", aln.id=NULL, exefile="muscle", file="pdb2aln.fa")
 }
 \arguments{
   \item{aln}{ an alignment list object with \code{id} and \code{ali}
@@ -17,8 +17,8 @@ pdb2aln(aln, pdb, id="seq.pdb", aln.id=NULL, exepath="", file="pdb2aln.fa")
   \item{id}{ name for the PDB sequence in the new alignment. }
   \item{aln.id}{ id of the sequence in the original alignment 
      that is closest to the sequence of the PDB structure. }
-  \item{exepath}{ path to the \sQuote{MUSCLE} program on your system (i.e.
-    the directory where \sQuote{MUSCLE} is stored). }
+  \item{exefile}{ file path to the \sQuote{MUSCLE} program on your system (i.e.
+    how is \sQuote{MUSCLE} invoked). }
   \item{file}{ file name for outputing the new alignment. }
 }
 \details{

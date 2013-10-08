@@ -130,10 +130,10 @@ head(hits$hits)
 #rawpdbs <- get.pdb( hits$pdb.id, "PDB_downloads")
 
 ## Split by chain with function "pdbsplit()"
-#pdbsplit(rawpdbs, path="PDB_downloads/split_chain/")
+#pdbsplit(rawpdbs, path="PDB_downloads/split_chain")
 
 ## and then align with "pdbaln()" and superpose with "pdbfit()"
-#hitfiles <- paste0("PDB_downloads/split_chain/", hits$pdb.id, ".pdb")
+#hitfiles <- paste0("PDB_downloads/split_chain", hits$pdb.id, ".pdb")
 #pdbs <- pdbaln(hitfiles)
 #xyz  <- pdbfit(pdbs)
 

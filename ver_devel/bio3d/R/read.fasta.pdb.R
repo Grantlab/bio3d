@@ -1,5 +1,5 @@
 "read.fasta.pdb" <-
-function(aln, pdb.path="", pdbext="", ncore=1, nseg.scale=1, ...) {
+function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
 
   # Parallelized by multicore package (Fri Apr 26 17:58:26 EDT 2013)
   if(ncore > 1) {
@@ -21,11 +21,8 @@ function(aln, pdb.path="", pdbext="", ncore=1, nseg.scale=1, ...) {
      }
   }
 
-  if(pdb.path=="") {
-    files  <- file.path(paste(aln$id, pdbext,sep=""))
-  } else {
-    files  <- file.path(pdb.path, paste(aln$id, pdbext,sep=""))
-  }
+  files  <- paste(prefix, aln$id, pdbext,sep="")
+
   ##cat(files,sep="\n")
   toread <- file.exists(files)
 

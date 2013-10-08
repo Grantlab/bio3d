@@ -1,5 +1,5 @@
 seq2aln <-
-function(seq2add, aln, id="seq", exepath = "", file = "aln.fa") {
+function(seq2add, aln, id="seq", exefile = "muscle", file = "aln.fa") {
   ##- Add a sequence 'seq2add' to an existing alignment 'aln'
   ##  Adds at the bottom of alignment
 
@@ -18,8 +18,8 @@ function(seq2add, aln, id="seq", exepath = "", file = "aln.fa") {
       write.fasta(seq2add, file=toaln)
     }
   }
-  
-  cmd <- paste(exepath, "muscle -profile -in1 ",
+ 
+  cmd <- paste(exefile, " -profile -in1 ",
                basealn, " -in2 ", toaln,
                " -out ", file, sep="")
   cat(cmd)

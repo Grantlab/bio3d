@@ -6,7 +6,7 @@ function(aln,
          stop.at   = 15,
          stop.vol  = 0.5,
          write.pdbs = FALSE,
-         outpath="core_pruned/",
+         outpath="core_pruned",
          ncore = 1,
          nseg.scale = 1) {
 
@@ -173,8 +173,8 @@ function(aln,
 
       if(write.pdbs) {
         # Write current core structure    
-        write.pdb(file  = paste(outpath,"core_",
-                    sprintf("%04.0f", length(res.still.in)),".pdb",sep=""),
+        write.pdb(file  = file.path(outpath, paste("core_",
+                    sprintf("%04.0f", length(res.still.in)),".pdb",sep="")),
                   #xyz   = xyz[1, new.xyz.inds ],
                   xyz   = mean.xyz[ new.xyz.inds ],
                   resno = pdbnum[ res.still.in ],

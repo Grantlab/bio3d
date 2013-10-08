@@ -1,14 +1,15 @@
 "stride" <-
-function(pdb, exepath = "", resno=TRUE) {
+function(pdb, exefile = "stride", resno=TRUE) {
   
   infile  <- tempfile()
   outfile <- tempfile()
   write.pdb(pdb, file=infile)
+
   os1 <- .Platform$OS.type
   if(os1 == "windows") {
-     shell( paste(exepath,"stride -f",outfile," ",infile,sep="") )
+     shell( paste(exefile," -f",outfile," ",infile,sep="") )
   } else {
-     system( paste(exepath,"stride -f",outfile," ",infile,sep="") )
+     system( paste(exefile," -f",outfile," ",infile,sep="") )
   }
   raw.lines <- readLines(outfile)
   type <- substring(raw.lines, 1, 3)

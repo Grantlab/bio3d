@@ -10,8 +10,8 @@ fit.xyz(fixed, mobile,
         fixed.inds  = NULL,
         mobile.inds = NULL,
         verbose=FALSE,
-        pdb.path = "", pdbext = "",
-        outpath = "fitlsq/", het=FALSE, full.pdbs=FALSE, 
+        prefix= "", pdbext = "",
+        outpath = "fitlsq", het=FALSE, full.pdbs=FALSE, 
         ncore = 1, nseg.scale = 1, ...)
 
 rot.lsq(xx, yy,
@@ -32,7 +32,7 @@ rot.lsq(xx, yy,
   \item{het}{ logical, if TRUE \sQuote{HETATM} records from full PDB
     files are written to output superposed PDB files.  Only required if
     \code{full.pdbs} is TRUE. } 
-  \item{pdb.path}{ path to the \dQuote{full} input PDB files.  Only
+  \item{prefix}{ prefix to mobile$id to locate \dQuote{full} input PDB files.  Only
         required if \code{full.pdbs} is TRUE. }
   \item{pdbext}{ the file name extension of the input PDB files. }
   \item{outpath}{ character string specifing the output directory when
@@ -113,7 +113,7 @@ xyz <- fit.xyz( fixed = pdbs$xyz[1,],
                mobile = pdbs,
                fixed.inds  = gaps$f.inds,
                mobile.inds = gaps$f.inds,
-               outpath = "rough_fit/",
+               outpath = "rough_fit",
                full.pdbs = TRUE)
 
 ##--- Fit two PDBs

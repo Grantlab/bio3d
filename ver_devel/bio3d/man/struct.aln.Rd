@@ -6,7 +6,7 @@
 }
 \usage{
 struct.aln(fixed, mobile, fixed.inds=NULL, mobile.inds=NULL, 
-           write.pdbs=TRUE, outpath = "fitlsq/", prefix=c("fixed",
+           write.pdbs=TRUE, outpath = "fitlsq", prefix=c("fixed",
            "mobile"), max.cycles=10, cutoff=0.5, ... )
 }
 \arguments{

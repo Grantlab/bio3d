@@ -5,7 +5,7 @@
   Downloads PDB coordinate files from the RCSB Protein Data Bank.
 }
 \usage{
-get.pdb(ids, path = "./", URLonly=FALSE, overwrite = FALSE)
+get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE)
 }
 \arguments{
   \item{ids}{ A character vector of one or more 4-letter PDB

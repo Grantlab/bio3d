@@ -1,15 +1,12 @@
 "read.all" <-
-function(aln, pdb.path="", pdbext="", sel=NULL, ...) {
+function(aln, prefix ="", pdbext="", sel=NULL, ...) {
 
   ## Usage:
   ## sel <- c("N", "CA", "C", "O", "CB", "*G", "*D",  "*E", "*Z")
   ## pdbs.all <- read.all(aln, sel=sel)
+  
+  files  <- paste(prefix, aln$id, pdbext,sep="")
 
-  if(pdb.path=="") {
-    files  <- file.path(paste(aln$id, pdbext,sep=""))
-  } else {
-    files  <- file.path(pdb.path, paste(aln$id, pdbext,sep=""))
-  }
   ##cat(files,sep="\n")
   toread <- file.exists(files)
 

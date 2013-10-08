@@ -5,11 +5,11 @@
   Perform NMA on an ensemble of aligned protein structures.
 }
 \usage{
-nma.pdbs(aln, fit=FALSE, full=FALSE, trim.inds=NULL,
-         outpath="pdbs_nma/", \dots)
+nma.pdbs(pdbs, fit=FALSE, full=FALSE, trim.inds=NULL,
+         outpath="pdbs_nma", \dots)
 }
 \arguments{
-  \item{aln}{ a numeric matrix of aligned C-alpha xyz Cartesian
+  \item{pdbs}{ a numeric matrix of aligned C-alpha xyz Cartesian
     coordinates. For example an alignment data structure obtained with
     \code{\link{read.fasta.pdb}} or \code{\link{pdbaln}}. }
   \item{fit}{ logical, if TRUE coordinate superposition is performed
@@ -20,7 +20,7 @@ nma.pdbs(aln, fit=FALSE, full=FALSE, trim.inds=NULL,
   \item{trim.inds}{ a vector of alignment column indices that selects the 
     positions and corresponding coordinates in all aligned structures upon 
     which NMA will be performed. If provided, the PDB
-    structures will be trimmed to obtain equal lengths. }
+    structures will be trimmed to an equal length before NMA. }
   \item{outpath}{ character string specifing the output directory to
     which the PDB structures should be written. }
   \item{...}{ additional arguments to \code{nma}. }
@@ -32,7 +32,7 @@ nma.pdbs(aln, fit=FALSE, full=FALSE, trim.inds=NULL,
   aligned atomic fluctuations and mode vectors in an automated fashion. 
 
   NOTE: The normal modes are calculated on the full structures as provided 
-  by object \sQuote{aln}. With the input argument \sQuote{full=TRUE} the 
+  by object \sQuote{pdbs}. With the input argument \sQuote{full=TRUE} the 
   output \sQuote{modes.array} provides mode vectors in which unaligned atoms 
   are ommited. Thus, these mode vectors might not be orthogonal anymore.
   
@@ -42,6 +42,8 @@ nma.pdbs(aln, fit=FALSE, full=FALSE, trim.inds=NULL,
   Returns a list with the following components:
   \item{fluctuations }{ a numeric matrix with aligned atomic
     fluctuations. }
+  \item{rmsip.map}{ a numeric matrix of RMSIP values between all pairs
+    of mode subsets. }
   \item{modes.array }{ a three-dimensional array with aligned mode
     vectors. }
   \item{all.modes }{ a list with a \code{nma} object for each input
@@ -54,9 +56,9 @@ nma.pdbs(aln, fit=FALSE, full=FALSE, trim.inds=NULL,
 \seealso{ \code{\link{nma}}, \code{\link{read.fasta.pdb}} }
 \examples{
 ## Fetch PDB files and split to chain A only PDB files
-ids <- c("1a70_A", "1czp_A", "1frd_A")
+ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
 raw.files <- get.pdb(ids, path = "raw_pdbs")
-files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain/")
+files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain")
 
 ## Sequence Alignement
 pdbs <- pdbaln(files)
@@ -65,7 +67,7 @@ pdbs <- pdbaln(files)
 all.modes <- nma.pdbs(pdbs, fit=TRUE)
 
 ## Plot fluctuation data
-plot.bio3d(all.modes$fluctuations[1,], typ="o", xlab="Residue Position")
+plot.bio3d(all.modes$fluctuations[1,], type="o", xlab="Residue Position")
 lines(all.modes$fluctuations[2,], type='o', col=2)
 lines(all.modes$fluctuations[3,], type='o', col=3)
 
@@ -74,6 +76,11 @@ all.modes <- nma.pdbs(pdbs, fit=TRUE, full=TRUE)
 
 ## Compare modes between two structures 
 rmsip(all.modes$modes.array[,,1], all.modes$modes.array[,,2])
+
+
+## Use indices to trim structures prior to NMA
+gaps.res <- gap.inspect(pdbs$ali)
+all.modes <- nma.pdbs(pdbs, fit=TRUE, full=TRUE, trim.inds=gaps.res$f.inds)
 
 }
 \keyword{ utilities }
