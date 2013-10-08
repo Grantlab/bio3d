@@ -1,6 +1,7 @@
 `pdbsplit` <-
 function(pdb.files, ids=NULL, path="split_chain", multi=FALSE) {
-  out <- c(); nohits <- c()
+  out <- c(); unused <- c()
+  matched <- c()
   toread <- file.exists(pdb.files)
   toread[substr(pdb.files, 1, 4) == "http"] <- TRUE
   if (all(!toread)) 
@@ -19,11 +20,13 @@ function(pdb.files, ids=NULL, path="split_chain", multi=FALSE) {
     chains <- unique(pdb$atom[, "chain"])
     
     if(!is.null(ids)) {
+      ## Match 'ids' with 'pdbId_chainId' combinations
       tmp.names <- paste(substr(basename(pdb.files[i]), 
                                 1, 4), "_", chains, sep = "")
-      tmp.inds <- which(tmp.names %in% ids)
-      if(length(tmp.inds)==0) {
-        nohits <- c(nohits, substr(basename(pdb.files[i]), 1, 4))
+      tmp.inds <- tmp.names %in% ids
+      if(all(!tmp.inds)) {
+        ## Skip pdb file if no match were found
+        unused <- c(unused, substr(basename(pdb.files[i]), 1, 4))
         chains <- c()
       }
       else {
@@ -69,9 +72,21 @@ function(pdb.files, ids=NULL, path="split_chain", multi=FALSE) {
   }
   
   if(!is.null(ids)) {
-    if(length(nohits)>0) {
-      nohits <- paste(nohits, collapse=", ")
-      warning(paste("no matched chain ids for pdb files:", nohits))
+    ids.used <- NULL
+    if(length(out)>0)
+      ids.used <- substr(basename(out), 1, 6)
+    nonmatch <- ids[!(ids %in% ids.used)]
+
+    ## Elements of 'pdb.files' not in use
+    if(length(unused)>0) {
+      unused <- paste(unused, collapse=", ")
+      warning(paste("unmatched pdb files:", unused))
+    }
+
+    ## Elements of 'ids' not in use
+    if(length(nonmatch)>0) {
+      nonmatch <- paste(nonmatch, collapse=", ")
+      warning(paste("unmatched ids:", nonmatch))
     }
   }
   return(out)
