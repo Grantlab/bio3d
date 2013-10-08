@@ -8,7 +8,7 @@ plot.dccm2 <-function(x, sse=NULL, colorkey=TRUE,
 
   ## cij <- dccm(xyz)
   ## net <- igraph.comms(cij)
-  ## plot.dccm2(cij, margin.segments=net$membership, segment.col=c("red","blue","green","purple", "orange", "black"))
+  ## plot.dccm2(cij, margin.segments=net$membership)
   
   require(lattice)
   require(grid)
@@ -127,7 +127,7 @@ plot.dccm2 <-function(x, sse=NULL, colorkey=TRUE,
       grid.rect(x=xymin, y=xymin,
                 gp = gpar(fill=NA,col="black"),
                 just=c("left","bottom"),
-                width=xmax, height=ymax,
+                width=xymax, height=xymax,
                 vp=vpPath("plot_01.toplevel.vp","plot_01.panel.1.1.vp"))
     }
   }
