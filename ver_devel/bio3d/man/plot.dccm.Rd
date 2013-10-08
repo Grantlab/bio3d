@@ -6,15 +6,20 @@
   Plot a dynamical cross-correlation matrix.
 }
 \usage{
-\method{plot}{dccm}(x, sse = NULL, colorkey = TRUE, at = c(-1, -0.75, -0.5, -0.25, 0.25, 0.5, 0.75, 1), main = "Residue Cross Correlation", helix.col = "gray20", sheet.col = "gray80", inner.box = TRUE, outer.box = FALSE, xlab = "Residue No.", ylab = "Residue No.", ...)
+\method{plot}{dccm}(x, sse = NULL, colorkey = TRUE,
+                   at = c(-1, -0.75, -0.5, -0.25, 0.25, 0.5, 0.75, 1),
+                   main = "Residue Cross Correlation",
+                   helix.col = "gray20", sheet.col = "gray80",
+                   inner.box = TRUE, outer.box = FALSE,
+                   xlab = "Residue No.", ylab = "Residue No.", ...)
 
-  \method{plot}{dccm}(x, sse=NULL, colorkey=TRUE,
+  \method{plot}{dccm2}(x, sse=NULL, colorkey=TRUE,
                      at=c(-1, -0.75, -0.5,  -0.25, 0.25, 0.5, 0.75, 1),
                      main="Residue Cross Correlation",
                      helix.col = "gray20", sheet.col = "gray80",
                      inner.box=TRUE, outer.box=FALSE,
                      xlab="Residue No.", ylab="Residue No.",
-                     margin.segments=NULL, segment.col=NULL, ...)
+                     margin.segments=NULL, segment.col=NULL, segment.min=1...)
 }
 \arguments{
   \item{x}{ a numeric matrix of atom-wise cross-correlations as output by
@@ -35,7 +40,10 @@
      will be used for bottom and left margin annotation. }
   \item{segment.col}{ a vector of colors used for each cluster group in 
      margin.segments. }
-  \item{\dots}{ additional graphical parameters for image. }
+  \item{segment.min}{ a single element numeric vector that will cause 
+    margin.segments with a length below this value to be excluded from
+    the plot. }
+   \item{\dots}{ additional graphical parameters for image. }
 }
 \details{
   See the functions \sQuote{plot.default}, \code{\link{dssp}} and
@@ -114,8 +122,9 @@
   plot.dccm(cij, col.regions=rev(heat.colors(12)))
 
   ## Plot with cluster annotation from dynamic network analysis
-  #net <- igraph.comms(cij)
+  # net <- igraph.comms(cij)
   # plot.dccm2(cij, margin.segments=net$membership, segment.col=c("red","blue","green","purple", "orange", "black"))
+  # plot.dccm2(cij, margin.segments=net$membership, segment.min=25)
 }
 
 }
