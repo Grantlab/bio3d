@@ -1,7 +1,8 @@
 
 ## UNREFINED functions for Bio3D incoperation at some point
 ##  Most of these are useful for protein structure modeling
-## These include:
+##
+## These include (list to be updaed):
 ##  fit.pdbs    - Quick Fit Fitter for PDBs
 ##  pdbname     - Extract PDB identifier from filename
 ##  srxn.bd     - Find BD trajectories that complete a give reaction
@@ -53,11 +54,12 @@
 ## dis.ftmap    - Process FTMAP results (min dist to residue of probes)
 ## bootstrap.rmsf - Bootstrap sampling of frames for RMSF determination.
 ## mustang        -  Structural alignment with mustang
+## add.dccm.grid  -  Add a grid or colored boxes to a plot.dccm() plot.
 ## col.wheel    - useful for picking plot colors (e.g. col.wheel("dark") ) 
 ##
 ##
 ## See also:
-##  ~/work/scop/scop.sf
+##  ~/work/scop/scop.sf  - Have access to the full SCOP database in R
 ##  ~/tmpwork/Rpackage/new_funs/HB.back.R
 ##  ~/tmpwork/Rpackage/new_funs/Hbond.R
 ##  ~/tmpwork/Rpackage/new_funs/io.R
@@ -69,12 +71,6 @@
 ##  ~/tmpwork/Rpackage/new_funs/read.pdb.R (with resolution etc)
 ##  ~/tmpwork/Rpackage/new_funs/rot_trans/rot.trans.R
 
-##seq.pdb
-##plot.blast
-##get.pdb
-##get.seq
-##split.pdb
-##trim.pdb
 
 
 ### --- See bio3d pdbfit()
@@ -2717,6 +2713,7 @@ mustang <- function(pdbfiles, alnfile="mustangaln") {
 }
 
 
+### --- See add.dccm.grid() below
 add.grid.old <- function(sse, col="gray", lty="dashed") {
   ## Add a grid to a plot.dccm() plot
   ##   sse <- dssp(pdb)
