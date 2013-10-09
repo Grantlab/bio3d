@@ -213,6 +213,10 @@ function (file, maxlines=-1, multi=FALSE,
                 ncol=nrow(atom.format[ !drop.ind,]),
                 dimnames = list(NULL, atom.format[ !drop.ind,"name"]) )
 
+  ## Calpha position - check for calcium resid
+  ##calpha = as.logical(atom[,"elety"]=="CA")
+  calpha = (atom[,"elety"]=="CA") & (atom[,"resid"] !="CA")
+
   output<-list(atom=atom,
                het=het,
                helix=helix,
@@ -220,7 +224,7 @@ function (file, maxlines=-1, multi=FALSE,
                seqres=seqres,
                xyz=as.numeric(t(atom[,c("x","y","z")])),
                xyz.models=xyz.models,
-               calpha = as.logical(atom[,"elety"]=="CA"))
+               calpha = calpha)
 
   class(output) <- "pdb"
   return(output)
