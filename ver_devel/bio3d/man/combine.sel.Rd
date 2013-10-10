@@ -6,7 +6,7 @@
   selections made by \code{\link{atom.select}}
 }
 \usage{
-combine.sel(sel1=NULL, sel2=NULL, op="AND")
+combine.sel(sel1=NULL, sel2=NULL, op="AND", verbose=TRUE)
 }
 \arguments{
   \item{sel1}{ an atom selection object of class \code{"select"}, obtained from
@@ -14,6 +14,8 @@ combine.sel(sel1=NULL, sel2=NULL, op="AND")
   \item{sel2}{ a second atom selection object of class \code{"select"}, obtained 
     from \code{\link{atom.select}}. }
   \item{op}{ name of the logical operation. }
+  \item{verbose}{ logical, if TRUE details of the selection combination are 
+     printed. }
 }
 \details{
   The value of \code{op} should be one of following:

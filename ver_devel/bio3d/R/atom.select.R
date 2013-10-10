@@ -291,7 +291,7 @@ function(pdb, string=NULL,
      if(verbose)
         cat("\nCombine selections from input string and components\n\n")
 
-  match <- combine.sel(sel1, sel2, op="AND")
+  match <- combine.sel(sel1, sel2, op="AND", verbose=verbose)
   
   return(match)
 }
