@@ -38,7 +38,7 @@ build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
     option is useful for very large structures and cases where memory
     may be limiting. }
   \item{hessian}{ hessian matrix as obtained from
-    \code{build.hessian}. For testing purposes and generally not
+    \code{build.hessian}. For internal purposes and generally not
     intended for public use. }
   \item{xyz}{ a numeric vector of Cartesian coordinates. }
   \item{aa.mass}{ a numeric vector of amino acid residue masses as
