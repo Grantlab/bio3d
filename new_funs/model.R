@@ -1,7 +1,8 @@
 
 ## UNREFINED functions for Bio3D incoperation at some point
 ##  Most of these are useful for protein structure modeling
-## These include:
+##
+## These include (list to be updaed):
 ##  fit.pdbs    - Quick Fit Fitter for PDBs
 ##  pdbname     - Extract PDB identifier from filename
 ##  srxn.bd     - Find BD trajectories that complete a give reaction
@@ -53,11 +54,12 @@
 ## dis.ftmap    - Process FTMAP results (min dist to residue of probes)
 ## bootstrap.rmsf - Bootstrap sampling of frames for RMSF determination.
 ## mustang        -  Structural alignment with mustang
+## add.dccm.grid  -  Add a grid or colored boxes to a plot.dccm() plot.
 ## col.wheel    - useful for picking plot colors (e.g. col.wheel("dark") ) 
 ##
 ##
 ## See also:
-##  ~/work/scop/scop.sf
+##  ~/work/scop/scop.sf  - Have access to the full SCOP database in R
 ##  ~/tmpwork/Rpackage/new_funs/HB.back.R
 ##  ~/tmpwork/Rpackage/new_funs/Hbond.R
 ##  ~/tmpwork/Rpackage/new_funs/io.R
@@ -69,42 +71,46 @@
 ##  ~/tmpwork/Rpackage/new_funs/read.pdb.R (with resolution etc)
 ##  ~/tmpwork/Rpackage/new_funs/rot_trans/rot.trans.R
 
-##seq.pdb
-##plot.blast
-##get.pdb
-##get.seq
-##split.pdb
-##trim.pdb
 
 
+### --- See bio3d pdbfit()
+###fit.pdbs <- function(pdbs, inds=NULL, outpath=NULL, ...) {
+###  ##
+###  ## Quick Fit Fitter for PDBs
+###  ##
+###  if(class(pdbs)!="3dalign") {
+###    stop("Input 'pdbs' should be of class '3dalign'")
+###  }
+###  full <- ifelse(is.null(outpath), FALSE, TRUE)
+###  if(is.null(inds)) {    inds <-gap.inspect(pdbs$xyz)$f.inds  }
+###  if(is.list(inds)){ inds=inds$xyz }
+###  return( fit.xyz( fixed=pdbs$xyz[1,], mobile=pdbs, fixed.inds=inds,
+###                  mobile.inds=inds, outpath=outpath,
+###                  full.pdbs=full, ... ))
+###}
 
-fit.pdbs <- function(pdbs, inds=NULL, outpath=NULL, ...) {
-  ##
-  ## Quick Fit Fitter for PDBs
-  ##
-  if(class(pdbs)!="3dalign") {
-    stop("Input 'pdbs' should be of class '3dalign'")
-  }
-  full <- ifelse(is.null(outpath), FALSE, TRUE)
-  if(is.null(inds)) {    inds <-gap.inspect(pdbs$xyz)$f.inds  }
-  if(is.list(inds)){ inds=inds$xyz }
-  return( fit.xyz( fixed=pdbs$xyz[1,], mobile=pdbs, fixed.inds=inds,
-                  mobile.inds=inds, outpath=outpath,
-                  full.pdbs=full, ... ))
+
+###pdbname <- function(x, mk4=TRUE) {
+###  ##
+###  ## Extract PDB identifer from filenames
+###  ## like "basename()" for PDB files
+###  ##
+###  x <- sub(".pdb$","", basename(x))
+###  if(mk4) {
+###    return(substr(x,1,4))
+###  } else { return(x) }
+###}
+
+pdbname <- function(x, pdbid=FALSE) {
+  ## Extract PDB name or ID from file names
+  ## like basename() but for PDB files
+  y <- sub("\\.pdb$", "", basename(x))
+  if(pdbid)
+    y <- substr(y, 1, 4)
+
+  names(y) = x
+  return(y)
 }
-
-
-pdbname <- function(x, mk4=TRUE) {
-  ##
-  ## Extract PDB identifer from filenames
-  ## like "basename()" for PDB files
-  ##
-  x <- sub(".pdb$","", basename(x))
-  if(mk4) {
-    return(substr(x,1,4))
-  } else { return(x) }
-}
-
 
 
 srxn.bd <- function(traj.file, reaction, outdir="trjout/") {
@@ -225,13 +231,13 @@ srxn2trj.bd <- function(srx,
 }
 
 
-
-motif.find <- function(motif, sequence) {
-  ## return indices of motif within sequence
-  position <- regexpr( paste(motif, collapse=""), paste(sequence,collapse=""))
-  inds <- c(position):c(position+attr(position, "match.length")-1)
-  return(inds)
-}
+### --- See bio3d motif.find()
+###motif.find <- function(motif, sequence) {
+###  ## return indices of motif within sequence
+###  position <- regexpr( paste(motif, collapse=""), paste(sequence,collapse=""))
+###  inds <- c(position):c(position+attr(position, "match.length")-1)
+###  return(inds)
+###}
 
 getArgs <- function(set) {
 
@@ -322,88 +328,89 @@ txt2num <- function(x) {
 }
 
 
-
-chain.break <- function(pdb, ca.dist=4, blank="X", rtn.vec=TRUE) {
-  ##- Find possible chian breaks
-  ##  (i.e. Caplpa's that are too far apart).
-  ##
-  ## chn <- chain.break(pdb)
-  x <- diff( as.numeric(pdb$atom[pdb$calpha,"x"]) )^2
-  y <- diff( as.numeric(pdb$atom[pdb$calpha,"y"]) )^2
-  z <- diff( as.numeric(pdb$atom[pdb$calpha,"z"]) )^2
-  d <- sqrt((y+y+z)/3)
-
-  ind <- which(d > ca.dist)
-  len <- diff( c(1,ind,length(d)) )
-  ## vec <- rep( LETTERS[1:length(len)], len)
-
-  cat(paste("Found",length(ind), " possible chain breaks\n"))
-  cat(paste("After resno(s)",
-        paste( pdb$atom[pdb$calpha,"resno"][(ind)], collapse=", " ),"\n" ))
-  cat(paste("chain length(s)",
-        paste(len, collapse=", " ),"\n" ))
-
-  if(rtn.vec) {
-    ## Make a chain id vector
-    resno.ind <- as.numeric(c(1, sort(as.numeric(c(ind,(ind+1)))), length(d)))
-    resno.val <- pdb$atom[pdb$calpha,"resno"][resno.ind]
-    resno.val <- matrix(as.numeric(resno.val),nrow=2)
-
-    vec <- rep(blank, nrow(pdb$atom))
-    for(i in 1:(length(resno.val)/2)) {
-      sel.ind <- atom.select(pdb,
-                             resno=c(resno.val[1,i]:resno.val[2,i]),
-                             verbose=FALSE)
-      ##rep(LETTERS[i], length(sel.ind$atom))
-      vec[sel.ind$atom]=LETTERS[i]
-    }
-    return(vec)
-  }
-}
-
-chain.pdb <- function(pdb, ca.dist=4, blank="X", rtn.vec=TRUE) {
-  ##- Find possible chian breaks
-  ##  i.e. Concetive Caplpa's that are further than 'ca.dist' apart,
-  ##        print basic chain info and rtn a vector of chain ids
-  ##        consisting of the 26 upper-case letters of the Roman
-  ##        alphabet
-  ##
-  ## chn <- chain.pdb(pdb)
-  ## pdb$atom[,"chain"] <- chain.pdb(pdb)
-  ##
-
-  ## Distance between concetive C-alphas
-  ca <- atom.select(pdb, "calpha", verbose=FALSE)
-  xyz <- matrix(pdb$xyz[ca$xyz], nrow=3)
-  d <- sqrt( rowSums( apply(xyz , 1, diff)^2 )/3 )
-
-  ## Chain break distance check
-  ind <- which(d > ca.dist)
-  len <- diff( c(1,ind,length(d)) )
-
-  cat(paste("Found",length(ind), " possible chain breaks\n"))
-  cat(paste("After resno(s)",
-        paste( pdb$atom[ca$atom,"resno"][(ind)], collapse=", " ),"\n" ))
-  cat(paste("chain length(s)",
-        paste(len+1, collapse=", " ),"\n" ))
-
-  ## Make a chain id vector
-  if(rtn.vec) {
-    resno.ind <- as.numeric(c(1, sort(as.numeric(c(ind,(ind+1)))), (length(d)+1)))
-    resno.val <- pdb$atom[ca$atom,"resno"][resno.ind]
-    resno.val <- matrix(as.numeric(resno.val),nrow=2)
-
-    vec <- rep(blank, nrow(pdb$atom))
-    for(i in 1:(length(resno.val)/2)) {
-      sel.ind <- atom.select(pdb,
-                             resno=c(resno.val[1,i]:resno.val[2,i]),
-                             verbose=FALSE)
-      vec[sel.ind$atom]=LETTERS[i]
-    }
-    return(vec)
-  }
-}
-
+### --- See bio3d::chain.pdb()
+###chain.break <- function(pdb, ca.dist=4, blank="X", rtn.vec=TRUE) {
+###  ##- Find possible chian breaks
+###  ##  (i.e. Caplpa's that are too far apart).
+###  ##
+###  ## chn <- chain.break(pdb)
+###  x <- diff( as.numeric(pdb$atom[pdb$calpha,"x"]) )^2
+###  y <- diff( as.numeric(pdb$atom[pdb$calpha,"y"]) )^2
+###  z <- diff( as.numeric(pdb$atom[pdb$calpha,"z"]) )^2
+###  d <- sqrt((y+y+z)/3)
+###
+###  ind <- which(d > ca.dist)
+###  len <- diff( c(1,ind,length(d)) )
+###  ## vec <- rep( LETTERS[1:length(len)], len)
+###
+###  cat(paste("Found",length(ind), " possible chain breaks\n"))
+###  cat(paste("After resno(s)",
+###        paste( pdb$atom[pdb$calpha,"resno"][(ind)], collapse=", " ),"\n" ))
+###  cat(paste("chain length(s)",
+###        paste(len, collapse=", " ),"\n" ))
+###
+###  if(rtn.vec) {
+###    ## Make a chain id vector
+###    resno.ind <- as.numeric(c(1, sort(as.numeric(c(ind,(ind+1)))), length(d)))
+###    resno.val <- pdb$atom[pdb$calpha,"resno"][resno.ind]
+###    resno.val <- matrix(as.numeric(resno.val),nrow=2)
+###
+###    vec <- rep(blank, nrow(pdb$atom))
+###    for(i in 1:(length(resno.val)/2)) {
+###      sel.ind <- atom.select(pdb,
+###                             resno=c(resno.val[1,i]:resno.val[2,i]),
+###                             verbose=FALSE)
+###      ##rep(LETTERS[i], length(sel.ind$atom))
+###      vec[sel.ind$atom]=LETTERS[i]
+###    }
+###    return(vec)
+###  }
+###}
+###
+### --- See bio3d::chain.pdb()
+###chain.pdb <- function(pdb, ca.dist=4, blank="X", rtn.vec=TRUE) {
+###  ##- Find possible chian breaks
+###  ##  i.e. Concetive Caplpa's that are further than 'ca.dist' apart,
+###  ##        print basic chain info and rtn a vector of chain ids
+###  ##        consisting of the 26 upper-case letters of the Roman
+###  ##        alphabet
+###  ##
+###  ## chn <- chain.pdb(pdb)
+###  ## pdb$atom[,"chain"] <- chain.pdb(pdb)
+###  ##
+###
+###  ## Distance between concetive C-alphas
+###  ca <- atom.select(pdb, "calpha", verbose=FALSE)
+###  xyz <- matrix(pdb$xyz[ca$xyz], nrow=3)
+###  d <- sqrt( rowSums( apply(xyz , 1, diff)^2 )/3 )
+###
+###  ## Chain break distance check
+###  ind <- which(d > ca.dist)
+###  len <- diff( c(1,ind,length(d)) )
+###
+###  cat(paste("Found",length(ind), " possible chain breaks\n"))
+###  cat(paste("After resno(s)",
+###        paste( pdb$atom[ca$atom,"resno"][(ind)], collapse=", " ),"\n" ))
+###  cat(paste("chain length(s)",
+###        paste(len+1, collapse=", " ),"\n" ))
+###
+###  ## Make a chain id vector
+###  if(rtn.vec) {
+###    resno.ind <- as.numeric(c(1, sort(as.numeric(c(ind,(ind+1)))), (length(d)+1)))
+###    resno.val <- pdb$atom[ca$atom,"resno"][resno.ind]
+###    resno.val <- matrix(as.numeric(resno.val),nrow=2)
+###
+###    vec <- rep(blank, nrow(pdb$atom))
+###    for(i in 1:(length(resno.val)/2)) {
+###      sel.ind <- atom.select(pdb,
+###                             resno=c(resno.val[1,i]:resno.val[2,i]),
+###                             verbose=FALSE)
+###      vec[sel.ind$atom]=LETTERS[i]
+###    }
+###    return(vec)
+###  }
+###}
+###
   
 ## pdbaln.R ==> see bio3d()
 
@@ -436,6 +443,7 @@ alitrim <- function(aln, cols=NULL, rows=NULL, atom=TRUE) {
 }
 
 
+### --- See bio3d::seq2aln()
 seq2aln.old <- function(seq, aln, aln.ind=NULL, id="seq") {
   ##- Add a sequence 'seq' to an existing alignment 'aln'
   ##  aln.ind is the row indice of the closest guy in aln to seq
@@ -524,63 +532,63 @@ seq2aln.old <- function(seq, aln, aln.ind=NULL, id="seq") {
 ## All atom contact Functions
 ##======================================##
 
-
-ndm <- function(xyz, grpby=NULL, scut=NULL) {
-  ##-- New distance matrix function with 'grpby' option
-  ##  ndm(pdb$xyz, grpby=pdb$atom[,"resno"], scut=3)
-
-  
-  ##- Full Distance matrix (could use 'dm' or 'dist.xyz')
-  dmat <- as.matrix(dist(matrix(xyz, ncol = 3, byrow = TRUE)))
-  
-  if(is.null(grpby)) {
-    ##- Mask lower.tri  
-    dmat[lower.tri(dmat)] = NA
-    ##- Mask concetive residues
-    if (!is.null(scut))
-      dmat[diag.ind(dmat, n = scut)] = NA
-
-    return(dmat)
-    
-  } else {
-    ##- Group by concetive numbers in 'grpby'
-    if( length(xyz) != (length(grpby)*3) )
-      stop("dimension miss-match in 'xyz' and 'grpby', check lengths")
-
-    ##- Bounds of 'grpby' numbers
-    inds <- bounds(grpby, dup=TRUE)
-    nres <- nrow(inds)
-    
-    ##- Per-residue matrix
-    m <- matrix(, ncol=nres, nrow=nres)
-    ij <- pairwise(nres)
-    
-    ##  Ignore concetive residues
-    if (!is.null(scut))
-      ij <- ij[ij[,2]-ij[,1] > (scut-1),]
-    
-    ##- Min per residue
-    for(k in 1 : nrow(ij) ) {
-      m[ij[k,1],ij[k,2]] <- min( dmat[ (inds[ij[k,1],"start"]:inds[ij[k,1],"end"]),
-                                      (inds[ij[k,2],"start"]:inds[ij[k,2],"end"])],
-                                na.rm=TRUE )
-    }
-    return(m)
-  }
-}
-
-
-ncmap <- function(xyz, grpby,  dcut=4, scut=3) {
-
-  ## Distance matrix (all-atom)
-  dmat <- ndm( xyz, grpby, scut)
-  ## Contact map
-  return(matrix(as.numeric(dmat < dcut),
-                ncol = ncol(dmat),
-                nrow = nrow(dmat)))
-
-}
-
+### --- See bio3d::cmap()
+###ndm <- function(xyz, grpby=NULL, scut=NULL) {
+###  ##-- New distance matrix function with 'grpby' option
+###  ##  ndm(pdb$xyz, grpby=pdb$atom[,"resno"], scut=3)
+###
+###  
+###  ##- Full Distance matrix (could use 'dm' or 'dist.xyz')
+###  dmat <- as.matrix(dist(matrix(xyz, ncol = 3, byrow = TRUE)))
+###  
+###  if(is.null(grpby)) {
+###    ##- Mask lower.tri  
+###    dmat[lower.tri(dmat)] = NA
+###    ##- Mask concetive residues
+###    if (!is.null(scut))
+###      dmat[diag.ind(dmat, n = scut)] = NA
+###
+###    return(dmat)
+###    
+###  } else {
+###    ##- Group by concetive numbers in 'grpby'
+###    if( length(xyz) != (length(grpby)*3) )
+###      stop("dimension miss-match in 'xyz' and 'grpby', check lengths")
+###
+###    ##- Bounds of 'grpby' numbers
+###    inds <- bounds(grpby, dup=TRUE)
+###    nres <- nrow(inds)
+###    
+###    ##- Per-residue matrix
+###    m <- matrix(, ncol=nres, nrow=nres)
+###    ij <- pairwise(nres)
+###    
+###    ##  Ignore concetive residues
+###    if (!is.null(scut))
+###      ij <- ij[ij[,2]-ij[,1] > (scut-1),]
+###    
+###    ##- Min per residue
+###    for(k in 1 : nrow(ij) ) {
+###      m[ij[k,1],ij[k,2]] <- min( dmat[ (inds[ij[k,1],"start"]:inds[ij[k,1],"end"]),
+###                                      (inds[ij[k,2],"start"]:inds[ij[k,2],"end"])],
+###                                na.rm=TRUE )
+###    }
+###    return(m)
+###  }
+###}
+###
+###
+###ncmap <- function(xyz, grpby,  dcut=4, scut=3) {
+###
+###  ## Distance matrix (all-atom)
+###  dmat <- ndm( xyz, grpby, scut)
+###  ## Contact map
+###  return(matrix(as.numeric(dmat < dcut),
+###                ncol = ncol(dmat),
+###                nrow = nrow(dmat)))
+###
+###}
+###
 
 
 
@@ -1067,28 +1075,29 @@ interp <- function(start, end, nbeads=25) {
 }
 
 
+### ---- See bio3d::pdbfit()
+#####-- Define a new functions (an easy fit.xyz wrapper)
+###fit <- function(pdbs, inds, outpath=NULL, prefix = "", pdbext = "") {
+###  full <- ifelse(is.null(outpath), FALSE, TRUE)
+###  return( fit.xyz( fixed=pdbs$xyz[1,], mobile=pdbs,
+###                  fixed.inds  = inds, mobile.inds = inds,
+###                  prefix = prefix, pdbext = pdbext,
+###                  outpath = outpath, full.pdbs = full,het=TRUE ))
+###}
+###
+###
+###fit2 <- function(pdbs, inds=NULL, outpath=NULL, ...) {
+###  full <- ifelse(is.null(outpath), FALSE, TRUE)
+###  if(is.null(inds)) {
+###    inds <- gap.inspect(pdbs$xyz)$f.inds
+###  }
+###  return( fit.xyz( fixed=pdbs$xyz[1,], mobile=pdbs,
+###                  fixed.inds  = inds, mobile.inds = inds,
+###                  outpath = outpath, full.pdbs = full, ... ))
+###}
+###
 
-##-- Define a new functions (an easy fit.xyz wrapper)
-fit <- function(pdbs, inds, outpath=NULL, prefix = "", pdbext = "") {
-  full <- ifelse(is.null(outpath), FALSE, TRUE)
-  return( fit.xyz( fixed=pdbs$xyz[1,], mobile=pdbs,
-                  fixed.inds  = inds, mobile.inds = inds,
-                  prefix = prefix, pdbext = pdbext,
-                  outpath = outpath, full.pdbs = full,het=TRUE ))
-}
-
-
-fit2 <- function(pdbs, inds=NULL, outpath=NULL, ...) {
-  full <- ifelse(is.null(outpath), FALSE, TRUE)
-  if(is.null(inds)) {
-    inds <- gap.inspect(pdbs$xyz)$f.inds
-  }
-  return( fit.xyz( fixed=pdbs$xyz[1,], mobile=pdbs,
-                  fixed.inds  = inds, mobile.inds = inds,
-                  outpath = outpath, full.pdbs = full, ... ))
-}
-
-
+### --- See bio3d::ide.filter()
 ide.group <- function(aln=NULL, ide=NULL, cutoff=0.6) {
 
   ##
@@ -1304,22 +1313,25 @@ ide.group <- function(aln=NULL, ide=NULL, cutoff=0.6) {
 ##}
 
 
-pdb.seq.aln <- function(pdb.files, alnfile="pdb_aln.fa", ...) {
 
-  raw <- NULL
-  for(i in 1:length(pdb.files)) {
-    pdb <- read.pdb(pdb.files[i], het2atom=TRUE)
-    seq <- aa321(pdb$atom[pdb$calpha,"resid"])
-    if (is.null(seq)) {
-      raw <- seqbind(raw, c("-","-"))
-    } else {   
-      raw <- seqbind(raw, seq)
-    }
-  }
-  return(seqaln(raw, id=pdb.files, file=alnfile, ...))
-}
+### --- See bio3d::pdbaln()
+###pdb.seq.aln <- function(pdb.files, alnfile="pdb_aln.fa", ...) {
+###
+###  raw <- NULL
+###  for(i in 1:length(pdb.files)) {
+###    pdb <- read.pdb(pdb.files[i], het2atom=TRUE)
+###    seq <- aa321(pdb$atom[pdb$calpha,"resid"])
+###    if (is.null(seq)) {
+###      raw <- seqbind(raw, c("-","-"))
+###    } else {   
+###      raw <- seqbind(raw, seq)
+###    }
+###  }
+###  return(seqaln(raw, id=pdb.files, file=alnfile, ...))
+###}
+###
 
-
+### --- See bio3d::torsion.pdb()
 rama.inds <- function( pdb, zone=c(33:40) ) {
   
   ##- Return xyz indices for PHI-PSI Ramachendran atoms 
@@ -1354,7 +1366,7 @@ plot.rama <- function(phi, psi, col=densCols( cbind(phi, psi)), ...) {
 }
 
 
-
+### --- See bio3d::seq2aln()
 aln2aln <- function(aln.mv, aln.mv.ind=1, aln.rf, aln.rf.ind=1) {
 
   ## saln <- read.fasta("coords/saln.15.afasta")
@@ -1411,6 +1423,7 @@ aln2aln <- function(aln.mv, aln.mv.ind=1, aln.rf, aln.rf.ind=1) {
 }
 
 
+### --- See bio3d::pdbseq()
 ##seq.pdb <- function(pdb, inds=NULL) {
 ##  ## b.inds <- atom.select(pdb, "//B////CA/")
 ##  ## seq.pdb(pdb, b.inds)
@@ -1489,9 +1502,11 @@ write.crdbox <- function(x, trjfile = "R.mdcrd") {
 ## like 'cat' and 'paste' except that their default code{sep}
 ## value is '""' (i.e. no space)
 
-paste0 <- function(..., sep = "") {
-  paste(..., sep = sep)
-}
+### --- See paste0() [now in base R]
+###paste0 <- function(..., sep = "") {
+###  paste(..., sep = sep)
+##}
+
 
 cat0 <- function (..., sep = "") {
   cat(..., sep = sep)
@@ -1714,6 +1729,7 @@ xyz2resp <- function(xyzfile, charge, rest=NULL,
 
 
 
+### --- See bio3d::blast.pdb()
 `blast.n` <-
 function(seq, database="nr") {
 
@@ -2170,37 +2186,39 @@ cat.pdb <- function(pdb1, pdb2) {
 }
 
 
-"renumber.pdb" <-
-function(pdb, first.resno=1, first.eleno=1, bychain=FALSE) {
-
-  ## Renumber 
-  ori.num <- as.numeric(pdb$atom[,"resno"])
-  ##ori.res <- pdb$atom[,"resid"]
-
-  if(bychain) {
-    stop("No code here yet")
-    ##ch <- chain.pdb(pdb)
-    
-  } else {
-    ## concetive residue numbers
-    ##tbl <- table(ori.num)
-    ##new.nums <- first.resno:(first.resno+length(tbl)-1)
-    ##pdb$atom[,"resno"] <- rep(new.nums, tbl)
-
-    ## Everytime old resno changed
-    new.res.len <- rle(ori.num)$lengths
-    nres <- length(new.res.len)
-    new.num <- first.resno:(first.resno+nres-1)
-    new.num <- rep(new.num,  new.res.len)
-  }
-
-  ## Eleno
-  npdb <- pdb
-  npdb$atom[,"eleno"] <- seq(first.eleno, length=nrow(pdb$atom))
-  npdb$atom[,"resno"] <- new.num
-  
-  return(npdb)
-}
+###--- See bio3d::convert.pdb()
+###"renumber.pdb" <-
+###function(pdb, first.resno=1, first.eleno=1, bychain=FALSE) {
+###
+###  ## Renumber 
+###  ori.num <- as.numeric(pdb$atom[,"resno"])
+###  ##ori.res <- pdb$atom[,"resid"]
+###
+###  if(bychain) {
+###    stop("No code here yet")
+###    ##ch <- chain.pdb(pdb)
+###    
+###  } else {
+###    ## concetive residue numbers
+###    ##tbl <- table(ori.num)
+###    ##new.nums <- first.resno:(first.resno+length(tbl)-1)
+###    ##pdb$atom[,"resno"] <- rep(new.nums, tbl)
+###
+###    ## Everytime old resno changed
+###    new.res.len <- rle(ori.num)$lengths
+###    nres <- length(new.res.len)
+###    new.num <- first.resno:(first.resno+nres-1)
+###    new.num <- rep(new.num,  new.res.len)
+###  }
+###
+###  ## Eleno
+###  npdb <- pdb
+###  npdb$atom[,"eleno"] <- seq(first.eleno, length=nrow(pdb$atom))
+###  npdb$atom[,"resno"] <- new.num
+###  
+###  return(npdb)
+###}
+###
 
 
 ## Match vector via matching sequence to alignment
@@ -2222,26 +2240,27 @@ vec2seq <- function(vec, aa.seq, aln) {
   return(Nvec)
 }
 
+### --- See bio3d::vec2resno()
+###vec2resno <- function(vec, resno) {
+###  ## replicate vec based on concetive
+###  ## similar resno entries
+###
+###  if(class(resno)=="pdb")
+###    resno <- pdb$atom[,"resno"]
+###
+###  res.len <- rle(resno)$lengths
+###  if(length(vec) != length(res.len))
+###    stop("Length miss-match of 'vec' and concetive 'resno'")
+###
+###  if( sum(res.len) != length(resno) )
+###    stop("Replicated length Miss-match")
+###  
+###  return( rep(vec,  times=res.len))
+###}
+###
 
-vec2resno <- function(vec, resno) {
-  ## replicate vec based on concetive
-  ## similar resno entries
 
-  if(class(resno)=="pdb")
-    resno <- pdb$atom[,"resno"]
-
-  res.len <- rle(resno)$lengths
-  if(length(vec) != length(res.len))
-    stop("Length miss-match of 'vec' and concetive 'resno'")
-
-  if( sum(res.len) != length(resno) )
-    stop("Replicated length Miss-match")
-  
-  return( rep(vec,  times=res.len))
-}
-
-
-
+### --- See bio3d::vec2resno()
 vec2dimer <- function(vec, aln, pdb, add.chain=TRUE) {
   ## Function to make a numeric vector from
   ## conservation data suitable for the Bfactor
@@ -2269,7 +2288,7 @@ vec2dimer <- function(vec, aln, pdb, add.chain=TRUE) {
 
 
 
-
+### --- See bio3d::bwr.colors()
 "bgr.colors" <-
 function (n) {
 
@@ -2309,8 +2328,9 @@ function (n) {
   rgb(red, blue, green)
 }
 
-# improved list of objects
 
+
+## improved list of objects
 .ls.objects <- function(pos = 1, pattern, order.by,
                         decreasing=FALSE, head=FALSE, n=5) {
 
@@ -2373,44 +2393,44 @@ read.hmmer.tbl <- function(infile) {
 }
 
 
-
-cons.aln <- function(aln, gap.col=0.6) {
-  ## Score residue conservation
-  ## Exclude positions with >= gap.col percent gaps
-  ##
-  ##aln <- read.fasta("~/work/eb1/pfam_aln2.fa")
-  ##con <- cons.aln(aln)
-  ##plot(con$sim, typ="l")
-  ##plot(con$ent.10, typ="h", col=con$col.ent.10)
-  
-  sim <- conserv(x=aln$ali, method="similarity", sub.matrix="bio3d")
-  ent.10 <- conserv(x=aln$ali, method="entropy10")
-  ent.22 <- conserv(x=aln$ali, method="entropy22")
-  ide <- conserv(x=aln$ali, method="identity")
-
-  ## excluding positions >=60 percent gaps)
-  H <- entropy(aln$ali)
-  gap60.inds <- which(apply(H$freq[21:22,],2,sum)>=gap.col) ##0.6)
-
-  ent.10[gap60.inds] = 0
-  ent.22[gap60.inds] = 0
-
-  col.sim <- rep("black", length(sim))
-  col.ent.10 <- col.sim
-  col.ent.22 <- col.sim
-  col.ide <- col.sim
-
-  col.sim[sim >= 0.7] = "red"
-  col.ent.10[ent.10 >= 0.7] = "red"
-  col.ent.22[ent.22 >= 0.7] = "red"
-  col.ide[ide >= 0.7] = "red"
-
-  return(list(sim=sim, ent.10=ent.10, ent.22=ent.22, ide=ide,
-              gap60.inds=gap60.inds, col.sim=col.sim,
-              col.ent.10=col.ent.10, col.ent.22=col.ent.22,
-              col.ide=col.ide) )
-}
-
+### --- See bio3d::conserv()
+###cons.aln <- function(aln, gap.col=0.6) {
+###  ## Score residue conservation
+###  ## Exclude positions with >= gap.col percent gaps
+###  ##
+###  ##aln <- read.fasta("~/work/eb1/pfam_aln2.fa")
+###  ##con <- cons.aln(aln)
+###  ##plot(con$sim, typ="l")
+###  ##plot(con$ent.10, typ="h", col=con$col.ent.10)
+###  
+###  sim <- conserv(x=aln$ali, method="similarity", sub.matrix="bio3d")
+###  ent.10 <- conserv(x=aln$ali, method="entropy10")
+###  ent.22 <- conserv(x=aln$ali, method="entropy22")
+###  ide <- conserv(x=aln$ali, method="identity")
+###
+###  ## excluding positions >=60 percent gaps)
+###  H <- entropy(aln$ali)
+###  gap60.inds <- which(apply(H$freq[21:22,],2,sum)>=gap.col) ##0.6)
+###
+###  ent.10[gap60.inds] = 0
+###  ent.22[gap60.inds] = 0
+###
+###  col.sim <- rep("black", length(sim))
+###  col.ent.10 <- col.sim
+###  col.ent.22 <- col.sim
+###  col.ide <- col.sim
+###
+###  col.sim[sim >= 0.7] = "red"
+###  col.ent.10[ent.10 >= 0.7] = "red"
+###  col.ent.22[ent.22 >= 0.7] = "red"
+###  col.ide[ide >= 0.7] = "red"
+###
+###  return(list(sim=sim, ent.10=ent.10, ent.22=ent.22, ide=ide,
+###              gap60.inds=gap60.inds, col.sim=col.sim,
+###              col.ent.10=col.ent.10, col.ent.22=col.ent.22,
+###              col.ide=col.ide) )
+###}
+###
 
 pathInterp <- function(z, npoint=12) {
   ## Given PCA Z coords for two conformers (rows) return
@@ -2435,7 +2455,7 @@ pathInterp <- function(z, npoint=12) {
 ##
 ## Description:  Functions for FTmap analysis of trajectorys and aligned PDBs
 ## Date:         Wed Feb  8 10:42:39 EST 2012 
-## Author:       Barry Grantbjgrant@umich.edu
+## Author:       Barry Grant bjgrant@umich.edu
 ##
 
 probe.trj <- function(pdbfiles, max1=TRUE) {
@@ -2693,7 +2713,8 @@ mustang <- function(pdbfiles, alnfile="mustangaln") {
 }
 
 
-add.grid <- function(sse, col="gray", lty="dashed") {
+### --- See add.dccm.grid() below
+add.grid.old <- function(sse, col="gray", lty="dashed") {
   ## Add a grid to a plot.dccm() plot
   ##   sse <- dssp(pdb)
   ##   plot.dccm(cij, sse=see)
@@ -2729,10 +2750,137 @@ add.grid <- function(sse, col="gray", lty="dashed") {
 }
 
 
+add.dccm.grid <- function(x, fill.col=NA, helix.col="purple", sheet.col="yellow",
+                          line.col="black", lty=1, lwd=1, segment.min=1,
+                          alpha=0.3, side=c(1,2)) {
+  
+  ## Add a grid or colored boxes to a plot.dccm() plot
+  ##   sse <- dssp(pdb)
+  ##   plot.dccm(cij, sse=see)
+  ##   add.dccm.grid(sse)
+  ##   add.dccm.grid(list("start"=c(50, 100, 150), "length"=c(10,25,50)))
+  ##   add.dccm.grid(list("start"=c(50, 100, 150), "length"=c(10,25,50)),
+  ##                 fill.col=c("blue","red","green"))
+  ##   plot.dccm2(cij, margin.segments=net$membership, segment.min=15)
+  ##   add.dccm.grid( net$membership, segment.min=15)
+  ##
+  ##   add.dccm.grid( net$membership, segment.min=25)
+  ##   add.dccm.grid( net$membership, segment.min=25, fill.col="gray")
+
+  ##-- Function to draw box on plot
+  draw.box <- function(start, length, xymin=0, xymax=1,
+                       fill.col="gray", alpha=0.3, line.col="black", lty=1, lwd=1, 
+                       side=c(1,2) ) {
+    
+    ##-- Draw Annotation Blocks On DCCM Plots
+    ##    draw.box(150,20) 
+    ##    draw.box(50,100, side=1, fill.col=NA, lty=2)
+
+    ## Grid graphics paramaters
+    gp <- gpar(fill=fill.col, col=line.col,
+               lty=lty, lwd=lwd, alpha=alpha)
+
+    vp <- vpPath("plot_01.toplevel.vp",
+                 "plot_01.panel.1.1.vp")
+
+    ##- Side 1: From Bottom Margin
+    if( (side==1) || (side=="both") || all(side==c(1,2)) ) {
+      grid.rect(x=unit(start-0.5, "native"),
+                y=xymin,
+                width=unit(length-0.5, "native"),
+                height=xymax,
+                gp=gp, just=c("left","bottom"), vp=vp) 
+    }
+    
+    ##- Side 2: From Left Margin
+    if( (side==2) || (side=="both") || all(side==c(1,2)) ) {
+      grid.rect(x=xymin, 
+                y=unit(start-0.5, "native"),
+                width=xymax,
+                height=unit(length-0.5, "native"),
+                gp=gp, just=c("left","bottom"), vp=vp)      
+    }
+  }
+
+
+  ##NOTE: For all 'x' objects that are not vectors we will exclude
+  ##      segments that are under 'segment.min' in length
+  segment.min.exclusion = TRUE 
+  
+
+
+  ##-- Parse 'x' Input --##
+  
+  ##- For vector input objects - e.g. $membership from cutree()
+  if( (is.vector(x)) && (!is.list(x)) ) {
+    grps <- table(x)
+
+    ## Exclude small grps less than 'segment.min'
+    ##  But do not do more filtering below 
+    grps = names( grps[grps > segment.min] )
+    segment.min.exclusion=FALSE ##<--- good idea but plots are too crowded!!
+
+    store.grps <- NULL; 
+    for(i in 1:length(grps)) {
+      store.grps <- rbind(store.grps,
+          cbind( bounds(which(x == grps[i])),
+                "grp"=as.numeric(grps[i])) )
+    }
+    ## convert to matrix for use below
+    x=store.grps
+
+    ## Dont do any more filtering
+    
+  }
+
+  ##- For SSE objects
+  if(class(x) == "dssp") {
+    start <- c(x$helix$start, x$sheet$start)
+    length <- c(x$helix$length, x$sheet$length)
+    
+    ## If no 'fill.col' is provided use helix and sheet specific fill.col
+    if(is.na(fill.col)) {
+      fill.col <- c(rep(helix.col, length(x$helix$start)),
+                    rep(sheet.col, length(x$sheet$start)) )
+    }
+  }  
+
+  ##- For other list objects
+  if(class(x) == "list") {
+    start <- x$start
+    length <- x$length
+  }
+
+  ##- For matrix objects - e.g. from bounds()
+  if(class(x) =="matrix") {
+    start  <- x[,"start"]
+    length <- x[,"length"]
+  }
+
+
+  ##-- Filter out short segments based on input 'segment.min'
+  if(segment.min.exclusion) {
+    inds <- !(length < segment.min)
+    start <- start[inds]
+    length <- length[inds]
+    if(length(fill.col > 1)) { fill.col <- fill.col[inds] }
+  }
+  
+  ## Draw
+  draw.box(start, length, fill.col=fill.col)
+}
+
+  
+
+
+
+
+
 col.wheel <- function(str, cex=0.75) {
   ## Produce a simple chart for picking color names
   ##  e.g. col.wheel("slate")
-  ##       col.wheel("dark") etc...
+  ##       col.wheel("dark")
+  ##       col.wheel("red") # etc...
   cols <- colors()[grep(str, colors())]
   pie(rep(1, length(cols)), labels=cols, col=cols, cex=cex)
   cols
