@@ -1,5 +1,6 @@
 "write.pdb" <-
 function (pdb = NULL,
+          file = "R.pdb",
           xyz = pdb$xyz,
           resno = NULL,
           resid = NULL,
@@ -12,8 +13,7 @@ function (pdb = NULL,
           append = FALSE,
           verbose =FALSE,
           chainter = FALSE,
-          end = TRUE,
-          file = "R.pdb") {
+          end = TRUE) {
 
   if(is.null(xyz) || !is.numeric(xyz))
     stop("write.pdb: please provide a 'pdb' object or numeric 'xyz' coordinates")
@@ -132,9 +132,12 @@ function (pdb = NULL,
       cat(paste("Writing 1 frame with",natom,"atoms "))
     }
     lines <- NULL
+    ii = 0
+    teleno <- as.numeric(eleno)
     for (i in 1:natom) {
+       
       lines <- rbind(lines, atom.print( card = card[i],
-                                       eleno = eleno[i],
+                                       eleno = as.character(teleno[i] + ii),
                                        elety = elety[i],
                                        resid = resid[i],
                                        chain = chain[i],
@@ -145,9 +148,13 @@ function (pdb = NULL,
                                        o = o[i], b = b[i]) )
       
       ## Inserted Jul 8th 2008 for adding TER between chains 
+      ## Modified to be consistent to PDB format v3.3
       if(chainter) {
         if(i  %in% ter.lines) {
-          lines <- rbind(lines, "TER   ")
+#          lines <- rbind(lines, "TER   ")
+          ii = ii + 1
+          lines <- rbind(lines, sprintf("%-6s%5s%6s%3s%1s%1s%4s%1s", 
+               "TER", as.character(teleno[i] + ii), "", resid[i], "", chain[i], resno[i], ""))
         }
       }
           
@@ -155,8 +162,13 @@ function (pdb = NULL,
     ## Changed cat() for write.table() as sugested by Joao Martins <joao.martins@env.ethz.ch>
     ##cat(lines, file = file, sep = "\n", append = append)
     write.table(lines, file = file, quote = FALSE, row.names = FALSE, col.names = FALSE, append = append)
+    if(chainter) {
+          ii = ii + 1
+          cat(sprintf("%-6s%5s%6s%3s%1s%1s%4s%1s\n", "TER", as.character(teleno[i] + ii), "", 
+              resid[i], "", chain[i], resno[i], ""), file = file, append = TRUE)
+    }
     if(end) {
-      cat("TER   ","END", file = file, sep = "\n", append = TRUE)
+      cat("END", file = file, append = TRUE)
     }
     
   } else {
@@ -168,8 +180,10 @@ function (pdb = NULL,
     for (j in 1:nfile) {
       coords <- matrix(round(as.numeric(xyz[j,]), 3), ncol = 3, byrow = TRUE)
       lines <- NULL
+      ii = 0
+      teleno <- as.numeric(eleno)
       for (i in 1:natom) {
-        lines <- rbind(lines, atom.print( eleno = eleno[i],
+        lines <- rbind(lines, atom.print( eleno = as.character(teleno[i] + ii),
                                          elety = elety[i],
                                          resid = resid[i],
                                          chain = chain[i],
@@ -180,9 +194,13 @@ function (pdb = NULL,
                                          o = o[i], b = b[i]) )
 
         ## Inserted Jul 8th 2008 for adding TER between chains (untested) 
+        ## Modified to be consistent to PDB format v3.3
         if(chainter) {
           if(i  %in% ter.lines) {
-            lines <- rbind(lines, "TER   ")
+#            lines <- rbind(lines, "TER   ")
+            ii = ii + 1
+            lines <- rbind(lines, sprintf("%-6s%5s%6s%3s%1s%1s%4s%1s", 
+               "TER", as.character(teleno[i] + ii), "", resid[i], "", chain[i], resno[i], ""))
           }
         }
         
@@ -191,9 +209,16 @@ function (pdb = NULL,
         if (j%%50 == 0) cat(".")
       }
       ##cat(lines, file = file, sep = "\n", append = TRUE)
+      cat(sprintf("%-6s%4s%4d\n", "MODEL", " ", j), file = file)
       write.table(lines, file = file, quote = FALSE, row.names = FALSE, col.names = FALSE, append = TRUE)
+      if(chainter) {
+         ii = ii + 1
+         cat(sprintf("%-6s%5s%6s%3s%1s%1s%4s%1s\n", "TER", as.character(teleno[i] + ii), "", 
+              resid[i], "", chain[i], resno[i], ""), file=file, append=TRUE)
+      }
+      cat(sprintf("%-6s\n", "ENDMDL"), file = file, append = TRUE)
       if(end) {
-        cat("TER   ","END", file = file, sep = "\n", append = TRUE)
+        cat("END", file = file,  append = TRUE)
       }
     }
 

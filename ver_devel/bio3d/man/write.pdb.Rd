@@ -6,13 +6,14 @@
   Cartesian coordinate vector or matrix.
 }
 \usage{
-write.pdb(pdb = NULL, xyz = pdb$xyz, resno = NULL, resid = NULL, eleno =
-NULL, elety = NULL, chain = NULL, o = NULL, b = NULL, het = FALSE,
-append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE, file = "R.pdb")
+write.pdb(pdb = NULL, file = "R.pdb", xyz = pdb$xyz, resno = NULL, resid = 
+NULL, eleno = NULL, elety = NULL, chain = NULL, o = NULL, b = NULL, 
+het = FALSE, append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE)
 }
 \arguments{
   \item{pdb}{ a PDB structure object obtained from
     \code{\link{read.pdb}}. }
+  \item{file}{ the output file name. }
   \item{xyz}{ Cartesian coordinates as a vector or 3xN matrix. }
   \item{resno}{ vector of residue numbers of length equal to
     length(xyz)/3. }
@@ -35,7 +36,6 @@ append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE, file = "R.pdb")
   \item{chainter}{ logical, if TRUE a TER line is inserted between
     chains. }
   \item{end}{ logical, if TRUE TER and END lines are written. }
-  \item{file}{ the output file name. }
 }
 \details{
   Only the \code{xyz} argument is strictly required.  Other arguments
