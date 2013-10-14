@@ -196,7 +196,7 @@ function (pdb = NULL,
               resid[i], "", chain[i], resno[i], ""), file = file, append = TRUE)
     }
     if(end) {
-      cat("END   ", file = file, append = TRUE)
+      cat("END   \n", file = file, append = TRUE)
     }
     
   } else {
@@ -250,7 +250,7 @@ function (pdb = NULL,
       cat(sprintf("%-6s\n", "ENDMDL"), file = file, append = TRUE)
     }
     if(end) {
-      cat("END   ", file = file,  append = TRUE)
+      cat("END   \n", file = file,  append = TRUE)
     }
 
   }
