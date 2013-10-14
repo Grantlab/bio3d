@@ -33,9 +33,9 @@ het = FALSE, append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE)
   \item{append}{ logical, if TRUE output is appended to the bottom of an
     existing file (used primarly for writing multi-model files). }
   \item{verbose}{ logical, if TRUE progress details are printed. }
-  \item{chainter}{ logical, if TRUE a TER line is inserted between
-    chains. }
-  \item{end}{ logical, if TRUE TER and END lines are written. }
+  \item{chainter}{ logical, if TRUE a TER line is inserted at termination
+    of a chain. }
+  \item{end}{ logical, if TRUE END line is written. }
 }
 \details{
   Only the \code{xyz} argument is strictly required.  Other arguments

@@ -168,7 +168,7 @@ function (pdb = NULL,
               resid[i], "", chain[i], resno[i], ""), file = file, append = TRUE)
     }
     if(end) {
-      cat("END", file = file, append = TRUE)
+      cat("END   ", file = file, append = TRUE)
     }
     
   } else {
@@ -209,7 +209,7 @@ function (pdb = NULL,
         if (j%%50 == 0) cat(".")
       }
       ##cat(lines, file = file, sep = "\n", append = TRUE)
-      cat(sprintf("%-6s%4s%4d\n", "MODEL", " ", j), file = file)
+      cat(sprintf("%-6s%4s%4d\n", "MODEL", " ", j), file = file, append = TRUE)
       write.table(lines, file = file, quote = FALSE, row.names = FALSE, col.names = FALSE, append = TRUE)
       if(chainter) {
          ii = ii + 1
@@ -217,9 +217,9 @@ function (pdb = NULL,
               resid[i], "", chain[i], resno[i], ""), file=file, append=TRUE)
       }
       cat(sprintf("%-6s\n", "ENDMDL"), file = file, append = TRUE)
-      if(end) {
-        cat("END", file = file,  append = TRUE)
-      }
+    }
+    if(end) {
+      cat("END   ", file = file,  append = TRUE)
     }
 
   }
