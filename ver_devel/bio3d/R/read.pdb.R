@@ -26,13 +26,14 @@ function (file, maxlines=-1, multi=FALSE,
     }
   }
 
-  # PDB FORMAT v2.0:    colpos,  datatype,    name,      description
+  # PDB FORMAT v3.3:    colpos,  datatype,    name,      description
   atom.format <- matrix(c(-6,     NA,          NA,       # (ATOM)
                           5,     'numeric',   "eleno",   # atom_no
                          -1,     NA,          NA,        # (blank)
                           4,     'character', "elety",   # atom_ty
                           1,     'character', "alt",     # alt_loc
-                          4,     'character', "resid",   # res_na
+                          3,     'character', "resid",   # res_na
+                         -1,     NA,          NA,        # (blank)
                           1,     'character', "chain",   # chain_id
                           4,     'numeric',   "resno",   # res_no
                           1,     'character', "insert",  # ins_code
@@ -43,9 +44,11 @@ function (file, maxlines=-1, multi=FALSE,
                           6,     'numeric',   "o",       # o
                           6,     'numeric',   "b",       # b
                          -6,     NA,           NA,       # (blank)
-                          4,     'character', "segid"    # seg_id
+                          4,     'character', "segid",   # seg_id
+                          2,     'character', "elesy",   # element symbol
+                          2,     'numeric', "charge"     # charge on the atom
                          ), ncol=3, byrow=TRUE,
-                       dimnames = list(c(1:17), c("widths","what","name")) )
+                       dimnames = list(c(1:20), c("widths","what","name")) )
 
   split.string <- function(x) {
     # split a string 'x'

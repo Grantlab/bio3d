@@ -7,8 +7,9 @@
 }
 \usage{
 write.pdb(pdb = NULL, file = "R.pdb", xyz = pdb$xyz, resno = NULL, resid = 
-NULL, eleno = NULL, elety = NULL, chain = NULL, o = NULL, b = NULL, 
-het = FALSE, append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE)
+NULL, eleno = NULL, elety = NULL, chain = NULL, o = NULL, b = NULL,
+segid = NULL, elesy = NULL, charge = NULL, het = FALSE, append = FALSE, 
+verbose = FALSE, chainter = FALSE, end = TRUE, print.segid = FALSE)
 }
 \arguments{
   \item{pdb}{ a PDB structure object obtained from
@@ -28,6 +29,9 @@ het = FALSE, append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE)
   \item{o}{ vector of occupancy values of length equal to
     length(xyz)/3. }
   \item{b}{ vector of B-factors of length equal to length(xyz)/3. }
+  \item{segid}{ vector of segment id of length equal to length(xyz)/3. }
+  \item{elesy}{ vector of element symbol of length equal to length(xyz)/3. }
+  \item{charge}{ vector of atomic charge of length equal to length(xyz)/3. }
   \item{het}{ logical, if TRUE \sQuote{HETATM} records from \code{pdb}
     object are written to the output PDB file. } 
   \item{append}{ logical, if TRUE output is appended to the bottom of an
@@ -36,6 +40,7 @@ het = FALSE, append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE)
   \item{chainter}{ logical, if TRUE a TER line is inserted at termination
     of a chain. }
   \item{end}{ logical, if TRUE END line is written. }
+  \item{print.segid}{ logical, if FALSE segid will not be written. }
 }
 \details{
   Only the \code{xyz} argument is strictly required.  Other arguments

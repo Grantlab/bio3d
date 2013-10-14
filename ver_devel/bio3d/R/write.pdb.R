@@ -9,11 +9,15 @@ function (pdb = NULL,
           chain = NULL,
           o = NULL,
           b = NULL,
+          segid = NULL,
+          elesy = NULL,
+          charge = NULL,
           het = FALSE,
           append = FALSE,
           verbose =FALSE,
           chainter = FALSE,
-          end = TRUE) {
+          end = TRUE, 
+          print.segid = FALSE) {
 
   if(is.null(xyz) || !is.numeric(xyz))
     stop("write.pdb: please provide a 'pdb' object or numeric 'xyz' coordinates")
@@ -70,20 +74,37 @@ function (pdb = NULL,
     if (is.null(b)) {
       b = pdb$atom[, "b"]
       if (het) { b = c(b, pdb$het[, "b"]) }}
-    
+     
     if (any(is.na(o))) {      o = rep("1.00", natom) }
     if (any(is.na(b))) {      b = rep("0.00", natom) }
     #if (any(is.na(chain))) { chain = rep(" ", natom) }
-    chain[is.na(chain)]= " "
+    chain[is.na(chain)]= ""
     
+    if (is.null(segid)) {
+       segid = pdb$atom[, "segid"]
+       if (het) { segid = c(segid, pdb$het[, "segid"]) }}
+    segid[is.na(segid)] = ""
+ 
+    if (is.null(elesy)) {
+       elesy = pdb$atom[, "elesy"]
+       if (het) { elesy = c(elesy, pdb$het[, "elesy"]) }}
+    elesy[is.na(elesy)] = ""
+   
+    if (is.null(charge)) {
+       charge = pdb$atom[, "charge"]
+       if (het) { charge = c(charge, pdb$het[, "charge"]) }}
+   
   } else {
     if (is.null(resno)) resno = c(1:natom)
     if (is.null(resid)) resid = rep("ALA", natom)
     if (is.null(eleno)) eleno = c(1:natom)
     if (is.null(elety)) elety = rep("CA", natom)
-    if (is.null(chain)) chain = rep(" ", natom)
+    if (is.null(chain)) chain = rep("", natom)
     if (is.null(o))         o = rep("1.00",natom)
     if (is.null(b))         b = rep("0.00", natom)
+    if (is.null(segid)) segid = rep("", natom)
+    if (is.null(elesy)) elesy = rep("", natom)
+    if (is.null(charge)) charge = rep("", natom)
   }
 
   
@@ -94,7 +115,8 @@ function (pdb = NULL,
     stop("write.pdb: 'length(xyz)' must be divisable by 3.")
   }
   check.lengths <- sum(length(resno), length(resid), length(eleno),
-                       length(elety), length(o), length(b))
+                       length(elety), length(o), length(b), length(segid), 
+                       length(elesy), length(charge))
   if (check.lengths%%natom != 0) {
     stop("write.pdb: the lengths of all input vectors != 'length(xyz)/3'.")
   }
@@ -104,6 +126,9 @@ function (pdb = NULL,
   b <- as.numeric(b)
   eleno <- as.character(eleno)
   resno <- as.character(resno)
+  charge <- as.character(charge)
+  charge[is.na(charge)] = ""
+  if(!print.segid) segid = rep("", natom)
   ## Inserted Jul 8th 2008 for adding TER between chains
   ter.lines <- (which(!duplicated(chain))[-1] - 1)
 
@@ -111,17 +136,17 @@ function (pdb = NULL,
   
   atom.print <- function(card = "ATOM", eleno, elety, alt = "",
         resid, chain = "", resno, insert = "", x, y, z, o = "1.00",
-        b = "0.00", segid = "") {
+        b = "0.00", segid = "", elesy = "", charge = "") {
     
-    format <- "%-6s%5s  %-3s%1s%-4s%1s%4s%1s%3s%8.3f%8.3f%8.3f%6.2f%6.2f%6s%4s"
+    format <- "%-6s%5s  %-3s%1s%-3s%1s%1s%4s%1s%3s%8.3f%8.3f%8.3f%6.2f%6.2f%6s%4s%2s%2s"
     if (nchar(elety) > 3) {
 #    if (nchar(elety) >= 3) {
 #      if ((substr(elety, 2, 2) == "H") | (substr(elety, 1, 1) == "H")) {
-        format <- "%-6s%5s %-4s%1s%-4s%1s%4s%1s%3s%8.3f%8.3f%8.3f%6.2f%6.2f%6s%4s"
+        format <- "%-6s%5s %-4s%1s%-3s%1s%1s%4s%1s%3s%8.3f%8.3f%8.3f%6.2f%6.2f%6s%4s%2s%2s"
 #      }
     }
-    sprintf(format, card, eleno, elety, alt, resid, chain,
-            resno, insert, "", x, y, z, o, b, "", segid)
+    sprintf(format, card, eleno, elety, alt, resid, "", chain,
+            resno, insert, "", x, y, z, o, b, "", segid, elesy, charge)
   } 
 
 
@@ -145,12 +170,15 @@ function (pdb = NULL,
                                        x = coords[i, 1],
                                        y = coords[i, 2],
                                        z = coords[i, 3],
-                                       o = o[i], b = b[i]) )
+                                       o = o[i], b = b[i],
+                                       segid = segid[i],
+                                       elesy = elesy[i],
+                                       charge = charge[i]))
       
       ## Inserted Jul 8th 2008 for adding TER between chains 
       ## Modified to be consistent to PDB format v3.3
       if(chainter) {
-        if(i  %in% ter.lines) {
+        if(i %in% ter.lines) {
 #          lines <- rbind(lines, "TER   ")
           ii = ii + 1
           lines <- rbind(lines, sprintf("%-6s%5s%6s%3s%1s%1s%4s%1s", 
@@ -191,7 +219,10 @@ function (pdb = NULL,
                                          x = coords[i, 1],
                                          y = coords[i, 2],
                                          z = coords[i, 3],
-                                         o = o[i], b = b[i]) )
+                                         o = o[i], b = b[i],
+                                         segid = segid[i],
+                                         elesy = elesy[i],
+                                         charge = charge[i]))
 
         ## Inserted Jul 8th 2008 for adding TER between chains (untested) 
         ## Modified to be consistent to PDB format v3.3
