@@ -32,8 +32,7 @@ function (file, maxlines=-1, multi=FALSE,
                          -1,     NA,          NA,        # (blank)
                           4,     'character', "elety",   # atom_ty
                           1,     'character', "alt",     # alt_loc
-                          3,     'character', "resid",   # res_na
-                         -1,     NA,          NA,        # (blank)
+                          4,     'character', "resid",   # res_na
                           1,     'character', "chain",   # chain_id
                           4,     'numeric',   "resno",   # res_no
                           1,     'character', "insert",  # ins_code
@@ -48,7 +47,7 @@ function (file, maxlines=-1, multi=FALSE,
                           2,     'character', "elesy",   # element symbol
                           2,     'numeric', "charge"     # charge on the atom
                          ), ncol=3, byrow=TRUE,
-                       dimnames = list(c(1:20), c("widths","what","name")) )
+                       dimnames = list(c(1:19), c("widths","what","name")) )
 
   split.string <- function(x) {
     # split a string 'x'
