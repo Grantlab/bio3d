@@ -1,6 +1,19 @@
 "get.pdb" <-
-  function (ids, path = ".", URLonly = FALSE, overwrite = FALSE ) 
+  function (ids, path = ".", URLonly = FALSE, overwrite = FALSE, verbose = TRUE, ncore = 1 ) 
 {
+    # Parallelized by multicore package (Tue Oct 15 15:23:36 EDT 2013)
+    if(ncore > 1) {
+       oops <- require(multicore)
+       if(!oops)
+          stop("Please install the multicore package from CRAN")
+       if(ncore > 8) {
+          # To avoid too frequent access to PDB server
+          warning("Maximum ncore (=8) exceeds")
+          ncore = 8
+       }
+       options(cores = ncore)
+    }
+
     if (any(nchar(ids) != 4)) {
         warning("ids should be standard 4 character PDB formart: trying first 4 char...")
         ids <- substr(basename(ids), 1, 4)
@@ -15,16 +28,30 @@
     if(!file.exists(path))
        dir.create(path)
     rtn <- rep(NA, length(pdb.files))
-    for (k in 1:length(pdb.files)) {
-      
-      if (!file.exists(put.files[k]) | overwrite ) {
-        rtn[k] <- download.file(get.files[k], put.files[k])
-      }
-      else {
-        rtn[k] <- put.files[k]
-        warning(paste(put.files[k], " exists. Skipping download"))
-      }
-      
+    if(ncore>1) {
+       rtn <- unlist(mclapply(1:length(pdb.files), function(k) {
+          if (!file.exists(put.files[k]) | overwrite ) {
+            rtn <- download.file(get.files[k], put.files[k], quiet = !verbose)
+          }
+          else {
+            rtn <- put.files[k]
+            warning(paste(put.files[k], " exists. Skipping download"))
+          }
+          return(rtn)
+       }))
+       readChildren()
+    } else {
+       for (k in 1:length(pdb.files)) {
+         
+         if (!file.exists(put.files[k]) | overwrite ) {
+           rtn[k] <- download.file(get.files[k], put.files[k], quiet = !verbose)
+         }
+         else {
+           rtn[k] <- put.files[k]
+           warning(paste(put.files[k], " exists. Skipping download"))
+         }
+         
+       }
     }
     names(rtn) <- file.path(path, paste(ids, ".pdb", sep = ""))
     if (any(rtn == 1)) {

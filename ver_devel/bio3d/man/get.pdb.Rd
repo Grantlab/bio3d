@@ -5,7 +5,8 @@
   Downloads PDB coordinate files from the RCSB Protein Data Bank.
 }
 \usage{
-get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE)
+get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, 
+     verbose = TRUE, ncore = 1)
 }
 \arguments{
   \item{ids}{ A character vector of one or more 4-letter PDB
@@ -17,6 +18,9 @@ get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE)
     FALSE the files are downloaded. }
   \item{overwrite}{ logical, if FALSE the file will not be downloaded if
     it alread exist. }
+  \item{verbose}{ print details of the reading process. }
+  \item{ncore}{ number of CPU cores used to do the calculation.
+     \code{ncore>1} requires multicore package installed. }
 }
 \details{
   This is a basic function to automate file download from the PDB.
