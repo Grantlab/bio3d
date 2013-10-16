@@ -5,7 +5,7 @@
   Downloads PDB coordinate files from the RCSB Protein Data Bank.
 }
 \usage{
-get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, 
+get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, gzip = FALSE,
      verbose = TRUE, ncore = 1)
 }
 \arguments{
@@ -18,6 +18,8 @@ get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE,
     FALSE the files are downloaded. }
   \item{overwrite}{ logical, if FALSE the file will not be downloaded if
     it alread exist. }
+  \item{gzip}{ logical, if TRUE the gzipped PDB will be downloaded and
+    extracted locally. }
   \item{verbose}{ print details of the reading process. }
   \item{ncore}{ number of CPU cores used to do the calculation.
      \code{ncore>1} requires multicore package installed. }

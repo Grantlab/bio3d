@@ -6,15 +6,16 @@
   files with one file for each chain.
 }
 \usage{
-pdbsplit(pdb.files, ids = NULL, path = "split_chain", multi=FALSE)
+pdbsplit(pdb.files, ids = NULL, path = "split_chain", \dots)
 }
 \arguments{
   \item{pdb.files}{ a character vector of PDB file names. }
   \item{ids}{ a character vector of PDB and chain identifiers
     (\sQuote{pdbId_chainId}). Used for filtering chain IDs for output. }
   \item{path}{ output path for chain-split files. }
-  \item{multi}{ logical, if TRUE atom records for all models in
-    multi-model files are splitted. }
+  \item{...}{ additional arguments to \code{read.pdb}. Useful e.g. for
+    parsing multi model PDB files, or include HETATM records in the
+    split files. }
 }
 \details{
   This function will produce single chain PDB files from multi-chain
@@ -52,7 +53,8 @@ pdbsplit(pdb.files, ids = NULL, path = "split_chain", multi=FALSE)
 
 \dontrun{
   ## desired pdbID-chainID combinations
-  ids <- c("1YX5_A", "3NOB_B", "1P3Q_Q", "2D3G_A", "1F9J_A")
+  ## for the last entry (1f9j), fetch all chains
+  ids <- c("1YX5_A", "3NOB_B", "1P3Q_Q", "2D3G_A", "1F9J")
 
   ## Same as above, but return only selected pdbID-chainID combinations
   sel.files <- pdbsplit(raw.files, ids,

@@ -1,6 +1,9 @@
 "get.pdb" <-
-  function (ids, path = ".", URLonly = FALSE, overwrite = FALSE, verbose = TRUE, ncore = 1 ) 
+  function (ids, path = ".", URLonly = FALSE, overwrite = FALSE, gzip = FALSE, verbose = TRUE, ncore = 1 ) 
 {
+    if(.Platform$OS.type=="windows")
+      gzip <- FALSE
+    
     # Parallelized by multicore package (Tue Oct 15 15:23:36 EDT 2013)
     if(ncore > 1) {
        oops <- require(multicore)
@@ -15,11 +18,11 @@
     }
 
     if (any(nchar(ids) != 4)) {
-        warning("ids should be standard 4 character PDB formart: trying first 4 char...")
+        warning("ids should be standard 4 character PDB-IDs: trying first 4 characters...")
         ids <- substr(basename(ids), 1, 4)
     }
     ids <- unique(ids)
-    pdb.files <- paste(ids, ".pdb", sep = "")
+    pdb.files <- paste(ids, ".pdb", ifelse(gzip, ".gz", ""), sep = "")
     get.files <- file.path("http://www.rcsb.org/pdb/files", pdb.files)
     if (URLonly) 
         return(get.files)
@@ -28,10 +31,15 @@
     if(!file.exists(path))
        dir.create(path)
     rtn <- rep(NA, length(pdb.files))
+
     if(ncore>1) {
        rtn <- unlist(mclapply(1:length(pdb.files), function(k) {
-          if (!file.exists(put.files[k]) | overwrite ) {
+          if (!file.exists(sub(".gz$", "", put.files[k])) | overwrite ) {
             rtn <- download.file(get.files[k], put.files[k], quiet = !verbose)
+            if(gzip) {
+               cmd <- paste("gunzip -f", put.files[k])
+               system(cmd)
+            }
           }
           else {
             rtn <- put.files[k]
@@ -42,9 +50,12 @@
        readChildren()
     } else {
        for (k in 1:length(pdb.files)) {
-         
-         if (!file.exists(put.files[k]) | overwrite ) {
+         if (!file.exists(sub(".gz$", "", put.files[k])) | overwrite ) {
            rtn[k] <- download.file(get.files[k], put.files[k], quiet = !verbose)
+           if(gzip) {
+              cmd <- paste("gunzip -f", put.files[k])
+              system(cmd)
+           }
          }
          else {
            rtn[k] <- put.files[k]
@@ -53,6 +64,7 @@
          
        }
     }
+    
     names(rtn) <- file.path(path, paste(ids, ".pdb", sep = ""))
     if (any(rtn == 1)) {
         warning("Some files could not be downloaded, check returned value")
