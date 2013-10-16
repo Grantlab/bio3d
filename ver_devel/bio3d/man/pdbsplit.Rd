@@ -15,7 +15,7 @@ pdbsplit(pdb.files, ids = NULL, path = "split_chain", \dots)
   \item{path}{ output path for chain-split files. }
   \item{...}{ additional arguments to \code{read.pdb}. Useful e.g. for
     parsing multi model PDB files, or include HETATM records in the
-    splitted files. }
+    split files. }
 }
 \details{
   This function will produce single chain PDB files from multi-chain
