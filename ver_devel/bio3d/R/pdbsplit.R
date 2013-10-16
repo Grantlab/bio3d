@@ -1,5 +1,5 @@
 `pdbsplit` <-
-function(pdb.files, ids=NULL, path="split_chain", multi=FALSE) {
+function(pdb.files, ids=NULL, path="split_chain", ...) {
   out <- c(); unused <- c()
   toread <- file.exists(pdb.files)
   toread[substr(pdb.files, 1, 4) == "http"] <- TRUE
@@ -15,7 +15,7 @@ function(pdb.files, ids=NULL, path="split_chain", multi=FALSE) {
   if(!file.exists(path)) 
      dir.create(path)
   for (i in 1:length(pdb.files)) {
-    pdb <- read.pdb(pdb.files[i], multi=multi, het2atom = TRUE, maxlines = -1)
+    pdb <- read.pdb(pdb.files[i], ...)
     chains <- unique(pdb$atom[, "chain"])
     
     if(!is.null(ids)) {

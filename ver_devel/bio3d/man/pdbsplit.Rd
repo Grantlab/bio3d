@@ -6,15 +6,16 @@
   files with one file for each chain.
 }
 \usage{
-pdbsplit(pdb.files, ids = NULL, path = "split_chain", multi=FALSE)
+pdbsplit(pdb.files, ids = NULL, path = "split_chain", \dots)
 }
 \arguments{
   \item{pdb.files}{ a character vector of PDB file names. }
   \item{ids}{ a character vector of PDB and chain identifiers
     (\sQuote{pdbId_chainId}). Used for filtering chain IDs for output. }
   \item{path}{ output path for chain-split files. }
-  \item{multi}{ logical, if TRUE atom records for all models in
-    multi-model files are splitted. }
+  \item{...}{ additional arguments to \code{read.pdb}. Useful e.g. for
+    parsing multi model PDB files, or include HETATM records in the
+    splitted files. }
 }
 \details{
   This function will produce single chain PDB files from multi-chain
