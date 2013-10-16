@@ -53,7 +53,8 @@ pdbsplit(pdb.files, ids = NULL, path = "split_chain", \dots)
 
 \dontrun{
   ## desired pdbID-chainID combinations
-  ids <- c("1YX5_A", "3NOB_B", "1P3Q_Q", "2D3G_A", "1F9J_A")
+  ## for the last entry (1f9j), fetch all chains
+  ids <- c("1YX5_A", "3NOB_B", "1P3Q_Q", "2D3G_A", "1F9J")
 
   ## Same as above, but return only selected pdbID-chainID combinations
   sel.files <- pdbsplit(raw.files, ids,

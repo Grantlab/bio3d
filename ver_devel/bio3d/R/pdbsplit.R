@@ -19,11 +19,14 @@ function(pdb.files, ids=NULL, path="split_chain", ...) {
     chains <- unique(pdb$atom[, "chain"])
     
     if(!is.null(ids)) {
+      ids <- unique(ids)
+      
       ## Match 'ids' with 'pdbId_chainId' combinations
       tmp.names <- paste(substr(basename(pdb.files[i]), 
                                 1, 4), "_", chains, sep = "")
-      tmp.inds <- tmp.names %in% ids
-      if(all(!tmp.inds)) {
+
+      tmp.inds <- unique(unlist(lapply(ids, grep, tmp.names)))
+      if(length(tmp.inds)==0) {
         ## Skip pdb file if no match were found
         unused <- c(unused, substr(basename(pdb.files[i]), 1, 4))
         chains <- c()
@@ -71,10 +74,13 @@ function(pdb.files, ids=NULL, path="split_chain", ...) {
   }
   
   if(!is.null(ids)) {
-    ids.used <- NULL
-    if(length(out)>0)
-      ids.used <- substr(basename(out), 1, 6)
-    nonmatch <- ids[!(ids %in% ids.used)]
+    ids.used <- NULL; nonmatch <- NULL
+    if(length(out)>0) {
+      ids.used <- sub(".pdb$", "", basename(out))
+      tmp.fun <- function(x, y) { ifelse(length(grep(x,y))>0, TRUE, FALSE) }
+      tmp.inds <- unlist(lapply(ids, tmp.fun, ids.used))
+      nonmatch <- ids[!tmp.inds]
+    }
 
     ## Elements of 'pdb.files' not in use
     if(length(unused)>0) {
