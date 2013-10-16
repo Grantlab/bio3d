@@ -1,6 +1,8 @@
 "get.pdb" <-
-  function (ids, path = ".", URLonly = FALSE, overwrite = FALSE, gzip = FALSE ) 
-{
+  function (ids, path = ".", URLonly = FALSE, overwrite = FALSE, gzip = FALSE ) {
+    if(.Platform$OS.type=="windows")
+      gzip <- FALSE
+    
     if (any(nchar(ids) != 4)) {
         warning("ids should be standard 4 character PDB-IDs: trying first 4 characters...")
         ids <- substr(basename(ids), 1, 4)
@@ -21,11 +23,7 @@
         rtn[k] <- download.file(get.files[k], put.files[k])
         if(gzip) {
           cmd <- paste("gunzip -f", put.files[k])
-          os1 <- .Platform$OS.type
-          if (os1 == "windows")
-            shell(shQuote(cmd))
-          else 
-            system(cmd)
+          system(cmd)
         }
       }
       else {
