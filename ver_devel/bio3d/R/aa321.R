@@ -1,7 +1,5 @@
 "aa321" <-
 function (aa) {
-  if(any(nchar(aa)!=3))
-    stop("Provide a character vector of individual 3-letter aminoacid codes")
 
   # convert three-letters amino-acid code into
   # one-letter IUPAC code, for instance "ALA" into "A".
