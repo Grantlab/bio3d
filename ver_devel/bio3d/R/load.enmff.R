@@ -152,9 +152,22 @@
   ## sdENM by lazyload. contains columns:
   ## aa1 aa2 min max   k
   ## and row names: AA1 AA2 etc.
-  
-  aa.now   <- ssdat$seq[atom.id]
-  ids.tmp  <- cbind(aa.now, ssdat$seq)
+
+  ## set sequence data to 1-letter aa code
+  if(any(nchar(ssdat$seq)==3))
+    sequ <- suppressWarnings( aa321(ssdat$seq) )  
+  else
+    sequ <- ssdat$seq
+
+  ## Check for non-standard amino acids
+  if(any(sequ=="X")) {
+    cat("\n")
+    unk <- paste(unique(ssdat$seq[which(sequ=="X")]), collapse=", ")
+    stop(paste("Unknown aminoacid identifier for:", unk))
+  }
+
+  aa.now   <- sequ[atom.id]
+  ids.tmp  <- cbind(aa.now, sequ)
   ids.tmp  <- t(apply(ids.tmp, 1, sort))
   pair.ids <- apply(ids.tmp, 1, function(x) paste(x, collapse=""))
       

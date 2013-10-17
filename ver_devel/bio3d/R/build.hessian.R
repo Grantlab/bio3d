@@ -130,8 +130,6 @@
 
     ## Sequence
     if(!is.null(sequ)) {
-      if(nchar(sequ[1])>1)
-        sequ <-  aa321(sequ)
       ssdat$seq <- sequ
     } else {
       ssdat$seq <- NULL
