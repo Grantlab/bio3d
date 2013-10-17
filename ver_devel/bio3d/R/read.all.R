@@ -20,6 +20,7 @@ function(aln, prefix ="", pdbext="", sel=NULL, ...) {
 
   coords <- NULL; res.nu <- NULL
   res.bf <- NULL; res.ch <- NULL
+  res.id <- NULL
   blank <- rep(NA, ncol(aln$ali))
   ## all atom data
   coords.all <- NULL
@@ -36,6 +37,7 @@ function(aln, prefix ="", pdbext="", sel=NULL, ...) {
       res.nu <- rbind(res.nu, blank)
       res.bf <- rbind(res.bf, blank)
       res.ch <- rbind(res.ch, blank)
+      res.id <- rbind(res.id, blank)
       ##
       ##coords.all
       ##
@@ -90,6 +92,7 @@ function(aln, prefix ="", pdbext="", sel=NULL, ...) {
       res.nu <- rbind(res.nu, ca.ali[, "resno"])
       res.bf <- rbind(res.bf, as.numeric( ca.ali[,"b"] ))
       res.ch <- rbind(res.ch, ca.ali[, "chain"])
+      res.id <- rbind(res.id, ca.ali[, "resid"])
 
       raw <- store.atom(pdb)
       if(is.null(sel)) {
@@ -115,7 +118,7 @@ function(aln, prefix ="", pdbext="", sel=NULL, ...) {
 ##  out<-list(xyz=coords, resno=res.nu, b=res.bf,
 ##            chain = res.ch, id=aln$id, ali=aln$ali)
   out<-list(xyz=coords, all=coords.all, resno=res.nu, b=res.bf,
-            chain = res.ch, id=aln$id, ali=aln$ali,
+            chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id,
             all.elety=elety.all, all.resid=resid.all, all.resno=resno.all)
 
   atm <- rep( rep(sel,each=3), ncol(aln$ali))

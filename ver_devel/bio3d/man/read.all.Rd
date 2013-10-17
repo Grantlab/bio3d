@@ -40,6 +40,7 @@ read.all(aln, prefix = "", pdbext = "", sel = NULL, ...)
   \item{chain}{character matrix of aligned chain identifiers.}
   \item{id}{character vector of PDB sequence/structure names.}
   \item{ali}{character matrix of aligned sequences.}
+  \item{resid}{character matrix of aligned 3-letter residue names.}
   \item{all }{numeric matrix of aligned equalvelent atom coordinates. }
   \item{all.elety}{numeric matrix of aligned atom element types. }
   \item{all.resid}{numeric matrix of aligned three-letter residue codes. }
