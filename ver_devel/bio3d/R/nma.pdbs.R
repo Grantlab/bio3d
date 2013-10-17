@@ -3,11 +3,20 @@
 ## 2 - return the full objects
 
 "nma.pdbs" <- function(pdbs, fit=TRUE, full=TRUE, 
-                       rm.gaps=TRUE, outpath = "pdbs_nma", ...) {
+                       rm.gaps=TRUE, outpath = "pdbs_nma", ncore=1, ...) {
 
   if(class(pdbs)!="3dalign")
     stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
-  
+ 
+  # Parallelized by multicore package
+  if(ncore > 1) {
+     oops <- require(multicore)
+     if(!oops)
+        stop("Please install the multicore package from CRAN")
+
+     options(cores = ncore)
+  }
+ 
   if(!is.null(outpath))
     dir.create(outpath, FALSE)
 
@@ -57,7 +66,7 @@
   ## Coordiantes - fit or not
   if(fit) {
     xyz <- fit.xyz(fixed = pdbs$xyz[1, ], mobile = pdbs,
-                   fixed.inds = gaps.pos$f.inds, mobile.inds = gaps.pos$f.inds)
+                   fixed.inds = gaps.pos$f.inds, mobile.inds = gaps.pos$f.inds, ncore=ncore)
                    ##pdb.path = ".", pdbext = "", outpath = "core_fitlsq", full.pdbs = TRUE, het2atom = TRUE)
   }
   else
@@ -84,11 +93,22 @@
     all.modes <- list()
   }
     
-  if(is.null(outpath))
-    fname <- tempfile(fileext = "pdb")
-
+  # Parallelized with multicore
   ## Loop through each structure in 'pdbs'
-  for ( i in 1:nrow(pdbs$xyz) ) {
+  mylapply <- lapply
+  if(ncore > 1) mylapply <- mclapply
+  retval <- mylapply(1:nrow(pdbs$xyz), function(i) {
+    
+    if(is.null(outpath))
+      fname <- tempfile(fileext = "pdb")
+    
+    pdbs.inds <- rep(NA, ncol(pdbs$resno))
+    modes.mat <- NA
+    modes <- NA 
+    if(rm.gaps)
+      flucts <- rep(NA, length(gaps.res$f.inds))
+    else
+      flucts <- rep(NA, ncol(gaps.res$bin))
 
     ## Set indices for this structure only
     f.inds <- NULL
@@ -96,11 +116,11 @@
     f.inds$pos <- atom2xyz(f.inds$res)
 
     ## similar to $resno but sequential indices
-    pdbs$inds[i, f.inds$res] <- seq(1, length(f.inds$res))
+    pdbs.inds[f.inds$res] <- seq(1, length(f.inds$res))
     
     ## Indices to extract from Hessian
-    inds.inc <- pdbs$inds[i, gaps.res$f.inds]
-    inds.exc <- pdbs$inds[i, gaps.res$t.inds][ !is.na(pdbs$inds[i, gaps.res$t.inds]) ]
+    inds.inc <- pdbs.inds[gaps.res$f.inds]
+    inds.exc <- pdbs.inds[gaps.res$t.inds][ !is.na(pdbs.inds[gaps.res$t.inds]) ]
 
     inds.inc.xyz <- atom2xyz(inds.inc)
     inds.exc.xyz <- atom2xyz(inds.exc)
@@ -183,18 +203,23 @@
           modes.mat[f.inds$pos, j] <- modes$U[,k]
         j <- j+1
       }
-      
-      all.modes[[i]] <- modes
-      modes.array[,,i] <- modes.mat
+
     }
-
     if(rm.gaps)
-      flucts[i, ] <- modes$fluctuations
+      flucts <- modes$fluctuations
     else
-      flucts[i, f.inds$res] <- modes$fluctuations
+      flucts[f.inds$res] <- modes$fluctuations
+    
+    return(list(inds=pdbs.inds, fluct=fluct, modes=modes, modes.mat=modes.mat)) 
+  })
 
+  for(i in 1:length(retval)) {
+    pdbs$inds[i, ] <- retval[[i]]$inds
+    flucts[i, ] <- retval[[i]]$fluct
+    all.modes[[i]] <- retval[[i]]$modes
+    modes.array[,,i] <- retval[[i]]$modes.mat
   }
-
+  if(ncore>1) readChildren()
 
   calc.rmsip <- function(x) {
     n <- dim(x)[3]
