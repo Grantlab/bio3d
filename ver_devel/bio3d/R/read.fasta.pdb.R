@@ -44,6 +44,7 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
   retval <- mylapply(1:length(aln$id), function(i) {
     coords <- NULL; res.nu <- NULL
     res.bf <- NULL; res.ch <- NULL
+    res.id <- NULL
     cat(paste("pdb/seq:",i,"  name:", aln$id[i]),"\n")
 
     if(!toread[i]) {
@@ -53,6 +54,7 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
       res.nu <- rbind(res.nu, blank)
       res.bf <- rbind(res.bf, blank)
       res.ch <- rbind(res.ch, blank)
+      res.id <- rbind(res.id, blank)
       
     } else {
       pdb <- read.pdb( files[i], verbose=FALSE, ... )
@@ -104,10 +106,11 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
       res.nu <- rbind(res.nu, ca.ali[, "resno"])
       res.bf <- rbind(res.bf, as.numeric( ca.ali[,"b"] ))
       res.ch <- rbind(res.ch, ca.ali[, "chain"])
+      res.id <- rbind(res.id, ca.ali[, "resid"])
 #    } # end for
 #  } # end else
     } # end else
-    return (list(coords=coords, res.nu=res.nu, res.bf=res.bf, res.ch=res.ch))
+    return (list(coords=coords, res.nu=res.nu, res.bf=res.bf, res.ch=res.ch, res.id=res.id))
   } ) # end mylapply
   if(ncore > 1) readChildren()
   retval <- do.call(rbind, retval)
@@ -115,15 +118,18 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
   res.nu <- matrix(unlist(retval[, "res.nu"]), nrow=length(aln$id), byrow=TRUE)
   res.bf <- matrix(unlist(retval[, "res.bf"]), nrow=length(aln$id), byrow=TRUE)
   res.ch <- matrix(unlist(retval[, "res.ch"]), nrow=length(aln$id), byrow=TRUE)
+  res.id <- matrix(unlist(retval[, "res.id"]), nrow=length(aln$id), byrow=TRUE)
+  
 
   rownames(aln$ali) <- aln$id
   rownames(coords) <- aln$id
   rownames(res.nu) <- aln$id
   rownames(res.bf) <- aln$id
   rownames(res.ch) <- aln$id
+  rownames(res.id) <- aln$id
   
   out<-list(xyz=coords, resno=res.nu, b=res.bf,
-            chain = res.ch, id=aln$id, ali=aln$ali)
+            chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id)
   class(out)="3dalign"
   return(out)
 }

@@ -40,6 +40,7 @@ read.fasta.pdb(aln, prefix = "", pdbext = "",
   \item{chain}{character matrix of aligned chain identifiers.}
   \item{id}{character vector of PDB sequence/structure names.}
   \item{ali}{character matrix of aligned sequences.}
+  \item{resid}{character matrix of aligned 3-letter residue names.}
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
@@ -65,6 +66,7 @@ basename( pdbs$id )
 
 # Alignment positions 335 to 339
 pdbs$ali[,335:339]
+pdbs$resid[,335:339]
 pdbs$resno[,335:339]
 pdbs$b[,335:339]
 
