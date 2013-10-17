@@ -1,6 +1,8 @@
 "aa123" <-
 function (aa) {
-
+  if(any(nchar(aa)!=1))
+    stop("Provide a character vector of individual 1-letter aminoacid codes")
+  
   # convert one-letter IUPAC amino-acid code into
   # three-letter PDB style, for instance "A" into "ALA".
   
@@ -17,7 +19,6 @@ function (aa) {
     if(is.na(x)) return(NA)
     if (all(x != aa1)) {
       warning("Unknown one letter code for aminoacid")
-#      return(NA)
       return("UNK")
     }
     else {
