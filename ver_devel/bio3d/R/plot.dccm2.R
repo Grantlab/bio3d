@@ -4,7 +4,7 @@ plot.dccm2 <-function(x, sse=NULL, colorkey=TRUE,
                      helix.col = "gray20", sheet.col = "gray80",
                      inner.box=TRUE, outer.box=FALSE,
                      xlab="Residue No.", ylab="Residue No.",
-                     margin.segments=NULL, segment.col=vmd.colors, 
+                     margin.segments=NULL, segment.col=vmd.colors(), 
                      segment.min=1, ...) {
 
   require(lattice)
