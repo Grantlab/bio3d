@@ -4,14 +4,15 @@ plot.dccm2 <-function(x, sse=NULL, colorkey=TRUE,
                      helix.col = "gray20", sheet.col = "gray80",
                      inner.box=TRUE, outer.box=FALSE,
                      xlab="Residue No.", ylab="Residue No.",
-                     margin.segments=NULL, segment.col=NULL, segment.min=1, ...) {
+                     margin.segments=NULL, segment.col=vmd.colors, 
+                     segment.min=1, ...) {
 
   require(lattice)
   require(grid)
   colnames(x) = NULL; rownames(x)=NULL
 
   draw.segment <- function(start, length, xymin, xymax, fill.col="gray", side=1) {
-    ##-- Draw Annotation Blocks On Plot Margins, used for SSE and CLUSTER members
+    ##-- Draw Annotation On Plot Margins, used for SSE and CLUSTER members
     ##    draw.segment(store.grps[,"start"], store.grps[,"length"],
     ##                 xymin=xymin, xymax=xymax, side=1, fill.col="red")
     

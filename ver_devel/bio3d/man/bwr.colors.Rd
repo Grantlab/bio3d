@@ -34,7 +34,7 @@ mono.colors(n)
   package function \code{colorpanel} by Gregory R. Warnes.
 }
 \author{ Barry Grant }
-\seealso{ \code{\link{plot.dmat}}, \code{\link{cm.colors}},
+\seealso{ \code{\link{vmd.colors}}, \code{\link{cm.colors}},
   \code{\link{colors}}, \code{\link{palette}}, \code{\link{hsv}},
   \code{\link{rgb}}, \code{\link{gray}}, \code{\link{col2rgb}}
 }

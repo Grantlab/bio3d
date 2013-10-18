@@ -70,8 +70,12 @@ pdbs$resid[,335:339]
 pdbs$resno[,335:339]
 pdbs$b[,335:339]
 
-# Alignment C-alpha coordinates for first structure
-pdbs$xyz[1,]
+# Alignment C-alpha coordinates for these positions
+pdbs$xyz[, atom2xyz(335:339)]
 
+# See 'fit.xyz()' function for actual coordinate superposition
+#  e.g. fit to first structure
+# xyz <- fit.xyz(pdbs$xyz[1,], pdbs)
+# xyz[, atom2xyz(335:339)]
 }
 \keyword{ IO }
