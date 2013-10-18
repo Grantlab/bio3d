@@ -29,10 +29,12 @@ vmd.colors(n=33, picker=FALSE, ...)
   Returns a character vector with color names.
 }
 \references{
-  To be published.
+  Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
+
+  \url{http://www.ks.uiuc.edu/Research/vmd/}
 }
 \author{
-  Guido and Barry
+  Barry Grant
 }
 \seealso{
   \code{\link{bwr.colors}}
