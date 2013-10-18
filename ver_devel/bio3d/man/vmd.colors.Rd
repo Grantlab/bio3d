@@ -11,7 +11,7 @@
 vmd.colors(n=33, picker=FALSE, ...)
 }
 \arguments{
-  \item{colors.num}{ The number of desired colors chosen in sequence
+  \item{n}{ The number of desired colors chosen in sequence
     from the VMD color palette (>=1) }
   \item{picker}{ Logical, if TRUE a color wheel plot will be produced to
     aid with color choice. }
