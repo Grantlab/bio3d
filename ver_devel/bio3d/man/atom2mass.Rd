@@ -1,6 +1,7 @@
 \name{atom2mass}
 \alias{atom2mass}
 \alias{atom2ele}
+\alias{formula2mass}
 \title{ Atom Names to Mass Converter }
 \description{
   Convert atom names to atomic mass.
@@ -8,7 +9,10 @@
 \usage{
 atom2mass(pdb, inds=NULL, mass.custom=NULL, elety.custom=NULL,
           grpby=NULL, rescue=TRUE)
+
 atom2ele(pdb, inds=NULL, elety.custom=NULL, rescue=TRUE)
+
+formula2mass(form, sum.mass=TRUE)
 }
 \arguments{
   \item{pdb}{ a character vector containing the atom names to convert
@@ -24,6 +28,9 @@ atom2ele(pdb, inds=NULL, elety.custom=NULL, rescue=TRUE)
     (e.g. atoms from a particular residue). }
   \item{rescue}{ logical, if TRUE the atom element will be mapped to the
     first character of the atom name. }
+  \item{form}{ character string containing the chemical formula at which
+    the mass calculation should be based. }
+  \item{sum.mass}{ logical, if TRUE the sum of masses is returned. }
 }
 \details{
   This function converts atom names to their corresponding relative
@@ -53,6 +60,8 @@ atom2ele(pdb, inds=NULL, elety.custom=NULL, rescue=TRUE)
 \examples{
 atom.names <- c("CA", "O", "N", "OXT")
 masses <- atom2mass(atom.names)
+
+formula2mass("C5 H6 N O3")
 
 \dontrun{
 ## Fetch atomic masses in a PDB object

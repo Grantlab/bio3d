@@ -5,7 +5,7 @@
   Convert a sequence of amino acid residue names to mass.
 }
 \usage{
-aa2mass(pdb, inds=NULL, mass.custom=NULL, addter=TRUE)
+aa2mass(pdb, inds=NULL, mass.custom=NULL, addter=TRUE, mmtk=FALSE)
 }
 \arguments{
   \item{pdb}{ a character vector containing the atom names to convert
@@ -18,7 +18,9 @@ aa2mass(pdb, inds=NULL, mass.custom=NULL, addter=TRUE)
     corresponding masses. }
   \item{addter}{ logical, if TRUE terminal atoms are added to final
     masses. }
- }
+  \item{mmtk}{ logical, if TRUE use the exact aminoacid residue masses as
+    provided with the MMTK database (for testing purposes). }
+}
 \details{
   This function converts amino acid residue names to their corresponding
   masses. In the case of a non-standard amino acid residue name
