@@ -11,7 +11,7 @@
       mass <- TRUE
     else
       mass <- FALSE
-    
+
     if(is.null(mode.inds))
       mode.inds <- seq(nma$triv.modes+1, length(nma$L))
 
@@ -36,7 +36,7 @@
       f <- f[,mode.inds]
   
     if(mass) {
-      f <- f / nma$mass**2
+      f <- f / nma$mass
       s <- 1/(2*pi)**2
       if(!is.null(nma$temp))
         s <- s*kb*nma$temp
