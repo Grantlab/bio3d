@@ -34,10 +34,7 @@ com.xyz(xyz, mass=NULL)
   Alternatively, the atom name will be mapped automatically to the
   element corresponding to the first character of the atom name. Atom
   names starting with character \code{H} will be mapped to hydrogen
-  atoms. 
- 
-  The function reports the atomic masses in which the calculation is
-  based and the corresponding center of mass. 
+  atoms.
 }
 \value{
   Returns the Cartesian coordinates at the center of mass.
@@ -53,13 +50,13 @@ com.xyz(xyz, mass=NULL)
 pdb <- read.pdb("3dnd")
 
 ## Center of mass:
-mycom <- com(pdb)
-write.pdb(xyz=mycom, file="dummy-1.pdb")
+com(pdb)
 
 ## Center of mass of a selection
 inds <- atom.select(pdb, chain="I")
-mycom <- com(pdb, inds)
+com(pdb, inds)
 
+\dontrun{
 ## Unknown atom names
 pdb <- read.pdb("3dnd", het2atom=TRUE)
 inds <- atom.select(pdb, resid="LL2")
@@ -76,6 +73,6 @@ mass.cust <- list("Cl"=35.45, "Pt"=195.08)
 
 mycom <- com(pdb, inds, elety.custom=elety.cust, mass.custom=mass.cust,
              rescue=TRUE)
-
+}
 }
 \keyword{ utilities }
