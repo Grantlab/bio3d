@@ -23,8 +23,8 @@ build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
     that selects the elements of \code{pdb} upon which the calculation
     should be based.}
   \item{ff}{ character string specifying the force field to use:
-    \sQuote{calpha}, \sQuote{anm}, \sQuote{calphax}, \sQuote{reach}, or
-  \sQuote{sdenm}. }
+    \sQuote{calpha}, \sQuote{anm}, \sQuote{pfanm}, \sQuote{calphax}, 
+   \sQuote{reach}, or \sQuote{sdenm}. }
   \item{pfc.fun}{ customized pair force constant (\sQuote{pfc})
     function. The provided function should take a vector of distances as
     an argument to return a vector of force constants. If provided,
