@@ -6,7 +6,7 @@
   according to the method of Edgar.
 }
 \usage{
-seqaln(aln, id=NULL, exefile="muscle", file="aln.fa", protein=TRUE,
+seqaln(aln, id=NULL, exefile="muscle", file=NULL, protein=TRUE,
        seqgroup=FALSE, refine=FALSE, extra.args="")
 }
 \arguments{
@@ -26,6 +26,7 @@ seqaln(aln, id=NULL, exefile="muscle", file="aln.fa", protein=TRUE,
   be aligned, and only tree dependent refinement is performed. }
   \item{extra.args}{ a single character string containing extra command
     line arguments for the alignment program. }
+
 }
 \details{
   Sequence alignment attempts to arrange the sequences of protein,

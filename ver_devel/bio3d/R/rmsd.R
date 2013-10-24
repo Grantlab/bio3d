@@ -64,7 +64,7 @@ function(a, b=NULL,
                  x <- a[inds[j,1],a.inds]
                  y <- a[inds[j,2],a.inds]
                  if(fit) {
-                   y <- fit.xyz(fixed=x, mobile=y)
+                   y <- fit.xyz(fixed=x, mobile=y, fixed.inds=1:length(x))
                  }
                  sqrt(sum((x-y)^2)/(length(a.inds)/3))
                },
