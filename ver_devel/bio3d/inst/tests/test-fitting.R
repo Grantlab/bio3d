@@ -32,14 +32,17 @@ test_that("Fitting still works", {
                      ncol=3, byrow=TRUE)
   expect_that(rmsd( xyz[, gaps$f.inds] ),
               equals(rmsd.mat, tolerance  = 1e-6))
+}
+)
 
 
+test_that("struct.aln still works", {
   ## Test struct.aln
   invisible(capture.output(pdb.a <- read.pdb("1hel")))
   invisible(capture.output(pdb.b <- read.pdb("1dpx")))
   
   invisible(capture.output(aln <- struct.aln(pdb.a, pdb.b, write.pdbs=FALSE,
-                                            cutoff=0.1, max.cycles=2)))
+                                            cutoff=0.1, max.cycles=2, extra.args="-quiet")))
   rmsda <- c(0.293, 0.229, 0.200)
 
   
@@ -48,7 +51,6 @@ test_that("Fitting still works", {
   expect_that(length(aln$b.inds$atom), equals(112))
   expect_that(length(aln$b.inds$xyz), equals(112*3))
   expect_that(length(aln$b.inds$xyz), equals(112*3))
-  
 }
 )
 

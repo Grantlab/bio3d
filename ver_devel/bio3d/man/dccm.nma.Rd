@@ -5,12 +5,14 @@
   Calculate the cross-correlation matrix from Normal Modes Analysis.
 }
 \usage{
-dccm.nma(nma, nmodes=NULL)
+dccm.nma(nma, nmodes = NULL, ncore = NULL)
 }
 \arguments{
   \item{nma}{ an object of class \code{nma} as obtained from
     function \code{nma}. }
   \item{nmodes}{ numerical, number of modes to consider. }
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires multicore package installed. }
 }
 \details{
   This function calculates the cross-correlation matrix from Normal
