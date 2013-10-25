@@ -9,6 +9,7 @@
 read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
          rm.alt = TRUE, het2atom=FALSE, verbose = TRUE)
 \method{print}{pdb}(x, \dots)
+\method{summary}{pdb}(object, \dots)
 }
 \arguments{
   \item{file}{ a single element character vector containing the name of
@@ -26,6 +27,8 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
     with caution. }  
   \item{verbose}{ print details of the reading process. }
   \item{x}{ a PDB structure object obtained from
+    \code{\link{read.pdb}}.  }
+  \item{object}{ a PDB structure object obtained from
     \code{\link{read.pdb}}.  }
   \item{...}{ additional arguments to \sQuote{print}. }
    
@@ -52,6 +55,7 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
     multi-model PDB files. }
   \item{calpha }{ logical vector with length equal to \code{nrow(atom)}
     with TRUE values indicating a C-alpha \dQuote{elety}. }
+  \item{calpha }{ the matched call. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
