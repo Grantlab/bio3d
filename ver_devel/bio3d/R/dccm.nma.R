@@ -1,6 +1,6 @@
 "dccm.nma" <-
-  function(nma, nmodes=NULL, ncore=NULL) {
-    
+  function(x, nmodes=NULL, ncore=NULL, ...) {
+    nma <- x
     if (missing(nma))
       stop("dccm.nma: must supply a 'nma' object, i.e. from 'nma'")
     if(!"nma" %in% class(nma))
@@ -23,7 +23,7 @@
     
     ## Inner product between all pairs of residues
     cross.inner.prod <- function(a, b) {
-      mat = apply(a, 1, "%*%", t(b))
+      mat <- apply(a, 1, "%*%", t(b))
       return(mat)
     }
 
