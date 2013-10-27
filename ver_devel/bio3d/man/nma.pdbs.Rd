@@ -1,5 +1,6 @@
 \name{nma.pdbs}
 \alias{nma.pdbs}
+\alias{print.enma}
 \title{ Ensemble Normal Mode Analysis }
 \description{
   Perform NMA on an ensemble of aligned protein structures.
@@ -7,6 +8,8 @@
 \usage{
 nma.pdbs(pdbs, fit=TRUE, full=FALSE, rm.gaps=TRUE,
          outpath="pdbs_nma", \dots)
+
+\method{print}{enma}(x, \dots)
 }
 \arguments{
   \item{pdbs}{ a numeric matrix of aligned C-alpha xyz Cartesian
@@ -21,7 +24,9 @@ nma.pdbs(pdbs, fit=TRUE, full=FALSE, rm.gaps=TRUE,
     structures). Thus, gap positions are removed from output. }
   \item{outpath}{ character string specifing the output directory to
     which the PDB structures should be written. }
-  \item{...}{ additional arguments to \code{nma} and \code{aa2mass}. }
+  \item{x}{ an \code{enma} object obtained from \code{\link{nma.pdbs}}. }
+  \item{...}{ additional arguments to \code{nma}, \code{aa2mass}, and
+    \code{print}. }
 }
 \details{
   This function performs normal mode analysis (NMA) on a set of aligned
@@ -40,14 +45,14 @@ nma.pdbs(pdbs, fit=TRUE, full=FALSE, rm.gaps=TRUE,
   See examples for more details. 
  }
 \value{
-  Returns a list with the following components:
+  Returns an \sQuote{enma} object with the following components:
   \item{fluctuations }{ a numeric matrix with aligned atomic
     fluctuations. }
   \item{rmsip}{ a numeric matrix of RMSIP values between all pairs
     of mode subsets. }
-  \item{U.subs }{ a three-dimensional array with aligned eigenvectors
-    (corresponding to the subspace defined by the first 20 non-trivial
-    eigenvectors (\sQuote{U}) of the \sQuote{nma} object). }
+  \item{U.subspace }{ a three-dimensional array with aligned
+    eigenvectors  (corresponding to the subspace defined by the first 20
+    non-trivial eigenvectors (\sQuote{U}) of the \sQuote{nma} object). }
   \item{full.nma }{ a list with a \code{nma} object for each input
     structure. }
 }

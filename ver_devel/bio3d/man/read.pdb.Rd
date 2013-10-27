@@ -1,6 +1,7 @@
 \name{read.pdb}
 \alias{read.pdb}
 \alias{print.pdb}
+\alias{summary.pdb}
 \title{ Read PDB File }
 \description{
   Read a Protein Data Bank (PDB) coordinate file.

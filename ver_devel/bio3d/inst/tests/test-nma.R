@@ -87,7 +87,7 @@ test_that("NMA", {
              0.0014876013838084666, -0.003968053761191632, 0.00020389385408319644)
   mmtk7 <- mmtk7 * (-1)
   nowMmtk7 <- head(modes$modes[,7], n=18)
-  expect_that(nowMmtk7, equals(mmtk7, , tolerance=1e-6))
+  expect_that(nowMmtk7, equals(mmtk7, tolerance=1e-6))
 
   mmtk7 <- c(0.05535176862194779, 0.053954464078107375, -0.0011153538121951093,
              0.04133856415826275, 0.049117637874840574, 0.0015497023155839553,

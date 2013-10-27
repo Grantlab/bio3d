@@ -7,10 +7,13 @@
 
   if(class(pdbs)!="3dalign")
     stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
+
+  ## Log the call
+  cl <- match.call()
   
   if(!is.null(outpath))
     dir.create(outpath, FALSE)
-
+  
   ## Passing arguments to functions aa2mass and nma
   am.names <- names(formals( aa2mass ))
   nm.names <- names(formals( nma ))
@@ -252,7 +255,7 @@
   
   rownames(flucts) <- basename(rownames(pdbs$xyz))
   out <- list(fluctuations=flucts, rmsip=rmsip.map,
-              U.subs=modes.array, full.nma=all.modes )
-      
+              U.subspace=modes.array, full.nma=all.modes, call=cl)
+  class(out) = "enma"
   return(out)
 }
