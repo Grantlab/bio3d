@@ -6,7 +6,7 @@
   returning aligned sequence and structure records.
 }
 \usage{
-pdbaln(files, fit = TRUE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...) 
+pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...) 
 }
 \arguments{
   \item{files}{ a character vector of PDB file names. }

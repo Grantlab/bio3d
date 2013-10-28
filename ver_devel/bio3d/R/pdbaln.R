@@ -1,5 +1,5 @@
 `pdbaln` <-
-function(files, fit=TRUE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
+function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
 
   ##- Quick and dirty alignment of pdb sequences
   ##   pdbs <- pdbaln(files)
