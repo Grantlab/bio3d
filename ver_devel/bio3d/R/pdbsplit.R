@@ -18,7 +18,11 @@ function(pdb.files, ids=NULL, path="split_chain", verbose=FALSE, ...) {
   if(!file.exists(path)) 
      dir.create(path)
   for (i in 1:length(pdb.files)) {
-    pdb <- read.pdb(pdb.files[i], verbose=verbose, ...)
+    if(!verbose)
+      invisible(capture.output( pdb <- read.pdb(pdb.files[i], verbose=verbose, ...) ))
+    else
+      pdb <- read.pdb(pdb.files[i], verbose=verbose, ...)
+    
     chains <- unique(pdb$atom[, "chain"])
     
     if(!is.null(ids)) {
