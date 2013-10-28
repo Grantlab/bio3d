@@ -17,15 +17,30 @@ dccm(x, ...)
     \code{dccm.xyz}, \code{dccm.nma}, and \code{dccm.enma}. }
 }
 \details{
-  \sQuote{dccm} is a generic function...
-}
-\value{
-  Returns a cross-correlation matrix.
+  \code{dccm} is a generic function calling the corresponding function
+  determined by the class of the input argument \code{x}. Use
+  \code{methods(\dQuote{dccm})} to get all the methods for \code{dccm}
+  generic:
+
+  \code{\link{dccm.xyz}} will be used when \code{x} is a numeric matrix
+  containing Cartesian coordinates (e.g. trajectory data).
+  
+  \code{\link{dccm.nma}} will calculate the cross-correlations based on
+  an \code{nma} object. Similarly, \code{\link{dccm.enma}} will
+  calculate the correlation matrices based on an ensemble of \code{nma}
+  objects (as obtained from function \code{nma.pdbs}).
+
+  \code{\link{plot.dccm}} and \code{\link{view.dccm}} provides
+  convenient functionality to plot a correlation map, and visualize the
+  correlations in the structure, respectively.
+
+  See examples for each corresponding function for more details.
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Barry Grant, Lars Skjaerven }
 \seealso{ \code{\link{dccm.xyz}}, \code{\link{dccm.nma}},
-  \code{\link{dccm.enma}} . }
+  \code{\link{dccm.enma}}, \code{\link{plot.dccm}},
+    \code{\link{view.dccm}}. }
 \keyword{ utilities }
