@@ -1,7 +1,7 @@
 "seqaln" <-
 function(aln, id=NULL,
                    exefile = "muscle",
-                   file = NULL,
+                   outfile = "aln.fa",
                    protein = TRUE,
                    seqgroup = FALSE,
                    refine = FALSE,
@@ -22,8 +22,8 @@ function(aln, id=NULL,
   toaln <- tempfile()  
   write.fasta(aln, file=toaln)
   
-  if(is.null(file)) fa <- tempfile() 
-  else fa <- file
+  if(is.null(outfile)) fa <- tempfile() 
+  else fa <- outfile
 
 ###  if(!seqgroup)  extra.args <- paste(extra.args,"-stable")
   if(refine) extra.args <- paste(extra.args,"-refine")
@@ -56,7 +56,7 @@ function(aln, id=NULL,
   ####
   
   unlink(toaln)
-  if(is.null(file)) unlink(fa)
+  if(is.null(outfile)) unlink(fa)
   return(naln)
 }
 
