@@ -22,7 +22,7 @@ Bio3d aims to leverage the extensive graphical and statistical capabilities of t
 The aim of this vignette\footnote{This vignette contains executable examples, see \texttt{help(vignette)} for further details.} is to provide Bio3D package instalation instructctions. 
 
 \subsection*{Whre can I find more information?}
-The latest version of the package, full documentation and furhter vignettes can be obtained from the main bio3d website: \url{http://thegrantlab.org/bio3d/} and wiki: \url{http://bio3d.pbwiki.com/}. 
+The latest version of the package, full documentation and furhter vignettes can be obtained from the main bio3d website: \url{http://thegrantlab.org/bio3d/}. 
 
 \subsection*{What other vignettes are available?}
 Available Bio3D package vignettes include:
@@ -104,7 +104,7 @@ library(devtools)
 install_bitbucket("bio3d", username="Grantlab", subdir="ver_devel/bio3d/")
 @
 
-Alternative instalation methods and addational instructions are posted to the wiki section of our \href{https://bitbucket.org/Grantlab/bio3d/}{bitbucket repository}. 
+Alternative instalation methods and addational instructions, including how to contribute to the bio3d project, are posted on the wiki section of our \href{https://bitbucket.org/Grantlab/bio3d/}{bitbucket repository}. 
 
 
 \section{Addational utilities}

@@ -11,34 +11,34 @@ test_that("NMA", {
                                         mass=TRUE, temp=300.0)))
 
   ## Check first eigenvector
-  U7 <- round(c(-0.054713238, -0.054334443,  0.001053040,
-                -0.041171764, -0.049233238, -0.001587705), 6)
+  U7 <- c(-0.054713238, -0.054334443,  0.001053040,
+          -0.041171764, -0.049233238, -0.001587705)
               
-  nowU7 <- round(head(modes$U[,7]), 6)
-  expect_that(nowU7, is_equivalent_to(U7))
+  nowU7 <- head(modes$U[,7])
+  expect_that(nowU7, equals(U7, tolerance=1e-6))
   
   ## Check second eigenvector
-  U8 <- round(c(-0.06418497, -0.02734926,  0.02436005,
-                   -0.01149358, -0.02942601,  0.01439773), 6)
-  nowU8 <- round(head(modes$U[,8]), 6)
-  expect_that(nowU8, is_equivalent_to(U8))
+  U8 <- c(-0.06418497, -0.02734926,  0.02436005,
+          -0.01149358, -0.02942601,  0.01439773)
+  nowU8 <- head(modes$U[,8])
+  expect_that(nowU8, equals(U8, tolerance=1e-6))
 
   ## Check Mode vector
-  mode7 <- round(c(-0.092583306, -0.091942327,  0.001781907,
-                   -0.079840815, -0.095473729, -0.003078899), 6)
-  nowMode7 <- round(head(modes$modes[,7]), 6)
-  expect_that(nowMode7, is_equivalent_to(mode7))
+  mode7 <- c(-0.092583306, -0.091942327,  0.001781907,
+             -0.079840815, -0.095473729, -0.003078899)
+  nowMode7 <- head(modes$modes[,7])
+  expect_that(nowMode7, equals(mode7, tolerance=1e-6))
 
   ## Check eigenvalues
-  eival <- round(c(0.013382, 0.013933, 0.022354, 0.025517, 0.029943, 0.033953), 6)
-  nowEival <- round(modes$L[7:12], 6)
-  expect_that(nowEival, equals(eival))
+  eival <- c(0.013382, 0.013933, 0.022354, 0.025517, 0.029943, 0.033953)
+  nowEival <- modes$L[7:12]
+  expect_that(nowEival, equals(eival, tolerance=1e-6))
 
   ## Check frequencies
-  freqs <- round(c(0.01841114, 0.01878635, 0.02379566,
-                   0.02542348, 0.02754024, 0.02932643), 6)
-  nowFreqs <- round(modes$frequencies[7:12], 6)
-  expect_that(nowFreqs, equals(freqs))
+  freqs <- c(0.01841114, 0.01878635, 0.02379566,
+             0.02542348, 0.02754024, 0.02932643)
+  nowFreqs <- modes$frequencies[7:12]
+  expect_that(nowFreqs, equals(freqs, tolerance=1e-6))
 
   ## Dimensions
   expect_that(dim(modes$U), equals(c(387, 387)))
@@ -52,9 +52,9 @@ test_that("NMA", {
   ## Orthognals
   expect_that(as.numeric(modes$U[,7] %*% modes$U[,7]),
               equals(1))
-  expect_that(round(as.numeric(modes$U[,7] %*% modes$U[,8]), 6),
-              equals(0))
-  expect_that(all((round(c(modes$U[,7] %*% modes$U),12)==0)[-7]),
+  expect_that(as.numeric(modes$U[,7] %*% modes$U[,8]),
+              equals(0, tolerance=1e-6))
+  expect_that(all((round(c(modes$U[,7] %*% modes$U),6)==0)[-7]),
               equals(TRUE))
   
   expect_that(all(modes$L[1:6]==0), equals(TRUE))
@@ -85,30 +85,28 @@ test_that("NMA", {
              0.003911230038334056, 0.0031036402193391484, 0.00011224732577516142,
              5.015756380626851e-05, 0.00122307913030356, 0.0005064454471294721,
              0.0014876013838084666, -0.003968053761191632, 0.00020389385408319644)
-  mmtk7 <- round(mmtk7, 6) * (-1)
-  nowMmtk7 <- round(head(modes$modes[,7], n=18), 6)
-  expect_that(nowMmtk7, equals(mmtk7))
+  mmtk7 <- mmtk7 * (-1)
+  nowMmtk7 <- head(modes$modes[,7], n=18)
+  expect_that(nowMmtk7, equals(mmtk7, tolerance=1e-6))
 
   mmtk7 <- c(0.05535176862194779, 0.053954464078107375, -0.0011153538121951093,
              0.04133856415826275, 0.049117637874840574, 0.0015497023155839553,
              0.04227251082807122, 0.03853532867244931, 0.00450537391343214)
-  mmtk7 <- round(mmtk7, 6) * (-1)
-  nowMmtk7 <- round(head(modes$U[,7], n=9), 6)
-  expect_that(nowMmtk7, equals(mmtk7)) 
+  mmtk7 <- mmtk7 * (-1)
+  nowMmtk7 <- head(modes$U[,7], n=9)
+  expect_that(nowMmtk7, equals(mmtk7, tolerance=1e-6)) 
  
   ## Frequencies
   mmtkFreqs <- c(0.18417800523842359, 0.18804324107310424, 0.23820080688206749,
                  0.25592672017449125, 0.2798133442063071, 0.29367413814307064)
-  mmtkFreqs <- round(mmtkFreqs, 6)
-  nowMmtkFreqs <- round(modes$frequencies[7:12], 6)
-  expect_that(nowMmtkFreqs, equals(mmtkFreqs))
+  nowMmtkFreqs <- modes$frequencies[7:12]
+  expect_that(nowMmtkFreqs, equals(mmtkFreqs, tolerance=1e-6))
 
   ## Fluctuations
   mmtk.flucts <- c(0.00195060853392, 0.00113764918589, 0.00167187530508, 0.00175346604072, 0.00151209078542,
                    0.00130098648001, 0.00133495588156, 0.00107978100112, 0.000924829566202, 0.00109689698409)
-  mmtk.flucts <- round(mmtk.flucts, 6)
-  nowFlucts <- round(modes$fluctuations[1:10], 6)
-  expect_that(nowFlucts, equals(mmtk.flucts))
+  nowFlucts <- modes$fluctuations[1:10]
+  expect_that(nowFlucts, equals(mmtk.flucts, tolerance=1e-6))
   
   
   ## Energetic Modes (mass=FALSE)
@@ -118,28 +116,25 @@ test_that("NMA", {
   mmtk7 <- c(0.010350805923938345, 0.009267077807430083, -3.701643999426641e-05,
              0.008268033266170226, 0.009606710315232818, 0.0003705525203545053,
              0.006767227535558591, 0.005694101052352917, 0.001077079483122824)
-  mmtk7 <- round(mmtk7, 6) 
-  nowMmtk7 <- round(head(modes$modes[,7], n=9), 6)
-  expect_that(nowMmtk7, equals(mmtk7))
-
+  nowMmtk7 <- head(modes$modes[,7], n=9)
+  expect_that(nowMmtk7, equals(mmtk7, tolerance=1e-6))
+  
   
   ## ANM eigenvectors
   invisible(capture.output(modes <- nma(pdb, ff='anm', mass=FALSE, temp=NULL, cutoff=15)))
-                           
+  
   anm7 <- c(0.041345308400364066, 0.03345000499525146, 0.008604839963113613,
             0.03755854024944313, 0.036973377719312125, 0.008638534251932818,
             0.033187347539802, 0.022779436981185324, 0.004702511702428035)
-  anm7 <- round(anm7, 6)
-  nowAnm7 <- round(head(modes$modes[,7], n=9), 6)
-  expect_that(nowAnm7, equals(anm7))
+  nowAnm7 <- head(modes$modes[,7], n=9)
+  expect_that(nowAnm7, equals(anm7, tolerance=1e-6))
 
 
   ## ANM eigenvalues check
   eivalsANM <- c(0.84962016107196869, 1.0327718030407862, 1.3724207202555807,
                  1.7545168246132175, 1.9606866740784614, 2.2429459260702607)
-  eivalsANM <- round(eivalsANM, 6)
-  nowEivalANM <- round(modes$L[7:12], 6)
-  expect_that(nowEivalANM, equals(eivalsANM))
+  nowEivalANM <- modes$L[7:12]
+  expect_that(nowEivalANM, equals(eivalsANM, tolerance=1e-6))
 
   
   ###################################################################
@@ -160,7 +155,7 @@ test_that("NMA", {
                     ncol=3, byrow=TRUE)
   
   expect_that(hessian[atom2xyz(j), atom2xyz(i)],
-              equals(subhess))
+              equals(subhess, tolerance=1e-6))
   
   ## Force constant weighting
   weight <- 0.5; 
@@ -169,7 +164,7 @@ test_that("NMA", {
   hessian2 <- build.hessian(xyz, pfc.fun=calpha.mmtk, fc.weights=fc.mat)
   
   expect_that(hessian[atom2xyz(j), atom2xyz(i)] * weight,
-              equals(hessian2[atom2xyz(j), atom2xyz(i)]))
+              equals(hessian2[atom2xyz(j), atom2xyz(i)], tolerance=1e-6))
   
   
   

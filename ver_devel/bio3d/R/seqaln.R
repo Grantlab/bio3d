@@ -1,7 +1,7 @@
 "seqaln" <-
 function(aln, id=NULL,
                    exefile = "muscle",
-                   file = "aln.fa",
+                   file = NULL,
                    protein = TRUE,
                    seqgroup = FALSE,
                    refine = FALSE,
@@ -22,6 +22,9 @@ function(aln, id=NULL,
   toaln <- tempfile()  
   write.fasta(aln, file=toaln)
   
+  if(is.null(file)) fa <- tempfile() 
+  else fa <- file
+
 ###  if(!seqgroup)  extra.args <- paste(extra.args,"-stable")
   if(refine) extra.args <- paste(extra.args,"-refine")
   if(protein) {
@@ -29,7 +32,7 @@ function(aln, id=NULL,
   } else { extra.args <- paste(extra.args,"-seqtype dna") }
    
   cmd <- paste(exefile, " -in ",toaln," -out ",
-               file," ",extra.args, sep="")
+               fa," ",extra.args, sep="")
   cat(cmd)
   
   if (os1 == "windows") {
@@ -41,7 +44,7 @@ function(aln, id=NULL,
 
   ### Update for muscle v3.8 with no "-stable" option
   ###  Thu Aug 26 18:29:38 PDT 2010
-  naln <- read.fasta(file, rm.dup=FALSE)
+  naln <- read.fasta(fa, rm.dup=FALSE)
   if(!seqgroup) {
     ord <- match(aln$id, naln$id)
 ##    if( any( duplicated(ord) ) ) {
@@ -53,6 +56,7 @@ function(aln, id=NULL,
   ####
   
   unlink(toaln)
+  if(is.null(file)) unlink(fa)
   return(naln)
 }
 

@@ -23,6 +23,7 @@ fluct.nma(nma, mode.inds=NULL)
   Returns a numeric vector of atomic fluctuations.
 }
 \references{
+  Hinsen, K. et al. (2000) \emph{Chemical Physics} \bold{261}, 25--37.
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Lars Skjaerven }

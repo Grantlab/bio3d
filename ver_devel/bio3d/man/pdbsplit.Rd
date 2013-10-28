@@ -6,13 +6,15 @@
   files with one file for each chain.
 }
 \usage{
-pdbsplit(pdb.files, ids = NULL, path = "split_chain", \dots)
+pdbsplit(pdb.files, ids = NULL, path = "split_chain", verbose = FALSE, \dots)
 }
 \arguments{
   \item{pdb.files}{ a character vector of PDB file names. }
   \item{ids}{ a character vector of PDB and chain identifiers
     (\sQuote{pdbId_chainId}). Used for filtering chain IDs for output. }
   \item{path}{ output path for chain-split files. }
+  \item{verbose}{ logical, if TRUE details of the PDB header and
+    chain selections are printed. }
   \item{...}{ additional arguments to \code{read.pdb}. Useful e.g. for
     parsing multi model PDB files, or include HETATM records in the
     split files. }

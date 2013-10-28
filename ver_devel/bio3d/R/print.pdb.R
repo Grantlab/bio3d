@@ -97,6 +97,9 @@
   cat("sequence #: ")
   cat(s,"\n")
 
+  i <- paste( attributes(x)$names, collapse=", ")
+  cat(strwrap(paste(" + attr:",i,"\n"),width=60, exdent=8), sep="\n")
+
 
 }
 

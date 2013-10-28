@@ -5,12 +5,15 @@
   Calculate the cross-correlation matrix from Normal Modes Analysis.
 }
 \usage{
-dccm.nma(nma, nmodes=NULL)
+\method{dccm}{nma}(x, nmodes = NULL, ncore = NULL, \dots)
 }
 \arguments{
-  \item{nma}{ an object of class \code{nma} as obtained from
+  \item{x}{ an object of class \code{nma} as obtained from
     function \code{nma}. }
   \item{nmodes}{ numerical, number of modes to consider. }
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires multicore package installed. }
+  \item{\dots}{ additional arguments ? }
 }
 \details{
   This function calculates the cross-correlation matrix from Normal
@@ -30,7 +33,7 @@ dccm.nma(nma, nmodes=NULL)
   Returns a cross-correlation matrix.
 }
 \references{
-  Skjaerven, L. et al. (2011) \emph{Proteins} \bold{79}, 232--243.
+  Wynsberghe. A.W.V, Cui, Q. \emph{Structure} \bold{14}, 1647--1653.
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Lars Skjaerven }

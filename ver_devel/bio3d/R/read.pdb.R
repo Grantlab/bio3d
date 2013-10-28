@@ -26,6 +26,8 @@ function (file, maxlines=-1, multi=FALSE,
     }
   }
 
+  cl <- match.call()
+  
   # PDB FORMAT v3.3:    colpos,  datatype,    name,      description
   atom.format <- matrix(c(-6,     NA,          NA,       # (ATOM)
                           5,     'numeric',   "eleno",   # atom_no
@@ -226,7 +228,7 @@ function (file, maxlines=-1, multi=FALSE,
                seqres=seqres,
                xyz=as.numeric(t(atom[,c("x","y","z")])),
                xyz.models=xyz.models,
-               calpha = calpha)
+               calpha = calpha, call=cl)
 
   class(output) <- "pdb"
   return(output)

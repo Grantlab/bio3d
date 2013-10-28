@@ -86,7 +86,7 @@ function(files, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
 
   s <- t(sapply(s, `[`, 1:max(sapply(s, length))))
   s[is.na(s)] <- "-"
-  s <- seqaln(s, id=files, ...)
+  s <- seqaln(s, id=files, extra.args="-quiet", ...)
   s <- read.fasta.pdb(s, prefix = "", pdbext = "", ncore=ncore, nseg.scale=nseg.scale)
   return(s)
 }
