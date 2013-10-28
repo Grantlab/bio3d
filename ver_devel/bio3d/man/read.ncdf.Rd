@@ -6,7 +6,8 @@
 }
 \usage{
 read.ncdf(trjfile, headonly = FALSE, verbose = TRUE, time = FALSE,
-          first = NULL, last = NULL, stride = 1, cell = FALSE)
+          first = NULL, last = NULL, stride = 1, cell = FALSE,
+          at.sel = NULL)
 }
 \arguments{
   \item{trjfile}{ name of trajectory file to read. A vector if treat
@@ -23,6 +24,8 @@ read.ncdf(trjfile, headonly = FALSE, verbose = TRUE, time = FALSE,
   \item{stride}{ take at every \code{stride} frame(s) }
   \item{cell}{ logical, if TRUE and \code{headonly} is FALSE return cell 
     information only. Otherwise, return header or coordinates.}
+  \item{at.sel}{an object of class \sQuote{select} indicating a subset
+    of atomic coordinates to be read.}
 }
 \details{
   Reads a AMBER netCDF format trajectory file with the help of David

@@ -1,6 +1,9 @@
 `read.ncdf` <-
 function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
-         first = NULL, last= NULL, stride = 1, cell = FALSE){
+         first = NULL, last= NULL, stride = 1, cell = FALSE,
+         at.sel = NULL){
+  # Adding option 'at.sel' to select a subset of the structure using
+  # an object of class 'select'
   
   # Currently file open in SHARE mode is not supported by NCDF
   # Multicore support for reading single file is supressed 
@@ -55,7 +58,16 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
   # set range of frames for reading
   # skip files out of the selection range
   # read heads or coordinates
-  retval <- lapply(1:length(nc), function (inc) {
+  retval <- lapply(seq_along(nc), function (inc) {
+    first.atom <-  1
+    count.atom <- -1
+    if(!is.null(at.sel)) {
+      if(!is.select(at.sel)) stop("'at.sel' must be an object of class 'select'. See 'atom.select'.")
+      atom.ind <- (at.sel$xyz[seq(3,length(at.sel$xyz),3)])/3
+      first.atom <- min(atom.ind)
+      count.atom <- diff(range(atom.ind)) + 1
+    }
+    
      nc <- nc[[inc]]  
      if(!is.null(frange)) frange <- frange[inc,]
      ss = 1
@@ -120,8 +132,9 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
         close.ncdf(nc)
         return( celldata )
      } 
-     coords <- get.var.ncdf(nc, "coordinates", c(1, 1, ss), 
-                          c(-1, -1, tlen))
+     coords <- get.var.ncdf(nc, "coordinates", c(1, first.atom, ss), 
+                          c(-1, count.atom, tlen))
+     if(!is.null(at.sel)) coords <- coords[,atom.ind - first.atom + 1,]
      coords <- matrix( coords, ncol=(dim(coords)[2]*3), byrow=TRUE )
      if(time)
         rownames(coords) <- get.var.ncdf(nc, "time", ss, tlen)
