@@ -1,11 +1,11 @@
-\name{deformation}
-\alias{deformation}
+\name{deformation.nma}
+\alias{deformation.nma}
 \title{ Deformation Analysis }
 \description{
   Calculate deformation energies from Normal Mode Analysis.
 }
 \usage{
-deformation(nma, mode.inds = NULL, pfc.fun = NULL, ncore = NULL)
+deformation.nma(nma, mode.inds = NULL, pfc.fun = NULL, ncore = NULL)
 }
 \arguments{
   \item{nma}{ a list object of class \code{"nma"} (obtained with
@@ -50,11 +50,11 @@ pdb <- read.pdb("1hel")
 modes <- nma(pdb)
 
 ## Calculate deformation energies
-def.energies <- deformation(modes)
+def.energies <- deformation.nma(modes)
 
 \dontrun{
 ## Fluctuations of first non-trivial mode
-def.energies <- deformation(modes, mode.inds=seq(7, 16))
+def.energies <- deformation.nma(modes, mode.inds=seq(7, 16))
 
 write.pdb(pdb=NULL, xyz=modes$xyz,
           b=def.energies$ei[,1])

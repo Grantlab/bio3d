@@ -1,4 +1,4 @@
-"deformation" <- function(nma, mode.inds=NULL, pfc.fun=NULL, ncore=NULL) {
+"deformation.nma" <- function(nma, mode.inds=NULL, pfc.fun=NULL, ncore=NULL) {
   if(!inherits(nma, "nma"))
     stop("provide input of class 'nma' as obtained from function 'nma'")
   

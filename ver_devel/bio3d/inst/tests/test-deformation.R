@@ -8,7 +8,7 @@ test_that("still works", {
 
   sums0 <- c(59.58306, 140.99031, 109.41997, 122.45797, 173.67592, 314.87548)
   
-  defe <- deformation(modes)
+  defe <- deformation.nma(modes)
   expect_that(defe$sums[1:6], equals(sums0, tolerance=1e-6))
   expect_that(defe$sums[1:6], equals(colSums(defe$ei[,1:6]), tolerance=1e-6))
    
@@ -35,7 +35,7 @@ test_that("fits with MMTK", {
                 287.880418213, 205.968139938, 466.277540766, 814.845931887)
   
   ## calc deformation energies
-  defe <- deformation(modes, mode.inds=seq(7,26), pfc.fun=calpha.mmtk)
+  defe <- deformation.nma(modes, mode.inds=seq(7,26), pfc.fun=calpha.mmtk)
   expect_that(defe$ei[,1], equals(def.mmtk, tolerance=1e-6))
 
   # mode 8
