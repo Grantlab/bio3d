@@ -18,7 +18,8 @@
   \item{mar}{ A numerical vector of the form c(bottom, left, top, right)
     which gives the number of lines of margin to be specified on the
     four sides of the plot.}
-  \item{\dots}{ extra plotting arguments. }
+  \item{\dots}{ extra plotting arguments passed to \code{plot.bio3d}
+    that effect the atomic fluctuations plot only. }
 }
 \details{
   \code{plot.nma} produces an eigenvalue (or frequency) spectrum plot
@@ -39,7 +40,7 @@ pdb <- read.pdb("1hel")
 ## Calculate modes
 modes <- nma(pdb)
 
-plot(modes)
+plot(modes, sse=pdb)
 
 }
 \keyword{ hplot }

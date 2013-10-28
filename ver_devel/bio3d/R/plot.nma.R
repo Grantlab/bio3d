@@ -23,11 +23,11 @@
       n <- length(freqs)
     
     plot(x$L[1:n], type = "h", pch = pch, xlab = "Mode index",
-         ylab = "", main = "Eigenvalues", col = col, ...)
+         ylab = "", main = "Eigenvalues", col = col)
 
     plot(freqs[1:n], type = "h", pch = pch, xlab = "Mode index",
-         ylab = "", main = main, col = col, ...)
+         ylab = "", main = main, col = col) 
     
-    plot(x$fluctuations, type = "h", pch = pch, xlab = "Residue index",
+    plot.bio3d(x$fluctuations, pch = pch, xlab = "Residue index",
          ylab = "", main = "Fluctuations", col = col, ...)
   }
