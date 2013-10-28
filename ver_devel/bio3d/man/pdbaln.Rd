@@ -6,10 +6,12 @@
   returning aligned sequence and structure records.
 }
 \usage{
-pdbaln(files, pqr = FALSE, ncore = 1, nseg.scale = 1, ...)
+pdbaln(files, fit = TRUE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...) 
 }
 \arguments{
   \item{files}{ a character vector of PDB file names. }
+  \item{fit}{ logical, if TRUE coordinate superposition is performed on
+    the input structures. }
   \item{pqr}{ logical, if TRUE the input structures are assumed to be in
   PQR format. }
   \item{ncore }{ number of CPU cores used to do the calculation.

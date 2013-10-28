@@ -1,5 +1,5 @@
 `pdbaln` <-
-function(files, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
+function(files, fit=TRUE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
 
   ##- Quick and dirty alignment of pdb sequences
   ##   pdbs <- pdbaln(files)
@@ -80,14 +80,17 @@ function(files, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
   
   cat("\n\nExtracting sequences\n")
   
-#  s <- lapply(pdb.list, seq.pdb)
   s <- mylapply(pdb.list, pdbseq)
   if(ncore > 1) readChildren()
 
   s <- t(sapply(s, `[`, 1:max(sapply(s, length))))
   s[is.na(s)] <- "-"
   s <- seqaln(s, id=files, extra.args="-quiet", ...)
+  cat("\n")
   s <- read.fasta.pdb(s, prefix = "", pdbext = "", ncore=ncore, nseg.scale=nseg.scale)
+
+  if(fit)
+    s$xyz <- pdbfit(s)
   return(s)
 }
 
