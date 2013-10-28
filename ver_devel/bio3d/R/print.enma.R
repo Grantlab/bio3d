@@ -54,5 +54,9 @@
       cat("Coordinates were NOT aligned prior to NMA calculations")
     
     cat("\n\n")
+
+  i <- paste( attributes(x)$names, collapse=", ")
+  cat(strwrap(paste(" + attr:",i,"\n"),width=60, exdent=8), sep="\n")
+
     invisible(x)
   }
