@@ -19,7 +19,7 @@ dccm(x, ...)
 \details{
   \code{dccm} is a generic function calling the corresponding function
   determined by the class of the input argument \code{x}. Use
-  \code{methods(\dQuote{dccm})} to get all the methods for \code{dccm}
+  \code{methods("dccm")} to get all the methods for \code{dccm}
   generic:
 
   \code{\link{dccm.xyz}} will be used when \code{x} is a numeric matrix

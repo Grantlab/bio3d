@@ -1,5 +1,5 @@
 `pdbsplit` <-
-function(pdb.files, ids=NULL, path="split_chain", ...) {
+function(pdb.files, ids=NULL, path="split_chain", verbose=FALSE, ...) {
   out <- c(); unused <- c()
   toread <- file.exists(pdb.files)
   toread[substr(pdb.files, 1, 4) == "http"] <- TRUE
@@ -11,11 +11,14 @@ function(pdb.files, ids=NULL, path="split_chain", ...) {
                         collapse = "\n\t"), sep = ""))
     pdb.files <- pdb.files[toread]
   }
+
+  if(!verbose)
+    pb <- txtProgressBar(min=0, max=length(pdb.files), style=3)
   
   if(!file.exists(path)) 
      dir.create(path)
   for (i in 1:length(pdb.files)) {
-    pdb <- read.pdb(pdb.files[i], ...)
+    pdb <- read.pdb(pdb.files[i], verbose=verbose, ...)
     chains <- unique(pdb$atom[, "chain"])
     
     if(!is.null(ids)) {
@@ -38,10 +41,13 @@ function(pdb.files, ids=NULL, path="split_chain", ...) {
     
     if (length(chains) > 0) {
       for (j in 1:length(chains)) {
+        if(!verbose)
+          setTxtProgressBar(pb, (i-1)+(j/length(chains)))
+        
         if (!is.na(chains[j])) {
           new.pdb <- NULL
           
-          sel <- atom.select(pdb, paste("//", chains[j], "/////"))
+          sel <- atom.select(pdb, paste("//", chains[j], "/////"), verbose=verbose)
           new.pdb <- trim.pdb(pdb, sel)
 
           ## Multi-model records
@@ -71,7 +77,12 @@ function(pdb.files, ids=NULL, path="split_chain", ...) {
         }
       }
     }
+    if(!verbose)
+      setTxtProgressBar(pb, i)
   }
+  
+  if(!verbose)
+    close(pb)
   
   if(!is.null(ids)) {
     ids.used <- NULL; nonmatch <- NULL
