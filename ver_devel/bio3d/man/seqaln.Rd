@@ -6,7 +6,7 @@
   according to the method of Edgar.
 }
 \usage{
-seqaln(aln, id=NULL, exefile="muscle", file=NULL, protein=TRUE,
+seqaln(aln, id=NULL, exefile="muscle", outfile="aln.fa", protein=TRUE,
        seqgroup=FALSE, refine=FALSE, extra.args="")
 }
 \arguments{
@@ -16,7 +16,7 @@ seqaln(aln, id=NULL, exefile="muscle", file=NULL, protein=TRUE,
   \item{id}{ a vector of sequence names to serve as sequence identifers. }
   \item{exefile}{ file path to the \sQuote{MUSCLE} program on your system (i.e.
     how is \sQuote{MUSCLE} invoked). }
-  \item{file}{ name of \sQuote{FASTA} output file to which alignment
+  \item{outfile}{ name of \sQuote{FASTA} output file to which alignment
     should be written. }
   \item{protein}{ logical, if TRUE the input sequences are assumed to be
     protein not DNA or RNA. }
@@ -99,7 +99,7 @@ for(i in 1:length(files)) {
 }
 
 ##-- Align these sequences
-aln <- seqaln(raw, id=files, file="seqaln.fa")
+aln <- seqaln(raw, id=files, outfile="seqaln.fa")
 
 ##-- Read Aligned PDBs storing coordinate data
 pdbs <- read.fasta.pdb(aln) 
@@ -118,7 +118,7 @@ aln <- list(ali=seqbind(c("X","C","X","X","A","G","K"),
                         c("C","-","A","X","G","X","X","K")),
             id=c("a","b"))
 
-temp <- seqaln(aln=aln, file="temp.fas", protein=TRUE,
+temp <- seqaln(aln=aln, outfile="temp.fas", protein=TRUE,
                extra.args= paste("-matrix",
                 system.file("matrices/custom.mat", package="bio3d"),
                 "-gapopen -3.0 ",
