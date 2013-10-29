@@ -2,7 +2,7 @@
   function(pdb, inds=NULL, mass.custom=NULL, elety.custom=NULL,
            grpby=NULL, rescue=TRUE) {
     
-    if(class(pdb)=="pdb") {
+    if(is.pdb(pdb)) {
       if(!is.null(inds)) {
         pdb <- trim.pdb(pdb, inds)
       }
@@ -22,23 +22,17 @@
     
     ## fetch a list of element types
     eles <- atom2ele(atom.names, elety.custom=elety.custom, rescue=rescue)
+
+    ele.mass <- unlist(atom.index$mass[eles])
     
-    ele.mass <- NULL
-    for ( ele in eles ) {
-      ele.mass <- c(ele.mass, atom.index$mass[[ ele ]])
-      
-      if( is.null(ele.mass) )
-        stop(paste("atom2mass: mass of element '", ele, "' unknown", sep=""))
-    }
+    if(any(is.na(ele.mass)))
+        stop(paste("\n\tatom2mass: mass of element '", eles[is.na(ele.mass)], "' unknown", sep=""))
     
     if(!is.null(grpby)) {
       if( length(atom.names) != length(grpby) )
         stop("dimension miss-match in 'pdb' and 'grpby', check lengths")
-      
-      inds <- bounds(grpby, dup.inds=TRUE)
-      ele.mass <- apply(inds, 1, function(ind, masses)
-                        sum(masses[ind["start"]:ind["end"]]), ele.mass)
+      ele.mass <- unlist(lapply(split(ele.mass, grpby), sum))
     }
-    
+    names(ele.mass) <- NULL
     return( ele.mass )
   }

@@ -1,7 +1,7 @@
 "atom2ele" <-
   function(pdb, inds=NULL, elety.custom=NULL, rescue=TRUE) {
-    
-    if(class(pdb)=="pdb") {
+
+    if(is.pdb(pdb)) {
       if(!is.null(inds)) {
         pdb <- trim.pdb(pdb, inds)
       }
@@ -18,23 +18,21 @@
         stop("elety.custom must be of class 'list'")
       atom.index$elety <- c(elety.custom, atom.index$elety)
     }
-    
-    eles <- NULL
-    for ( at in atom.names ) {
-      if( substr(at,1,1) == "H" )
-        at <- "H"
-      ele <- atom.index$elety[[ at ]]
-      
-      if(is.null(ele)) {
-        if(rescue) {
-          ele <- substr(at, 1,1)
-          warning(paste("unknown element: mapped ", at, " to ", ele, sep=""))
-        }
-        else {
-          stop(paste("atom2ele: element of '", at, "' unknown", sep=""))
-        }
+
+    atom.names[substr(atom.names,1,1) == "H"] <- "H"
+    eles <- atom.index$elety[atom.names]
+    is.unknown <- is.na(names(eles))
+
+    if(any(is.unknown)) {
+      if(rescue) {
+        eles[is.unknown] <- substr(atom.names[is.unknown],1,1)
+        warning(paste("\n\tunknown element: mapped ", atom.names[is.unknown], " to ", eles[is.unknown], sep=""))
       }
-      eles <- c(eles, ele)
+      else {
+        stop(paste("\n\tatom2ele: element of '", atom.names[is.unknown], "' unknown", sep=""))
+      }
     }
+    eles <- unlist(eles)
+    names(eles) <- NULL
     return( eles )
   }
