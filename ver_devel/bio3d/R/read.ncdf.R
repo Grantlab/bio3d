@@ -63,7 +63,7 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
     count.atom <- -1
     if(!is.null(at.sel)) {
       if(!is.select(at.sel)) stop("'at.sel' must be an object of class 'select'. See 'atom.select'.")
-      atom.ind <- (at.sel$xyz[seq(3,length(at.sel$xyz),3)])/3
+      atom.ind <- xyz2atom(at.sel$xyz)
       first.atom <- min(atom.ind)
       count.atom <- diff(range(atom.ind)) + 1
     }

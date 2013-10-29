@@ -14,6 +14,8 @@ read.dcd(trjfile, big=FALSE, verbose = TRUE)
     big.matrix object }
   \item{verbose}{ logical, if TRUE print details of the reading
     process. }
+  \item{cell}{logical, if TRUE return cell information only.
+  Otherwise, return coordinates.}    
 }
 \details{
   Reads a CHARMM or X-PLOR/NAMD binary trajectory file with either big-
@@ -22,12 +24,14 @@ read.dcd(trjfile, big=FALSE, verbose = TRUE)
   Reading is accomplished with two different sub-functions:
   \code{dcd.header}, which reads header info, and \code{dcd.frame}, which
   takes header information and reads atoms frame by frame producing an
-  nframes/natom*3 matrix of cartesian coordinates.
+  nframes/natom*3 matrix of cartesian coordinates or an nframes/6 matrix
+  of cell parameters.
 
 }
 \value{
    A numeric matrix of xyz coordinates with a frame/structure per row and
-   a Cartesian coordinate per column.
+   a Cartesian coordinate per column or a numeric matrix of cell information 
+   with a frame/structure per row and lengths and angles per column.
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
@@ -54,9 +58,11 @@ read.dcd(trjfile, big=FALSE, verbose = TRUE)
 \seealso{ \code{\link{read.pdb}}, \code{\link{write.pdb}},
   \code{\link{atom.select}} }
 \examples{
-##-- Read example trajectory file
+##-- Read coordinates from example trajectory file
 trtfile <- system.file("examples/hivp.dcd", package="bio3d")
 trj <- read.dcd(trtfile)
+##-- Read cell parameters from example trajectory file
+trj <- read.dcd(trtfile, cell = TRUE)
 
 ## Read the starting PDB file to determine atom correspondence
 pdbfile <- system.file("examples/hivp.pdb", package="bio3d")

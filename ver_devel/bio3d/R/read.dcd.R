@@ -1,5 +1,5 @@
 "read.dcd" <-
-function(trjfile, big=FALSE, verbose=TRUE){
+function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
 
   # Version 0.2 ... Tue Jan 18 14:20:12 PST 2011
   # Version 0.1 ... Thu Mar  9 21:18:54 PST 2005
@@ -33,7 +33,9 @@ function(trjfile, big=FALSE, verbose=TRUE){
 #NATOM
 #INT
 #===========================================================
-#X(I), I=1,NATOM         (DOUBLE)
+#CELL(I), I=1,6          (DOUBLE)
+#===========================================================
+#X(I), I=1,NATOM         (SINGLE)
 #Y(I), I=1,NATOM         
 #Z(I), I=1,NATOM         
 #===========================================================
@@ -185,7 +187,7 @@ function(trjfile, big=FALSE, verbose=TRUE){
 
 
   
-  dcd.frame <- function(trj, head) {
+  dcd.frame <- function(trj, head, cell) {
     
     # DCD step/frame data
     #  read one frame from the current conection 'trj'
@@ -195,10 +197,14 @@ function(trjfile, big=FALSE, verbose=TRUE){
 
     #============#
     # Free atoms #
+    # Uncomment the next two lines if reading cell
+    # parameters only works with CHARMM DCD files
+#     if(!head$charmm && cell)
+#       stop("Cell parameters can only be read from CHARMM dcd files.")
     if ( head$charmm &&  head$extrablock) {
-      # CHARMM files may contain an extra block
+      # CHARMM files may contain lattice parameters
       a <- readBin(trj,"integer",1, endian=head$end)  # flush FORTRAN header 
-      seek(trj, where=a, origin= "current") # skip this block 
+      u <- readBin(trj, "numeric", size = 8, n = (a/8),endian = head$end)
       a <- readBin(trj,"integer",1, endian=head$end)  # flush FORTRAN tail
     }
 
@@ -241,7 +247,9 @@ function(trjfile, big=FALSE, verbose=TRUE){
     #               y=y,
     #               z=z)
 
-    coords <- as.vector(rbind(x,y,z))
+    if(cell) to.return <- c( u[c(1,3,6)], (180/pi)*acos(u[c(5,4,2)]))
+    else to.return <- as.vector(rbind(x,y,z))
+    return(to.return)
   }
   
   # Check if file exists
@@ -262,10 +270,12 @@ function(trjfile, big=FALSE, verbose=TRUE){
 ### ==> !!! Insert to read big dcd files (Sep 29th 08) !!! <=== ###    
   ###xyz <- matrix(NA, nrow=nframes,ncol=natoms*3)
   if(!big) {
-    xyz <- matrix(NA, nrow=nframes,ncol=natoms*3)
+    if(cell) to.return <- matrix(NA, nrow=nframes,ncol=6)
+    else to.return <- matrix(NA, nrow=nframes,ncol=natoms*3)
   } else {
     library(bigmemory)  ##-! Insert to read big dcd files (Sep 29th 08)
-    xyz <- big.matrix(nrow=nframes,ncol=natoms*3, init = NA, type = "double")
+    if(cell) to.return <- big.matrix(nrow=nframes,ncol=6, init = NA, type = "double")
+    else to.return <- big.matrix(nrow=nframes,ncol=natoms*3, init = NA, type = "double")
   }
 ### ==> !!! end big.matrix insert
   
@@ -277,8 +287,7 @@ function(trjfile, big=FALSE, verbose=TRUE){
   for(i in 1:nframes) {
     curr.pos <- seek(trj, where=0, origin= "current")
     if (curr.pos <= head$end.pos) {
-      coords<-dcd.frame(trj,head)
-      xyz[i,] <- coords
+      to.return[i,]<-dcd.frame(trj,head,cell)
       if (verbose) {
         setTxtProgressBar(pb, i)
 #        if(i %% 100==0) { cat(".") }
@@ -296,6 +305,6 @@ function(trjfile, big=FALSE, verbose=TRUE){
   if(verbose) { cat("\n") }
   close(trj)
   ##class(xyz)="trj"
-  return(xyz) 
+  return(to.return) 
 }
 
