@@ -22,11 +22,11 @@
 }
 
 \seealso{
-  \code{\link{pdb}}
+  \code{\link{read.pdb}}
 }
 \examples{
 # Read a PDB file
-pdb <- read.pdb( "http://www.rcsb.org/pdb/files/1BG2.pdb" )
+pdb <- read.pdb("1BG2")
 is.pdb(pdb)
 
 }

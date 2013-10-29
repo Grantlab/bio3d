@@ -18,7 +18,7 @@ TRUE if x is an object of class \sQuote{select} and FALSE otherwise
 }
 
 \author{
-Julien Idé
+Julien Ide
 }
 
 \seealso{
