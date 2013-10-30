@@ -82,7 +82,7 @@
   if(rm.gaps)
     modes.array <- array(NA, dim=c(length(gaps.pos$f.inds), keep, nrow(gaps.res$bin)))
   else
-    modes.array <- array(NA, dim=c(length(pdbs$xyz), keep, nrow(gaps.res$bin)))
+    modes.array <- array(NA, dim=c(ncol(pdbs$xyz), keep, nrow(gaps.res$bin)))
   
   if(is.null(outpath))
     fname <- tempfile(fileext = "pdb")
