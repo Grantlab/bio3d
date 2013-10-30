@@ -58,11 +58,11 @@ read.dcd(trjfile, big=FALSE, verbose = TRUE, cell = FALSE)
 \seealso{ \code{\link{read.pdb}}, \code{\link{write.pdb}},
   \code{\link{atom.select}} }
 \examples{
-##-- Read coordinates from example trajectory file
-trtfile <- system.file("examples/hivp.dcd", package="bio3d")
-trj <- read.dcd(trtfile)
 ##-- Read cell parameters from example trajectory file
+trtfile <- system.file("examples/hivp.dcd", package="bio3d")
 trj <- read.dcd(trtfile, cell = TRUE)
+##-- Read coordinates from example trajectory file
+trj <- read.dcd(trtfile)
 
 ## Read the starting PDB file to determine atom correspondence
 pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
