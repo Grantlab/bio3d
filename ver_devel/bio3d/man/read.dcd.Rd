@@ -5,7 +5,7 @@
   Read coordinate data from a binary DCD trajectory file.
 }
 \usage{
-read.dcd(trjfile, big=FALSE, verbose = TRUE)
+read.dcd(trjfile, big=FALSE, verbose = TRUE, cell = FALSE)
 }
 \arguments{
   \item{trjfile}{ name of trajectory file to read. A vector if 
