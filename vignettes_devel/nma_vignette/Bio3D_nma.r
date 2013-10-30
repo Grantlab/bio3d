@@ -99,20 +99,12 @@ download.file("http://www-personal.umich.edu/~xinqyao/transducin.RData",
               "transducin.RData")
 load("transducin.RData")
 
-#' The object **pdbs** contains the C-alpha atoms coordinates of the 53 structures with
-#' atomic positions aligned based on the multiple sequence alignment. 
+#' The object **pdbs** contains the C-alpha atoms coordinates of the 53 structures with atomic positions aligned based on the multiple sequence alignment.
+
 #+, cache=TRUE, results="hide"
 nmodes <- nma.pdbs(pdbs)
-ind <- grep("1TAG_A", pdbs$id)
-pdb <- read.pdb("1tag")
-resno <- pdbs$resno[ind, ]
-resno[!is.na(resno)] <- pdb$atom[pdb$calpha,"resno"]
-sse<-dssp(pdb)
 
-#' Objects **gaps.atom** and **gaps.xyz** are prepared previously with calling
-#' gap.inspect(pdbs\$ali) and gap.inspect(pdbs\$xyz), respectively. **ligs** annotates
-#' the nucleotide state of each structure based on a preliminary inspection on the structure data, 
-#' while **vcolors** accordingly colors nucleotide state with green (GDP) and red (GTP).
+#' Objects **gaps.atom** and **gaps.xyz** are prepared previously with calling gap.inspect(pdbs\$ali) and gap.inspect(pdbs\$xyz), respectively. **ligs** annotates the nucleotide state of each structure based on a preliminary inspection on the structure data, while **vcolors** accordingly colors nucleotide state with green (GDP) and red (GTP).
 #'
 
 #+ example2_B, fig.cap="Atomic fluctuation of transducin predicted by NMA"
@@ -120,6 +112,7 @@ plot(nmodes, col=vcolors)
  
 ##  plot(resno[gaps.atom$f.inds], nmodes$fluctuations[i,], type='h', col=vcolors[i], sse=sse)
 
+# Broken because plot.enma() does not take x  & y inputs
 text(x=176, y=1, label="SW I")
 text(x=200, y=1.3, label="SW II")
 text(x=210, y=2.2, label="SW III")
@@ -130,18 +123,15 @@ text(x=210, y=2.2, label="SW III")
 #' inner product (RMSIP) of low-frequency vibrational modes. As a comparison, we also calculated the
 #' inter-structure root mean square deviation (RMSD) of the C-alpha atoms.
 #+ example2_B2, fig.cap="Distribution of overlap value among transducin family (Do we need this figure?)"
-rmsip.map <- nmodes$rmsip
-rownames(rmsip.map) <- substr(basename(pdbs$id), 1, 6)
-colnames(rmsip.map) <- substr(basename(pdbs$id), 1, 6)
-hist(rmsip.map, breaks=70)
-#+ example2_B3, fig.cap="RMSIP matrix of transducin family"
-heatmap((1-rmsip.map), labRow=ligs, symm=TRUE)
 
-#+, cache=TRUE
+hist(nmodes$rmsip, breaks=70)
+
+#+ example2_B3, fig.cap="RMSIP matrix of transducin family"
+heatmap((1-nmodes$rmsip), labRow=ligs, labCol=ids, symm=TRUE)
+
+#+ example2_B4, cache=TRUE, fig.cap="RMSD matrix of transducin family"
 rmsd.map <- rmsd(pdbs$xyz, a.inds=gaps.xyz$f.inds, fit=TRUE)
-dimnames(rmsd.map) <- dimnames(rmsip.map)
-#+ example2_B4, fig.cap="RMSD matrix of transducin family"
-heatmap(rmsd.map, labRow=ligs, symm=TRUE)
+heatmap(rmsd.map, labRow=ligs, labCol=ids, symm=TRUE)
 
 #'
 #' ## Example 3: Variance weighted normal mode analysis
@@ -153,8 +143,6 @@ heatmap(rmsd.map, labRow=ligs, symm=TRUE)
 #+, cache=TRUE, results="hide"
 # Set the ensemble PDB ids
 ids <- c("1sx4_[A-C]", "1xck_[A-C]")
-
-##, "1svt_[A-C]", "1sx3_[A-C]", "1kp8_[A-C]")
 
 # Download and split PDBs by chain ID
 raw.files <- get.pdb(ids, path = "raw_pdbs", gzip=TRUE)
@@ -317,23 +305,7 @@ rmsip(pc.xray, modes.wtd)
 #' First, download data and wrap a function for making variance weights:
 #+, cache=TRUE
 # We may think of puting the online data somewhere else!!!
-download.file("http://www-personal.umich.edu/~xinqyao/transducin.RData", 
-              "transducin.RData")
 load("transducin.RData")
-
-mk.weights <- function(xyz) {
-  # weights <- mk.weights(xyz)
-  natoms <- ncol(xyz) / 3
-  all <- array(0, dim=c(natoms,natoms,nrow(xyz)))
-  for( i in 1:nrow(xyz) ) {
-    dists <- dist.xyz(xyz[i,])
-    all[,,i] <- dists
-  }
-  all.vars <- apply(all, 1:2, var)
-  cat( paste("Max:", round(max(all.vars),2),
-             "  Min:", round(min(all.vars),2) ),"\n" )
-  return(1 - (all.vars / max(all.vars)))
-}
 
 #' Then, we take one structure for each GDP and GTP state, and run **nma()** with force field **calpha**.
 #' The PDB objects **gdp** and **gtp** contains the structural information for the C-alpha atoms of 
@@ -348,19 +320,15 @@ inds.gtp <- atom.select(gtp, resno=pdbs$resno[inds[2], gaps.atom$f.inds])
 modes.gdp <- nma(gdp, inds=inds.gdp, fc.weights=NULL)
 modes.gtp <- nma(gtp, inds=inds.gtp, fc.weights=NULL)
 
-#' Now, we calculate the pairwise distance variance based on the structure ensemble 
-#' with the wrapped function mentioned above. This will be used to weight the force constants
-#' in the elastic network model. The object **xyz** is a numeric matrix containing 
-#' aligned cartesian coordinates all fitted to the first structure in **pdbs**, 
+#' Now, we calculate the pairwise distance variance based on the structure ensemble with the wrapped function mentioned above. This will be used to weight the force constants in the elastic network model. The object **xyz** is a numeric matrix containing  aligned cartesian coordinates all fitted to the first structure in **pdbs**, 
 #' xyz <- pdbfit(pdbs).
 weights <- mk.weights(xyz[, gaps.xyz$f.inds])
 
 modes.gdp.b <- nma(gdp, inds=inds.gdp, fc.weights=weights**100)
 modes.gtp.b <- nma(gtp, inds=inds.gtp, fc.weights=weights**100)
 
-#' To evaluate the results, we calculate the overlap (square dot product) between modes predicted by 
-#' variance weighted or non-weighted NMA and the first principle component from PCA (contained
-#' in the object **pc.xray** returned by calling **pca.xyz(xyz[, gaps.xyz$f.inds])**.
+#' To evaluate the results, we calculate the overlap (square dot product) between modes predicted by  variance weighted or non-weighted NMA and the first principle component from PCA (contained in the object **pc.xray** returned by calling **pca.xyz(xyz[, gaps.xyz$f.inds])**.
+
 oa <- overlap(modes.gdp, pc.xray$U[,1])
 ob <- overlap(modes.gtp, pc.xray$U[,1])
 oc <- overlap(modes.gdp.b, pc.xray$U[,1])
@@ -380,6 +348,9 @@ legend(x=2, y=1.0, pch=1, lty=c(1, 1, 2, 2), col=c("darkgreen", "red",
        "darkgreen", "red"), legend=c("GDP", "GTP", "Weighted GDP", "Weighted GTP"))
 
 #'
+#' ## References
+#'
+#' 
 #' ## Document Details
 #' This document is shipped with the Bio3D package in both latex and PDF formats. All code can be extracted and automatically executed to generate Figures and/or PDF with the following commands:
 
