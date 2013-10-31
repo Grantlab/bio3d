@@ -74,7 +74,7 @@
       rinds <- mode.inds[ which(core.ids==i) ]
 
       if(ncore>1) {
-        q <- parallel(corrmats(rinds, i, nma, corr.mat, freqs))
+        q <- multicore::parallel(corrmats(rinds, i, nma, corr.mat, freqs))
         jobs[[i]] <- q
       }
       else

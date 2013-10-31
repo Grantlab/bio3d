@@ -67,6 +67,7 @@
     
     rmsip <- sqrt(sum(o)/subset)
     out <- list(overlap=round(o,3), rmsip=rmsip)
-    
+
+    class(out) <- "rmsip"
     return( out )
   }

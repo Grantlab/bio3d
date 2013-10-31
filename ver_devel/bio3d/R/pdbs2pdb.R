@@ -1,4 +1,4 @@
-"pdbs2pdb" <- function(pdbs, inds=NULL) {
+"pdbs2pdb" <- function(pdbs, inds=NULL, rm.gaps=FALSE) {
   if(class(pdbs)!="3dalign") {
     stop("Input 'pdbs' should be of class '3dalign', e.g. from pdbaln() or read.fasta.pdb()")
   }
@@ -20,8 +20,14 @@
     
     ## Set indices for this structure only
     f.inds <- NULL
-    f.inds$res <- which(gaps.res$bin[j,]==0)
-    f.inds$pos <- atom2xyz(f.inds$res)
+    if(rm.gaps) {
+      f.inds$res <- gaps.res$f.inds
+      f.inds$pos <- gaps.pos$f.inds
+    }
+    else {
+      f.inds$res <- which(gaps.res$bin[j,]==0)
+      f.inds$pos <- atom2xyz(f.inds$res)
+    }
 
     ## Make a temporary PDB object
     write.pdb(pdb=NULL,

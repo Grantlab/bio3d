@@ -35,14 +35,14 @@
     if(!is.null(x$full.nma))
       cat("  - Full 'nma' objects\n")
     if(!is.null(x$rmsip))
-      cat("  - Root mean squared inner product (RMSIP)\n")
+      cat("  - Root mean square inner product (RMSIP)\n")
     if(!is.null(x$fluctuations))
       cat("  - Aligned atomic fluctuations\n")
     
     if(rm.gaps)
-      cat("  - Aligned mode vectors (gaps removed)\n")
+      cat("  - Aligned eigenvectors (gaps removed)\n")
     else
-      cat("  - Aligned mode vectors (gaps not removed)\n")
+      cat("  - Aligned eigenvectors (gaps not removed)\n")
     
     cat("  - Dimensions of x$U.subspace: ", dims[1L], "x", dims[2L], "x", dims[3L], sep="")
 

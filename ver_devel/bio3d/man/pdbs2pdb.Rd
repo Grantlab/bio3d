@@ -6,7 +6,7 @@
   \code{pdb} objects. 
 }
 \usage{
-pdbs2pdb(pdbs, inds = NULL)
+pdbs2pdb(pdbs, inds = NULL, rm.gaps = FALSE)
 }
 \arguments{
   \item{pdbs}{ a list of class \code{"3dalign"} containing PDB file
@@ -14,6 +14,8 @@ pdbs2pdb(pdbs, inds = NULL)
     \code{pdbaln}. }
   \item{inds}{ a vector of indices that selects the PDB structures to
     convert. }
+  \item{rm.gaps}{ logical, if TRUE atoms in gap containing columns are
+    removed in the output \code{pdb} objects. }
 }
 \details{
   This function will generate a list of \code{pdb} objects from a
@@ -43,14 +45,17 @@ all.files <- pdbsplit(raw.files, pdb.ids,
                 path =paste(outdir, "/split_chain", sep=""))
 
 ## Align and fit
-pdbs     <- pdbaln(all.files)
-pdbs$xyz <- pdbfit(pdbs)
+pdbs     <- pdbaln(all.files, fit=TRUE)
 
 ## Convert back to PDB objects
 all.pdbs <- pdbs2pdb(pdbs)
 
 ## Access the first PDB object
 ## all.pdbs[[1]]
+
+## Return PDB objects consisting of only
+## atoms in non-gap positions
+all.pdbs <- pdbs2pdb(pdbs, rm.gaps=TRUE)
 
 }
 }

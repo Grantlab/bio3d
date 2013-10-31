@@ -21,7 +21,7 @@ rmsip(modes.a, modes.b, subset=10, row.name="a", col.name="b")
   from principal component or normal modes analysis. 
 }
 \value{
-  Returns a list with the following components:
+  Returns an \code{rmsip} object with the following components:
   \item{overlap}{ a numeric matrix containing pairwise (squared) dot products 
     between the modes. }
   \item{rmsip}{ a numeric RMSIP value. }
@@ -43,9 +43,8 @@ modes <- nma(pdb)
 # Calculate the RMSIP between the Xray-PCs and the MD-PCs
 r <- rmsip(modes, pc.sim, subset=10, row.name="NMA", col.name="PCA")
 
-# Plot pairwise overlap values 
-image(1:10, 1:10, r$overlap, col=gray(50:0/50), zlim=c(0,1),
-      xlab="MD-PCA", ylab="NMA")
+# Plot pairwise overlap values
+plot(r, xlab="NMA", ylab="PCA")
 }
 }
 \keyword{ utilities }
