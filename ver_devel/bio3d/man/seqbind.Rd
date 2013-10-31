@@ -2,20 +2,19 @@
 \alias{seqbind}
 \title{ Combine Sequences by Rows Without Recycling }
 \description{
-  Take a pair of vector or matrix arguments and combine them row-wise without
-  recycling the shorter argument (as is the case with \code{\link{rbind}}).
+  Take vectors and/or matrices arguments and combine them row-wise without
+  recycling them (as is the case with \code{\link{rbind}}).
 }
 \usage{
-seqbind(a, b, blank = "-")
+seqbind(..., blank = "-")
 }
 \arguments{
-  \item{a}{ a vector or matrix. }
-  \item{b}{ a vector or matrix to be appended to \code{a}. }
-  \item{blank}{ a character to add to the shorter argument, to achieve the
+  \item{\dots}{ vectors and/or matrices to combine. }
+  \item{blank}{ a character to add to short arguments, to achieve the
     same length as the longer argument. }
 }
 \value{
-  A matrix combining the \code{a} and \code{b} input arguments row-wise.
+  A matrix combining input arguments row-wise.
 }
 \references{
     Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
