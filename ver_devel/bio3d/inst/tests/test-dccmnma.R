@@ -1,0 +1,21 @@
+context("Testing dccm.nma")
+
+
+test_that("Correlation matrix from NMA", {
+
+  ## Calculate correl mat on a small protein
+  invisible(capture.output(pdb.small <- read.pdb("1etl")))
+  invisible(capture.output(modes <- nma(pdb.small)))
+  invisible(capture.output(cm <- dccm.nma(modes, ncore=1)))
+  
+  expect_that(cm[1,1], equals(1,           tolerance=1e-6))
+  expect_that(cm[1,2], equals(0.06514794,  tolerance=1e-6))
+  expect_that(cm[1,3], equals(-0.31563254, tolerance=1e-6))
+  expect_that(cm[1,3], equals(cm[3,1]))
+
+  ## Check multicore DCCM
+  invisible(capture.output(cm.mc <- dccm.nma(modes, ncore=2)))
+  expect_that(cm, equals(cm.mc, tolerance=1e-6))
+  
+}
+          )

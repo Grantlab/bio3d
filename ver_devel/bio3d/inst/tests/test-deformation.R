@@ -3,10 +3,10 @@ context("Testing deformation analysis")
 test_that("still works", {
   
   invisible(capture.output(pdb.small <- read.pdb("1etl")))
-  invisible(capture.output(modes <- nma(pdb.small, pfc.fun=calpha.mmtk,
-                                        addter=FALSE, mmtk=TRUE)))
-
-  sums0 <- c(59.58306, 140.99031, 109.41997, 122.45797, 173.67592, 314.87548)
+  invisible(capture.output(modes <- nma(pdb.small)))
+                           
+  sums0 <- c(59.89283, 141.39431, 109.09525,
+             122.52931, 172.63766, 317.01506)
   
   defe <- deformation.nma(modes)
   expect_that(defe$sums[1:6], equals(sums0, tolerance=1e-6))
