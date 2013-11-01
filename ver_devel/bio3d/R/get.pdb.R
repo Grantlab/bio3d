@@ -9,10 +9,10 @@
        oops <- require(multicore)
        if(!oops)
           stop("Please install the multicore package from CRAN")
-       if(ncore > 8) {
+       if(ncore > 4) {
           # To avoid too frequent access to PDB server
-          warning("Maximum ncore (=8) exceeds")
-          ncore = 8
+          warning("Exceed maximum ncore (=4) to access PDB server. Use ncore=4")
+          ncore = 4
        }
        options(cores = ncore)
     }
