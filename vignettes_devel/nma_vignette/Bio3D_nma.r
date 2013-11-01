@@ -18,11 +18,23 @@ system("pandoc -o Bio3D_nma.pdf Bio3D_nma.md")
 #'
 
 #'
-#' ## Example 1A: Basic normal mode analysis
+#' ## Requirements:
+#' * R (version > 2.11)
+#' * Bio3D (version 2.x)
+#' * muscle
+#' * dssp
+
+
+#'
+#' ## Example 1: Basic Normal Mode Analysis
+#' ### Example 1A: Normal mode calculation
 #' Normal mode analysis (NMA) of a single protein structure can be carried out by providing a PDB object to the function **nma()**. In the code below we first load the Bio3D package and then download an example structure of hen egg white lysozyme (PDB id *1hel*) with the function **read.pdb()**. Finally the function **nma()** is used perform the normal mode calculation:
 
 #+ example1_A, results="hide"
-library(bio3d)
+##library(bio3d)
+library(devtools)
+#load_all("/struct/carlomag/skjaerve/workspace/bio3d/ver_devel/bio3d")
+load_all("/media/mamut/home/slars/workspace/bio3d/ver_devel/bio3d")
 pdb <- read.pdb("1hel")
 modes <- nma(pdb)
 
@@ -30,33 +42,155 @@ modes <- nma(pdb)
 
 print(modes)
 
-#' This reveals the function call resulting in the *nma* object along with the total number of stored normal modes. For PDB id *1hel* there are 129 amino acid residues, and thus $3*129=387$ modes in this object (in which the first six are so-called trivial modes with zero frequency corresponding to rigid-body rotation and translation). The frequency of the next six lowest-frequency modes is also printed. Note that the returned *nma* object consists of a number of attributes listed on the _+attr:_ line. These attributes contain the detailed results of the calculation and a complete description of their contents and structure can be found on the **nma()** functions help page accessible with the command: `help(nma)`. Additional examples of data access are provided further below. However, to get a quick overview of the results one can simply call the **plot()** function on the returned *nma* object. This will produce a summary plot of (1) the eigenvalues, (2) the mode frequencies, and (3) the atomic fluctuations (See Figure 1).
+#' This reveals the function call resulting in the *nma* object along with the total number of stored normal modes. For PDB id *1hel* there are 129 amino acid residues, and thus $3*129=387$ modes in this object (in which the first six are so-called trivial modes with zero frequency corresponding to rigid-body rotation and translation). The frequency of the next six lowest-frequency modes is also printed. 
+#' 
+#' Note that the returned *nma* object consists of a number of attributes listed on the _+attr:_ line. These attributes contain the detailed results of the calculation and a complete description of their contents and structure can be found on the **nma()** functions help page accessible with the command: `help(nma)`. Additional examples of data access are provided further below. However, to get a quick overview of the results one can simply call the **plot()** function on the returned *nma* object. This will produce a summary plot of (1) the eigenvalues, (2) the mode frequencies, and (3) the atomic fluctuations (See Figure 1).
 
 #+ fig1_a_1, fig.cap="Summary plot of NMA results for hen egg white lysozyme (PDB id *1hel*). The optional *sse=pdb* argument provided to **plot.nma()** results in a secondary structure schematic being added to the top and bottom margins of the fluctuation plot (helices black and strands gray). Note the larger fluctuations predicted for loop regions." 
 plot(modes, sse=pdb)
 
 
 #'
-#' ## Example 1B: Multiple force fields for normal mode analysis
-#' The main Bio3D normal mode analysis function, **nma()**, requires a set of coordinates, as obtained from the **read.pdb()** function, and the specification of a force field describing the interactions between constituent atoms. By default the *calpha* force field originally developed by Konrad Hinsen is utilized. This employs a spring force constant differentiating between nearest-neighbor pairs along the backbone and all other pairs. The force constant function was parameterized by fitting to a local minimum of a crambin model using the AMBER94 force field. However, a large number of additional force fields are also available. Full details of these force fields can be obtained with the command `help(load.enmff)`. With the code below we briefly demonstrate their usage and comparison: 
-
+#' ### Example 1B: Specifying a force field
+#' The main Bio3D normal mode analysis function, **nma()**, requires a set of coordinates, as obtained from the **read.pdb()** function, 
+#' and the specification of a force field describing the interactions between constituent atoms. By default the *calpha* force field originally
+#' developed by Konrad Hinsen is utilized [^3]. This employs a spring force constant differentiating between nearest-neighbor pairs along the 
+#' backbone and all other pairs. The force constant function was parameterized by fitting to a local minimum of a crambin model using the 
+#' AMBER94 force field. However, a number of additional force fields are also available, as well as functionality for providing customized 
+#' force constant function. Full details of these force fields can be obtained with the command `help(load.enmff)`. 
+#' With the code below we briefly demonstrate their usage along with a simple comparison of the modes obtained from two of the most commonly 
+#' used force fields: 
 
 #+ help, eval=FALSE
 help(load.enmff)
-
+ 
 #+ example1_B, results="hide"
+# Calculate modes with various force fields
 modes.a <- nma(pdb, ff="calpha")
 modes.b <- nma(pdb, ff="anm")
 modes.c <- nma(pdb, ff="pfanm")
-modes.d <- nma(pdb, ff="calphax")
-modes.e <- nma(pdb, ff="reach")
+modes.d <- nma(pdb, ff="reach")
+modes.e <- nma(pdb, ff="sdenm")
 
 #+ example1_B_rmsip
-rmsip(modes.a, modes.b)
-## RMSIP matrix plot here with adjplot or similar...
-#adjplot( rmsip(modes.a, modes.b, modes.c, modes.d, modes.e) )
+# Root mean square inner product (RMSIP)
+r <- rmsip(modes.a, modes.b)
 
-#' Compare to expermental difference vector here also and generate molecular figure
+#+ plot_ff-rmsip, fig.width=5, fig.height=5, fig.cap="Analysis of mode similarity between modes obtained from the *ANM* and *calpha* force fields by calculating mode overlap and root mean square inner product (RMSIP) with function **rmsip()**. An RMSIP value of *1* depicts identical directionalites of the two mode subspaces. "
+# Plot the RMSIP
+plot(r, xlab="ANM", ylab="C-alpha FF")
+
+#'
+#' ### Example 1C: Normal mode analysis of the GroEL subunit
+#' Bio3D includes a number of functions for analyzing and visualizing the normal modes. In the example below we illustrate this functionality
+#' on the GroEL subunit. GroEL is a multimeric protein consisting of 14 identical subunits organized in three distinct domains inter-connected
+#' by two hinge regions facilitating large conformational changes. 
+#' 
+#' We will investigate the normal modes through 
+#' (**1**) mode visualization to illustrate the nature of the motions; 
+#' (**2**) cross-correlation analysis to determine correlated regions; 
+#' (**3**) deformation analysis to measure the local flexibility of the strucutre; and 
+#' (**4**) overlap analysis to determine which modes contribute to a given conformational change. 
+
+#'
+#' #### Calculate the normal modes
+#' In the code below we download a structure of GroEL (PDB-id *1sx4*) and use **atom.select()** to select one of the 14 subunits prior to 
+#' the call to **nma()**:
+
+#+ example1_C, cache=TRUE, results="hide"
+# Download PDB, calcualte normal modes of the open subunit
+pdb.full   <- read.pdb("1sx4")
+pdb.open   <- trim.pdb(pdb.full, atom.select(pdb.full, chain="A"))
+modes      <- nma(pdb.open)
+
+#'
+#' #### Mode visualization
+#' With Bio3d you can visualize the normal modes either by generating a trajectory file which can be loaded into a molecular viewer program (e.g. VMD or PyMOL), 
+#' or through a vector field representation in PyMOL. Both functions, **mktrj.nma()** and **view.modes()**, takes an *nma* object as input in addition to
+#' the mode index specifiying which mode to visualize:
+#' 
+#+ example1_C-trj, cache=TRUE, results="hide"
+# Make a PDB trajectory
+a <- mktrj.nma(modes, mode=7)
+
+# Vector field representation
+view.modes(modes, mode=7)
+
+#' ![Visualization of the first non-trivial mode of the GroEL subunit. Visualization is provided through a trajectory file (left), or vector field representation (right).](figure/groel-traj-vector.png)
+
+
+#'
+#' #### Cross-correlation analysis
+#' Function **dccm.nma()** calculates the cross-correlation matrix of the *nma* object. Function **plot.dccm()** will draw a correlation map,
+#' and 3D visualization of correlations is provided through function **view.dccm()**:
+#' 
+#+ example1_C-dccm, cache=TRUE, message=FALSE, results="hide"
+# Calculate the cross-correlation matrix
+cm <- dccm(modes)
+
+#+ example1_C-plotdccm, fig.width=6.5, fig.height=6, fig.cap="Correlation map revealing correlated and anti-correlated regions in the protein structure."
+# Make a correlation map with plot.dccm2(cm)
+
+# Or with filled.contour()
+Labpalette = colorRampPalette(c("blue", "white", "red"), space = "Lab")
+filled.contour( x=1:nrow(cm), y=1:ncol(cm), z=cm,
+                color = Labpalette, levels = pretty( c(-1,1), 20))
+
+#+ example1_C-viewdccm, cache=TRUE, results="hide"
+# View the correlations in the structure
+view.dccm(cm, pdb.open)
+
+#' ![Correlated (left) and anti-correlated (right) residues depicted with red and blue lines, respectively. The figures demonstrate the output of function **view.dccm()**.](figure/groel-correl.png)
+
+#'
+#' #### Fluctuation and Deformation analysis
+#' Deformation analysis provides a measure for the amount of local flexibility in the protein structure - i.e. atomic motion relative
+#' to neighbouring atoms. It differs from *fluctuations* (e.g. RMSF values) which provide amplitudes of the absolute atomic motion.
+#' Below we calculate deformation energies (**deformation.nma()**) and atomic fluctuations (**fluct.nma()**) of the first three modes and 
+#' visualize the results in PyMOL:
+
+#+ example1_C-deform, cache=TRUE, results="hide"
+# Deformation energies
+defe <- deformation.nma(modes)
+defsums <- rowSums(defe$ei[,1:3])
+
+# Fluctuations
+flucts <- fluct.nma(modes, mode.inds=seq(7,9))
+
+# Write to PDB files
+write.pdb(pdb=NULL, xyz=modes$xyz, file="R-defor.pdb", b=defsums)
+write.pdb(pdb=NULL, xyz=modes$xyz, file="R-fluct.pdb", b=flucts)
+
+
+#' ![Atomic fluctuations (left) and deformation energies (right) visualized in PyMOL.](figure/groel_fluct-deformation.png)
+
+#'                
+#' #### Overlap analysis
+#' Finally, we illustrate overlap analysis to compare a conformational difference vector with the normal modes to identify 
+#' which modes contribute to a given conformational change (i.e. the difference between the open and closed state of the GroEL subunit).
+
+#+ example1_C-overlap, cache=TRUE, results="hide"
+# Closed state of the subunit
+pdb.closed <- trim.pdb(pdb.full, atom.select(pdb.full, chain="H"))
+
+# Align closed and open PDBs
+aln <- struct.aln(pdb.open, pdb.closed, max.cycles=0)
+pdb.closed$xyz <- aln$xyz
+
+# Caclulate a difference vector
+xyz <- rbind(pdb.open$xyz[aln$a.inds$xyz], pdb.closed$xyz[aln$a.inds$xyz])
+diff <- difference.vector(xyz)
+
+# Calculate overlap
+oa <- overlap(modes, diff)
+
+#+ plot_groeloverlap, fig.width=7, fig.height=5, fig.cap="Overlap analysis between the modes of the open subunit and the conformational difference vector between the closed-open state."
+plot(oa$overlap, type='h', xlab="Mode index", ylab="Squared overlap", ylim=c(0,1))
+points(oa$overlap, col=1)
+lines(oa$overlap.cum, type='b', col=2, cex=0.5)
+text(c(1,5)+.5, oa$overlap[c(1,5)], c("Mode 1", "Mode 5"), adj=0)
+
+
 
 #'
 #' ## Example 2: Ensemble normal mode analysis
@@ -64,85 +198,120 @@ rmsip(modes.a, modes.b)
 
 #'
 #' ### Example 2A: Protein kinases 
+#' In the following code we collect 9 kinase structures from the protein databank (using **get.pdb()**) with sequence identity down to 14%, 
+#' and align these with **pdbaln()**:
 
-#+ example2_A, cache=TRUE, results="hide"
+#+ example2_A, cache=TRUE, results="hide", warning=FALSE
 # Select Protein Kinase PDB IDs
 ids <- c("4b7t_A", "2exm_A", "1opj_A", 
          "4jaj_A", "1a9u_A", "1tki_A", 
-          "1phk_A", "1csn_A", "1lp4_A") 
-         # "1m14", "3dnd", "2jdo", "1JKL", "1gng", "2src", "1OMW", "1b6c_D",
+         "1phk_A", "1csn_A", "1lp4_A") 
 
+# Download and split by chain ID
 raw.files <- get.pdb(ids, path="raw_pdbs")
-files <- pdbsplit( raw.files, ids )
+files     <- pdbsplit( raw.files, ids )
 
 # Alignment of structures
 pdbs <- pdbaln(files)
 
+# Sequence identity
+seqidentity(pdbs)
+
+#'
+#' The *pdbs* object now contains *aligned* C-alpha atom data, including cartesian coordinates, residue numbers, 
+#' residue types, and B-factors. The sequence alignement is also stored by default to the fasta file 'aln.fa'.
+#' Function **nma.pdbs()** will calculate the normal modes of each protein structures stored in the *pdbs* object. 
+#' The normal modes are calculated on the full structures as provided
+#' by object *pdbs*. With the default argument `rm.gaps=TRUE` unaligned atoms 
+#' are ommited from output in accordance to [^5]. 
+#' 
+
+#+ example2_A-modes, cache=TRUE, results="hide", warning=FALSE
 # NMA on all structures
-modes <- nma.pdbs(pdbs, full=TRUE)
+modes <- nma.pdbs(pdbs)
 
-#+ plot_enma, width=7, height=4, fig.cap="Results of ensemble NMA on select protein kinase superfamily members"
+#'
+#' The *modes* object of class *enma* contains aligned normal mode data including fluctuations, RMSIP data, and aligned
+#' eigenvectors. A short summary of the *modes* object can be obtain by calling the function **print()**, and the aligned 
+#' fluctuations can be plotted with function **plot()**:
+
+#+ example2_A-print,
+print(modes)
+
+#+ plot_enma1, fig.width=10, fig.height=5, fig.cap="Results of ensemble NMA on selected protein kinase superfamily members. "
 # Plot fluctuation data
-plot(modes, typ="l")
-## add legend with PDB IDs and cols
+plot(modes, pdbs, type="h")
+legend("topleft", legend=ids, col=seq(1,nrow(modes$fluctuations)), lty=1)
 
+#+ example2_A-modes2, cache=TRUE, results="hide",
+# Alternatively, use 'rm.gaps=FALSE' to keep the gap containing columns
+modes <- nma.pdbs(pdbs, rm.gaps=FALSE)
+
+#+ plot_enma2, fig.width=10, fig.height=5, fig.cap="Results of ensemble NMA on select protein kinase superfamily members (with `rm.gaps=FALSE`)."
+plot(modes, pdbs, type="h")
+
+#'
+#' We could also add here **dccm.enm()**..? we have this functionality, but not in use at the moment
+#'
 
 #'
 #' ### Example 2B: Transducin
 #' 
 #' This example will run **nma.pdbs()** on the transducin family containing 53 PDB structures.
-
 #' First, we download pre-compiled structure and alignment data for transducin.
-#+ data, cache=TRUE
+#' This data file includes 
+#' (1) an object *pdbs* of class *3dalign* which contains aligned C-alpha coordinates of 53 structures as well as sequence alignment; 
+#' (2) *ligs* which annotates the nucleotide state of each structure based on a preliminary inspection on the structure data; and
+#' (3) *vcolors* which is used to color accordingly to the nucleotide state (green for GDP, and red for GTP).
+
+#+ example2_B-data, cache=FALSE, results="hide"
 # We may think of puting this data (or a subset) within the package!
-download.file("http://www-personal.umich.edu/~xinqyao/transducin.RData", 
-              "transducin.RData")
+#download.file("http://www-personal.umich.edu/~xinqyao/transducin.RData", 
+#              "transducin.RData")
 load("transducin.RData")
 
-#' The object **pdbs** contains the C-alpha atoms coordinates of the 53 structures with atomic positions aligned based on the multiple sequence alignment.
+#+ example2_B-modes, cache=TRUE, results="hide"
+# Inspect gaps in the alignment
+gaps.atom <- gap.inspect(pdbs$ali)
+gaps.xyz <- gap.inspect(pdbs$xyz)
 
-#+, cache=TRUE, results="hide"
-nmodes <- nma.pdbs(pdbs)
+# Calculate normal modes of the 53 structures
+modes <- nma.pdbs(pdbs)
 
-#' Objects **gaps.atom** and **gaps.xyz** are prepared previously with calling gap.inspect(pdbs\$ali) and gap.inspect(pdbs\$xyz), respectively. **ligs** annotates the nucleotide state of each structure based on a preliminary inspection on the structure data, while **vcolors** accordingly colors nucleotide state with green (GDP) and red (GTP).
-#'
-
-#+ example2_B, fig.cap="Atomic fluctuation of transducin predicted by NMA"
-plot(nmodes, col=vcolors)
- 
-##  plot(resno[gaps.atom$f.inds], nmodes$fluctuations[i,], type='h', col=vcolors[i], sse=sse)
-
-# Broken because plot.enma() does not take x  & y inputs
+#+ example2_B-plot, fig.width=9, fig.height=5, fig.cap="Structural dynamics of transducin. The calculation is based on NMA of 53 structures: 28 GTP-bound (red), and 25 GDP-bound (green)."
+# Make fluctuation plot
+plot(modes, col=vcolors)
 text(x=176, y=1, label="SW I")
 text(x=200, y=1.3, label="SW II")
 text(x=210, y=2.2, label="SW III")
 
+#' The similarity of structural dynamics is calculated by RMSIP
+#' based on the 10 lowest frequency normal modes. The *rmsip* values are pre-calculated in the *modes* object
+#' and can be accessed through the attribute `modes$rmsip`.
+#' As a comparison, we also calculate the
+#' root mean square deviation (RMSD) of all pair-wise structures:
 
-#' The inter-structure relationship can be characterized via comparing the modes predicted by NMA. 
-#' The similarity of structures in terms of dynamic property is calculated with the root mean square
-#' inner product (RMSIP) of low-frequency vibrational modes. As a comparison, we also calculated the
-#' inter-structure root mean square deviation (RMSD) of the C-alpha atoms.
-#+ example2_B2, fig.cap="Distribution of overlap value among transducin family (Do we need this figure?)"
+#+ example2_B-rmsip, fig.cap="RMSIP matrix of the transducin family. "
+# Plot a heat map with clustering dendogram
+heatmap((1-modes$rmsip), labRow=ligs, labCol=ids, symm=TRUE)
 
-hist(nmodes$rmsip, breaks=70)
-
-#+ example2_B3, fig.cap="RMSIP matrix of transducin family"
-heatmap((1-nmodes$rmsip), labRow=ligs, labCol=ids, symm=TRUE)
-
-#+ example2_B4, cache=TRUE, fig.cap="RMSD matrix of transducin family"
+#+ example2_B-rmsd, cache=TRUE, fig.cap="RMSD matrix of the transducin family."
+# Calculate pair-wise RMSD values
 rmsd.map <- rmsd(pdbs$xyz, a.inds=gaps.xyz$f.inds, fit=TRUE)
 heatmap(rmsd.map, labRow=ligs, labCol=ids, symm=TRUE)
 
 #'
 #' ## Example 3: Variance weighted normal mode analysis
-#' In this example we illustrate an approach of weighting the pair force constants based on the variance of the inter atomic distances obtained from an ensemble of structures (e.g. available X-ray structures). The motivation for such variance-weighting is to reduce the well known depence of the force constants on the one structure upon which they derived derived [ADD REFS here!].
+#' In this example we illustrate an approach of weighting the pair force constants based on the variance of the inter atomic distances obtained from an ensemble of structures (e.g. available X-ray structures). The motivation for such variance-weighting is to reduce the well known depence of the force constants on the one structure upon which they derived derived [^4].
 #'
 #' ### Example 3A: GroEL
-#' The GroEL subunit consists of 524 residues which comprise three distinct domains inter-connected by two hinge regions facilitating large conformational changes. In the example below we will see how the normal modes of the open state corresponds nicely with the observed conformational change (by X-ray and EM studies), contrary to the closed state. We will then use an ensemble of X-ray structures as weighting to the pair-force constants:
+#' We first calculate the normal modes of both the closed and open state of the GroEL subunit, and we illustrate 
+#' the difference in the agreement towards the observed conformational changes (characterised by X-ray and EM studies). 
+#' We will then use an ensemble of X-ray/EM structures as weights to the pair-force constants.
 
-#+, cache=TRUE, results="hide"
-# Set the ensemble PDB ids
-ids <- c("1sx4_[A-C]", "1xck_[A-C]")
+#+ example3_A-pdbs, cache=TRUE, results="hide", warning=FALSE
+# Define the ensemble PDB-ids
+ids <- c("1sx4_[A,B,H,I]", "1xck_[A-B]", "1sx3_[A-B]", "4ab3_[A-B]")
 
 # Download and split PDBs by chain ID
 raw.files <- get.pdb(ids, path = "raw_pdbs", gzip=TRUE)
@@ -152,64 +321,73 @@ files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain/")
 pdbs <- pdbaln(files, fit=TRUE)
 
 #'
-#' The 'pdbs' object contains *aligned* C-alpha atom data, including cartesian coordinates, residue numbers, residue type and B-factors. The sequence alignement is also stored by default to the fasta file 'aln.fa'.
-#'
-
-#'
 #' #### Calculate normal modes
-#' Next we will calculate the normal modes of the open and closed conformational state. They are stored at indices 1 and 4, respectively, in our 'pdbs' object. Use the **pdbs2pdb()** to fetch the pdb objects which is needed for the input to **nma()**. 
+#' Next we will calculate the normal modes of the open and closed conformational state. They are stored at indices 1 and 5, respectively, in our 'pdbs' object. 
+#' Use the **pdbs2pdb()** to fetch the pdb objects which is needed for the input to **nma()**. 
 #'
 
-#+, cache=TRUE,
-## Inspect gaps
+#+ example3_A-modes, cache=TRUE,
+# Inspect gaps
 gaps.res <- gap.inspect(pdbs$ali)
 gaps.pos <- gap.inspect(pdbs$xyz)
 
-## Convert back to access PDB objects
-pdb.list   <- pdbs2pdb(pdbs, inds=c(1,4))
+# Access PDB objects
+pdb.list   <- pdbs2pdb(pdbs, inds=c(1,5,9), rm.gaps=TRUE)
 
+#'
+#' Note that we are here using the argument `rm.gaps=TRUE` to omit residues in gap containing columns of the alignment. 
+#' Consequently, the resulting three pdb objects we obtain will have the same lengths (523 residues), which
+#' is convenient for subsequent analysis. 
+
+#+ example3_A-pdblist, cache=TRUE, results='hide'
 pdb.open   <- pdb.list[["1sx4_A"]]
 pdb.closed <- pdb.list[["1xck_A"]]
+pdb.rstate <- pdb.list[["4ab3_A"]]
 
+# Calaculate normal modes
 modes.open   <- nma(pdb.open)
 modes.closed <- nma(pdb.closed)
+modes.rstate <- nma(pdb.rstate)
 
 #'
 #' #### Overlap analysis
 #' Use overlap analysis to determine the agreement between the normal mode vectors and the conformational difference vector:
 #'
 
-#+, cache=TRUE,
-## Difference vector
-diff.vec <- difference.vector(pdbs$xyz[c(1,4), gaps.pos$f.inds])
+#+ example3_A-overlap, cache=TRUE,
+# Difference vector 1: closed - open
+diff.vec.1 <- difference.vector(pdbs$xyz[c(1,5), gaps.pos$f.inds])
+# Difference vector 2: closed - rstate
+diff.vec.2 <- difference.vector(pdbs$xyz[c(5,9), gaps.pos$f.inds])
 
-## Calculate overlap
-oa <- overlap(modes.open,   diff.vec)
-ob <- overlap(modes.closed, diff.vec)
+# Calculate overlap
+oa <- overlap(modes.open,   diff.vec.1)
+ob <- overlap(modes.closed, diff.vec.1)
+oc <- overlap(modes.closed, diff.vec.2)
 
-
-#+ example3A_overlapplotA, fig.width=7, fig.height=6, fig.cap="Overlap anlaysis"
+#+ example3A_plotoverlap1, fig.width=7, fig.height=6, fig.cap="Overlap anlaysis with function **overlap()**. The modes calculated on the open state of the GroEL subunit shows a high similarity to the conformational difference vector (black), while the agreement is lower when the normal modes are calculated on the closed state (red). Blue line correspond to the overlap between the closed state and the r-state (a semi-open state characterized by a rotation of the apical domain in the oposite direction as compared to the open state."
 plot(oa$overlap.cum[1:10], type='b', ylim=c(0,1),
      ylab="Squared overlap", xlab="Mode index",
-     cex.lab=1.4, axes=F, lwd=2)
+     cex.lab=1.4, cex.axis=1.2, lwd=2)
 lines(ob$overlap.cum[1:10], type='b', lty=2, col=2, lwd=2)
+lines(oc$overlap.cum[1:10], type='b', lty=3, col=4, lwd=1)
 
 legend("bottomright",
-       c("Open state", "Closed state"),
-       col=c("black", "red"), lty=c(1,2))
-
-box()
-axis(1, cex.axis=1.3)
-axis(2, cex.axis=1.3)
+       c("Open to closed", "Closed to open", "Closed to r-state"),
+       col=c(1,2,4), lty=c(1,2,3))
 
 #'
 #' #### Variance weighting
-#' From the overlap analysis above we see the remarkable agreement between the conformational difference vector and the normal modes calculated on the open structures. Contrary, the lowest frequency modes of the closed structures does not show the same behaviour. We will thus proceed with the weighting of the force constants. First we'll define a quick function for calculating the weights which takes a matrix of cartesian coordinates as input:
+#' From the overlap analysis above we see the good agreement (high overlap value) between the conformational difference vector 
+#' and the normal modes calculated on the open structures. Contrary, the lowest frequency modes of the closed 
+#' structures does not show the same behaviour. We will thus proceed with the weighting of the force constants. 
+#' First we'll define a quick function for calculating the weights which takes a matrix of cartesian coordinates 
+#' as input:
 #'
 
-#+, cache=TRUE,
+#+ example3_A-weights, cache=TRUE,
 "make.weights" <- function(xyz) {
-  ## Calculate pairwise distances
+  # Calculate pairwise distances
   natoms <- ncol(xyz) / 3
   all <- array(0, dim=c(natoms,natoms,nrow(xyz)))
   for( i in 1:nrow(xyz) ) {
@@ -217,139 +395,136 @@ axis(2, cex.axis=1.3)
     all[,,i] <- dists
   }
   
-  ## Calculate variance of pairwise distances
+  # Calculate variance of pairwise distances
   all.vars <- apply(all, 1:2, var)
   
-  ## Make the final weights
+  # Make the final weights
   weights <- 1 - (all.vars / max(all.vars))
   return(weights)
 }
 
-#+, cache=TRUE
-## Calcualte the weights
+# Calcualte the weights
 wts <- make.weights(pdbs$xyz[, gaps.pos$f.inds])
 
+#' 
 #' Weights to the force constants can be included by the argument 'fc.weights' to function **nma()**. 
-#' This needs be a matrix with dimensions NxN. Here we will run a small for-loop with increasing the 
-#' strength of the weigthing at each step and store the new overlap values in the variable 'ocs':
+#' This needs be a matrix with dimensions NxN (where N is the number of C-alpha atoms). Here we will 
+#' run a small for-loop with increasing the 
+#' strength of the weigthing at each step and store the new overlap values in the variable 'ob.wtd':
 
-#+, cache=TRUE, results="hide"
-ocs <- NULL
+#+ example3_A-owtd, cache=TRUE, results="hide"
+ob.wtd <- NULL
 for ( i in 1:10 ) {
   modes.wtd <- nma(pdb.closed, fc.weights=wts**i)
-  oc        <- overlap(modes.wtd,    diff.vec)
-  ocs       <- rbind(ocs, oc$overlap.cum)
+  ob.tmp    <- overlap(modes.wtd,    diff.vec.1)
+  ob.wtd    <- rbind(ob.wtd, ob.tmp$overlap.cum)
 }
 
-#+ example3A_overlapplot, fig.width=7, fig.height=6, fig.cap="Overlap plot"
+#+ example3A_plotoverlap2, fig.width=7, fig.height=6, fig.cap="Overlap plot with increasing strength on the weighting. The final weighted normal modes of the closed subunit shows as high overlap values as the modes for the open state."
 plot(oa$overlap.cum[1:10], type='b', ylim=c(0,1),
      ylab="Squared overlap", xlab="Mode index",
-     cex.lab=1.4, axes=F, lwd=2)
+     cex.lab=1.4, cex.axis=1.2, axes=T, lwd=2)
 lines(ob$overlap.cum[1:10], type='b', lty=2, col=1, lwd=2)
 
 cols <- rainbow(10)
-for ( i in 1:nrow(ocs) ) {
-  lines(ocs[i,1:10], type='b', lty=1, col=cols[i])
+for ( i in 1:nrow(ob.wtd) ) {
+  lines(ob.wtd[i,1:10], type='b', lty=1, col=cols[i])
 }
 
 legend("bottomright",
        c("Open state", "Closed state", "Closed state (weighted)"),
        col=c("black", "black", "green"), lty=c(1,2,1))
 
-box()
-axis(1, cex.axis=1.3)
-axis(2, cex.axis=1.3)
-
 
 #'
 #' #### RMSIP calculation
-#' Root mean square inner product (RMSIP) can be used to compare mode subspaces:
-#+ example3A_rmsip
+#' RMSIP can be used to compare the mode subspaces:
+#+ example3_A-rmsip, cache=TRUE
 ra <- rmsip(modes.open, modes.wtd)
 rb <- rmsip(modes.open, modes.closed)
 
-ra$rmsip
-rb$rmsip
 
-#+ example3A_rmsipplot, fig.width=9, fig.height=4, fig.cap="RMSIP map"
+#+ example3A_plot-rmsip, fig.width=10, fig.height=5, fig.cap="RMSIP maps between (un)weighted normal modes obtained from the open and closed subunits."
 par(mfrow=c(1,2))
-image(1:10, 1:10, ra$overlap, col=gray(50:0/50), zlim=c(0,1),
-      ylab="NMA(open)", xlab="NMA(weighted)")
-image(1:10, 1:10, rb$overlap, col=gray(50:0/50), zlim=c(0,1),
-      ylab="NMA(open)", xlab="NMA(closed)")
-
+plot(ra, ylab="NMA(open)", xlab="NMA(weighted)")
+plot(rb, ylab="NMA(open)", xlab="NMA(closed)")
 
 #'
 #' #### Match with PCA
-#'
+#' Finally, we compare the calculated normal modes with principal components obtained from the ensemble of X-ray
+#' structures using function **pca.xyz()**:
 
-## Calculate the PCs
+#+ example3_A-pca, cache=TRUE
+# Calculate the PCs
 pc.xray <- pca.xyz(pdbs$xyz[,gaps.pos$f.inds])
 
-rmsip(pc.xray, modes.closed)
-rmsip(pc.xray, modes.wtd)
-
-
-
-
-
-
+# Calculate RMSIP values
+rmsip(pc.xray, modes.open)$rmsip
+rmsip(pc.xray, modes.closed)$rmsip
+rmsip(pc.xray, modes.rstate)$rmsip
+rmsip(pc.xray, modes.wtd)$rmsip
 
 
 #'
 #' ### Example 3B: Transducin
 #' 
-#' This example will run **nma()** on transducin with various variance weighted force constants. 
+#' This example will run **nma()** on transducin with variance weighted force constants. 
 #' The modes predicted by NMA will be compared with PCA results over the transducin family.
-
-#' First, download data and wrap a function for making variance weights:
-#+, cache=TRUE
-# We may think of puting the online data somewhere else!!!
+#' We load the transducin data (downloaded above), and 
+#' calculate the normal modes for two structures corresponding to one for each of the two states:
+#' GDP (PDB id 1TAG) and GTP (PDB id 1TND). Again we use function **pdbs2pdb()** to build the *pdb* objects
+#' from the *pdbs* object (containing aligned structure/sequence information). The coordiantes of the data set were
+#' fitted to all non-gap containing C-alpha positions. 
+#+ example3_B-data, cache=FALSE,
 load("transducin.RData")
 
-#' Then, we take one structure for each GDP and GTP state, and run **nma()** with force field **calpha**.
-#' The PDB objects **gdp** and **gtp** contains the structural information for the C-alpha atoms of 
-#' transducin in GDP (PDB ID 1TAG) and GTP (PDB ID 1TND) states, respectively. The coordinates 
-#' in **gdp** and **gtp** were fitted to the **pdbs** object based on all non-gap C-alpha positions. 
-#+, results="hide"
-inds <- sapply(c("1TAG_A", "1TND_B"), grep, pdbs$id)
-inds.gdp <- atom.select(gdp, resno=pdbs$resno[inds[1], gaps.atom$f.inds])
-inds.gtp <- atom.select(gtp, resno=pdbs$resno[inds[2], gaps.atom$f.inds])
+#+ example3_B-modes, cache=TRUE, results="hide", 
+# Fetch PDB objects
+pdb.list <- pdbs2pdb(pdbs, inds=c(2, 7), rm.gaps=TRUE)
+pdb.gdp <- pdb.list[[ grep("1TAG_A", names(pdb.list)) ]]
+pdb.gtp <- pdb.list[[ grep("1TND_B", names(pdb.list)) ]]
 
-#+
-modes.gdp <- nma(gdp, inds=inds.gdp, fc.weights=NULL)
-modes.gtp <- nma(gtp, inds=inds.gtp, fc.weights=NULL)
+# Calculate normal modes
+modes.gdp <- nma(pdb.gdp)
+modes.gtp <- nma(pdb.gtp)
 
-#' Now, we calculate the pairwise distance variance based on the structure ensemble with the wrapped function mentioned above. This will be used to weight the force constants in the elastic network model. The object **xyz** is a numeric matrix containing  aligned cartesian coordinates all fitted to the first structure in **pdbs**, 
-#' xyz <- pdbfit(pdbs).
-weights <- mk.weights(xyz[, gaps.xyz$f.inds])
+#' Now, we calculate the pairwise distance variance based on the structural ensemble with the function 
+#' **make.weights()** defined above. This will be used to weight the force constants in the elastic network model. 
+#+ example3_B-weights, cache=TRUE, results='hide'
+# Calculate weights 
+weights <- make.weights(pdbs$xyz[, gaps.xyz$f.inds])
 
-modes.gdp.b <- nma(gdp, inds=inds.gdp, fc.weights=weights**100)
-modes.gtp.b <- nma(gtp, inds=inds.gtp, fc.weights=weights**100)
+# Calculate normal modes with weighted pair force constants
+modes.gdp.b <- nma(pdb.gdp, fc.weights=weights**100)
+modes.gtp.b <- nma(pdb.gtp, fc.weights=weights**100)
 
 #' To evaluate the results, we calculate the overlap (square dot product) between modes predicted by  variance weighted or non-weighted NMA and the first principle component from PCA (contained in the object **pc.xray** returned by calling **pca.xyz(xyz[, gaps.xyz$f.inds])**.
-
+#+ example3_B-overlap, cache=TRUE, results='hide'
 oa <- overlap(modes.gdp, pc.xray$U[,1])
 ob <- overlap(modes.gtp, pc.xray$U[,1])
 oc <- overlap(modes.gdp.b, pc.xray$U[,1])
 od <- overlap(modes.gtp.b, pc.xray$U[,1])
 
-#+, fig.cap="Variance weighted force constants improve NMA prediction"
+#+ example3_B-plotoverlap,  fig.width=7, fig.height=6, fig.cap="Variance weighted force constants improve NMA prediction"
 plot(oa$overlap.cum, type='o', ylim=c(0,1), col="darkgreen", lwd=2, xlab="Mode", 
      ylab="Cummulative overlap")
 lines(ob$overlap.cum, type='o', ylim=c(0,1), col="red", lwd=2)
-lines(oc$overlap.cum, type='b', ylim=c(0,1), col="darkgreen", lwd=2)
-lines(od$overlap.cum, type='b', ylim=c(0,1), col="red", lwd=2)
+lines(oc$overlap.cum, type='b', ylim=c(0,1), col="darkgreen", lwd=2, lty=2)
+lines(od$overlap.cum, type='b', ylim=c(0,1), col="red", lwd=2, lty=2)
 text(20, oa$overlap.cum[20], label=round(oa$overlap.cum[20], 2), pos=3)
 text(20, ob$overlap.cum[20], label=round(ob$overlap.cum[20], 2), pos=3)
 text(20, oc$overlap.cum[20], label=round(oc$overlap.cum[20], 2), pos=3)
 text(20, od$overlap.cum[20], label=round(od$overlap.cum[20], 2), pos=3)
-legend(x=2, y=1.0, pch=1, lty=c(1, 1, 2, 2), col=c("darkgreen", "red", 
+legend("topleft", pch=1, lty=c(1, 1, 2, 2), col=c("darkgreen", "red", 
        "darkgreen", "red"), legend=c("GDP", "GTP", "Weighted GDP", "Weighted GTP"))
 
 #'
 #' ## References
-#'
+#' [^3]: Hinsen, K. et al. (2000) Chemical Physics 261:25-37.
+#' 
+#' [^4]: Tama F, Sanejouand YH. (2001) Protein Eng. 14:1-6.
+#' 
+#' [^5]: Fuglebakk, E. et al. (2012) Bioinformatics 28:2431-40.
 #' 
 #' ## Document Details
 #' This document is shipped with the Bio3D package in both latex and PDF formats. All code can be extracted and automatically executed to generate Figures and/or PDF with the following commands:
