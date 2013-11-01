@@ -1,4 +1,4 @@
-#' # Supporting Material: Enhanced Methods for Normal Mode Analysis with Bio3D
+#' # Supplementary Data: Enhanced Methods for Normal Mode Analysis with Bio3D
 #' ## Lars Skjaerven, Xin-Qiu Yao & Barry J. Grant
 
 #+ preamble, include=FALSE, eval=FALSE
@@ -10,20 +10,16 @@ system("pandoc -o Bio3D_nma.pdf Bio3D_nma.md")
 #' ## Background:
 #' Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data.
 #'
-#' Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities. These include a unique collection of multiple elastic network model force-fields (see Example 1 below), automated ensemble analysis methods (Example 2) and variance weighted NMA (Example 3). Here we demonstrate the use of these new features with working code that comprise complete executable examples[^2].
+#' Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities. These include a unique collection of multiple elastic network model force-fields (see **Example 1** below), automated ensemble analysis methods (**Example 2**) and variance weighted NMA (**Example 3**). Here we demonstrate the use of these new features with working code that comprise complete executable examples[^2].
 #'
-#' [^1]: The latest version of the package, full documentation and further vignettes (including detailed installation instructions) can be obtained from the main Bio3D website: http://thegrantlab.org/bio3d/
+#' [^1]: The latest version of the package, full documentation and further vignettes (including detailed installation instructions) can be obtained from the main Bio3D website: [http://thegrantlab.org/bio3d/](http://thegrantlab.org/bio3d/)
 #'
-#' [^2]: This document contains executable code that generates all figures contained within this document. See help(vignette) within R for further details. 
+#' [^2]: This document contains executable code that generates all figures contained within this document. See help(vignette) within R for full details. 
 #'
 
 #'
-#' ## Requirements:
-#' * R (version > 2.11)
-#' * Bio3D (version 2.x)
-#' * muscle
-#' * dssp
-
+#' #### Requirements:
+#' Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/download/download.html) available both on-line and from within the Bio3D package. In addition to Bio3D the _MUSCLE_ multiple sequence alignment program (available from the [muscle home page](http://www.drive5.com/muscle/)) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
 
 #'
 #' ## Example 1: Basic Normal Mode Analysis
@@ -39,9 +35,9 @@ modes <- nma(pdb)
 
 print(modes)
 
-#' This reveals the function call resulting in the *nma* object along with the total number of stored normal modes. For PDB id *1hel* there are 129 amino acid residues, and thus $3*129=387$ modes in this object (in which the first six are so-called trivial modes with zero frequency corresponding to rigid-body rotation and translation). The frequency of the next six lowest-frequency modes is also printed. 
+#' This reveals the function call resulting in the *nma* object along with the total number of stored normal modes. For PDB id *1hel* there are 129 amino acid residues, and thus $387$ modes ($3*129=387$) in this object. The first six modes are so-called trivial modes with zero frequency and correspond to rigid-body rotation and translation. The frequency of the next six lowest-frequency modes is also printed. 
 #' 
-#' Note that the returned *nma* object consists of a number of attributes listed on the _+attr:_ line. These attributes contain the detailed results of the calculation and a complete description of their contents and structure can be found on the **nma()** functions help page accessible with the command: `help(nma)`. Additional examples of data access are provided further below. However, to get a quick overview of the results one can simply call the **plot()** function on the returned *nma* object. This will produce a summary plot of (1) the eigenvalues, (2) the mode frequencies, and (3) the atomic fluctuations (See Figure 1).
+#' Note that the returned *nma* object consists of a number of attributes listed on the _+attr:_ line. These attributes contain the detailed results of the calculation and their complete description can be found on the **nma()** functions help page accessible with the command: `help(nma)`. To get a quick overview of the results one can simply call the **plot()** function on the returned *nma* object. This will produce a summary plot of (1) the eigenvalues, (2) the mode frequencies, and (3) the atomic fluctuations (See Figure 1).
 
 #+ fig1_a_1, fig.cap="Summary plot of NMA results for hen egg white lysozyme (PDB id *1hel*). The optional *sse=pdb* argument provided to **plot.nma()** results in a secondary structure schematic being added to the top and bottom margins of the fluctuation plot (helices black and strands gray). Note the larger fluctuations predicted for loop regions." 
 plot(modes, sse=pdb)
@@ -54,7 +50,7 @@ plot(modes, sse=pdb)
 #' developed by Konrad Hinsen is utilized [^3]. This employs a spring force constant differentiating between nearest-neighbor pairs along the 
 #' backbone and all other pairs. The force constant function was parameterized by fitting to a local minimum of a crambin model using the 
 #' AMBER94 force field. However, a number of additional force fields are also available, as well as functionality for providing customized 
-#' force constant function. Full details of these force fields can be obtained with the command `help(load.enmff)`. 
+#' force constant functions. Full details of available force fields can be obtained with the command `help(load.enmff)`. 
 #' With the code below we briefly demonstrate their usage along with a simple comparison of the modes obtained from two of the most commonly 
 #' used force fields: 
 
@@ -86,13 +82,12 @@ plot(r, xlab="ANM", ylab="C-alpha FF")
 #' We will investigate the normal modes through 
 #' (**1**) mode visualization to illustrate the nature of the motions; 
 #' (**2**) cross-correlation analysis to determine correlated regions; 
-#' (**3**) deformation analysis to measure the local flexibility of the strucutre; and 
+#' (**3**) deformation analysis to measure the local flexibility of the structure; and 
 #' (**4**) overlap analysis to determine which modes contribute to a given conformational change. 
 
 #'
 #' #### Calculate the normal modes
-#' In the code below we download a structure of GroEL (PDB-id *1sx4*) and use **atom.select()** to select one of the 14 subunits prior to 
-#' the call to **nma()**:
+#' In the code below we download a structure of GroEL (PDB-id *1sx4*) and use **atom.select()** to select one of the 14 subunits prior to the call to **nma()**:
 
 #+ example1_C, cache=TRUE, results="hide"
 # Download PDB, calcualte normal modes of the open subunit
@@ -102,15 +97,15 @@ modes      <- nma(pdb.open)
 
 #'
 #' #### Mode visualization
-#' With Bio3d you can visualize the normal modes either by generating a trajectory file which can be loaded into a molecular viewer program (e.g. VMD or PyMOL), 
+#' With Bio3D you can visualize the normal modes either by generating a trajectory file which can be loaded into a molecular viewer program (e.g. VMD or PyMOL), 
 #' or through a vector field representation in PyMOL. Both functions, **mktrj.nma()** and **view.modes()**, takes an *nma* object as input in addition to
-#' the mode index specifiying which mode to visualize:
+#' the mode index specifying which mode to visualize:
 #' 
 #+ example1_C-trj, cache=TRUE, results="hide"
 # Make a PDB trajectory
 a <- mktrj.nma(modes, mode=7)
 
-# Vector field representation
+# Vector field representation (see Figure 3.)
 view.modes(modes, mode=7)
 
 #' ![Visualization of the first non-trivial mode of the GroEL subunit. Visualization is provided through a trajectory file (left), or vector field representation (right).](figure/groel-traj-vector.png)
@@ -126,24 +121,23 @@ view.modes(modes, mode=7)
 cm <- dccm(modes)
 
 #+ example1_C-plotdccm, fig.width=6.5, fig.height=6, fig.cap="Correlation map revealing correlated and anti-correlated regions in the protein structure."
-# Make a correlation map with plot.dccm2(cm)
+# Make a correlation map with plot.dccm(cm)
 
 # Or with filled.contour()
-Labpalette = colorRampPalette(c("blue", "white", "red"), space = "Lab")
 filled.contour( x=1:nrow(cm), y=1:ncol(cm), z=cm,
-                color = Labpalette, levels = pretty( c(-1,1), 20))
+                color = bwr.colors, levels = pretty( c(-1,1), 20))
 
 #+ example1_C-viewdccm, cache=TRUE, results="hide"
-# View the correlations in the structure
+# View the correlations in the structure (see Figure 5.)
 view.dccm(cm, pdb.open)
 
 #' ![Correlated (left) and anti-correlated (right) residues depicted with red and blue lines, respectively. The figures demonstrate the output of function **view.dccm()**.](figure/groel-correl.png)
 
 #'
 #' #### Fluctuation and Deformation analysis
-#' Deformation analysis provides a measure for the amount of local flexibility in the protein structure - i.e. atomic motion relative
-#' to neighbouring atoms. It differs from *fluctuations* (e.g. RMSF values) which provide amplitudes of the absolute atomic motion.
-#' Below we calculate deformation energies (**deformation.nma()**) and atomic fluctuations (**fluct.nma()**) of the first three modes and 
+#' Deformation analysis provides a measure for the amount of local flexibility in the protein structure - _i.e._ atomic motion relative
+#' to neighbouring atoms. It differs from *fluctuations* (_e.g._ RMSF values) which provide amplitudes of the absolute atomic motion.
+#' Below we calculate deformation energies (with **deformation.nma()**) and atomic fluctuations (with **fluct.nma()**) of the first three modes and 
 #' visualize the results in PyMOL:
 
 #+ example1_C-deform, cache=TRUE, results="hide"
@@ -154,7 +148,7 @@ defsums <- rowSums(defe$ei[,1:3])
 # Fluctuations
 flucts <- fluct.nma(modes, mode.inds=seq(7,9))
 
-# Write to PDB files
+# Write to PDB files (see Figure 6.)
 write.pdb(pdb=NULL, xyz=modes$xyz, file="R-defor.pdb", b=defsums)
 write.pdb(pdb=NULL, xyz=modes$xyz, file="R-fluct.pdb", b=flucts)
 
@@ -191,12 +185,11 @@ text(c(1,5)+.5, oa$overlap[c(1,5)], c("Mode 1", "Mode 5"), adj=0)
 
 #'
 #' ## Example 2: Ensemble normal mode analysis
-#' The analysis of multiple protein structures (e.g. a protein family) can be accomplished with the **nma.pdbs()** function. This will take aligned input structures, as generated by the **pdbaln()** function for example, and perform NMA on each structure collecting the results in manner that facilitates the interoperation of similarity and dissimilarity trends in the structure set. Here we will analyze a collection of protein kinase structures with low sequence identity (2A) and large set of closely related transducin heterotrimeric G protein family members (2B). 
+#' The analysis of multiple protein structures (e.g. a protein family) can be accomplished with the **nma.pdbs()** function. This will take aligned input structures, as generated by the **pdbaln()** function for example, and perform NMA on each structure collecting the results in manner that facilitates the interoperation of similarity and dissimilarity trends in the structure set. Here we will analyze a collection of protein kinase structures with low sequence identity (Example 2A) and large set of closely related transducin heterotrimeric G protein family members (Example 2B). 
 
 #'
 #' ### Example 2A: Protein kinases 
-#' In the following code we collect 9 kinase structures from the protein databank (using **get.pdb()**) with sequence identity down to 14%, 
-#' and align these with **pdbaln()**:
+#' In the following code we collect 9 kinase structures from the protein databank (using **get.pdb()**) with sequence identity down to 14% (see the call to function **seqidentity()** below), and align these with **pdbaln()**:
 
 #+ example2_A, cache=TRUE, results="hide", warning=FALSE
 # Select Protein Kinase PDB IDs
@@ -211,21 +204,22 @@ files     <- pdbsplit( raw.files, ids )
 # Alignment of structures
 pdbs <- pdbaln(files)
 
+#+ example_2A2
 # Sequence identity
-seqidentity(pdbs)
+summary( c(seqidentity(pdbs)) )
 
 #'
-#' The *pdbs* object now contains *aligned* C-alpha atom data, including cartesian coordinates, residue numbers, 
-#' residue types, and B-factors. The sequence alignement is also stored by default to the fasta file 'aln.fa'.
+#' The *pdbs* object now contains *aligned* C-alpha atom data, including Cartesian coordinates, residue numbers, 
+#' residue types, and B-factors. The sequence alignment is also stored by default to the fasta file 'aln.fa' (to view this you can use an alignment viewer such as SEAVIEW, see _Requirements_ section above).
 #' Function **nma.pdbs()** will calculate the normal modes of each protein structures stored in the *pdbs* object. 
 #' The normal modes are calculated on the full structures as provided
 #' by object *pdbs*. With the default argument `rm.gaps=TRUE` unaligned atoms 
-#' are ommited from output in accordance to [^5]. 
+#' are omitted from output in accordance with common practice [^5]. 
 #' 
 
 #+ example2_A-modes, cache=TRUE, results="hide", warning=FALSE
 # NMA on all structures
-modes <- nma.pdbs(pdbs)
+modes <- nma.pdbs(pdbs, full=TRUE)
 
 #'
 #' The *modes* object of class *enma* contains aligned normal mode data including fluctuations, RMSIP data, and aligned
@@ -240,38 +234,39 @@ print(modes)
 plot(modes, pdbs, type="h")
 legend("topleft", legend=ids, col=seq(1,nrow(modes$fluctuations)), lty=1)
 
-#+ example2_A-modes2, cache=TRUE, results="hide",
-# Alternatively, use 'rm.gaps=FALSE' to keep the gap containing columns
+#+ example2_A-modes2, cache=TRUE, eval="FALSE", results="hide",
+# Alternatively, one can use 'rm.gaps=FALSE' to keep the gap containing columns
 modes <- nma.pdbs(pdbs, rm.gaps=FALSE)
 
-#+ plot_enma2, fig.width=10, fig.height=5, fig.cap="Results of ensemble NMA on select protein kinase superfamily members (with `rm.gaps=FALSE`)."
-plot(modes, pdbs, type="h")
+#'
+#' Cross-correlation analysis can be easily performed and the results contrasted for each member of the input ensemble. Below we calculate and plot the correlation matrices for each structure and then output correlations present only in all input structures.
+#'
 
-#'
-#' We could also add here **dccm.enm()**..? we have this functionality, but not in use at the moment
-#'
+#+ plot_enma2, fig.cap="Residue cross-correlations for each kinase structures analyzed."
+# Calculate correlation matrices for each structure
+cij <- dccm(modes)
+
+# Set DCCM plot panel names for combined figure
+dimnames(cij$all.dccm)=list(NULL, NULL, ids)
+plot.dccm(cij$all.dccm)
+
+#+ plot_enma3, fig.cap="Residue cross-correlations present in all kinase structures analyzed."
+# Determine correlations present only in all 9 input structures
+#cij.all <- dccm.mean(cij$all.dccm, cutoff.sims=9, cutoff.cij = 0)
+#plot.dccm2(cij.all, main="Consensus Residue Cross Correlation")
+
 
 #'
 #' ### Example 2B: Transducin
 #' 
-#' This example will run **nma.pdbs()** on the transducin family containing 53 PDB structures.
-#' First, we download pre-compiled structure and alignment data for transducin.
-#' This data file includes 
-#' (1) an object *pdbs* of class *3dalign* which contains aligned C-alpha coordinates of 53 structures as well as sequence alignment; 
-#' (2) *ligs* which annotates the nucleotide state of each structure based on a preliminary inspection on the structure data; and
-#' (3) *vcolors* which is used to color accordingly to the nucleotide state (green for GDP, and red for GTP).
+#' In this section we will demonstrate the use of **nma.pdbs()** on the example transducin family data that ships with the Bio3D package. This can be loaded with the command _data(transducin)_ and contains an object *pdbs* consisting of aligned C-alpha coordinates for 53 transducin structures from the PDB as well their annotation (in the object *annot*) as obtained from the **pdb.annotate()** function. Note that this data can be generated from scratch by following the *Comparative Structure Analysis with Bio3D Vignette* available both on-line and from within the Bio3D package.
+
 
 #+ example2_B-data, cache=FALSE, results="hide"
-# We may think of puting this data (or a subset) within the package!
-#download.file("http://www-personal.umich.edu/~xinqyao/transducin.RData", 
-#              "transducin.RData")
 load("transducin.RData")
+##data(transducin)
 
 #+ example2_B-modes, cache=TRUE, results="hide"
-# Inspect gaps in the alignment
-gaps.atom <- gap.inspect(pdbs$ali)
-gaps.xyz <- gap.inspect(pdbs$xyz)
-
 # Calculate normal modes of the 53 structures
 modes <- nma.pdbs(pdbs)
 
@@ -524,7 +519,7 @@ legend("topleft", pch=1, lty=c(1, 1, 2, 2), col=c("darkgreen", "red",
 #' [^5]: Fuglebakk, E., Echave, J., and Reuter, N. (2012). Measuring and comparing structural fluctuation patterns in large protein datasets. *Bioinformatics*, 28(19), 2431–40.
 #' 
 #' ## Document Details
-#' This document is shipped with the Bio3D package in both latex and PDF formats. All code can be extracted and automatically executed to generate Figures and/or PDF with the following commands:
+#' This document is shipped with the Bio3D package in both R and PDF formats. All code can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
 
 #+ close, include=TRUE, eval=FALSE
 library(knitr)
