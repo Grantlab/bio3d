@@ -31,10 +31,7 @@ system("pandoc -o Bio3D_nma.pdf Bio3D_nma.md")
 #' Normal mode analysis (NMA) of a single protein structure can be carried out by providing a PDB object to the function **nma()**. In the code below we first load the Bio3D package and then download an example structure of hen egg white lysozyme (PDB id *1hel*) with the function **read.pdb()**. Finally the function **nma()** is used perform the normal mode calculation:
 
 #+ example1_A, results="hide"
-##library(bio3d)
-library(devtools)
-#load_all("/struct/carlomag/skjaerve/workspace/bio3d/ver_devel/bio3d")
-load_all("/media/mamut/home/slars/workspace/bio3d/ver_devel/bio3d")
+library(bio3d)
 pdb <- read.pdb("1hel")
 modes <- nma(pdb)
 
