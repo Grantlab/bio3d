@@ -517,11 +517,11 @@ legend("topleft", pch=1, lty=c(1, 1, 2, 2), col=c("darkgreen", "red",
 
 #'
 #' ## References
-#' [^3]: Hinsen, K. et al. (2000) Chemical Physics 261:25-37.
+#' [^3]: Hinsen, K., Petrescu, A., Dellerue, S., Bellissent-Funel, M., and Kneller, G. (2000). Harmonicity in slow protein dynamics. *Chemical Physics*, 261(1-2), 25–37.
 #' 
-#' [^4]: Tama F, Sanejouand YH. (2001) Protein Eng. 14:1-6.
+#' [^4]: Tama, F. and Sanejouand, Y. H. (2001). Conformational change of proteins arising from normal mode calculations. *Protein Eng*, 14(1), 1–6.
 #' 
-#' [^5]: Fuglebakk, E. et al. (2012) Bioinformatics 28:2431-40.
+#' [^5]: Fuglebakk, E., Echave, J., and Reuter, N. (2012). Measuring and comparing structural fluctuation patterns in large protein datasets. *Bioinformatics*, 28(19), 2431–40.
 #' 
 #' ## Document Details
 #' This document is shipped with the Bio3D package in both latex and PDF formats. All code can be extracted and automatically executed to generate Figures and/or PDF with the following commands:
