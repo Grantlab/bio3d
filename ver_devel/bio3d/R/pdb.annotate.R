@@ -66,6 +66,13 @@ pdb.annotate <- function(ids, anno.terms=NULL) {
     ##- Parse the xml file
     doc = xmlRoot(xmlTreeParse(tmpfile))
     tmp1 = xmlApply(doc, function(x) xmlApply(x, xmlValue))
+    ## To remove empty entry: character(0) --> ""
+    t.fun <- function(rec) {
+      len <- sapply(rec, length)
+      if(any(len==0)) rec[[which(len==0)]] <- ""
+      return(rec)
+    }
+    tmp1 <- lapply(tmp1, t.fun)
     tmp2 <- tmp1[[1]]
     if(length(tmp1)>=2) {
       for(i in 2:length(tmp1)) {
