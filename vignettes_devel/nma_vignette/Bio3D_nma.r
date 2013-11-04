@@ -263,8 +263,9 @@ plot.dccm(cij$all.dccm)
 
 
 #+ example2_B-data, cache=FALSE, results="hide"
-load("transducin.RData")
-##data(transducin)
+data(transducin)
+gaps.res <- gap.inspect(pdbs$ali)
+gaps.pos <- gap.inspect(pdbs$xyz)
 
 #+ example2_B-modes, cache=TRUE, results="hide"
 # Calculate normal modes of the 53 structures
@@ -272,10 +273,12 @@ modes <- nma.pdbs(pdbs)
 
 #+ example2_B-plot, fig.width=9, fig.height=5, fig.cap="Structural dynamics of transducin. The calculation is based on NMA of 53 structures: 28 GTP-bound (red), and 25 GDP-bound (green)."
 # Make fluctuation plot
-plot(modes, col=vcolors)
-text(x=176, y=1, label="SW I")
-text(x=200, y=1.3, label="SW II")
-text(x=210, y=2.2, label="SW III")
+vcolors <- rep("red", length(ligs))
+vcolors[ligs=="GDP"] <- "darkgreen"
+plot(modes, col=vcolors, pdbs=pdbs)
+legend("left", lty=c(1, 1), lwd=c(2, 2),
+       col=c("red", "darkgreen"),
+       legend=c("GTP", "GDP"))
 
 #' The similarity of structural dynamics is calculated by RMSIP
 #' based on the 10 lowest frequency normal modes. The *rmsip* values are pre-calculated in the *modes* object
@@ -285,11 +288,12 @@ text(x=210, y=2.2, label="SW III")
 
 #+ example2_B-rmsip, fig.cap="RMSIP matrix of the transducin family. "
 # Plot a heat map with clustering dendogram
+ids <- substr(basename(pdbs$id), 1, 6)
 heatmap((1-modes$rmsip), labRow=ligs, labCol=ids, symm=TRUE)
 
 #+ example2_B-rmsd, cache=TRUE, fig.cap="RMSD matrix of the transducin family."
 # Calculate pair-wise RMSD values
-rmsd.map <- rmsd(pdbs$xyz, a.inds=gaps.xyz$f.inds, fit=TRUE)
+rmsd.map <- rmsd(pdbs$xyz, a.inds=gaps.pos$f.inds, fit=TRUE)
 heatmap(rmsd.map, labRow=ligs, labCol=ids, symm=TRUE)
 
 #'
@@ -462,17 +466,26 @@ rmsip(pc.xray, modes.wtd)$rmsip
 #' 
 #' This example will run **nma()** on transducin with variance weighted force constants. 
 #' The modes predicted by NMA will be compared with PCA results over the transducin family.
-#' We load the transducin data (downloaded above), and 
+#' We load the transducin data via the command data(transducin) and 
 #' calculate the normal modes for two structures corresponding to one for each of the two states:
 #' GDP (PDB id 1TAG) and GTP (PDB id 1TND). Again we use function **pdbs2pdb()** to build the *pdb* objects
 #' from the *pdbs* object (containing aligned structure/sequence information). The coordiantes of the data set were
 #' fitted to all non-gap containing C-alpha positions. 
 #+ example3_B-data, cache=FALSE,
-load("transducin.RData")
+data(transducin)
+
+gaps.res <- gap.inspect(pdbs$ali)
+gaps.pos <- gap.inspect(pdbs$xyz)
+
+#+ PCA-transducin, cache=TRUE
+xyz <- pdbfit(pdbs)
+pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
 
 #+ example3_B-modes, cache=TRUE, results="hide", 
 # Fetch PDB objects
-pdb.list <- pdbs2pdb(pdbs, inds=c(2, 7), rm.gaps=TRUE)
+npdbs <- pdbs
+npdbs$xyz <- xyz
+pdb.list <- pdbs2pdb(npdbs, inds=c(2, 7), rm.gaps=TRUE)
 pdb.gdp <- pdb.list[[ grep("1TAG_A", names(pdb.list)) ]]
 pdb.gtp <- pdb.list[[ grep("1TND_B", names(pdb.list)) ]]
 
@@ -484,13 +497,15 @@ modes.gtp <- nma(pdb.gtp)
 #' **make.weights()** defined above. This will be used to weight the force constants in the elastic network model. 
 #+ example3_B-weights, cache=TRUE, results='hide'
 # Calculate weights 
-weights <- make.weights(pdbs$xyz[, gaps.xyz$f.inds])
+weights <- make.weights(xyz[, gaps.pos$f.inds])
 
 # Calculate normal modes with weighted pair force constants
 modes.gdp.b <- nma(pdb.gdp, fc.weights=weights**100)
 modes.gtp.b <- nma(pdb.gtp, fc.weights=weights**100)
 
-#' To evaluate the results, we calculate the overlap (square dot product) between modes predicted by  variance weighted or non-weighted NMA and the first principle component from PCA (contained in the object **pc.xray** returned by calling **pca.xyz(xyz[, gaps.xyz$f.inds])**.
+#' To evaluate the results, we calculate the overlap (square dot product) between modes 
+#' predicted by variance weighted or non-weighted NMA and the first principle component 
+#' from PCA.
 #+ example3_B-overlap, cache=TRUE, results='hide'
 oa <- overlap(modes.gdp, pc.xray$U[,1])
 ob <- overlap(modes.gtp, pc.xray$U[,1])
