@@ -61,7 +61,7 @@ plot.dccm2 <-function(x, sse=NULL, colorkey=TRUE,
   ##-- Main Plot
   p1 <- contourplot(x, region = TRUE, labels=F, col="gray40",
                     at=at, xlab=xlab, ylab=ylab,
-                    colorkey=colorkey, main=main)#, ...)
+                    colorkey=colorkey, main=main, ...)
 
   xymin=0; xymax=1
   if (is.null(sse) && is.null(margin.segments)) {
