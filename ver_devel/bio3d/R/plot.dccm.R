@@ -63,6 +63,7 @@ plot.dccm <-function(x, sse=NULL, colorkey=TRUE,
                     at=at, xlab=xlab, ylab=ylab,
                     colorkey=colorkey, main=main, ...)
 
+
   xymin=0; xymax=1
   if (is.null(sse) && is.null(margin.segments)) {
     print(p1)
@@ -109,6 +110,13 @@ plot.dccm <-function(x, sse=NULL, colorkey=TRUE,
     if(!is.null(sse)) {
       ##-- SSE annotation 
       ## TOP
+
+      ## dont have a pdb$helix$length
+      if( is.null(sse$helix$length) ) {
+        sse$helix$length <- (sse$helix$end+1)-sse$helix$start
+        sse$sheet$length <- (sse$sheet$end+1)-sse$sheet$start
+      }
+
       draw.segment(sse$helix$start, sse$helix$length,
                    xymin=xymin, xymax=xymax, fill.col=helix.col, side=3)
       
@@ -123,6 +131,7 @@ plot.dccm <-function(x, sse=NULL, colorkey=TRUE,
                    xymin=xymin, xymax=xymax, fill.col=sheet.col, side=4)
     }
     
+
     if(!is.null(margin.segments)) {
       ##-- Cluster annotation 
       ## BOTTOM
