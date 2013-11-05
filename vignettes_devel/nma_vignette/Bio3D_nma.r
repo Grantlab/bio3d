@@ -121,11 +121,9 @@ view.modes(modes, mode=7)
 cm <- dccm(modes)
 
 #+ example1_C-plotdccm, fig.width=6.5, fig.height=6, fig.cap="Correlation map revealing correlated and anti-correlated regions in the protein structure."
-# Make a correlation map with plot.dccm(cm)
+# Plot a correlation map with plot.dccm(cm)
+plot(cm, sse=pdb.open, contour=F, col.regions=bwr.colors(20), at=seq(-1,1,0.1) )
 
-# Or with filled.contour()
-filled.contour( x=1:nrow(cm), y=1:ncol(cm), z=cm,
-                color = bwr.colors, levels = pretty( c(-1,1), 20))
 
 #+ example1_C-viewdccm, cache=TRUE, results="hide"
 # View the correlations in the structure (see Figure 5.)
@@ -466,9 +464,9 @@ rmsip(pc.xray, modes.wtd)$rmsip
 #' ### Example 3B: Transducin
 #' 
 #' This example will run **nma()** on transducin with variance weighted force constants. 
-#' The modes predicted by NMA will be compared with PCA results over the transducin family.
-#' The transducin data are loaded via the command _data(transducin)_ and 
-#' the normal modes are calculated for two structures corresponding to one for each of the two states:
+#' The modes predicted by NMA will be compared with principal components analysis (PCA) results over the transducin family.
+#' We load the transducin data via the command _data(transducin)_ and 
+#' calculate the normal modes for two structures corresponding to one for each of the two states:
 #' GDP (PDB id 1TAG) and GTP (PDB id 1TND). Again we use function **pdbs2pdb()** to build the *pdb* objects
 #' from the *pdbs* object (containing aligned structure/sequence information). The coordiantes of the data set were
 #' fitted to all non-gap containing C-alpha positions. 
