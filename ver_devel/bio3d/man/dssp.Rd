@@ -1,13 +1,13 @@
 \name{dssp}
 \alias{dssp}
-\alias{print.dssp}
+\alias{print.sse}
 \title{ Secondary Structure Analysis with DSSP }
 \description{
   Secondary structure assignment according to the method of Kabsch and Sander.
 }
 \usage{
 dssp(pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE)
-\method{print}{dssp}(x, \dots)
+\method{print}{sse}(x, \dots)
 }
 \arguments{
   \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
@@ -20,7 +20,8 @@ dssp(pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE)
     parsed. }
   \item{verbose}{ logical, if TRUE \sQuote{DSSP} warning and error
     messages are printed. } 
-  \item{x}{ an \code{dssp} object obtained from \code{\link{dssp}}. }
+  \item{x}{ an \code{sse} object obtained from \code{\link{dssp}} or 
+    \code{\link{stride}}. }
   \item{...}{ additional arguments to \sQuote{print}. }
   }
 \details{

@@ -1,4 +1,4 @@
-"print.dssp" <-
+"print.sse" <-
   function(x, ...) {
 
     cn <- class(x)

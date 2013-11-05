@@ -1,11 +1,13 @@
 \name{stride}
 \alias{stride}
+\alias{print.sse}
 \title{ Secondary Structure Analysis with STRIDE }
 \description{
   Secondary structure assignment according to the method of Frishman and Argos.
 }
 \usage{
 stride(pdb, exefile = "stride", resno=TRUE)
+\method{print}{sse}(x, \dots)
 }
 \arguments{
   \item{pdb}{ a structure object of class '"pdb"', obtained from
@@ -14,6 +16,9 @@ stride(pdb, exefile = "stride", resno=TRUE)
    how is \sQuote{STRIDE} invoked). }
   \item{resno}{ logical, if TRUE output is in terms of residue numbers
     rather than residue index (position in sequence). } 
+  \item{x}{ an \code{sse} object obtained from \code{\link{dssp}} or
+    \code{\link{stride}}. }
+  \item{...}{ additional arguments to \sQuote{print}. }
 }
 \details{
   This function calls the \sQuote{STRIDE} program to define secondary

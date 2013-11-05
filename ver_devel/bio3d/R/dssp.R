@@ -237,6 +237,6 @@ function (pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE) {
                 turn = turn, phi = phi, psi = psi, acc = acc,
                 sse = sse, call=cl)
 
-    class(out) <- "dssp"
+    class(out) <- "sse"
     return(out)
 }
