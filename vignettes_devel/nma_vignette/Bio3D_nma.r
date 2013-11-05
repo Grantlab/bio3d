@@ -259,11 +259,13 @@ plot.dccm(cij$all.dccm)
 #'
 #' ### Example 2B: Transducin
 #' 
-#' In this section we will demonstrate the use of **nma.pdbs()** on the example transducin family data that ships with the Bio3D package. This can be loaded with the command _data(transducin)_ and contains an object *pdbs* consisting of aligned C-alpha coordinates for 53 transducin structures from the PDB as well their annotation (in the object *annot*) as obtained from the **pdb.annotate()** function. Note that this data can be generated from scratch by following the *Comparative Structure Analysis with Bio3D Vignette* available both on-line and from within the Bio3D package.
+#' In this section we will demonstrate the use of **nma.pdbs()** on the example transducin family data that ships with the Bio3D package. This can be loaded with the command _data(transducin)_ and contains an object *pdbs* consisting of aligned C-alpha coordinates for 53 transducin structures from the PDB as well their annotation (in the object *annotation*) as obtained from the **pdb.annotate()** function. Note that this data can be generated from scratch by following the *Comparative Structure Analysis with Bio3D Vignette* available both on-line and from within the Bio3D package.
 
 
 #+ example2_B-data, cache=FALSE, results="hide"
 data(transducin)
+rm(list=names(transducin))
+attach(transducin)
 gaps.res <- gap.inspect(pdbs$ali)
 gaps.pos <- gap.inspect(pdbs$xyz)
 
@@ -273,11 +275,10 @@ modes <- nma.pdbs(pdbs)
 
 #+ example2_B-plot, fig.width=9, fig.height=5, fig.cap="Structural dynamics of transducin. The calculation is based on NMA of 53 structures: 28 GTP-bound (red), and 25 GDP-bound (green)."
 # Make fluctuation plot
-vcolors <- rep("red", length(ligs))
-vcolors[ligs=="GDP"] <- "darkgreen"
+vcolors <- annotation[, "color"]
 plot(modes, col=vcolors, pdbs=pdbs)
 legend("left", lty=c(1, 1), lwd=c(2, 2),
-       col=c("red", "darkgreen"),
+       col=c("red", "green"),
        legend=c("GTP", "GDP"))
 
 #' The similarity of structural dynamics is calculated by RMSIP
@@ -289,12 +290,12 @@ legend("left", lty=c(1, 1), lwd=c(2, 2),
 #+ example2_B-rmsip, fig.cap="RMSIP matrix of the transducin family. "
 # Plot a heat map with clustering dendogram
 ids <- substr(basename(pdbs$id), 1, 6)
-heatmap((1-modes$rmsip), labRow=ligs, labCol=ids, symm=TRUE)
+heatmap((1-modes$rmsip), labRow=annotation[, "state"], labCol=ids, symm=TRUE)
 
 #+ example2_B-rmsd, cache=TRUE, fig.cap="RMSD matrix of the transducin family."
 # Calculate pair-wise RMSD values
 rmsd.map <- rmsd(pdbs$xyz, a.inds=gaps.pos$f.inds, fit=TRUE)
-heatmap(rmsd.map, labRow=ligs, labCol=ids, symm=TRUE)
+heatmap(rmsd.map, labRow=annotation[, "state"], labCol=ids, symm=TRUE)
 
 #'
 #' ## Example 3: Variance weighted normal mode analysis
@@ -466,13 +467,15 @@ rmsip(pc.xray, modes.wtd)$rmsip
 #' 
 #' This example will run **nma()** on transducin with variance weighted force constants. 
 #' The modes predicted by NMA will be compared with PCA results over the transducin family.
-#' We load the transducin data via the command data(transducin) and 
-#' calculate the normal modes for two structures corresponding to one for each of the two states:
+#' The transducin data are loaded via the command _data(transducin)_ and 
+#' the normal modes are calculated for two structures corresponding to one for each of the two states:
 #' GDP (PDB id 1TAG) and GTP (PDB id 1TND). Again we use function **pdbs2pdb()** to build the *pdb* objects
 #' from the *pdbs* object (containing aligned structure/sequence information). The coordiantes of the data set were
 #' fitted to all non-gap containing C-alpha positions. 
 #+ example3_B-data, cache=FALSE,
 data(transducin)
+rm(list=names(transducin))
+attach(transducin)
 
 gaps.res <- gap.inspect(pdbs$ali)
 gaps.pos <- gap.inspect(pdbs$xyz)
