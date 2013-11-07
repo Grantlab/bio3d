@@ -1,6 +1,6 @@
 summary.pdb <- function(object, ...) {
 
-  ## summary.cna(pdb)
+  ## Print a summary of basic PDB object features
 
   if( !"pdb" %in% class(object) ) {
     stop("Input should be a pdb object, as obtained from 'read.pdb()'")
@@ -23,6 +23,8 @@ summary.pdb <- function(object, ...) {
   not.prot.inds <- atom.select(object, "notprotein",verbose=FALSE)$atom
   nother.atom <- length( not.prot.inds )
   not.prot.res <- object$atom[not.prot.inds, "resid"]
+  not.prot.res <- paste(unique(not.prot.res), collapse=" ")
+ 
   if(length(not.prot.res) == 0)
     not.prot.res <- "none"
 
