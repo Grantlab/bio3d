@@ -120,10 +120,9 @@ view.modes(modes, mode=7)
 # Calculate the cross-correlation matrix
 cm <- dccm(modes)
 
-#+ example1_C-plotdccm, fig.width=6.5, fig.height=6, fig.cap="Correlation map revealing correlated and anti-correlated regions in the protein structure."
+#+ example1_C-plotdccm, message=FALSE, fig.width=6.5, fig.height=6, fig.cap="Correlation map revealing correlated and anti-correlated regions in the protein structure."
 # Plot a correlation map with plot.dccm(cm)
 plot(cm, sse=pdb.open, contour=F, col.regions=bwr.colors(20), at=seq(-1,1,0.1) )
-
 
 #+ example1_C-viewdccm, cache=TRUE, results="hide"
 # View the correlations in the structure (see Figure 5.)
@@ -212,7 +211,7 @@ summary( c(seqidentity(pdbs)) )
 #' Function **nma.pdbs()** will calculate the normal modes of each protein structures stored in the *pdbs* object. 
 #' The normal modes are calculated on the full structures as provided
 #' by object *pdbs*. With the default argument `rm.gaps=TRUE` unaligned atoms 
-#' are omitted from output in accordance with common practice [^5]. 
+#' are omitted from output in accordance with common practice [^4]. 
 #' 
 
 #+ example2_A-modes, cache=TRUE, results="hide", warning=FALSE
@@ -232,7 +231,7 @@ print(modes)
 plot(modes, pdbs, type="h")
 legend("topleft", legend=ids, col=seq(1,nrow(modes$fluctuations)), lty=1)
 
-#+ example2_A-modes2, cache=TRUE, eval="FALSE", results="hide",
+#+ example2_A-modes2, cache=TRUE, eval=FALSE, results="hide",
 # Alternatively, one can use 'rm.gaps=FALSE' to keep the gap containing columns
 modes <- nma.pdbs(pdbs, rm.gaps=FALSE)
 
@@ -240,10 +239,11 @@ modes <- nma.pdbs(pdbs, rm.gaps=FALSE)
 #' Cross-correlation analysis can be easily performed and the results contrasted for each member of the input ensemble. Below we calculate and plot the correlation matrices for each structure and then output correlations present only in all input structures.
 #'
 
-#+ plot_enma2, fig.cap="Residue cross-correlations for each kinase structures analyzed."
+#+ cij_enma3, results="hide", message=FALSE
 # Calculate correlation matrices for each structure
 cij <- dccm(modes)
 
+#+ plot_enma2, fig.cap="Residue cross-correlations for each kinase structures analyzed."
 # Set DCCM plot panel names for combined figure
 dimnames(cij$all.dccm)=list(NULL, NULL, ids)
 plot.dccm(cij$all.dccm)
@@ -261,23 +261,24 @@ plot.dccm(cij$all.dccm)
 
 
 #+ example2_B-data, cache=FALSE, results="hide"
+# Load data
 data(transducin)
-rm(list=names(transducin))
-attach(transducin)
+pdbs <- transducin$pdbs
+annotation <- transducin$annotation
+
+# Find gap positions
 gaps.res <- gap.inspect(pdbs$ali)
 gaps.pos <- gap.inspect(pdbs$xyz)
 
-#+ example2_B-modes, cache=TRUE, results="hide"
+#+ example2_B-modes, cache=TRUE, results="hide", warning=FALSE
 # Calculate normal modes of the 53 structures
 modes <- nma.pdbs(pdbs)
 
 #+ example2_B-plot, fig.width=9, fig.height=5, fig.cap="Structural dynamics of transducin. The calculation is based on NMA of 53 structures: 28 GTP-bound (red), and 25 GDP-bound (green)."
 # Make fluctuation plot
-vcolors <- annotation[, "color"]
-plot(modes, col=vcolors, pdbs=pdbs)
+plot(modes, col=annotation[, "color"], pdbs=pdbs)
 legend("left", lty=c(1, 1), lwd=c(2, 2),
-       col=c("red", "green"),
-       legend=c("GTP", "GDP"))
+    col=c("red", "green"), legend=c("GTP", "GDP"))
 
 #' The similarity of structural dynamics is calculated by RMSIP
 #' based on the 10 lowest frequency normal modes. The *rmsip* values are pre-calculated in the *modes* object
@@ -297,7 +298,7 @@ heatmap(rmsd.map, labRow=annotation[, "state"], labCol=ids, symm=TRUE)
 
 #'
 #' ## Example 3: Variance weighted normal mode analysis
-#' In this example we illustrate an approach of weighting the pair force constants based on the variance of the inter atomic distances obtained from an ensemble of structures (e.g. available X-ray structures). The motivation for such variance-weighting is to reduce the well known depence of the force constants on the one structure upon which they derived derived [^4].
+#' In this example we illustrate an approach of weighting the pair force constants based on the variance of the inter atomic distances obtained from an ensemble of structures (e.g. available X-ray structures). The motivation for such variance-weighting is to reduce the well known dependence of the force constants on the one structure upon which they are derived [^5].
 #'
 #' ### Example 3A: GroEL
 #' We first calculate the normal modes of both the closed and open state of the GroEL subunit, and we illustrate 
@@ -317,7 +318,7 @@ pdbs <- pdbaln(files, fit=TRUE)
 
 #'
 #' #### Calculate normal modes
-#' Next we will calculate the normal modes of the open and closed conformational state. They are stored at indices 1 and 5, respectively, in our 'pdbs' object. 
+#' Next we will calculate the normal modes of the open and closed conformational state. They are stored at indices 1 and 5, respectively, in our *pdbs* object. 
 #' Use the **pdbs2pdb()** to fetch the pdb objects which is needed for the input to **nma()**. 
 #'
 
@@ -464,21 +465,22 @@ rmsip(pc.xray, modes.wtd)$rmsip
 #' ### Example 3B: Transducin
 #' 
 #' This example will run **nma()** on transducin with variance weighted force constants. 
-#' The modes predicted by NMA will be compared with principal components analysis (PCA) results over the transducin family.
+#' The modes predicted by NMA will be compared with principal component analysis (PCA) results over the transducin family.
 #' We load the transducin data via the command _data(transducin)_ and 
-#' calculate the normal modes for two structures corresponding to one for each of the two states:
+#' calculate the normal modes for two structures corresponding to two nucleotide states, respectively:
 #' GDP (PDB id 1TAG) and GTP (PDB id 1TND). Again we use function **pdbs2pdb()** to build the *pdb* objects
-#' from the *pdbs* object (containing aligned structure/sequence information). The coordiantes of the data set were
+#' from the *pdbs* object (containing aligned structure/sequence information). The coordinates of the data set were
 #' fitted to all non-gap containing C-alpha positions. 
 #+ example3_B-data, cache=FALSE,
 data(transducin)
-rm(list=names(transducin))
-attach(transducin)
+pdbs <- transducin$pdbs
 
 gaps.res <- gap.inspect(pdbs$ali)
 gaps.pos <- gap.inspect(pdbs$xyz)
 
 #+ PCA-transducin, cache=TRUE
+# Fit coordinates based on all non-gap positions
+# and do PCA
 xyz <- pdbfit(pdbs)
 pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
 
@@ -505,7 +507,7 @@ modes.gdp.b <- nma(pdb.gdp, fc.weights=weights**100)
 modes.gtp.b <- nma(pdb.gtp, fc.weights=weights**100)
 
 #' To evaluate the results, we calculate the overlap (square dot product) between modes 
-#' predicted by variance weighted or non-weighted NMA and the first principle component 
+#' predicted by variance weighted or non-weighted NMA and the first principal component 
 #' from PCA.
 #+ example3_B-overlap, cache=TRUE, results='hide'
 oa <- overlap(modes.gdp, pc.xray$U[,1])
@@ -526,13 +528,126 @@ text(20, od$overlap.cum[20], label=round(od$overlap.cum[20], 2), pos=3)
 legend("topleft", pch=1, lty=c(1, 1, 2, 2), col=c("darkgreen", "red", 
        "darkgreen", "red"), legend=c("GDP", "GTP", "Weighted GDP", "Weighted GTP"))
 
+
 #'
-#' ## References
+#' ## Example 4: User-defined pair force constant functions
+#' In this example we demonstrate the interface for defining custom functions for the pair spring force constants. 
+#' A custom function can be obtained through simple scripting as shown below. 
+#'
+
+#' ### Example 4A: Specifying a simple function
+#' We first show how to define a simple force constant function by building a revised version
+#' of the parameter-free ANM force field. The function **my.ff()** below takes as input *r* which is a vector
+#' of inter-atomic (calpha) distances (i.e. distances from atom *i*, to all other atoms in the system;
+#' this function will thus be called N times, where N is the number of calpha atoms). It will in this case return 0 for the
+#' pairs with a distance larger than 10 \AA, and $r^{-2}$ for all other pairs. Our simple function will thus look like:
+
+
+#+ example4_A-basic, cache=TRUE, results="hide", warning=FALSE
+# Define function for spring force constants
+"my.ff" <- function(r, ...) {
+  ifelse( r>10, 0, r^(-2) )
+}
+
+#' Once the function is in place we can feed it to function **nma()** to calculate the normal modes
+#' based on the particular force constants built with our new function. Below we apply it the lysozyme (PDB id *1hel*): 
+
+#+ example4_A-modes, cache=TRUE, results="hide", warning=FALSE
+# Download PDB and calculate normal modes
+pdb <- read.pdb("1hel")
+modes <- nma(pdb, pfc.fun=my.ff)
+
+#'
+#' Alternatively we can take a more manual approach by calling **build.hessian()** if we want to investigate
+#' the hessian matrix further (note that **build.hessian** is called from within function **nma()** which
+#' will diagonalize the hessian to obtain the normal modes and thus not return it to the user). In the code
+#' below we first build the hessian and illustrate how to obtain the normal modes through calls to either
+#' **eigen()** or **nma()** (which can also take a hessian matrix as input): 
+
+#+ example4_A-manual, cache=TRUE, results="hide", warning=FALSE
+# Indices for CA atoms
+ca.inds <- atom.select(pdb, 'calpha')
+
+# Build hessian matrix
+h <- build.hessian(pdb$xyz[ ca.inds$xyz ], pfc.fun=my.ff)
+
+# Diagonalize and obtain eigenvectors and -values
+modes <- eigen(h, symmetric=TRUE)
+
+# ... or feed the hessian to function 'nma()'
+modes <- nma(pdb, hessian=h, mass=FALSE)
+
+#' Note that function **nma()** assumes the hessian to be mass-weighted and we therefore have to specify *mass=FALSE*
+#' in this particular case. To obtain a mass-weighted hessian pass the amino acid masses through argument *aa.mass*
+#' to function **build.hessian()**.
+
+#'
+#' ### Example 4B: Specific force constants for disulfide bridges
+#' In the following code we illustrate a more advanced force constant function making use of arguments *atom.id*
+#' and *ssdat* which is passed from function **build.hessian()** by default. This allows users to access the protein
+#' sequence (`ssdat$seq`), secondary structure data (`ssdat$sse`), beta bridges (`ssdat$beta.bridges`),
+#' helix 1-4 (`ssdat$helix14`), and disulfide bridges (ss bonds; `ssdat$ss.bonds`) when building the force constants.
+
+#'
+#' First we define our new function (**ff.custom()**) and specify the force constants which should be applied
+#' to bonded and non-bonded interactions (`k.bonded` and `k.nonbonded`, respectively). Next we define the
+#' the force constant for the disulfide bridges (`k.ssbond`):
+
+
+#+ example4_B-ssbond, cache=TRUE, results="hide", warning=FALSE
+"ff.custom" <- function(r, atom.id, ssdat=NULL, ...) {
+  # Default force constants (Hinsen et al 2000)
+  k.bonded    <- (r * 8.6 * 10^2) - (2.39 * 10^3)
+  k.nonbonded <- (128 * 10^4) * r^(-6)
+
+  # Special force constant for SS-bonds
+  k.ssbond    <- 143;
+
+  # Calculate default values (equivalent to the calpha ff)
+  ks <- ifelse(r<4.0,
+               k.bonded,
+               k.nonbonded)
+
+  if(!is.null(ssdat$ss.bonds)) {
+    # If atom.id is part off a ssbond..
+    inds <- ssdat$ss.bonds[,1]==atom.id
+    
+    if(any(inds)) {
+      # Find ss-bond pair
+      inds.paired <- ssdat$ss.bonds[which(inds), 2]
+
+      # and change the spring force constant
+      ks[inds.paired] <- k.ssbond
+    }
+  }
+  return(ks)
+}
+
+#'
+#' The disulfide bridges needs to be defined manually througha two-column matrix which we feed to function **nma()**:
+
+#+ example4_B-modes, cache=TRUE, results="hide", warning=FALSE
+# Define SS-bonds in a two-column matrix
+ss.bonds <- matrix(c(76,94, 64,80, 30,115, 6,127),
+                   ncol=2, byrow=TRUE)
+
+# Calaculate modes with custom force field
+modes <- nma(pdb, pfc.fun=ff.custom, ss.bonds=ss.bonds)
+
+#'
+#' Finally we can use force field *calphax* to account for stronger interactions for beta bridges and helix 1-4 interactions:
+
+#+ example4_B-calphax, cache=TRUE, results="hide", warning=FALSE
+# Use ff='calphax' to account for stronger beta-bridges and helix 1-4 interactions
+sse <- dssp(pdb, resno=FALSE, full=TRUE)
+modes <- nma(pdb, ff='calphax', ss.bonds=ss.bonds, sse=sse)
+
+#'
 #' [^3]: Hinsen, K., Petrescu, A., Dellerue, S., Bellissent-Funel, M., and Kneller, G. (2000). Harmonicity in slow protein dynamics. *Chemical Physics*, 261(1-2), 25–37.
 #' 
-#' [^4]: Tama, F. and Sanejouand, Y. H. (2001). Conformational change of proteins arising from normal mode calculations. *Protein Eng*, 14(1), 1–6.
+#' [^4]: Fuglebakk, E., Echave, J., and Reuter, N. (2012). Measuring and comparing structural fluctuation patterns in large protein datasets. *Bioinformatics*, 28(19), 2431–40.
 #' 
-#' [^5]: Fuglebakk, E., Echave, J., and Reuter, N. (2012). Measuring and comparing structural fluctuation patterns in large protein datasets. *Bioinformatics*, 28(19), 2431–40.
+#' [^5]: Tama, F. and Sanejouand, Y. H. (2001). Conformational change of proteins arising from normal mode calculations. *Protein Eng*, 14(1), 1–6.
 #' 
 #' ## Document Details
 #' This document is shipped with the Bio3D package in both R and PDF formats. All code can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:

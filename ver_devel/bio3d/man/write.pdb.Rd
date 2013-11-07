@@ -7,9 +7,9 @@
 }
 \usage{
 write.pdb(pdb = NULL, file = "R.pdb", xyz = pdb$xyz, resno = NULL, resid = 
-NULL, eleno = NULL, elety = NULL, chain = NULL, o = NULL, b = NULL,
-segid = NULL, elesy = NULL, charge = NULL, het = FALSE, append = FALSE, 
-verbose = FALSE, chainter = FALSE, end = TRUE, print.segid = FALSE)
+NULL, eleno = NULL, elety = NULL, chain = NULL, insert = NULL, alt = NULL, 
+o = NULL, b = NULL, segid = NULL, elesy = NULL, charge = NULL, het = FALSE, 
+append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE, print.segid = FALSE)
 }
 \arguments{
   \item{pdb}{ a PDB structure object obtained from
@@ -25,6 +25,10 @@ verbose = FALSE, chainter = FALSE, end = TRUE, print.segid = FALSE)
   \item{elety}{ vector of element/atom types of length equal to
     length(xyz)/3. }
   \item{chain}{ vector of chain identifiers with length equal to
+    length(xyz)/3. }
+  \item{insert}{ vector of insertion code with length equal to
+    length(xyz)/3. }
+  \item{alt}{ vector of alternate record with length equal to
     length(xyz)/3. }
   \item{o}{ vector of occupancy values of length equal to
     length(xyz)/3. }
