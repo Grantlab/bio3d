@@ -13,6 +13,12 @@ function (nums, dup.inds=FALSE, pre.sort=TRUE) {
         stop("must supply a numeric vector")
     if (length(nums)==0)
       return(nums)
+
+    if(pre.sort) {
+      ## should we pre-sort...
+      nums <- sort(unique(nums))
+    }
+
     if (length(nums) == 1) {
       bounds <- c(nums, nums, 1)
       names(bounds) <- c("start", "end", "length")
@@ -22,10 +28,6 @@ function (nums, dup.inds=FALSE, pre.sort=TRUE) {
      return( t(as.matrix(bounds)) )
     }
 
-    if(pre.sort) {
-      ## should we pre-sort...
-      nums <- sort(unique(nums))
-    }
     bounds <- nums[1]
     nums.start <- nums[1]
     diff.i <- 1

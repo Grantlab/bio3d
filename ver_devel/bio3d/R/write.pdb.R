@@ -7,6 +7,8 @@ function (pdb = NULL,
           eleno = NULL,
           elety = NULL,
           chain = NULL,
+          insert= NULL,
+          alt = NULL,
           o = NULL,
           b = NULL,
           segid = NULL,
@@ -67,6 +69,14 @@ function (pdb = NULL,
       chain = pdb$atom[, "chain"]
       if (het) { chain = c(chain, pdb$het[, "chain"]) }}
     
+    if (is.null(insert)) {
+      insert = pdb$atom[, "insert"]
+      if (het) { insert = c(insert, pdb$het[, "insert"]) }}
+
+    if (is.null(alt)) {
+      alt = pdb$atom[, "alt"]
+      if (het) { alt = c(alt, pdb$het[, "alt"]) }}
+    
     if (is.null(o)) {
       o = pdb$atom[, "o"]
       if (het) { o = c(o, pdb$het[, "o"]) }}
@@ -79,6 +89,8 @@ function (pdb = NULL,
     if (any(is.na(b))) {      b = rep("0.00", natom) }
     #if (any(is.na(chain))) { chain = rep(" ", natom) }
     chain[is.na(chain)]= ""
+    insert[is.na(insert)] = ""
+    alt[is.na(alt)] = ""
     
     if (is.null(segid)) {
        segid = pdb$atom[, "segid"]
@@ -100,6 +112,8 @@ function (pdb = NULL,
     if (is.null(eleno)) eleno = c(1:natom)
     if (is.null(elety)) elety = rep("CA", natom)
     if (is.null(chain)) chain = rep("", natom)
+    if (is.null(insert)) insert=rep("", natom)
+    if (is.null(alt)) alt=rep("", natom)
     if (is.null(o))         o = rep("1.00",natom)
     if (is.null(b))         b = rep("0.00", natom)
     if (is.null(segid)) segid = rep("", natom)
@@ -164,9 +178,11 @@ function (pdb = NULL,
       lines <- rbind(lines, atom.print( card = card[i],
                                        eleno = as.character(teleno[i] + ii),
                                        elety = elety[i],
+                                       alt = alt[i],
                                        resid = resid[i],
                                        chain = chain[i],
                                        resno = resno[i],
+                                       insert = insert[i],
                                        x = coords[i, 1],
                                        y = coords[i, 2],
                                        z = coords[i, 3],
@@ -182,7 +198,7 @@ function (pdb = NULL,
 #          lines <- rbind(lines, "TER   ")
           ii = ii + 1
           lines <- rbind(lines, sprintf("%-6s%5s%6s%3s%1s%1s%4s%1s", 
-               "TER", as.character(teleno[i] + ii), "", resid[i], "", chain[i], resno[i], ""))
+               "TER", as.character(teleno[i] + ii), "", resid[i], "", chain[i], resno[i], insert[i]))
         }
       }
           
@@ -193,7 +209,7 @@ function (pdb = NULL,
     if(chainter) {
           ii = ii + 1
           cat(sprintf("%-6s%5s%6s%3s%1s%1s%4s%1s\n", "TER", as.character(teleno[i] + ii), "", 
-              resid[i], "", chain[i], resno[i], ""), file = file, append = TRUE)
+              resid[i], "", chain[i], resno[i], insert[i]), file = file, append = TRUE)
     }
     if(end) {
       cat("END   \n", file = file, append = TRUE)
@@ -213,9 +229,11 @@ function (pdb = NULL,
       for (i in 1:natom) {
         lines <- rbind(lines, atom.print( eleno = as.character(teleno[i] + ii),
                                          elety = elety[i],
+                                         alt = alt[i],
                                          resid = resid[i],
                                          chain = chain[i],
                                          resno = resno[i],
+                                         insert = insert[i],
                                          x = coords[i, 1],
                                          y = coords[i, 2],
                                          z = coords[i, 3],
@@ -231,7 +249,7 @@ function (pdb = NULL,
 #            lines <- rbind(lines, "TER   ")
             ii = ii + 1
             lines <- rbind(lines, sprintf("%-6s%5s%6s%3s%1s%1s%4s%1s", 
-               "TER", as.character(teleno[i] + ii), "", resid[i], "", chain[i], resno[i], ""))
+               "TER", as.character(teleno[i] + ii), "", resid[i], "", chain[i], resno[i], insert[i]))
           }
         }
         
@@ -245,7 +263,7 @@ function (pdb = NULL,
       if(chainter) {
          ii = ii + 1
          cat(sprintf("%-6s%5s%6s%3s%1s%1s%4s%1s\n", "TER", as.character(teleno[i] + ii), "", 
-              resid[i], "", chain[i], resno[i], ""), file=file, append=TRUE)
+              resid[i], "", chain[i], resno[i], insert[i]), file=file, append=TRUE)
       }
       cat(sprintf("%-6s\n", "ENDMDL"), file = file, append = TRUE)
     }

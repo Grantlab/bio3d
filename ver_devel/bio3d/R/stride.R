@@ -30,7 +30,22 @@ function(pdb, exefile = "stride", resno=TRUE) {
   cha <- substring(raw.tor, 10,10)
   acc <- as.numeric(substring(raw.tor, 65, 69))
 
-  res.num  <- as.numeric(substring(raw.tor, 12, 15))
+  res.num  <- suppressWarnings(as.numeric(substring(raw.tor, 12, 15)))
+  if(any(is.na(res.num))) {
+    ins <- which(is.na(res.num))
+    res.num[ins] <- as.numeric(substring(raw.tor, 11, 14))[ins]    
+    if(resno) {
+      warning("Insertions are found in PDB: Residue numbers may be incorrect.
+            Try again with resno=FALSE")
+    } 
+    else {
+      ii <- diff(res.num)
+      ii[ii==0] <- 1     #Consecutive numbers at insertion residues
+      ii[ii<0] <- 2      #Jumps at possible chain termination
+      res.num <- res.num[1] + c(0, cumsum(ii))
+    }
+  }
+
 #  res.ind <- 1:length(res.num)
 #  res.name <- substring(raw.tor, 6, 8)
   h.res <- bounds(res.num[which(sse == "H")], pre.sort=FALSE)
