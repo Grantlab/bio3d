@@ -41,9 +41,8 @@ dssp.trj(pdb, trj, skip=1000, threshold=3, file.head="")
 \examples{
 \dontrun{
 # Read a PDB file
-pdb <- read.pdb("1bg2")
-
-trj <- read.ncdf ("trj.netcdf")
+pdb <- read.pdb(system.file("examples/hivp.pdb", package="bio3d"))
+trj <- read.dcd(system.file("examples/hivp.dcd", package="bio3d"))
 
 dssp.trj(pdb, trj, skip = 100, threshold = 1.5)
 

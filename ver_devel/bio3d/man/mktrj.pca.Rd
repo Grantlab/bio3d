@@ -38,25 +38,29 @@ mktrj.pca(pca = NULL, pc = 1, mag = 1, step = 0.125, file = NULL,  ...)
   \url{http://www.ks.uiuc.edu/Research/vmd/}. }
 \seealso{ \code{\link{pca.xyz}} }
 \examples{
-data(kinesin) # see pca.xyz for details
-attach(kinesin, warn.conflicts=FALSE)
+data(transducin)
+attach(transducin, warn.conflicts=FALSE)
 
 # Ignore gap containing positions
-cut.seqs <- which(pdbs$id \%in\% c("d1n6mb_","d1ry6a_"))
-gaps <- gap.inspect(pdbs$ali[-cut.seqs,])
+gaps.res <- gap.inspect(pdbs$ali)
+gaps.pos <- gap.inspect(pdbs$xyz)
+
+# PCA
+pc.xray <- pca.xyz(pdbs$xyz[, gaps.pos$f.inds])
 
 # Write PC trajectory
 a <- mktrj.pca(pc.xray, pc=1, file="pc1.pdb",
-               resno = pdbs$resno[1, gaps$f.inds],
-               resid = aa123(pdbs$ali[1, gaps$f.inds]) )
+               resno = pdbs$resno[1, gaps.res$f.inds],
+               resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
 
 b <- mktrj.pca(pc.xray, pc=2, file="pc2.pdb",
-               resno = pdbs$resno[1, gaps$f.inds],
-               resid = aa123(pdbs$ali[1, gaps$f.inds]) )
+               resno = pdbs$resno[1, gaps.res$f.inds],
+               resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
 
 c <- mktrj.pca(pc.xray, pc=3, file="pc3.pdb",
-               resno = pdbs$resno[1, gaps$f.inds],
-               resid = aa123(pdbs$ali[1, gaps$f.inds]) )
+               resno = pdbs$resno[1, gaps.res$f.inds],
+               resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
 
+detach(transducin)
 }
 \keyword{ utilities }

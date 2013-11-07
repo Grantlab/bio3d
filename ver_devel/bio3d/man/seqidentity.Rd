@@ -32,14 +32,14 @@
 \seealso{ \code{\link{read.fasta}}, \code{\link{ide.filter}}, \code{\link{entropy}}, \code{\link{consensus}} }
 \examples{
 \dontrun{
-#aln <- read.fasta( system.file("examples/kinesin_xray.fa",
-#                     package = "bio3d") )
+aln <- read.fasta( system.file("examples/kif1a.fa",
+                     package = "bio3d") )
 }
 
 data(kinesin)
 attach(kinesin, warn.conflicts=FALSE)
 
-ide.mat <- seqidentity(aln)
+ide.mat <- seqidentity(pdbs)
 
 # Plot identity matrix
 plot.dmat(ide.mat, color.palette=mono.colors,
@@ -51,7 +51,8 @@ hist(ide.mat[upper.tri(ide.mat)], breaks=30,xlim=c(0,1),
      main="Sequence Identity", xlab="Identity")
 
 # Compare two sequences
-seqidentity( rbind(aln$ali[1,], aln$ali[20,]) )
+seqidentity( rbind(pdbs$ali[1,], pdbs$ali[20,]) )
 
+detach(kinesin)
 }
 \keyword{ utilities }

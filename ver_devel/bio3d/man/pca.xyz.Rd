@@ -34,39 +34,40 @@ pca.xyz(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))))
 \examples{
 
 \dontrun{
-#-- Read kinesin alignment and structures
-aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
+#-- Read transducin alignment and structures
+aln <- read.fasta(system.file("examples/transducin.fa",package="bio3d"))
 pdbs <- read.fasta.pdb(aln)
 
 # Find core
-core <- core.find(pdbs,
+core <- core.find(pdbs, 
                   #write.pdbs = TRUE,
                   verbose=TRUE)
 
-# Fit structures onto sub 0.5A^3 core
-xyz <- fit.xyz( fixed = pdbs$xyz[1,],
-                mobile = pdbs,
-                fixed.inds  = core$c0.5A.xyz,
-                mobile.inds = core$c0.5A.xyz) 
+rm(list=c("pdbs", "core"))
 }
 
-#-- OR Read previously saved kinesin data
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+#-- OR Read previously saved transducin data
+data(transducin)
+attach(transducin, warn.conflicts=FALSE)
 
-# Remove outlier structures from kinesin alignment
-cut.seqs <- which(pdbs$id \%in\% c("d1n6mb_","d1ry6a_"))
+# Previously fitted coordinates based on sub 1.0A^3 core
+xyz <- pdbs$xyz
 
+# Alternatively fit structures onto sub 0.5A^3 core
+#xyz <- fit.xyz( fixed = pdbs$xyz[1,],
+#                mobile = pdbs,
+#                fixed.inds  = core$c0.5A.xyz,
+#                mobile.inds = core$c0.5A.xyz) 
+                
 # Ignore gap containing positions
-gaps.res <- gap.inspect(pdbs$ali[-cut.seqs,])
-gaps.pos <- gap.inspect(pdbs$xyz[-cut.seqs,])
-
+gaps.res <- gap.inspect(pdbs$ali)
+gaps.pos <- gap.inspect(pdbs$xyz)
 
 #-- Do PCA
-pc.xray <- pca.xyz(xyz[-cut.seqs, gaps.pos$f.inds])
+pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
 
 # Plot results (conformer plots & scree plot)
-plot(pc.xray)
+plot(pc.xray, col=annotation[, "color"])
 
 ## Plot atom wise loadings
 plot.bio3d(pc.xray$au[,1], ylab="PC1 (A)")
@@ -74,15 +75,19 @@ plot.bio3d(pc.xray$au[,1], ylab="PC1 (A)")
 #plot.bio3d(gaps.res$f.ind, pc.xray$au[,1],
 #           xlab="Alignment Position", ylab="PC1 (A)")
 
-## Plot loadings in relation to reference structure "d1bg2__"
-res.ref <- which(!is.gap(pdbs$ali["d1bg2__",]))
+## Plot loadings in relation to reference structure "1TAG_A"
+pdb <- read.pdb("1tag")
+sse <- dssp(pdb, resno=FALSE)
+
+ind <- grep("1TAG", pdbs$id)
+res.ref <- which(!is.gap(pdbs$ali[ind,]))
 res.ind <- which(res.ref \%in\% gaps.res$f.ind)
+op <- par(no.readonly=TRUE)
 par(mfrow = c(3, 1), cex = 0.6, mar = c(3, 4, 1, 1))
 plot.bio3d(res.ind, pc.xray$au[,1], sse=sse, ylab="PC1 (A)")
 plot.bio3d(res.ind, pc.xray$au[,2], sse=sse, ylab="PC2 (A)")
 plot.bio3d(res.ind, pc.xray$au[,3], sse=sse, ylab="PC3 (A)")
-
-
+par(op)
 
 \dontrun{
 # Write PC trajectory
@@ -99,7 +104,7 @@ c <- mktrj.pca(pc.xray, pc=3, file="pc3.pdb",
                resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
 }
 
-
+detach(transducin)
 }
 \keyword{ utilities }
 \keyword{ multivariate }
