@@ -528,6 +528,120 @@ text(20, od$overlap.cum[20], label=round(od$overlap.cum[20], 2), pos=3)
 legend("topleft", pch=1, lty=c(1, 1, 2, 2), col=c("darkgreen", "red", 
        "darkgreen", "red"), legend=c("GDP", "GTP", "Weighted GDP", "Weighted GTP"))
 
+
+#'
+#' ## Example 4: User-defined pair force constant functions
+#' In this example we demonstrate the interface for defining custom functions for the pair spring force constants. 
+#' A custom function can be obtained through simple scripting as shown below. 
+#'
+
+#' ### Example 4A: Specifying a simple function
+#' We first show how to define a simple force constant function by building a revised version
+#' of the parameter-free ANM force field. The function **my.ff()** below takes as input *r* which is a vector
+#' of inter-atomic (calpha) distances (i.e. distances from atom *i*, to all other atoms in the system;
+#' this function will thus be called N times, where N is the number of calpha atoms). It will in this case return 0 for the
+#' pairs with a distance larger than 10 \AA, and $r^{-2}$ for all other pairs. Our simple function will thus look like:
+
+
+#+ example4_A-basic, cache=TRUE, results="hide", warning=FALSE
+# Define function for spring force constants
+"my.ff" <- function(r, ...) {
+  ifelse( r>10, 0, r^(-2) )
+}
+
+#' Once the function is in place we can feed it to function **nma()** to calculate the normal modes
+#' based on the particular force constants built with our new function. Below we apply it the lysozyme (PDB id *1hel*): 
+
+#+ example4_A-modes, cache=TRUE, results="hide", warning=FALSE
+# Download PDB and calculate normal modes
+pdb <- read.pdb("1hel")
+modes <- nma(pdb, pfc.fun=my.ff)
+
+#'
+#' Alternatively we can take a more manual approach by calling **build.hessian()** if we want to investigate
+#' the hessian matrix further (note that **build.hessian** is called from within function **nma()** which
+#' will diagonalize the hessian to obtain the normal modes and thus not return it to the user). In the code
+#' below we first build the hessian and illustrate how to obtain the normal modes through calls to either
+#' **eigen()** or **nma()** (which can also take a hessian matrix as input): 
+
+#+ example4_A-manual, cache=TRUE, results="hide", warning=FALSE
+# Indices for CA atoms
+ca.inds <- atom.select(pdb, 'calpha')
+
+# Build hessian matrix
+h <- build.hessian(pdb$xyz[ ca.inds$xyz ], pfc.fun=my.ff)
+
+# Diagonalize and obtain eigenvectors and -values
+modes <- eigen(h, symmetric=TRUE)
+
+# ... or feed the hessian to function 'nma()'
+modes <- nma(pdb, hessian=h, mass=FALSE)
+
+#' Note that function **nma()** assumes the hessian to be mass-weighted and we therefore have to specify *mass=FALSE*
+#' in this particular case. To obtain a mass-weighted hessian pass the amino acid masses through argument *aa.mass*
+#' to function **build.hessian()**.
+
+#'
+#' ### Example 4B: Specific force constants for disulfide bridges
+#' In the following code we illustrate a more advanced force constant function making use of arguments *atom.id*
+#' and *ssdat* which is passed from function **build.hessian()** by default. This allows users to access the protein
+#' sequence (`ssdat$seq`), secondary structure data (`ssdat$sse`), beta bridges (`ssdat$beta.bridges`),
+#' helix 1-4 (`ssdat$helix14`), and disulfide bridges (ss bonds; `ssdat$ss.bonds`) when building the force constants.
+
+#'
+#' First we define our new function (**ff.custom()**) and specify the force constants which should be applied
+#' to bonded and non-bonded interactions (`k.bonded` and `k.nonbonded`, respectively). Next we define the
+#' the force constant for the disulfide bridges (`k.ssbond`):
+
+
+#+ example4_B-ssbond, cache=TRUE, results="hide", warning=FALSE
+"ff.custom" <- function(r, atom.id, ssdat=NULL, ...) {
+  # Default force constants (Hinsen et al 2000)
+  k.bonded    <- (r * 8.6 * 10^2) - (2.39 * 10^3)
+  k.nonbonded <- (128 * 10^4) * r^(-6)
+
+  # Special force constant for SS-bonds
+  k.ssbond    <- 143;
+
+  # Calculate default values (equivalent to the calpha ff)
+  ks <- ifelse(r<4.0,
+               k.bonded,
+               k.nonbonded)
+
+  if(!is.null(ssdat$ss.bonds)) {
+    # If atom.id is part off a ssbond..
+    inds <- ssdat$ss.bonds[,1]==atom.id
+    
+    if(any(inds)) {
+      # Find ss-bond pair
+      inds.paired <- ssdat$ss.bonds[which(inds), 2]
+
+      # and change the spring force constant
+      ks[inds.paired] <- k.ssbond
+    }
+  }
+  return(ks)
+}
+
+#'
+#' The disulfide bridges needs to be defined manually througha two-column matrix which we feed to function **nma()**:
+
+#+ example4_B-modes, cache=TRUE, results="hide", warning=FALSE
+# Define SS-bonds in a two-column matrix
+ss.bonds <- matrix(c(76,94, 64,80, 30,115, 6,127),
+                   ncol=2, byrow=TRUE)
+
+# Calaculate modes with custom force field
+modes <- nma(pdb, pfc.fun=ff.custom, ss.bonds=ss.bonds)
+
+#'
+#' Finally we can use force field *calphax* to account for stronger interactions for beta bridges and helix 1-4 interactions:
+
+#+ example4_B-calphax, cache=TRUE, results="hide", warning=FALSE
+# Use ff='calphax' to account for stronger beta-bridges and helix 1-4 interactions
+sse <- dssp(pdb, resno=FALSE, full=TRUE)
+modes <- nma(pdb, ff='calphax', ss.bonds=ss.bonds, sse=sse)
+
 #'
 #' [^3]: Hinsen, K., Petrescu, A., Dellerue, S., Bellissent-Funel, M., and Kneller, G. (2000). Harmonicity in slow protein dynamics. *Chemical Physics*, 261(1-2), 25–37.
 #' 
