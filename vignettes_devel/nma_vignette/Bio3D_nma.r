@@ -1,6 +1,7 @@
 #' # Supplementary Data: Enhanced Methods for Normal Mode Analysis with Bio3D
 #' ## Lars Skjaerven, Xin-Qiu Yao & Barry J. Grant
 
+
 #+ preamble, include=FALSE, eval=FALSE
 library(knitr)
 spin('Bio3D_nma.r')
@@ -250,8 +251,8 @@ plot.dccm(cij$all.dccm)
 
 #+ plot_enma3, fig.cap="Residue cross-correlations present in all kinase structures analyzed."
 # Determine correlations present only in all 9 input structures
-#cij.all <- dccm.mean(cij$all.dccm, cutoff.sims=9, cutoff.cij = 0)
-#plot.dccm2(cij.all, main="Consensus Residue Cross Correlation")
+cij.all <- dccm.mean(cij$all.dccm, cutoff.sims=9, cutoff.cij = 0)
+plot.dccm(cij.all, main="Consensus Residue Cross Correlation")
 
 
 #'
@@ -550,7 +551,7 @@ legend("topleft", pch=1, lty=c(1, 1, 2, 2), col=c("darkgreen", "red",
 }
 
 #' Once the function is in place we can feed it to function **nma()** to calculate the normal modes
-#' based on the particular force constants built with our new function. Below we apply it the lysozyme (PDB id *1hel*): 
+#' based on the particular force constants built with our new function. Below we apply it to the lysozyme structure (PDB id *1hel*) from Example 1: 
 
 #+ example4_A-modes, cache=TRUE, results="hide", warning=FALSE
 # Download PDB and calculate normal modes
@@ -571,10 +572,10 @@ ca.inds <- atom.select(pdb, 'calpha')
 # Build hessian matrix
 h <- build.hessian(pdb$xyz[ ca.inds$xyz ], pfc.fun=my.ff)
 
-# Diagonalize and obtain eigenvectors and -values
+# Diagonalize and obtain eigenvectors and eigenvalues
 modes <- eigen(h, symmetric=TRUE)
 
-# ... or feed the hessian to function 'nma()'
+# ... or feed the Hessian to function 'nma()'
 modes <- nma(pdb, hessian=h, mass=FALSE)
 
 #' Note that function **nma()** assumes the Hessian to be mass-weighted and we therefore have to specify *mass=FALSE*
@@ -624,7 +625,7 @@ modes <- nma(pdb, hessian=h, mass=FALSE)
 }
 
 #'
-#' The disulfide bridges needs to be defined manually through a two-column matrix which we feed to function **nma()**:
+#' The disulfide bridges can be supplied as input to **nma()** function via a simple two-column matrix:
 
 #+ example4_B-modes, cache=TRUE, results="hide", warning=FALSE
 # Define SS-bonds in a two-column matrix
@@ -635,7 +636,7 @@ ss.bonds <- matrix(c(76,94, 64,80, 30,115, 6,127),
 modes <- nma(pdb, pfc.fun=ff.custom, ss.bonds=ss.bonds)
 
 #'
-#' Finally we can use force field *calphax* to account for stronger interactions for beta bridges and helix 1-4 interactions:
+#' Note that we can also use force field *calphax* to account for stronger interactions for beta bridges and helix 1-4 interactions:
 
 #+ example4_B-calphax, cache=TRUE, results="hide", warning=FALSE
 # Use ff='calphax' to account for stronger beta-bridges and helix 1-4 interactions
