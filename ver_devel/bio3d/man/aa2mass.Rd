@@ -24,7 +24,9 @@ aa2mass(pdb, inds=NULL, mass.custom=NULL, addter=TRUE, mmtk=FALSE)
 \details{
   This function converts amino acid residue names to their corresponding
   masses. In the case of a non-standard amino acid residue name
-  \code{mass.custom} can be used to map the residue to the correct mass.
+  \code{mass.custom} can be used to map the residue to the correct
+  mass. User-defined amino acid masses (with argument \code{mass.custom})
+  will override mass entries obtained from the database. 
 
   See examples for more details.
 }
@@ -43,7 +45,7 @@ aa2mass(pdb, inds=NULL, mass.custom=NULL, addter=TRUE, mmtk=FALSE)
   \code{\link{aa.index}}}
 \examples{
 resi.names <- c("LYS", "ALA", "CYS", "HIS")
-masses <- aa2mass(resi.names)
+masses <- aa2mass(resi.names, addter=FALSE)
 
 \dontrun{
 ## Fetch atomic masses in a PDB object
@@ -53,11 +55,10 @@ masses <- aa2mass(pdb)
 ## or
 masses <- atom2mass(pdb$atom[1:10,"resid"])
 
+## Dealing with unconventional residues
+pdb <- read.pdb("1xj0", het2atom=TRUE)
 
-## Map residue names manually
-pdb <- read.pdb("prot.amber.pdb")
-
-mass.cust <- list("HIE"=137.141527, "HID"=137.141527)
+mass.cust <- list("CSX"=122.166)
 masses <- aa2mass(pdb, mass.custom=mass.cust)
 }
 }
