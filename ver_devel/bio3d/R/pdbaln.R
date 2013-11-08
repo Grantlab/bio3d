@@ -54,6 +54,12 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
     stop(paste(" ** Missing files: check filenames\n",
                paste( files[c(missing)], collapse="\n"),"\n",sep="") )
   }
+  
+  # Avoid multi-thread downloading
+  if(any(toread.online | toread.id)) {
+     ncore = 1
+     options(cores = ncore)
+  }
   cat("Reading PDB files:",files, sep="\n")
   
   mylapply <- lapply
@@ -67,7 +73,6 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
     cat(".")
     return( pdb )
   } )
-  if(ncore > 1) readChildren()
 #  pdb.list <- NULL
 #  for(i in 1:length(files)) {
 #    if(pqr) {
@@ -81,7 +86,6 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
   cat("\n\nExtracting sequences\n")
   
   s <- mylapply(pdb.list, pdbseq)
-  if(ncore > 1) readChildren()
 
   s <- t(sapply(s, `[`, 1:max(sapply(s, length))))
   s[is.na(s)] <- "-"
