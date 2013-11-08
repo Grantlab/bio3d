@@ -13,6 +13,11 @@
   ## MMTK Units: kJ / mol / nm^2
   ##a <- 128; b <- 8.6 * 10^5; c <- 2.39 * 10^5;
   ## Bio3D Units: kJ / mol / A^2
+
+  ## Consider enhancement:
+  ## In case of unreasonable CA-CA distance
+  ## r[(r<3.55)] <- 3.55
+  
   a <- 128 * 10^4; b <- 8.6 * 10^2; c <- 2.39 * 10^3;
   ifelse( r<4.0,
          b*(r) - c,
@@ -208,27 +213,31 @@
   natoms <- length(r)
   
   ## units in kJ/mol/A^2
-  af <- 6770; as <- 2.08;
-  bf <- 0.951; bs <- 0.0589;
-  k12 <- 860; k13 <- 26.7; k14 <- 17;
+  ## Table 1 - line DHFR
+  #af <- 6770; as <- 2.08;
+  #bf <- 0.951; bs <- 0.0589;
+  #k12 <- 860; k13 <- 26.7; k14 <- 17;
+
+  ## by correspondance with Kei (29 aug'13)
+  ## line 38, page 1644, 2008 Biophysical J
+  af <- 4810;  as <- 1.7;
+  bf <- 0.872; bs <- 0.068;
+
+  ## avgering over table 1
+  k12 <- 866; k13 <- 28.7; k14 <- 24.16667;
   
   ## Calculate default interactions
   ks <- (af * exp(-bf*r)) + (as * exp(-bs*r))
   
-  ## Differentiate between k12, k13, k14 
-  types <- rep(0, natoms)
-  a <- seq(atom.id-1, 0)
-  if(natoms!=atom.id) {
-    b <- seq(1, natoms-atom.id)
-    types <- c(a,b)
-  }
-  else 
-    types <- a
+  ## Differentiate between k12, k13, k14
+  inds.k12 <- c(atom.id -1, atom.id+1)
+  inds.k13 <- c(atom.id -2, atom.id+2)
+  inds.k14 <- c(atom.id -3, atom.id+3)
+
+  inds.k12 <- inds.k12[ intersect(which(inds.k12 > 0), which(inds.k12 <= natoms)) ]
+  inds.k13 <- inds.k13[ intersect(which(inds.k13 > 0), which(inds.k13 <= natoms)) ]
+  inds.k14 <- inds.k14[ intersect(which(inds.k14 > 0), which(inds.k14 <= natoms)) ]
   
-  ## Set specific k-values
-  inds.k12 <- which(types==1)
-  inds.k13 <- which(types==2)
-  inds.k14 <- which(types==3)
   ks[inds.k12] <- k12;
   ks[inds.k13] <- k13;
   ks[inds.k14] <- k14;
