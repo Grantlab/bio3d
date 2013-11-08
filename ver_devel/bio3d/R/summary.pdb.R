@@ -54,7 +54,7 @@ summary.pdb <- function(object, printseq=FALSE, ...) {
 
   if(printseq) {
     aa <- paste("     ",  gsub(" ","", 
-            strwrap( paste(pdbseq(a),collapse=" "), 
+            strwrap( paste(pdbseq(object),collapse=" "), 
             width=120, exdent=0) ), collapse="\n")
     cat("   Sequence:\n", aa, "\n\n", sep="")
   }
