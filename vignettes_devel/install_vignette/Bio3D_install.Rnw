@@ -52,10 +52,10 @@ Bio3D is an R package that provides interactive tools for structural bioinformat
 Features include the ability to read and write biomolecular structure, sequence and dynamic trajectory data, query and search online sequence and stucture databases, perform atom selection, re-orientation, superposition, rigid core identification, clustering, distance matrix analysis, conservation analysis, normal mode analysis, principal component analysis, and many other common sequence and structural analysis tasks. 
 
 \subsection*{Why an R package?}
-Bio3d aims to leverage the extensive graphical and statistical capabilities of the R environment (\url{http://www.r-project.org}) and thus provide a useful framework for the exploratory interactive analysis of biomolecular sequence and structure data.
+Bio3D aims to leverage the extensive graphical and statistical capabilities of the R environment (\url{http://www.r-project.org}) and thus provide a useful framework for the exploratory interactive analysis of biomolecular sequence and structure data.
 
 \subsection*{What is the purpose of this document?}
-The aim of this vignette\footnote{This vignette contains executable examples, see \texttt{help(vignette)} for further details.} is to provide Bio3D package instalation instructctions. 
+The aim of this vignette\footnote{This vignette contains executable examples, see \texttt{help(vignette)} for further details.} is to provide Bio3D package installation instructions. 
 
 \subsection*{Where can I find more information?}
 The latest version of the package, full documentation and furhter vignettes can be obtained from the main Bio3D website: \url{http://thegrantlab.org/bio3d/} and wiki: \url{http://bio3d.pbwiki.com/}. 
@@ -74,7 +74,7 @@ Available Bio3D package vignettes include:
 \item \texttt{Normal mode analysis with Bio3D}
 \end{itemize}
 
-\paragraph{Sidenote:} We are always interested in adding additional functionality and documentation to the Bio3D package. If you have ideas or sugestions for improvments, or indeed code that you would like to distribute as part of this package, please contact us -- we would like to hear from you!
+\paragraph{Sidenote:} We are always interested in adding additional functionality and documentation to the Bio3D package. If you have ideas or suggestions for improvments, or indeed code that you would like to distribute as part of this package, please contact us -- we would like to hear from you!
 
 \section{Quick Installation for Linux/Ubuntu Users}
 Most required packages and programs are available from the official Ubuntu repository:
@@ -185,7 +185,7 @@ There are a number of additional packages and programs that will either interfac
 
 \subsection{Required for full Bio3D functionality}
 \paragraph{MUSCLE:}
-Muscle is a fast multiple sequence alignment program available from the muscle home page \url{http://www.drive5.com/muscle}. The Bio3D \texttt{seqaln()} function currently calls the MUSCLE program, hence MUSCLE must be installed on your system and in the search path for executables if you wish to use this function.
+Muscle is a fast multiple sequence alignment program available from the muscle home page \url{http://www.drive5.com/muscle}. The Bio3D functions \texttt{seqaln()} and \texttt{pdbaln()} currently calls the MUSCLE program, hence MUSCLE must be installed on your system and in the search path for executables if you wish to use this function.
 
 \paragraph{A note for Mac and Unix users:} 
 After downloading MUSCLE, it should be unzipped and renamed to just ``muscle'' and placed in a directory such as ``/usr/local/bin/''. 
@@ -210,7 +210,7 @@ VMD is a molecular visualization program for displaying, animating, and analyzin
 Along with the standard documentation you may find my \href{http://bio3d.pbworks.com/w/page/7824484/vmd_cmds}{VMD cheat sheet useful}. I have also included a link on this page to my .vmdrc file which includes a number of timesaving customizations (see the \href{http://bio3d.pbworks.com/w/page/7824484/vmd_cmds}{cheat sheet} for full details).
 
 \paragraph{PyMOL:}
-PyMOL is another visualization program with overlapping functionality with VMD. Bio3D functions ``view.dccm'' and ``view.modes'' require PyMOL in the search path. PyMOL is open-source software and available from \url{http://www.pymol.org}.
+PyMOL is another visualization program with overlapping functionality with VMD. Bio3D functions \texttt{view.dccm()} and \texttt{view.modes()} require PyMOL in the search path. PyMOL is open-source software and available from \url{http://www.pymol.org}.
 
 
 %\subsection{Quick installation of key utility programs on Ubuntu (64-bit)}
