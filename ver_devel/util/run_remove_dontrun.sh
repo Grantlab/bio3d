@@ -3,10 +3,12 @@
 ##### all the example codes will be executed
 
 for i in ../bio3d/man/*.Rd; do
-   # skip some examples because of the missing data, run errors
-   # or just to avoid confusion of using attach(data) (pca.xyz.Rd)
-   # we may think of another consistent example in future 
+   # skip some examples because of the missing 
+   # data or run errors
    if [ `basename $i` != "dssp.trj.Rd" ] && \
+      [ `basename $i` != "nma.Rd" ] && \
+      [ `basename $i` != "read.all.Rd" ] && \
+      [ `basename $i` != "store.atom.Rd" ] && \
       [ `basename $i` != "read.mol2.Rd" ]; then
       echo $i
       # find and delete tags \dontrun{ and }

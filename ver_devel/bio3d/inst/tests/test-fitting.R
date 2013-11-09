@@ -72,19 +72,12 @@ test_that("fit.xyz() gets the same results as VMD", {
 })
 
 test_that("fit.xyz() with ncore>1 works properly", {
-   # transducin
-   ids <- c("1tag_A", "1tnd_A", "3sn6_A", "1cul_C",
-            "3v00_A", "1got_A", "1kjy_A", "4g5o_A",
-            "2ode_A", "2ihb_A", "1as0_A", "1tad_A")
-   tmp <- tempdir()
-   raw.files <- get.pdb(substr(ids, 1, 4), tmp, verbose=FALSE)
-   invisible(capture.output(files <- pdbsplit(raw.files, ids=ids, path=file.path(tmp, "split_chain"))))
-   invisible(capture.output(pdbs <- pdbaln(files)))
-   gaps.pos <- gap.inspect(pdbs$xyz)
+   invisible(capture.output(pdbs <- pdbaln(c("1tag", "1as0", "1as2"))))
+   inds <- gap.inspect(pdbs$xyz)$f.inds
 
    # check if ncore > 1 is really faster 
-   time1 <- system.time(xyz1 <- fit.xyz(pdbs$xyz[1,], pdbs$xyz, gaps.pos$f.inds, gaps.pos$f.inds, ncore=1))
-   time2 <- system.time(xyz2 <- fit.xyz(pdbs$xyz[1,], pdbs$xyz, gaps.pos$f.inds, gaps.pos$f.inds, ncore=2))
+   time1 <- system.time(xyz1 <- fit.xyz(pdbs$xyz[1,], pdbs$xyz, inds, inds, ncore=1))
+   time2 <- system.time(xyz2 <- fit.xyz(pdbs$xyz[1,], pdbs$xyz, inds, inds, ncore=2))
    time1 <- time1["elapsed"]
    time2 <- time2["elapsed"]
 
