@@ -54,10 +54,10 @@ write.crd(pdb = NULL, xyz = pdb$xyz, resno = NULL, resid = NULL, eleno = NULL, e
 \dontrun{
 # Read a PDB file
 pdb <- read.pdb( "1bg2" )
-pdb.summary(pdb)
+summary(pdb)
 # Convert to CHARMM format
 new <- convert.pdb(pdb, type="charmm")
-pdb.summary(new)
+summary(new)
 # Write a CRD file
 write.crd(new, file="4charmm.crd")
 }

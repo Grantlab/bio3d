@@ -59,7 +59,15 @@ dv <- difference.vector( pdbs$xyz[diff.inds,], gaps.pos$f.inds )
 o <- overlap(pc.xray, dv)
 o <- overlap(pc.xray$U, dv)
 
+# Plot results
+plot(o$overlap, type='h', ylim=c(0,1))
+points(o$overlap)
+lines(o$overlap.cum, type='b', col='red')
 
+
+detach(kinesin)
+
+\dontrun{
 ## Calculate overlap from NMA
 pdb.a <- read.pdb("1cmk")
 pdb.b <- read.pdb("3dnd")
@@ -83,7 +91,6 @@ modes <- nma(pdb.a, inds=sele.a)
 # Calculate the squared overlap between the normal modes 
 # and the difference vector  
 o <- overlap(modes, dv)
-
-detach(kinesin)
+}
 }
 \keyword{ utilities }
