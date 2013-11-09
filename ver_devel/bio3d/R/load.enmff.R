@@ -153,11 +153,12 @@
   return(ks)
 }
 
-"ff.sdenm" <- function(r, atom.id, ssdat=NULL, ...) {
-  ## sdENM by lazyload. contains columns:
-  ## aa1 aa2 min max   k
-  ## and row names: AA1 AA2 etc.
 
+"ff.sdenm" <- function(r, atom.id, ssdat=NULL, ...) {
+  ## sdENM by lazyload. contains an array with dimensions
+  ## 20  x 20  x 27
+  ## aa1 x aa2 x distance.category
+  
   ## set sequence data to 1-letter aa code
   if(any(nchar(ssdat$seq)==3))
     sequ <- suppressWarnings( aa321(ssdat$seq) )  
@@ -171,43 +172,50 @@
     stop(paste("Unknown aminoacid identifier for:", unk))
   }
 
-  aa.now   <- sequ[atom.id]
-  ids.tmp  <- cbind(aa.now, sequ)
-  ids.tmp  <- t(apply(ids.tmp, 1, sort))
-  pair.ids <- apply(ids.tmp, 1, function(x) paste(x, collapse=""))
-      
-  dist.ids <- rep(NA, length(r))
+  ## Initialize
+  natoms <- length(r)
+  aa.now <- sequ[atom.id]
+
+  ## vector for spring constants
+  ks <- rep(NA, natoms)
+  
+  ## Make distance categories
   map.dist <- c(0, seq(4, 16.5, by=0.5))
   
-  ## each AA pair has 27 records
-  map.id <- seq(1,27)
-  
-  for(i in 2:length(map.id)) {
-    inds.a <- which(r>map.dist[i-1])
-    inds.b <- which(r<=map.dist[i])
-    inds   <- intersect(inds.a, inds.b)
-    dist.ids[ inds ] <- map.id[i-1]
+  dist.cat <- cut(r, breaks=map.dist, labels=FALSE)
+  dist.cat[is.na(dist.cat)] <- 27
+  dist.cat[atom.id]         <- NA
+
+  ## Unique distance categories
+  unq.cat <- unique(dist.cat)
+
+  for ( i in 1:length(unq.cat) ) {
+    tmp.cat <- unq.cat[i]
+    
+    if(!is.na(tmp.cat)) {
+      tmp.inds <- which(dist.cat==tmp.cat)
+
+      ## Since the lower.tri is NA we look up twice :P
+      a <- sdENM[ aa.now, sequ, tmp.cat ][ tmp.inds ]
+      b <- sdENM[ sequ, aa.now, tmp.cat ][ tmp.inds ]
+
+      ks[ tmp.inds ][!is.na(a)] <- a[!is.na(a)]
+      ks[ tmp.inds ][!is.na(b)] <- b[!is.na(b)]
+    }
   }
-  dist.ids[is.na(dist.ids)] <- 27
-  
-  pair.ids <- paste(pair.ids, dist.ids, sep="")
-  ks <- sdENM[pair.ids, "k"]
-  
-  if(atom.id != 1) {
-    if(r[atom.id-1]<4)
-      ks[atom.id-1] <- 43.52
-  }
-  if(atom.id != length(r)) {
-    if(r[atom.id+1]<4)
-      ks[atom.id+1] <- 43.52
-  }
+
+  ## Set special restraints for covalent pairs
+  inds.k12 <- c(atom.id -1, atom.id+1)
+  inds.k12 <- inds.k12[ intersect(which(inds.k12 > 0), which(inds.k12 <= natoms)) ]
+  ks[inds.k12] <- 43.52
   
   ## sdENM FF is in arbitrary units
-  ## scale to kJ / mol / A^2 range
+  ## The values given were arbitrarily normalized, so that
+  ## the average kappa (over all amino acid pairs) is equal to 1, at d = 6 Ang.
+  ## scale to kJ / mol / A^2 range:
   ks <- ks * 0.0083144621 * 300 * 10
   return(ks)
 }
-
 
 "ff.reach" <- function(r, atom.id, ssdat=NULL, ...) {
   natoms <- length(r)
