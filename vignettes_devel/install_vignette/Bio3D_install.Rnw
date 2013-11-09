@@ -42,7 +42,9 @@ opts_chunk$set(fig.path='figure/silk-')
 
 
 \title{Installing Bio3D}
-\author{Barry J. Grant}
+\author{Lars Skjaerven, Xin-Qiu Yao and Barry J. Grant\\
+University of Michigan, Ann Arbor}
+
 \maketitle
 
 \section{Background}
@@ -68,7 +70,7 @@ Available Bio3D package vignettes include:
 \item \texttt{Getting started with Bio3D}
 \item \texttt{Comparative protein structure analysis with Bio3D}
 \item \texttt{Sequence conservation analysis with Bio3D} 
-\item \texttt{Basic trajectory analysis with Bio3D}
+\item \texttt{Beginning trajectory analysis with Bio3D}
 \item \texttt{Principal component analysis with Bio3D} 
 \item \texttt{Dynamic network analysis with Bio3D}
 \item \texttt{Normal mode analysis with Bio3D}
@@ -90,21 +92,22 @@ chmod a+x /usr/local/bin/dssp
 
 \noindent Download the source code of the latest Bio3D version:
 \begin{verbatim}
-wget http://thegrantlab.org/bio3d/bio3d_1.1-6.tar.gz
+wget http://thegrantlab.org/bio3d/bio3d_2.0-0.tar.gz
 \end{verbatim}
 
 \noindent Install required packages, and finally the Bio3D package:
-\begin{verbatim}
-R
-> install.packages(c("ncdf", "lattice", "grid", "bigmemory", "multicore", "XML"))
-> install.packages("bio3d_1.1-6.tar.gz")
-\end{verbatim}
 
-\section{Installation Prequisites}
+<<eval=FALSE>>=
+install.packages(c("ncdf", "lattice", "grid", "bigmemory", "multicore", "XML"),dependencies=TRUE)
+install.packages("bio3d_2.0-0.tar.gz")
+@
+
+
+\section{Installation Perquisites}
 Before you attempt to install Bio3D you should have a relatively recent version of R installed and working on your system. Detailed instructions for obtaining and installing R on various platforms can be found on the R home page \url{http://www.r-project.org}. 
 
 \subsection*{Do I need to know R?}
-To get the most out of Bio3D you should be quite familiar with basic R usage. Some newcommers to R find this a steep learning curve. However, once you have mastered basic operations with vectors and matrices in R you should feel confident about getting stuck into using the Bio3D package.
+To get the most out of Bio3D you should be quite familiar with basic R usage. Some newcomers to R find this a steep learning curve. However, once you have mastered basic operations with vectors and matrices in R you should feel confident about getting stuck into using the Bio3D package.
 
 \paragraph{Sidenote:} There are now numerous on--line resources that can help you get started using R. Again they can be found from the \href{http://www.r-project.org}{main R website} at \url{http://www.r-project.org}. We also maintain a list of R resources at \url{http://bio3d.pbworks.com/w/page/68764093/Use_R}. However, google may be your best friend in this regard. 
 
@@ -128,16 +131,16 @@ To install from source requires that your machine has standard compilers and too
 
 
 \subsection{Linux/Unix Installation}
-To install the Bio3D package in a Unix enviroment download the latest Bio3D source tar.gz file from above. Then within an R session type: 
+To install the Bio3D package in a Unix environment download the latest Bio3D source tar.gz file from above. Then within an R session type: 
 
 <<eval=FALSE>>=
-install.packages("bio3d_1.1-6.tar.gz") 
+install.packages("bio3d_2.0-0.tar.gz") 
 @
 
 \noindent
 Or from the command line:
 \begin{verbatim}
-R CMD INSTALL bio3d_1.1-6.tar.gz
+R CMD INSTALL bio3d_2.0-0.tar.gz
 \end{verbatim}
 
 
@@ -231,6 +234,9 @@ You should now be able to load the Bio3D library into your current R session by 
 library(bio3d)
 help(package="bio3d")
 @
+
+\section{Where to next}
+If you have read this far, congratulations! We are ready to have some fun and move to other package vignettes that describe various analysis including basic Molecular Dynamics Trajectory Analysis, Correlation Network Analysis (where we will build and dissect dynamic networks form different correlated motion data), enhanced methods for Normal Mode Analysis (where we will explore the dynamics of large protein families and superfamilies), and advanced Comparative Structure Analysis (where we will mine available experimental data and supplement it with simulation results to map the conformational dynamics and coupled motions of proteins).
 
 
 \section{Session Information}
