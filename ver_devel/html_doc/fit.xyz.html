@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>fit.xyz. bio3d 1.2</title>
+<title>fit.xyz. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant with &lt;code&gt;rot.lsq&lt;/code&gt; contributions from Leo Caves ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -42,9 +42,9 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>fit.xyz(fixed, mobile, fixed.inds = NULL, mobile.inds = NULL, verbose = FALSE, pdb.path = "", 
-  pdbext = "", outpath = "fitlsq/", het = FALSE, full.pdbs = FALSE, ncore = 1, 
-      nseg.scale = 1, ...)
+    <pre>fit.xyz(fixed, mobile, fixed.inds = NULL, mobile.inds = NULL, verbose = FALSE, prefix = "", 
+  pdbext = "", outpath = "fitlsq", het = FALSE, full.pdbs = FALSE, ncore = 1, nseg.scale = 1, 
+      ...)
 
 rot.lsq(xx, yy, xfit = rep(TRUE, length(xx)), yfit = xfit, verbose = FALSE)</pre>
     
@@ -69,8 +69,8 @@ rot.lsq(xx, yy, xfit = rep(TRUE, length(xx)), yfit = xfit, verbose = FALSE)</pre
       <dd> logical, if TRUE &#145;HETATM&#146; records from full PDB
     files are written to output superposed PDB files.  Only required if
     <code>full.pdbs</code> is TRUE. </dd>
-      <dt>pdb.path</dt>
-      <dd> path to the &#147;full&#148; input PDB files.  Only
+      <dt>prefix</dt>
+      <dd> prefix to mobile$id to locate &#147;full&#148; input PDB files.  Only
         required if <code>full.pdbs</code> is TRUE. </dd>
       <dt>pdbext</dt>
       <dd> the file name extension of the input PDB files. </dd>
@@ -198,7 +198,7 @@ xyz <- fit.xyz( fixed = pdbs$xyz[1,],
                mobile = pdbs,
                fixed.inds  = gaps$f.inds,
                mobile.inds = gaps$f.inds,
-               outpath = "rough_fit/",
+               outpath = "rough_fit",
                full.pdbs = TRUE)
 </div>
 <div class='output'>  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               

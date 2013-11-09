@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>entropy. bio3d 1.2</title>
+<title>entropy. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -176,8 +176,7 @@ aa  <- rev(rownames(h$freq))
 oldpar <- par(no.readonly=TRUE)
 layout(matrix(c(1,2),2,1,byrow = TRUE), widths = 7, 
        heights = c(2, 8), respect = FALSE)
-</div>
-<div class='input'>
+
 # Plot 1: entropy
 par(mar = c(0, 4, 2, 2))
 barplot(H, border="white", ylab = "Entropy",
@@ -195,35 +194,35 @@ image(x=1:ncol(con$freq),
       col=col, yaxt="n", xaxt="n",
       xlab="Alignment Position", ylab="Residue Type")
 </div>
-<p><img src='entropy-6.png' alt='' width='400' height='400' /></p>
+<p><img src='entropy-4.png' alt='' width='400' height='400' /></p>
 <div class='input'>axis(side=1, at=seq(0,length(con$seq),by=5))
 </div>
-<p><img src='entropy-8.png' alt='' width='400' height='400' /></p>
+<p><img src='entropy-6.png' alt='' width='400' height='400' /></p>
 <div class='input'>axis(side=2, at=c(1:22), labels=aa)
 </div>
-<p><img src='entropy-10.png' alt='' width='400' height='400' /></p>
+<p><img src='entropy-8.png' alt='' width='400' height='400' /></p>
 <div class='input'>axis(side=3, at=c(1:length(con$seq)), labels =con$seq)
 </div>
-<p><img src='entropy-12.png' alt='' width='400' height='400' /></p>
+<p><img src='entropy-10.png' alt='' width='400' height='400' /></p>
 <div class='input'>axis(side=4, at=c(1:22), labels=aa)
 </div>
-<p><img src='entropy-14.png' alt='' width='400' height='400' /></p>
+<p><img src='entropy-12.png' alt='' width='400' height='400' /></p>
 <div class='input'>grid(length(con$seq), length(aa))
 </div>
-<p><img src='entropy-16.png' alt='' width='400' height='400' /></p>
+<p><img src='entropy-14.png' alt='' width='400' height='400' /></p>
 <div class='input'>box()
 </div>
-<p><img src='entropy-18.png' alt='' width='400' height='400' /></p>
+<p><img src='entropy-16.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 for(i in 1:length(con$seq)) {
   text(i, which(aa==con$seq[i]),con$seq[i],col="white")
 }
 </div>
-<p><img src='entropy-20.png' alt='' width='400' height='400' /></p>
+<p><img src='entropy-18.png' alt='' width='400' height='400' /></p>
 <div class='input'>abline(h=c(3.5, 4.5, 5.5, 3.5, 7.5, 9.5,
          12.5, 14.5, 16.5, 19.5), col="gray")
 </div>
-<p><img src='entropy-22.png' alt='' width='400' height='400' /></p>
+<p><img src='entropy-20.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 par(oldpar)
 </div></pre>

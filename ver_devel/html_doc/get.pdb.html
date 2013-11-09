@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>get.pdb. bio3d 1.2</title>
+<title>get.pdb. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -42,7 +42,8 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>get.pdb(ids, path = "./", URLonly = FALSE, overwrite = FALSE)</pre>
+    <pre>get.pdb(ids, path = ".", URLonly = FALSE, overwrite = FALSE, gzip = FALSE, verbose = TRUE, 
+  ncore = 1)</pre>
     
     <h2>Arguments</h2>
     <dl>
@@ -59,6 +60,14 @@
       <dt>overwrite</dt>
       <dd> logical, if FALSE the file will not be downloaded if
     it alread exist. </dd>
+      <dt>gzip</dt>
+      <dd> logical, if TRUE the gzipped PDB will be downloaded and
+    extracted locally. </dd>
+      <dt>verbose</dt>
+      <dd> print details of the reading process. </dd>
+      <dt>ncore</dt>
+      <dd> number of CPU cores used to do the calculation.
+     <code>ncore>1</code> requires multicore package installed. </dd>
     </dl>
     
     <div class="Description">
@@ -108,60 +117,7 @@ pdb <- read.pdb( get.pdb("5p21", URL=TRUE) )
 </div>
 <div class='input'>pdb.summary(pdb)
 </div>
-<div class='output'>..| segid |..
-total #: 1 
-values : NA 
-
-
-..| chain |..
-total protein #: 1 
-values : A 
-
-
-..| resno |..
-total protein #: 166 
-in segments: 
-
-  start end length
-1     1 166    166
-
-
-..| resid |..
-total #: 19 ( diff types from 166 )
-values : 
-
-ALA ARG ASN ASP CYS GLN GLU GLY HIS ILE LEU LYS MET PHE PRO SER THR TYR VAL 
- 11  11   4  14   3  11  13  11   3  11  11   8   4   5   3   8  11   9  15 
-
-
-..| eleno |..
-total # : 1323 
-in segments: 
-
-  start  end length
-1     1 1323   1323
-
-
-..| elety |..
-total # : 32 ( diff types from 1323 )
-values : 
-
-  C  CA  CB  CD CD1 CD2  CE CE1 CE2  CG CG1 CG2  CZ   N ND1 ND2  NE NE2 NH1 NH2 
-166 166 155  46  36  28  12  17  14  96  26  37  25 166   3   4  11  14  11  11 
- NZ   O OD1 OD2 OE1 OE2  OG OG1  OH OXT  SD  SG 
-  8 166  18  14  24  13   8  11   9   1   4   3 
-
-
-..| water |..
-total # : 0 
-
-
-..| summary |..
-atom     #: 1323 
-xyz      #: 3969 
-calpha   #: 166 
-sequence #: MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIEDSYRKQVVIDGETCLLDILDTAGQEEYSAMRDQYMRTGEGFLCVFAINNTKSFEDIHQYREQIKRVKDSDDVPMVLVGNKCDLAARTVESRQAQDLARSYGIPYIETSAKTRQGVEDAFYTLVREIRQH 
-</div>
+<strong class='error'>Error in eval(expr, envir, enclos): could not find function "pdb.summary"</strong>
 <div class='input'>
 ## Download PDB file
 ## get.pdb("5p21")

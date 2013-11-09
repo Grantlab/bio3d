@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>overlap. bio3d 1.2</title>
+<title>overlap. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Lars Skjaerven ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -105,13 +105,13 @@ attach(kinesin, warn.conflicts=FALSE)
 gaps.pos <- gap.inspect(pdbs$xyz)
      
 #-- Do PCA
-pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
+pc.xray <- pca.xyz(pdbs$xyz[, gaps.pos$f.inds])
     
 # Define a difference vector between two structural states
 diff.inds <- c(grep("d1v8ja", pdbs$id), 
                grep("d1goja", pdbs$id))
 
-dv <- difference.vector( xyz[diff.inds,], gaps.pos$f.inds )
+dv <- difference.vector( pdbs$xyz[diff.inds,], gaps.pos$f.inds )
 
 # Calculate the squared overlap between the PCs and the difference vector  
 o <- overlap(pc.xray, dv)
@@ -158,26 +158,23 @@ xyz <- rbind(pdb.a$xyz[sele.a$xyz],
              pdb.b$xyz[sele.b$xyz])
 
 ## Superimpose
-xyz[2,] <- fit.xyz(xyz[1,], xyz[2,])
-</div>
-<strong class='warning'>Warning message:
-No fitting indices provided, using the 334 non NA positions
-</strong>
-<div class='input'>
+xyz[2,] <- fit.xyz(xyz[1,], xyz[2,], 1:ncol(xyz))
+
 ## The difference between the two conformations
 dv <- difference.vector( xyz )
 
 ## Calculate normal modes
 modes <- nma(pdb.a, inds=sele.a)
 </div>
-<div class='output'> Building Hessian...		Done in 5.759 seconds.
- Diagonalizing Hessian...	Done in 2.033 seconds.
+<div class='output'> Building Hessian...		Done in 0.332 seconds.
+ Diagonalizing Hessian...	Done in 1.874 seconds.
 </div>
 <div class='input'>
 # Calculate the squared overlap between the normal modes 
 # and the difference vector  
 o <- overlap(modes, dv)
 
+detach(kinesin)
 </div></pre>
   </div>
   <div class="span4">

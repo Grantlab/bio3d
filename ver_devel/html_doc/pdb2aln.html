@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>pdb2aln. bio3d 1.2</title>
+<title>pdb2aln. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Xin-Qiu Yao &amp; Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -42,7 +42,7 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>pdb2aln(aln, pdb, id = "seq.pdb", aln.id = NULL, exepath = "", file = "pdb2aln.fa")</pre>
+    <pre>pdb2aln(aln, pdb, id = "seq.pdb", aln.id = NULL, exefile = "muscle", file = "pdb2aln.fa")</pre>
     
     <h2>Arguments</h2>
     <dl>
@@ -57,9 +57,9 @@
       <dt>aln.id</dt>
       <dd> id of the sequence in the original alignment 
      that is closest to the sequence of the PDB structure. </dd>
-      <dt>exepath</dt>
-      <dd> path to the &#145;MUSCLE&#146; program on your system (i.e.
-    the directory where &#145;MUSCLE&#146; is stored). </dd>
+      <dt>exefile</dt>
+      <dd> file path to the &#145;MUSCLE&#146; program on your system (i.e.
+    how is &#145;MUSCLE&#146; invoked). </dd>
       <dt>file</dt>
       <dd> file name for outputing the new alignment. </dd>
     </dl>
@@ -146,7 +146,7 @@ pdb <- read.pdb(id)
 gap.inds <- gap.inspect(pdbs$resno)
 naln <- pdb2aln(aln=pdbs, pdb=pdb, id=id)
 </div>
-<div class='output'>muscle -profile -in1 /tmp/RtmpesXLkY/file5d6e5649b56e -in2 /tmp/RtmpesXLkY/file5d6e2266bdfd -out /tmp/RtmpesXLkY/file5d6e6dbffb30</div>
+<div class='output'>muscle -profile -in1 /tmp/RtmpyefGEQ/filec1771ed36909 -in2 /tmp/RtmpyefGEQ/filec17710856397 -out /tmp/RtmpyefGEQ/filec17734a4cfde</div>
 <div class='input'>ninds <- which(naln$ref["ali.pos", ] %in% gap.inds$f.inds)
 npc.inds <- naln$ref["ca.inds", ninds]
 

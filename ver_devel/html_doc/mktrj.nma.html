@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>mktrj.nma. bio3d 1.2</title>
+<title>mktrj.nma. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant, Lars Skjaerven ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -42,7 +42,7 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>mktrj.nma(nma = NULL, mode = 7, mag = 100, step = 12.5, file = NULL, ...)</pre>
+    <pre>mktrj.nma(nma = NULL, mode = 7, mag = 10, step = 1.25, file = NULL, ...)</pre>
     
     <h2>Arguments</h2>
     <dl>
@@ -54,7 +54,7 @@
       <dt>mag</dt>
       <dd> a magnification factor for scaling the displacements. </dd>
       <dt>step</dt>
-      <dd> the step size by which to increment along the <code>pc</code>. </dd>
+      <dd> the step size by which to increment along the mode. </dd>
       <dt>file</dt>
       <dd> a character vector giving the output PDB file name. </dd>
       <dt>...</dt>
@@ -73,8 +73,8 @@
       <h2>Details</h2>
       
       <p>Trajectory frames are built from reconstructed Cartesian coordinates
-  produced by interpolating from the mean structure along a given
-  <code>normal mode</code>, in increments of <code>step</code>.</p>
+  produced by interpolating from the structure along a given mode
+  vector, in increments of <code>step</code>.</p>
   
       <p>An optional magnification factor can be used to amplify
   displacements.  This involves scaling the mode vector by
@@ -116,8 +116,8 @@ pdb <- read.pdb("1hel")
 ## Calculate (vibrational) normal modes
 modes <- nma(pdb)
 </div>
-<div class='output'> Building Hessian...		Done in 0.833 seconds.
- Diagonalizing Hessian...	Done in 0.142 seconds.
+<div class='output'> Building Hessian...		Done in 0.075 seconds.
+ Diagonalizing Hessian...	Done in 0.135 seconds.
 </div>
 <div class='input'>
 ## Visualize modes

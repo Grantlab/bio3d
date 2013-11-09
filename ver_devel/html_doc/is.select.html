@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>is.select. bio3d 2.0</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="
+Julien Ide
+">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Is an Object of Class &#145;select&#146;?</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>is.select(x)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>x</dt>
+      <dd>an R object to be tested.</dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Checks whether its argument is an object of class &#145;select&#146;.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>Tests if x is an object of class &#145;select&#146;, i.e. if x has a &#147;class&#148; attribute equal to <code>select</code>.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>TRUE if x is an object of class &#145;select&#146; and FALSE otherwise</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'># Read a PDB file
+pdb <- read.pdb( "http://www.rcsb.org/pdb/files/1BG2.pdb" )
+</div>
+<div class='output'>  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
+</div>
+<div class='input'>
+# Print structure summary
+atom.select(pdb)
+</div>
+<div class='output'>
+ Call:  read.pdb(file = "http://www.rcsb.org/pdb/files/1BG2.pdb")
+
+  Atom Count: 2733 
+
+   Total ATOMs#: 2527 
+     Protein ATOMs#: 2527   ( Calpha ATOMs#: 323 ) 
+     Non-protein ATOMs#: 0   ( residues:  ) 
+     Chains#: 1   ( values: A ) 
+
+   Total HETATOMs: 206 
+     Residues HETATOMs#: 174   ( residues: MG ACT ADP HOH ) 
+     Chains#: 1   ( values: A )
+
+   Sequence:
+      DLAECNIKVMCRFRPLNESEVNRGDKYIAKFQGEDTVVIASKPYAFDRVFQSSTSQEQVY
+      NDCAKKIVKDVLEGYNGTIFAYGQTSSGKTHTMEGKLHDPEGMGIIPRIVQDIFNYIYSM
+      DENLEFHIKVSYFEIYLDKIRDLLDVSKTNLSVHEDKNRVPYVKGCTERFVCSPDEVMDT
+      IDEGKSNRHVAVTNMNEHSSRSHSIFLINVKQENTQTEQKLSGKLYLVDLAGSEKVSKTG
+      AEGAVLDEAKNINKSLSALGNVISALAEGSTYVPYRDSKMTRILQDSLGGNCRTTIVICC
+      SPSSYNESETKSTLLFGQRAKTI
+
++ attr: atom, het, helix, sheet, seqres,
+        xyz, xyz.models, calpha, call
+</div>
+<div class='input'>
+# Select all C-alpha atoms with residues numbers between 65 and 143
+ca.inds <- atom.select(pdb, resno=65:143, elety="CA")
+</div>
+<div class='output'>
+Build selection from input components
+
+      segid  chain 
+Stest ""     ""    
+Natom "2527" "2527"
+      resno                                                                                                                                                                                                                                                                                     
+Stest "65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143"
+Natom "641"                                                                                                                                                                                                                                                                                     
+      resid  eleno  elety
+Stest ""     ""     "CA" 
+Natom "2527" "2527" "323"
+ *  Selected a total of: 79 intersecting atoms  *
+</div>
+<div class='input'>is.select(ca.inds)
+</div>
+<div class='output'>[1] TRUE
+</div>
+<div class='input'></div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>is.select</li>
+    </ul>
+    <ul>
+      <li> classes </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+    
+<code><a href='atom.select.html'>atom.select</a></code>
+
+    
+    <h2>Author</h2>
+    
+Julien Ide
+
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=is.select'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

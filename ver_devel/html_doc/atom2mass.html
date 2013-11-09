@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>atom2mass. bio3d 2.0</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
+          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Atom Names to Mass Converter </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>atom2mass(pdb, inds = NULL, mass.custom = NULL, elety.custom = NULL, grpby = NULL, 
+  rescue = TRUE)
+
+atom2ele(pdb, inds = NULL, elety.custom = NULL, rescue = TRUE)
+
+formula2mass(form, sum.mass = TRUE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>pdb</dt>
+      <dd> a character vector containing the atom names to convert
+    to atomic masses. Alternatively, an object of type <code>pdb</code> can be
+    provided. </dd>
+      <dt>inds</dt>
+      <dd> atom and xyz coordinate indices obtained from <code>atom.select</code>
+    that selects the elements of <code>pdb</code> upon which the calculation
+    should be based (in effect only when a <code>pdb</code> object is provided). </dd>
+      <dt>mass.custom</dt>
+      <dd> a list of atom elements and their corresponding masses. </dd>
+      <dt>elety.custom</dt>
+      <dd> a list of atom names to element symbol mapping. </dd>
+      <dt>grpby</dt>
+      <dd> a vector counting connective duplicated elements that
+    indicate the elements of <code>atoms</code> that should be considered as a group
+    (e.g. atoms from a particular residue). </dd>
+      <dt>rescue</dt>
+      <dd> logical, if TRUE the atom element will be mapped to the
+    first character of the atom name. </dd>
+      <dt>form</dt>
+      <dd> character string containing the chemical formula at which
+    the mass calculation should be based. </dd>
+      <dt>sum.mass</dt>
+      <dd> logical, if TRUE the sum of masses is returned. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Convert atom names to atomic mass.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This function converts atom names to their corresponding relative
+  atomic masses. Atom names found in standard amino acids in the PDB are
+  mapped to atom elements (with <code>atom2ele</code>) which finally are
+  mapped to mass.</p>
+  
+      <p>In the case of an unknown atom name <code>elety.custom</code> and
+  <code>mass.custom</code> can be used to map an atom to the correct
+  atomic mass.</p>
+  
+      <p>Alternatively, the atom name will be mapped automatically to the
+  element corresponding to the first character of the atom name. Atom
+  names starting with character <code>H</code> will be mapped to hydrogen
+  atoms.</p>
+  
+      <p>See examples for more details.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a numeric vector of atomic masses.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>atom.names <- c("CA", "O", "N", "OXT")
+masses <- atom2mass(atom.names)
+
+formula2mass("C5 H6 N O3")
+</div>
+<div class='output'>[1] 128.108
+</div>
+<div class='input'>
+## Fetch atomic masses in a PDB object
+pdb <- read.pdb("1hel")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    HYDROLASE(O-GLYCOSYL)                   10-JAN-92   1HEL               
+</div>
+<div class='input'>masses <- atom2mass(pdb)
+
+## or
+masses <- atom2mass(pdb$atom[1:10,"elety"])
+
+## Group and sum per residue
+masses <- atom2mass(pdb, grpby=pdb$atom[,"resno"])
+
+
+## Map atom names manually
+pdb <- read.pdb("3RE0", het2atom=TRUE)
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    OXIDOREDUCTASE                          02-APR-11   3RE0               
+   PDB has ALT records, taking A only, rm.alt=TRUE
+</div>
+<div class='input'>inds <- atom.select(pdb, resno=201)
+</div>
+<div class='output'>
+Build selection from input components
+
+      segid  chain  resno resid  eleno  elety 
+Stest ""     ""     "201" ""     ""     ""    
+Natom "4131" "4131" "4"   "4131" "4131" "4131"
+ *  Selected a total of: 4 intersecting atoms  *
+</div>
+<div class='input'>
+elety.cust <- list("CL2"="Cl", "PT1"="Pt")
+mass.cust <- list("Cl"=35.45, "Pt"=195.08)
+
+masses <- atom2mass(pdb, inds, mass.custom=mass.cust, elety.custom=elety.cust)
+</div>
+<strong class='warning'>Warning message:
+
+	unknown element: mapped N1 to N
+	unknown element: mapped N2 to N</strong></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>atom2mass</li><li>atom2ele</li><li>formula2mass</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='atom.index.html'>atom.index</a></code>, <code><a href='com.html'>com</a></code> 
+    
+    <h2>Author</h2>
+     Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=atom2mass'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

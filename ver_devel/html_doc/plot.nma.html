@@ -2,9 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>plot.nma. bio3d 1.2</title>
+<title>plot.nma. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="author" content=" Barry Grant ">
+<meta name="author" content=" Lars Skjaerven ">
 
 <link href="css/bootstrap.css" rel="stylesheet">
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -62,7 +62,8 @@
     which gives the number of lines of margin to be specified on the
     four sides of the plot.</dd>
       <dt>...</dt>
-      <dd> extra plotting arguments. </dd>
+      <dd> extra plotting arguments passed to <code>plot.bio3d</code>
+    that effect the atomic fluctuations plot only. </dd>
     </dl>
     
     <div class="Description">
@@ -105,11 +106,11 @@ pdb <- read.pdb("1hel")
 ## Calculate modes
 modes <- nma(pdb)
 </div>
-<div class='output'> Building Hessian...		Done in 0.813 seconds.
- Diagonalizing Hessian...	Done in 0.141 seconds.
+<div class='output'> Building Hessian...		Done in 0.073 seconds.
+ Diagonalizing Hessian...	Done in 0.134 seconds.
 </div>
 <div class='input'>
-plot(modes)
+plot(modes, sse=pdb)
 </div>
 <p><img src='plot.nma-6.png' alt='' width='400' height='400' /></p>
 <div class='input'></div></pre>
@@ -126,7 +127,7 @@ plot(modes)
      <code><a href='nma.html'>nma</a></code>, <code><a href='plot.bio3d.html'>plot.bio3d</a></code> 
     
     <h2>Author</h2>
-     Barry Grant 
+     Lars Skjaerven 
     
   </div>
 </div>

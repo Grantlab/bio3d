@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>binding.site. bio3d 1.2</title>
+<title>binding.site. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Lars Skjaerven ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -191,12 +191,21 @@ Natom "157" "157" "157" "157" "157" "157"
  *  Selected a total of: 157 intersecting atoms  *
 </div>
 <div class='input'>
-     ## <strong>Not run</strong>: 
-#      # Interaction between two PDB entities
-#      rec <- read.pdb("receptor.pdb")
-#      lig <- read.pdb("ligand.pdb")
-#      bs <- binding.site(rec, lig, hydrogens=FALSE)
-#      ## <strong>End(Not run)</strong>
+     # Interaction between two PDB entities
+#     rec <- read.pdb("receptor.pdb")
+#     lig <- read.pdb("ligand.pdb")
+     rec <- trim.pdb(pdb, inds=rec.inds)
+     lig <- trim.pdb(pdb, inds=lig.inds)
+     bs <- binding.site(rec, lig, hydrogens=FALSE)
+</div>
+<div class='output'>
+Build selection from input string
+
+ *  Selected 2780 non-hydrogen atoms *
+
+Build selection from input string
+
+ *  Selected 157 non-hydrogen atoms *
 </div></pre>
   </div>
   <div class="span4">

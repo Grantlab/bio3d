@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>plot.blast. bio3d 1.2</title>
+<title>plot.blast. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -129,32 +129,32 @@
     <pre class="examples"><div class='input'>b2 <-  blast.pdb( pdbseq(read.pdb( get.pdb("4q21", URLonly=TRUE) )) )
 </div>
 <div class='output'>  HEADER    ONCOGENE PROTEIN                        25-SEP-91   4Q21               
- Searching ... please wait (updates every 5 seconds) RID = ZJK0TN2C01R 
- ..
- Reporting 270 hits
+ Searching ... please wait (updates every 5 seconds) RID = 7V7FX55X014 
+ .
+ Reporting 164 hits
 </div>
 <div class='input'>raw.hits <- plot.blast(b2)
 </div>
 <div class='output'>  * Possible cutoff values include:
-		 237 60 
+		 237 70 
     Yielding Nhits:
-		 147 270  
+		 111 164  
 
  ** Chosen cutoff value of:
-		 60 
+		 70 
     Yielding Nhits:
-		 270  
+		 164  
 </div>
-<p><img src='plot.blast-6.png' alt='' width='400' height='400' /></p>
+<p><img src='plot.blast-5.png' alt='' width='400' height='400' /></p>
 <div class='input'>top.hits <- plot.blast(b2, 188)
 </div>
 <div class='output'>  * Possible cutoff values include:
-		 237 60 
+		 237 70 
     Yielding Nhits:
-		 147 270  
+		 111 164  
 
 </div>
-<p><img src='plot.blast-9.png' alt='' width='400' height='400' /></p>
+<p><img src='plot.blast-8.png' alt='' width='400' height='400' /></p>
 <div class='input'>head(top.hits$hits)
 </div>
 <div class='output'>  pdb.id   gi.id       group
@@ -170,43 +170,43 @@ blast <- blast.pdb( pdbseq(read.pdb( get.pdb("2BN3", URLonly=TRUE) )))
 </div>
 <div class='output'>  HEADER    RADIATION DAMAGE                        18-MAR-05   2BN3               
    PDB has ALT records, taking A only, rm.alt=TRUE
- Searching ... please wait (updates every 5 seconds) RID = ZJK18BR801R 
- ...
- Reporting 1174 hits
+ Searching ... please wait (updates every 5 seconds) RID = 7V7GGP30014 
+ .
+ Reporting 503 hits
 </div>
 <div class='input'>raw.hits <- plot(blast)
 </div>
 <div class='output'>  * Possible cutoff values include:
 		 -3 
     Yielding Nhits:
-		 1174  
+		 503  
 
  ** Chosen cutoff value of:
 		 -3 
     Yielding Nhits:
-		 1174  
+		 503  
 </div>
-<p><img src='plot.blast-16.png' alt='' width='400' height='400' /></p>
+<p><img src='plot.blast-15.png' alt='' width='400' height='400' /></p>
 <div class='input'>top.hits <- plot(blast, cut.seed=20)
 </div>
 <div class='output'>  * Possible cutoff values include:
-		 21 -3 
+		 24 7 -3 
     Yielding Nhits:
-		 550 1174  
+		 426 481 503  
 
  ** Chosen cutoff value of:
-		 21 
+		 24 
     Yielding Nhits:
-		 550  
+		 426  
 </div>
-<p><img src='plot.blast-19.png' alt='' width='400' height='400' /></p>
+<p><img src='plot.blast-18.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 head(top.hits$pdb.id)
 </div>
 <div class='output'>[1] "1APH_B" "1BPH_B" "1CPH_B" "1DPH_B" "4INS_B" "4INS_D"
 </div>
-<div class='input'>#pdbFiles <- get.pdb(substr(top.hits$pdb.id, 1, 4), path="downloadedPDBs/")
-#pdbsplit(pdbFiles, path="downloadedPDBs/PDB_chains/")
+<div class='input'>#pdbFiles <- get.pdb(substr(top.hits$pdb.id, 1, 4), path="downloadedPDBs")
+#pdbsplit(pdbFiles, path="downloadedPDBs/PDB_chains")
 </div></pre>
   </div>
   <div class="span4">

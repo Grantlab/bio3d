@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>plot.pca. bio3d 1.2</title>
+<title>plot.pca. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -48,7 +48,7 @@ plot(x, y = NULL, type = "o", pch = 18, main = "", sub = "", xlim = c(0, 20), yl
   ylab = "Proporton of Variance (%)", xlab = "Eigenvalue Rank", axes = TRUE, ann = par("ann"), 
       col = par("col"), lab = TRUE, ...)
 
-plot(x, start.row = 1, end.row = nrow(x), col = rainbow(nrow(x)), lab = "", ...)</pre>
+plot(x, inds = NULL, col = rainbow(nrow(x)), lab = "", ...)</pre>
     
     <h2>Arguments</h2>
     <dl>
@@ -67,10 +67,8 @@ plot(x, start.row = 1, end.row = nrow(x), col = rainbow(nrow(x)), lab = "", ...)
       <dd> A numerical vector of the form c(bottom, left, top, right)
     which gives the number of lines of margin to be specified on the
     four sides of the plot.</dd>
-      <dt>start.row</dt>
-      <dd> row index of the first conformer to colour. </dd>
-      <dt>end.row</dt>
-      <dd> row index of the last conformer to colour. </dd>
+      <dt>inds</dt>
+      <dd> row indices of the conformers to label. </dd>
       <dt>lab</dt>
       <dd> a character vector of plot labels. </dd>
       <dt>y</dt>
@@ -130,24 +128,33 @@ plot(x, start.row = 1, end.row = nrow(x), col = rainbow(nrow(x)), lab = "", ...)
     </div>
     
     <h2 id="examples">Examples</h2>
-    <pre class="examples"><div class='input'>data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+    <pre class="examples"><div class='input'>data(transducin)
+attach(transducin, warn.conflicts=FALSE)
 
+pc.xray <- pca.xyz(pdbs$xyz[, gap.inspect(pdbs$xyz)$f.inds])
 plot(pc.xray)
 </div>
-<p><img src='plot.pca-3.png' alt='' width='400' height='400' /></p>
+<p><img src='plot.pca-2.png' alt='' width='400' height='400' /></p>
 <div class='input'>
-## change colors
-#plot(pc.xray,col=rainbow(length(pc.xray$z[,1])), cex=1.5)
-plot(pc.xray,col=rainbow(length(pc.xray$z[,1])))
+## color by nucleotide state
+vcolors <- annotation[, "color"]
+plot(pc.xray, col=vcolors)
 </div>
-<p><img src='plot.pca-5.png' alt='' width='400' height='400' /></p>
+<p><img src='plot.pca-4.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 ## add labels
+#labs <- rownames(annotation)
+#inds <- c(2,7)
+#plot.pca.score(pc.xray, inds=inds, col=vcolors, lab=labs)
 
 ## color by seq identity
+#ide <- seqidentity(pdbs$ali)
+#hc <- hclust(as.dist(1-ide))
+#grps <- cutree(hc, h=0.2)
+#vcolors <- rainbow(max(grps))[grps]
+#plot(pc.xray, inds=inds, col=vcolors, lab=labs)
 
-
+detach(transducin)
 </div></pre>
   </div>
   <div class="span4">

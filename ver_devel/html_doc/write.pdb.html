@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>write.pdb. bio3d 1.2</title>
+<title>write.pdb. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
   Barry Grant
@@ -24,7 +24,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -46,15 +46,18 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>write.pdb(pdb = NULL, xyz = pdb$xyz, resno = NULL, resid = NULL, eleno = NULL, elety = NULL, 
-  chain = NULL, o = NULL, b = NULL, het = FALSE, append = FALSE, verbose = FALSE, 
-      chainter = FALSE, end = TRUE, file = "R.pdb")</pre>
+    <pre>write.pdb(pdb = NULL, file = "R.pdb", xyz = pdb$xyz, resno = NULL, resid = NULL, 
+  eleno = NULL, elety = NULL, chain = NULL, insert = NULL, alt = NULL, o = NULL, 
+      b = NULL, segid = NULL, elesy = NULL, charge = NULL, het = FALSE, append = FALSE, 
+      verbose = FALSE, chainter = FALSE, end = TRUE, print.segid = FALSE)</pre>
     
     <h2>Arguments</h2>
     <dl>
       <dt>pdb</dt>
       <dd> a PDB structure object obtained from
     <code><a href='read.pdb.html'>read.pdb</a></code>. </dd>
+      <dt>file</dt>
+      <dd> the output file name. </dd>
       <dt>xyz</dt>
       <dd> Cartesian coordinates as a vector or 3xN matrix. </dd>
       <dt>resno</dt>
@@ -72,11 +75,23 @@
       <dt>chain</dt>
       <dd> vector of chain identifiers with length equal to
     length(xyz)/3. </dd>
+      <dt>insert</dt>
+      <dd> vector of insertion code with length equal to
+    length(xyz)/3. </dd>
+      <dt>alt</dt>
+      <dd> vector of alternate record with length equal to
+    length(xyz)/3. </dd>
       <dt>o</dt>
       <dd> vector of occupancy values of length equal to
     length(xyz)/3. </dd>
       <dt>b</dt>
       <dd> vector of B-factors of length equal to length(xyz)/3. </dd>
+      <dt>segid</dt>
+      <dd> vector of segment id of length equal to length(xyz)/3. </dd>
+      <dt>elesy</dt>
+      <dd> vector of element symbol of length equal to length(xyz)/3. </dd>
+      <dt>charge</dt>
+      <dd> vector of atomic charge of length equal to length(xyz)/3. </dd>
       <dt>het</dt>
       <dd> logical, if TRUE &#145;HETATM&#146; records from <code>pdb</code>
     object are written to the output PDB file. </dd>
@@ -86,12 +101,12 @@
       <dt>verbose</dt>
       <dd> logical, if TRUE progress details are printed. </dd>
       <dt>chainter</dt>
-      <dd> logical, if TRUE a TER line is inserted between
-    chains. </dd>
+      <dd> logical, if TRUE a TER line is inserted at termination
+    of a chain. </dd>
       <dt>end</dt>
-      <dd> logical, if TRUE TER and END lines are written. </dd>
-      <dt>file</dt>
-      <dd> the output file name. </dd>
+      <dd> logical, if TRUE END line is written. </dd>
+      <dt>print.segid</dt>
+      <dd> logical, if FALSE segid will not be written. </dd>
     </dl>
     
     <div class="Description">

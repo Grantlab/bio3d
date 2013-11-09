@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>difference.vector. bio3d 1.2</title>
+<title>difference.vector. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Lars Skjaerven ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -96,14 +96,14 @@ attach(kinesin, warn.conflicts=FALSE)
 gaps.pos <- gap.inspect(pdbs$xyz)
      
 #-- Do PCA
-pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
+pc.xray <- pca.xyz(pdbs$xyz[, gaps.pos$f.inds])
      
 # Define a difference vector between two structural states
 diff.inds <- c(grep("d1v8ja", pdbs$id), 
                grep("d1goja", pdbs$id))
 
 ## Calculate the difference vector
-dv <- difference.vector( xyz[diff.inds,], gaps.pos$f.inds )
+dv <- difference.vector( pdbs$xyz[diff.inds,], gaps.pos$f.inds )
 
 # Calculate the squared overlap between the PCs and the difference vector  
 o <- overlap(pc.xray, dv)
