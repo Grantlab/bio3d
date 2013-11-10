@@ -53,8 +53,13 @@ summary.pdb <- function(object, printseq=FALSE, ...) {
   cat(s)
 
   if(printseq) {
+    aa <- pdbseq(object)
+    if(nres > 225) {
+      ## Trim long sequences before output
+      aa <- c(aa[1:225], "...<cut>...", aa[(nres-3):nres])
+    }
     aa <- paste("     ",  gsub(" ","", 
-            strwrap( paste(pdbseq(object),collapse=" "), 
+            strwrap( paste(aa,collapse=" "), 
             width=120, exdent=0) ), collapse="\n")
     cat("   Sequence:\n", aa, "\n\n", sep="")
   }
