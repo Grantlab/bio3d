@@ -1,5 +1,6 @@
 ###
 ### Examples from NMA Vignette
+###
 ### Authors Lars Skjaerven
 ###         Xin-Qiu Yao
 ###         Barry J Grant
@@ -12,9 +13,11 @@ pause <- function() {
   invisible()
 }
 
-#######################################
-## Basic usage                        #
-#######################################
+#############################################
+##                                          #
+## Basic usage                              #
+##                                          #
+#############################################
 
 ### Read PDB and Calculate Normal Modes
 pdb <- read.pdb("1hel")
@@ -57,23 +60,27 @@ plot(r, xlab="ANM", ylab="C-alpha FF")
 
 pause()
 
+#############################################
+##                                          #
+## Ensemble NMA                             #
+##                                          #
+#############################################
 
-#######################################
-## Ensemble NMA                       #
-#######################################
-
+### Set temp dir to store PDB files
+tmp.dir <- tempdir()
 
 ### Download a set of Kinase structures
 ids <- c("4b7t_A", "2exm_A", "1opj_A", 
          "4jaj_A", "1a9u_A", "1tki_A")
 
+
 ### Download and split by chain ID
-raw.files <- get.pdb(ids, path="raw_pdbs")
+raw.files <- get.pdb(ids, path=tmp.dir)
 
 pause()
 
 ### Split PDB files by chain ID
-files     <- pdbsplit( raw.files, ids )
+files <- pdbsplit( raw.files, ids, path=tmp.dir)
 
 pause()
 
@@ -88,7 +95,12 @@ summary( c(seqidentity(pdbs)) )
 pause()
 
 ### Calculate modes of aligned proteins
-modes <- nma.pdbs(pdbs, fit=TRUE)
+modes <- nma.pdbs(pdbs, fit=TRUE, outpath=NULL)
+
+pause()
+
+## Print a summary
+print(modes)
 
 pause()
 
@@ -96,3 +108,5 @@ pause()
 plot(modes, pdbs, type="h")
 
 pause()
+
+unlink(tmp.dir)
