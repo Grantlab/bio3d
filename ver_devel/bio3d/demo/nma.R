@@ -38,7 +38,7 @@ cm <- dccm(modes)
 pause()
 
 ### Plot correlation map
-plot(cm, sse=pdb.open)
+plot(cm, sse=pdb)
 
 pause()
 
