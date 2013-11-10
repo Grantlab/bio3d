@@ -48,13 +48,12 @@ core <- core.find(pdbs)
 pause()
 
 ## Fit structures to core region
-xyz <- fit.xyz(fixed=pdbs$xyz[1,], mobile=pdbs,
-               fixed.inds=core$c1A.xyz, mobile.inds=core$c1A.xyz)
-               ##outpath="core_fit/", full.pdbs=T, het2atom=T)
+xyz <- pdbfit(pdbs, inds=core$c1A.xyz)
+           ## outpath="core_fit/", full.pdbs=T, het2atom=T)
 
 pause()
 
-## Inspect gaps
+## Locate gap containing positions
 gaps.pos <- gap.inspect(pdbs$xyz)
 
 ## Perform PCA on non-gap containing positions

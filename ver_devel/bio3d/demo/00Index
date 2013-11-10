@@ -1,2 +1,4 @@
-nma           Demonstration of Normal Mode Analysis
-pca           Demonstration of Principal Component Analysis
+nma           Normal Mode Analysis
+pca           Principal Component Analysis
+md	      Molecular Dynamics Trajectory Analysis
+pdb	      PDB File Manipulation, Serching and Alignment
