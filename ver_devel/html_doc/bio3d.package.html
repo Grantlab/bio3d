@@ -68,14 +68,15 @@ Type: </td>
 Version: </td>
 <td> 2.0</td>
 </tr><tr><td>
-Date: </td>
-<td> DEVEL VERSION: 2013-07-22</td>
-</tr><tr><td>
+Date: 2013-11-08</td>
+<td>
 License: </td>
-<td> GPL version 2 or newer</td>
-</tr><tr><td>
+</tr><tr><td> GPL version 2 or newer</td>
+<td>
 URL: </td>
-<td> <a href = 'http://thegrantlab.org/bio3d/'>http://thegrantlab.org/bio3d/</a></td>
+</tr><tr><td> <a href = 'http://thegrantlab.org/bio3d/'>http://thegrantlab.org/bio3d/</a></td>
+<td>
+Package: </td>
 </tr></table></p>
   
       <p>Features include the ability to read and write structure
@@ -85,7 +86,7 @@ URL: </td>
 (<code><a href='read.dcd.html'>read.dcd</a></code>, <code><a href='read.ncdf.html'>read.ncdf</a></code>, <code><a href='write.ncdf.html'>write.ncdf</a></code>).</p>
   
       <p>Perform sequence database searches (<code><a href='blast.pdb.html'>blast.pdb</a></code>), atom
-summaries (<code>pdb.summary</code>),  atom selection
+summaries (<code><a href='read.pdb.html'>summary.pdb</a></code>),  atom selection
 (<code><a href='atom.select.html'>atom.select</a></code>),  re-orientation (<code><a href='orient.pdb.html'>orient.pdb</a></code>),
 superposition (<code><a href='fit.xyz.html'>rot.lsq</a></code>,  <code><a href='fit.xyz.html'>fit.xyz</a></code>), rigid core
 identification (<code><a href='core.find.html'>core.find</a></code>,  <code><a href='plot.core.html'>plot.core</a></code>, 
@@ -101,6 +102,15 @@ of structure data.</p>
 <code><a href='seqidentity.html'>seqidentity</a></code>,  <code><a href='entropy.html'>entropy</a></code>,  <code><a href='consensus.html'>consensus</a></code>)
 and structural (<code><a href='pdbaln.html'>pdbaln</a></code>, <code><a href='rmsd.html'>rmsd</a></code>,
 <code><a href='rmsf.html'>rmsf</a></code>, <code><a href='core.find.html'>core.find</a></code>) data.</p>
+  
+      <p>Perform normal mode analysis (elastic network model) with
+(<code><a href='nma.html'>nma</a></code>) and (<code><a href='nma.html'>build.hessian</a></code>), ensemble normal
+mode analysis (<code><a href='nma.pdbs.html'>nma.pdbs</a></code>), mode comparison
+(<code><a href='rmsip.html'>rmsip</a></code>) and (<code><a href='overlap.html'>overlap</a></code>), atomic fluctuation
+prediction (<code><a href='fluct.nma.html'>fluct.nma</a></code>), cross-correlation analysis
+(<code><a href='dccm.nma.html'>dccm.nma</a></code>), cross-correlation visualization (<code><a href='view.dccm.html'>view.dccm</a></code>), 
+deformation analysis (<code><a href='deformation.nma.html'>deformation.nma</a></code>), and mode visualization
+(<code><a href='view.modes.html'>view.modes</a></code>), (<code><a href='mktrj.nma.html'>mktrj.nma</a></code>).</p>
   
       <p>In addition, various utility functions are provided to facilitate
 manipulation and analysis of biological sequence and structural data
@@ -213,32 +223,32 @@ plot(tor$phi, tor$psi)
 ##-- Search for related structures in the PDB database
 blast <- blast.pdb( pdbseq(pdb) )
 </div>
-<div class='output'> Searching ... please wait (updates every 5 seconds) RID = 7V725FWG014 
- .
- Reporting 103 hits
+<div class='output'> Searching ... please wait (updates every 5 seconds) RID = 82RRZYZS015 
+ ..
+ Reporting 206 hits
 </div>
 <div class='input'>hits  <- plot.blast(blast)
 </div>
 <div class='output'>  * Possible cutoff values include:
 		 709 285 87 -3 
     Yielding Nhits:
-		 5 9 91 103  
+		 11 15 186 206  
 
  ** Chosen cutoff value of:
 		 87 
     Yielding Nhits:
-		 91  
+		 186  
 </div>
 <p><img src='bio3d.package-17.png' alt='' width='400' height='400' /></p>
 <div class='input'>head(hits$hits)
 </div>
 <div class='output'>  pdb.id   gi.id       group
 1 "1BG2_A" "157830287" "1"  
-2 "1MKJ_A" "24987772"  "1"  
-3 "4ATX_C" "406855617" "1"  
-4 "4HNA_K" "512125532" "1"  
-5 "2Y5W_A" "344189479" "1"  
-6 "2KIN_A" "3114353"   "2"  
+2 "2P4N_K" "193885175" "1"  
+3 "1MKJ_A" "24987772"  "1"  
+4 "4ATX_C" "406855617" "1"  
+5 "4HNA_K" "512125532" "1"  
+6 "2Y5W_A" "344189479" "1"  
 </div>
 <div class='input'>
 ## Download these with function "get.pdb()"

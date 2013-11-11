@@ -99,12 +99,6 @@ raw.files <- get.pdb(pdb.ids, path = outdir)
 </div>
 <strong class='warning'>Warning message:
 ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1YX5.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/3NOB.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1P3Q.pdb  exists. Skipping download</strong>
 <div class='input'>
 ## Split PDBs by chain ID and multi-model records
 all.files <- pdbsplit(raw.files, pdb.ids, 
@@ -130,7 +124,7 @@ raw_pdbs/split_chain/1P3Q_U.pdb
 ..........
 
 Extracting sequences
-muscle -in /tmp/RtmpyefGEQ/filec1777761c661 -out aln.fa -quiet -seqtype protein
+muscle -in /tmp/RtmpSa4CZG/file43b34b27cae -out aln.fa -quiet -seqtype protein
 pdb/seq: 1   name: raw_pdbs/split_chain/1YX5_B.pdb 
 pdb/seq: 2   name: raw_pdbs/split_chain/3NOB_A.pdb 
 pdb/seq: 3   name: raw_pdbs/split_chain/3NOB_B.pdb 

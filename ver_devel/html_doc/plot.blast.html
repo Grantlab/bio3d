@@ -129,29 +129,29 @@
     <pre class="examples"><div class='input'>b2 <-  blast.pdb( pdbseq(read.pdb( get.pdb("4q21", URLonly=TRUE) )) )
 </div>
 <div class='output'>  HEADER    ONCOGENE PROTEIN                        25-SEP-91   4Q21               
- Searching ... please wait (updates every 5 seconds) RID = 7V7FX55X014 
- .
- Reporting 164 hits
+ Searching ... please wait (updates every 5 seconds) RID = 82S7843J014 
+ ...
+ Reporting 289 hits
 </div>
 <div class='input'>raw.hits <- plot.blast(b2)
 </div>
 <div class='output'>  * Possible cutoff values include:
-		 237 70 
+		 237 62 
     Yielding Nhits:
-		 111 164  
+		 151 289  
 
  ** Chosen cutoff value of:
-		 70 
+		 62 
     Yielding Nhits:
-		 164  
+		 289  
 </div>
 <p><img src='plot.blast-5.png' alt='' width='400' height='400' /></p>
 <div class='input'>top.hits <- plot.blast(b2, 188)
 </div>
 <div class='output'>  * Possible cutoff values include:
-		 237 70 
+		 237 62 
     Yielding Nhits:
-		 111 164  
+		 151 289  
 
 </div>
 <p><img src='plot.blast-8.png' alt='' width='400' height='400' /></p>
@@ -170,21 +170,21 @@ blast <- blast.pdb( pdbseq(read.pdb( get.pdb("2BN3", URLonly=TRUE) )))
 </div>
 <div class='output'>  HEADER    RADIATION DAMAGE                        18-MAR-05   2BN3               
    PDB has ALT records, taking A only, rm.alt=TRUE
- Searching ... please wait (updates every 5 seconds) RID = 7V7GGP30014 
- .
- Reporting 503 hits
+ Searching ... please wait (updates every 5 seconds) RID = 82S7WUAW01R 
+ .....
+ Reporting 1177 hits
 </div>
 <div class='input'>raw.hits <- plot(blast)
 </div>
 <div class='output'>  * Possible cutoff values include:
 		 -3 
     Yielding Nhits:
-		 503  
+		 1177  
 
  ** Chosen cutoff value of:
 		 -3 
     Yielding Nhits:
-		 503  
+		 1177  
 </div>
 <p><img src='plot.blast-15.png' alt='' width='400' height='400' /></p>
 <div class='input'>top.hits <- plot(blast, cut.seed=20)
@@ -192,12 +192,12 @@ blast <- blast.pdb( pdbseq(read.pdb( get.pdb("2BN3", URLonly=TRUE) )))
 <div class='output'>  * Possible cutoff values include:
 		 24 7 -3 
     Yielding Nhits:
-		 426 481 503  
+		 548 1127 1177  
 
  ** Chosen cutoff value of:
 		 24 
     Yielding Nhits:
-		 426  
+		 548  
 </div>
 <p><img src='plot.blast-18.png' alt='' width='400' height='400' /></p>
 <div class='input'>

@@ -46,17 +46,31 @@
 <p><a href="http://thegrantlab.org/bio3d/download/download.html" class="btn btn-primary btn-large">Download now &raquo;</a></p>  
 </div>
 
-<h1>Features</h1>
+<h1>Documentation</h1>
 
-<p>Features include the ability to read and write structure, sequence and dynamic trajectory data, perform database searches, atom summaries, atom selection, re-orientation, superposition, rigid core identification, clustering, torsion analysis, distance matrix analysis, structure and sequence conservation analysis, and principal component analysis (PCA).  </p>
+<p>The Bio3D package consists of <a href="#Input/Output:">input/output</a> functions, <a href="#Sequence Analysis:">sequence analysis</a> functions, <a href="#Structure Analysis:">structure analysis</a> functions, <a href="#Trajectory Analysis:">simulation analysis</a> functions, <a href="#Normal Mode Analysis:">normal mode analysis</a> functions, <a href="#Utilities:">conversion and manipulation</a> functions, and <a href="#Graphics:">graphics</a> functions. Each of these functions is listed below with links to further documentation that includes example code and results. </p>
 
-<p>In addition, various utility functions are provided to enable the statistical and graphical power of the R environment to work with biological sequence and structural data.  Please refer to the main <code>Bio3D website</code> at <a href="http://thegrantlab.org/bio3d/">http://thegrantlab.org/bio3d/</a> for more background information.</p>
+<p>Note that you can also get help on any particular function by using the command <code>?function</code> or <code>help(function)</code> and directly execute the example code for a given function with the command <code>example(function)</code> from within R itself. </p>
 
-<p>The Bio3D package consists of input/output functions, conversion and manipulation functions, analysis functions, and graphics functions which are summarized below with links to further documentation including example results. Remember that you can also get help on any particular function by using the command <code>?function</code> or <code>help(function)</code> from within R itself.</p>
+<p>We also distribute a number of extended <strong>Bio3D vignettes</strong> that provide worked examples of using Bio3D to perform a particular type of analysis. Currently available vignettes include:</p>
+
+<ul>
+<li>Installing Bio3D ( <a href="http://thegrantlab.org/bio3d/Bio3D_install.pdf">PDF</a> )</li>
+<li>Getting started with Bio3D ( PDF )</li>
+<li>Beginning Trajectory Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/Bio3D_md.pdf">PDF</a> )</li>
+<li>Enhanced Methods for Normal Mode Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/Bio3D_nma.pdf">PDF</a> )</li>
+<li>Comparative sequence and structure analysis with Bio3D ( PDF )</li>
+<li>Introduction to correlation network analysis with Bio3D ( PDF )</li>
+</ul>
+
+<p>There is also a <a href="http://thegrantlab.org/bio3d/bio3d.pdf">package manual</a> (in PDF format) that is a concatenation of each functions documentation. </p>
+
+<p>Note that for information on Bio3D development status or to report a bug, please refer to: <a href="https://bitbucket.org/Grantlab/bio3d">https://bitbucket.org/Grantlab/bio3d</a> </p>
 
 
     <h2>Help topics</h2>
-
+    
+    <a name="Input/Output:"></a>
     <h3>Input/Output:</h3>
     <p>Read and Write Common Data Types</p>
 
@@ -64,25 +78,7 @@
     <ul class="index">
         
       <li>
-        <code><a href="aln2html.html">aln2html</a></code>: Create a HTML Page For a Given Alignment </li>
-            
-      <li>
-        <code><a href="get.pdb.html">get.pdb</a></code>: Download PDB Coordinate Files </li>
-            
-      <li>
-        <code><a href="get.seq.html">get.seq</a></code>: Download FASTA Sequence Files </li>
-            
-      <li>
-        <code><a href="mktrj.pca.html">mktrj.pca</a></code>: PCA Atomic Displacement Trajectory </li>
-            
-      <li>
-        <code><a href="read.all.html">read.all</a></code>: Read Aligned Structure Data</li>
-            
-      <li>
-        <code><a href="read.crd.html">read.crd</a></code>: Read CRD File </li>
-            
-      <li>
-        <code><a href="read.dcd.html">read.dcd</a></code>: Read CHARMM/X-PLOR/NAMD Binary DCD files </li>
+        <code><a href="read.pdb.html">read.pdb</a></code>(print.pdb, summary.pdb): Read PDB File </li>
             
       <li>
         <code><a href="read.fasta.html">read.fasta</a></code>: Read FASTA formated Sequences </li>
@@ -94,13 +90,34 @@
         <code><a href="read.ncdf.html">read.ncdf</a></code>: Read AMBER Binary netCDF files </li>
             
       <li>
-        <code><a href="read.pdb.html">read.pdb</a></code>(print.pdb, summary.pdb): Read PDB File </li>
+        <code><a href="read.dcd.html">read.dcd</a></code>: Read CHARMM/X-PLOR/NAMD Binary DCD files </li>
             
       <li>
-        <code><a href="read.pdcBD.html">read.pdcBD</a></code>: Read PQR output from pdcBD File </li>
+        <code><a href="read.crd.html">read.crd</a></code>: Read CRD File </li>
             
       <li>
         <code><a href="read.pqr.html">read.pqr</a></code>: Read PQR File </li>
+            
+      <li>
+        <code><a href="read.mol2.html">read.mol2</a></code>: Read MOL2 File </li>
+            
+      <li>
+        <code><a href="read.all.html">read.all</a></code>: Read Aligned Structure Data</li>
+            
+      <li>
+        <code><a href="aln2html.html">aln2html</a></code>: Create a HTML Page For a Given Alignment </li>
+            
+      <li>
+        <code><a href="get.pdb.html">get.pdb</a></code>: Download PDB Coordinate Files </li>
+            
+      <li>
+        <code><a href="get.seq.html">get.seq</a></code>: Download FASTA Sequence Files </li>
+            
+      <li>
+        <code><a href="load.enmff.html">load.enmff</a></code>(ff.calpha, ff.calphax, ff.anm, ff.pfanm, ff.sdenm, ff.reach): ENM Force Field Loader </li>
+            
+      <li>
+        <code><a href="write.pdb.html">write.pdb</a></code>: Write PDB Format Coordinate File </li>
             
       <li>
         <code><a href="write.crd.html">write.crd</a></code>: Write CRD File </li>
@@ -112,14 +129,21 @@
         <code><a href="write.ncdf.html">write.ncdf</a></code>: Write AMBER Binary netCDF files </li>
             
       <li>
-        <code><a href="write.pdb.html">write.pdb</a></code>: Write PDB Format Coordinate File </li>
+        <code><a href="write.pqr.html">write.pqr</a></code>: Write PQR Format Coordinate File </li>
             
       <li>
-        <code><a href="write.pqr.html">write.pqr</a></code>: Write PQR Format Coordinate File </li>
+        <code><a href="mktrj.nma.html">mktrj.nma</a></code>: NMA Atomic Displacement Trajectory </li>
+            
+      <li>
+        <code><a href="mktrj.pca.html">mktrj.pca</a></code>: PCA Atomic Displacement Trajectory </li>
+            
+      <li>
+        <code><a href="view.dccm.html">view.dccm</a></code>: Visualization of Dynamic Cross-Correlation </li>
     
     </ul>
-    <h3>Analysis:</h3>
-    <p>Do Interesting Things</p>
+    <a name="Structure Analysis:"></a>
+    <h3>Structure Analysis:</h3>
+    <p>Do Interesting Things with Protein Structure</p>
 
     
     <ul class="index">
@@ -131,19 +155,26 @@
         <code><a href="blast.pdb.html">blast.pdb</a></code>: NCBI BLAST Sequence Search </li>
             
       <li>
+        <code><a href="atom.select.html">atom.select</a></code>: Atom Selection From PDB Structure </li>
+            
+      <li>
+        <code><a href="combine.sel.html">combine.sel</a></code>: Combine Atom Selections From PDB Structure </li>
+            
+      <li>
         <code><a href="cmap.html">cmap</a></code>: Contact Map </li>
-            
-      <li>
-        <code><a href="consensus.html">consensus</a></code>: Sequence Consensus for an Alignment </li>
-            
-      <li>
-        <code><a href="conserv.html">conserv</a></code>: Score Residue Conservation At Each Position in an Alignment </li>
             
       <li>
         <code><a href="core.find.html">core.find</a></code>: Identification of Invariant Core Positions </li>
             
       <li>
+        <code><a href="com.html">com</a></code>(com.xyz): Center of Mass </li>
+            
+      <li>
         <code><a href="dccm.html">dccm</a></code>: DCCM: Dynamical Cross-Correlation Matrix </li>
+            
+      <li>
+        <code><a href="dccm.mean.html">dccm.mean</a></code>:
+</li>
             
       <li>
         <code><a href="dist.xyz.html">dist.xyz</a></code>:  Calculate the Distances Between the Rows of Two Matrices </li>
@@ -155,10 +186,163 @@
         <code><a href="dssp.html">dssp</a></code>(stride, print.sse): Secondary Structure Analysis with DSSP or STRIDE </li>
             
       <li>
-        <code><a href="entropy.html">entropy</a></code>: Shannon Entropy Score </li>
+        <code><a href="fit.xyz.html">fit.xyz</a></code>(rot.lsq): Coordinate Superposition </li>
             
       <li>
-        <code><a href="fit.xyz.html">fit.xyz</a></code>(rot.lsq): Coordinate Superposition </li>
+        <code><a href="binding.site.html">binding.site</a></code>: Binding Site Residues </li>
+            
+      <li>
+        <code><a href="mktrj.pca.html">mktrj.pca</a></code>: PCA Atomic Displacement Trajectory </li>
+            
+      <li>
+        <code><a href="overlap.html">overlap</a></code>: Overlap analysis </li>
+            
+      <li>
+        <code><a href="pca.project.html">pca.project</a></code>(pca.z2xyz, pca.xyz2z): Project Data onto Principal Components </li>
+            
+      <li>
+        <code><a href="pca.tor.html">pca.tor</a></code>: Principal Component Analysis </li>
+            
+      <li>
+        <code><a href="pca.xyz.html">pca.xyz</a></code>: Principal Component Analysis </li>
+            
+      <li>
+        <code><a href="pdbaln.html">pdbaln</a></code>: Sequence Alignment of PDB Files </li>
+            
+      <li>
+        <code><a href="pdb.annotate.html">pdb.annotate</a></code>: Get Customizable Annotations From PDB </li>
+            
+      <li>
+        <code><a href="pdb2aln.html">pdb2aln</a></code>: Align a PDB structure to an existing alignment </li>
+            
+      <li>
+        <code><a href="pdb2aln.ind.html">pdb2aln.ind</a></code>: Mapping between PDB atomic indices and alignment positions </li>
+            
+      <li>
+        <code><a href="pdbfit.html">pdbfit</a></code>: PDB File Coordinate Superposition </li>
+            
+      <li>
+        <code><a href="chain.pdb.html">chain.pdb</a></code>: Find Possible PDB Chain Breaks </li>
+            
+      <li>
+        <code><a href="convert.pdb.html">convert.pdb</a></code>:Convert Between Various PDB formats</li>
+            
+      <li>
+        <code><a href="rgyr.html">rgyr</a></code>: Radius of Gyration</li>
+            
+      <li>
+        <code><a href="rmsd.html">rmsd</a></code>: Root Mean Square Deviation </li>
+            
+      <li>
+        <code><a href="rmsd.filter.html">rmsd.filter</a></code>: RMSD Filter </li>
+            
+      <li>
+        <code><a href="rmsf.html">rmsf</a></code>: Atomic RMS Fluctuations </li>
+            
+      <li>
+        <code><a href="rmsip.html">rmsip</a></code>: Root Mean Square Inner Product </li>
+            
+      <li>
+        <code><a href="struct.aln.html">struct.aln</a></code>: Structure Alignment Of Two PDB Files </li>
+            
+      <li>
+        <code><a href="torsion.pdb.html">torsion.pdb</a></code>: Calculate Mainchain and Sidechain Torsion/Dihedral Angles </li>
+            
+      <li>
+        <code><a href="torsion.xyz.html">torsion.xyz</a></code>: Calculate Torsion/Dihedral Angles </li>
+            
+      <li>
+        <code><a href="wrap.tor.html">wrap.tor</a></code>: Wrap Torsion Angle Data </li>
+            
+      <li>
+        <code><a href="aa2mass.html">aa2mass</a></code>: Amino Acid Residues to Mass Converter </li>
+            
+      <li>
+        <code><a href="atom.index.html">atom.index</a></code>: Index of Atomic Masses </li>
+            
+      <li>
+        <code><a href="atom2mass.html">atom2mass</a></code>(atom2ele, formula2mass): Atom Names to Mass Converter </li>
+            
+      <li>
+        <code><a href="dccm.enma.html">dccm.enma</a></code>: Cross-Correlation for Ensemble NMA (eNMA) </li>
+            
+      <li>
+        <code><a href="dccm.mean.html">dccm.mean</a></code>:
+</li>
+            
+      <li>
+        <code><a href="dccm.nma.html">dccm.nma</a></code>: Dynamic Cross-Correlation from Normal Modes Analysis </li>
+            
+      <li>
+        <code><a href="dccm.xyz.html">dccm.xyz</a></code>: DCCM: Dynamical Cross-Correlation Matrix </li>
+            
+      <li>
+        <code><a href="deformation.nma.html">deformation.nma</a></code>: Deformation Analysis </li>
+            
+      <li>
+        <code><a href="fluct.nma.html">fluct.nma</a></code>: NMA Fluctuations </li>
+            
+      <li>
+        <code><a href="inner.prod.html">inner.prod</a></code>: Mass-weighted Inner Product </li>
+            
+      <li>
+        <code><a href="load.enmff.html">load.enmff</a></code>(ff.calpha, ff.calphax, ff.anm, ff.pfanm, ff.sdenm, ff.reach): ENM Force Field Loader </li>
+            
+      <li>
+        <code><a href="mktrj.nma.html">mktrj.nma</a></code>: NMA Atomic Displacement Trajectory </li>
+            
+      <li>
+        <code><a href="nma.html">nma</a></code>(build.hessian, print.nma): Normal Mode Analysis </li>
+            
+      <li>
+        <code><a href="nma.pdbs.html">nma.pdbs</a></code>(print.enma): Ensemble Normal Mode Analysis </li>
+            
+      <li>
+        <code><a href="normalize.vector.html">normalize.vector</a></code>: Mass-Weighted Normalized Vector </li>
+            
+      <li>
+        <code><a href="pdbs2pdb.html">pdbs2pdb</a></code>: PDBs to PDB Converter </li>
+            
+      <li>
+        <code><a href="plot.enma.html">plot.enma</a></code>: Plot eNMA Results </li>
+            
+      <li>
+        <code><a href="plot.nma.html">plot.nma</a></code>: Plot NMA Results </li>
+            
+      <li>
+        <code><a href="plot.rmsip.html">plot.rmsip</a></code>: Plot RMSIP Results </li>
+            
+      <li>
+        <code><a href="sdENM.html">sdENM</a></code>: Index for the sdENM ff </li>
+            
+      <li>
+        <code><a href="sse.bridges.html">sse.bridges</a></code>: SSE Backbone Hydrogen Bonding </li>
+            
+      <li>
+        <code><a href="view.dccm.html">view.dccm</a></code>: Visualization of Dynamic Cross-Correlation </li>
+            
+      <li>
+        <code><a href="view.modes.html">view.modes</a></code>: Vector Field Visualization of Modes </li>
+    
+    </ul>
+    <a name="Sequence Analysis:"></a>
+    <h3>Sequence Analysis:</h3>
+    <p>Do Interesting Things with Protein Sequence</p>
+
+    
+    <ul class="index">
+        
+      <li>
+        <code><a href="consensus.html">consensus</a></code>: Sequence Consensus for an Alignment </li>
+            
+      <li>
+        <code><a href="conserv.html">conserv</a></code>: Score Residue Conservation At Each Position in an Alignment </li>
+            
+      <li>
+        <code><a href="blast.pdb.html">blast.pdb</a></code>: NCBI BLAST Sequence Search </li>
+            
+      <li>
+        <code><a href="entropy.html">entropy</a></code>: Shannon Entropy Score </li>
             
       <li>
         <code><a href="ide.filter.html">ide.filter</a></code>: Percent Identity Filter </li>
@@ -167,10 +351,61 @@
         <code><a href="seqidentity.html">seqidentity</a></code>: Percent Identity</li>
             
       <li>
-        <code><a href="mktrj.pca.html">mktrj.pca</a></code>: PCA Atomic Displacement Trajectory </li>
+        <code><a href="motif.find.html">motif.find</a></code>: Find Sequence Motifs. </li>
             
       <li>
-        <code><a href="motif.find.html">motif.find</a></code>: Find Sequence Motifs. </li>
+        <code><a href="pdbaln.html">pdbaln</a></code>: Sequence Alignment of PDB Files </li>
+            
+      <li>
+        <code><a href="seq2aln.html">seq2aln</a></code>: Add a Sequence to an Existing Alignmnet </li>
+            
+      <li>
+        <code><a href="seqaln.html">seqaln</a></code>: Sequence Alignment with MUSCLE</li>
+            
+      <li>
+        <code><a href="seqaln.pair.html">seqaln.pair</a></code>: Sequence Alignment of Identical Protein Sequences </li>
+            
+      <li>
+        <code><a href="seqbind.html">seqbind</a></code>: Combine Sequences by Rows Without Recycling </li>
+    
+    </ul>
+    <a name="Trajectory Analysis:"></a>
+    <h3>Trajectory Analysis:</h3>
+    <p>Do Interesting Things with Simulation Data</p>
+
+    
+    <ul class="index">
+        
+      <li>
+        <code><a href="angle.xyz.html">angle.xyz</a></code>: Calculate the Angle Between Three Atoms </li>
+            
+      <li>
+        <code><a href="cmap.html">cmap</a></code>: Contact Map </li>
+            
+      <li>
+        <code><a href="core.find.html">core.find</a></code>: Identification of Invariant Core Positions </li>
+            
+      <li>
+        <code><a href="dccm.html">dccm</a></code>: DCCM: Dynamical Cross-Correlation Matrix </li>
+            
+      <li>
+        <code><a href="dccm.mean.html">dccm.mean</a></code>:
+</li>
+            
+      <li>
+        <code><a href="dist.xyz.html">dist.xyz</a></code>:  Calculate the Distances Between the Rows of Two Matrices </li>
+            
+      <li>
+        <code><a href="dm.html">dm</a></code>(dm.xyz): Distance Matrix Analysis </li>
+            
+      <li>
+        <code><a href="dssp.trj.html">dssp.trj</a></code>: Secondary Structure Analysis of Trajectories with DSSP  </li>
+            
+      <li>
+        <code><a href="fit.xyz.html">fit.xyz</a></code>(rot.lsq): Coordinate Superposition </li>
+            
+      <li>
+        <code><a href="mktrj.pca.html">mktrj.pca</a></code>: PCA Atomic Displacement Trajectory </li>
             
       <li>
         <code><a href="overlap.html">overlap</a></code>: Overlap analysis </li>
@@ -203,18 +438,6 @@
         <code><a href="rmsip.html">rmsip</a></code>: Root Mean Square Inner Product </li>
             
       <li>
-        <code><a href="seq2aln.html">seq2aln</a></code>: Add a Sequence to an Existing Alignmnet </li>
-            
-      <li>
-        <code><a href="seqaln.html">seqaln</a></code>: Sequence Alignment with MUSCLE</li>
-            
-      <li>
-        <code><a href="seqaln.pair.html">seqaln.pair</a></code>: Sequence Alignment of Identical Protein Sequences </li>
-            
-      <li>
-        <code><a href="seqbind.html">seqbind</a></code>: Combine Sequences by Rows Without Recycling </li>
-            
-      <li>
         <code><a href="torsion.pdb.html">torsion.pdb</a></code>: Calculate Mainchain and Sidechain Torsion/Dihedral Angles </li>
             
       <li>
@@ -224,6 +447,85 @@
         <code><a href="wrap.tor.html">wrap.tor</a></code>: Wrap Torsion Angle Data </li>
     
     </ul>
+    <a name="Normal Mode Analysis:"></a>
+    <h3>Normal Mode Analysis:</h3>
+    <p>Do Interesting Things with Protein Sequence</p>
+
+    
+    <ul class="index">
+        
+      <li>
+        <code><a href="aa2mass.html">aa2mass</a></code>: Amino Acid Residues to Mass Converter </li>
+            
+      <li>
+        <code><a href="atom.index.html">atom.index</a></code>: Index of Atomic Masses </li>
+            
+      <li>
+        <code><a href="atom2mass.html">atom2mass</a></code>(atom2ele, formula2mass): Atom Names to Mass Converter </li>
+            
+      <li>
+        <code><a href="dccm.enma.html">dccm.enma</a></code>: Cross-Correlation for Ensemble NMA (eNMA) </li>
+            
+      <li>
+        <code><a href="dccm.mean.html">dccm.mean</a></code>:
+</li>
+            
+      <li>
+        <code><a href="dccm.nma.html">dccm.nma</a></code>: Dynamic Cross-Correlation from Normal Modes Analysis </li>
+            
+      <li>
+        <code><a href="dccm.xyz.html">dccm.xyz</a></code>: DCCM: Dynamical Cross-Correlation Matrix </li>
+            
+      <li>
+        <code><a href="deformation.nma.html">deformation.nma</a></code>: Deformation Analysis </li>
+            
+      <li>
+        <code><a href="fluct.nma.html">fluct.nma</a></code>: NMA Fluctuations </li>
+            
+      <li>
+        <code><a href="inner.prod.html">inner.prod</a></code>: Mass-weighted Inner Product </li>
+            
+      <li>
+        <code><a href="load.enmff.html">load.enmff</a></code>(ff.calpha, ff.calphax, ff.anm, ff.pfanm, ff.sdenm, ff.reach): ENM Force Field Loader </li>
+            
+      <li>
+        <code><a href="mktrj.nma.html">mktrj.nma</a></code>: NMA Atomic Displacement Trajectory </li>
+            
+      <li>
+        <code><a href="nma.html">nma</a></code>(build.hessian, print.nma): Normal Mode Analysis </li>
+            
+      <li>
+        <code><a href="nma.pdbs.html">nma.pdbs</a></code>(print.enma): Ensemble Normal Mode Analysis </li>
+            
+      <li>
+        <code><a href="normalize.vector.html">normalize.vector</a></code>: Mass-Weighted Normalized Vector </li>
+            
+      <li>
+        <code><a href="pdbs2pdb.html">pdbs2pdb</a></code>: PDBs to PDB Converter </li>
+            
+      <li>
+        <code><a href="plot.enma.html">plot.enma</a></code>: Plot eNMA Results </li>
+            
+      <li>
+        <code><a href="plot.nma.html">plot.nma</a></code>: Plot NMA Results </li>
+            
+      <li>
+        <code><a href="plot.rmsip.html">plot.rmsip</a></code>: Plot RMSIP Results </li>
+            
+      <li>
+        <code><a href="sdENM.html">sdENM</a></code>: Index for the sdENM ff </li>
+            
+      <li>
+        <code><a href="sse.bridges.html">sse.bridges</a></code>: SSE Backbone Hydrogen Bonding </li>
+            
+      <li>
+        <code><a href="view.dccm.html">view.dccm</a></code>: Visualization of Dynamic Cross-Correlation </li>
+            
+      <li>
+        <code><a href="view.modes.html">view.modes</a></code>: Vector Field Visualization of Modes </li>
+    
+    </ul>
+    <a name="Graphics:"></a>
     <h3>Graphics:</h3>
     <p>Plotting and Graphic Display</p>
 
@@ -232,6 +534,10 @@
         
       <li>
         <code><a href="bwr.colors.html">bwr.colors</a></code>(mono.colors): Color Palettes </li>
+            
+      <li>
+        <code><a href="vmd.colors.html">vmd.colors</a></code>:
+</li>
             
       <li>
         <code><a href="plot.bio3d.html">plot.bio3d</a></code>: Plots with marginal SSE annotation </li>
@@ -255,6 +561,7 @@
         <code><a href="plot.pca.loadings.html">plot.pca.loadings</a></code>:  Plot Residue Loadings along PC1 to PC3 </li>
     
     </ul>
+    <a name="Utilities:"></a>
     <h3>Utilities:</h3>
     <p>Convert and Manipulate Data</p>
 
@@ -275,6 +582,9 @@
             
       <li>
         <code><a href="atom.select.html">atom.select</a></code>: Atom Selection From PDB Structure </li>
+            
+      <li>
+        <code><a href="combine.sel.html">combine.sel</a></code>: Combine Atom Selections From PDB Structure </li>
             
       <li>
         <code><a href="atom2xyz.html">atom2xyz</a></code>(xyz2atom): Convert Between Atom and xyz Indices </li>
@@ -306,6 +616,13 @@
             
       <li>
         <code><a href="is.gap.html">is.gap</a></code>: Gap Characters </li>
+            
+      <li>
+        <code><a href="is.pdb.html">is.pdb</a></code>:
+</li>
+            
+      <li>
+        <code><a href="is.select.html">is.select</a></code>:Is an Object of Class </li>
             
       <li>
         <code><a href="lbio3d.html">lbio3d</a></code>: List all Functions in the bio3d Package </li>
@@ -350,6 +667,7 @@
         <code><a href="vec2resno.html">vec2resno</a></code>: Replicate Per-residue Vector Values </li>
     
     </ul>
+    <a name="Example Data:"></a>
     <h3>Example Data:</h3>
     <p>Bio3d Example Data</p>
 
@@ -360,127 +678,25 @@
         <code><a href="example.data.html">example.data</a></code>(kinesin, transducin, pdbs, core, annotation):Bio3d Example Data</li>
     
     </ul>
+    <a name="Other"></a>
     <h3>Other</h3>
     
     
     <ul class="index">
         
       <li>
-        <code><a href="aa2mass.html">aa2mass</a></code>: Amino Acid Residues to Mass Converter </li>
-            
-      <li>
-        <code><a href="atom.index.html">atom.index</a></code>: Index of Atomic Masses </li>
-            
-      <li>
-        <code><a href="atom2mass.html">atom2mass</a></code>(atom2ele, formula2mass): Atom Names to Mass Converter </li>
-            
-      <li>
-        <code><a href="binding.site.html">binding.site</a></code>: Binding Site Residues </li>
-            
-      <li>
-        <code><a href="com.html">com</a></code>(com.xyz): Center of Mass </li>
-            
-      <li>
-        <code><a href="combine.sel.html">combine.sel</a></code>: Combine Atom Selections From PDB Structure </li>
-            
-      <li>
-        <code><a href="dccm.enma.html">dccm.enma</a></code>: Cross-Correlation for Ensemble NMA (eNMA) </li>
-            
-      <li>
-        <code><a href="dccm.mean.html">dccm.mean</a></code>:
-</li>
-            
-      <li>
-        <code><a href="dccm.nma.html">dccm.nma</a></code>: Dynamic Cross-Correlation from Normal Modes Analysis </li>
-            
-      <li>
-        <code><a href="dccm.xyz.html">dccm.xyz</a></code>: DCCM: Dynamical Cross-Correlation Matrix </li>
-            
-      <li>
-        <code><a href="deformation.nma.html">deformation.nma</a></code>: Deformation Analysis </li>
-            
-      <li>
-        <code><a href="dssp.trj.html">dssp.trj</a></code>: Secondary Structure Analysis of Trajectories with DSSP  </li>
-            
-      <li>
-        <code><a href="fluct.nma.html">fluct.nma</a></code>: NMA Fluctuations </li>
-            
-      <li>
-        <code><a href="inner.prod.html">inner.prod</a></code>: Mass-weighted Inner Product </li>
-            
-      <li>
-        <code><a href="is.pdb.html">is.pdb</a></code>:
-</li>
-            
-      <li>
-        <code><a href="is.select.html">is.select</a></code>:Is an Object of Class </li>
-            
-      <li>
-        <code><a href="load.enmff.html">load.enmff</a></code>(ff.calpha, ff.calphax, ff.anm, ff.pfanm, ff.sdenm, ff.reach): ENM Force Field Loader </li>
-            
-      <li>
-        <code><a href="mktrj.nma.html">mktrj.nma</a></code>: NMA Atomic Displacement Trajectory </li>
-            
-      <li>
-        <code><a href="nma.html">nma</a></code>(build.hessian, print.nma): Normal Mode Analysis </li>
-            
-      <li>
-        <code><a href="nma.pdbs.html">nma.pdbs</a></code>(print.enma): Ensemble Normal Mode Analysis </li>
-            
-      <li>
-        <code><a href="normalize.vector.html">normalize.vector</a></code>: Mass-Weighted Normalized Vector </li>
-            
-      <li>
-        <code><a href="pdb.annotate.html">pdb.annotate</a></code>: Get Customizable Annotations From PDB </li>
-            
-      <li>
-        <code><a href="pdb2aln.html">pdb2aln</a></code>: Align a PDB structure to an existing alignment </li>
-            
-      <li>
-        <code><a href="pdb2aln.ind.html">pdb2aln.ind</a></code>: Mapping between PDB atomic indices and alignment positions </li>
-            
-      <li>
-        <code><a href="pdbfit.html">pdbfit</a></code>: PDB File Coordinate Superposition </li>
-            
-      <li>
-        <code><a href="pdbs2pdb.html">pdbs2pdb</a></code>: PDBs to PDB Converter </li>
-            
-      <li>
-        <code><a href="plot.enma.html">plot.enma</a></code>: Plot eNMA Results </li>
-            
-      <li>
-        <code><a href="plot.nma.html">plot.nma</a></code>: Plot NMA Results </li>
-            
-      <li>
-        <code><a href="plot.rmsip.html">plot.rmsip</a></code>: Plot RMSIP Results </li>
-            
-      <li>
-        <code><a href="read.mol2.html">read.mol2</a></code>: Read MOL2 File </li>
-            
-      <li>
-        <code><a href="sdENM.html">sdENM</a></code>: Index for the sdENM ff </li>
-            
-      <li>
-        <code><a href="sse.bridges.html">sse.bridges</a></code>: SSE Backbone Hydrogen Bonding </li>
-            
-      <li>
-        <code><a href="struct.aln.html">struct.aln</a></code>: Structure Alignment Of Two PDB Files </li>
-            
-      <li>
-        <code><a href="view.dccm.html">view.dccm</a></code>: Visualization of Dynamic Cross-Correlation </li>
-            
-      <li>
-        <code><a href="view.modes.html">view.modes</a></code>: Vector Field Visualization of Modes </li>
-            
-      <li>
-        <code><a href="vmd.colors.html">vmd.colors</a></code>:
-</li>
+        <code><a href="read.pdcBD.html">read.pdcBD</a></code>: Read PQR output from pdcBD File </li>
     
     </ul>
   </div>
   
   <div class="span3 offset1">
-        
+    
+    <h2>Demos</h2>
+    <ul>
+      <li><a href="demo-nma.html">Demonstration of Normal Mode Analysis</a></li>
+    </ul>
+    
     <h2>Dependencies</h2>
     <ul>
       <li><strong>Depends</strong>: </li>

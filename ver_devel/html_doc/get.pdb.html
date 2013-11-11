@@ -115,9 +115,25 @@ pdb <- read.pdb( get.pdb("5p21", URL=TRUE) )
 </div>
 <div class='output'>  HEADER    ONCOGENE PROTEIN                        30-APR-90   5P21               
 </div>
-<div class='input'>pdb.summary(pdb)
+<div class='input'>summary(pdb)
 </div>
-<strong class='error'>Error in eval(expr, envir, enclos): could not find function "pdb.summary"</strong>
+<div class='output'>
+ Call:  read.pdb(file = get.pdb("5p21", URL = TRUE))
+
+  Atom Count: 1567 
+
+   Total ATOMs#: 1323 
+     Protein ATOMs#: 1323   ( Calpha ATOMs#: 166 ) 
+     Non-protein ATOMs#: 0   ( residues:  ) 
+     Chains#: 1   ( values: A ) 
+
+   Total HETATOMs: 244 
+     Residues HETATOMs#: 213   ( residues: MG GNP HOH ) 
+     Chains#: 1   ( values: A )
+
++ attr: atom, het, helix, sheet, seqres,
+        xyz, xyz.models, calpha, call
+</div>
 <div class='input'>
 ## Download PDB file
 ## get.pdb("5p21")
