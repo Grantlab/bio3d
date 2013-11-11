@@ -1,48 +1,140 @@
 list(
-  index = list(
+  index = list( 
+    ##"io"
     sd_section("Input/Output:",
                "Read and Write Common Data Types",
       c(
+        "read.pdb",
+        "read.fasta",
+        "read.fasta.pdb",
+        "read.ncdf",        
+        "read.dcd",
+        "read.crd",
+        "read.pqr", 
+        "read.mol2"      
+        "read.all",
         "aln2html",
         "get.pdb",
         "get.seq",
-        "mktrj.pca",
-        "read.all",
-        "read.crd",
-        "read.dcd",
-        "read.fasta",
-        "read.fasta.pdb",
-        "read.ncdf",
-        "read.pdb",
-        "read.pdcBD",
-        "read.pqr",
+        "load.enmff",
+        "write.pdb", 
         "write.crd",
         "write.fasta",
         "write.ncdf",
-        "write.pdb",
         "write.pqr"
+        "mktrj.nma"
+        "mktrj.pca",        
+        "view.dccm",
+        "view.nma"
       )
     ),
-    sd_section("Analysis:",
-               "Do Interesting Things",
-      c(
+
+    ##"structure"
+    sd_section("Structure Analysis:",
+               "Do Interesting Things with Protein Structure",
+      c(    
         "angle.xyz",
         "blast.pdb",
+        "atom.select",
+        "combine.sel",
         "cmap",
-        "consensus",
-        "conserv",
         "core.find",
+        "com",
         "dccm",
+        "dccm.mean",
         "dist.xyz",
         "dm",
         "dm.xyz",
         "dssp",
-        "entropy",
         "fit.xyz",
+        "binding.site",
+        "mktrj.pca",
+        "overlap",
+        "pca.project",
+        "pca.tor",
+        "pca.xyz",
+        "pca.xyz2z",
+        "pca.z2xyz",
+        "pdbaln",
+        "pdb.annotate",
+        "pdb2aln",
+        "pdb2aln.ind",
+        "pdbfit",
+        "chain.pdb",
+        "convert.pdb",
+        "summary.pdb",
+        "rgyr",
+        "rmsd",
+        "rmsd.filter",
+        "rmsf",
+        "rmsip",
+        "rot.lsq",
+        "stride",
+        "struct.aln",
+        "torsion.pdb",
+        "torsion.xyz",
+        "wrap.tor",
+        "aa2mass",
+        "atom.index",
+        "atom2mass",
+        "dccm.enma",
+        "dccm.mean",
+        "dccm.nma",
+        "dccm.xyz",
+        "deformation.nma",
+        "fluct.nma",
+        "inner.prod",
+        "load.enmff",
+        "mktrj.nma",
+        "nma", 
+        "nma.pdbs",
+        "normalize.vector",
+        "pdbs2pdb",
+        "plot.enma",
+        "plot.nma",
+        "plot.rmsip",
+        "sdENM",
+        "sse.bridges",
+        "view.dccm",
+        "view.modes"
+        )
+    ),
+
+    ##"sequence"
+    sd_section("Sequence Analysis:",
+               "Do Interesting Things with Protein Sequence",
+      c(    
+        "consensus",
+        "conserv",
+        "blast.pdb",
+        "entropy",
         "ide.filter",
         "seqidentity",
-        "mktrj.pca",
         "motif.find",
+        "pdbaln",
+        "seq2aln",
+        "seqaln",
+        "seqaln.pair",
+        "seqbind",
+
+        )   
+    ),
+
+    ##"trajectory"
+    sd_section("Trajectory Analysis:",
+               "Do Interesting Things with Simulation Data",
+      c(    
+        "angle.xyz",
+        "cmap",
+        "core.find",
+        "dccm",
+        "dccm.mean",
+        "dist.xyz",
+        "dm",
+        "dm.xyz",
+        "dssp.trj",
+        "fit.xyz",
+        "mktrj.pca",
         "overlap",
         "pca.project",
         "pca.tor",
@@ -56,21 +148,50 @@ list(
         "rmsf",
         "rmsip",
         "rot.lsq",
-        "seq2aln",
-        "seqaln",
-        "seqaln.pair",
-        "seqbind",
         "stride",
         "torsion.pdb",
         "torsion.xyz",
         "wrap.tor"
         )
     ),
+
+    ##"nma"
+    sd_section("Normal Mode Analysis:",
+               "Do Interesting Things with Protein Sequence",
+      c(    
+        "aa2mass",
+        "atom.index",
+        "atom2mass",
+        "dccm.enma",
+        "dccm.mean",
+        "dccm.nma",
+        "dccm.xyz",
+        "deformation.nma",
+        "fluct.nma",
+        "inner.prod",
+        "load.enmff",
+        "mktrj.nma",
+        "nma", 
+        "nma.pdbs",
+        "normalize.vector",
+        "pdbs2pdb",
+        "plot.enma",
+        "plot.nma",
+        "plot.rmsip",
+        "sdENM",
+        "sse.bridges",
+        "view.dccm",
+        "view.modes"
+        )   
+    ),
+
+    ##"graphics"
      sd_section("Graphics:",
                "Plotting and Graphic Display",
       c(
         "bwr.colors",
         "mono.colors",
+        "vmd.colors",
         "plot.bio3d",
         "plot.blast",
         "plot.core",
@@ -81,7 +202,9 @@ list(
         "plot.pca.score",
         "plot.pca.scree"
         )
-      ),
+    ),
+
+    ##"util"
     sd_section("Utilities:",
                "Convert and Manipulate Data",
       c(
@@ -91,6 +214,7 @@ list(
         "aa321",
         "aln2html",
         "atom.select",
+        "combine.sel",
         "atom2xyz",
         "bio3d-package",
         "bounds",
@@ -101,6 +225,8 @@ list(
         "gap.inspect",
         "ide.filter",
         "is.gap",
+        "is.pdb",
+        "is.select",
         "lbio3d",
         "orient.pdb",
         "pairwise",
@@ -120,6 +246,8 @@ list(
         "vec2resno"
         )
     ),
+
+    ##"example"
     sd_section("Example Data:",
                "Bio3d Example Data",
       c("example.data")
