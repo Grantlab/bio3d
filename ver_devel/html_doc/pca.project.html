@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>pca.project. bio3d 1.2</title>
+<title>pca.project. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Karim ElSawy and Barry Grant">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -42,7 +42,7 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>pca.project(data, pca, angular = FALSE)
+    <pre>pca.project(data, pca, angular = FALSE, fit = FALSE, ...)
 
 pca.z2xyz(z.coord, pca)
 
@@ -58,6 +58,10 @@ pca.xyz2z(xyz.coord, pca)</pre>
       <dt>angular</dt>
       <dd> logical, if TRUE the data to be projected is treated
     as torsion angle data. </dd>
+      <dt>fit</dt>
+      <dd> logical, if TRUE the data is first fitted to <code>pca$mean</code>. </dd>
+      <dt>...</dt>
+      <dd> other parameters for <code><a href='fit.xyz.html'>fit.xyz</a></code>. </dd>
       <dt>xyz.coord</dt>
       <dd> a numeric vector or row-wise matrix of data to be projected. </dd>
       <dt>z.coord</dt>
@@ -88,19 +92,26 @@ pca.xyz2z(xyz.coord, pca)</pre>
     </div>
     
     <h2 id="examples">Examples</h2>
-    <pre class="examples"><div class='input'>data(kinesin)
+    <pre class="examples"><div class='input'>data(transducin)
+attach(transducin, warn.conflicts=FALSE)
+
 gaps.pos <- gap.inspect(pdbs$xyz)
 
-#-- Do PCA without structures 1 and 2
-pc.xray <- pca.xyz(xyz[-c(1:2), gaps.pos$f.inds])
-d <- pca.project(xyz[1:2, gaps.pos$f.inds], pc.xray)
+#-- Do PCA without structures 2 and 7
+pc.xray <- pca.xyz(pdbs$xyz[-c(2,7), gaps.pos$f.inds])
+
+#-- Project structures 2 and 7 onto the PC space
+d <- pca.project(pdbs$xyz[c(2,7), gaps.pos$f.inds], pc.xray)
 
 plot(pc.xray$z[,1], pc.xray$z[,2],col="gray")
 </div>
 <p><img src='pca.project-2.png' alt='' width='400' height='400' /></p>
 <div class='input'>points(d[,1],d[,2], col="red")
 </div>
-<p><img src='pca.project-4.png' alt='' width='400' height='400' /></p></pre>
+<p><img src='pca.project-4.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+detach(transducin)
+</div></pre>
   </div>
   <div class="span4">
     <!-- <ul>
@@ -111,7 +122,7 @@ plot(pc.xray$z[,1], pc.xray$z[,2],col="gray")
     </ul> -->
       
     <h2>See also</h2>
-     <code><a href='pca.xyz.html'>pca.xyz</a></code>, <code><a href='pca.tor.html'>pca.tor</a></code> 
+     <code><a href='pca.xyz.html'>pca.xyz</a></code>, <code><a href='pca.tor.html'>pca.tor</a></code>, <code><a href='fit.xyz.html'>fit.xyz</a></code> 
     
     <h2>Author</h2>
      Karim ElSawy and Barry Grant

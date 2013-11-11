@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>plot.core. bio3d 1.2</title>
+<title>plot.core. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -130,7 +130,8 @@ http://www.rcsb.org/pdb/files/1i5s.pdb
 .
 
 Extracting sequences
-muscle -in /tmp/RtmpesXLkY/file5d6e5ad86ff3 -out aln.fa  -seqtype proteinpdb/seq: 1   name: http://www.rcsb.org/pdb/files/1bg2.pdb 
+muscle -in /tmp/RtmpyefGEQ/filec177354acd5a -out aln.fa -quiet -seqtype protein
+pdb/seq: 1   name: http://www.rcsb.org/pdb/files/1bg2.pdb 
 pdb/seq: 2   name: http://www.rcsb.org/pdb/files/2ncd.pdb 
 pdb/seq: 3   name: http://www.rcsb.org/pdb/files/1i6i.pdb 
    PDB has ALT records, taking A only, rm.alt=TRUE
@@ -381,7 +382,7 @@ core.inds <- print(core)
 34   315 316      2
 35   318 318      1
 </div>
-<div class='input'>xyz <- pdbfit(pdbs, core.inds, outpath="corefit_structures/")
+<div class='input'>xyz <- pdbfit(pdbs, core.inds, outpath="corefit_structures")
 </div>
 <div class='output'>  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
   HEADER    CONTRACTILE PROTEIN                     04-JUN-99   2NCD               

@@ -13,6 +13,11 @@
   ## MMTK Units: kJ / mol / nm^2
   ##a <- 128; b <- 8.6 * 10^5; c <- 2.39 * 10^5;
   ## Bio3D Units: kJ / mol / A^2
+
+  ## Consider enhancement:
+  ## In case of unreasonable CA-CA distance
+  ## r[(r<3.55)] <- 3.55
+  
   a <- 128 * 10^4; b <- 8.6 * 10^2; c <- 2.39 * 10^3;
   ifelse( r<4.0,
          b*(r) - c,
@@ -148,11 +153,12 @@
   return(ks)
 }
 
-"ff.sdenm" <- function(r, atom.id, ssdat=NULL, ...) {
-  ## sdENM by lazyload. contains columns:
-  ## aa1 aa2 min max   k
-  ## and row names: AA1 AA2 etc.
 
+"ff.sdenm" <- function(r, atom.id, ssdat=NULL, ...) {
+  ## sdENM by lazyload. contains an array with dimensions
+  ## 20  x 20  x 27
+  ## aa1 x aa2 x distance.category
+  
   ## set sequence data to 1-letter aa code
   if(any(nchar(ssdat$seq)==3))
     sequ <- suppressWarnings( aa321(ssdat$seq) )  
@@ -166,69 +172,80 @@
     stop(paste("Unknown aminoacid identifier for:", unk))
   }
 
-  aa.now   <- sequ[atom.id]
-  ids.tmp  <- cbind(aa.now, sequ)
-  ids.tmp  <- t(apply(ids.tmp, 1, sort))
-  pair.ids <- apply(ids.tmp, 1, function(x) paste(x, collapse=""))
-      
-  dist.ids <- rep(NA, length(r))
+  ## Initialize
+  natoms <- length(r)
+  aa.now <- sequ[atom.id]
+
+  ## vector for spring constants
+  ks <- rep(NA, natoms)
+  
+  ## Make distance categories
   map.dist <- c(0, seq(4, 16.5, by=0.5))
   
-  ## each AA pair has 27 records
-  map.id <- seq(1,27)
-  
-  for(i in 2:length(map.id)) {
-    inds.a <- which(r>map.dist[i-1])
-    inds.b <- which(r<=map.dist[i])
-    inds   <- intersect(inds.a, inds.b)
-    dist.ids[ inds ] <- map.id[i-1]
+  dist.cat <- cut(r, breaks=map.dist, labels=FALSE)
+  dist.cat[is.na(dist.cat)] <- 27
+  dist.cat[atom.id]         <- NA
+
+  ## Unique distance categories
+  unq.cat <- unique(dist.cat)
+
+  for ( i in 1:length(unq.cat) ) {
+    tmp.cat <- unq.cat[i]
+    
+    if(!is.na(tmp.cat)) {
+      tmp.inds <- which(dist.cat==tmp.cat)
+
+      ## Since the lower.tri is NA we look up twice :P
+      a <- sdENM[ aa.now, sequ, tmp.cat ][ tmp.inds ]
+      b <- sdENM[ sequ, aa.now, tmp.cat ][ tmp.inds ]
+
+      ks[ tmp.inds ][!is.na(a)] <- a[!is.na(a)]
+      ks[ tmp.inds ][!is.na(b)] <- b[!is.na(b)]
+    }
   }
-  dist.ids[is.na(dist.ids)] <- 27
-  
-  pair.ids <- paste(pair.ids, dist.ids, sep="")
-  ks <- sdENM[pair.ids, "k"]
-  
-  if(atom.id != 1) {
-    if(r[atom.id-1]<4)
-      ks[atom.id-1] <- 43.52
-  }
-  if(atom.id != length(r)) {
-    if(r[atom.id+1]<4)
-      ks[atom.id+1] <- 43.52
-  }
+
+  ## Set special restraints for covalent pairs
+  inds.k12 <- c(atom.id -1, atom.id+1)
+  inds.k12 <- inds.k12[ intersect(which(inds.k12 > 0), which(inds.k12 <= natoms)) ]
+  ks[inds.k12] <- 43.52
   
   ## sdENM FF is in arbitrary units
-  ## scale to kJ / mol / A^2 range
+  ## The values given were arbitrarily normalized, so that
+  ## the average kappa (over all amino acid pairs) is equal to 1, at d = 6 Ang.
+  ## scale to kJ / mol / A^2 range:
   ks <- ks * 0.0083144621 * 300 * 10
   return(ks)
 }
-
 
 "ff.reach" <- function(r, atom.id, ssdat=NULL, ...) {
   natoms <- length(r)
   
   ## units in kJ/mol/A^2
-  af <- 6770; as <- 2.08;
-  bf <- 0.951; bs <- 0.0589;
-  k12 <- 860; k13 <- 26.7; k14 <- 17;
+  ## Table 1 - line DHFR
+  #af <- 6770; as <- 2.08;
+  #bf <- 0.951; bs <- 0.0589;
+  #k12 <- 860; k13 <- 26.7; k14 <- 17;
+
+  ## by correspondance with Kei (29 aug'13)
+  ## line 38, page 1644, 2008 Biophysical J
+  af <- 4810;  as <- 1.7;
+  bf <- 0.872; bs <- 0.068;
+
+  ## avgering over table 1
+  k12 <- 866; k13 <- 28.7; k14 <- 24.16667;
   
   ## Calculate default interactions
   ks <- (af * exp(-bf*r)) + (as * exp(-bs*r))
   
-  ## Differentiate between k12, k13, k14 
-  types <- rep(0, natoms)
-  a <- seq(atom.id-1, 0)
-  if(natoms!=atom.id) {
-    b <- seq(1, natoms-atom.id)
-    types <- c(a,b)
-  }
-  else 
-    types <- a
+  ## Differentiate between k12, k13, k14
+  inds.k12 <- c(atom.id -1, atom.id+1)
+  inds.k13 <- c(atom.id -2, atom.id+2)
+  inds.k14 <- c(atom.id -3, atom.id+3)
+
+  inds.k12 <- inds.k12[ intersect(which(inds.k12 > 0), which(inds.k12 <= natoms)) ]
+  inds.k13 <- inds.k13[ intersect(which(inds.k13 > 0), which(inds.k13 <= natoms)) ]
+  inds.k14 <- inds.k14[ intersect(which(inds.k14 > 0), which(inds.k14 <= natoms)) ]
   
-  ## Set specific k-values
-  inds.k12 <- which(types==1)
-  inds.k13 <- which(types==2)
-  inds.k14 <- which(types==3)
   ks[inds.k12] <- k12;
   ks[inds.k13] <- k13;
   ks[inds.k14] <- k14;

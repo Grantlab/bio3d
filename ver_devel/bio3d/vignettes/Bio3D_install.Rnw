@@ -1,0 +1,4 @@
+%\VignetteIndexEntry{Installing Bio3D}
+\documentclass{article}
+\begin{document}
+\end{document}

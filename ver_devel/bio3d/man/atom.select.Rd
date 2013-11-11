@@ -1,6 +1,5 @@
 \name{atom.select}
 \alias{atom.select}
-\alias{pdb.summary}
 \title{ Atom Selection From PDB Structure }
 \description{
   Return the atom and xyz coordinates indices of a \sQuote{pdb} structure
@@ -9,7 +8,6 @@
 \usage{
 atom.select(pdb, string=NULL, chain=NULL, resno=NULL, resid=NULL,
 eleno=NULL, elety=NULL, verbose=TRUE, rm.insert=FALSE)
-pdb.summary(pdb)
 }
 \arguments{
   \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
@@ -54,8 +52,7 @@ pdb.summary(pdb)
   \code{"h"} and \code{"noh"} may also be used. See below for examples.
 
   When called without a selection string, \code{atom.select} will print a
-  summary of \code{pdb} makeup.  \code{pdb.summary} is a simple
-  alias to \code{atom.select} with \code{string=NULL} and \code{verbose=T}.
+  summary of \code{pdb} makeup.
 }
 \value{
   Returns a list of class \code{"select"} with components:

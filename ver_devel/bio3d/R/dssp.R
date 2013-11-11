@@ -56,8 +56,22 @@ function (pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE) {
     
     res.id  <- as.numeric(substring(raw.lines, 1, 5))   ## dssp residue IDs
     res.num <- as.numeric(substring(raw.lines, 6, 10))  ## Residue numbers
+    res.insert <- substring(raw.lines, 11, 11)          ## Insertion codes
     res.ind <- 1:length(res.num)                        ## Internal indices
 
+    if(any(res.insert!=" ")) {
+       if(resno) {
+         warning("Insertions are found in PDB: Residue numbers may be incorrect.
+                Try again with resno=FALSE")
+       }
+       else { 
+         ii <- diff(res.num)
+         ii[ii==0] <- 1     #Consecutive numbers at insertion residues
+         ii[ii<0] <- 2      #Jumps at possible chain termination
+         res.num <- res.num[1] + c(0, cumsum(ii))
+       }
+    }
+    
     if(full) {
       ## Difference between sse res id and internal res indices
       diff        <- res.id - res.ind
@@ -237,6 +251,6 @@ function (pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE) {
                 turn = turn, phi = phi, psi = psi, acc = acc,
                 sse = sse, call=cl)
 
-    class(out) <- "dssp"
+    class(out) <- "sse"
     return(out)
 }

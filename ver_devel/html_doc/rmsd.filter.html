@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>rmsd.filter. bio3d 1.2</title>
+<title>rmsd.filter. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -113,7 +113,7 @@ k <- rmsd.filter(xyz=pdbs,cutoff=0.5)
 </div>
 <div class='output'>ide.filter(): N clusters @ cutoff =  23 
 </div>
-<div class='input'>aln$id[k$ind]
+<div class='input'>pdbs$id[k$ind]
 </div>
 <div class='output'> [1] "d1bg2__" "d1mkja_" "d2kin.1" "d3kin.2" "d1v8ka_" "d1goja_" "d1ry6a_"
  [8] "d1sdma_" "d1t5c_a" "d1vfva_" "d1i6ia_" "d1i5sa_" "d1vfxa_" "d2fl6_b"
@@ -125,7 +125,10 @@ k <- rmsd.filter(xyz=pdbs,cutoff=0.5)
 <p><img src='rmsd.filter-6.png' alt='' width='400' height='400' /></p>
 <div class='input'>abline(h=0.5, col="gray")
 </div>
-<p><img src='rmsd.filter-8.png' alt='' width='400' height='400' /></p></pre>
+<p><img src='rmsd.filter-8.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+detach(kinesin)
+</div></pre>
   </div>
   <div class="span4">
     <!-- <ul>

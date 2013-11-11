@@ -18,7 +18,7 @@ pdb.annotate <- function(ids, anno.terms=NULL) {
       ## Check and exclude invalid annotation terms
       term.found <- (anno.terms %in% anno.allterms)
       if( any(!term.found) ) {
-        warning( paste("Requested annotation term not availalbe:",
+        warning( paste("Requested annotation term not available:",
                        paste(anno.terms[!term.found], collapse=", "),
                        "\n  Available terms are:\n\t ",
                        paste(anno.allterms, collapse=", ")) )
@@ -140,7 +140,8 @@ pdb.annotate <- function(ids, anno.terms=NULL) {
     ## again, we need the transformation of the matrix out.tbl
     if(length(ids)==1) { out.tbl <- t(out.tbl) }
     
-    ## return a matrix of required annotation
+    ## return a data frame of required annotation
     colnames(out.tbl) <- anno.terms
-    return(out.tbl)
+    return(as.data.frame(out.tbl, stringsAsFactors=FALSE))
+    ##return(out.tbl)
 }

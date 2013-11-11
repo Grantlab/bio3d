@@ -2,7 +2,7 @@
 \alias{nma}
 \alias{build.hessian}
 \alias{print.nma}
-\title{ Normal Modes Analysis }
+\title{ Normal Mode Analysis }
 \description{
   Perform elastic network model (ENM) C-alpha normal modes calculation
   of a protein structure.

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>read.pdcBD. bio3d 1.2</title>
+<title>read.pdcBD. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -143,16 +143,16 @@ pdb$atom[1,]
 </div>
 <div class='output'>   eleno    elety      alt    resid    chain    resno   insert        x 
      "1"      "N"       NA    "ASP"      "A"      "3"       NA "43.743" 
-       y        z        o        b    segid 
-"-2.106" "39.408"   "1.00" "100.00"       NA 
+       y        z        o        b    segid    elesy   charge 
+"-2.106" "39.408"   "1.00" "100.00"       NA      "N"       NA 
 </div>
 <div class='input'># Look at the first het atom
 pdb$het[1,]
 </div>
 <div class='output'>   eleno    elety      alt    resid    chain    resno   insert        x 
   "2529"     "MG"       NA     "MG"      "A"    "402"       NA "15.166" 
-       y        z        o        b    segid 
-"12.165" "39.274"   "1.00"  "24.10"       NA 
+       y        z        o        b    segid    elesy   charge 
+"12.165" "39.274"   "1.00"  "24.10"       NA     "MG"       NA 
 </div>
 <div class='input'># Print some coordinate data
 pdb$atom[1:20, c("x","y","z")]

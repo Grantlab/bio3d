@@ -34,15 +34,21 @@ pca.xyz2z(xyz.coord, pca)
 \seealso{ \code{\link{pca.xyz}}, \code{\link{pca.tor}}, \code{\link{fit.xyz}} }
 \examples{
 \dontrun{
-data(kinesin)
+data(transducin)
+attach(transducin, warn.conflicts=FALSE)
+
 gaps.pos <- gap.inspect(pdbs$xyz)
 
-#-- Do PCA without structures 1 and 2
-pc.xray <- pca.xyz(xyz[-c(1:2), gaps.pos$f.inds])
-d <- pca.project(xyz[1:2, gaps.pos$f.inds], pc.xray)
+#-- Do PCA without structures 2 and 7
+pc.xray <- pca.xyz(pdbs$xyz[-c(2,7), gaps.pos$f.inds])
+
+#-- Project structures 2 and 7 onto the PC space
+d <- pca.project(pdbs$xyz[c(2,7), gaps.pos$f.inds], pc.xray)
 
 plot(pc.xray$z[,1], pc.xray$z[,2],col="gray")
 points(d[,1],d[,2], col="red")
+
+detach(transducin)
 }
 }
 \keyword{ utilities }

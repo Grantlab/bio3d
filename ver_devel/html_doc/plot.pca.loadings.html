@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>plot.pca.loadings. bio3d 1.2</title>
+<title>plot.pca.loadings. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -79,11 +79,15 @@
     </div>
     
     <h2 id="examples">Examples</h2>
-    <pre class="examples"><div class='input'>data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+    <pre class="examples"><div class='input'>data(transducin)
+attach(transducin, warn.conflicts=FALSE)
+pc.xray <- pca.xyz(pdbs$xyz[, gap.inspect(pdbs$xyz)$f.inds])
 plot.pca.loadings(pc.xray$U)
 </div>
-<p><img src='plot.pca.loadings-3.png' alt='' width='400' height='400' /></p></pre>
+<p><img src='plot.pca.loadings-2.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+detach(transducin)
+</div></pre>
   </div>
   <div class="span4">
     <!-- <ul>

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>mktrj.pca. bio3d 1.2</title>
+<title>mktrj.pca. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -106,26 +106,30 @@
     </div>
     
     <h2 id="examples">Examples</h2>
-    <pre class="examples"><div class='input'>data(kinesin) # see pca.xyz for details
-attach(kinesin, warn.conflicts=FALSE)
+    <pre class="examples"><div class='input'>data(transducin)
+attach(transducin, warn.conflicts=FALSE)
 
 # Ignore gap containing positions
-cut.seqs <- which(pdbs$id %in% c("d1n6mb_","d1ry6a_"))
-gaps <- gap.inspect(pdbs$ali[-cut.seqs,])
+gaps.res <- gap.inspect(pdbs$ali)
+gaps.pos <- gap.inspect(pdbs$xyz)
+
+# PCA
+pc.xray <- pca.xyz(pdbs$xyz[, gaps.pos$f.inds])
 
 # Write PC trajectory
 a <- mktrj.pca(pc.xray, pc=1, file="pc1.pdb",
-               resno = pdbs$resno[1, gaps$f.inds],
-               resid = aa123(pdbs$ali[1, gaps$f.inds]) )
+               resno = pdbs$resno[1, gaps.res$f.inds],
+               resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
 
 b <- mktrj.pca(pc.xray, pc=2, file="pc2.pdb",
-               resno = pdbs$resno[1, gaps$f.inds],
-               resid = aa123(pdbs$ali[1, gaps$f.inds]) )
+               resno = pdbs$resno[1, gaps.res$f.inds],
+               resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
 
 c <- mktrj.pca(pc.xray, pc=3, file="pc3.pdb",
-               resno = pdbs$resno[1, gaps$f.inds],
-               resid = aa123(pdbs$ali[1, gaps$f.inds]) )
+               resno = pdbs$resno[1, gaps.res$f.inds],
+               resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
 
+detach(transducin)
 </div></pre>
   </div>
   <div class="span4">

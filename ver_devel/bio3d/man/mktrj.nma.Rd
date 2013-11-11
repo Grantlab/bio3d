@@ -6,10 +6,10 @@
   vector.
 }
 \usage{
-mktrj.nma(nma = NULL, mode = 7, mag = 10, step = 1.25, file = NULL,  ...)
+\method{mktrj}{nma}(x = NULL, mode = 7, mag = 10, step = 1.25, file = NULL,  ...)
 }
 \arguments{
-  \item{nma}{ a list object of class \code{"nma"} (obtained with
+  \item{x}{ a list object of class \code{"nma"} (obtained with
     \code{\link{nma}}).}
   \item{mode}{ the mode number along which displacements should be made.}
   \item{mag}{ a magnification factor for scaling the displacements. }
@@ -33,10 +33,10 @@ mktrj.nma(nma = NULL, mode = 7, mag = 10, step = 1.25, file = NULL,  ...)
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Barry Grant, Lars Skjaerven }
-\note{ The molecular graphics software VMD is useful for viewing
-  trajectories see: \cr
+\note{ Molecular graphics software such as VMD or PyMOL is useful
+  for viewing trajectories see e.g: \cr
   \url{http://www.ks.uiuc.edu/Research/vmd/}. }
-\seealso{ \code{\link{nma} } }
+\seealso{ \code{\link{nma}}, \code{\link{view.modes}}. }
 \examples{
 ## Fetch stucture
 pdb <- read.pdb("1hel")
@@ -45,6 +45,6 @@ pdb <- read.pdb("1hel")
 modes <- nma(pdb)
 
 ## Visualize modes
-m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
+m7 <- mktrj(modes, mode=7, file="mode_7.pdb")
 }
 \keyword{ utilities }

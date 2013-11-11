@@ -74,10 +74,10 @@ convert.pdb(pdb, type, renumber = FALSE, first.resno = 1, first.eleno = 1, rm.h 
 \examples{
 # Read a PDB file
 pdb <- read.pdb( "1bg2" )
-pdb.summary(pdb)
+summary(pdb)
 # Convert to CHARMM format
 new <- convert.pdb(pdb, type="charmm")
-pdb.summary(new)
+summary(new)
 # Write a PDB and CRD file
 #write.pdb(new, file="4charmm.pdb")
 #write.crd(new, file="4charmm.crd")

@@ -24,8 +24,11 @@
 \author{ Barry Grant }
 \seealso{ \code{\link{pca.xyz}}, \code{\link{plot.pca}} }
 \examples{
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+data(transducin)
+attach(transducin, warn.conflicts=FALSE)
+pc.xray <- pca.xyz(pdbs$xyz[, gap.inspect(pdbs$xyz)$f.inds])
 plot.pca.loadings(pc.xray$U)
+
+detach(transducin)
 }
 \keyword{ hplot }

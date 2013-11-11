@@ -42,19 +42,23 @@ ide.filter(aln = NULL, ide = NULL, cutoff = 0.6, verbose = TRUE, ncore=1, nseg.s
 \examples{
 data(kinesin)
 attach(kinesin, warn.conflicts=FALSE)
-ide.mat <- seqidentity(aln)
+
+ide.mat <- seqidentity(pdbs)
 
 # Histogram of pairwise identity values
+op <- par(no.readonly=TRUE)
 par(mfrow=c(2,1))
 hist(ide.mat[upper.tri(ide.mat)], breaks=30,xlim=c(0,1),
      main="Sequence Identity", xlab="Identity")
 
 k <- ide.filter(ide=ide.mat, cutoff=0.6)
-ide.cut <- seqidentity(aln$ali[k$ind,])
+ide.cut <- seqidentity(pdbs$ali[k$ind,])
 hist(ide.cut[upper.tri(ide.cut)], breaks=10, xlim=c(0,1),
      main="Sequence Identity", xlab="Identity")
 
 #plot(k$tree, axes = FALSE, ylab="Sequence Identity")
 #print(k$ind) # selected
+par(op)
+detach(kinesin)
 }
 \keyword{ utilities }

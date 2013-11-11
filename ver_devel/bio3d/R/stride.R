@@ -1,6 +1,9 @@
 "stride" <-
 function(pdb, exefile = "stride", resno=TRUE) {
   
+  ## Log the call
+  cl <- match.call()
+  
   infile  <- tempfile()
   outfile <- tempfile()
   write.pdb(pdb, file=infile)
@@ -27,13 +30,28 @@ function(pdb, exefile = "stride", resno=TRUE) {
   cha <- substring(raw.tor, 10,10)
   acc <- as.numeric(substring(raw.tor, 65, 69))
 
-  res.num  <- as.numeric(substring(raw.tor, 12, 15))
-  res.ind <- 1:length(res.num)
-  res.name <- as.numeric(substring(raw.tor, 6, 8))
-  h.ind <- bounds(res.num[which(sse == "H")], pre.sort=FALSE)
-  g.ind <- bounds(res.num[which(sse == "G")], pre.sort=FALSE)
-  e.ind <- bounds(res.num[which(sse == "E")], pre.sort=FALSE)
-  t.ind <- bounds(res.num[which(sse == "T")], pre.sort=FALSE)
+  res.num  <- suppressWarnings(as.numeric(substring(raw.tor, 12, 15)))
+  if(any(is.na(res.num))) {
+    ins <- which(is.na(res.num))
+    res.num[ins] <- as.numeric(substring(raw.tor, 11, 14))[ins]    
+    if(resno) {
+      warning("Insertions are found in PDB: Residue numbers may be incorrect.
+            Try again with resno=FALSE")
+    } 
+    else {
+      ii <- diff(res.num)
+      ii[ii==0] <- 1     #Consecutive numbers at insertion residues
+      ii[ii<0] <- 2      #Jumps at possible chain termination
+      res.num <- res.num[1] + c(0, cumsum(ii))
+    }
+  }
+
+#  res.ind <- 1:length(res.num)
+#  res.name <- substring(raw.tor, 6, 8)
+  h.res <- bounds(res.num[which(sse == "H")], pre.sort=FALSE)
+  g.res <- bounds(res.num[which(sse == "G")], pre.sort=FALSE)
+  e.res <- bounds(res.num[which(sse == "E")], pre.sort=FALSE)
+  t.res <- bounds(res.num[which(sse == "T")], pre.sort=FALSE)
 
 ##  sseInfo <- cbind(resIndex=res.ind, resNumber=res.num,
 ##                   resName=res.name, sse=sse)
@@ -55,29 +73,36 @@ function(pdb, exefile = "stride", resno=TRUE) {
 #  sse.type[e.ind] <- "E"
 #  sse.type[t.ind] <- "T"
 
-  h.res <- h.ind;    g.res <- g.ind
-  e.res <- e.ind;    t.res <- t.ind
-  if(resno) {
-    res.num  <- as.numeric(substring(raw.tor, 12, 15))
-    if(length(h.ind) > 0) {
-      h.res[,"start"] <- res.num[h.ind[,"start"]]
-      h.res[,"end"] <- res.num[h.ind[,"end"]]
-    }
-
-    if(length(g.ind) > 0) {
-      g.res[,"start"] <- res.num[g.ind[,"start"]]
-      g.res[,"end"] <- res.num[g.ind[,"end"]]
-    }
-
-    if(length(e.ind) > 0) {
-      e.res[,"start"] <- res.num[e.ind[,"start"]]
-      e.res[,"end"] <- res.num[e.ind[,"end"]]
-    }
-
-    if(length(t.ind) > 0) {
-      t.res[,"start"] <- res.num[t.ind[,"start"]]
-      t.res[,"end"] <- res.num[t.ind[,"end"]]
-    }
+  h.ind <- h.res;    g.ind <- g.res
+  e.ind <- e.res;    t.ind <- t.res
+  
+  if(length(h.res) > 0) {
+    res.ind <- which(sse == "H")
+    h.ind[, "end"] <- res.ind[cumsum(h.res[, "length"])]
+    h.ind[, "start"] <- h.ind[, "end"] - h.res[, "length"] + 1
+  }
+  
+  if(length(g.res) > 0) {
+    res.ind <- which(sse == "G")
+    g.ind[, "end"] <- res.ind[cumsum(g.res[, "length"])]
+    g.ind[, "start"] <- g.ind[, "end"] - g.res[, "length"] + 1
+  }
+  
+  if(length(e.res) > 0) {
+    res.ind <- which(sse == "E")
+    e.ind[, "end"] <- res.ind[cumsum(e.res[, "length"])]
+    e.ind[, "start"] <- e.ind[, "end"] - e.res[, "length"] + 1
+  }
+  
+  if(length(t.res) > 0) {
+    res.ind <- which(sse == "T")
+    t.ind[, "end"] <- res.ind[cumsum(t.res[, "length"])]
+    t.ind[, "start"] <- t.ind[, "end"] - t.res[, "length"] + 1
+  }
+  
+  if(!resno) {
+    h.res <- h.ind;    g.res <- g.ind
+    e.res <- e.ind;    t.res <- t.ind
   }
 
   sheet = list(start=NULL, end=NULL, length=NULL, chain=NULL)
@@ -136,7 +161,11 @@ function(pdb, exefile = "stride", resno=TRUE) {
 #                length =(end[t.ind] - start[t.ind] + 1),
 #                chain = chain[t.ind])
 #  }
-  out <- list(helix = helix, sheet=sheet, turn=turn,
-              phi=phi, psi=psi, acc=acc, sse=sse)
+  out <- list(helix = helix, sheet=sheet, hbonds=NULL, 
+              turn=turn, phi=phi, psi=psi, acc=acc, 
+              sse=sse, call=cl)
+  
+  class(out) <- "sse"
+  return(out)
 }
 

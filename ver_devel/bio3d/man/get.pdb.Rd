@@ -47,7 +47,7 @@ get.pdb( c("1poo", "1moo"), URLonly=TRUE )
 
 ## These URLs can be used by 'read.pdb'
 pdb <- read.pdb( get.pdb("5p21", URL=TRUE) )
-pdb.summary(pdb)
+summary(pdb)
 
 ## Download PDB file
 ## get.pdb("5p21")

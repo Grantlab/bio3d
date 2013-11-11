@@ -25,38 +25,9 @@ And constructed with the following guidelines:
 For more information on SemVer, please visit http://semver.org/.
 
 
-v1.2-0
-------
+-----
 
-* [New functions](https://bitbucket.org/Grantlab/bio3d/wiki/New%20functions)
-
-Highlights include:
-* fit.xyz, rmsd, and dccm functions now support multicore
-* dccm supports "grpby" argument, which can be used for all-atom cross-correlation calculation
-* cmap supports multicore and input of structural ensemble
-* read.ncdf supports specifying time range
-* core.find, pdbaln, and read.fasta.pdb now support multicore
-* read.pdb and split.pdb support multi-model PDB files
-* binding.site: Determines the interacting residues between two PDB entities
-* read.mol2: Read a Sybyl MOL2 file
-* pdb2aln: Align a PDB structure to an existing alignment
-* rgyr: Calculation of the radius of gyration
-* struct.aln: Alignment of two PDB files with unequal number of atoms (with iterative refinement)
-* nma: Calculate coarse grained normal modes (elastic network model)
-* dccm.nma, fluct.nma, mktrj.nma, rmsip, overlap: Various analysis of normal modes
-* com, com.xyz: Calculate the center of mass of PDB entities
-* pdb.annotate: Get customizable annotations for query results from PDB
-* dssp, stride: Updated to return sse sequence and work with new version of dssp
-* dssp.trj: Run dssp on a trajectory
-* bounds: Bug fix
-* Rd doc file imporvments
-* pdbseq: renamed from previous seq.pdb()
-
-
-v1.1-6
-______
-
-For changes pior to v1.2-0 please see the bio3d wki:
+For changes pior to v1.1-6 please see the bio3d wki:
 * [Whats new wki page](http://bio3d.pbworks.com/w/page/7824486/WhatsNew)
 
 

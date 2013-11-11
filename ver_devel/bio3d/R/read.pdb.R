@@ -213,10 +213,12 @@ function (file, maxlines=-1, multi=FALSE,
       atom <- atom[-insert.inds,]
     }
   }
-  het <- matrix(trim(sapply(het.atom, split.string)), byrow=TRUE,
-                ncol=nrow(atom.format[ !drop.ind,]),
-                dimnames = list(NULL, atom.format[ !drop.ind,"name"]) )
-
+  if(!het2atom) {
+    het <- matrix(trim(sapply(het.atom, split.string)), byrow=TRUE,
+                  ncol=nrow(atom.format[ !drop.ind,]),
+                  dimnames = list(NULL, atom.format[ !drop.ind,"name"]) )
+  } else { het=NULL }
+  
   ## Calpha position - check for calcium resid
   ##calpha = as.logical(atom[,"elety"]=="CA")
   calpha = (atom[,"elety"]=="CA") & (atom[,"resid"] !="CA")

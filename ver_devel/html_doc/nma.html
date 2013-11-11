@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>nma. bio3d 1.2</title>
+<title>nma. bio3d 2.0</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Lars Skjaerven ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -37,15 +37,16 @@
         
       </header>
       
-      <h1> Normal Modes Analysis </h1>
+      <h1> Normal Mode Analysis </h1>
 
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>nma(pdb, inds = NULL, ff = "calpha", pfc.fun = NULL, normalize = TRUE, mass = TRUE, 
-  temp = 300, compiler = TRUE, cutoff = 15, gamma = 1)
+    <pre>nma(pdb, inds = NULL, ff = "calpha", pfc.fun = NULL, mass = TRUE, temp = 300, keep = NULL, 
+  hessian = NULL, ...)
 
-build.hessian(xyz, pfc.fun, normalize = TRUE)
+build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL, sequ = NULL, 
+      ss.bonds = NULL, ...)
 
 print(x, nmodes = 6, ...)</pre>
     
@@ -60,34 +61,54 @@ print(x, nmodes = 6, ...)</pre>
     should be based.</dd>
       <dt>ff</dt>
       <dd> character string specifying the force field to use:
-    &#145;calpha&#146; or &#145;anm&#146;. </dd>
+    &#145;calpha&#146;, &#145;anm&#146;, &#145;pfanm&#146;, &#145;calphax&#146;, 
+   &#145;reach&#146;, or &#145;sdenm&#146;. </dd>
       <dt>pfc.fun</dt>
-      <dd> customized pair force constant function. </dd>
-      <dt>normalize</dt>
-      <dd> logical, if TRUE distance vectors will be normalized. </dd>
+      <dd> customized pair force constant (&#145;pfc&#146;)
+    function. The provided function should take a vector of distances as
+    an argument to return a vector of force constants. If provided,
+    'pfc.fun' will override argument <code>ff</code>. See examples below. </dd>
       <dt>mass</dt>
-      <dd> logical, if TRUE the calculation will be mass
-    weighted. </dd>
+      <dd> logical, if TRUE the Hessian will be mass-weighted. </dd>
       <dt>temp</dt>
-      <dd> numerical, temperature at which the atomic vectors are
-    calculated. </dd>
-      <dt>compiler</dt>
-      <dd> logical, if TRUE code for building the Hessian matrix
-    will be byte compiled for efficiency. </dd>
-      <dt>cutoff</dt>
-      <dd> numerical, cutoff for pair-wise interactions (applies to
-    &#145;anm&#146;-FF only). </dd>
-      <dt>gamma</dt>
-      <dd> numerical, global scaling factor  (applies to
-    &#145;anm&#146;-FF only). </dd>
+      <dd> numerical, temperature for which the amplitudes for
+    scaling the atomic displacement vectors are calculated. Set
+    &#145;temp=NULL&#146; to avoid scaling. </dd>
+      <dt>keep</dt>
+      <dd> numerical, final number of modes to be stored. Note that
+    all subsequent analyses are limited to this subset of modes. This
+    option is useful for very large structures and cases where memory
+    may be limiting. </dd>
+      <dt>hessian</dt>
+      <dd> hessian matrix as obtained from
+    <code>build.hessian</code>. For internal purposes and generally not
+    intended for public use. </dd>
       <dt>xyz</dt>
       <dd> a numeric vector of Cartesian coordinates. </dd>
+      <dt>aa.mass</dt>
+      <dd> a numeric vector of amino acid residue masses as
+    obtained from function <code>aa2mass</code>. </dd>
+      <dt>fc.weights</dt>
+      <dd> a numeric matrix of size NxN (where N is the number
+    of calpha atoms) containg scaling factors for the pariwise force
+    constants. See examples below. </dd>
+      <dt>sse</dt>
+      <dd> secondary structure elements as obtained from
+    <code>dssp</code>. </dd>
+      <dt>sequ</dt>
+      <dd> a character vector of the amino acid sequence. </dd>
+      <dt>ss.bonds</dt>
+      <dd> a numeric two-column matrix containing the residue
+    numbers of the disulfide bridges in the structure. </dd>
       <dt>x</dt>
       <dd> an <code>nma</code> object obtained from <code><a href='nma.html'>nma</a></code>. </dd>
       <dt>nmodes</dt>
       <dd> numeric, number of modes to be printed. </dd>
       <dt>...</dt>
-      <dd> additional arguments to &#145;print&#146;. </dd>
+      <dd> additional arguments to <code>build.hessian</code>,
+    <code>aa2mass</code>, <code>pfc.fun</code>, and <code>print</code>. One useful option
+    here for dealing with unconventional residues is
+    &#145;mass.custom&#146;, see the <code>aa2mass</code> function for details. </dd>
     </dl>
     
     <div class="Description">
@@ -102,19 +123,17 @@ print(x, nmodes = 6, ...)</pre>
       <h2>Details</h2>
       
       <p>This function calculates the normal modes of a C-alpha model of a
-  protein structure. Two force fields are implemented - both employing
-  the elastic network model (ENM).</p>
+  protein structure. A number of force fields are implemented all of
+  whhich employ the elastic network model (ENM).</p>
   
-      <p>The &#145;Calpha&#146; force field - originally developed by Konrad
+      <p>The &#145;calpha&#146; force field - originally developed by Konrad
   Hinsen - is the recommended one for most applications. It employs a
   spring force constant differentiating between nearest-neighbour pairs
-  along the backbone and all other pairs. The force constant is
-  obtained by fitting to a local minimum of the AMBER94 force field.</p>
+  along the backbone and all other pairs. The force constant function
+  was parameterized by fitting to a local minimum of a crambin model
+  using the AMBER94 force field.</p>
   
-      <p>The implementation of the &#145;ANM&#146; (Anisotropic Network Model)
-  force field originates from the lab of Ivet Bahar. It uses a
-  simplified spring force constant based on the pair-wise
-  distance.</p>
+      <p>See <code>load.enmff</code> for details of the different force fields.</p>
   
       <p>By default <code>nma()</code> will diagonalize the mass-weighted Hessian
   matrix. The resulting mode vectors are moreover scaled by the thermal
@@ -123,7 +142,7 @@ print(x, nmodes = 6, ...)</pre>
       <p>The implementation under default arguments reproduces the calculation
   of normal modes (VibrationalModes) in the Molecular Modeling Toolkit
   (MMTK) package. To reproduce ANM modes set <code>ff='anm'</code>,
-  <code>mass=FALSE</code>, <code>temp=NULL</code>, and <code>normalize=FALSE</code>.</p>
+  <code>mass=FALSE</code>, and <code>temp=NULL</code>.</p>
   
     </div>
 
@@ -131,24 +150,50 @@ print(x, nmodes = 6, ...)</pre>
       <h2>Value</h2>
       
       <p>Returns an object of class &#145;nma&#146; with the following components:
-  modes numeric matrix containing the normal mode vectors
-    (converted to unweighted Cartesian coordinates). 
+  modes numeric matrix  with columns containing the normal mode
+    vectors. Mode vectors are converted to unweighted Cartesian
+    coordinates  when <code>mass=TRUE</code>. Note that the 6 first trivial
+    eigenvectos appear in columns one to six. 
   frequencies numeric vector containing the vibrational
     frequencies corresponding to each mode (for <code>mass=TRUE</code>). 
   force.constants numeric vector containing the force constants
     corresponding to each mode (for <code>mass=FALSE)</code>). 
-  fluctuations numeric vector of atomic fluctuations . 
-  U numeric vector containing the raw eigenvectors. 
+  fluctuations numeric vector of atomic fluctuations. 
+  U numeric vector containing the raw eigenvectors. Equals to
+    the <code>modes</code> component when <code>mass=FALSE</code> and
+    <code>temp=NULL</code>. 
   L numeric vector containing the raw eigenvalues. 
   xyz numeric vector of the cartesian coordinates in which the
     calculation was performed. 
-  mass numeric vector containing the residue masses used for the 
+  mass numeric vector containing the residue masses used for the
     mass-weighting. 
-  temp numerical, temperature at which the atomic vectors are
-    calculated. 
+  temp numerical, temperature for which the amplitudes for
+    scaling the atomic displacement vectors are calculated. 
   triv.modes number of trivial modes. 
   natoms number of C-alpha atoms. 
   call the matched call.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>The current version provides an efficent implementation of NMA with
+  execution time comparable to similar software (when the entire Hessian
+  is diagonalized).</p>
+  
+      <p>The main (speed related) bottleneck is currently the diagonalization
+  of the Hessian matrix which is performed with the core R function
+  &#145;eigen&#146;. For computing a few (5-20) approximate modes the user
+  can consult package &#145;irlba&#146;.</p>
+  
+      <p>NMA is memory extensive and users should be cautions when running
+  larger proteins (>3000 residues). Use &#145;keep&#146; to reduce the
+  amount of memory needed to store the final &#145;nma&#146; object (the
+  full 3Nx3N Hessian matrix still needs to be allocated).</p>
+  
+      <p>We thank Edvin Fuglebakk for valuable discussions on the
+  implementation as well as for contributing with testing.</p>
   
     </div>
 
@@ -156,7 +201,6 @@ print(x, nmodes = 6, ...)</pre>
       <h2>References</h2>
       
       <p>Hinsen, K. et al. (2000) <em>Chemical Physics</em> <b>261</b>, 25--37.
-  Atilgan, A.R. et al. (2001) <em>Biophysical Journal</em> <b>80</b>, 505--515.
   Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
   
     </div>
@@ -172,8 +216,8 @@ pdb <- read.pdb("1hel")
 ## Calculate normal modes
 modes <- nma(pdb)
 </div>
-<div class='output'> Building Hessian...		Done in 0.898 seconds.
- Diagonalizing Hessian...	Done in 0.141 seconds.
+<div class='output'> Building Hessian...		Done in 0.073 seconds.
+ Diagonalizing Hessian...	Done in 0.133 seconds.
 </div>
 <div class='input'>
 ## Print modes
@@ -190,13 +234,15 @@ Number of modes:
   387 (6 trivial)
 
 Frequencies:
-  Mode 7: 	0.184
-  Mode 8: 	0.188
-  Mode 9: 	0.238
-  Mode 10: 	0.256
-  Mode 11: 	0.28
-  Mode 12: 	0.294
+  Mode 7: 	0.018
+  Mode 8: 	0.019
+  Mode 9: 	0.024
+  Mode 10: 	0.025
+  Mode 11: 	0.028
+  Mode 12: 	0.029
 
++ attr: modes, frequencies, force.constants, fluctuations,
+        U, L, xyz, mass, temp, triv.modes, natoms, call
 </div>
 <div class='input'>
 ## Plot modes
@@ -207,32 +253,41 @@ plot(modes)
 ## Visualize modes
 m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
 
-## Calculate 'energetic' modes
-modes <- nma(pdb, mass=FALSE)
-</div>
-<div class='output'> Building Hessian...		Done in 0.876 seconds.
- Diagonalizing Hessian...	Done in 0.142 seconds.
-</div>
-<div class='input'>
-## Use Anisotropic Network Model
-modes <- nma(pdb, ff="anm", mass=FALSE, temp=NULL, normalize=FALSE)
-</div>
-<div class='output'> Building Hessian...		Done in 0.414 seconds.
- Diagonalizing Hessian...	Done in 0.144 seconds.
-</div>
-<div class='input'>
-## Customize energy function
-"my.ff" <- function(r) {
-    return(1 / (r**2))
-}
-
-## Modes with a new funny energy function
-modes <- nma(pdb, pfc.fun=my.ff)
-</div>
-<div class='output'> Building Hessian...		Done in 0.689 seconds.
- Diagonalizing Hessian...	Done in 0.142 seconds.
-</div>
-<div class='input'></div></pre>
+## <strong>Not run</strong>: 
+# ## Use Anisotropic Network Model
+# modes <- nma(pdb, ff="anm", mass=FALSE, temp=NULL, cutoff=15)
+# 
+# ## Use SSE information and SS-bonds
+# sse      <- dssp(pdb, resno=FALSE, full=TRUE)
+# ss.bonds <- matrix(c(76,94, 64,80, 30,115, 6,127),
+#                    ncol=2, byrow=TRUE)
+# 
+# modes <- nma(pdb, ff="calphax", sse=sse, ss.bonds=ss.bonds)
+# 
+# 
+# ## User defined energy function
+# ## Note: Must take a vector of distances
+# "my.ff" <- function(r) {
+#    ifelse( r>15, 0, 1 )
+# }
+# 
+# ## Modes with a user defined energy function
+# modes <- nma(pdb, pfc.fun=my.ff)
+# 
+# 
+# ## A more manual approach
+# sele <- atom.select(pdb, "//A////CA/")
+# xyz <- pdb$xyz[sele$xyz]
+# 
+# hessian <- build.hessian(xyz, my.ff)
+# modes <- eigen(hessian)
+# 
+# ## Dealing with unconventional residues
+# pdb <- read.pdb("1xj0", het2atom=TRUE)
+# ## nma(pdb)
+# modes <- nma(pdb, mass.custom=list(CSX=121.166))
+# ## <strong>End(Not run)</strong>
+</div></pre>
   </div>
   <div class="span4">
     <!-- <ul>
@@ -244,7 +299,7 @@ modes <- nma(pdb, pfc.fun=my.ff)
       
     <h2>See also</h2>
      <code><a href='fluct.nma.html'>fluct.nma</a></code>, <code><a href='mktrj.nma.html'>mktrj.nma</a></code>,
-  <code><a href='dccm.nma.html'>dccm.nma</a></code>, <code><a href='overlap.html'>overlap</a></code>  
+  <code><a href='dccm.nma.html'>dccm.nma</a></code>, <code><a href='overlap.html'>overlap</a></code>, <code><a href='rmsip.html'>rmsip</a></code>  
     
     <h2>Author</h2>
      Lars Skjaerven 

@@ -117,13 +117,12 @@ list(
         "store.atom",
         "trim.pdb",
         "unbound",
-        "vec2resno",
-        "wiki.tbl"
+        "vec2resno"
         )
     ),
     sd_section("Example Data:",
                "Bio3d Example Data",
-      c("kinesin")
+      c("example.data")
     )#,
     #sd_icon("Some title:",
     #        "some sub-text",

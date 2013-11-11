@@ -13,7 +13,7 @@ Utilities for the analysis of protein structure and sequence data.
 Package: \tab bio3d\cr
 Type: \tab Package\cr
 Version: \tab 2.0\cr
-Date: \tab DEVEL VERSION: 2013-07-22\cr
+Date: 2013-11-08\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab \url{http://thegrantlab.org/bio3d/}\cr
 }
@@ -25,7 +25,7 @@ Features include the ability to read and write structure
 (\code{\link{read.dcd}}, \code{\link{read.ncdf}}, \code{\link{write.ncdf}}).
 
 Perform sequence database searches (\code{\link{blast.pdb}}), atom
-summaries (\code{\link{pdb.summary}}),  atom selection
+summaries (\code{\link{summary.pdb}}),  atom selection
 (\code{\link{atom.select}}),  re-orientation (\code{\link{orient.pdb}}),
 superposition (\code{\link{rot.lsq}},  \code{\link{fit.xyz}}), rigid core
 identification (\code{\link{core.find}},  \code{\link{plot.core}}, 
@@ -41,6 +41,15 @@ Perform conservation analysis of sequence (\code{\link{seqaln}}, \code{\link{con
 \code{\link{seqidentity}},  \code{\link{entropy}},  \code{\link{consensus}})
 and structural (\code{\link{pdbaln}}, \code{\link{rmsd}},
 \code{\link{rmsf}}, \code{\link{core.find}}) data.
+
+Perform normal mode analysis (elastic network model) with
+(\code{\link{nma}}) and (\code{\link{build.hessian}}), ensemble normal
+mode analysis (\code{\link{nma.pdbs}}), mode comparison
+(\code{\link{rmsip}}) and (\code{\link{overlap}}), atomic fluctuation
+prediction (\code{\link{fluct.nma}}), cross-correlation analysis
+(\code{\link{dccm.nma}}), cross-correlation visualization (\code{\link{view.dccm}}), 
+deformation analysis (\code{\link{deformation.nma}}), and mode visualization
+(\code{\link{view.modes}}), (\code{\link{mktrj.nma}}). 
 
 In addition, various utility functions are provided to facilitate
 manipulation and analysis of biological sequence and structural data

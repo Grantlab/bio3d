@@ -10,7 +10,7 @@
 read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
          rm.alt = TRUE, het2atom=FALSE, verbose = TRUE)
 \method{print}{pdb}(x, \dots)
-\method{summary}{pdb}(object, \dots)
+\method{summary}{pdb}(object, printseq=FALSE, \dots)
 }
 \arguments{
   \item{file}{ a single element character vector containing the name of
@@ -31,6 +31,8 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
     \code{\link{read.pdb}}.  }
   \item{object}{ a PDB structure object obtained from
     \code{\link{read.pdb}}.  }
+  \item{printseq}{ logical, if TRUE the PDB ATOM sequence will be printed
+    to the screen. See also \code{\link{pdbseq}}.  }
   \item{...}{ additional arguments to \sQuote{print}. }
    
 }

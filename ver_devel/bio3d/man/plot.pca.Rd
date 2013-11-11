@@ -14,7 +14,7 @@
          ylab = "Proporton of Variance (\%)",
          xlab = "Eigenvalue Rank", axes = TRUE, ann = par("ann"),
          col = par("col"), lab = TRUE, ...)
-\method{plot}{pca.score}(x, start.row = 1, end.row = nrow(x), col=rainbow(nrow(x)), lab = "", ...)
+\method{plot}{pca.score}(x, inds=NULL, col=rainbow(nrow(x)), lab = "", ...)
 
 }
 \arguments{
@@ -28,8 +28,7 @@
   \item{mar}{ A numerical vector of the form c(bottom, left, top, right)
     which gives the number of lines of margin to be specified on the
     four sides of the plot.}
-  \item{start.row}{ row index of the first conformer to colour. }
-  \item{end.row}{ row index of the last conformer to colour. }
+  \item{inds}{ row indices of the conformers to label. }
   \item{lab}{ a character vector of plot labels. }
   \item{y}{ the y coordinates for the scree plot. }
   \item{type}{ one-character string giving the type of plot desired.}
@@ -58,19 +57,28 @@
 \author{ Barry Grant }
 \seealso{ \code{\link{pca.xyz}}, \code{\link{plot.bio3d}} }
 \examples{
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+data(transducin)
+attach(transducin, warn.conflicts=FALSE)
 
+pc.xray <- pca.xyz(pdbs$xyz[, gap.inspect(pdbs$xyz)$f.inds])
 plot(pc.xray)
 
-## change colors
-#plot(pc.xray,col=rainbow(length(pc.xray$z[,1])), cex=1.5)
-plot(pc.xray,col=rainbow(length(pc.xray$z[,1])))
+## color by nucleotide state
+vcolors <- annotation[, "color"]
+plot(pc.xray, col=vcolors)
 
 ## add labels
+#labs <- rownames(annotation)
+#inds <- c(2,7)
+#plot.pca.score(pc.xray, inds=inds, col=vcolors, lab=labs)
 
 ## color by seq identity
+#ide <- seqidentity(pdbs$ali)
+#hc <- hclust(as.dist(1-ide))
+#grps <- cutree(hc, h=0.2)
+#vcolors <- rainbow(max(grps))[grps]
+#plot(pc.xray, inds=inds, col=vcolors, lab=labs)
 
-
+detach(transducin)
 }
 \keyword{ hplot }

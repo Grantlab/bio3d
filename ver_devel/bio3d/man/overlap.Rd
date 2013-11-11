@@ -47,19 +47,27 @@ attach(kinesin, warn.conflicts=FALSE)
 gaps.pos <- gap.inspect(pdbs$xyz)
      
 #-- Do PCA
-pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
+pc.xray <- pca.xyz(pdbs$xyz[, gaps.pos$f.inds])
     
 # Define a difference vector between two structural states
 diff.inds <- c(grep("d1v8ja", pdbs$id), 
                grep("d1goja", pdbs$id))
 
-dv <- difference.vector( xyz[diff.inds,], gaps.pos$f.inds )
+dv <- difference.vector( pdbs$xyz[diff.inds,], gaps.pos$f.inds )
 
 # Calculate the squared overlap between the PCs and the difference vector  
 o <- overlap(pc.xray, dv)
 o <- overlap(pc.xray$U, dv)
 
+# Plot results
+plot(o$overlap, type='h', ylim=c(0,1))
+points(o$overlap)
+lines(o$overlap.cum, type='b', col='red')
 
+
+detach(kinesin)
+
+\dontrun{
 ## Calculate overlap from NMA
 pdb.a <- read.pdb("1cmk")
 pdb.b <- read.pdb("3dnd")
@@ -72,7 +80,7 @@ xyz <- rbind(pdb.a$xyz[sele.a$xyz],
              pdb.b$xyz[sele.b$xyz])
 
 ## Superimpose
-xyz[2,] <- fit.xyz(xyz[1,], xyz[2,])
+xyz[2,] <- fit.xyz(xyz[1,], xyz[2,], 1:ncol(xyz))
 
 ## The difference between the two conformations
 dv <- difference.vector( xyz )
@@ -83,6 +91,6 @@ modes <- nma(pdb.a, inds=sele.a)
 # Calculate the squared overlap between the normal modes 
 # and the difference vector  
 o <- overlap(modes, dv)
-
+}
 }
 \keyword{ utilities }

@@ -22,9 +22,14 @@
         warning(paste("incompatible arguments: SSE information from 'pdbs'\n", 
                       "  will not be generated when 'sse' is provided"))
 
-      if(file.exists(pdbs$id[1])) {
+      pdb.ref <- try(read.pdb(pdbs$id[1]), silent=TRUE)
+      if(inherits(pdb.ref, "try-error")) {
+        ## Try more
+        pdb.ref <- try(read.pdb(substr(basename(pdbs$id[1]), 1, 4)), silent=TRUE)
+      }
+      if(!inherits(pdb.ref, "try-error")) {
         ## Reference PDB and SSE
-        pdb.ref <- read.pdb(pdbs$id[1])
+        
         sse.ref <- dssp(pdb.ref)
         
         if(rm.gaps) {
@@ -34,7 +39,7 @@
         else {
           resnos <- pdbs$resno[1, ]
         }
-        
+          
         ## Helices
         resno.helix <- unbound(sse.ref$helix$start, sse.ref$helix$end)
         inds <- which(resnos %in% as.character(resno.helix))
@@ -105,6 +110,8 @@
       axis(side=1, at=mp[ seq(1, nrow(mp), by=50) ],
            labels=seq(0,length(H),by=50))
       box()
+      
+      par(mfrow=c(1,1))
     }
     
   }
