@@ -11,7 +11,7 @@ list(
         "read.dcd",
         "read.crd",
         "read.pqr", 
-        "read.mol2"      
+        "read.mol2",     
         "read.all",
         "aln2html",
         "get.pdb",
@@ -21,8 +21,8 @@ list(
         "write.crd",
         "write.fasta",
         "write.ncdf",
-        "write.pqr"
-        "mktrj.nma"
+        "write.pqr",
+        "mktrj.nma",
         "mktrj.pca",        
         "view.dccm",
         "view.nma"
@@ -115,7 +115,7 @@ list(
         "seq2aln",
         "seqaln",
         "seqaln.pair",
-        "seqbind",
+        "seqbind"
 
         )   
     ),
