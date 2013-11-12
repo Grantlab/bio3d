@@ -1,10 +1,3 @@
-<div class="hero-unit">
-<h1>Bio3D in R</h1>
-
-<p>Utilities to analyze, process, organize and explore protein structure, sequence and dynamics data.</p>
-<p><a href="http://thegrantlab.org/bio3d/download/download.html" class="btn btn-primary btn-large">Download now &raquo;</a></p>  
-</div>
-
 # Documentation
 
 The Bio3D package consists of <a href="#Input/Output:">input/output</a> functions, <a href="#Sequence Analysis:">sequence analysis</a> functions, <a href="#Structure Analysis:">structure analysis</a> functions, <a href="#Trajectory Analysis:">simulation analysis</a> functions, <a href="#Normal Mode Analysis:">normal mode analysis</a> functions, <a href="#Utilities:">conversion and manipulation</a> functions, and <a href="#Graphics:">graphics</a> functions. Each of these functions is listed below with links to further documentation that includes example code and results. 

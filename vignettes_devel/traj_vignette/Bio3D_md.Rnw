@@ -24,7 +24,7 @@ University of Michigan, Ann Arbor}
 Bio3D\footnote{The latest version of the package, full documentation and further vignettes (including detailed installation instructions) can be obtained from the main Bio3D website: \href{http://thegrantlab.org/bio3d/}{http://thegrantlab.org/bio3d/}} is an R package that provides interactive tools for the analysis of bimolecular structure, sequence and simulation data. The aim of this document, termed a vignette\footnote{This vignette contains executable examples, see \texttt{help(vignette)} for further details.} in R parlance, is to provide a brief task-oriented introduction to basic molecular dynamics trajectory analysis with the Bio3D R package \citep{grant06}.  
 
 \paragraph{Requirements:}
-Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the \href{http://thegrantlab.org/bio3d/}{Installing Bio3D} vignette available both on-line and from within the Bio3D package. To see available vignettes use the command"
+Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the \href{http://thegrantlab.org/bio3d/}{Installing Bio3D} vignette available both on-line and from within the Bio3D package. To see available vignettes use the command:
 
 <<eval=FALSE>>=
 vignette(package="bio3d")
@@ -80,7 +80,7 @@ dim(dcd)
 Note that the output of the \texttt{dim()} function is telling us that we have 351 trajectory frames (or rows in our dcd matrix) and 594 coordinates (or x, y and z columns).
 
 \paragraph{Question:} How many atoms are in the trajectory and PDB files?
-\paragraph{Question:} How would you extract the amino acid sequence of the HIVpr system in one letter and 3-letter forms? HINT: try \texttt{help.search("PDB sequence")} for a Bio3D function that might help you.
+\paragraph{Question:} How would you extract the amino acid sequence of the HIVpr system in 1-letter and 3-letter forms? HINT: try \texttt{help.search("PDB sequence")} for a Bio3D function that might help you.
 
 \paragraph{Side-note:} Note that typically one works with trajectory files that contain all protein atoms, or at the very least all backbone atoms. Solvent however can often be excluded prior to Bio3D input - it just depends upon your particular analysis questions. For example, we are not able to analyze Hydrogen bonding patterns or details of water occupancy with the currently inputed data.
 
