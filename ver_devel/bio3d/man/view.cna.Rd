@@ -78,7 +78,7 @@ cij <- dccm(xyz)
 net <- cna(cij)
 
 # View cna
-view.cna(net, layout=layout.pdb(pdb,net), launch=TRUE)
+view.cna(net, layout=layout.pdb(pdb,net), launch=FALSE)
 }
 
 \keyword{ utility }
