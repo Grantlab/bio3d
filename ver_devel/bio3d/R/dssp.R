@@ -15,10 +15,20 @@ function (pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE) {
        shell(paste(exefile, infile, outfile), 
                  ignore.stderr = !verbose, ignore.stdout = !verbose)
     } else {
+      ## Check if the program is executable
+      tmp.cmd <- paste(exefile, "--version")
+      success <- system(tmp.cmd, ignore.stderr = TRUE, ignore.stdout = TRUE)
+      
+      if(success!=0)
+        stop(paste("Launching external program 'dssp' failed\n",
+                   "  make sure '", exefile, "' is in your search path", sep=""))
+
+      ## Run command
       success <- system(paste(exefile, infile, outfile), 
-                 ignore.stderr = !verbose, ignore.stdout = !verbose)
-      if(success==1)
-        stop("an error occurred")
+                        ignore.stderr = !verbose, ignore.stdout = !verbose)
+      if(success!=0)
+        stop(paste("An error occurred while running command\n '",
+                   exefile, "'", sep=""))
     }
 
 ##

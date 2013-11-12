@@ -5,7 +5,8 @@ function(aln, id=NULL,
                    protein = TRUE,
                    seqgroup = FALSE,
                    refine = FALSE,
-                   extra.args = "") {
+                   extra.args = "",
+                   verbose = FALSE) {
 
 
   as.aln <- function(mat, id=NULL) {
@@ -33,13 +34,27 @@ function(aln, id=NULL,
    
   cmd <- paste(exefile, " -in ",toaln," -out ",
                fa," ",extra.args, sep="")
-  cat(cmd)
+  if(verbose)
+    cat(paste(cmd, "\n"))
   
   if (os1 == "windows") {
 #    system(shQuote(cmd))
     shell(shQuote(cmd))
   } else {
-    system(cmd)
+    ## Check if the program is executable
+    tmp.cmd <- paste(exefile, "-version")
+    success <- system(tmp.cmd, ignore.stderr = TRUE, ignore.stdout = TRUE)
+
+    if(success!=0)
+      stop(paste("Launching external program 'muscle' failed\n",
+                 "  make sure '", exefile, "' is in your search path", sep=""))
+    
+    ## Run command
+    success <- system(cmd, ignore.stderr = !verbose, ignore.stdout = !verbose)
+
+    if(success!=0)
+      stop(paste("An error occurred while running command\n '",
+                 exefile, "'", sep=""))
   }
 
   ### Update for muscle v3.8 with no "-stable" option
