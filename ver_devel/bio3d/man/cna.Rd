@@ -36,7 +36,7 @@
     community determination. Supported methods are:\cr
     btwn='Girvan-Newman betweenness'\cr
     walk='Random walk'\cr
-    greedy='Greedy algorithm for modularity optimization'\cr }  
+    greed='Greedy algorithm for modularity optimization'\cr }  
   \item{collapse.method}{ A single element character vector specifing
     the \sQuote{cij} collapse method, can be one of \sQuote{max}, \sQuote{median},
     \sQuote{mean}, or \sQuote{trimmed}. By defualt the \sQuote{max} method is
