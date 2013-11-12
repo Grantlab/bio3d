@@ -21,41 +21,47 @@ University of Michigan, Ann Arbor}
 \maketitle
 
 \section{Background}
-Bio3D\footnote{The latest version of the package, full documentation and further vignettes (including detailed installation instructions) can be obtained from the main Bio3D website: \href{http://thegrantlab.org/bio3d/}{http://thegrantlab.org/bio3d/}} is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data.
+Bio3D\footnote{The latest version of the package, full documentation and further vignettes (including detailed installation instructions) can be obtained from the main Bio3D website: \href{http://thegrantlab.org/bio3d/}{http://thegrantlab.org/bio3d/}} is an R package that provides interactive tools for the analysis of bimolecular structure, sequence and simulation data. The aim of this document, termed a vignette\footnote{This vignette contains executable examples, see \texttt{help(vignette)} for further details.} in R parlance, is to provide a brief task-oriented introduction to basic molecular dynamics trajectory analysis with the Bio3D R package \citep{grant06}.  
 
 \paragraph{Requirements:}
-Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the \texttt{Installing Bio3D} vignette available both on-line and from within the Bio3D package. 
+Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the \href{http://thegrantlab.org/bio3d/}{Installing Bio3D} vignette available both on-line and from within the Bio3D package. To see available vignettes use the command"
 
-In addition to Bio3D the MUSCLE multiple sequence alignment program (available from \href{http://www.drive5.com/muscle/}{http://www.drive5.com/muscle/}) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
-
-The aim of this document, termed a vignette\footnote{This vignette contains executable examples, see \texttt{help(vignette)} for further details.} in R parlance, is to provide a brief task-oriented introduction to basic trajectory analysis with the Bio3D R package \citep{grant06}.  A number of other Bio3D package vignettes are available, including: \texttt{Installing Bio3D}, \texttt{Comparative protein structure analysis with Bio3D} and \texttt{Introduction to sequence conservation analysis with Bio3D} and \texttt{Enhanced methods for normal mode analysis with Bio3D}.  In this vignette, \texttt{Beginning trajectory analysis with Bio3D}, we will demonstrate the use of several common Bio3D facilitates for the analysis of molecular dynamics trajectories.
-
-
-
-
-\subsection{Getting Started}
-Start R, load the Bio3D package and use the command \texttt{lbio3d()} to list the current functions available within the package:
-
-<<>>=
-library(bio3d)
-lbio3d()
+<<eval=FALSE>>=
+vignette(package="bio3d")
 @
 
-Detailed documentation and example code for each function can be accessed via the \texttt{help()} and \texttt{example()} commands (e.g. \texttt{help(read.pdb)}).  You can also copy and paste any of the example code from the documentation of a particular function, or indeed this vignette, directly into your R session.
+Note that to follow along with this vignette the \href{http://www.drive5.com/muscle/}{MUSCLE multiple sequence alignment program} must be installed on your system and in the search path for executables. Please see the installation vignette for full details.
 
-\section{Reading Example Trajectory Data}
-A number of example data sets are shipped with the Bio3D package. The main purpose of including this data is to allow users to more quickly appreciate the capabilities of various Bio3D functions that would otherwise require potentially time consuming data generation. In the examples below we will input, process and analyze a molecular dynamics trajectory of Human Immunodeficiency Virus aspartic protease (HIVpr). This trajectory is stored in CHARMM/NAMD dcd format and has had all solvent and non C-alpha protein atoms excluded to reduce overall file size. Typically one works with all protein atoms, or at the very least all backbone atoms. Solvent however can often be excluded prior to Bio3D input - it just depends upon your particular analysis questions. 
+\section{Getting Started}
+Start R, load the Bio3D package and use the command \texttt{demo("md")} to get a quick feel for some of the tasks that we will be introducing in the following sections.
+
+<<eval=FALSE>>=
+library(bio3d)
+demo("md")
+@
+
+<<echo=FALSE>>=
+library(bio3d)
+@
 
 
-The code snippet below sets the file paths for the example HIVpr starting structure (pdbfile) and trajectory data (dcdfile).
+\paragraph{Side-note:} Note that you will be prompted to hit the \texttt{RETURN} key at each step of the demo as this will allow you to see the particular functions being called. Also note that detailed documentation and example code for each function can be accessed via the \texttt{help()} and \texttt{example()} commands (e.g. \texttt{help(read.pdb)}).  You can also copy and paste any of the example code from the documentation of a particular function, or indeed this vignette, directly into your R session to see how things work. You can also find this \href{http://thegrantlab.org/bio3d/html/index.html}{documentation online}.
+
+
+\subsection{Reading Example Trajectory Data}
+A number of example data sets are shipped with the Bio3D package. The main purpose of including this data is to allow users to more quickly appreciate the capabilities of various Bio3D functions that would otherwise require potentially time consuming data generation. In the examples below we will input, process and analyze a molecular dynamics trajectory of Human Immunodeficiency Virus aspartic protease (HIVpr). This trajectory is stored in CHARMM/NAMD DCD format and has had all solvent and non C-alpha protein atoms excluded to reduce overall file size.
+
+
+\paragraph{}The code snippet below sets the file paths for the example HIVpr starting structure (pdbfile) and trajectory data (dcdfile).
 
 <<>>=
 dcdfile <- system.file("examples/hivp.dcd", package="bio3d")
 pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 @
-Note that in the above example the \texttt{system.file()} command returns a character string corresponding to the file name of a PDB structure included with the Bio3D package. This is required as users may install the package in different locations. When using your own input files the \texttt{system.file()} command will not be required, for example
 
-<<>>=
+\paragraph{Side-note:} Note that in the above example the \texttt{system.file()} command returns a character string corresponding to the file name of a PDB structure included with the Bio3D package. This is required as users may install the package in different locations. When using your own input files the \texttt{system.file()} command will not be required, for example
+
+<<eval=FALSE>>=
 mydcdfile <- "/path/to/my/data/myfile.dcd"
 @
 
@@ -70,7 +76,14 @@ print(pdb)
 length(pdb$xyz)
 dim(dcd)
 @
-Note that the output of the \texttt{dim()} function is telling us that we have 351 trajectroy frames (or rows in our dcd matrix) and 594 coordinates (or x, y and z columns).
+
+Note that the output of the \texttt{dim()} function is telling us that we have 351 trajectory frames (or rows in our dcd matrix) and 594 coordinates (or x, y and z columns).
+
+\paragraph{Question:} How many atoms are in the trajectory and PDB files?
+\paragraph{Question:} How would you extract the amino acid sequence of the HIVpr system in one letter and 3-letter forms? HINT: try \texttt{help.search("PDB sequence")} for a Bio3D function that might help you.
+
+\paragraph{Side-note:} Note that typically one works with trajectory files that contain all protein atoms, or at the very least all backbone atoms. Solvent however can often be excluded prior to Bio3D input - it just depends upon your particular analysis questions. For example, we are not able to analyze Hydrogen bonding patterns or details of water occupancy with the currently inputed data.
+
 
 \section{Trajectory Frame Superposition}
 In this simple example we select all C-alpha atoms for trajectory frame superposition.
@@ -88,6 +101,11 @@ The above command performs the actual superposition and stores the new coordinat
 <<>>=
 dim(xyz) == dim(dcd)
 @
+
+\paragraph{Question:} How would you fit trajectory frames on the Calpha atoms of residues 24 to 27 and 85 to 90 in both chains? HINT: See the example section of \texttt{help(atom.select)}. 
+\paragraph{Question:} Would you expect the alternate fitting suggested above to alter your later results? HINT: You can come back to this question later after going through the other sections.
+
+\paragraph{Side-note:} A simple way to obtain the average structure from your fitted trajectory is to use the following command \texttt{apply(xyz,2,mean)}.
 
 \section{Root Mean Square Deviation (RMSD)}
 RMSD is a standard measure of structural distance between coordinate sets and is implemented in the Bio3D function \texttt{rmsd()}.
@@ -109,6 +127,9 @@ lines(density(rd), col="gray", lwd=3)
 summary(rd)
 @ 
 
+\paragraph{Question:} How would you calculate the pairwise RMSD between all frames?
+\paragraph{Question:} What would be a good way to visualize and further analyze such a pairwise RMSD matrix? HINT: Have a look at the NMA vignette for some, hopefully, inspiring plots?
+
 \section{Root Mean Squared Fluctuations (RMSF)}
 RMSF is an often used measure of conformational variance and is implemented in the Bio3D function \texttt{rmsf()}. This analysis will highlight the portions of structure that are fluctuating from their mean structure the most (and least).
 <<echo=TRUE, fig.cap="Residue-wise RMSF indicates regions of high mobility">>=
@@ -116,10 +137,14 @@ rf <- rmsf(xyz[,ca.inds$xyz])
 plot(rf, ylab="RMSF", xlab="Residue Position", typ="l")
 @
 
-\section{Principal Component Analysis}
-PCA can be employed to examine the relationship between different conformations sampled during the trajectory and is implemented in the Bio3D functions \texttt{pca.xyz()} and \texttt{pca.tor()}. The application of PCA to both distributions of experimental structures and molecular dynamics trajectories will be covered in detail in other vignettes. Briefly, we will note here that this method can provide considerable insight into the nature of conformational differences with the resulting principal components (orthogonal eigenvectors) describing the axes of maximal variance of the distribution of structures. Projection of the distribution onto the subspace defined by the largest principal components results in a lower dimensional representation of the structural dataset. The percentage of the total mean square displacement (or variance) of atom positional fluctuations captured in each dimension is characterized by their corresponding eigenvalue (see the next figure). Experience suggests that 3--5 dimensions are often sufficient to capture over 70 percent of the total variance in a given family of experimental structures or indeed a standard molecular dynamics trajectory. Thus, a handful of principal components are sufficient to provide a useful description while still retaining most of the variance in the original distribution \citet{grant06}.
+\paragraph{Question:} If you had multiple simulations (which by the way we greatly encourage), how would you plot these on the same graph? HINT: See \texttt{help(points)}. 
+\paragraph{Question:} If you noticed differences at particular sites (e.g. in the presence or absence of a ligand) how would you go about addressing the significance of these differences? HINT: this is why we always encourage a multiple simulation approach and implement Bio3D in one of the most advanced statistical analysis packages available.
 
-A quick overview of the results of \texttt{pca.xyz()} can be obtained by calling \texttt{plot.pca()}
+\section{Principal Component Analysis}
+PCA can be employed to examine the relationship between different conformations sampled during the trajectory and is implemented in the Bio3D functions \texttt{pca.xyz()} and \texttt{pca.tor()}. The application of PCA to both distributions of experimental structures and molecular dynamics trajectories will be covered in detail in other vignettes. Briefly, we will note here that this method can provide considerable insight into the nature of conformational differences with the resulting principal components (orthogonal eigenvectors) describing the axes of maximal variance of the distribution of structures. Projection of the distribution onto the subspace defined by the largest principal components results in a lower dimensional representation of the structural dataset (see \texttt{Figure 4}). The percentage of the total mean square displacement (or variance) of atom positional fluctuations captured in each dimension is characterized by their corresponding eigenvalue (see \texttt{Figure 4D}). Experience suggests that 3--5 dimensions are often sufficient to capture over 70 percent of the total variance in a given family of experimental structures or indeed a standard molecular dynamics trajectory. Thus, a handful of principal components are sufficient to provide a useful description while still retaining most of the variance in the original distribution \citet{grant06}.
+
+\paragraph{}A quick overview of the results of \texttt{pca.xyz()} can be obtained by calling \texttt{plot.pca()}
+
 <<echo=TRUE, fig.cap="PCA results for our HIVpr trajectory with instantaneous conformations (i.e. trajectory frames) colored from blue to red in order of time">>=
 pc <- pca.xyz(xyz[,ca.inds$xyz])
 plot(pc, col=bwr.colors(nrow(xyz)) )
@@ -132,14 +157,19 @@ grps <- cutree(hc, k=2)
 plot(pc, col=grps)
 @
 
-Bellow we call \texttt{plot.bio3d()} to examine the contribution of each residue to the first two principal components.
+\paragraph{Question:} How can we find out which frames correspond to the distinct groups along PC1? HINT: Which variable/object created above tells us about cluster membership?
+
+
+\paragraph{}Bellow we call \texttt{plot.bio3d()} to examine the contribution of each residue to the first two principal components.
 
 <<echo=TRUE, fig.cap="Residue-wise loadings for PC1 (black) and PC2 (blue)">>=
 plot.bio3d(pc$au[,1], ylab="PC1 (A)", xlab="Residue Position", typ="l")
 points(pc$au[,2], typ="l", col="blue")
 @
 
-To further aid interpretation, a PDB format trajectory can be produced that interpolates between the most dissimilar structures in the distribution along a given principal component.  This involves dividing the difference between the conformers into a number of evenly spaced steps along the principal components, forming the frames of the output multi-model PDB trajectory. Such trajectories can be directly visualized in a molecular graphics program, such as VMD \citep{vmd}. Furthermore, the interpolated structures can be analyzed for possible domain and shear movements with other Bio3D functions, or used as initial seed structures for reaction path refinement methods (note you will likely want to perform all heavy atom PCA for such applications).
+\paragraph{Question:} Why do you think there might be two major peaks in our RMSF plot?
+
+\paragraph{}To further aid interpretation, a PDB format trajectory can be produced that interpolates between the most dissimilar structures in the distribution along a given principal component.  This involves dividing the difference between the conformers into a number of evenly spaced steps along the principal components, forming the frames of the output multi-model PDB trajectory. Such trajectories can be directly visualized in a molecular graphics program, such as VMD \citep{vmd}. Furthermore, the interpolated structures can be analyzed for possible domain and shear movements with other Bio3D functions, or used as initial seed structures for reaction path refinement methods (note you will likely want to perform all heavy atom PCA for such applications).
 <<eval=FALSE>>=
 p1 <- mktrj.pca(pc, pc=1, b=pc$au[,1], file="pc1.pdb")
 p2 <- mktrj.pca(pc, pc=2,b=pc$au[,2], file="pc2.pdb")
@@ -154,6 +184,8 @@ write.ncdf(p1, "trj_pc1.nc")
 \includegraphics[width=120mm]{hiv_pc1.png}
 \end{center}
 
+\paragraph{Question:} Which regions are the most dynamic and why?
+
 
 \section{Cross-Correlation Analysis}
 The extent to which the atomic fluctuations/displacements of a system are correlated with one another can be assessed by examining the magnitude of all pairwise cross-correlation coefficients. The Bio3D \texttt{dccm()} function returns a matrix of all atom-wise cross-correlations whose elements may be displayed in a graphical representation frequently termed a dynamical cross-correlation map, or DCCM.
@@ -163,7 +195,9 @@ cij<-dccm(xyz[,ca.inds$xyz])
 plot(cij)
 @
 
-A 3D visualization of these correlations can be provided through the function \texttt{view.dccm()}
+\paragraph{Question:} What do the off-diagonal regions of negative correlation correspond to in this plot and which regions are involved? HINT: Negative values typical indicate regions that move in opposite directions.
+
+\paragraph{}A 3D visualization of these correlations can be provided through the function \texttt{view.dccm()}
 
 <<eval=FALSE>>=
 # View the correlations in pymol
@@ -190,7 +224,7 @@ knit("Bio3D_md.Rnw")
 tools::texi2pdf("Bio3D_md.tex")
 @
 
-\section*{Information About the Current Bio3D Session}
+\subsection*{Information About the Current Bio3D Session}
 <<>>=
 sessionInfo()
 @
