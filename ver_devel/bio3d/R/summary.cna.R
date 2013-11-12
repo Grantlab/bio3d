@@ -20,10 +20,25 @@ summary.cna <- function(object, ...) {
     members <- rep(NA, length(id))
     for(i in 1:length(id)) {
       b <- bounds(memb[[i]])[,c("start","end"),drop=FALSE]
-      members[i] <- paste0("c(",
-         paste( apply(b, 1, paste, collapse=":"), collapse=", "), ")")
+      
+      single.member <- NULL
+      for(a in 1:dim(b)[1]){
+        if(b[a,1] != b[a,2]){
+          single.member[a] <- paste0(b[a,1], ":", b[a,2])
+        }
+        else{
+          single.member[a] <- b[a,1]
+        }
+      }
+      if(length(single.member)>1){
+        members[i] <- paste0("c(", paste0(single.member, collapse=", "), ")")
+      }
+      else{
+        members[i] <- single.member
+      }
     }
-  } else {
+  }
+  else{
     ##- non numeric vectors can not be condensed
     members <- unlist(lapply(memb, paste, collapse=", "))
   }
