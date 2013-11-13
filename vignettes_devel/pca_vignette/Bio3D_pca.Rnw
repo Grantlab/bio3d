@@ -48,42 +48,55 @@ library(bio3d)
 \paragraph{Side-note:} Note that you will be prompted to hit the \texttt{RETURN} key at each step of the demo as this will allow you to see the particular functions being called. Also note that detailed documentation and example code for each function can be accessed via the \texttt{help()} and \texttt{example()} commands (e.g. \texttt{help(read.pdb)}).  You can also copy and paste any of the example code from the documentation of a particular function, or indeed this vignette, directly into your R session to see how things work. You can also find this \href{http://thegrantlab.org/bio3d/html/index.html}{documentation online}.
 
 
-\subsection{Read A PDB Structure}
+\subsection{Read a PDB Structure}
 The code snippet below reads structure data online and returns an object \texttt{pdb} for further manipulation. The function \texttt{read.pdb()} is supplied with one input argument, the four letter RCSB Protein Data Bank (PDB) identifier \texttt{1tag}. 
 
-<<>>=
+<<eval=TRUE>>=
 pdb <- read.pdb("1tag")
 @ 
 
-\paragraph{Side-note:} If you have PDB file stored on your local hard disk, use the path to that file as the argument of \texttt{read.pdb()}. For example:
+%\paragraph{Side-note:} If you have your PDB file stored on your local hard disk, use the path to that file as the argument of \texttt{read.pdb()}.
+
+Alternatively, you can read a PDB file directly from your local file system using the file name (or the full path to the file) as an argument to \texttt{read.pdb()}:
 <<eval=FALSE>>=
+pdb <- read.pdb("myfile.pdb")
 pdb <- read.pdb("/path/to/my/data/myfile.pdb")
 @ 
 
 
-To examine the contents of the \texttt{pdb} object we can use the \texttt{attributes} command:
+A short summary of the \texttt{pdb} object can be obtained by simply calling the function print(): 
 <<>>=
+print(pdb)
+@
+
+To examine the contents of the \texttt{pdb} object in more detail we can use the \texttt{attributes} function:
+<<eval=TRUE>>=
 attributes(pdb)
 @
 
-Most bio3d functions, including \texttt{read.pdb()}, return list objects whose components can be accessed in the standard way (see \texttt{help(read.pdb)} for further details).  For example, to print coordinate data for the first three atoms in our newly created \texttt{pdb} object type:
+These attributes describe the list components that comprise the pdb object, and each individual component can be accessed using the \texttt{\$} symbol (e.g.~\texttt{pdb\$atom}). Their complete description can be found on the  \texttt{read.pdb()} functions help page accessible with the command: \texttt{help(read.pdb)}. Note that the \texttt{atom} component is a matrix consisting of all atomic coordinate ATOM data, with a row per ATOM and a column per record type. The column names can be used as a convenient means of data access, for example to access coordinate data for the first three atoms in our newly created \texttt{pdb} object:
 
 <<>>=
 pdb$atom[1:3, c("resno","resid","elety","x","y","z")]
 @
 
-\paragraph{Side-note:} Simply type the name of the object \texttt{pdb} will call the function \texttt{print(pdb)}, which returns a summary of the structural data:
-<<>>=
-pdb
+In the example above we used numeric indices to access atoms 1 to 3, and a character vector of column names to access the specific record types. In a similar fashion the \texttt{atom.select()} function returns numeric indices that can be used for convenient data access: 
+
+<<results='hide'>>=
+ca.inds <- atom.select(pdb, "calpha")
 @
 
-In the previous example we use numeric indices to access atoms 1 to 3. In a similar fashion the \texttt{atom.select()} function returns numeric indices that can be used for convenient data access: 
-<<fig=TRUE, fig.cap="B-factor along with residue numbers">>=
-inds <- atom.select(pdb, "calpha")
-plot.bio3d(pdb$atom[inds$atom, "resno"], pdb$atom[inds$atom, "b"], 
+The returned \texttt{ca.inds} object is a list containing atom and xyz numeric indices corresponding to the selection (all C-alpha atoms in this particular case). The indices can be used to access e.g.~the Cartesian coordinates of the selected atoms (\texttt{pdb\$xyz[ca.inds\$xyz]}), or residue numbers and B-factor data for the selected atoms:
+
+<<fig=TRUE, fig.cap="Residue B-factor data for PDB id 1TAG. Grey boxes depict secondary structure elements in the structure (dark grey: alpha helices; light grey: beta sheets).">>=
+resnos <- pdb$atom[ca.inds$atom, "resno"]
+bfacts <- pdb$atom[ca.inds$atom, "b"]
+plot.bio3d(resnos, bfacts,
            sse=pdb, ylab="Bfactor", xlab="Residue Number")
 @
-The returned \texttt{inds} object is a list containing atom and xyz numeric indices (in this case corresponding to all alpha Carbon atoms). In the above example we use these indices to plot residue number vs B-factor along with a basic secondary structure schematic (Figure 1). As a further example of data access lets extract the sequence for the loop region (P-loop) between strand 3 (beta 1) and helix 1 in our \texttt{pdb} object.
+
+In the above example we use these indices to plot residue number vs B-factor along with a basic secondary structure schematic (provided with the argument \texttt{sse=pdb}; Figure 1). As a further example of data access lets extract the sequence for the loop region (P-loop) between strand 3 (beta 1) and helix 1 in our \texttt{pdb} object.
+
 <<>>=
 loop <- pdb$sheet$end[3]:pdb$helix$start[1]
 loop.inds <- atom.select(pdb,paste("///", paste(loop, collapse=","), 
@@ -93,7 +106,7 @@ aa321(pdb$atom[loop.inds$atom, "resid"])
 @ 
 In the above example the residue numbers in the \texttt{sheet} and \texttt{helix} components of \texttt{pdb} are accessed and used in a subsequent atom selection. The \texttt{aa321()} function converts between three-letter and one-letter IUPAC amino acid codes.
 
-\paragraph{Question:} How would you do to select all backbone atoms? HINT: help(atom.select) and check out the keyword \texttt{string}.
+\paragraph{Question:} How would you do to select all backbone atoms? HINT: \texttt{help(atom.select)} and check out the keyword \texttt{string}.
 \paragraph{Question:} How would you do to select all sidechain atoms? HINT: Consider two steps and check out \texttt{help(combine.sel)}.
 
 
@@ -158,14 +171,14 @@ head(hits$hits)
 @ 
 \end{center}
 
-\paragraph{Side-note:} The funciton \texttt{pdb.annotate()} can help to fetch more detailed information about the corresponding structures, e.g. title, experimental method, resolution, ligand name, citation, etc., providing the PDB ids:
+\paragraph{Sidenote}: The function \texttt{pdb.annotate()} can help to fetch more detailed information about the corresponding structures, e.g. title, experimental method, resolution, ligand name(s), citation, etc., providing the PDB ids:
 <<>>=
 anno <- pdb.annotate(hits$pdb.id)
 head(anno[, c("resolution", "ligandId", "citation")])
 @
 
 \subsection{Multiple Sequence Alignment}
-After downloading our complete list of structures from the PDB and splitting these into separate chains (see below) we extract the ATOM record sequence from each structure and align these to determine residue-residue correspondences. 
+Next we download the complete list of structures from the PDB (with function \texttt{get.pdb()}), and use function \texttt{pdbsplit()} to split the structures into separate chains and store them on the hard drive for subsequent access. Finally, function \texttt{pdbaln()} will extract the sequence of each structure and perform a multiple sequence alignment to determine residue-residue correspondences (\textbf{NOTE:} requires external program \textit{MUSCLE} in search path):
 
 <<getpdbs, eval=FALSE>>=
 unq.ids <- unique( substr(hits$pdb.id, 1, 4) )
@@ -176,9 +189,9 @@ files <- pdbsplit(raw.files, ids=hits$pdb.id, path="raw_pdbs/split_chain")
 ##- Extract and align sequences
 pdbs <- pdbaln(files)
 @ 
-Inspect the alignment (the automatically generated "aln.fa" file) with your favorate alignment viewer (e.g. SEAVIEW, available from: \href{http://pbil.univ-lyon1.fr/software/seaview.html}{http://pbil.univ-lyon1.fr/software/seaview.html}). 
+Inspect the alignment (the automatically generated ``aln.fa'' file) with your favorite alignment viewer (e.g. SEAVIEW, available from: \href{http://pbil.univ-lyon1.fr/software/seaview.html}{http://pbil.univ-lyon1.fr/software/seaview.html}). 
 
-\paragraph{Side-note:}It is possible that you may find some structures with missing residues (or gaps in the alignment) at sites of particular interest (e.g. switch regions in the case of transducin). This will prevent you from investigating the structural variation about these important sites and so may cause misleading results in your studies. To solve this problem, you may exclude these "bad" sequences from your hit list and generate a smaller but with higher quality dataset for further exploration.
+\paragraph{Side-note:}It is possible that you may find some structures with missing residues (or gaps in the alignment) at sites of particular interest (e.g. switch regions in the case of transducin). This will prevent you from investigating the structural variation about these important sites and so may cause misleading results in your studies. To solve this problem, you may exclude these ``bad'' sequences from your hit list and generate a smaller, but with higher quality dataset for further exploration.
 
 \paragraph{Question:} How to generate a \texttt{pdbs} object with a subset hit PDB ids?
 
@@ -258,7 +271,7 @@ gaps.pos <- gap.inspect(pdbs$xyz)
 pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
 @ 
 
-\paragraph{Question:}Why the input of \texttt{pca.xyz} is \texttt{xyz} rather than \texttt{pdbs\$xyz}?
+\paragraph{Question:}Why is the input to function \texttt{pca.xyz()} \texttt{xyz} rather than \texttt{pdbs\$xyz}?
 
 
 The above sequence of commands returns the indices of two structures and the indices for gap containing positions, both of which we exclude from subsequent PCA with the \texttt{pca.xyz()} command. A quick overview of the results of \texttt{pca.xyz()} can be obtained by calling \texttt{plot.pca()} (Figure 6).
@@ -320,7 +333,7 @@ abline(h=30, lty=3, col="gray60")
 @ 
 \end{center}
 
-In the PC1-PC2 plane, the inactive "GDP" state of structures (green points in Figure 6) are further split into two sub-groups (Figure 9 & 10). The bottom-right sub-group (blue) exclusively correspond to the structures complexed with GDP dissociation inhibitor (GDPi).
+In the PC1-PC2 plane, the inactive ``GDP'' state of structures (green points in Figure 6) are further split into two sub-groups (Figure 9 \& 10). The bottom-right sub-group (blue) exclusively correspond to the structures complexed with GDP dissociation inhibitor (GDPi).
 
 \paragraph{Question:} What is the difference between the clustering method using PCs and that using RMSD?
 
@@ -333,7 +346,7 @@ RMSD is a standard measure of structural distance between coordinate sets.
 \begin{center}
 <<fig=TRUE,echo=TRUE, fig.cap="Histogram of RMSD among transducin structures">>=
 rmsd.fit <- rmsd(xyz[,gaps.pos$f.inds])
-hist(rmsd.fit[upper.tri(rmsd.fit)], breaks=20, xlab="RMSD (A)")
+hist(rmsd.fit[upper.tri(rmsd.fit)], breaks=20, xlab="RMSD (Å)")
 @ 
 \end{center}
 
