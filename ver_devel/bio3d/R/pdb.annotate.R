@@ -1,6 +1,6 @@
 # function: pdb.annotate
 # date: 08/06/2013, edited 08/30/2013
-# returns a matrix of requested annotation terms.
+# returns a data.frame of requested annotation terms.
 
 pdb.annotate <- function(ids, anno.terms=NULL) {
     oops <- require(XML)
@@ -65,7 +65,11 @@ pdb.annotate <- function(ids, anno.terms=NULL) {
 
     ##- Parse the xml file
     doc = xmlRoot(xmlTreeParse(tmpfile))
+
+    if(length(doc)==0)
+      stop("Annotation report incomplete from PDB")
     tmp1 = xmlApply(doc, function(x) xmlApply(x, xmlValue))
+
     ## To remove empty entry: character(0) --> ""
     t.fun <- function(rec) {
       len <- sapply(rec, length)
@@ -95,38 +99,38 @@ pdb.annotate <- function(ids, anno.terms=NULL) {
     if(length(unq.ids)==1)
         new.tbl <- t(new.tbl)
 
-    if(length(which(duplicated(pdb.ids))) >= 1)
-    {
-        dup.rows <- bounds(which(duplicated(pdb.ids)))
-        ## information of duplicated ids
-        for( i in 1:nrow(dup.rows))
-        {
-            l <- tmp3[ (dup.rows[i,"start"]-1):dup.rows[i,"end"], ]
-            row.store <- NULL
-            for(j in 1:ncol(l))
-            {
-             row.store <- c(row.store, paste(unique(as.vector(l[,j])), collapse=", "))
-            }
-        new.tbl <- rbind(new.tbl, row.store)
+    if(length(which(duplicated(pdb.ids))) >= 1) {
+    
+      dup.rows <- bounds(which(duplicated(pdb.ids)))
+      ## information of duplicated ids
+      for( i in 1:nrow(dup.rows)) {
+        
+        l <- tmp3[ (dup.rows[i,"start"]-1):dup.rows[i,"end"], ]
+        row.store <- NULL
+        for(j in 1:ncol(l))  {
+          row.store <- c(row.store, paste(unique(as.vector(l[,j])), collapse=", "))
         }
+        new.tbl <- rbind(new.tbl, row.store)
+      }
     }
     ## format the colnames
+    
     colnames(new.tbl) <- colnames(tmp3)
-
+    
+    
     ## change colnames (e.g. dimEntity.structureId -> structureId)
-    for( i in 1:ncol(new.tbl))
-    {
-    a <- unlist(strsplit(colnames(new.tbl)[i], "\\."))
-    colnames(new.tbl)[i] <- a[2]
+    for( i in 1:ncol(new.tbl)) {
+      a <- unlist(strsplit(colnames(new.tbl)[i], "\\."))
+      colnames(new.tbl)[i] <- a[2]
     }
-
+    
     ## Format citation information
     if (any(anno.terms == "citation") ) {
       citation <- NULL
       lig.auth <- new.tbl[,"citationAuthor"]
       lig.year <- new.tbl[,"publicationYear"]
       lig.jnal <- new.tbl[,"journalName"]
-
+      
       for(i in 1:length(lig.auth)) {
         citation <- c(citation, paste( unlist(strsplit(lig.auth[[i]], ","))[1],
                                       " et al. ", lig.jnal[i], " (", lig.year[i],")",sep=""))
@@ -138,10 +142,19 @@ pdb.annotate <- function(ids, anno.terms=NULL) {
     out.tbl <- as.matrix(new.tbl[, anno.terms])
 
     ## again, we need the transformation of the matrix out.tbl
-    if(length(ids)==1) { out.tbl <- t(out.tbl) }
+    if(dim(out.tbl)[2L]==1)
+      out.tbl <- t(out.tbl)
+
+    colnames(out.tbl) <- anno.terms
+    
+    unq.ids <- unique(substr(basename(ids), 1, 4))
+    if(nrow(out.tbl)!=length(unq.ids)) {
+      tmp.ids <- out.tbl[,"structureId"]
+      missing <- paste(unq.ids[!unq.ids %in% tmp.ids], collapse=", ")
+      warning(paste("Annotation data could not be found for PDB ids:\n  ",
+                    missing))
+    }
     
     ## return a data frame of required annotation
-    colnames(out.tbl) <- anno.terms
     return(as.data.frame(out.tbl, stringsAsFactors=FALSE))
-    ##return(out.tbl)
 }
