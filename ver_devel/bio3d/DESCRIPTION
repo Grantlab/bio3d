@@ -1,6 +1,6 @@
 Package: bio3d
 Title: Biological Structure Analysis
-Version: 2.0.1
+Version: 2.0-1
 Author: Barry Grant, Xin-Qiu Yao, Lars Skjaerven
 VignetteBuilder: knitr
 Suggests: ncdf, lattice, grid, bigmemory, multicore, XML, knitr
