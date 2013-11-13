@@ -1,0 +1,4 @@
+%\VignetteIndexEntry{Comparative Sequence and Structure Analysis with Bio3D}
+\documentclass{article}
+\begin{document}
+\end{document}

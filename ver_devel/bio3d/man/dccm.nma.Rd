@@ -50,6 +50,6 @@ cm <- dccm.nma(modes)
 
 ## Plot correlation map
 plot(cm, sse = pdb, contour = F, col.regions = bwr.colors(20),
-     at = seq(-1, 1, 0.1)))
+     at = seq(-1, 1, 0.1))
 }
 \keyword{ analysis }
