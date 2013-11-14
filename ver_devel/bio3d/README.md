@@ -9,7 +9,7 @@ We also distribute a number of extended **Bio3D vignettes** that provide worked 
 - Getting started with Bio3D ( PDF )
 - Beginning Trajectory Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/Bio3D_md.pdf">PDF</a> )
 - Enhanced Methods for Normal Mode Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/Bio3D_nma.pdf">PDF</a> )
-- Comparative sequence and structure analysis with Bio3D ( PDF )
+- Comparative sequence and structure analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/Bio3D_pca.pdf">PDF</a> )
 - Introduction to correlation network analysis with Bio3D ( PDF )
 
 There is also a <a href="http://thegrantlab.org/bio3d/bio3d.pdf">package manual</a> (in PDF format) that is a concatenation of each functions documentation. 
