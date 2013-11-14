@@ -29,6 +29,26 @@ list(
       )
     ),
 
+    ##"sequence"
+    sd_section("Sequence Analysis:",
+               "Do Interesting Things with Protein Sequence",
+      c(    
+        "consensus",
+        "conserv",
+        "blast.pdb",
+        "entropy",
+        "ide.filter",
+        "seqidentity",
+        "motif.find",
+        "pdbaln",
+        "seq2aln",
+        "seqaln",
+        "seqaln.pair",
+        "seqbind"
+
+        )   
+    ),
+
     ##"structure"
     sd_section("Structure Analysis:",
                "Do Interesting Things with Protein Structure",
@@ -48,6 +68,7 @@ list(
         "dssp",
         "fit.xyz",
         "binding.site",
+        "mktrj",
         "mktrj.pca",
         "overlap",
         "pca.project",
@@ -100,25 +121,6 @@ list(
         )
     ),
 
-    ##"sequence"
-    sd_section("Sequence Analysis:",
-               "Do Interesting Things with Protein Sequence",
-      c(    
-        "consensus",
-        "conserv",
-        "blast.pdb",
-        "entropy",
-        "ide.filter",
-        "seqidentity",
-        "motif.find",
-        "pdbaln",
-        "seq2aln",
-        "seqaln",
-        "seqaln.pair",
-        "seqbind"
-
-        )   
-    ),
 
     ##"trajectory"
     sd_section("Trajectory Analysis:",
@@ -134,6 +136,7 @@ list(
         "dm.xyz",
         "dssp.trj",
         "fit.xyz",
+        "mktrj",
         "mktrj.pca",
         "overlap",
         "pca.project",
@@ -170,6 +173,7 @@ list(
         "fluct.nma",
         "inner.prod",
         "load.enmff",
+        "mktrj",
         "mktrj.nma",
         "nma", 
         "nma.pdbs",

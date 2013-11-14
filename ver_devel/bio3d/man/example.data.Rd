@@ -14,6 +14,10 @@
   speed up example execution. It should allow users to more quickly
   appreciate the capabilities of functions that would otherwise require
   raw data download, input and processing before execution.
+
+  Note that related datasets formed the basis of
+  the work described in (Grant, 2007) and (Yao & Grant, 2013) for \code{kinesin}
+  and \code{transducin} examples, respectively.
 }
 \usage{
 data(kinesin)
@@ -41,7 +45,9 @@ data(transducin)
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
+
   Grant, B.J. et al. (2007) \emph{J. Mol. Biol.} \bold{368}, 1231--1248.
+  
   Yao, X.Q. et al. (2013) \emph{Biophys. J.} \bold{105}, L08--L10.
 }
 \keyword{datasets}
