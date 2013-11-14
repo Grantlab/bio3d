@@ -32,16 +32,24 @@ function(a, b=NULL,
   }
 
   if(is.list(a)) a=a$xyz
+  if(is.list(b)) b=b$xyz
+
+  if( is.null(a.inds) && is.null(b.inds) ) {
+    a.inds <- gap.inspect(a)$f.inds
+    if(!is.null(b)) a.inds <- intersect(a.inds, gap.inspect(b)$f.inds)
+    b.inds <- a.inds
+    warning(paste("No indices provided, using the",
+                  length(a.inds)/3,  "non NA positions\n"))
+  }
+
+  if (is.null(a.inds)) a.inds <- gap.inspect(a)$f.inds
+  if (is.null(b.inds) && !is.null(b)) b.inds <- gap.inspect(b)$f.inds
 
   if(is.vector(a)) {
     if(is.null(b)) {
       stop("No comparison can be made, input was only a single vector 'a'")
     }
-    lseq   <- length(a)
-    if(is.null(a.inds)) a.inds <- 1:lseq
   } else {
-    lseq   <- ncol(a)
-    if(is.null(a.inds)) a.inds <- 1:lseq
     if(is.null(b)) {
       # Pair Wise Matrix 'a'
       if( any(is.na(a[,a.inds])) ) {
@@ -101,7 +109,6 @@ function(a, b=NULL,
   }
 
   if(is.vector(b)) {
-    if(is.null(b.inds)) b.inds=1:length(b)
     if (length(a.inds) != length(b.inds)) {
       stop("dimension mismatch:
               a[a.inds] and b[b.inds] should be the same length")
@@ -119,15 +126,11 @@ function(a, b=NULL,
     return(round(irmsd,3))
 
   } else {
-    if(is.list(b)) {
-      b=b$xyz
-    }
     if(is.matrix(b)) {
-      if(is.null(b.inds)) b.inds=1:ncol(b)
-        if (length(a.inds) != length(b.inds)) {
+      if (length(a.inds) != length(b.inds)) {
           stop("dimension mismatch:
                   a[a.inds] and b[,b.inds] should be the same length")
-        }
+      }
       if( any(is.na(a[a.inds])) ||
          any(is.na(b[,b.inds])) ) {
         stop("error: NA elements present in selected set")
