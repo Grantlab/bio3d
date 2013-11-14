@@ -1,5 +1,5 @@
 library(staticdocs)
-build_package("../bio3d", base_path="html", examples=TRUE)
+build_package("bio3d", base_path="html", examples=TRUE)
 
 save.image("tmp_build_package.RData")
 q("no")

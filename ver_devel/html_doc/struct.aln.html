@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>struct.aln. bio3d 2.0</title>
+<title>struct.aln. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Lars Skjarven ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -145,7 +145,7 @@
      ## Align and fit b on to a:
      aln <- struct.aln(a, b)
 </div>
-<div class='output'>muscle -in /tmp/RtmpSa4CZG/file43b3301f21ee -out aln.fa  -seqtype protein
+<div class='output'>
  Initial RMSD (320 atoms): 6.658
  Cycle 1: 7 atoms rejected
   Mean: 1.3 Std: 6.1 Cut: 13.4
@@ -204,7 +204,7 @@ Natom "53970" "3855" "53970" "53970" "53970" "53970"
      ## Align and fit:
      aln <- struct.aln(a,b, a.inds, b.inds)
 </div>
-<div class='output'>muscle -in /tmp/RtmpSa4CZG/file43b35971a713 -out aln.fa  -seqtype protein
+<div class='output'>
  Initial RMSD (524 atoms): 12.062
  Cycle 1: 42 atoms rejected
   Mean: 8.1 Std: 6.6 Cut: 21.4

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>bio3d-package. bio3d 2.0</title>
+<title>bio3d-package. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Barry Grant &lt;bjgrant@umich.edu&gt;
@@ -24,7 +24,7 @@ Lars Skjaerven &lt;larsss@gmail.com&gt;
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -66,9 +66,9 @@ Type: </td>
 <td> Package</td>
 </tr><tr><td>
 Version: </td>
-<td> 2.0</td>
+<td> 2.0-1</td>
 </tr><tr><td>
-Date: 2013-11-08</td>
+Date: 2013-11-13</td>
 <td>
 License: </td>
 </tr><tr><td> GPL version 2 or newer</td>
@@ -223,8 +223,8 @@ plot(tor$phi, tor$psi)
 ##-- Search for related structures in the PDB database
 blast <- blast.pdb( pdbseq(pdb) )
 </div>
-<div class='output'> Searching ... please wait (updates every 5 seconds) RID = 82RRZYZS015 
- ..
+<div class='output'> Searching ... please wait (updates every 5 seconds) RID = 88A6ZZZ0014 
+ .
  Reporting 206 hits
 </div>
 <div class='input'>hits  <- plot.blast(blast)
@@ -347,6 +347,9 @@ xyz <- pdbfit(pdbs)
 gaps <- gap.inspect(pdbs$xyz)
 rmsd(pdbs$xyz[, gaps$f.inds])
 </div>
+<strong class='warning'>Warning message:
+No indices provided, using the 293 non NA positions
+</strong>
 <div class='output'>       [,1]   [,2]   [,3]   [,4]
 [1,]  0.000 48.901 48.533 63.343
 [2,] 48.901  0.000 58.171 53.186
@@ -355,6 +358,9 @@ rmsd(pdbs$xyz[, gaps$f.inds])
 </div>
 <div class='input'>rmsd(xyz[, gaps$f.inds])
 </div>
+<strong class='warning'>Warning message:
+No indices provided, using the 293 non NA positions
+</strong>
 <div class='output'>      [,1]  [,2]  [,3]  [,4]
 [1,] 0.000 2.654 2.412 2.775
 [2,] 2.654 0.000 2.202 3.063
@@ -568,6 +574,9 @@ xyz2 <- pdbfit(pdbs, inds=core$c0.5A.xyz)
 ## Note larger overall RMSD but lower core-residue RMSF
 rmsd(xyz2[, gaps$f.inds])
 </div>
+<strong class='warning'>Warning message:
+No indices provided, using the 293 non NA positions
+</strong>
 <div class='output'>      [,1]  [,2]  [,3]  [,4]
 [1,] 0.000 2.828 2.455 2.805
 [2,] 2.828 0.000 2.326 3.155
@@ -577,10 +586,10 @@ rmsd(xyz2[, gaps$f.inds])
 <div class='input'>
 plot(rmsf(xyz), typ="l", col="blue", ylab="RMSF")
 </div>
-<p><img src='bio3d.package-45.png' alt='' width='400' height='400' /></p>
+<p><img src='bio3d.package-48.png' alt='' width='400' height='400' /></p>
 <div class='input'>points(rmsf(xyz2), typ="l", col="red")
 </div>
-<p><img src='bio3d.package-47.png' alt='' width='400' height='400' /></p>
+<p><img src='bio3d.package-50.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 
@@ -598,11 +607,11 @@ pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
 ## Plot results
 plot(pc.xray)
 </div>
-<p><img src='bio3d.package-49.png' alt='' width='400' height='400' /></p>
+<p><img src='bio3d.package-52.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 plot.pca.loadings(pc.xray$au)
 </div>
-<p><img src='bio3d.package-51.png' alt='' width='400' height='400' /></p>
+<p><img src='bio3d.package-54.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 ## Write a PC trajectory (for viewing as tube in VMD)
 rn <- pdbs$resno[1, gaps.res$f.inds]
@@ -653,25 +662,29 @@ Natom "198" "198" "26"                                     "198" "198" "198"
 
 ##-- RMSD of trj frames from PDB
 r <- rmsd(a=pdb, b=fit.xyz)
-
+</div>
+<strong class='warning'>Warning message:
+No indices provided, using the 198 non NA positions
+</strong>
+<div class='input'>
 ##-- PCA of trj
 pc.trj <- pca.xyz(fit.xyz)
 
 ## Plot PCA results
 plot(pc.trj)
 </div>
-<p><img src='bio3d.package-57.png' alt='' width='400' height='400' /></p>
+<p><img src='bio3d.package-62.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 ## Examine residue-wise contributions to PCs
 plot.pca.loadings(pc.trj$au)
 </div>
-<p><img src='bio3d.package-59.png' alt='' width='400' height='400' /></p>
+<p><img src='bio3d.package-64.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 ## cluster in PC1 subspace
 hc <- hclust(dist(pc.trj$z[,1]))
 plot(pc.trj, col=cutree(hc, k=2))
 </div>
-<p><img src='bio3d.package-61.png' alt='' width='400' height='400' /></p>
+<p><img src='bio3d.package-66.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 ## Write PC trajectory for viewing as tube in VMD

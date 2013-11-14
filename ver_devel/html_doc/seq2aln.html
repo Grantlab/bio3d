@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>seq2aln. bio3d 2.0</title>
+<title>seq2aln. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -133,12 +133,10 @@ aa.1 <- pdbseq( read.pdb("1bg2") )
 </div>
 <div class='input'>
 aln <- seqaln( seqbind(aa.1,aa.2) )
-</div>
-<div class='output'>muscle -in /tmp/RtmpSa4CZG/file43b32c6d0137 -out aln.fa  -seqtype protein</div>
-<div class='input'>
+
 seq2aln(aa.3, aln)
 </div>
-<div class='output'>muscle -profile -in1 /tmp/RtmpSa4CZG/file43b3259b1d88 -in2 /tmp/RtmpSa4CZG/file43b36605ec0a -out aln.fa</div>
+<div class='output'>muscle -profile -in1 /tmp/Rtmpbw2kkP/filed6c18bd13b1 -in2 /tmp/Rtmpbw2kkP/filed6c758341d0 -out aln.fa</div>
 <div class='output'>$id
 [1] "seq1" "seq2" "seq" 
 

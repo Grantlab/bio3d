@@ -2,7 +2,7 @@
 ##### This script removes the dontrun tags and so
 ##### all the example codes will be executed
 
-for i in ../bio3d/man/*.Rd; do
+for i in ./bio3d/man/*.Rd; do
    # skip some examples because of the missing 
    # data or run errors
    if [ `basename $i` != "dssp.trj.Rd" ] && \

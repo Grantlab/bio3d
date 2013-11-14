@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>mktrj.nma. bio3d 2.0</title>
+<title>mktrj.nma. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant, Lars Skjaerven ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -42,11 +42,11 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>mktrj.nma(nma = NULL, mode = 7, mag = 10, step = 1.25, file = NULL, ...)</pre>
+    <pre>mktrj(x = NULL, mode = 7, mag = 10, step = 1.25, file = NULL, ...)</pre>
     
     <h2>Arguments</h2>
     <dl>
-      <dt>nma</dt>
+      <dt>x</dt>
       <dd> a list object of class <code>"nma"</code> (obtained with
     <code><a href='nma.html'>nma</a></code>).</dd>
       <dt>mode</dt>
@@ -99,8 +99,8 @@
     <div class="Note">
       <h2>Note</h2>
       
-      <p>The molecular graphics software VMD is useful for viewing
-  trajectories see: 
+      <p>Molecular graphics software such as VMD or PyMOL is useful
+  for viewing trajectories see e.g: 
   <a href = 'http://www.ks.uiuc.edu/Research/vmd/'>http://www.ks.uiuc.edu/Research/vmd/</a>.</p>
   
     </div>
@@ -116,12 +116,12 @@ pdb <- read.pdb("1hel")
 ## Calculate (vibrational) normal modes
 modes <- nma(pdb)
 </div>
-<div class='output'> Building Hessian...		Done in 0.134 seconds.
- Diagonalizing Hessian...	Done in 0.134 seconds.
+<div class='output'> Building Hessian...		Done in 0.083 seconds.
+ Diagonalizing Hessian...	Done in 0.133 seconds.
 </div>
 <div class='input'>
 ## Visualize modes
-m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
+m7 <- mktrj(modes, mode=7, file="mode_7.pdb")
 </div></pre>
   </div>
   <div class="span4">
@@ -133,7 +133,7 @@ m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
     </ul> -->
       
     <h2>See also</h2>
-     <code><a href='nma.html'>nma</a> </code> 
+     <code><a href='nma.html'>nma</a></code>, <code><a href='view.modes.html'>view.modes</a></code>. 
     
     <h2>Author</h2>
      Barry Grant, Lars Skjaerven 
