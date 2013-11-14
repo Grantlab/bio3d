@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>pdbfit. bio3d 2.0</title>
+<title>pdbfit. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -109,16 +109,16 @@ files <- get.pdb(c("4q21","5p21"), path=tempdir(), overwrite=TRUE)
 pdbs <- pdbaln(files)
 </div>
 <div class='output'>Reading PDB files:
-/tmp/RtmpSa4CZG/4q21.pdb
-/tmp/RtmpSa4CZG/5p21.pdb
+/tmp/Rtmpbw2kkP/4q21.pdb
+/tmp/Rtmpbw2kkP/5p21.pdb
   HEADER    ONCOGENE PROTEIN                        25-SEP-91   4Q21               
 .  HEADER    ONCOGENE PROTEIN                        30-APR-90   5P21               
 .
 
 Extracting sequences
-muscle -in /tmp/RtmpSa4CZG/file43b319721294 -out aln.fa -quiet -seqtype protein
-pdb/seq: 1   name: /tmp/RtmpSa4CZG/4q21.pdb 
-pdb/seq: 2   name: /tmp/RtmpSa4CZG/5p21.pdb 
+
+pdb/seq: 1   name: /tmp/Rtmpbw2kkP/4q21.pdb 
+pdb/seq: 2   name: /tmp/Rtmpbw2kkP/5p21.pdb 
 </div>
 <div class='input'>xyz <- pdbfit(pdbs)
 

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>plot.core. bio3d 2.0</title>
+<title>plot.core. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -130,7 +130,7 @@ http://www.rcsb.org/pdb/files/1i5s.pdb
 .
 
 Extracting sequences
-muscle -in /tmp/RtmpSa4CZG/file43b3267f5363 -out aln.fa -quiet -seqtype protein
+
 pdb/seq: 1   name: http://www.rcsb.org/pdb/files/1bg2.pdb 
 pdb/seq: 2   name: http://www.rcsb.org/pdb/files/2ncd.pdb 
 pdb/seq: 3   name: http://www.rcsb.org/pdb/files/1i6i.pdb 
@@ -401,6 +401,9 @@ xyz2 <- pdbfit(pdbs)
 gaps <- gap.inspect(pdbs$xyz)
 rmsd(xyz[,gaps$f.inds])
 </div>
+<strong class='warning'>Warning message:
+No indices provided, using the 294 non NA positions
+</strong>
 <div class='output'>      [,1]  [,2]  [,3]  [,4]
 [1,] 0.000 3.581 3.362 3.105
 [2,] 3.581 0.000 3.772 3.593
@@ -409,6 +412,9 @@ rmsd(xyz[,gaps$f.inds])
 </div>
 <div class='input'>rmsd(xyz2[,gaps$f.inds])
 </div>
+<strong class='warning'>Warning message:
+No indices provided, using the 294 non NA positions
+</strong>
 <div class='output'>      [,1]  [,2]  [,3]  [,4]
 [1,] 0.000 3.570 3.297 3.089
 [2,] 3.570 0.000 3.696 3.579
@@ -418,10 +424,10 @@ rmsd(xyz[,gaps$f.inds])
 <div class='input'>
 plot(rmsf(xyz[,gaps$f.inds]), typ="l", col="blue", ylim=c(0,9))
 </div>
-<p><img src='plot.core-16.png' alt='' width='400' height='400' /></p>
+<p><img src='plot.core-18.png' alt='' width='400' height='400' /></p>
 <div class='input'>points(rmsf(xyz2[,gaps$f.inds]), typ="l", col="red")
 </div>
-<p><img src='plot.core-18.png' alt='' width='400' height='400' /></p>
+<p><img src='plot.core-20.png' alt='' width='400' height='400' /></p>
 <div class='input'></div></pre>
   </div>
   <div class="span4">

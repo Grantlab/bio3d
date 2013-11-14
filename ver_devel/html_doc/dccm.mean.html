@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>dccm.mean. bio3d 2.0</title>
+<title>dccm.mean. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Guido Scarabelli &amp; Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -37,9 +37,7 @@
         
       </header>
       
-      <h1>
-  Atomic Correlation Matrix Consensus Filtering
-</h1>
+      <h1> Atomic Correlation Matrix Consensus Filtering </h1>
 
 <div class="row">
   <div class="span8">
@@ -101,6 +99,22 @@ raw.files <- get.pdb(ids, path = "raw_pdbs")
 </div>
 <strong class='warning'>Warning message:
 ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/4b7t.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/2exm.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1opj.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/4jaj.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1a9u.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1tki.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1csn.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1lp4.pdb  exists. Skipping download</strong>
 <div class='input'>files <- pdbsplit(raw.files, ids)
 </div>
 <div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |=========                                                             |  12%  |                                                                              |==================                                                    |  25%  |                                                                              |==========================                                            |  38%  |                                                                              |===================================                                   |  50%  |                                                                              |============================================                          |  62%  |                                                                              |====================================================                  |  75%  |                                                                              |=============================================================         |  88%  |                                                                              |======================================================================| 100%
@@ -121,7 +135,7 @@ split_chain/1lp4_A.pdb
 ........
 
 Extracting sequences
-muscle -in /tmp/RtmpSa4CZG/file43b31be035ee -out aln.fa -quiet -seqtype protein
+
 pdb/seq: 1   name: split_chain/4b7t_A.pdb 
 pdb/seq: 2   name: split_chain/2exm_A.pdb 
 pdb/seq: 3   name: split_chain/1opj_A.pdb 
@@ -162,13 +176,13 @@ Attaching package: ‘lattice’
     parallel
 </strong>
 <strong class='message'>Loading required package: grid</strong>
-<p><img src='dccm.mean-18.png' alt='' width='400' height='400' /></p>
+<p><img src='dccm.mean-26.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 # Filter to display only correlations present in all structures
 cij.all <- dccm.mean(cij$all.dccm, cutoff.sims = 8, cutoff.cij = 0) 
 plot.dccm(cij.all, main = "Consensus Residue Cross Correlation")
 </div>
-<p><img src='dccm.mean-20.png' alt='' width='400' height='400' /></p>
+<p><img src='dccm.mean-28.png' alt='' width='400' height='400' /></p>
 <div class='input'></div></pre>
   </div>
   <div class="span4">

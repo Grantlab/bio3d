@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>read.dcd. bio3d 2.0</title>
+<title>read.dcd. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -174,7 +174,11 @@ xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
 
 ##-- RMSD of trj frames from PDB
 r1 <- rmsd(a=pdb, b=xyz)
-
+</div>
+<strong class='warning'>Warning message:
+No indices provided, using the 198 non NA positions
+</strong>
+<div class='input'>
 # Pairwise RMSD of trj frames for positions 47 to 54
 flap.inds <- atom.select(pdb,"///47:54///CA/")
 </div>
@@ -187,10 +191,14 @@ Natom "198" "198" "16"    "198" "198" "198"
  *  Selected a total of: 16 intersecting atoms  *
 </div>
 <div class='input'>p <- rmsd(xyz[,flap.inds$xyz])
-# plot highlighting flap opening?
+</div>
+<strong class='warning'>Warning message:
+No indices provided, using the 16 non NA positions
+</strong>
+<div class='input'># plot highlighting flap opening?
 plot.dmat(p, color.palette = mono.colors)
 </div>
-<p><img src='read.dcd-10.png' alt='' width='400' height='400' /></p>
+<p><img src='read.dcd-14.png' alt='' width='400' height='400' /></p>
 <div class='input'></div></pre>
   </div>
   <div class="span4">

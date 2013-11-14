@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>Demonstration of Normal Mode Analysis. bio3d 2.0</title>
+<title>Normal Mode Analysis. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="Barry Grant, Xin-Qiu Yao, Lars Skjaerven">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -70,8 +70,8 @@ pdb <- read.pdb("1hel")
 </div>
 <div class='input'>modes <- nma(pdb)
 </div>
-<div class='output'> Building Hessian...		Done in 0.075 seconds.
- Diagonalizing Hessian...	Done in 0.135 seconds.
+<div class='output'> Building Hessian...		Done in 0.083 seconds.
+ Diagonalizing Hessian...	Done in 0.133 seconds.
 </div>
 <div class='input'>
 pause()
@@ -162,12 +162,17 @@ pause()
 </div>
 <div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
 <div class='input'>
-#############################################
-##                                          #
-## Ensemble NMA                             #
-##                                          #
-#############################################
+################################################
+##                                             #
+## Ensemble NMA                                #
+## (requires the 'muscle' program installed)   #
+##                                             #
+################################################
 
+pause()
+</div>
+<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
+<div class='input'>
 ### Set temp dir to store PDB files
 tmp.dir <- tempdir()
 
@@ -200,22 +205,22 @@ pause()
 pdbs <- pdbaln(files)
 </div>
 <div class='output'>Reading PDB files:
-/tmp/RtmpSa4CZG/4b7t_A.pdb
-/tmp/RtmpSa4CZG/2exm_A.pdb
-/tmp/RtmpSa4CZG/1opj_A.pdb
-/tmp/RtmpSa4CZG/4jaj_A.pdb
-/tmp/RtmpSa4CZG/1a9u_A.pdb
-/tmp/RtmpSa4CZG/1tki_A.pdb
+/tmp/Rtmpbw2kkP/4b7t_A.pdb
+/tmp/Rtmpbw2kkP/2exm_A.pdb
+/tmp/Rtmpbw2kkP/1opj_A.pdb
+/tmp/Rtmpbw2kkP/4jaj_A.pdb
+/tmp/Rtmpbw2kkP/1a9u_A.pdb
+/tmp/Rtmpbw2kkP/1tki_A.pdb
 ......
 
 Extracting sequences
-muscle -in /tmp/RtmpSa4CZG/file43b342041176 -out aln.fa -quiet -seqtype protein
-pdb/seq: 1   name: /tmp/RtmpSa4CZG/4b7t_A.pdb 
-pdb/seq: 2   name: /tmp/RtmpSa4CZG/2exm_A.pdb 
-pdb/seq: 3   name: /tmp/RtmpSa4CZG/1opj_A.pdb 
-pdb/seq: 4   name: /tmp/RtmpSa4CZG/4jaj_A.pdb 
-pdb/seq: 5   name: /tmp/RtmpSa4CZG/1a9u_A.pdb 
-pdb/seq: 6   name: /tmp/RtmpSa4CZG/1tki_A.pdb 
+
+pdb/seq: 1   name: /tmp/Rtmpbw2kkP/4b7t_A.pdb 
+pdb/seq: 2   name: /tmp/Rtmpbw2kkP/2exm_A.pdb 
+pdb/seq: 3   name: /tmp/Rtmpbw2kkP/1opj_A.pdb 
+pdb/seq: 4   name: /tmp/Rtmpbw2kkP/4jaj_A.pdb 
+pdb/seq: 5   name: /tmp/Rtmpbw2kkP/1a9u_A.pdb 
+pdb/seq: 6   name: /tmp/Rtmpbw2kkP/1tki_A.pdb 
 </div>
 <div class='input'>
 pause()
@@ -274,7 +279,7 @@ pause()
 ### Plot fluctuations
 plot(modes, pdbs, type="h")
 </div>
-<p><img src='nma-58.png' alt='' width='400' height='400' /></p>
+<p><img src='nma-60.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 pause()
 </div>

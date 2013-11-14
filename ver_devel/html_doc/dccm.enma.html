@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>dccm.enma. bio3d 2.0</title>
+<title>dccm.enma. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Lars Skjaerven ">
 
@@ -20,7 +20,7 @@
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
+      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -100,6 +100,18 @@ raw.files <- get.pdb(ids, path = "raw_pdbs")
 </div>
 <strong class='warning'>Warning message:
 ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1a70.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1czp.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1frd.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1fxi.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1iue.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1pfd.pdb  exists. Skipping download</strong>
 <div class='input'>files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain")
 </div>
 <div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
@@ -119,7 +131,7 @@ raw_pdbs/split_chain/1pfd_A.pdb
 .....
 
 Extracting sequences
-muscle -in /tmp/RtmpSa4CZG/file43b34bca6d21 -out aln.fa -quiet -seqtype protein
+
 pdb/seq: 1   name: raw_pdbs/split_chain/1a70_A.pdb 
 pdb/seq: 2   name: raw_pdbs/split_chain/1czp_A.pdb 
    PDB has ALT records, taking A only, rm.alt=TRUE
