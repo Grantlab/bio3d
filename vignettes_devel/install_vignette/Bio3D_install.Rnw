@@ -1,60 +1,31 @@
 \documentclass{article}
 
-
 \usepackage{geometry}
 \geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
 
-\setcounter{secnumdepth}{2}
-\setcounter{tocdepth}{2}
+\usepackage{natbib}
+\usepackage{color}
+\definecolor{myurlblue}{rgb}{0.3,0.2,0.7}
+\usepackage[colorlinks=true,urlcolor=myurlblue,pagecolor=black,citecolor=myurlblue,linkcolor=black]{hyperref}
 
-\usepackage{url}
-\usepackage[authoryear]{natbib}
-
-\usepackage[unicode=true,pdfusetitle,
- bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
- breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=true]
- {hyperref}
-\hypersetup{
- pdfstartview={XYZ null null 1}}
-\usepackage{breakurl}
-
-\makeatletter
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
-\providecommand{\LyX}{\texorpdfstring%
-  {L\kern-.1667em\lower.25em\hbox{Y}\kern-.125emX\@}
-  {LyX}}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
-\renewcommand{\textfraction}{0.05}
-\renewcommand{\topfraction}{0.8}
-\renewcommand{\bottomfraction}{0.8}
-\renewcommand{\floatpagefraction}{0.75}
-
-
-\makeatother
-
-\begin{document}
-
-<<include=FALSE>>=
-opts_chunk$set(fig.path='figure/silk-')
-@
 
 
 \title{Installing Bio3D}
 \author{Lars Skjaerven, Xin-Qiu Yao and Barry J. Grant\\
 University of Michigan, Ann Arbor}
 
+\begin{document}
 \maketitle
+
 
 \section{Background}
 Bio3D is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of biomolecular structure, sequence and trajectory data \footnote{Grant, B.J. et al. (2006) \textit{Bioinformatics}, \textbf{22}, 2695-2696}.
 
 \subsection*{What can I do with Bio3D?}
-Features include the ability to read and write biomolecular structure, sequence and dynamic trajectory data, query and search online sequence and stucture databases, perform atom selection, re-orientation, superposition, rigid core identification, clustering, distance matrix analysis, conservation analysis, normal mode analysis, principal component analysis, and many other common sequence and structural analysis tasks. 
+Features include the ability to read and write biomolecular structure, sequence and dynamic trajectory data, query and search online sequence and structure databases, perform atom selection, re-orientation, superposition, rigid core identification, clustering, distance matrix analysis, alignment, conservation analysis, normal mode analysis, principal component analysis, and many other common sequence and structural analysis tasks. 
 
 \subsection*{Why an R package?}
-Bio3D aims to leverage the extensive graphical and statistical capabilities of the R environment (\url{http://www.r-project.org}) and thus provide a useful framework for the exploratory interactive analysis of biomolecular sequence and structure data.
+Bio3D aims to leverage the extensive graphical and statistical capabilities of the R environment (\url{http://www.r-project.org}) and thus provide a useful integrated framework for the exploratory interactive analysis of biomolecular sequence and structure data.
 
 \subsection*{What is the purpose of this document?}
 The aim of this vignette\footnote{This vignette contains executable examples, see \texttt{help(vignette)} for further details.} is to provide Bio3D package installation instructions. 
@@ -63,7 +34,13 @@ The aim of this vignette\footnote{This vignette contains executable examples, se
 The latest version of the package, full documentation and furhter vignettes can be obtained from the main Bio3D website: \url{http://thegrantlab.org/bio3d/} and wiki: \url{http://bio3d.pbwiki.com/}. 
 
 \subsection*{What other vignettes are available?}
-Available Bio3D package vignettes include:
+Available Bio3D package vignettes can be found online \url{http://thegrantlab.org/bio3d/html/} and within R once the Bio3D package is installed. To see available vignettes from within R use the R command:
+
+<<eval=FALSE>>=
+vignette(package="bio3d")
+@
+
+\noindent At the time of writing these include:
 
 \begin{itemize}
 \item \texttt{Installing Bio3D}
@@ -71,12 +48,11 @@ Available Bio3D package vignettes include:
 \item \texttt{Comparative protein structure analysis with Bio3D}
 \item \texttt{Sequence conservation analysis with Bio3D} 
 \item \texttt{Beginning trajectory analysis with Bio3D}
-\item \texttt{Principal component analysis with Bio3D} 
 \item \texttt{Dynamic network analysis with Bio3D}
 \item \texttt{Normal mode analysis with Bio3D}
 \end{itemize}
 
-\paragraph{Sidenote:} We are always interested in adding additional functionality and documentation to the Bio3D package. If you have ideas or suggestions for improvments, or indeed code that you would like to distribute as part of this package, please contact us -- we would like to hear from you!
+\paragraph{Side-note:} We are always interested in adding additional functionality and documentation to the Bio3D package. If you have ideas or suggestions for improvements, or indeed code that you would like to distribute as part of this package, please contact us -- we would like to hear from you!
 
 \section{Quick Installation for Linux/Ubuntu Users}
 Most required packages and programs are available from the official Ubuntu repository:
@@ -92,19 +68,20 @@ chmod a+x /usr/local/bin/dssp
 
 \noindent Download the source code of the latest Bio3D version:
 \begin{verbatim}
-wget http://thegrantlab.org/bio3d/bio3d_2.0-0.tar.gz
+wget http://thegrantlab.org/bio3d/bio3d_2.0-1.tar.gz
 \end{verbatim}
 
-\noindent Install required packages, and finally the Bio3D package:
+\noindent Start R by issuing the command \texttt{R} and then from the R prompt install required packages, and finally the Bio3D package:
 
 <<eval=FALSE>>=
 install.packages(c("ncdf", "lattice", "grid", "bigmemory", "multicore", "XML"),dependencies=TRUE)
-install.packages("bio3d_2.0-0.tar.gz")
+install.packages("bio3d_2.0-1.tar.gz")
 @
 
+\noindent If everything worked as expected you can skip ahead to section 5. If you experienced errors you should continue to read section 3 and the installation instructions in section 4.1.
 
 \section{Installation Perquisites}
-Before you attempt to install Bio3D you should have a relatively recent version of R installed and working on your system. Detailed instructions for obtaining and installing R on various platforms can be found on the R home page \url{http://www.r-project.org}. 
+Before you attempt to install Bio3D you should have a relatively recent version of R installed and working on your system (we recommend at least R version 3.0.1). Detailed instructions for obtaining and installing R on various platforms can be found on the R home page \url{http://www.r-project.org}. 
 
 \subsection*{Do I need to know R?}
 To get the most out of Bio3D you should be quite familiar with basic R usage. Some newcomers to R find this a steep learning curve. However, once you have mastered basic operations with vectors and matrices in R you should feel confident about getting stuck into using the Bio3D package.
@@ -123,7 +100,7 @@ install.packages(c("ncdf", "lattice", "grid", "bigmemory", "multicore", "XML"), 
 The Bio3D package is available in two forms from \url{http://thegrantlab.org/bio3d/}
 
 \begin{itemize}
-\item \href{http://thegrantlab.org/bio3d/download/download.html}{as platform independent source code} (intended primiraly for Mac and Unix systems), 
+\item \href{http://thegrantlab.org/bio3d/download/download.html}{as platform independent source code} (intended primarily for Mac and Unix systems), 
 \item \href{http://thegrantlab.org/bio3d/download/download.html}{as a compiled binary for Windows}.
 \end{itemize}
 
@@ -131,20 +108,20 @@ To install from source requires that your machine has standard compilers and too
 
 
 \subsection{Linux/Unix Installation}
-To install the Bio3D package in a Unix environment download the latest Bio3D source tar.gz file from above. Then within an R session type: 
+If you are unable to use the quick installation instructions described in section 2 in a Unix environment then you should download the latest Bio3D source tar.gz file from above. Then within an R session type: 
 
 <<eval=FALSE>>=
-install.packages("bio3d_2.0-0.tar.gz") 
+install.packages("bio3d_2.0-1.tar.gz") 
 @
 
 \noindent
 Or from the command line:
 \begin{verbatim}
-R CMD INSTALL bio3d_2.0-0.tar.gz
+R CMD INSTALL bio3d_2.0-1.tar.gz
 \end{verbatim}
 
 
-\paragraph{Sidenote:} This will only work if you have permission to write files to the standard package installation location. If you would rather install to a different location you can set the \texttt{R\_LIBS} enviroment variable to a location of your choice. For example, if you use tcsh/bash then add a line similar to the following to your .tcshrc/.bashrc file: 
+\paragraph{Sidenote:} This will only work if you have permission to write files to the standard package installation location. If you would rather install to a different location you can set the \texttt{R\_LIBS} environment variable to a location of your choice. For example, if you use tcsh/bash then add a line similar to the following to your .tcshrc/.bashrc file: 
 
 \begin{verbatim}
 # csh:
@@ -216,23 +193,22 @@ Along with the standard documentation you may find my \href{http://bio3d.pbworks
 PyMOL is another visualization program with overlapping functionality with VMD. Bio3D functions \texttt{view.dccm()} and \texttt{view.modes()} require PyMOL in the search path. PyMOL is open-source software and available from \url{http://www.pymol.org}.
 
 
-%\subsection{Quick installation of key utility programs on Ubuntu (64-bit)}
-%\begin{verbatim}
-%apt-get install seaview muscle pymol
-
-%wget ftp://ftp.cmbi.ru.nl/pub/software/dssp/dssp-2.0.4-linux-amd64
-%mv dssp-2.0.4-linux-amd64 /usr/local/bin/dssp
-%chmod +x /usr/local/bin/dssp
-%\end{verbatim}
-
-
-
 \section{Testing your installation}
 You should now be able to load the Bio3D library into your current R session by typing the usual \texttt{library(bio3d)} command at the R Console. 
 
 <<eval=FALSE>>=
 library(bio3d)
 help(package="bio3d")
+vignette(package="bio3d")
+@
+
+We now suggest you use the command \texttt{demo("pdb")}, \texttt{demo("pca")} and \texttt{demo("md")} to get a quick feel for some of the tasks that we will be introducing in subsequent vignettes:
+
+<<eval=FALSE>>=
+library(bio3d)
+demo("pdb")
+demo("pca")
+demo("md")
 @
 
 \section{Where to next}
