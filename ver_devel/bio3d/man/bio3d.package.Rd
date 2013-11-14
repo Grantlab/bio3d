@@ -27,8 +27,7 @@ Features include the ability to read and write structure
 Perform sequence database searches (\code{\link{blast.pdb}}), atom
 summaries (\code{\link{summary.pdb}}),  atom selection
 (\code{\link{atom.select}}),  re-orientation (\code{\link{orient.pdb}}),
-superposition (\code{\link{rot.lsq}},  \code{\link{fit.xyz}}), rigid core
-identification (\code{\link{core.find}},  \code{\link{plot.core}}, 
+alignment ((\code{\link{pdbaln}},  \code{\link{seqaln}})) superposition (\code{\link{rot.lsq}},  \code{\link{fit.xyz}}), rigid core identification (\code{\link{core.find}},  \code{\link{plot.core}}, 
 \code{\link{fit.xyz}}), torsion/dihedral analysis
 (\code{\link{torsion.pdb}},  \code{\link{torsion.xyz}}), clustering (via
 \code{\link{hclust}}), principal component analysis
@@ -88,7 +87,17 @@ help(read.pdb)
 ##    http://thegrantlab.org/bio3d/html/read.pdb.html
 
 \dontrun{
-##-- Read a PDB file
+##-- See the list of Bio3D demos 
+demo(package="bio3d")
+
+## Try some out, e.g: 
+demo(pdb) # PDB Manipulation, Serching and Alignment
+demo(pca) # Principal Component Analysis
+demo(md)  # Molecular Dynamics Trajectory Analysis
+demo(nma) # Normal Mode Analysis
+
+
+##-- Start by reading a PDB file
 pdb <- read.pdb("1BG2")
 
 ##
