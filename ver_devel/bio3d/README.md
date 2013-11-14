@@ -6,7 +6,7 @@ Note that you can also get help on any particular function by using the command 
 
 We also distribute a number of extended **Bio3D vignettes** that provide worked examples of using Bio3D to perform a particular type of analysis. Currently available vignettes include:
 - Installing Bio3D ( <a href="http://thegrantlab.org/bio3d/Bio3D_install.pdf">PDF</a> )
-- Getting started with Bio3D ( PDF )
+- Getting started with Bio3D ( PDF | <a href="http://thegrantlab.org/bio3d/user_guide/user_guide.html">HTML</a> )
 - Beginning Trajectory Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/Bio3D_md.pdf">PDF</a> )
 - Enhanced Methods for Normal Mode Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/Bio3D_nma.pdf">PDF</a> )
 - Comparative sequence and structure analysis with Bio3D ( PDF )
