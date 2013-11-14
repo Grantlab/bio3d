@@ -30,7 +30,6 @@ Detailed instructions for obtaining and installing the Bio3D package on various 
 vignette(package="bio3d")
 @
 
-Note that to follow along with this vignette the \href{http://www.drive5.com/muscle/}{MUSCLE multiple sequence alignment program} must be installed on your system and in the search path for executables. Please see the installation vignette for full details.
 
 \section{Getting Started}
 Start R, load the Bio3D package and use the command \texttt{demo("md")} to get a quick feel for some of the tasks that we will be introducing in the following sections.
@@ -110,7 +109,7 @@ dim(xyz) == dim(dcd)
 \section{Root Mean Square Deviation (RMSD)}
 RMSD is a standard measure of structural distance between coordinate sets and is implemented in the Bio3D function \texttt{rmsd()}.
 
-<<echo=TRUE, fig.cap="Simple time series of RMSD from the initial structure (note periodic jumps that we will later see correspond to transient openings of the flap regions of HIVpr)">>=
+<<warning=FALSE, fig.cap="Simple time series of RMSD from the initial structure (note periodic jumps that we will later see correspond to transient openings of the flap regions of HIVpr)">>=
 rd <- rmsd(xyz[1,ca.inds$xyz], xyz[,ca.inds$xyz])
 
 plot(rd, typ="l", ylab="RMSD", xlab="Frame No.")
@@ -190,7 +189,7 @@ write.ncdf(p1, "trj_pc1.nc")
 \section{Cross-Correlation Analysis}
 The extent to which the atomic fluctuations/displacements of a system are correlated with one another can be assessed by examining the magnitude of all pairwise cross-correlation coefficients. The Bio3D \texttt{dccm()} function returns a matrix of all atom-wise cross-correlations whose elements may be displayed in a graphical representation frequently termed a dynamical cross-correlation map, or DCCM.
 
-<<echo=TRUE>>=
+<<echo=TRUE, results="hide">>=
 cij<-dccm(xyz[,ca.inds$xyz])
 plot(cij)
 @
@@ -219,8 +218,7 @@ If you have read this far, congratulations! We are ready to have some fun and mo
 This document is shipped with the Bio3D package in both Rnw and PDF formats. All code can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
 
 <<eval=FALSE>>=
-library(knitr)
-knit("Bio3D_md.Rnw")
+knitr::knit("Bio3D_md.Rnw")
 tools::texi2pdf("Bio3D_md.tex")
 @
 
