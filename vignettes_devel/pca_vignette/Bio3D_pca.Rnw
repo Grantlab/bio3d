@@ -297,6 +297,9 @@ plot(hc.rd, labels=pdbs$id, ylab="RMSD", main="RMSD Cluster Dendrogram")
 RMSF is another often used measure of conformational variance. The Bio3D \texttt{rmsf()} function will return a vector of atom-wise (or residue-wise) variance instead of a single numeric value. For example:
 
 <<fig.cap="RMSF plot">>=
+## Ignore gap containing positions
+gaps.pos <- gap.inspect(pdbs$xyz)
+
 rf <- rmsf(xyz[, gaps.pos$f.inds])
 plot.bio3d(res.ind, rf, sse=sse, ylab="RMSF (A)", xlab="Position", typ="l")
 @ 
