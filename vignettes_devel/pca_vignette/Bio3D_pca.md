@@ -1,6 +1,7 @@
 # Comparative Protein Structure Analysis with Bio3D
 ## Xin-Qiu Yao, Lars Skjaerven and Barry J. Grant
 ## University of Michigan, Ann Arbor
+<br><br><br>
 
 ## Background
 
@@ -10,7 +11,7 @@ of this document, termed a vignette[^2] in R parlance, is to provide a
 brief task-oriented introduction to facilities for analyzing protein
 structure data with Bio3D [@grant06].
 
-#### Requirements:
+### Requirements:
 
 Detailed instructions for obtaining and installing the Bio3D package on
 various platforms can be found in the [Installing
@@ -30,6 +31,7 @@ secondary structure assignment
 program](http://swift.cmbi.ru.nl/gv/dssp/) must be installed on your
 system and in the search path for executables. Please see the
 installation vignette for full details.
+<br><br>
 
 ## Getting Started
 
@@ -59,6 +61,7 @@ from the documentation of a particular function, or indeed this
 vignette, directly into your R session to see how things work. You can
 also find this [documentation
 online](http://thegrantlab.org/bio3d/html/index.html).
+<br><br>
 
 ### Working with single PDB structures
 
@@ -229,7 +232,7 @@ names.
 #### Question:
 
 How would you extract the one-letter amino acid sequence for the loop
-region mentioned above? HINT The `aa321()` function converts between
+region mentioned above? HINT: The `aa321()` function converts between
 three-letter and one-letter IUPAC amino acid codes.
 
 #### Question:
@@ -241,12 +244,13 @@ section of `help(atom.select)` and the `string` option.
 
 Consider using the `help(combine.sel)` function when dealing with more
 complicated selections.
+<br><br>
 
 ### Working with multiple PDB structures
 
 The Bio3D package was designed to specifically facilitate the analysis
 of multiple structures from both experiment and simulation. The
-challenge with working with these structures is that they are usually
+challenge of working with these structures is that they are usually
 different in their composition (i.e. contain differing number of atoms,
 sequences, chains, ligands, structures, conformations etc. even for the
 same protein as we will see below) and it is these differences that are
@@ -331,10 +335,11 @@ rmsd(pdbs, fit = TRUE)
 
 What effect does setting the `fit=TRUE` option have in the RMSD
 calculation? What would the results indicate if you set `fit=FALSE` or
-disparaged this option? HINT Bio3D functions have various default
+disparaged this option? HINT: Bio3D functions have various default
 options that will be used if the option is not explicitly specified by
 the user, see `help(rmsd)` for an example and note that the input
 options with an equals sign (e.g. `fit=FALSE`) have default values.
+<br><br>
 
 ### Exploring example data for the transducin heterotrimeric G Protein
 
@@ -344,8 +349,6 @@ by following the extended examples documented within the various Bio3D
 functions) is to allow users to more quickly appreciate the capabilities
 of functions that would otherwise require extensive data downloads
 before execution.
-
-#### 
 
 For a number of the examples in the current vignette we will utilize the
 included transducin dataset that contains over 50 publicly available
@@ -375,6 +378,7 @@ This dataset can be assembled from scratch with commands similar to
 those detailed in the next section and those listed in section 2.2. Also
 see `help(example.data)` for a full description of this datasets
 contents.
+<br><br><br>
 
 ## Constructing Experimental Structure Ensembles for a Protein Family
 
@@ -445,20 +449,14 @@ head(hits$pdb.id)
 ```
 
 
-#### Sidenote: The function `pdb.annotate()` can fetch detailed information about the
+#### Sidenote: 
+The function `pdb.annotate()` can fetch detailed information about the
 corresponding structures (e.g. title, experimental method, resolution,
 ligand name(s), citation, etc.). For example:
 
 
 ```r
 anno <- pdb.annotate(hits$pdb.id)
-```
-
-```
-## Loading required package: XML
-```
-
-```r
 head(anno[, c("resolution", "ligandId", "citation")])
 ```
 
@@ -472,7 +470,7 @@ head(anno[, c("resolution", "ligandId", "citation")])
 ## 1BOF        2.2            GDP, MG, SO4 Coleman et al. Biochemistry (1998)
 ```
 
-
+<br><br>
 
 ### Multiple Sequence Alignment
 
@@ -513,6 +511,7 @@ further exploration.
 
 How could you automatically identify gap positions in your alignment?
 HINT: try the command `help.search("gap", package="bio3d")`.
+<br><br><br>
 
 ## Comparative Structure Analysis
 
@@ -538,8 +537,6 @@ superposition over all domains (whole structure superposition). A more
 appropriate and insightful superposition would be anchored at the most
 invariant region and hence more clearly highlight the domain
 rearrangement (sub-structure superposition).
-
-#### 
 
 The Bio3D `core.find()` function implements an iterated superposition
 procedure, where residues displaying the largest positional differences
@@ -596,7 +593,7 @@ write.pdb(xyz = pdbs$xyz[1, core.inds$xyz], file = "quick_core.pdb")
 ```
 
 
-![image](figure/core.png)
+![The most structural invariant core positions in the transducin family](figure/core.png)
 
 We can now superpose all structures on the selected core indices with
 the `fit.xyz()` or `pdbfit()` function.
@@ -617,8 +614,10 @@ superposed structures can be output for viewing (in this case to the
 local directory `somedir` which you can obviously change). These fitted
 structures can then be viewed in your favorite molecular graphics
 program (Figure 5).
+<br><br>
 
-![image](figure/fit.png)
+![Structure ensemble of transducin family superposed based on core positions](figure/fit.png)
+<br><br>
 
 ### Standard Structural Analysis
 
@@ -638,7 +637,7 @@ structures based on these values:
 
 ```r
 rd <- rmsd(xyz)
-hist(rd, breaks = 40, xlab = "RMSD (Å)")
+hist(rd, breaks = 40, xlab = "RMSD (Å)", main = "Histogram of RMSD")
 ```
 
 ![Histogram of RMSD among transducin structures](figure/unnamed-chunk-19.png) 
@@ -646,13 +645,44 @@ hist(rd, breaks = 40, xlab = "RMSD (Å)")
 
 
 ```r
-
 # RMSD clustering
 hc.rd <- hclust(as.dist(rd))
-plot(hc.rd, labels = pdbs$id, ylab = "RMSD", main = "RMSD Cluster Dendrogram")
 ```
 
-![RMSD clustering of transducin structures](figure/unnamed-chunk-20.png) 
+
+The result can be illustrated as a simple dendrogram with the command:
+
+```r
+plot(hc.rd, labels = pdbs$id, ylab = "RMSD (Å)", main = "RMSD Cluster Dendrogram")
+```
+
+
+Or as a nicer plot:
+
+```r
+hc.rd$labels <- pdbs$id
+dend <- as.dendrogram(hc.rd)
+colLab <- function(n, cols) {
+    if (is.leaf(n)) {
+        a <- attributes(n)
+        col <- cols[a$label]
+        a$nodePar$pch = NA
+        attr(n, "nodePar") <- c(a$nodePar, list(lab.col = col))
+    }
+    n
+}
+op <- par(no.readonly = TRUE)
+par(cex = 0.8)
+dend_colored <- dendrapply(dend, colLab, annotation[, "color"])
+plot(dend_colored, cex.axis = 1.2, cex.lab = 1.2, cex.main = 1.2, ylab = "RMSD (Å)", 
+    main = "RMSD Cluster Dendrogram")
+```
+
+![RMSD clustering of transducin structures](figure/unnamed-chunk-22.png) 
+
+```r
+par(op)
+```
 
 
 #### Question: 
@@ -660,9 +690,11 @@ How many structure groups/clusters do we have according to this clustering? How 
 
 #### Question: 
 What kind of plot would the command `heatmap(rd)` produce? How would you label this plot with PDB codes? HINT: labCol and labRow. 
+<br><br>
 
 #### Root mean squared fluctuations (RMSF):
-RMSF is another often used measure of conformational variance. The Bio3D `rmsf()` function will return a vector of atom-wise (or residue-wise) variance instead of a single numeric value. For example:
+RMSF is another often used measure of conformational variance. The Bio3D `rmsf()` function returns a vector of atom-wise (or residue-wise) variance instead of a single numeric value. The below sequence of commands returns the indices for gap containing
+positions,  which we then exclude from subsequent RMSF calculation:
 
 
 ```r
@@ -670,20 +702,21 @@ RMSF is another often used measure of conformational variance. The Bio3D `rmsf()
 gaps.res <- gap.inspect(pdbs$ali)
 gaps.pos <- gap.inspect(pdbs$xyz)
 
-## Plot loadings in relation to reference structure '1TAG' Annotate SSE with
-## renumbered residue indices
-sse <- dssp(pdb, resno = FALSE)
+## Plot loadings in relation to reference structure '1TAG'
 
+## Annotate SSE with renumbered residue indices
+sse <- dssp(pdb, resno = FALSE)
 ind <- grep("1TAG", pdbs$id)
 res.ref <- which(!is.gap(pdbs$ali[ind, ]))
 res.ind <- which(res.ref %in% gaps.res$f.ind)
 
 rf <- rmsf(xyz[, gaps.pos$f.inds])
-plot.bio3d(res.ind, rf, sse = sse, ylab = "RMSF (A)", xlab = "Position", typ = "l")
+plot.bio3d(res.ind, rf, sse = sse, ylab = "RMSF (Å)", xlab = "Position", typ = "l")
 ```
 
-![RMSF plot](figure/unnamed-chunk-21.png) 
+![RMSF plot](figure/unnamed-chunk-23.png) 
 
+<br><br>
 
 #### Torsion/Dihedral analysis:
 
@@ -699,7 +732,7 @@ tor <- torsion.pdb(pdb)
 plot(tor$phi, tor$psi, xlab = "phi", ylab = "psi")
 ```
 
-![Basic Ramachandran plot](figure/unnamed-chunk-22.png) 
+![Basic Ramachandran plot](figure/unnamed-chunk-24.png) 
 
 
 Lets compare the Calpha atom based pseudo-torsion angles between two structures:
@@ -730,16 +763,15 @@ sse2 <- dssp(read.pdb("1tag"))
 plot.bio3d(resno, abs(d.ab), typ = "h", sse = sse2, xlab = "Residue", ylab = "Angle")
 ```
 
-![Torsion angle difference between structures in GDP (1tag) and GTP (1tnd) nucleotide states](figure/unnamed-chunk-23.png) 
+![Torsion angle difference between structures in GDP (1tag) and GTP (1tnd) nucleotide states](figure/unnamed-chunk-25.png) 
 
+<br><br>
 
 #### Difference distance matrix analysis (DDM)
 
 Distance matrices can be calculated with the function `dm()` and contact
 maps with the function `cmap()`. In the example below we calculate the
-differe distance matrix by simply subtracting one distance matrix from
-another. Note the vectorized nature of the this calculation (i.e. we do
-not have to explicitly iterate through each element of the matrix):
+difference distance matrix by simply subtracting one distance matrix from another. Note the vectorized nature of the this calculation (i.e. we do not have to explicitly iterate through each element of the matrix):
 
 
 ```r
@@ -750,12 +782,13 @@ plot((a - b), nlevels = 10, grid.col = "gray", resnum.1 = resno, resnum.2 = resn
     xlab = "1tag", ylab = "1tnd (positions relative to 1tag)")
 ```
 
-![Difference of distance matrices between structures in GDP(1tag) and GTP(1tnd) nucleotide states](figure/unnamed-chunk-24.png) 
+![Difference of distance matrices between structures in GDP(1tag) and GTP(1tnd) nucleotide states](figure/unnamed-chunk-26.png) 
 
 
 #### Question:
 
 Can you think of the pros and cons of these different analysis methods?
+<br><br><br>
 
 ## Principal Component Analysis (PCA)
 
@@ -782,9 +815,7 @@ original distribution [@grant06].
 
 #### 
 
-The below sequence of commands returns the indices of for gap containing
-positions, which we then exclude from subsequent PCA with the
-`pca.xyz()` command.
+The below command excludes the gap positions identified above from the PCA with the `pca.xyz()` command.
 
 
 ```r
@@ -802,6 +833,7 @@ Why is the input to function `pca.xyz()` given as `xyz` rather than
 
 Why would you need superposition before using `pca.xyz` but not need it
 for `pca.tor`?
+<br><br>
 
 A quick overview of the results of `pca.xyz()` can be obtained by
 calling `plot.pca()` (Figure 12).
@@ -811,7 +843,7 @@ calling `plot.pca()` (Figure 12).
 plot(pc.xray, col = annotation[, "color"])
 ```
 
-![Overview of PCA results for transducin crystallographic structures](figure/unnamed-chunk-26.png) 
+![Overview of PCA results for transducin crystallographic structures](figure/unnamed-chunk-28.png) 
 
 
 We can also call `plot.bio3d()` to examine the contribution of each
@@ -828,14 +860,14 @@ par(op)
 ```
 
 
-![Contribution of each residue to the first three principal components](figure/unnamed-chunk-28.png) 
+![Contribution of each residue to the first three principal components](figure/unnamed-chunk-30.png) 
 
 
 
-The plots in Figures 12 and 14 display the relationships between different conformers, highlight positions responsible for the major differences between structures and enable the interpretation and characterization of multiple interconformer relationships.
+The plots in Figures 12 and 13 display the relationships between different conformers, highlight positions responsible for the major differences between structures and enable the interpretation and characterization of multiple interconformer relationships.
 
 
-To further aid interpretation, a PDB format trajectory can be produced that interpolates between the most dissimilar structures in the distribution along a given principal cmponent.  This involves dividing the difference between the conformers into a number of evenly spaced steps along the principal components, forming the frames of the trajectory. Such trajectories can be directly visualized in a molecular graphics program, such as VMD [@vmd]. Furthermore, the PCA results can be compared to those from simulations (see the molecular dynamics and normal mode analysis vignettes), as well as guiding dynamic network analysis, being analyzed for possible domain and shear movements with the DynDom package [@dyndom], or used as initial seed structures for reaction path refinement methods such as Conjugate Peak Refinement [@cpr].
+To further aid interpretation, a PDB format trajectory can be produced that interpolates between the most dissimilar structures in the distribution along a given principal cmponent.  This involves dividing the difference between the conformers into a number of evenly spaced steps along the principal components, forming the frames of the trajectory. Such trajectories can be directly visualized in a molecular graphics program, such as VMD [@vmd] (Figure 14). Furthermore, the PCA results can be compared to those from simulations (see the molecular dynamics and normal mode analysis vignettes), as well as guiding dynamic network analysis, being analyzed for possible domain and shear movements with the DynDom package [@dyndom], or used as initial seed structures for reaction path refinement methods such as Conjugate Peak Refinement [@cpr].
 
 
 
@@ -844,7 +876,8 @@ a <- mktrj.pca(pc.xray, pc = 1, file = "pc1.pdb")
 ```
 
 
-![image](figure/pca.png)
+![Interpolated structures along PC1 produced by the mktrj.pca() function](figure/pca.png)
+<br><br>
 
 ### Conformer Clustering in PC Space
 
@@ -861,7 +894,7 @@ clustering detailed previously. For example in the PC1-PC2 plane, the
 inactive “GDP” structures (green points in Figure 12) are further split
 into two sub-groups (Figures 15 and 16). The bottom-right sub-group
 (blue) exclusively correspond to the structures complexed with GDP
-dissociation inhibitor (GDPi). This is clearly evident in the PC plot
+dissociation inhibitor (GDI). This is clearly evident in the PC plot
 and clustering dendrogram that can be generated with the following
 commands:
 
@@ -869,22 +902,34 @@ commands:
 ```r
 hc <- hclust(dist(pc.xray$z[, 1:2]))
 grps <- cutree(hc, h = 30)
-cols <- c("red", "green", "blue")
-plot(pc.xray$z[, 1:2], typ = "p", pch = 16, col = cols[grps], xlab = "PC1", 
-    ylab = "PC2")
+cols <- c("red", "green", "blue")[grps]
+plot(pc.xray$z[, 1:2], typ = "p", pch = 16, col = cols, xlab = "PC1", ylab = "PC2", 
+    cex = 1.2, cex.axis = 1.5, cex.lab = 1.5)
 ```
 
-![Clustering based on PC1-PC2](figure/unnamed-chunk-301.png) 
+![Clustering based on PC1-PC2](figure/unnamed-chunk-321.png) 
 
 ```r
-plot(hc, labels = pdbs$id, main = "PC1-2", xlab = "", ylab = "Distance")
+
+# Dendrogram plot
+dend <- as.dendrogram(hc)
+names(cols) <- pdbs$id
+op <- par(no.readonly = TRUE)
+par(cex = 0.8)
+dend_colored <- dendrapply(dend, colLab, cols)
+plot(dend_colored, cex.axis = 1.2, cex.lab = 1.2, cex.main = 1.2, ylab = "Distance in PC Space", 
+    main = "PC1-2")
 abline(h = 30, lty = 3, col = "gray60")
 ```
 
-![Clustering based on PC1-PC2](figure/unnamed-chunk-302.png) 
+![Clustering based on PC1-PC2](figure/unnamed-chunk-322.png) 
+
+```r
+par(op)
+```
 
 
-#### Side-note:
+#### Sidenote:
 
 On the PC1 vs PC2 conformer plot in Figure 15 you can interactively
 identify and label individual structures by using the `identify()`
@@ -910,6 +955,7 @@ different clustering results?
 
 
 
+<br><br><br>
 
 ## Where to Next
 
@@ -923,6 +969,7 @@ calculations), and advanced Comparative Structure Analysis (where we
 will mine available experimental data and supplement it with simulation
 results to map the conformational dynamics and coupled motions of
 proteins).
+<br><br><br>
 
 ## Document Details
 
@@ -936,6 +983,12 @@ knitr::knit("Bio3D_pca.Rnw")
 tools::texi2pdf("Bio3D_pca.tex")
 ```
 
+
+#### Sidenote:
+
+Currently, the full Rnw file is not availabe in the package due to the 
+fact that the building of package would take too long time.
+<br><br>
 
 ### Information About the Current Bio3D Session
 
@@ -963,11 +1016,14 @@ sessionInfo()
 ## [1] XML_3.98-1.1 bio3d_2.0-1  knitr_1.5   
 ## 
 ## loaded via a namespace (and not attached):
-## [1] codetools_0.2-8 digest_0.6.3    evaluate_0.5.1  formatR_0.10   
-## [5] stringr_0.6.2   tools_3.0.1
+## [1] digest_0.6.3   evaluate_0.5.1 formatR_0.10   stringr_0.6.2 
+## [5] tools_3.0.1
 ```
 
+<br><br><br>
 
+
+## References
 
 Grant, B.J. and Rodrigues, A.P.D.C and Elsawy, K.M. and Mccammon, A.J.
 and Caves, L.S.D. (2006) **Bio3d: an R package for the comparative
