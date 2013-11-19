@@ -8,7 +8,9 @@ formula2mass <- function(form, sum.mass=TRUE) {
   eles <- eles[sapply(eles, nzchar)]
   no.num <- !grepl("[0-9]",eles)
   eles[no.num] <- paste(eles[no.num], "1", sep="")
-
+  if(any(grepl("(^[[:alpha:]]+)([[:digit:]]+$)", eles)))
+     stop(errmsg)
+  
   elemass <- function(ele) {
     num <- gsub("[A-z]","",ele)
     cha <- gsub("[0-9]","",ele)
