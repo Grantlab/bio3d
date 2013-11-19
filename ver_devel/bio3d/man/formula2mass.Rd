@@ -19,7 +19,7 @@ Return a single element numeric vector containing the mass corresponding to a gi
 \author{Lars Skjaerven}
 
 \seealso{
-\code{\link{atom2symb}}, \code{\link{get.masses}}
+\code{\link{atom2ele}}, \code{\link{atom2mass}}
 }
 \examples{
 formula2mass("C5 H6 N O3")
