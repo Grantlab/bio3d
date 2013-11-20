@@ -34,7 +34,7 @@ The aim of this vignette[^2] is to provide Bio3D package installation instructio
 
 The latest version of the package, full documentation and furhter
 vignettes can be obtained from the main Bio3D website:
-<http://thegrantlab.org/bio3d/> and wiki: <http://bio3d.pbwiki.com/>.
+<http://thegrantlab.org/bio3d/>.
 
 ### What other vignettes are available?
 
@@ -87,7 +87,7 @@ DSSP however is not, but can be installed by:
 
 Download the source code of the latest Bio3D version:
 
-    wget http://thegrantlab.org/bio3d/bio3d_2.0-1.tar.gz
+    wget http://thegrantlab.org/bio3d/phocadownload/Bio3D_version2.x/bio3d_2.0-1.tar.gz
 
 Start R by issuing the command `R` and then from the R prompt install
 required packages, and finally the Bio3D package:
@@ -149,11 +149,11 @@ The Bio3D package is available in two forms from
 <http://thegrantlab.org/bio3d/>
 
 -   [as platform independent source
-    code](http://thegrantlab.org/bio3d/download/download.html) (intended
+    code](http://thegrantlab.org/bio3d/download) (intended
     primarily for Mac and Unix systems),
 
 -   [as a compiled binary for
-    Windows](http://thegrantlab.org/bio3d/download/download.html).
+    Windows](http://thegrantlab.org/bio3d/download).
 
 To install from source requires that your machine has standard compilers
 and tools such as Perl 5.004 or later. If you run into problems with
@@ -220,7 +220,7 @@ downloaded Bio3D zip file and click `Open` to finish the installation.
 
 For the majority of users we recommend the use of the last stable
 release available from the [main Bio3D
-website](http://thegrantlab.org/bio3d/download/download.html). The
+website](http://thegrantlab.org/bio3d/download). The
 development version is available from our [bitbucket
 repository](https://bitbucket.org/Grantlab/bio3d/) and typically
 contains new functions and bug fixes that have not yet been incorporated
@@ -370,14 +370,14 @@ sessionInfo()
 ```
 
 ```
-## R version 3.0.1 (2013-05-16)
+## R version 3.0.2 (2013-09-25)
 ## Platform: x86_64-redhat-linux-gnu (64-bit)
 ## 
 ## locale:
 ##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
 ##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
 ##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-##  [7] LC_PAPER=C                 LC_NAME=C                 
+##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
 ##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
 ## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
@@ -388,7 +388,7 @@ sessionInfo()
 ## [1] knitr_1.5
 ## 
 ## loaded via a namespace (and not attached):
-## [1] evaluate_0.5.1 formatR_0.10   stringr_0.6.2  tools_3.0.1
+## [1] evaluate_0.4.7 formatR_0.9    stringr_0.6.2  tools_3.0.2
 ```
 
 

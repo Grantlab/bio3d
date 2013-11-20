@@ -34,7 +34,7 @@ The aim of this vignette[^2] is to provide Bio3D package installation instructio
 
 The latest version of the package, full documentation and furhter
 vignettes can be obtained from the main Bio3D website:
-<http://thegrantlab.org/bio3d/> and wiki: <http://bio3d.pbwiki.com/>.
+<http://thegrantlab.org/bio3d/>.
 
 ### What other vignettes are available?
 
@@ -85,7 +85,7 @@ DSSP however is not, but can be installed by:
 
 Download the source code of the latest Bio3D version:
 
-    wget http://thegrantlab.org/bio3d/bio3d_2.0-1.tar.gz
+    wget http://thegrantlab.org/bio3d/phocadownload/Bio3D_version2.x/bio3d_2.0-1.tar.gz
 
 Start R by issuing the command `R` and then from the R prompt install
 required packages, and finally the Bio3D package:
@@ -141,11 +141,11 @@ The Bio3D package is available in two forms from
 <http://thegrantlab.org/bio3d/>
 
 -   [as platform independent source
-    code](http://thegrantlab.org/bio3d/download/download.html) (intended
+    code](http://thegrantlab.org/bio3d/download) (intended
     primarily for Mac and Unix systems),
 
 -   [as a compiled binary for
-    Windows](http://thegrantlab.org/bio3d/download/download.html).
+    Windows](http://thegrantlab.org/bio3d/download).
 
 To install from source requires that your machine has standard compilers
 and tools such as Perl 5.004 or later. If you run into problems with
@@ -210,7 +210,7 @@ downloaded Bio3D zip file and click `Open` to finish the installation.
 
 For the majority of users we recommend the use of the last stable
 release available from the [main Bio3D
-website](http://thegrantlab.org/bio3d/download/download.html). The
+website](http://thegrantlab.org/bio3d/download). The
 development version is available from our [bitbucket
 repository](https://bitbucket.org/Grantlab/bio3d/) and typically
 contains new functions and bug fixes that have not yet been incorporated
