@@ -26,19 +26,27 @@
     atom.inds <- ij[,i]
 
     if(Mlist) {
-      ev <- eigen(M[[i]])
-      maxDist     <- M[[i]][1,1]
+      ev      <- eigen(M[[i]])
+      maxDist <- M[[i]][1,1]
     }
     else {
-      ev <- eigen(M[,,i])
-      maxDist     <- M[1,1,i]
+      ev      <- eigen(M[,,i])
+      maxDist <- M[1,1,i]
     }
     
     maxEigenVal <- max(ev$values)
     hei <- 1 - (sqrt(maxDist / maxEigenVal))
     matrixCorr[atom.inds[1], atom.inds[2]] <- hei
     matrixCorr[atom.inds[2], atom.inds[1]] <- hei
+
+    ##matrixCorr[atom.inds[1], atom.inds[2]] <- maxDist
+    ##matrixCorr[atom.inds[2], atom.inds[1]] <- maxDist
+    
+    ##if(max(ev$values)>maxEigenVal) 
+    ##  maxEigenVal <- max(ev$values)
   }
+
+  ##matrixCorr <- 1 - sqrt(matrixCorr / maxEigenVal)
   
   return(matrixCorr)
 }

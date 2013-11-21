@@ -1,24 +1,66 @@
-geostas <- function(xyz, amsm=NULL, k=3, ...) {
-  ## TODO: include option to input pdbs 3dalign object
+geostas <- function(xyz, amsm=NULL, k=3, method="pairwise", fit=TRUE, ...) {
+
+  if(! (is.matrix(xyz) || class(xyz)=="3dalign" || is.pdb(xyz)) )
+    stop(paste("'xyz' should be a trajectory matrix, a 'pdb' object, or\n\t",
+               "a list object as obtained from 'read.fasta.pdb'"))
   
-  if(!is.matrix(xyz))
-    stop("'xyz' must be a trajectory matrix as obtained e.g. by\n")
+  if(!method %in% c("pairwise", "columnwise"))
+    stop("'method' should be 'pairwise' or 'columnwise'")
   
-  if(is.null(amsm))
+  if(class(xyz)=="3dalign") {
+    pdbs <- xyz
+    gaps.pos <- gap.inspect(pdbs$xyz)
+    xyz <- pdbs$xyz[, gaps.pos$f.inds]
+  }
+
+  if(class(xyz)=="pdb") {
+    if(is.null(pdb$xyz.models))
+      stop("incompatible input. provide a multimodel 'pdb' object")
+    
+    pdb <- xyz
+    ca.inds <- atom.select(pdb, 'calpha')
+    xyz <- pdb$xyz.models[,ca.inds$xyz]
+  }
+
+  if(fit) {
+    inds <- seq(1, ncol(xyz))
+    xyz <- fit.xyz(xyz[1,], xyz, fixed.inds=inds, mobile.inds=inds)
+  }
+  
+  if(is.null(amsm)) {
     amsm <- amsm.xyz(xyz, ...)
+  }
+  else {
+    if(!all(dim(amsm)==ncol(xyz)/3))
+      stop("dimension mismatch ('xyz' and 'amsm')")
+  }
 
-  cm.tmp  <- normalize.vector(amsm)
-  cm.norm <- apply(cm.tmp, 2, function(x,y) x %*% y, cm.tmp)
+  if(method=="pairwise") {
+    cm <- 1-amsm
+    diag(cm) <- 0
+  }
+  else {
+    cm.tmp  <- normalize.vector(amsm)
+    cm <- 1 - apply(cm.tmp, 2, function(x,y) x %*% y, cm.tmp)
+  }
 
-  dis    <- dist(cm.norm)
-  hc     <- hclust(dis)
-  grps   <- cutree(hc, k = k) 
   
-  ##hc1 <- reorder.hclust(clusts, dis)
-  ##grps <- cutree(hc1, k = k) 
+  ## H-clust
+  #dis    <- dist(cm)
+  #hc     <- hclust(dis)
+  #grps   <- cutree(hc, k = k) 
+
+  
+  ## H-clust method: 'ward'
+  #d    <- dist(cm, method = "euclidean") # distance matrix
+  #fit  <- hclust(d, method="ward") 
+  #grps <- cutree(fit, k=k) # cut tree into 5 clusters
+
+
+  ## k-means clustering
+  grps <- kmeans(cm, k)$cluster
 
   ## return also indices for the identified domains?
   out <- list(grps=grps, amsm=amsm)
-  
   return(out)
 }
