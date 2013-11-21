@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -48,15 +49,15 @@
 <p>We also distribute a number of extended <strong>Bio3D vignettes</strong> that provide worked examples of using Bio3D to perform a particular type of analysis. Currently available vignettes include:</p>
 
 <ul>
-<li>Installing Bio3D ( <a href="http://thegrantlab.org/bio3d/Bio3D_install.pdf">PDF</a> )</li>
-<li>Getting started with Bio3D ( PDF | <a href="http://thegrantlab.org/bio3d/user_guide/user_guide.html">HTML</a> )</li>
-<li>Beginning Trajectory Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/Bio3D_md.pdf">PDF</a> )</li>
-<li>Enhanced Methods for Normal Mode Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/Bio3D_nma.pdf">PDF</a> )</li>
-<li>Comparative sequence and structure analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/Bio3D_pca.pdf">PDF</a> )</li>
-<li>Introduction to correlation network analysis with Bio3D ( PDF )</li>
+<li>Installing Bio3D ( <a href="http://thegrantlab.org/bio3d/vignettes/install_vignette/Bio3D_install.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/installing-bio3d">HTML</a>)</li>
+<li>Getting started with Bio3D ( PDF | <a href="http://thegrantlab.org/bio3d/user-guide">HTML</a> )</li>
+<li>Beginning Trajectory Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/vignettes/traj_vignette/Bio3D_md.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/trajectory-analysis">HTML</a>)</li>
+<li>Enhanced Methods for Normal Mode Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/vignettes/nma_vignette/Bio3D_nma.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/normal-mode-analysis">HTML</a>)</li>
+<li>Comparative sequence and structure analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/vignettes/pca_vignette/Bio3D_pca.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/principal-component-analysis">HTML</a>)</li>
+<li>Introduction to correlation network analysis with Bio3D ( PDF | HTML)</li>
 </ul>
 
-<p>There is also a <a href="http://thegrantlab.org/bio3d/bio3d.pdf">package manual</a> (in PDF format) that is a concatenation of each functions documentation. </p>
+<p>There is also a <a href="http://thegrantlab.org/bio3d/vignettes/bio3d.pdf">package manual</a> (in PDF format) that is a concatenation of each functions documentation. </p>
 
 <p>Note that for information on Bio3D development status or to report a bug, please refer to: <a href="https://bitbucket.org/Grantlab/bio3d">https://bitbucket.org/Grantlab/bio3d</a> </p>
 
@@ -134,6 +135,50 @@
         <code><a href="view.dccm.html">view.dccm</a></code>: Visualization of Dynamic Cross-Correlation </li>
     
     </ul>
+    <a name="Sequence Analysis:"></a>
+    <h3>Sequence Analysis:</h3>
+    <p>Do Interesting Things with Protein Sequence</p>
+
+    
+    <ul class="index">
+        
+      <li>
+        <code><a href="consensus.html">consensus</a></code>: Sequence Consensus for an Alignment </li>
+            
+      <li>
+        <code><a href="conserv.html">conserv</a></code>: Score Residue Conservation At Each Position in an Alignment </li>
+            
+      <li>
+        <code><a href="blast.pdb.html">blast.pdb</a></code>: NCBI BLAST Sequence Search </li>
+            
+      <li>
+        <code><a href="entropy.html">entropy</a></code>: Shannon Entropy Score </li>
+            
+      <li>
+        <code><a href="ide.filter.html">ide.filter</a></code>: Percent Identity Filter </li>
+            
+      <li>
+        <code><a href="seqidentity.html">seqidentity</a></code>: Percent Identity</li>
+            
+      <li>
+        <code><a href="motif.find.html">motif.find</a></code>: Find Sequence Motifs. </li>
+            
+      <li>
+        <code><a href="pdbaln.html">pdbaln</a></code>: Sequence Alignment of PDB Files </li>
+            
+      <li>
+        <code><a href="seq2aln.html">seq2aln</a></code>: Add a Sequence to an Existing Alignmnet </li>
+            
+      <li>
+        <code><a href="seqaln.html">seqaln</a></code>: Sequence Alignment with MUSCLE</li>
+            
+      <li>
+        <code><a href="seqaln.pair.html">seqaln.pair</a></code>: Sequence Alignment of Identical Protein Sequences </li>
+            
+      <li>
+        <code><a href="seqbind.html">seqbind</a></code>: Combine Sequences by Rows Without Recycling </li>
+    
+    </ul>
     <a name="Structure Analysis:"></a>
     <h3>Structure Analysis:</h3>
     <p>Do Interesting Things with Protein Structure</p>
@@ -182,6 +227,9 @@
             
       <li>
         <code><a href="binding.site.html">binding.site</a></code>: Binding Site Residues </li>
+            
+      <li>
+        <code><a href="mktrj.html">mktrj</a></code>: PCA / NMA Atomic Displacement Trajectory </li>
             
       <li>
         <code><a href="mktrj.pca.html">mktrj.pca</a></code>: PCA Atomic Displacement Trajectory </li>
@@ -316,50 +364,6 @@
         <code><a href="view.modes.html">view.modes</a></code>: Vector Field Visualization of Modes </li>
     
     </ul>
-    <a name="Sequence Analysis:"></a>
-    <h3>Sequence Analysis:</h3>
-    <p>Do Interesting Things with Protein Sequence</p>
-
-    
-    <ul class="index">
-        
-      <li>
-        <code><a href="consensus.html">consensus</a></code>: Sequence Consensus for an Alignment </li>
-            
-      <li>
-        <code><a href="conserv.html">conserv</a></code>: Score Residue Conservation At Each Position in an Alignment </li>
-            
-      <li>
-        <code><a href="blast.pdb.html">blast.pdb</a></code>: NCBI BLAST Sequence Search </li>
-            
-      <li>
-        <code><a href="entropy.html">entropy</a></code>: Shannon Entropy Score </li>
-            
-      <li>
-        <code><a href="ide.filter.html">ide.filter</a></code>: Percent Identity Filter </li>
-            
-      <li>
-        <code><a href="seqidentity.html">seqidentity</a></code>: Percent Identity</li>
-            
-      <li>
-        <code><a href="motif.find.html">motif.find</a></code>: Find Sequence Motifs. </li>
-            
-      <li>
-        <code><a href="pdbaln.html">pdbaln</a></code>: Sequence Alignment of PDB Files </li>
-            
-      <li>
-        <code><a href="seq2aln.html">seq2aln</a></code>: Add a Sequence to an Existing Alignmnet </li>
-            
-      <li>
-        <code><a href="seqaln.html">seqaln</a></code>: Sequence Alignment with MUSCLE</li>
-            
-      <li>
-        <code><a href="seqaln.pair.html">seqaln.pair</a></code>: Sequence Alignment of Identical Protein Sequences </li>
-            
-      <li>
-        <code><a href="seqbind.html">seqbind</a></code>: Combine Sequences by Rows Without Recycling </li>
-    
-    </ul>
     <a name="Trajectory Analysis:"></a>
     <h3>Trajectory Analysis:</h3>
     <p>Do Interesting Things with Simulation Data</p>
@@ -393,6 +397,9 @@
             
       <li>
         <code><a href="fit.xyz.html">fit.xyz</a></code>(rot.lsq): Coordinate Superposition </li>
+            
+      <li>
+        <code><a href="mktrj.html">mktrj</a></code>: PCA / NMA Atomic Displacement Trajectory </li>
             
       <li>
         <code><a href="mktrj.pca.html">mktrj.pca</a></code>: PCA Atomic Displacement Trajectory </li>
@@ -476,6 +483,9 @@
             
       <li>
         <code><a href="load.enmff.html">load.enmff</a></code>(ff.calpha, ff.calphax, ff.anm, ff.pfanm, ff.sdenm, ff.reach): ENM Force Field Loader </li>
+            
+      <li>
+        <code><a href="mktrj.html">mktrj</a></code>: PCA / NMA Atomic Displacement Trajectory </li>
             
       <li>
         <code><a href="mktrj.nma.html">mktrj.nma</a></code>: NMA Atomic Displacement Trajectory </li>
@@ -672,15 +682,12 @@
     <ul class="index">
         
       <li>
-        <code><a href="mktrj.html">mktrj</a></code>: PCA / NMA Atomic Displacement Trajectory </li>
-            
-      <li>
         <code><a href="read.pdcBD.html">read.pdcBD</a></code>: Read PQR output from pdcBD File </li>
     
     </ul>
   </div>
   
-  <div class="span3 offset1">
+  <div class="span3">
     <h2>Vignettes</h2>
     <ul>
       <li><a href="vignettes/Bio3D_install.pdf">Installing Bio3D</a></li>
@@ -710,7 +717,7 @@
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1='>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1='>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

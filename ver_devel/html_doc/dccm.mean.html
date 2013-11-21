@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -99,22 +100,6 @@ raw.files <- get.pdb(ids, path = "raw_pdbs")
 </div>
 <strong class='warning'>Warning message:
 ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/4b7t.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/2exm.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1opj.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/4jaj.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1a9u.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1tki.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1csn.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1lp4.pdb  exists. Skipping download</strong>
 <div class='input'>files <- pdbsplit(raw.files, ids)
 </div>
 <div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |=========                                                             |  12%  |                                                                              |==================                                                    |  25%  |                                                                              |==========================                                            |  38%  |                                                                              |===================================                                   |  50%  |                                                                              |============================================                          |  62%  |                                                                              |====================================================                  |  75%  |                                                                              |=============================================================         |  88%  |                                                                              |======================================================================| 100%
@@ -167,25 +152,16 @@ cij <- dccm(modes)
 dimnames(cij$all.dccm) = list(NULL, NULL, ids) 
 plot.dccm(cij$all.dccm)
 </div>
-<strong class='message'>Loading required package: lattice</strong>
-<strong class='message'>
-Attaching package: ‘lattice’
-</strong>
-<strong class='message'>The following object is masked from ‘package:multicore’:
-
-    parallel
-</strong>
-<strong class='message'>Loading required package: grid</strong>
-<p><img src='dccm.mean-26.png' alt='' width='400' height='400' /></p>
+<p><img src='dccm.mean-14.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 # Filter to display only correlations present in all structures
 cij.all <- dccm.mean(cij$all.dccm, cutoff.sims = 8, cutoff.cij = 0) 
 plot.dccm(cij.all, main = "Consensus Residue Cross Correlation")
 </div>
-<p><img src='dccm.mean-28.png' alt='' width='400' height='400' /></p>
+<p><img src='dccm.mean-16.png' alt='' width='400' height='400' /></p>
 <div class='input'></div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>dccm.mean</li>
     </ul>
@@ -206,7 +182,7 @@ plot.dccm(cij.all, main = "Consensus Residue Cross Correlation")
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=dccm.mean'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=dccm.mean'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

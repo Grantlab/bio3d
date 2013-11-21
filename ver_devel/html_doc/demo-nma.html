@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -70,7 +71,7 @@ pdb <- read.pdb("1hel")
 </div>
 <div class='input'>modes <- nma(pdb)
 </div>
-<div class='output'> Building Hessian...		Done in 0.083 seconds.
+<div class='output'> Building Hessian...		Done in 0.078 seconds.
  Diagonalizing Hessian...	Done in 0.133 seconds.
 </div>
 <div class='input'>
@@ -138,7 +139,7 @@ pause()
 ### Calculate modes with force field ANM
 modes.anm <- nma(pdb, ff="anm")
 </div>
-<div class='output'> Building Hessian...		Done in 0.072 seconds.
+<div class='output'> Building Hessian...		Done in 0.074 seconds.
  Diagonalizing Hessian...	Done in 0.134 seconds.
 </div>
 <div class='input'>
@@ -186,6 +187,18 @@ raw.files <- get.pdb(ids, path=tmp.dir)
 </div>
 <strong class='warning'>Warning message:
 ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
+<strong class='warning'>Warning message:
+/tmp/RtmpeKwoQP/4b7t.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+/tmp/RtmpeKwoQP/2exm.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+/tmp/RtmpeKwoQP/1opj.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+/tmp/RtmpeKwoQP/4jaj.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+/tmp/RtmpeKwoQP/1a9u.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+/tmp/RtmpeKwoQP/1tki.pdb  exists. Skipping download</strong>
 <div class='input'>
 pause()
 </div>
@@ -205,22 +218,22 @@ pause()
 pdbs <- pdbaln(files)
 </div>
 <div class='output'>Reading PDB files:
-/tmp/Rtmpbw2kkP/4b7t_A.pdb
-/tmp/Rtmpbw2kkP/2exm_A.pdb
-/tmp/Rtmpbw2kkP/1opj_A.pdb
-/tmp/Rtmpbw2kkP/4jaj_A.pdb
-/tmp/Rtmpbw2kkP/1a9u_A.pdb
-/tmp/Rtmpbw2kkP/1tki_A.pdb
+/tmp/RtmpeKwoQP/4b7t_A.pdb
+/tmp/RtmpeKwoQP/2exm_A.pdb
+/tmp/RtmpeKwoQP/1opj_A.pdb
+/tmp/RtmpeKwoQP/4jaj_A.pdb
+/tmp/RtmpeKwoQP/1a9u_A.pdb
+/tmp/RtmpeKwoQP/1tki_A.pdb
 ......
 
 Extracting sequences
 
-pdb/seq: 1   name: /tmp/Rtmpbw2kkP/4b7t_A.pdb 
-pdb/seq: 2   name: /tmp/Rtmpbw2kkP/2exm_A.pdb 
-pdb/seq: 3   name: /tmp/Rtmpbw2kkP/1opj_A.pdb 
-pdb/seq: 4   name: /tmp/Rtmpbw2kkP/4jaj_A.pdb 
-pdb/seq: 5   name: /tmp/Rtmpbw2kkP/1a9u_A.pdb 
-pdb/seq: 6   name: /tmp/Rtmpbw2kkP/1tki_A.pdb 
+pdb/seq: 1   name: /tmp/RtmpeKwoQP/4b7t_A.pdb 
+pdb/seq: 2   name: /tmp/RtmpeKwoQP/2exm_A.pdb 
+pdb/seq: 3   name: /tmp/RtmpeKwoQP/1opj_A.pdb 
+pdb/seq: 4   name: /tmp/RtmpeKwoQP/4jaj_A.pdb 
+pdb/seq: 5   name: /tmp/RtmpeKwoQP/1a9u_A.pdb 
+pdb/seq: 6   name: /tmp/RtmpeKwoQP/1tki_A.pdb 
 </div>
 <div class='input'>
 pause()
@@ -279,7 +292,7 @@ pause()
 ### Plot fluctuations
 plot(modes, pdbs, type="h")
 </div>
-<p><img src='nma-60.png' alt='' width='400' height='400' /></p>
+<p><img src='nma-66.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 pause()
 </div>
@@ -290,7 +303,7 @@ unlink(tmp.dir)</div>
 </div></div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1='>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1='>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>
