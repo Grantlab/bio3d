@@ -21,8 +21,9 @@ amsm.xyz(xyz, ncore = NULL)
     groups. }
   \item{method }{ character string specifing the approach for clustering
     the atomic movement similarity matrix (pariwise or columnwise). }
-  \item{fit}{ logical, if TRUE coordinate superposition is performed
-    prior to normal mode calculations. }
+  \item{fit}{ logical, if TRUE coordinate superposition on identified
+    core atoms is performed prior to the calculation of the AMS
+    matrix. } 
   \item{ncore }{ number of CPU cores used to do the calculation.
     \code{ncore>1} requires multicore package installed. }
   \item{...}{ additional arguments to \code{\link{amsm.xyz}}. }
@@ -62,6 +63,7 @@ amsm.xyz(xyz, ncore = NULL)
   \item{grps }{ a numeric vector containing the domain assignment per
     residue. }
   \item{amsm }{ a numeric matrix of atomic movement similarity (AMSM). }
+  \item{fit.inds }{ a numeric vector of xyz indices used for fitting. }
 }
 \references{
   Romanowska, J. et al. (2012) \emph{JCTC} \bold{8}, 2588--2599.
@@ -86,6 +88,10 @@ trj <- rbind(mktrj(modes, mode=7),
 
 ## Find domains
 gs <- geostas(trj)
+
+plot.dccm(gs$amsm, at=seq(0, 1, 0.1), main="AMSM with Domain Assignment ",
+          margin.segments=gs$grps)
+
 
 ## Make a new PDB file with chain ID corresponding to domains
 ## write.pdb(pdb=NULL, xyz=modes$xyz, chain=gs$grps)
@@ -119,7 +125,7 @@ ca.inds <- atom.select(pdb, 'calpha')
 ## Find domains and write PDB
 gs  <- geostas(pdb)
 
-## Fit to the 'first' domain
+## Fit all frames to the 'first' domain
 domain.inds <- atom2xyz(which(gs$grps==1))
 
 xyz <- fit.xyz(pdb$xyz.models[1, ca.inds$xyz],
@@ -129,6 +135,30 @@ xyz <- fit.xyz(pdb$xyz.models[1, ca.inds$xyz],
 
 write.pdb(xyz=xyz, chain=gs$grps)
 
+
+
+#### X-ray ensemble GroEL subunits
+# Define the ensemble PDB-ids
+ids <- c("1sx4_[A,B,H,I]", "1xck_[A-B]", "1sx3_[A-B]", "4ab3_[A-B]")
+
+# Download and split PDBs by chain ID
+raw.files <- get.pdb(ids, path = "raw_pdbs", gzip = TRUE)
+files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain/")
+
+# Align and superimpose coordinates
+pdbs <- pdbaln(files)
+gs <- geostas(pdbs, k=4, fit=TRUE)
+
+# Principal component analysis 
+gaps.pos <- gap.inspect(pdbs$xyz)
+xyz <- fit.xyz(pdbs$xyz[1, gaps.pos$f.inds],
+               pdbs$xyz[, gaps.pos$f.inds],
+               fixed.inds=gs$fit.inds,
+               mobile.inds=gs$fit.inds)
+pc.xray <- pca.xyz(xyz)
+
+## Visualize PCs with colored domains (chain ID)
+a <- mktrj(pc.xray, pc=1, chain=gs$grps)
 
 }
 }

@@ -22,9 +22,21 @@ geostas <- function(xyz, amsm=NULL, k=3, method="pairwise", fit=TRUE, ...) {
     xyz <- pdb$xyz.models[,ca.inds$xyz]
   }
 
-  if(fit) {
-    inds <- seq(1, ncol(xyz))
-    xyz <- fit.xyz(xyz[1,], xyz, fixed.inds=inds, mobile.inds=inds)
+  ##if(fit) {
+  ##  inds <- seq(1, ncol(xyz))
+  ##  xyz <- fit.xyz(xyz[1,], xyz, fixed.inds=inds, mobile.inds=inds)
+  ##}
+  
+  if(fit && is.null(amsm)) {
+    core <- core.find(xyz)
+    fit.inds <- core$c1A.xyz
+
+    xyz <- fit.xyz(xyz[1,], xyz, fixed.inds=fit.inds, mobile.inds=fit.inds)
+    if(is.null(fit.inds))
+      warning("core indices not found. fitting to all atoms")
+  }
+  else {
+    fit.inds <- NULL
   }
   
   if(is.null(amsm)) {
@@ -61,6 +73,6 @@ geostas <- function(xyz, amsm=NULL, k=3, method="pairwise", fit=TRUE, ...) {
   grps <- kmeans(cm, k)$cluster
 
   ## return also indices for the identified domains?
-  out <- list(grps=grps, amsm=amsm)
+  out <- list(grps=grps, amsm=amsm, fit.inds=fit.inds)
   return(out)
 }
