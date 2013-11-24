@@ -37,9 +37,10 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
    
 }
 \details{
-  \code{maxlines} may require increasing for some large multi-model files.
-  The preferred means of reading such data is via binary DCD format 
-  trajectory files (see the \code{\link{read.dcd}} function).
+  code{maxlines} may be set so as to restrict the reading to a portion
+  of input files. Note that the preferred means of reading large 
+  multi-model files is via binary DCD format trajectory files (see the 
+  \code{\link{read.dcd}} function).
 }
 \value{
   Returns a list of class \code{"pdb"} with the following components:
