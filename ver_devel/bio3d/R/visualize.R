@@ -22,8 +22,10 @@ visualize.default <- function(
 
   if(is.null(col))
     col <- do.call(rgb, elements[M, c("red","green","blue")])
-  if(length(col) != length(xyz)/3)
-    warning("'col' has been recycled")
+  if(length(col) != length(xyz)/3){
+    if(length(col)!=1) warning("'col' has been recycled")
+    col <- rep(col, length = length(xyz)/3)
+  }
 
   if(is.null(cell)) {
     if(abc.axes) {
@@ -103,7 +105,7 @@ visualize.pdb <- function(
   con1 <- match(con[,1], x$atom[,"eleno"])
   con2 <- match(con[,2], x$atom[,"eleno"])
   con <- data.frame(eleid.1 = con1, eleid.2 = con2)
-  
+
   visualize.default(
     x$xyz, ele.symb = ele.symb, con, cell, type,
     xyz.axes, abc.axes, pbc.box, lwd, lwd.xyz, lwd.abc, lwd.pbc.box,
