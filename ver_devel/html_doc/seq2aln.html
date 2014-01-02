@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>seq2aln. bio3d 2.0</title>
+<title>seq2aln. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -133,12 +134,10 @@ aa.1 <- pdbseq( read.pdb("1bg2") )
 </div>
 <div class='input'>
 aln <- seqaln( seqbind(aa.1,aa.2) )
-</div>
-<div class='output'>muscle -in /tmp/RtmpyefGEQ/filec177cc6c65 -out aln.fa  -seqtype protein</div>
-<div class='input'>
+
 seq2aln(aa.3, aln)
 </div>
-<div class='output'>muscle -profile -in1 /tmp/RtmpyefGEQ/filec1776b211240 -in2 /tmp/RtmpyefGEQ/filec1772dd85d3c -out aln.fa</div>
+<div class='output'>muscle -profile -in1 /tmp/RtmpeKwoQP/filead6b5bde2550 -in2 /tmp/RtmpeKwoQP/filead6b21767f40 -out aln.fa</div>
 <div class='output'>$id
 [1] "seq1" "seq2" "seq" 
 
@@ -285,7 +284,7 @@ attr(,"class")
 </div>
 <div class='input'></div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>seq2aln</li>
     </ul>
@@ -305,7 +304,7 @@ attr(,"class")
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=seq2aln'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=seq2aln'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

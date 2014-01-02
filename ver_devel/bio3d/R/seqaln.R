@@ -5,9 +5,18 @@ function(aln, id=NULL,
                    protein = TRUE,
                    seqgroup = FALSE,
                    refine = FALSE,
-                   extra.args = "") {
+                   extra.args = "",
+                   verbose = FALSE) {
 
-
+  ## Check if the program is executable
+  os1 <- .Platform$OS.type
+  status <- system(paste(exefile, "-version"),
+                   ignore.stderr = TRUE, ignore.stdout = TRUE)
+  
+  if(!(status %in% c(0,1)))
+    stop(paste("Launching external program 'MUSCLE' failed\n",
+               "  make sure '", exefile, "' is in your search path", sep=""))
+  
   as.aln <- function(mat, id=NULL) {
     if(is.null(id))
       id=paste("seq",1:nrow(mat),sep="")
@@ -18,7 +27,6 @@ function(aln, id=NULL,
     aln<-as.aln(aln,id=id)
 
 
-  os1   <- .Platform$OS.type
   toaln <- tempfile()  
   write.fasta(aln, file=toaln)
   
@@ -33,14 +41,18 @@ function(aln, id=NULL,
    
   cmd <- paste(exefile, " -in ",toaln," -out ",
                fa," ",extra.args, sep="")
-  cat(cmd)
+  if(verbose)
+    cat(paste("Running command:\n ", cmd , "\n"))
   
-  if (os1 == "windows") {
-#    system(shQuote(cmd))
-    shell(shQuote(cmd))
-  } else {
-    system(cmd)
-  }
+  ## Run command
+  if (os1 == "windows")
+    success <- shell(shQuote(cmd), ignore.stderr = !verbose, ignore.stdout = !verbose)
+  else
+    success <- system(cmd, ignore.stderr = !verbose, ignore.stdout = !verbose)
+  
+  if(success!=0)
+    stop(paste("An error occurred while running command\n '",
+               exefile, "'", sep=""))
 
   ### Update for muscle v3.8 with no "-stable" option
   ###  Thu Aug 26 18:29:38 PDT 2010

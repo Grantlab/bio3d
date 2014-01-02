@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>overlap. bio3d 2.0</title>
+<title>overlap. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Lars Skjaerven ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -112,11 +113,30 @@ diff.inds <- c(grep("d1v8ja", pdbs$id),
                grep("d1goja", pdbs$id))
 
 dv <- difference.vector( pdbs$xyz[diff.inds,], gaps.pos$f.inds )
-
+</div>
+<strong class='error'>Error in difference.vector(pdbs$xyz[diff.inds, ], gaps.pos$f.inds): xyz must be a matrix with two rows</strong>
+<div class='input'>
 # Calculate the squared overlap between the PCs and the difference vector  
 o <- overlap(pc.xray, dv)
-o <- overlap(pc.xray$U, dv)
+</div>
+<strong class='error'>Error in overlap(pc.xray, dv): object 'dv' not found</strong>
+<div class='input'>o <- overlap(pc.xray$U, dv)
+</div>
+<strong class='error'>Error in overlap(pc.xray$U, dv): object 'dv' not found</strong>
+<div class='input'>
+# Plot results
+plot(o$overlap, type='h', ylim=c(0,1))
+</div>
+<strong class='error'>Error in plot(o$overlap, type = "h", ylim = c(0, 1)): object 'o' not found</strong>
+<div class='input'>points(o$overlap)
+</div>
+<strong class='error'>Error in points(o$overlap): object 'o' not found</strong>
+<div class='input'>lines(o$overlap.cum, type='b', col='red')
+</div>
+<strong class='error'>Error in lines(o$overlap.cum, type = "b", col = "red"): object 'o' not found</strong>
+<div class='input'>
 
+detach(kinesin)
 
 ## Calculate overlap from NMA
 pdb.a <- read.pdb("1cmk")
@@ -166,18 +186,16 @@ dv <- difference.vector( xyz )
 ## Calculate normal modes
 modes <- nma(pdb.a, inds=sele.a)
 </div>
-<div class='output'> Building Hessian...		Done in 0.332 seconds.
- Diagonalizing Hessian...	Done in 1.874 seconds.
+<div class='output'> Building Hessian...		Done in 0.306 seconds.
+ Diagonalizing Hessian...	Done in 1.849 seconds.
 </div>
 <div class='input'>
 # Calculate the squared overlap between the normal modes 
 # and the difference vector  
 o <- overlap(modes, dv)
-
-detach(kinesin)
 </div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>overlap</li>
     </ul>
@@ -196,7 +214,7 @@ detach(kinesin)
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=overlap'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=overlap'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

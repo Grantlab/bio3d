@@ -69,6 +69,8 @@
     if(is.null(col))
       col <- seq(1, nrow(x$fluctuations))
 
+    op <- par(no.readonly=TRUE)
+    on.exit(par(op))
     if(entropy)
       par(mfrow=c(3,1), mar=mar)
     else
@@ -111,7 +113,6 @@
            labels=seq(0,length(H),by=50))
       box()
       
-      par(mfrow=c(1,1))
     }
     
   }

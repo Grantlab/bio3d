@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>rmsd.filter. bio3d 2.0</title>
+<title>rmsd.filter. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -111,14 +112,13 @@
 attach(kinesin, warn.conflicts=FALSE)
 k <- rmsd.filter(xyz=pdbs,cutoff=0.5)
 </div>
-<div class='output'>ide.filter(): N clusters @ cutoff =  23 
+<div class='output'>ide.filter(): N clusters @ cutoff =  6 
 </div>
 <div class='input'>pdbs$id[k$ind]
 </div>
-<div class='output'> [1] "d1bg2__" "d1mkja_" "d2kin.1" "d3kin.2" "d1v8ka_" "d1goja_" "d1ry6a_"
- [8] "d1sdma_" "d1t5c_a" "d1vfva_" "d1i6ia_" "d1i5sa_" "d1vfxa_" "d2fl6_b"
-[15] "d1ii6a_" "d2ncda_" "d1cz7d_" "d1n6ma_" "d1n6mb_" "d1f9va_" "d1f9ta_"
-[22] "d3kar__" "d1f9wa_"
+<div class='output'>[1] "/tmp/RtmpeKwoQP/4b7t_A.pdb" "/tmp/RtmpeKwoQP/2exm_A.pdb"
+[3] "/tmp/RtmpeKwoQP/1opj_A.pdb" "/tmp/RtmpeKwoQP/4jaj_A.pdb"
+[5] "/tmp/RtmpeKwoQP/1a9u_A.pdb" "/tmp/RtmpeKwoQP/1tki_A.pdb"
 </div>
 <div class='input'>plot(k$tree, ylab="RMSD")
 </div>
@@ -130,7 +130,7 @@ k <- rmsd.filter(xyz=pdbs,cutoff=0.5)
 detach(kinesin)
 </div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>rmsd.filter</li>
     </ul>
@@ -150,7 +150,7 @@ detach(kinesin)
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=rmsd.filter'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=rmsd.filter'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

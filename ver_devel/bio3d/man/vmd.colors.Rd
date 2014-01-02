@@ -1,8 +1,6 @@
 \name{vmd.colors}
 \alias{vmd.colors}
-\title{
-  VMD Color Palette
-}
+\title{ VMD Color Palette }
 \description{
   This function creates a character vector of the colors used by the VMD
   molecular graphics program.

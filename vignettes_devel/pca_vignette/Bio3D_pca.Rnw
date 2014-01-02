@@ -1,0 +1,518 @@
+\documentclass{article}
+
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+
+\usepackage{natbib}
+\usepackage{color}
+\definecolor{myurlblue}{rgb}{0.3,0.2,0.7}
+\usepackage[colorlinks=true,urlcolor=myurlblue,pagecolor=black,citecolor=myurlblue,linkcolor=black]{hyperref}
+
+\usepackage{graphicx}
+
+\title{Comparative Protein Structure Analysis with Bio3D}
+\author{Xin-Qiu Yao, Lars Skjaerven and Barry J. Grant\\
+University of Michigan, Ann Arbor}
+
+
+\begin{document}
+\maketitle
+
+\section{Background}
+Bio3D\footnote{The latest version of the package, full documentation and further vignettes (including detailed installation instructions) can be obtained from the main Bio3D website: \href{http://thegrantlab.org/bio3d/}{http://thegrantlab.org/bio3d/}} is an R package that provides interactive tools for the analysis of bimolecular structure, sequence and simulation data. The aim of this document, termed a vignette\footnote{This vignette contains executable examples, see \texttt{help(vignette)} for further details.} in R parlance, is to provide a brief task-oriented introduction to facilities for analyzing protein structure data with Bio3D \citep{grant06}. 
+
+\paragraph{Requirements:}
+Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the \href{http://thegrantlab.org/bio3d/}{Installing Bio3D} vignette available both online and from within the Bio3D package. To see available vignettes use the command:
+
+<<eval=FALSE>>=
+vignette(package="bio3d")
+@
+
+Note that to follow along with this vignette the \href{http://www.drive5.com/muscle/}{MUSCLE multiple sequence alignment program} and the \href{http://swift.cmbi.ru.nl/gv/dssp/}{DSSP secondary structure assignment program} must be installed on your system and in the search path for executables. Please see the installation vignette for full details. 
+
+\section{Getting Started}
+Start R, load the Bio3D package and use the command \texttt{demo("pdb")} and then \texttt{demo("pca")} to get a quick feel for some of the tasks that we will be introducing in the following sections.
+
+<<eval=FALSE>>=
+library(bio3d)
+demo("pdb")
+demo("pca")
+@
+
+<<echo=FALSE>>=
+library(bio3d)
+@
+
+
+\paragraph{Side-note:} You will be prompted to hit the \texttt{RETURN} key at each step of the demos as this will allow you to see the particular functions being called. Also note that detailed documentation and example code for each function can be accessed via the \texttt{help()} and \texttt{example()} commands (e.g. \texttt{help(read.pdb)}).  You can also copy and paste any of the example code from the documentation of a particular function, or indeed this vignette, directly into your R session to see how things work. You can also find this \href{http://thegrantlab.org/bio3d/html/index.html}{documentation online}.
+
+
+\subsection{Working with single PDB structures}
+The code snippet below calls the \texttt{read.pdb()} with a single input argument, the four letter Protein Data Bank (PDB) identifier code \texttt{"1tag"}. This will cause the \texttt{read.pdb()} function to read directly from the online RCSB PDB database and return a new object \texttt{pdb} for further manipulation.  
+
+
+<<eval=TRUE>>=
+pdb <- read.pdb("1tag")
+@ 
+
+
+Alternatively, you can read a PDB file directly from your local file system using the file name (or the full path to the file) as an argument to \texttt{read.pdb()}:
+<<eval=FALSE>>=
+pdb <- read.pdb("myfile.pdb")
+pdb <- read.pdb("/path/to/my/data/myfile.pdb")
+@ 
+
+
+A short summary of the \texttt{pdb} object can be obtained by simply calling the function print(): 
+<<>>=
+print(pdb)
+@
+
+To examine the contents of the \texttt{pdb} object in more detail we can use the \texttt{attributes} function:
+<<eval=TRUE>>=
+attributes(pdb)
+@
+
+These attributes describe the list components that comprise the \texttt{pdb} object, and each individual component can be accessed using the \texttt{\$} symbol (e.g.~\texttt{pdb\$atom}). Their complete description can be found on the  \texttt{read.pdb()} functions help page accessible with the command: \texttt{help(read.pdb)}. Note that the \texttt{atom} component is a matrix consisting of all atomic coordinate ATOM data, with a row per ATOM and a column per record type. The column names can be used as a convenient means of data access, for example to access coordinate data for the first three atoms in our newly created \texttt{pdb} object:
+
+<<>>=
+pdb$atom[1:3, c("resno","resid","elety","x","y","z")]
+@
+
+In the example above we used numeric indices to access atoms 1 to 3, and a character vector of column names to access the specific record types. In a similar fashion the \texttt{atom.select()} function returns numeric indices that can be used for accessing desired subsets of the \texttt{pdb} data. For example: 
+
+<<results='hide'>>=
+ca.inds <- atom.select(pdb, "calpha")
+@
+
+The returned \texttt{ca.inds} object is a list containing atom and xyz numeric indices corresponding to the selection (all C-alpha atoms in this particular case). The indices can be used to access e.g.~the Cartesian coordinates of the selected atoms (\texttt{pdb\$xyz[ca.inds\$xyz]}), or residue numbers and B-factor data for the selected atoms. For example:
+
+<<fig.cap="Residue B-factor data for PDB id 1TAG. Grey boxes depict secondary structure elements in the structure (dark grey: alpha helices; light grey: beta sheets).">>=
+resnos <- pdb$atom[ca.inds$atom, "resno"]
+bfacts <- pdb$atom[ca.inds$atom, "b"]
+plot.bio3d(resnos, bfacts,
+           sse=pdb, ylab="B-factor", xlab="Residue", typ="l")
+@
+
+In the above example we use these indices to plot residue number vs B-factor along with a basic secondary structure schematic (provided with the argument \texttt{sse=pdb}; Figure 1). As a further example of data access lets extract the sequence for the loop region (P-loop) between strand 3 (beta 1) and helix 1 in our \texttt{pdb} object.
+
+<<>>=
+loop <- pdb$sheet$end[3]:pdb$helix$start[1]
+loop.inds <- atom.select(pdb, resno=loop, elety="CA") 
+pdb$atom[loop.inds$atom, "resid"]
+@ 
+
+In the above example the residue numbers in the \texttt{sheet} and \texttt{helix} components of \texttt{pdb} are accessed and used in a subsequent atom selection, the output of which is used as indices to extract residue names. 
+
+\paragraph{Question:} How would you extract the one-letter amino acid sequence for the loop region mentioned above? HINT The \texttt{aa321()} function converts between three-letter and one-letter IUPAC amino acid codes. 
+
+\paragraph{Question:} How would select all backbone or sidechain atoms? HINT: see the example section of \texttt{help(atom.select)} and the \texttt{string} option.
+
+\paragraph{Side-note:} Consider using the \texttt{help(combine.sel)} function when dealing with more complicated selections.
+
+
+\subsection{Working with multiple PDB structures}
+The Bio3D package was designed to specifically facilitate the analysis of multiple structures from both experiment and simulation. The challenge with working with these structures is that they are usually different in their composition (i.e. contain differing number of atoms, sequences, chains, ligands, structures, conformations etc. even for the same protein as we will see below) and it is these differences that are frequently of most interest. 
+
+\paragraph{}For this reason Bio3D contains extensive utilities to enable the reading and writing of sequence and structure data, sequence and structure alignment, performing homologous protein searches, structure annotation, atom selection, re-orientation, superposition, rigid core identification, clustering, torsion analysis, distance matrix analysis, structure and sequence conservation analysis, normal mode analysis across related structures, and principal component analysis of structural ensembles. We will demonstrate some of these utilities in the following sections and in other package vignettes. However, before delving into more advanced analysis lets examine how we can read multiple PDB structures from the RCSB PDB for a particular protein and perform some basic analysis: 
+
+<<quicktransducin, results="hide", cache=TRUE, warning=FALSE>>=
+## Download some example PDB files
+ids<-c("1TND_B","1AGR_A","1FQJ_A","1TAG_A","1GG2_A","1KJY_A")
+raw.files <- get.pdb(ids)
+@
+
+The \texttt{get.pdb()} function will download the requested files, below we extract the particular chains we are most interested in with the function \texttt{pdbsplit()} (note these \texttt{ids} could come from the results of a \texttt{blast.pdb()} search as described in subsequent sections). The requested chains are then aligned and their structural data stored in a new object \texttt{pdbs} that can be used for further analysis and manipulation.
+
+<<aligntransducin, results="hide">>=
+# Extract and align the chains we are interested in
+files <- pdbsplit(raw.files, ids)
+pdbs <- pdbaln(files)
+@
+
+Below we examine the sequence and structural similarity. 
+<<basictransducin, warning=FALSE>>=
+## Calculate sequence identity
+seqidentity(pdbs)
+
+## Calculate RMSD
+rmsd(pdbs, fit=TRUE)
+@
+
+<<echo=FALSE>>=
+rm(pdbs)
+@
+
+\paragraph{Question:} What effect does setting the \texttt{fit=TRUE} option have in the RMSD calculation? What would the results indicate if you set \texttt{fit=FALSE} or disparaged this option? HINT Bio3D functions have various default options that will be used if the option is not explicitly specified by the user, see \texttt{help(rmsd)} for an example and note that the input options with an equals sign (e.g. \texttt{fit=FALSE}) have default values.
+
+
+
+\subsection{Exploring example data for the transducin heterotrimeric G Protein}
+A number of example datasets are included with the Bio3D package. The main purpose of including this data (which may be generated by the user by following the extended examples documented within the various Bio3D functions) is to allow users to more quickly appreciate the capabilities of functions that would otherwise require extensive data downloads before execution.
+
+\paragraph{}
+For a number of the examples in the current vignette we will utilize the included transducin dataset that contains over 50 publicly available structures.  This dataset formed the basis of the work described in \citep{yao13} and we refer the motivated reader to this publication and references therein for extensive background information.  Briefly, heterotrimeric G proteins are molecular switches that turn on and off intracellular signaling cascades in response to the activation of G protein coupled receptors (GPCRs). Receptor activation by extracellular stimuli promotes a cycle of GTP binding and hydrolysis on the G protein alpha subunit that leads to conformational rearrangements (i.e. internal structural changes) that activate multiple downstream effectors. The current dataset consists of transducin (including Gt and Gi/o) alpha subunit sequence and structural data and can be loaded with the command \texttt{data(transducin)}:
+
+<<transducin, results="hide">>=
+data(transducin)
+attach(transducin)
+@ 
+\paragraph{Side-note:} This dataset can be assembled from scratch with commands similar to those detailed in the next section and those listed in section 2.2. Also see \texttt{help(example.data)} for a full description of this datasets contents. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% --------------
+% Third section 
+% --------------
+
+\section{Constructing Experimental Structure Ensembles for a Protein Family}
+Comparing multiple structures of homologous proteins and carefully analyzing large multiple sequence alignments can help identify patterns of sequence and structural conservation and highlight conserved interactions that are crucial for protein stability and function \citep{grant07}.  Bio3D provides a useful framework for such studies and can facilitate the integration of sequence, structure and dynamics data in the analysis of protein evolution.
+
+\subsection{Finding Available Sets of Similar Structures}
+In this tutorial, to collect available transducin crystal structures, we first use BLAST to query the PDB database to find similar sequences (and hence structures) to our chosen representative (PDB ID "1tag"):
+
+<<blast, results="hide", cache=TRUE>>=
+pdb <- read.pdb("1tag")
+seq <- pdbseq(pdb)
+blast <- blast.pdb(seq)
+@ 
+
+Examining the alignment scores and their associated E-values (with the function \texttt{plot.blast()}) indicates a sensible normalized score (-log(E-Value)) cutoff of ~240 bits (Figure 2).
+
+<<blasthits, fig.cap="Summary of BLAST results for query 1tag against the PDB chain database">>=
+hits <- plot.blast(blast, cutoff=240)
+@
+
+We can then list a subset of our top hits, for example:
+
+<<>>=
+head(hits$hits)
+head(hits$pdb.id)
+@ 
+
+
+\paragraph{Sidenote}: The function \texttt{pdb.annotate()} can fetch detailed information about the corresponding structures (e.g. title, experimental method, resolution, ligand name(s), citation, etc.). For example: 
+
+<<warning=FALSE>>=
+anno <- pdb.annotate(hits$pdb.id)
+head(anno[, c("resolution", "ligandId", "citation")])
+@
+
+\subsection{Multiple Sequence Alignment}
+Next we download the complete list of structures from the PDB (with function \texttt{get.pdb()}), and use function \texttt{pdbsplit()} to split the structures into separate chains and store them for subsequent access. Finally, function \texttt{pdbaln()} will extract the sequence of each structure and perform a multiple sequence alignment to determine residue-residue correspondences (\textbf{NOTE:} requires external program \textit{MUSCLE} be in search path for executables):
+
+<<getpdbs, eval=FALSE>>=
+unq.ids <- unique( substr(hits$pdb.id, 1, 4) )
+##- Download and chain split PDBs
+raw.files <- get.pdb(unq.ids, path="raw_pdbs")
+files <- pdbsplit(raw.files, ids=hits$pdb.id, path="raw_pdbs/split_chain")
+
+##- Extract and align sequences
+pdbs <- pdbaln(files)
+@ 
+
+You can now inspect the alignment (the automatically generated ``aln.fa'' file) with your favorite alignment viewer (we recommend SEAVIEW, available from: \href{http://pbil.univ-lyon1.fr/software/seaview.html}{http://pbil.univ-lyon1.fr/software/seaview.html}). 
+
+\paragraph{Side-note:} You may find a number of structures with missing residues (i.e. gaps in the alignment) at sites of particular interest to you. If this is the case you may consider removing these structures from your hit list and generating a smaller, but potentially higher quality, dataset for further exploration.
+
+\paragraph{Question:} How could you automatically identify gap positions in your alignment? HINT: try the command \texttt{help.search("gap", package="bio3d")}.
+
+
+\section{Comparative Structure Analysis}
+The detailed comparison of homologous protein structures can be used to infer pathways for evolutionary adaptation and, at closer evolutionary distances, mechanisms for conformational change. The Bio3D package employs both conventional methods for structural analysis (alignment, RMSD, difference distance matrix analysis, etc.) as well as refined structural superposition and principal component analysis (PCA) to facilitate comparative structure analysis. 
+
+\subsection{Structure Superposition}
+Conventional structural superposition of proteins minimizes the root mean square difference between their full set of equivalent residues. This can be performed with Bio3D functions \texttt{pdbfit()} and \texttt{fit.xyz} as outlined previously. However, for certain applications such a superposition procedure can be inappropriate. For example, in the comparison of a multi-domain protein that has undergone a hinge-like rearrangement of its domains, standard all atom superposition would result in an underestimate of the true atomic displacement by attempting superposition over all domains (whole structure superposition). A more appropriate and insightful superposition would be anchored at the most invariant region and hence more clearly highlight the domain rearrangement (sub-structure superposition). 
+
+\paragraph{}The Bio3D \texttt{core.find()} function implements an iterated superposition procedure, where residues displaying the largest positional differences are identified and excluded at each round.  The function returns an ordered list of excluded residues, from which the user can select a subset of 'core' residues upon which superposition can be based.
+
+<<results="hide", cache=TRUE>>=
+core <- core.find(pdbs)
+@ 
+The \texttt{plot.core()} and \texttt{print.core()} functions allow one to further examine the output of the \texttt{core.find()} procedure (see below and Figure 3).
+
+<<fig.cap="Identification of core residues">>=
+col=rep("black", length(core$volume))
+col[core$volume<2]="pink"; col[core$volume<1]="red"
+plot(core, col=col)
+@
+
+The \texttt{print.core()} function also returns \texttt{atom} and \texttt{xyz} indices similar to those returned from the \texttt{atom.select()} function.  Below we use these indices for core superposition and to write a quick PDB file for viewing in a molecular graphics program such as VMD (Figure 4).  
+
+<<>>=
+core.inds <- print(core, vol=1.0)
+write.pdb(xyz=pdbs$xyz[1,core.inds$xyz], file="quick_core.pdb")
+@ 
+
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[width=80mm]{figs/core.png}
+\caption{The most structural invariant core positions in the transducin family}
+\end{center}
+\end{figure}
+
+We can now superpose all structures on the selected core indices with the \texttt{fit.xyz()} or \texttt{pdbfit()} function.
+
+<<>>=
+xyz <- pdbfit( pdbs, core.inds )
+@
+
+The above command performs the actual superposition and stores the new coordinates in the matrix object \texttt{xyz}.  
+
+\paragraph{Side-note:} By providing an extra \texttt{outpath="somedir"} argument to \texttt{pdbfit} the superposed structures can be output for viewing (in this case to the local directory \texttt{somedir} which you can obviously change). These fitted structures can then be viewed in your favorite molecular graphics program (Figure 5).
+
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[width=80mm]{figs/fit.png}
+\caption{Structure ensemble of transducin family superposed based on core positions}
+\end{center}
+\end{figure}
+
+
+
+\subsection{Standard Structural Analysis}
+Bio3D contains functions to perform standard structural analysis, such as root mean-square deviation (RMSD), root mean-square fluctuation (RMSF), secondary structure, dihedral angles, difference distance matrices etc. The current section provides a brief exposure to using Bio3D in this vein. However, do feel free to skip ahead to the arguably more interesting section on PCA analysis.
+
+\paragraph{Root mean square deviation (RMSD):}
+RMSD is a standard measure of structural distance between coordinate sets. Here we examine the pairwise RMSD values and cluster our structures based on these values:
+
+<<warning=FALSE, fig.cap="Histogram of RMSD among transducin structures">>=
+rd <- rmsd(xyz)
+hist(rd, breaks=40, xlab="RMSD (Å)")
+@ 
+
+
+<<echo=TRUE, fig.cap="RMSD clustering of transducin structures">>=
+# RMSD clustering 
+hc.rd <- hclust(as.dist(rd))
+plot(hc.rd, labels=pdbs$id, ylab="RMSD", main="RMSD Cluster Dendrogram")
+@ 
+
+\paragraph{Question:} How many structure groups/clusters do we have according to this clustering? How would determine which structures are assigned to which cluster? HINT: See \texttt{help(cutree)}. 
+
+\paragraph{Question:} What kind of plot would the command \texttt{heatmap(rd)} produce? How would you label this plot with PDB codes? HINT: labCol and labRow. 
+
+
+\paragraph{Root mean squared fluctuations (RMSF):}
+RMSF is another often used measure of conformational variance. The Bio3D \texttt{rmsf()} function will return a vector of atom-wise (or residue-wise) variance instead of a single numeric value. For example:
+
+<<fig.cap="RMSF plot">>=
+## Ignore gap containing positions
+gaps.pos <- gap.inspect(pdbs$xyz)
+
+rf <- rmsf(xyz[, gaps.pos$f.inds])
+plot.bio3d(res.ind, rf, sse=sse, ylab="RMSF (A)", xlab="Position", typ="l")
+@ 
+
+
+\paragraph{Torsion/Dihedral analysis:}
+The conformation of a polypeptide or nucleotide chain can be usefully described in terms of angles of internal rotation around its constituent bonds.
+
+<<fig.cap="Basic Ramachandran plot">>=
+tor <- torsion.pdb(pdb)
+# basic Ramachandran plot
+plot(tor$phi, tor$psi, xlab="phi", ylab="psi")
+@ 
+
+Lets compare the Calpha atom based pseudo-torsion angles between two structures: 
+
+<<fig.cap="Torsion angle difference between structures in GDP (1tag) and GTP (1tnd) nucleotide states">>=
+a.xyz <- pdbs$xyz["1TAG_A",]
+b.xyz <- pdbs$xyz["1TND_B",]
+
+gaps.xyz <- is.gap(pdbs$xyz["1TAG_A",])
+gaps.res <- is.gap(pdbs$ali["1TAG_A",])
+resno <- pdbs$resno["1TAG_A",!gaps.res]
+
+a <- torsion.xyz(a.xyz[!gaps.xyz],atm.inc=1)
+b <- torsion.xyz(b.xyz[!gaps.xyz],atm.inc=1)
+d.ab <- wrap.tor(a-b)
+
+sse2 <- dssp(read.pdb("1tag"))
+plot.bio3d(resno, abs(d.ab), typ="h", sse=sse2, xlab="Residue", ylab="Angle")
+@
+
+\paragraph{Difference distance matrix analysis (DDM)}
+Distance matrices can be calculated with the function \texttt{dm()} and contact maps with the function \texttt{cmap()}. In the example below we calculate the differe distance matrix by simply subtracting one distance matrix from another. Note the vectorized nature of the this calculation (i.e. we do not have to explicitly iterate through each element of the matrix):
+
+<<results="hide", fig.cap="Difference of distance matrices between structures in GDP(1tag) and GTP(1tnd) nucleotide states">>=
+a <- dm(a.xyz[!gaps.xyz])
+b <- dm(b.xyz[!gaps.xyz])
+
+plot( (a - b), nlevels=10, grid.col="gray", resnum.1=resno, resnum.2=resno,
+     xlab="1tag", ylab="1tnd (positions relative to 1tag)")
+@
+
+\paragraph{Question:} Can you think of the pros and cons of these different analysis methods?
+
+
+
+
+
+
+\section{Principal Component Analysis (PCA)}
+Following core identification and subsequent superposition, PCA can be employed to examine the relationship between different structures based on their equivalent residues. The application of PCA to both distributions of experimental structures and molecular dynamics trajectories, along with its ability to provide considerable insight into the nature of conformational differences is also discussed in the molecular dynamics trajectory analysis vignette.  
+
+Briefly, the resulting principal components (orthogonal eigenvectors) describe the axes of maximal variance of the distribution of structures. Projection of the distribution onto the subspace defined by the largest principal components results in a lower dimensional representation of the structural dataset. The percentage of the total mean square displacement (or variance) of atom positional fluctuations captured in each dimension is characterized by their corresponding eigenvalue. Experience suggests that 3--5 dimensions are often sufficient to capture over 70 percent of the total variance in a given family of structures. Thus, a handful of principal components are sufficient to provide a useful description while still retaining most of the variance in the original distribution \citep{grant06}. 
+
+\paragraph{} The below sequence of commands returns the indices of for gap containing positions, which we then exclude from subsequent PCA with the \texttt{pca.xyz()} command. 
+
+<<>>=
+## Ignore gap containing positions
+gaps.res <- gap.inspect(pdbs$ali)
+gaps.pos <- gap.inspect(pdbs$xyz)
+
+##-- Do PCA
+pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
+@ 
+
+\paragraph{Question:}Why is the input to function \texttt{pca.xyz()} given as \texttt{xyz} rather than \texttt{pdbs\$xyz}? 
+
+\paragraph{Question:} Why would you need superposition before using \texttt{pca.xyz} but not need it for \texttt{pca.tor}?
+
+A quick overview of the results of \texttt{pca.xyz()} can be obtained by calling \texttt{plot.pca()} (Figure 12).
+
+<<fig.cap="Overview of PCA results for transducin crystallographic structures">>=
+plot(pc.xray, col=annotation[, "color"])
+@ 
+
+
+We can also call  \texttt{plot.bio3d()} to examine the contribution of each residue to the first three principal components with the following commands (Figure 13).
+
+<<eval=FALSE>>=
+par(mfrow = c(3, 1), cex = 0.6, mar = c(3, 4, 1, 1))
+plot.bio3d(res.ind, pc.xray$au[,1], sse=sse, ylab="PC1 (A)")
+plot.bio3d(res.ind, pc.xray$au[,2], sse=sse, ylab="PC2 (A)")
+plot.bio3d(res.ind, pc.xray$au[,3], sse=sse, ylab="PC3 (A)")
+par(op)
+@
+
+<<echo=FALSE, fig.cap="Contribution of each residue to the first three principal components">>=
+## Plot loadings in relation to reference structure "1TAG"
+sse <- dssp(pdb, resno=FALSE)
+     
+ind <- grep("1TAG", pdbs$id)
+res.ref <- which(!is.gap(pdbs$ali[ind,]))
+res.ind <- which(res.ref %in% gaps.res$f.ind)
+op <- par(no.readonly=TRUE)
+par(mfrow = c(3, 1), cex = 0.6, mar = c(3, 4, 1, 1))
+plot.bio3d(res.ind, pc.xray$au[,1], sse=sse, ylab="PC1 (A)")
+plot.bio3d(res.ind, pc.xray$au[,2], sse=sse, ylab="PC2 (A)")
+plot.bio3d(res.ind, pc.xray$au[,3], sse=sse, ylab="PC3 (A)")
+par(op)
+@ 
+
+
+The plots in Figures 12 and 14 display the relationships between different conformers, highlight positions responsible for the major differences between structures and enable the interpretation and characterization of multiple interconformer relationships.
+
+
+To further aid interpretation, a PDB format trajectory can be produced that interpolates between the most dissimilar structures in the distribution along a given principal cmponent.  This involves dividing the difference between the conformers into a number of evenly spaced steps along the principal components, forming the frames of the trajectory. Such trajectories can be directly visualized in a molecular graphics program, such as VMD \citep{vmd}. Furthermore, the PCA results can be compared to those from simulations (see the molecular dynamics and normal mode analysis vignettes), as well as guiding dynamic network analysis, being analyzed for possible domain and shear movements with the DynDom package \citep{dyndom}, or used as initial seed structures for reaction path refinement methods such as Conjugate Peak Refinement \citep{cpr}.
+
+<<eval=FALSE>>=
+a <- mktrj.pca(pc.xray, pc=1, file="pc1.pdb")
+@
+
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[width=110mm]{figs/pca.png}
+\caption{Interpolated structures along PC1 produced by the mktrj.pdb() function}
+\end{center}
+\end{figure}
+
+\subsection{Conformer Clustering in PC Space}
+Clustering structures in PC space can often enable one to focus on the relationships between individual structures in terms of their major structural displacements, with a controllable the level of dynamic details (via specifying the number of PCs used in the clustering). For example, with clustering along PCs 1 and 2, we can investigate how the X-ray structures of transducin relate to each other with respect to the major conformation change that covers over 65\% structural variance (See Figures 12 and 15). This can reveal functional relationships that are often hard to find by conventional pairwise methods such as the RMSD clustering detailed previously. For example in the PC1-PC2 plane, the inactive ``GDP'' structures (green points in Figure 12) are further split into two sub-groups (Figures 15 and 16). The bottom-right sub-group (blue) exclusively correspond to the structures complexed with GDP dissociation inhibitor (GDPi). This is clearly evident in the PC plot and clustering dendrogram that can be generated with the following commands:
+
+
+<<fig.cap="Clustering based on PC1-PC2">>=
+hc <- hclust(dist(pc.xray$z[,1:2]))
+grps <- cutree(hc, h=30)
+cols <- c("red", "green", "blue")
+plot(pc.xray$z[, 1:2], typ="p", pch=16, col=cols[grps], xlab="PC1", ylab="PC2")
+plot(hc, labels=pdbs$id, main="PC1-2", xlab="", ylab="Distance")
+abline(h=30, lty=3, col="gray60")
+@ 
+
+\paragraph{Side-note:} On the PC1 vs PC2 conformer plot in Figure 15 you can interactively identify and label individual structures by using the \texttt{identify()} function clicking with your mouse (left to select, right to end). In this particular case the command would be:
+
+<<eval=FALSE>>=
+identify(pc.xray$z[,1], pc.xray$z[,2], labels=pdbs$id)
+@
+
+
+\paragraph{Question:} Which clustering appears to be most informative, that based on RMSD or that based on PCA? Why might this be the case? HINT: It can be useful to think of PCA as a filter for large scale conformational changes.
+
+\paragraph{Question:} Can you find a Bio3D function that would allow you to compare the different clustering results? 
+
+
+
+
+<<echo=FALSE>>=
+detach(transducin)
+@
+
+\section{Where to Next}
+If you have read this far, congratulations! We are ready to have some fun and move to other package vignettes that describe more interesting analysis including Correlation Network Analysis (where we will build and dissect dynamic networks form different correlated motion data), enhanced methods for Normal Mode Analysis (where we will explore the dynamics of large protein families and superfamilies using predictive calculations), and advanced Comparative Structure Analysis (where we will mine available experimental data and supplement it with simulation results to map the conformational dynamics and coupled motions of proteins).
+
+
+\section{Document Details}
+This document is shipped with the Bio3D package in both Rnw and PDF formats. All code can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
+
+<<eval=FALSE>>=
+knitr::knit("Bio3D_pca.Rnw")
+tools::texi2pdf("Bio3D_pca.tex")
+@
+
+\subsection*{Information About the Current Bio3D Session}
+<<>>=
+sessionInfo()
+@
+
+
+\begin{thebibliography}{9}
+
+
+\bibitem[Grant \emph{et al.}, 2006]{grant06}
+Grant, B.J. and Rodrigues, A.P.D.C and Elsawy, K.M. and Mccammon, A.J. and Caves, L.S.D. (2006)
+\textbf{Bio3d: an R package for the comparative analysis of protein structures.}
+\emph{Bioinformatics},
+\textbf{22}, 2695--2696.
+
+
+\bibitem[Grant \emph{et al.}, 2007]{grant07}
+Grant, B.J. and Mccammon, A.J. and Caves, L.S.D. and Cross, R.A. (2007)
+\textbf{Multivariate Analysis of Conserved Sequence-Structure Relationships in Kinesins: Coupling of the Active Site and a Tubulin-binding Sub-domain.}
+\emph{J. Mol. Biol.},
+\textbf{5}, 1231--1248
+
+
+\bibitem[Fischer and Karplus, 1992]{cpr}
+Fischer, S. and Karplus, M. (1992) 
+\textbf{Conjugate peak refinement: an algorithm for finding reaction paths and accurate transition states in systems with many degrees of freedom.}
+\emph{Chem. Phys. Lett}, \textbf{194}, 252--261
+
+
+\bibitem[Hayward and Berendsen, 1989]{dyndom}
+Hayward, S. and Berendsen, H. (1998) 
+\textbf{Systematic analysis of domain motions in proteins from conformational change: new results on citrate synthase and T4 lysozyme.}
+\emph{Proteins}, \textbf{30}, 144--154
+
+
+\bibitem[Humphrey \emph{et al.}, 1996]{vmd}
+Humphrey, W., et al. (1996) 
+\textbf{VMD: visual molecular dynamics.}
+\emph{J. Mol. Graph}, \textbf{14}, 33--38
+
+
+\bibitem[Yao and Grant, 2013]{yao13}
+Yao, X.Q. and Grant, B.J. (2013) 
+\textbf{Domain-opening and dynamic coupling in the alpha-subunit of heterotrimeric G proteins.}
+\emph{Biophys. J}, \textbf{105}, L08--10
+
+
+\end{thebibliography}
+
+
+
+
+\end{document}
+

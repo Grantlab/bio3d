@@ -60,11 +60,14 @@ plot(r, xlab="ANM", ylab="C-alpha FF")
 
 pause()
 
-#############################################
-##                                          #
-## Ensemble NMA                             #
-##                                          #
-#############################################
+################################################
+##                                             #
+## Ensemble NMA                                #
+## (requires the 'muscle' program installed)   #
+##                                             #
+################################################
+
+pause()
 
 ### Set temp dir to store PDB files
 tmp.dir <- tempdir()
