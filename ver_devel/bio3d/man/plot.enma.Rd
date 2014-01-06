@@ -19,9 +19,9 @@
   \item{entropy}{ logical, if TRUE entropy and fluctuation variance is
     plotted. }
   \item{col}{ a character vector of plotting colors.  }
-  \item{signif} { logical, if TRUE significance of difference is plotted.}
-  \item{pcut} { P-value cutoff for the significance. }
-  \item{qcut} { Cutoff for the minimal difference of mean fluctuation to plot 
+  \item{signif}{ logical, if TRUE significance of difference is plotted. }
+  \item{pcut}{ P-value cutoff for the significance. }
+  \item{qcut}{ Cutoff for the minimal difference of mean fluctuation to plot 
              the significance. }
   \item{xlab}{ a label for the x axis. }
   \item{ylab}{ a label for the y axis. }
