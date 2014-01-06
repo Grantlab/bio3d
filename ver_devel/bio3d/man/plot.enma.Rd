@@ -6,6 +6,7 @@
 }
 \usage{
 \method{plot}{enma}(x, pdbs = NULL, entropy = FALSE, col = NULL,
+        signif = FALSE, pcut = 0.005, qcut = 0.04,
         xlab = "Residue Position", ylab = "Fluctuations",
         mar = c(4, 5, 2, 2), ...)
 }
@@ -18,6 +19,10 @@
   \item{entropy}{ logical, if TRUE entropy and fluctuation variance is
     plotted. }
   \item{col}{ a character vector of plotting colors.  }
+  \item{signif} { logical, if TRUE significance of difference is plotted.}
+  \item{pcut} { P-value cutoff for the significance. }
+  \item{qcut} { Cutoff for the minimal difference of mean fluctuation to plot 
+             the significance. }
   \item{xlab}{ a label for the x axis. }
   \item{ylab}{ a label for the y axis. }
   \item{mar}{ A numerical vector of the form c(bottom, left, top, right)
