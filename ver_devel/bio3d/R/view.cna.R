@@ -1,5 +1,6 @@
 view.cna <- function(x, layout=layout.pdb(pdb, x),
-                     col.sphere=0:32, col.lines="silver",
+                     col.sphere=match(V(x$clustered.network)$color, vmd.colors())-1, 
+                     col.lines="silver",
                      weights=E(x$clustered.network)$weight,
                      radius=table(x$raw.communities$membership)/5,
                      alpha=1,
