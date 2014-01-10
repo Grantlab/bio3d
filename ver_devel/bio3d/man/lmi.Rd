@@ -11,7 +11,7 @@ lmi(trj, grpby=NULL, ncore=1)
   \item{trj}{ a numeric matrix of Cartesian coordinates with a row per structure/frame. }
   \item{grpby}{ a vector counting connective duplicated elements that
     indicate the elements of \code{trj} that should be considered as a group
-    (e.g. atoms from a particular residue).
+    (e.g. atoms from a particular residue). }
   \item{ncore}{ number of CPU cores used to do the calculation.
     \code{ncore>1} requires multicore package installed. }
 }
