@@ -1,6 +1,6 @@
 `read.pqr` <-
-function (file, maxlines=50000, multi=FALSE,
-                      rm.insert=FALSE, rm.alt=TRUE, verbose=TRUE) {
+function (file, maxlines=-1, multi=FALSE,
+          rm.insert=FALSE, rm.alt=TRUE, het2atom=FALSE, verbose=TRUE) {
 
   if(missing(file)) {
     stop("read.pqr: please specify a PQR 'file' for reading")
@@ -11,8 +11,10 @@ function (file, maxlines=50000, multi=FALSE,
   if(!is.logical(multi)) {
     stop("read.pqr: 'multi' must be logical TRUE/FALSE")
   }
-  
-  # PDB FORMAT v2.0:    colpos,  datatype,    name,      description
+ 
+  cl <- match.call()
+ 
+  # PDB FORMAT v3.3:    colpos,  datatype,    name,      description
   atom.format <- matrix(c(-6,     NA,          NA,       # (ATOM)
                           5,     'numeric',   "eleno",   # atom_no
                          -1,     NA,          NA,        # (blank)
@@ -29,9 +31,11 @@ function (file, maxlines=50000, multi=FALSE,
                           8,     'numeric',   "o",       # o  ### 6 for pdb
                           8,     'numeric',   "b",       # b  ### 6 for pdb
                          -6,     NA,           NA,       # (blank)
-                          4,     'character', "segid"    # seg_id
+                          4,     'character', "segid",   # seg_id
+                          2,     'character', "elesy",   # element symbol
+                          2,     'numeric', "charge"     # charge on the atom
                          ), ncol=3, byrow=TRUE,
-                       dimnames = list(c(1:17), c("widths","what","name")) )
+                       dimnames = list(c(1:19), c("widths","what","name")) )
 
   split.string <- function(x) {
     # split a string 'x'
@@ -50,6 +54,13 @@ function (file, maxlines=50000, multi=FALSE,
     s
   }
 
+  parse.atom <- function(atom.lines, atom.format, drop.ind) {
+    ## format ATOM records as a character matrix
+    atom <- matrix(trim(sapply(atom.lines, split.string)), byrow=TRUE,
+                   ncol=nrow(atom.format[ !drop.ind,]),
+                   dimnames = list(NULL, atom.format[ !drop.ind,"name"]) )
+    return(atom)
+  }
 
   # finds first and last (substr positions)
   widths <-  as.numeric(atom.format[,"widths"]) # fixed-width spec  
@@ -75,7 +86,11 @@ function (file, maxlines=50000, multi=FALSE,
       type <- type[ (1:raw.end[1]) ]
     } else {
       print("multi=TRUE: 'read.dcd' will be quicker!")
+      raw.lines.multi <- raw.lines
+      type.multi <- type
     }
+    raw.lines <- raw.lines[ (1:raw.end[1]) ]
+    type <- type[ (1:raw.end[1]) ]
   }
   if ( length(raw.end) !=1 ) {
     if (length(raw.lines) == maxlines) {
@@ -85,20 +100,33 @@ function (file, maxlines=50000, multi=FALSE,
     }
   }
 
-  # split by record type
+  ## split by record type
   raw.header <- raw.lines[type == "HEADER"]
   raw.seqres <- raw.lines[type == "SEQRES"]
   raw.helix  <- raw.lines[type == "HELIX "]
   raw.sheet  <- raw.lines[type == "SHEET "]
   raw.atom   <- raw.lines[type == "ATOM  "]
   het.atom   <- raw.lines[type == "HETATM"]
-  # also look for "TER" records
-  rm(raw.lines)
-  
+  all.atom   <- raw.lines[type %in% c("ATOM  ","HETATM")]
+
   if (verbose) {
     if (!is.character0(raw.header)) { cat(" ", raw.header, "\n") }
   }
-  seqres <- unlist(strsplit( trim(substring(raw.seqres,19,80))," "))
+  ## Edit from Baoqiang Cao <bqcao@ices.utexas.edu> Nov 29, 2009
+  ## Old version:
+  ##  seqres <- unlist(strsplit( trim(substring(raw.seqres,19,80))," +"))
+  ## New version
+
+  seqres <- unlist(strsplit( trim(substring(raw.seqres,19,80))," +"))
+  if(!is.null(seqres)) {
+    seqres.ch <- substring(raw.seqres, 12, 12)
+    seqres.ln <- substring(raw.seqres, 13, 17)
+    seqres.in <- ( !duplicated(seqres.ch) )
+    names(seqres) <- rep(seqres.ch[seqres.in], times=seqres.ln[seqres.in])
+  }
+  ## End Edit from Baoqiang:
+
+#  seqres <- unlist(strsplit( trim(substring(raw.seqres,19,80))," "))
 
   helix  <- list(start = as.numeric(substring(raw.helix,22,25)),
                  end   = as.numeric(substring(raw.helix,34,37)),
@@ -110,16 +138,58 @@ function (file, maxlines=50000, multi=FALSE,
                  chain = trim(substring(raw.sheet,22,22)),
                  sense = trim(substring(raw.sheet,39,40)))
   
-  # format ATOM records as a character matrix
-  atom <- matrix(trim(sapply(raw.atom, split.string)), byrow=TRUE,
-                 ncol=nrow(atom.format[ !drop.ind,]), 
-                 dimnames = list(NULL, atom.format[ !drop.ind,"name"]) )
+  if (het2atom) {
+    atom <- parse.atom(all.atom, atom.format, drop.ind)
+  } else {
+    atom <- parse.atom(raw.atom, atom.format, drop.ind)
+  }
+
+  ## Start edit from Lars -- multiple models
+  xyz.models <- NULL
+  if (length(raw.end) > 1 && multi) {
+    ## Models: same molecule, different conformation
+    ## Store only coordinates
+    xyz.models <- as.numeric(t(atom[,c("x","y","z")]))
+    xyz.len <- length(xyz.models)
+
+    for ( i in 2:length(raw.end) ) {
+      raw.lines.tmp <- raw.lines.multi[ ((raw.end[i-1]+1):raw.end[i]) ]
+      type.tmp <- type.multi[ ((raw.end[i-1]+1):raw.end[i]) ]
+
+      raw.atom  <- raw.lines.tmp[type.tmp %in% "ATOM  "]
+      all.atom  <- raw.lines.tmp[type.tmp %in% c("ATOM  ","HETATM")]
+
+      if (het2atom) {
+        atom.tmp <- parse.atom(all.atom, atom.format, drop.ind)
+      } else {
+        atom.tmp <- parse.atom(raw.atom, atom.format, drop.ind)
+      }
+      tmp.xyz <- as.numeric(t(atom.tmp[,c("x","y","z")]))
+
+      if ( length(tmp.xyz) != xyz.len ) {
+        warning(paste("Unequal number of atoms for multi-model records:", file))
+        xyz.models <- NULL
+        break
+      }
+      else {
+        xyz.models <- rbind(xyz.models, tmp.xyz)
+      }
+    }
+    rm(raw.lines.multi)
+  }
+  ## End edit from multi-model
+
+  # also look for "TER" records
+  rm(raw.lines)
 
   # Alt records with m[,"alt"] != NA
   if (rm.alt) {
     if ( sum( !is.na(atom[,"alt"]) ) > 0 ) {
-      cat("   PDB has ALT records, taking A only, rm.alt=TRUE\n")
-      alt.inds <- which( (atom[,"alt"] != "A") ) # take first alt only
+      ## Edited: Mon May  4 17:41:11 PDT 2009 to cope with
+      ## both numeric and character ALT records
+      first.alt <- sort( unique(na.omit(atom[,"alt"])) )[1]
+      cat(paste("   PDB has ALT records, taking",first.alt,"only, rm.alt=TRUE\n"))
+      alt.inds <- which( (atom[,"alt"] != first.alt) ) # take first alt only
       if(length(alt.inds)>0)
         atom <- atom[-alt.inds,]
     }
@@ -132,9 +202,15 @@ function (file, maxlines=50000, multi=FALSE,
       atom <- atom[-insert.inds,]
     }
   }
-  het <- matrix(trim(sapply(het.atom, split.string)), byrow=TRUE,
-                ncol=nrow(atom.format[ !drop.ind,]), 
-                dimnames = list(NULL, atom.format[ !drop.ind,"name"]) )
+  if(!het2atom) {
+    het <- matrix(trim(sapply(het.atom, split.string)), byrow=TRUE,
+                  ncol=nrow(atom.format[ !drop.ind,]),
+                  dimnames = list(NULL, atom.format[ !drop.ind,"name"]) )
+  } else { het=NULL }
+
+  ## Calpha position - check for calcium resid
+  ##calpha = as.logical(atom[,"elety"]=="CA")
+  calpha = (atom[,"elety"]=="CA") & (atom[,"resid"] !="CA")
 
   output<-list(atom=atom,
                het=het,
@@ -142,10 +218,10 @@ function (file, maxlines=50000, multi=FALSE,
                sheet=sheet,
                seqres=seqres,
                xyz=as.numeric(t(atom[,c("x","y","z")])),
-               calpha = as.logical(atom[,"elety"]=="CA"))
+               xyz.models=xyz.models,
+               calpha = calpha, call=cl)
 
   class(output) <- "pdb"
   return(output)
   
 }
-
