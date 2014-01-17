@@ -1,4 +1,4 @@
-plot.cna <- function(x, community=x$clustered.communities, weights=E(x$clustered.network)$weight*10,
+plot.cna <- function(x, community=x$clustered.communities, weights=NULL,
                      layout=NULL, col=NULL, ...) {
 
   ##- Function for ploting cna networks the way we like them.
@@ -23,7 +23,19 @@ plot.cna <- function(x, community=x$clustered.communities, weights=E(x$clustered
   ##
   ## col=V(x$clustered.network)$color
   ##    vmd.colors(18)== V(x$clustered.network)$color
-  
+
+  if(is.null(weights)){
+    weights <- E(x$clustered.network)$weight*10
+    
+    if(is.null(x$call$minus.log)){
+      weights <- exp(-weights)
+    }
+    else{
+      if(x$call$minus.log){
+        weights <- exp(-weights)
+      }
+    }
+  }
   
   if(is.null(layout)) {
       coords <- layout.fruchterman.reingold(x$clustered.network, weights=weights)

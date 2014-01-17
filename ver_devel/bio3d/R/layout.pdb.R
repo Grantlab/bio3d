@@ -21,7 +21,7 @@ layout.pdb <- function(pdb, membership, renumber=TRUE, k=3){
 
   ##-- Check if the number of number of residues in 'pdb' equals
   ##   the length of 'membership' vector
-  if(length(pdb$atom[pdb$calpha,"resno"]) != length(membership)){
+  if(max(as.numeric(pdb$atom[,"resno"])) != length(membership)){
     stop("Number of residues in 'pdb' and length of 'membership' vector differ")
   }
 
