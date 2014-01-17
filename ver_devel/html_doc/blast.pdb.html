@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>blast.pdb. bio3d 2.0</title>
+<title>blast.pdb. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -144,53 +145,53 @@
 </div>
 <div class='input'>blast <- blast.pdb( pdbseq(pdb) )
 </div>
-<div class='output'> Searching ... please wait (updates every 5 seconds) RID = 7V739MYC01R 
- .
- Reporting 63 hits
+<div class='output'> Searching ... please wait (updates every 5 seconds) RID = 8X1ZJMYR015 
+ ..
+ Reporting 206 hits
 </div>
 <div class='input'>
 head(blast$hit.tbl)
 </div>
 <div class='output'>     queryid   subjectids                identity positives alignmentlength
-[1,] "unnamed" "gi|3114353|pdb|2KIN|A"   "85.23"  "92.83"   "237"          
-[2,] "unnamed" "gi|3891776|pdb|3KIN|A"   "85.23"  "92.83"   "237"          
-[3,] "unnamed" "gi|3891778|pdb|3KIN|C"   "85.23"  "92.83"   "237"          
-[4,] "unnamed" "gi|17942987|pdb|1GOJ|A"  "56.79"  "71.91"   "324"          
-[5,] "unnamed" "gi|160286521|pdb|3B6U|A" "45.21"  "61.38"   "334"          
-[6,] "unnamed" "gi|160286522|pdb|3B6U|B" "45.21"  "61.38"   "334"          
+[1,] "unnamed" "gi|157830287|pdb|1BG2|A" "100.00" "100.00"  "323"          
+[2,] "unnamed" "gi|193885175|pdb|2P4N|K" "100.00" "100.00"  "323"          
+[3,] "unnamed" "gi|24987772|pdb|1MKJ|A"  "100.00" "100.00"  "323"          
+[4,] "unnamed" "gi|406855617|pdb|4ATX|C" " 98.76" " 99.38"  "323"          
+[5,] "unnamed" "gi|512125532|pdb|4HNA|K" " 98.45" " 98.45"  "323"          
+[6,] "unnamed" "gi|344189479|pdb|2Y5W|A" " 76.00" " 87.38"  "325"          
      mismatches gapopens q.start q.end s.start s.end evalue     bitscore
-[1,] " 34"      " 1"     "  1"   "236" " 2"    "238" "8.0e-151" "427.0" 
-[2,] " 34"      " 1"     "  1"   "236" " 2"    "238" "8.0e-151" "427.0" 
-[3,] " 34"      " 1"     "  1"   "236" " 2"    "238" "8.0e-151" "427.0" 
-[4,] "134"      " 3"     "  6"   "323" " 7"    "330" "9.0e-125" "365.0" 
-[5,] "163"      " 7"     "  7"   "323" "23"    "353" " 1.0e-83" "261.0" 
-[6,] "163"      " 7"     "  7"   "323" "23"    "353" " 1.0e-83" "261.0" 
+[1,] "  0"      " 0"     "  1"   "323" "  3"   "325" " 0.0e+00" "671.0" 
+[2,] "  0"      " 0"     "  1"   "323" "  3"   "325" " 0.0e+00" "671.0" 
+[3,] "  0"      " 0"     "  1"   "323" "  3"   "325" " 0.0e+00" "671.0" 
+[4,] "  4"      " 0"     "  1"   "323" "  3"   "325" " 0.0e+00" "664.0" 
+[5,] "  5"      " 0"     "  1"   "323" "  3"   "325" " 0.0e+00" "660.0" 
+[6,] " 74"      " 2"     "  3"   "323" "  9"   "333" " 0.0e+00" "510.0" 
 </div>
 <div class='input'>top.hits <- plot(blast)
 </div>
 <div class='output'>  * Possible cutoff values include:
-		 285 88 -1 
+		 709 285 87 -3 
     Yielding Nhits:
-		 4 55 63  
+		 11 15 186 206  
 
  ** Chosen cutoff value of:
-		 88 
+		 87 
     Yielding Nhits:
-		 55  
+		 186  
 </div>
 <p><img src='blast.pdb-9.png' alt='' width='400' height='400' /></p>
 <div class='input'>head(top.hits$hits)
 </div>
 <div class='output'>  pdb.id   gi.id       group
-1 "2KIN_A" "3114353"   "1"  
-2 "3KIN_A" "3891776"   "1"  
-3 "3KIN_C" "3891778"   "1"  
-4 "1GOJ_A" "17942987"  "1"  
-5 "3B6U_A" "160286521" "2"  
-6 "3B6U_B" "160286522" "2"  
+1 "1BG2_A" "157830287" "1"  
+2 "2P4N_K" "193885175" "1"  
+3 "1MKJ_A" "24987772"  "1"  
+4 "4ATX_C" "406855617" "1"  
+5 "4HNA_K" "512125532" "1"  
+6 "2Y5W_A" "344189479" "1"  
 </div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>blast.pdb</li>
     </ul>
@@ -208,7 +209,7 @@ head(blast$hit.tbl)
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=blast.pdb'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=blast.pdb'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

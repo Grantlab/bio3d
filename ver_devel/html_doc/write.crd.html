@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>write.crd. bio3d 2.0</title>
+<title>write.crd. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -125,22 +126,54 @@ pdb <- read.pdb( "1bg2" )
 <div class='output'>  Note: Accessing online PDB file
   HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
 </div>
-<div class='input'>pdb.summary(pdb)
+<div class='input'>summary(pdb)
 </div>
-<strong class='error'>Error in eval(expr, envir, enclos): could not find function "pdb.summary"</strong>
+<div class='output'>
+ Call:  read.pdb(file = "1bg2")
+
+  Atom Count: 2733 
+
+   Total ATOMs#: 2527 
+     Protein ATOMs#: 2527   ( Calpha ATOMs#: 323 ) 
+     Non-protein ATOMs#: 0   ( residues:  ) 
+     Chains#: 1   ( values: A ) 
+
+   Total HETATOMs: 206 
+     Residues HETATOMs#: 174   ( residues: MG ACT ADP HOH ) 
+     Chains#: 1   ( values: A )
+
++ attr: atom, het, helix, sheet, seqres,
+        xyz, xyz.models, calpha, call
+</div>
 <div class='input'># Convert to CHARMM format
 new <- convert.pdb(pdb, type="charmm")
 </div>
 <div class='output'> Converting to charmm format 
 </div>
-<div class='input'>pdb.summary(new)
+<div class='input'>summary(new)
 </div>
-<strong class='error'>Error in eval(expr, envir, enclos): could not find function "pdb.summary"</strong>
+<div class='output'>
+ Call:  read.pdb(file = "1bg2")
+
+  Atom Count: 2733 
+
+   Total ATOMs#: 2527 
+     Protein ATOMs#: 2527   ( Calpha ATOMs#: 323 ) 
+     Non-protein ATOMs#: 0   ( residues:  ) 
+     Chains#: 1   ( values: NA ) 
+
+   Total HETATOMs: 206 
+     Residues HETATOMs#: 174   ( residues: MG ACT ADP HOH ) 
+     Chains#: 1   ( values: A )
+
++ attr: atom, het, helix, sheet, seqres,
+        xyz, xyz.models, calpha, call
+</div>
 <div class='input'># Write a CRD file
 write.crd(new, file="4charmm.crd")
 </div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>write.crd</li>
     </ul>
@@ -162,7 +195,7 @@ write.crd(new, file="4charmm.crd")
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=write.crd'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=write.crd'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

@@ -48,12 +48,8 @@ modes <- nma(pdb)
 ## Calculate correlation matrix
 cm <- dccm.nma(modes)
 
-## Plot matrix
-plot(cm)
-
-## An alternative pretty map:
-Labpalette = colorRampPalette(c("blue", "white", "red"), space = "Lab")
-filled.contour( x=1:nrow(cm), y=1:ncol(cm), z=cm,
-                color = Labpalette, levels = pretty( c(-1,1), 20))
+## Plot correlation map
+plot(cm, sse = pdb, contour = FALSE, col.regions = bwr.colors(20),
+     at = seq(-1, 1, 0.1))
 }
 \keyword{ analysis }

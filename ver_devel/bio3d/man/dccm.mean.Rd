@@ -1,8 +1,6 @@
 \name{dccm.mean}
 \alias{dccm.mean}
-\title{
-  Atomic Correlation Matrix Consensus Filtering
-}
+\title{ Atomic Correlation Matrix Consensus Filtering }
 \description{
 Filter a three-dimensional correlation matrix, or DCCM, composed of 
 results from multiple dccm calculations and return correlations 

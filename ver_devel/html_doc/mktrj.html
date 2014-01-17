@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>mktrj. bio3d 2.0-1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Barry Grant, Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="container">
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
+  </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> PCA / NMA Atomic Displacement Trajectory </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>mktrj(x, ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>x</dt>
+      <dd> a list object of class <code>"pca"</code> or <code>"nma"</code> as
+    obtained  with <code><a href='pca.xyz.html'>pca.xyz</a></code> or <code><a href='nma.html'>nma</a></code>,
+    respectively. </dd>
+      <dt>...</dt>
+      <dd> additional arguments passed to the methods
+    <code>mktrj.pca</code> or <code>mktrj.nma</code>. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Make a trajectory of atomic displacments along a given principal
+  component / normal mode.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p><code>mktrj</code> is a generic function calling the corresponding function
+  determined by the class of the input argument <code>x</code>. Use
+  <code>methods("mktrj")</code> to get all the methods for <code>mktrj</code>
+  generic:</p>
+  
+      <p><code><a href='mktrj.pca.html'>mktrj.pca</a></code> will be used when <code>x</code> is an object of 
+  <code>"pca"</code>.</p>
+  
+      <p><code><a href='mktrj.nma.html'>mktrj.nma</a></code> will be used when <code>x</code> is an object of 
+  <code>"nma"</code>.</p>
+  
+      <p>See examples for each corresponding function for more details.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>Molecular graphics software such as VMD or PyMOL is useful
+  for viewing trajectories see e.g: 
+  <a href = 'http://www.ks.uiuc.edu/Research/vmd/'>http://www.ks.uiuc.edu/Research/vmd/</a>.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>data(transducin)
+attach(transducin, warn.conflicts=FALSE)
+
+# Ignore gap containing positions
+gaps.pos <- gap.inspect(pdbs$xyz)
+
+# PCA
+pc.xray <- pca.xyz(pdbs$xyz[, gaps.pos$f.inds])
+
+# Write PC trajectory of pc=1
+a <- mktrj(pc.xray)
+
+detach(transducin)
+</div></pre>
+  </div>
+  <div class="span3">
+    <!-- <ul>
+      <li>mktrj</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='mktrj.pca.html'>mktrj.pca</a></code>, <code><a href='mktrj.nma.html'>mktrj.nma</a></code>,
+  <code><a href='pca.xyz.html'>pca.xyz</a></code>, <code><a href='nma.html'>nma</a></code>, <code><a href='view.modes.html'>view.modes</a></code>. 
+    
+    <h2>Author</h2>
+     Barry Grant, Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=mktrj'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

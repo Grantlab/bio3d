@@ -1,10 +1,51 @@
 NEWS 
 ====
 
-For a more fine-grained list of changes or to report a bug, consult 
+Version 2.0 contains over 30 new functions including enhanced Normal Mode 
+Analysis facilities as well extensive improvements to existing code and 
+documentation. For a fine-grained list of changes or to report a bug, please 
+consult: 
 
 * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
 * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+
+Major new functions include:
+* aa2mass: Amino Acid Residues to Mass Converter
+* atom.index: Index of Atomic Masses
+* atom2mass(atom2ele, formula2mass): Atom Names to Mass Converter
+* binding.site: Binding Site Residues
+* com(com.xyz): Center of Mass
+* combine.sel: Combine Atom Selections From PDB Structure
+* dccm.enma: Cross-Correlation for Ensemble NMA (eNMA)
+* dccm.mean: Filter DCCM matrices
+* dccm.nma: Dynamic Cross-Correlation from Normal Modes Analysis
+* dccm.xyz: DCCM: Dynamical Cross-Correlation Matrix
+* deformation.nma: Deformation Analysis
+* dssp.trj: Secondary Structure Analysis of Trajectories with DSSP
+* fluct.nma: NMA Fluctuations
+* inner.prod: Mass-weighted Inner Product
+* is.pdb: Is an Object of Class pdb
+* is.select: Is an Object of Class atom.select
+* load.enmff(ff.calpha, ff.calphax, ff.anm, ff.pfanm, ff.sdenm, ff.reach): ENM Force Field Loader
+* mktrj.nma: NMA Atomic Displacement Trajectory
+* nma(build.hessian, print.nma): Normal Mode Analysis
+* nma.pdbs(print.enma): Ensemble Normal Mode Analysis
+* normalize.vector: Mass-Weighted Normalized Vector
+* pdb.annotate: Get Customizable Annotations From PDB
+* pdb2aln: Align a PDB structure to an existing alignment
+* pdb2aln.ind: Mapping between PDB atomic indices and alignment positions
+* pdbfit: PDB File Coordinate Superposition
+* pdbs2pdb: PDBs to PDB Converter
+* plot.enma: Plot eNMA Results
+* plot.nma: Plot NMA Results
+* plot.rmsip: Plot RMSIP Results
+* read.mol2: Read MOL2 File
+* sdENM: Index for the sdENM ff
+* sse.bridges: SSE Backbone Hydrogen Bonding
+* struct.aln: Structure Alignment Of Two PDB Files
+* view.dccm: Visualization of Dynamic Cross-Correlation
+* view.modes: Vector Field Visualization of Modes
+* vmd.colors: Color as in VMD Molecular Viewer
 
 
 Versioning
@@ -12,7 +53,9 @@ Versioning
 
 Releases will be numbered with the following semantic versioning format:
 
-<major>.<minor>.<patch>
+<major>.<minor>-<patch>
+
+E.g.: 2.0-1
 
 And constructed with the following guidelines:
 

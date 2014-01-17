@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>plot.blast. bio3d 2.0</title>
+<title>plot.blast. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -129,29 +130,29 @@
     <pre class="examples"><div class='input'>b2 <-  blast.pdb( pdbseq(read.pdb( get.pdb("4q21", URLonly=TRUE) )) )
 </div>
 <div class='output'>  HEADER    ONCOGENE PROTEIN                        25-SEP-91   4Q21               
- Searching ... please wait (updates every 5 seconds) RID = 7V7FX55X014 
- .
- Reporting 164 hits
+ Searching ... please wait (updates every 5 seconds) RID = 8X2CG9PK015 
+ ..
+ Reporting 289 hits
 </div>
 <div class='input'>raw.hits <- plot.blast(b2)
 </div>
 <div class='output'>  * Possible cutoff values include:
-		 237 70 
+		 237 62 
     Yielding Nhits:
-		 111 164  
+		 151 289  
 
  ** Chosen cutoff value of:
-		 70 
+		 62 
     Yielding Nhits:
-		 164  
+		 289  
 </div>
 <p><img src='plot.blast-5.png' alt='' width='400' height='400' /></p>
 <div class='input'>top.hits <- plot.blast(b2, 188)
 </div>
 <div class='output'>  * Possible cutoff values include:
-		 237 70 
+		 237 62 
     Yielding Nhits:
-		 111 164  
+		 151 289  
 
 </div>
 <p><img src='plot.blast-8.png' alt='' width='400' height='400' /></p>
@@ -170,21 +171,21 @@ blast <- blast.pdb( pdbseq(read.pdb( get.pdb("2BN3", URLonly=TRUE) )))
 </div>
 <div class='output'>  HEADER    RADIATION DAMAGE                        18-MAR-05   2BN3               
    PDB has ALT records, taking A only, rm.alt=TRUE
- Searching ... please wait (updates every 5 seconds) RID = 7V7GGP30014 
+ Searching ... please wait (updates every 5 seconds) RID = 8X2CY9W9015 
  .
- Reporting 503 hits
+ Reporting 1177 hits
 </div>
 <div class='input'>raw.hits <- plot(blast)
 </div>
 <div class='output'>  * Possible cutoff values include:
 		 -3 
     Yielding Nhits:
-		 503  
+		 1177  
 
  ** Chosen cutoff value of:
 		 -3 
     Yielding Nhits:
-		 503  
+		 1177  
 </div>
 <p><img src='plot.blast-15.png' alt='' width='400' height='400' /></p>
 <div class='input'>top.hits <- plot(blast, cut.seed=20)
@@ -192,12 +193,12 @@ blast <- blast.pdb( pdbseq(read.pdb( get.pdb("2BN3", URLonly=TRUE) )))
 <div class='output'>  * Possible cutoff values include:
 		 24 7 -3 
     Yielding Nhits:
-		 426 481 503  
+		 548 1127 1177  
 
  ** Chosen cutoff value of:
 		 24 
     Yielding Nhits:
-		 426  
+		 548  
 </div>
 <p><img src='plot.blast-18.png' alt='' width='400' height='400' /></p>
 <div class='input'>
@@ -209,7 +210,7 @@ head(top.hits$pdb.id)
 #pdbsplit(pdbFiles, path="downloadedPDBs/PDB_chains")
 </div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>plot.blast</li>
     </ul>
@@ -227,7 +228,7 @@ head(top.hits$pdb.id)
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=plot.blast'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=plot.blast'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

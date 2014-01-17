@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>dccm.enma. bio3d 2.0</title>
+<title>dccm.enma. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Lars Skjaerven ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -100,18 +101,6 @@ raw.files <- get.pdb(ids, path = "raw_pdbs")
 </div>
 <strong class='warning'>Warning message:
 ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1a70.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1czp.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1frd.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1fxi.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1iue.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1pfd.pdb  exists. Skipping download</strong>
 <div class='input'>files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain")
 </div>
 <div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
@@ -131,7 +120,7 @@ raw_pdbs/split_chain/1pfd_A.pdb
 .....
 
 Extracting sequences
-muscle -in /tmp/RtmpyefGEQ/filec1777785fc8d -out aln.fa -quiet -seqtype protein
+
 pdb/seq: 1   name: raw_pdbs/split_chain/1a70_A.pdb 
 pdb/seq: 2   name: raw_pdbs/split_chain/1czp_A.pdb 
    PDB has ALT records, taking A only, rm.alt=TRUE
@@ -150,12 +139,11 @@ all.modes <- nma.pdbs(pdbs, full=TRUE, fit=TRUE, rm.gaps=TRUE)
 ## Calculate correlation matrices
 all.dccm <- dccm(all.modes)
 </div>
-<strong class='message'>Loading required package: multicore</strong>
 <div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |==============                                                        |  20%  |                                                                              |============================                                          |  40%  |                                                                              |==========================================                            |  60%  |                                                                              |========================================================              |  80%  |                                                                              |======================================================================| 100%
 </div>
 <div class='input'></div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>dccm.enma</li>
     </ul>
@@ -173,7 +161,7 @@ all.dccm <- dccm(all.modes)
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=dccm.enma'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=dccm.enma'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

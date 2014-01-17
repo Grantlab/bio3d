@@ -14,11 +14,14 @@ pause <- function() {
   invisible()
 }
 
-#############################################
-##                                          #
-## Basic PCA of related X-ray structures    #
-##                                          #
-#############################################
+################################################
+##                                             #
+## Basic PCA of related X-ray structures       #
+## (requires the 'muscle' program installed)   #
+##                                             #
+################################################
+
+pause()
 
 ### Set temp dir to store PDB files
 tmp.dir <- tempdir()
