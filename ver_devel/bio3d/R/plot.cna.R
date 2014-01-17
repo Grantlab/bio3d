@@ -25,7 +25,7 @@ plot.cna <- function(x, community=x$clustered.communities, weights=NULL,
   ##    vmd.colors(18)== V(x$clustered.network)$color
 
   if(is.null(weights)){
-    weights <- E(x$clustered.network)$weight*10
+    weights <- E(x$clustered.network)$weight
     
     if(is.null(x$call$minus.log)){
       weights <- exp(-weights)
@@ -35,6 +35,7 @@ plot.cna <- function(x, community=x$clustered.communities, weights=NULL,
         weights <- exp(-weights)
       }
     }
+     weights <- weights*10
   }
   
   if(is.null(layout)) {
