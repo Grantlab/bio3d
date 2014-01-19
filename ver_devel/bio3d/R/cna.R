@@ -50,12 +50,19 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     return(comms)
   }
 
-  contract.matrix <- function(cij.abs, membership,## membership=comms$membership,
-                              collapse.method="max"){
+  contract.matrix <- function(cij.network, membership,## membership=comms$membership,
+                              collapse.method="max", minus.log){
     
     ## Function to collapse a NxN matrix to an mxm matrix
     ##  where m is the communities of N. The collapse method
     ##  can be one of the 'collapse.options' below
+
+    ## convert to the original cij values if "-log" was used
+    
+    if(minus.log){
+      cij.network[cij.network>0] <- exp(-cij.network[cij.network>0])
+    }
+    
     collapse.options=c("max", "median", "mean", "trimmed")
     collapse.method <- match.arg(tolower(collapse.method), collapse.options)
 
@@ -68,7 +75,7 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
       for(i in 1:nrow(inds)) {
         comms.1.inds <- which(membership==inds[i,1])
         comms.2.inds <- which(membership==inds[i,2])
-        submatrix <- cij.abs[comms.1.inds, comms.2.inds]
+        submatrix <- cij.network[comms.1.inds, comms.2.inds]
 
         ## Use specified "collapse.method" to define community couplings
         collapse.cij[ inds[i,1], inds[i,2] ] = switch(collapse.method,
@@ -77,7 +84,11 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
                     mean = mean(submatrix),
                     trimmed = mean(submatrix, trim = 0.1))
       }
-
+      
+      if(minus.log){
+        collapse.cij[collapse.cij>0] <- -log(collapse.cij[collapse.cij>0])
+      }
+      
       ## Copy values to lower triangle of matrix and set class and colnames
       collapse.cij[ inds[,c(2,1)] ] = collapse.cij[ inds ]
       colnames(collapse.cij) <- 1:ncol(collapse.cij)
@@ -91,7 +102,10 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     }
     return(collapse.cij)
   }
-
+  
+  ## Store the command used to submit the calculation
+  cl <- match.call()
+  
   ##- Take absolute value of 'cij'
   cij.abs <- abs(cij)
 
@@ -101,28 +115,34 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
   if(minus.log){
     ##-- Calculate the -log of cij
     ## change cij 1 to 0.9 to avoid log(1) = 0
-    cij.abs[cij.abs==1] = 0.9999
-    cij.abs <- -log(cij.abs)
+    cij.network <- cij.abs
+    cij.network[cij.network==1] = 0.9999
+    cij.network <- -log(cij.network)
     ## remove infinite values
-    cij.abs[is.infinite(cij.abs)] = 0
+    cij.network[is.infinite(cij.network)] = 0
   }
+  else{
+     cij.network <- cij.abs
+   }
 
   if(!is.null(cm)){  
     ##-- Filter cij by contact map
-    cij.abs <- cij.abs * cm
+    cij.network <- cij.network * cm
   }
 
+  ## cij.network contains either the -log(abs.cij) or just abs.cij. It depends on your specification when you called the function (the default is minus.log=TRUE)
+  
   ## Make an igraph network object
-  raw.network <- graph.adjacency(cij.abs,
+  raw.network <- graph.adjacency(cij.network,
                              mode="undirected",
                              weighted=TRUE,
                              diag=FALSE)
   
   ##-- Calculate the first set of communities
   raw.communities <- cluster.network(raw.network, cluster.method)
-  
+
   ##-- Coarse grain the cij matrix to a new cluster/community matrix
-  clustered.cij <- contract.matrix(cij.abs, raw.communities$membership, collapse.method)
+  clustered.cij <- contract.matrix(cij.network, raw.communities$membership, collapse.method, minus.log)
 
   ##-- Generate a coarse grained network
   if(sum(clustered.cij)>0){
@@ -174,7 +194,8 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
                  "clustered.network"=clustered.network,
                  "clustered.communities"=clustered.communities,
                  "clustered.cij"=clustered.cij,
-                 "raw.cij"=cij.abs)
+                 "raw.cij"=cij.network,
+                 call = cl)
 
   class(output)="cna"
 
