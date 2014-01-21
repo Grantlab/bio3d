@@ -11,7 +11,8 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz)))) {
   if (!n || !p)
     stop("0 extent dimensions")
   
-  mean <- apply(xyz[subset,],2,mean) ## mean structure
+#  mean <- apply(xyz[subset,],2,mean) ## mean structure
+  mean <- colMeans(xyz[subset,]) ## Faster
   n <- sum(subset) 
 
   ## eigen-decomposition is a bit faster than svd when n~=p
@@ -24,9 +25,8 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz)))) {
      U <- prj$vectors
   } else {
      Q <- t(t(xyz[subset,]) - mean) / sqrt(n-1)
-     prj <- svd(Q, nv = p)
+     prj <- svd(Q)
      L <- prj$d^2
-     L <- c(L, rep(0, p-n))
      U <- prj$v
   }
 
