@@ -16,7 +16,7 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz)))) {
   n <- sum(subset) 
 
   ## eigen-decomposition is a bit faster than svd when n~=p
-  if(n > 0.5*p) {   
+  if(n > 0.4*p) {   
      S    <- var(xyz[subset,])          ## coverance matrix
    
      ## eigenvectors ("U") & eigenvalues ("L"): [ U'SU=L ]
@@ -24,6 +24,10 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz)))) {
      L <- prj$values
      U <- prj$vectors
   } else {
+     warning(paste("Singular Value Decomposition (SVD) approach is used\n",
+                   "for matrix (MxN) with M<<N: \n",
+           "   Only",n,"eigenvalues and eigenvectors are returned!\n"))
+
      Q <- t(t(xyz[subset,]) - mean) / sqrt(n-1)
      prj <- svd(Q)
      L <- prj$d^2
