@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -109,8 +110,8 @@ pdb <- read.pdb("1hel")
 ## Calculate normal modes
 modes <- nma(pdb)
 </div>
-<div class='output'> Building Hessian...		Done in 0.069 seconds.
- Diagonalizing Hessian...	Done in 0.134 seconds.
+<div class='output'> Building Hessian...		Done in 0.072 seconds.
+ Diagonalizing Hessian...	Done in 0.133 seconds.
 </div>
 <div class='input'>
 ## Calculate correlation matrix
@@ -125,7 +126,7 @@ plot(cm, sse = pdb, contour = FALSE, col.regions = bwr.colors(20),
 </div>
 <p><img src='dccm.nma-8.png' alt='' width='400' height='400' /></p></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>dccm.nma</li>
     </ul>
@@ -143,7 +144,7 @@ plot(cm, sse = pdb, contour = FALSE, col.regions = bwr.colors(20),
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=dccm.nma'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=dccm.nma'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

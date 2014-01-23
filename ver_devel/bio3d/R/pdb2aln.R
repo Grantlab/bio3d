@@ -32,7 +32,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
       ##- Align seq to masked template from alignment
       tmp.msk <- aln$ali[idhit, ]
       tmp.msk[is.gap(tmp.msk)] <- "X"
-      seq2tmp <- seqaln.pair(seqbind(tmp.msk, aa1), file=tempfile(), exefile=exefile)
+      seq2tmp <- seqaln.pair(seqbind(tmp.msk, aa1), outfile=tempfile(), exefile=exefile)
       
       ##- check sequence identity
       ii <- seq2tmp$ali[1,]=='X'

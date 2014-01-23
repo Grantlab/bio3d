@@ -36,9 +36,19 @@ done
 
 #./check_html.sh > tidy_html.log
 
+# Remove additional vignettes
+lines=(`awk '/href=\"vignettes\//{printf "%d ", NR}' html/index.html`)
+nums=`expr ${#lines[@]} / 2`
+for((i=0; i<$nums; i++)); do
+   lines=(`awk '/href=\"vignettes\//{printf "%d ", NR}' html/index.html`)
+   sed "${lines[0]}"d html/index.html > index.html
+   mv index.html html/index.html
+done
+cp ../bio3d/vignettes/*.pdf html/vignettes/
+
 # remove return in the index.html
 sed 's/<br \/>/:/' html/index.html > index.html
 mv index.html html/
 
-mv eg.html html/
+mv sandbox/eg.html html/
 

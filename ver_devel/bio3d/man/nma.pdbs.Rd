@@ -6,7 +6,7 @@
   Perform NMA on an ensemble of aligned protein structures.
 }
 \usage{
-nma.pdbs(pdbs, fit=TRUE, full=FALSE, rm.gaps=TRUE,
+nma.pdbs(pdbs, fit=TRUE, full=FALSE, rm.gaps=TRUE, defa=FALSE, 
          outpath="pdbs_nma", \dots)
 
 \method{print}{enma}(x, \dots)
@@ -22,6 +22,8 @@ nma.pdbs(pdbs, fit=TRUE, full=FALSE, rm.gaps=TRUE,
   \item{rm.gaps}{ logical, if TRUE obtain the hessian matrices for only
     atoms in the aligned positions (non-gap positions in all aligned
     structures). Thus, gap positions are removed from output. }
+  \item{defa}{ logical, if TRUE perform deformation analysis on the
+    first 5 modes. }
   \item{outpath}{ character string specifing the output directory to
     which the PDB structures should be written. }
   \item{x}{ an \code{enma} object obtained from \code{\link{nma.pdbs}}. }
@@ -50,6 +52,8 @@ nma.pdbs(pdbs, fit=TRUE, full=FALSE, rm.gaps=TRUE,
     fluctuations. }
   \item{rmsip}{ a numeric matrix of RMSIP values between all pairs
     of mode subsets. }
+  \item{deformations }{ a numeric matrix with aligned atomic
+    deformation energies. }
   \item{U.subspace }{ a three-dimensional array with aligned
     eigenvectors  (corresponding to the subspace defined by the first 20
     non-trivial eigenvectors (\sQuote{U}) of the \sQuote{nma} object). }

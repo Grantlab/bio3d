@@ -2,7 +2,7 @@ list(
   index = list( 
     ##"io"
     sd_section("Input/Output:",
-               "Read and Write Common Data Types",
+               "Read and Write Common Biomolecular Data Types",
       c(
         "read.pdb",
         "read.fasta",
@@ -160,7 +160,7 @@ list(
 
     ##"nma"
     sd_section("Normal Mode Analysis:",
-               "Do Interesting Things with Protein Sequence",
+               "Probe Large-Scale Protein Motions",
       c(    
         "aa2mass",
         "atom.index",
