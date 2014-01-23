@@ -34,7 +34,7 @@
 }
 \references{
 }
-\author{ Guido and Barry }
+\author{ Guido Scarabelli and Barry Grant }
 
 \seealso{ \code{\link{identify}}, \code{\link{plot.igraph}}, \code{\link{plot.communities}}, \code{\link{igraph.plotting}} \code{\link{plot.cna}}}
 \examples{
@@ -66,7 +66,7 @@ xy <- plot.cna(net)
 d <- identify.cna(xy, cna=net)
 
 # Right click to end the function...
-  ## d <- identify.cna(xy, labels=net$raw.communities$membership)
+  ## d <- identify.cna(xy, labels=net$communities$membership)
   ## d <- identify(xy, cnet=net)
   ## d <- identify(xy, summary(net)$members)
 
