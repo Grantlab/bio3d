@@ -2,7 +2,7 @@
 ## 1 -  use k <- kaa - ((kaq %*% kqq.inv) %*% kqa) to derive hessian for core atoms
 ## 2 - return the full objects
 
-"nma.pdbs" <- function(pdbs, fit=TRUE, full=FALSE, 
+"nma.pdbs" <- function(pdbs, fit=TRUE, full=FALSE, defa = FALSE, 
                        rm.gaps=TRUE, outpath = "pdbs_nma", ...) {
 
   if(class(pdbs)!="3dalign")
@@ -49,6 +49,39 @@
   gaps.res <- gap.inspect(pdbs$ali)
   gaps.pos <- gap.inspect(pdbs$xyz)
 
+  ## check for missing masses before we start calculating
+  if(any(pdbs$ali=="X") && mass==TRUE) {
+    mat.file <- system.file(paste("matrices/aa_mass.mat",sep=""), package="bio3d")
+    mat <- read.table(mat.file)
+    resnames <- c(row.names(mat), names(am.args$mass.custom))
+    
+    ops.inds <- which(pdbs$ali=="X", arr.ind=TRUE)
+    unknowns <- c()
+    
+    for(i in 1:nrow(ops.inds)) {
+      j <- ops.inds[i]
+      if(!file.exists(pdbs$id[j])) {
+        cat("\n")
+        stop(paste("Non-standard residue type found in", basename(pdbs$id[j]), "\n",
+                   "  attempt to re-read PDB file failed."))
+      }
+      else {
+        pdb.tmp <- read.pdb(pdbs$id[j])
+        resid <- pdb.tmp$atom[atom.select(pdb.tmp, 'calpha', verbose=FALSE)$atom, "resid"]
+        
+        if(any(!(resid %in% resnames))) {
+          unknowns <- c(unknowns, resid[!resid%in%resnames])
+        }
+      }
+    }
+
+    if(length(unknowns)>0) {
+      unknowns <- paste(unique(unknowns), collapse=", ")
+      stop(paste("Unknown aminoacid identifier(s):", unknowns,
+                 "\n  Use 'mass=FALSE' or 'mass.custom=list(UNK=156.2)'"))
+    }
+  }
+  
   ## Use for later indexing
   pdbs$inds <- matrix(NA, ncol=ncol(pdbs$resno), nrow=nrow(pdbs$resno))
   
@@ -71,6 +104,12 @@
     flucts <- matrix(NA, nrow=nrow(gaps.res$bin), ncol=length(gaps.res$f.inds))
   else
     flucts <- matrix(NA, nrow=nrow(gaps.res$bin), ncol=ncol(gaps.res$bin))
+
+  ## if we do deformation analysis
+  deform <- flucts
+
+  ## store residue numbers (same as pdbs$id[,gaps$f.inds])
+  ##resnos <- flucts
   
   ## List object to store each modes object
   if(full)
@@ -111,7 +150,7 @@
     tmp.xyz <- xyz[i, f.inds$pos]
     resno   <- pdbs$resno[i,f.inds$res]
     chain   <- pdbs$chain[i,f.inds$res]
-
+    
     ## Fix for missing chain IDs
     chain[is.na(chain)] <- ""
     
@@ -165,7 +204,8 @@
     
     if(rm.gaps) {
       ## Build the hessian of the complete structure
-      hess    <- build.hessian(tmp.pdb$xyz, pfc.fun, aa.mass=masses)
+      sequ    <- tmp.pdb$atom[,"resid"]
+      hess    <- build.hessian(tmp.pdb$xyz, pfc.fun, aa.mass=masses, sequ=sequ)
 
       ## Effective hessian for atoms in the aligned core
       if(length(inds.exc)>0) {
@@ -199,6 +239,10 @@
       invisible(capture.output( modes <- nma(pdb=tmp.pdb, ff=ff, mass=mass, temp=temp, keep=nm.keep, aa.mass=masses)))
     }
 
+    ## Perform deformation analysis
+    if(defa)
+      defo <- rowMeans(deformation.nma(modes, mode.inds=seq(7,11))$ei)
+
     if(rm.gaps)
       modes.mat <- matrix(NA, ncol=keep, nrow=nrow(modes$U))
     else
@@ -216,12 +260,21 @@
     if(full)
       all.modes[[i]] <- modes
     modes.array[,,i] <- modes.mat
-   
-
-    if(rm.gaps)
+    
+    if(rm.gaps) {
       flucts[i, ] <- modes$fluctuations
-    else
+      ##resnos[i, ] <- pdbs$resno[i,gaps.res$f.inds]
+
+      if(defa)
+        deform[i, ] <- defo
+    }
+    else {
       flucts[i, f.inds$res] <- modes$fluctuations
+      ##resnos[i, f.inds$res] <- resno
+
+      if(defa)
+        deform[i, f.inds$res] <- defo
+    }
 
     setTxtProgressBar(pb, i)
   }
@@ -254,7 +307,7 @@
   }
   
   rownames(flucts) <- basename(rownames(pdbs$xyz))
-  out <- list(fluctuations=flucts, rmsip=rmsip.map,
+  out <- list(fluctuations=flucts, rmsip=rmsip.map, deformations=deform, ##resno=resnos,
               U.subspace=modes.array, full.nma=all.modes, call=cl)
   class(out) = "enma"
   return(out)

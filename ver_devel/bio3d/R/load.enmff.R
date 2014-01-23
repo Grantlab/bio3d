@@ -16,7 +16,7 @@
 
   ## Consider enhancement:
   ## In case of unreasonable CA-CA distance
-  ## r[(r<3.55)] <- 3.55
+  r[(r<3.7)] <- 3.7
   
   a <- 128 * 10^4; b <- 8.6 * 10^2; c <- 2.39 * 10^3;
   ifelse( r<4.0,
@@ -214,6 +214,7 @@
   ## the average kappa (over all amino acid pairs) is equal to 1, at d = 6 Ang.
   ## scale to kJ / mol / A^2 range:
   ks <- ks * 0.0083144621 * 300 * 10
+  ks[is.na(ks)]=0
   return(ks)
 }
 

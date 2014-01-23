@@ -11,13 +11,28 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz)))) {
   if (!n || !p)
     stop("0 extent dimensions")
   
-  S    <- var(xyz[subset,])          ## coverance matrix
-  mean <- apply(xyz[subset,],2,mean) ## mean structure
+#  mean <- apply(xyz[subset,],2,mean) ## mean structure
+  mean <- colMeans(xyz[subset,]) ## Faster
+  n <- sum(subset) 
 
-  ## eigenvectors ("U") & eigenvalues ("L"): [ U'SU=L ]
-  prj  <- eigen(S, symmetric = TRUE)
-  L <- prj$values
-  U <- prj$vectors
+  ## eigen-decomposition is a bit faster than svd when n~=p
+  if(n > 0.4*p) {   
+     S    <- var(xyz[subset,])          ## coverance matrix
+   
+     ## eigenvectors ("U") & eigenvalues ("L"): [ U'SU=L ]
+     prj  <- eigen(S, symmetric = TRUE)
+     L <- prj$values
+     U <- prj$vectors
+  } else {
+     warning(paste("Singular Value Decomposition (SVD) approach is used\n",
+                   "for matrix (MxN) with M<<N: \n",
+           "   Only",n,"eigenvalues and eigenvectors are returned!\n"))
+
+     Q <- t(t(xyz[subset,]) - mean) / sqrt(n-1)
+     prj <- svd(Q)
+     L <- prj$d^2
+     U <- prj$v
+  }
 
   ## fix negative eigenvalues
   ## (these are very small numbers and should be zero)
