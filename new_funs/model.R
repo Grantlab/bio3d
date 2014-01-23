@@ -3,7 +3,7 @@
 ##  Most of these are useful for protein structure modeling
 ##
 ## These include (list to be updaed):
-##  fit.pdbs    - Quick Fit Fitter for PDBs
+##  # fit.pdbs    - Quick Fit Fitter for PDBs
 ##  pdbname     - Extract PDB identifier from filename
 ##  srxn.bd     - Find BD trajectories that complete a give reaction
 ##  srxn2trj.bd - Make XML BD trajectorys given srxn output
