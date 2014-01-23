@@ -186,7 +186,6 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     ## Set node sizes
     V(network)$size <- 1
   }
-
   
   ## Output
   output <- list("network"=network,

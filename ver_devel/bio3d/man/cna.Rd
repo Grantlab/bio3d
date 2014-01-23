@@ -7,9 +7,9 @@
   This function builds both residue-based and community-based undirected weighted
   network graphs from an input correlation matrix, as obtained from the
   functions \sQuote{dccm} and \sQuote{dccm.nma}. Community
-  detection/clustering is performed on the initial residue based (raw)
+  detection/clustering is performed on the initial residue based 
   network to determine the community organization and network structure
-  of the community based (clustered) network.
+  of the community based network.
 }
 \usage{
   cna(cij, vnames=colnames(cij), cutoff.cij=0.4, cm=NULL, method="btwn")
