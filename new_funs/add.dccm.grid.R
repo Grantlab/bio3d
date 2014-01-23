@@ -116,6 +116,6 @@ add.dccm.grid <- function(x, fill.col=NA, helix.col="purple", sheet.col="yellow"
   }
   
   ## Draw
-  draw.box(start, length, fill.col=fill.col)
+  draw.box(start, length, fill.col=fill.col, alpha=alpha)
 }
 
