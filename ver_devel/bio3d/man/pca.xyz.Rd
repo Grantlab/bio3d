@@ -6,7 +6,7 @@
    numeric data matrix.
  }
 \usage{
-pca.xyz(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))))
+pca.xyz(xyz, subset = rep(TRUE, nrow(as.matrix(xyz)), use.svd = FALSE))
 }
 \arguments{
   \item{xyz}{ numeric matrix of Cartesian coordinates with a row per
@@ -15,6 +15,8 @@ pca.xyz(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))))
     subset of rows (e.g. experimental structures vs molecular dynamics
     trajectory structures) from the full \code{xyz} matrix. Note: the
     full \code{xyz} is projected onto this subspace.}
+  \item{use.svd}{ logical, if TRUE singular value decomposition (SVD) is 
+    called instead of eigenvalue decomposition. }
 }
 \value{
   Returns a list with the following components:
