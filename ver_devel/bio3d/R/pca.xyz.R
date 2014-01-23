@@ -1,5 +1,5 @@
 "pca.xyz" <-
-function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz)))) {
+function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE) {
   ## Performs principal components analysis on the given "xyz" numeric data
   ## matrix and return the results as an object of class "pca.xyz"
 
@@ -14,9 +14,16 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz)))) {
 #  mean <- apply(xyz[subset,],2,mean) ## mean structure
   mean <- colMeans(xyz[subset,]) ## Faster
   n <- sum(subset) 
-
-  ## eigen-decomposition is a bit faster than svd when n~=p
-  if(n > 0.4*p) {   
+  
+  # Check number of columns
+  if(p > 3000 && n <= 0.4*p && !use.svd) {
+     cat("NOTE: In input xyz (MxN),  N > 3000 and M < N\n",
+         "     Singular Value Decomposition (SVD) approach is faster\n",
+         "     and is recommended (set use.svd = TRUE)\n\n", sep=" ")
+     flush(stdout())
+  }
+     
+  if(!use.svd) {   
      S    <- var(xyz[subset,])          ## coverance matrix
    
      ## eigenvectors ("U") & eigenvalues ("L"): [ U'SU=L ]
@@ -24,10 +31,11 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz)))) {
      L <- prj$values
      U <- prj$vectors
   } else {
-     warning(paste("Singular Value Decomposition (SVD) approach is used\n",
-                   "for matrix (MxN) with M<<N: \n",
-           "   Only",n,"eigenvalues and eigenvectors are returned!\n"))
+     if(n < p)
+        warning(paste("In input xyz (MxN), M < N:\n",
+           "   Only",n,"eigenvalues and eigenvectors are returned!\n\n"))
 
+     ## S = Q'Q, Q = UDV'
      Q <- t(t(xyz[subset,]) - mean) / sqrt(n-1)
      prj <- svd(Q)
      L <- prj$d^2
