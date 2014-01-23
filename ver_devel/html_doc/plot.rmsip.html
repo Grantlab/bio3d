@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>plot.rmsip. bio3d 2.0-1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="container">
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
+  </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Plot RMSIP Results </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>plot(x, xlab = NULL, ylab = NULL, col = gray(50:0/50), zlim = c(0, 1), ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>x</dt>
+      <dd> an object of class <code>rmsip</code>. </dd>
+      <dt>xlab</dt>
+      <dd> a label for the x axis, defaults to &#145;a&#146;. </dd>
+      <dt>ylab</dt>
+      <dd> a label for the y axis, defaults to &#145;b&#146;. </dd>
+      <dt>col</dt>
+      <dd> a vector of colors for the RMSIP map (or overlap values). </dd>
+      <dt>zlim</dt>
+      <dd> the minimum and maximum &#145;z&#146; values for which
+    colors should be plotted. </dd>
+      <dt>...</dt>
+      <dd> additional arguments to function <code>image</code>. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Produces a heat plot of RMSIP (Root mean square inner product) for the
+  visualization of modes similarity.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p><code>plot.rmsip</code> produces a color image with the function
+  <code>image</code>.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Called for its effect.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>## Read PDB structure
+pdb <- read.pdb("1hel")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    HYDROLASE(O-GLYCOSYL)                   10-JAN-92   1HEL               
+</div>
+<div class='input'>
+## Perform NMA
+modes.a <- nma(pdb, ff="calpha")
+</div>
+<div class='output'> Building Hessian...		Done in 0.076 seconds.
+ Diagonalizing Hessian...	Done in 0.132 seconds.
+</div>
+<div class='input'>modes.b <- nma(pdb, ff="anm")
+</div>
+<div class='output'> Building Hessian...		Done in 0.069 seconds.
+ Diagonalizing Hessian...	Done in 0.136 seconds.
+</div>
+<div class='input'>
+## Calculate and plot RMSIP
+r <- rmsip(modes.a, modes.b)
+plot(r)
+</div>
+<p><img src='plot.rmsip-8.png' alt='' width='400' height='400' /></p></pre>
+  </div>
+  <div class="span3">
+    <!-- <ul>
+      <li>plot.rmsip</li>
+    </ul>
+    <ul>
+      <li> hplot </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='rmsip.html'>rmsip</a></code>, <code><a href='overlap.html'>overlap</a></code>,
+  <code><a href='nma.html'>nma</a></code>, <code><a href='http://www.inside-r.org/r-doc/graphics/image'>image</a></code>.  
+    
+    <h2>Author</h2>
+     Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=plot.rmsip'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

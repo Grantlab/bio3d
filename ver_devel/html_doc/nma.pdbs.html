@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>nma.pdbs. bio3d 2.0-1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="container">
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
+  </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Ensemble Normal Mode Analysis </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>nma.pdbs(pdbs, fit = TRUE, full = FALSE, rm.gaps = TRUE, outpath = "pdbs_nma", ...)
+
+print(x, ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>pdbs</dt>
+      <dd> a numeric matrix of aligned C-alpha xyz Cartesian
+    coordinates. For example an alignment data structure obtained with
+    <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code> or <code><a href='pdbaln.html'>pdbaln</a></code>. </dd>
+      <dt>fit</dt>
+      <dd> logical, if TRUE coordinate superposition is performed
+    prior to normal mode calculations. </dd>
+      <dt>full</dt>
+      <dd> logical, if TRUE return the complete, full structure, 
+    &#145;nma&#146; objects. </dd>
+      <dt>rm.gaps</dt>
+      <dd> logical, if TRUE obtain the hessian matrices for only
+    atoms in the aligned positions (non-gap positions in all aligned
+    structures). Thus, gap positions are removed from output. </dd>
+      <dt>outpath</dt>
+      <dd> character string specifing the output directory to
+    which the PDB structures should be written. </dd>
+      <dt>x</dt>
+      <dd> an <code>enma</code> object obtained from <code><a href='nma.pdbs.html'>nma.pdbs</a></code>. </dd>
+      <dt>...</dt>
+      <dd> additional arguments to <code>nma</code>, <code>aa2mass</code>, and
+    <code>print</code>. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Perform NMA on an ensemble of aligned protein structures.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This function performs normal mode analysis (NMA) on a set of aligned
+  protein structures obtained with function <code>read.fasta.pdb</code> or
+  <code>pdbaln</code>. The main purpose is to provide aligned atomic
+  fluctuations and mode vectors in an automated fashion.</p>
+  
+      <p>The normal modes are calculated on the full structures as provided 
+  by object &#145;pdbs&#146;. With the input argument &#145;full=TRUE&#146;
+  the full &#145;nma&#146; objects are returned together with output
+  &#145;U.subs&#146; providing the aligned mode vectors. When
+  &#145;rm.gaps=TRUE&#146; the unaligned atoms are ommited from
+  output. With default arguments &#145;rmsip&#146; provides RMSIP
+  values for all pairwise structures.</p>
+  
+      <p>See examples for more details.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns an &#145;enma&#146; object with the following components:
+  fluctuations  a numeric matrix with aligned atomic
+    fluctuations. 
+  rmsip a numeric matrix of RMSIP values between all pairs
+    of mode subsets. 
+  U.subspace  a three-dimensional array with aligned
+    eigenvectors  (corresponding to the subspace defined by the first 20
+    non-trivial eigenvectors (&#145;U&#146;) of the &#145;nma&#146; object). 
+  full.nma  a list with a <code>nma</code> object for each input
+    structure.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>## Fetch PDB files and split to chain A only PDB files
+ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
+raw.files <- get.pdb(ids, path = "raw_pdbs")
+</div>
+<strong class='warning'>Warning message:
+ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1a70.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1czp.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1frd.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1fxi.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1iue.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+raw_pdbs/1pfd.pdb  exists. Skipping download</strong>
+<div class='input'>files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain")
+</div>
+<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
+</div>
+<div class='input'>
+## Sequence Alignement
+pdbs <- pdbaln(files)
+</div>
+<div class='output'>Reading PDB files:
+raw_pdbs/split_chain/1a70_A.pdb
+raw_pdbs/split_chain/1czp_A.pdb
+raw_pdbs/split_chain/1frd_A.pdb
+raw_pdbs/split_chain/1fxi_A.pdb
+raw_pdbs/split_chain/1iue_A.pdb
+raw_pdbs/split_chain/1pfd_A.pdb
+.   PDB has ALT records, taking A only, rm.alt=TRUE
+.....
+
+Extracting sequences
+
+pdb/seq: 1   name: raw_pdbs/split_chain/1a70_A.pdb 
+pdb/seq: 2   name: raw_pdbs/split_chain/1czp_A.pdb 
+   PDB has ALT records, taking A only, rm.alt=TRUE
+pdb/seq: 3   name: raw_pdbs/split_chain/1frd_A.pdb 
+pdb/seq: 4   name: raw_pdbs/split_chain/1fxi_A.pdb 
+pdb/seq: 5   name: raw_pdbs/split_chain/1iue_A.pdb 
+pdb/seq: 6   name: raw_pdbs/split_chain/1pfd_A.pdb 
+</div>
+<div class='input'>
+## Normal mode analysis on aligned data
+all.modes <- nma.pdbs(pdbs, rm.gaps=FALSE)
+</div>
+<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
+</div>
+<div class='input'>
+## Plot fluctuation data
+plot.bio3d(all.modes$fluctuations[1,], type="o", xlab="Residue Position")
+</div>
+<p><img src='nma.pdbs-16.png' alt='' width='400' height='400' /></p>
+<div class='input'>lines(all.modes$fluctuations[2,], type='o', col=2)
+</div>
+<p><img src='nma.pdbs-18.png' alt='' width='400' height='400' /></p>
+<div class='input'>lines(all.modes$fluctuations[3,], type='o', col=3)
+</div>
+<p><img src='nma.pdbs-20.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+## Remove gaps from output
+all.modes <- nma.pdbs(pdbs, rm.gaps=TRUE)
+</div>
+<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
+</div>
+<div class='input'>
+## Compare modes between two structures 
+rmsip(all.modes$U.subs[,,1], all.modes$U.subs[,,2])
+</div>
+<div class='output'>$overlap
+       b1    b2    b3    b4    b5    b6    b7    b8    b9   b10
+a1  0.712 0.182 0.000 0.017 0.001 0.001 0.000 0.001 0.016 0.003
+a2  0.019 0.041 0.146 0.415 0.129 0.011 0.008 0.013 0.002 0.004
+a3  0.039 0.421 0.041 0.008 0.030 0.134 0.000 0.005 0.020 0.005
+a4  0.002 0.011 0.514 0.111 0.001 0.151 0.016 0.018 0.001 0.006
+a5  0.000 0.000 0.107 0.069 0.165 0.101 0.119 0.086 0.135 0.021
+a6  0.000 0.000 0.000 0.000 0.183 0.001 0.302 0.011 0.204 0.007
+a7  0.001 0.002 0.049 0.034 0.059 0.009 0.210 0.257 0.013 0.056
+a8  0.002 0.004 0.003 0.007 0.034 0.001 0.031 0.322 0.085 0.178
+a9  0.007 0.004 0.002 0.065 0.087 0.165 0.002 0.008 0.034 0.193
+a10 0.001 0.007 0.001 0.005 0.003 0.036 0.007 0.017 0.168 0.044
+
+$rmsip
+[1] 0.8355263
+
+attr(,"class")
+[1] "rmsip"
+</div>
+<div class='input'></div></pre>
+  </div>
+  <div class="span3">
+    <!-- <ul>
+      <li>nma.pdbs</li><li>print.enma</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='nma.html'>nma</a></code>, <code><a href='pdbaln.html'>pdbaln</a></code>,
+  <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>, <code><a href='rmsip.html'>rmsip</a></code>  
+    
+    <h2>Author</h2>
+     Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=nma.pdbs'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

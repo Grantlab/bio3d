@@ -10,7 +10,7 @@
 read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
          rm.alt = TRUE, het2atom=FALSE, verbose = TRUE)
 \method{print}{pdb}(x, \dots)
-\method{summary}{pdb}(object, \dots)
+\method{summary}{pdb}(object, printseq=FALSE, \dots)
 }
 \arguments{
   \item{file}{ a single element character vector containing the name of
@@ -31,13 +31,16 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
     \code{\link{read.pdb}}.  }
   \item{object}{ a PDB structure object obtained from
     \code{\link{read.pdb}}.  }
+  \item{printseq}{ logical, if TRUE the PDB ATOM sequence will be printed
+    to the screen. See also \code{\link{pdbseq}}.  }
   \item{...}{ additional arguments to \sQuote{print}. }
    
 }
 \details{
-  \code{maxlines} may require increasing for some large multi-model files.
-  The preferred means of reading such data is via binary DCD format 
-  trajectory files (see the \code{\link{read.dcd}} function).
+  \code{maxlines} may be set so as to restrict the reading to a portion
+  of input files. Note that the preferred means of reading large 
+  multi-model files is via binary DCD format trajectory files (see the 
+  \code{\link{read.dcd}} function).
 }
 \value{
   Returns a list of class \code{"pdb"} with the following components:
@@ -56,7 +59,7 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
     multi-model PDB files. }
   \item{calpha }{ logical vector with length equal to \code{nrow(atom)}
     with TRUE values indicating a C-alpha \dQuote{elety}. }
-  \item{calpha }{ the matched call. }
+  \item{call }{ the matched call. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>deformation.nma. bio3d 2.0-1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="container">
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
+  </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Deformation Analysis </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>deformation.nma(nma, mode.inds = NULL, pfc.fun = NULL, ncore = NULL)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>nma</dt>
+      <dd> a list object of class <code>"nma"</code> (obtained with
+    <code><a href='nma.html'>nma</a></code>).</dd>
+      <dt>mode.inds</dt>
+      <dd> a numeric vector of mode indices in which the
+    calculation should be based. </dd>
+      <dt>pfc.fun</dt>
+      <dd> customized pair force constant (&#145;pfc&#146;)
+    function. The provided function should take a vector of distances as
+    an argument to return a vector of force constants. See <code>nma</code>
+    for examples. </dd>
+      <dt>ncore </dt>
+      <dd> number of CPU cores used to do the calculation.
+    <code>ncore>1</code> requires multicore package installed. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Calculate deformation energies from Normal Mode Analysis.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>Deformation analysis provides a measure for the amount of local
+  flexibility of the protein structure - i.e. atomic motion relative to
+  neighbouring atoms. It differs from &#145;fluctuations&#146; (e.g. RMSF
+  values) which provide amplitudes of the absolute atomic motion.</p>
+  
+      <p>Deformation energies are calculated based on the <code>nma</code> object. By
+  default the first 20 non-trivial modes are included in the calculation.</p>
+  
+      <p>See examples for more details.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list with the following components:
+  ei  numeric matrix containing the energy contribution (E) from
+    each atom (i; row-wise) at each mode index (column-wise). 
+  sums  deformation energies corresponding to each mode.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Hinsen, K. (1998) <em>Proteins</em> <b>33</b>, 417--429.
+  Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>## Fetch stucture
+pdb <- read.pdb("1hel")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    HYDROLASE(O-GLYCOSYL)                   10-JAN-92   1HEL               
+</div>
+<div class='input'>
+## Calculate (vibrational) normal modes
+modes <- nma(pdb)
+</div>
+<div class='output'> Building Hessian...		Done in 0.07 seconds.
+ Diagonalizing Hessian...	Done in 0.134 seconds.
+</div>
+<div class='input'>
+## Calculate deformation energies
+def.energies <- deformation.nma(modes)
+
+## Fluctuations of first non-trivial mode
+def.energies <- deformation.nma(modes, mode.inds=seq(7, 16))
+
+write.pdb(pdb=NULL, xyz=modes$xyz,
+          b=def.energies$ei[,1])
+</div></pre>
+  </div>
+  <div class="span3">
+    <!-- <ul>
+      <li>deformation.nma</li>
+    </ul>
+    <ul>
+      <li> analysis </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='nma.html'>nma</a> </code> 
+    
+    <h2>Author</h2>
+     Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=deformation.nma'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

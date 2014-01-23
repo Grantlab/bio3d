@@ -1,8 +1,6 @@
 \name{is.pdb}
 \alias{is.pdb}
-\title{
-  Is an Object of Class \sQuote{pdb}?
-}
+\title{ Is an Object of Class \sQuote{pdb}?  }
 \description{
   Checks whether its argument is an object of class \sQuote{pdb}.
 }

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>sse.bridges. bio3d 2.0-1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="container">
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
+  </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> SSE Backbone Hydrogen Bonding </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>sse.bridges(sse, type = "helix", hbond = TRUE, energy.cut = -1)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>sse</dt>
+      <dd> an sse object as obtained with <code>dssp</code>. </dd>
+      <dt>type</dt>
+      <dd> character string specifying &#145;helix&#146; or &#145;sheet&#146;. </dd>
+      <dt>hbond</dt>
+      <dd> use hbond records in the dssp output. </dd>
+      <dt>energy.cut</dt>
+      <dd> cutoff for the dssp hbond energy. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Determine backbone C=O to N-H hydrogen bonding in secondary
+  structure elements.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>Simple functionality to parse the &#145;BP&#146; and &#145;hbond&#146;
+  records of the DSSP output.</p>
+  
+      <p>Requires input from function <code>dssp</code> with arguments
+  <code>resno=FALSE</code> and <code>full=TRUE</code>.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a numeric matrix of two columns containing the residue ids
+  of the paired residues.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'># Read a PDB file
+pdb <- read.pdb("1hel")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    HYDROLASE(O-GLYCOSYL)                   10-JAN-92   1HEL               
+</div>
+<div class='input'>sse <- dssp(pdb, resno=FALSE, full=TRUE)
+
+sse.bridges(sse, type="helix")
+</div>
+<div class='output'>      [,1] [,2]
+ [1,]    5    9
+ [2,]    6   10
+ [3,]    7   11
+ [4,]    8   12
+ [5,]    9   13
+ [6,]   10   14
+ [7,]   25   29
+ [8,]   26   30
+ [9,]   27   31
+[10,]   28   32
+[11,]   29   33
+[12,]   30   34
+[13,]   31   35
+[14,]   32   36
+[15,]   89   93
+[16,]   90   94
+[17,]   91   95
+[18,]   92   96
+[19,]   93   97
+[20,]   94   98
+[21,]   95   99
+[22,]  109  113
+[23,]  110  114
+</div></pre>
+  </div>
+  <div class="span3">
+    <!-- <ul>
+      <li>sse.bridges</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='read.pdb.html'>read.pdb</a></code>, <code><a href='dssp.html'>dssp</a></code> 
+    
+    <h2>Author</h2>
+     Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=sse.bridges'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

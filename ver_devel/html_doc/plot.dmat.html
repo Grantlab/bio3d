@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>plot.dmat. bio3d 1.2</title>
+<title>plot.dmat. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -161,22 +162,23 @@ plot(d,
      color.palette = mono.colors,
      xlab="Residue Number", ylab="Residue Number")
 </div>
-<p><img src='plot.dmat-5.png' alt='' width='400' height='400' /></p>
+<p><img src='plot.dmat-4.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 # Downlaod and align two PDB files
 pdbs <- pdbaln( get.pdb( c( "4q21", "521p"), path=tempdir(), overwrite=TRUE))
 </div>
 <div class='output'>Reading PDB files:
-/tmp/RtmpesXLkY/4q21.pdb
-/tmp/RtmpesXLkY/521p.pdb
+/tmp/RtmpeKwoQP/4q21.pdb
+/tmp/RtmpeKwoQP/521p.pdb
   HEADER    ONCOGENE PROTEIN                        25-SEP-91   4Q21               
 .  HEADER    ONCOGENE PROTEIN                        06-JUN-91   521P               
 .
 
 Extracting sequences
-muscle -in /tmp/RtmpesXLkY/file5d6e24dc87c9 -out aln.fa  -seqtype proteinpdb/seq: 1   name: /tmp/RtmpesXLkY/4q21.pdb 
-pdb/seq: 2   name: /tmp/RtmpesXLkY/521p.pdb 
+
+pdb/seq: 1   name: /tmp/RtmpeKwoQP/4q21.pdb 
+pdb/seq: 2   name: /tmp/RtmpeKwoQP/521p.pdb 
 </div>
 <div class='input'>
 # Get distance matrix
@@ -195,7 +197,7 @@ c <- a - b
 # Plot DDM
 plot(c,key=FALSE, grid=FALSE)
 </div>
-<p><img src='plot.dmat-13.png' alt='' width='400' height='400' /></p>
+<p><img src='plot.dmat-12.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 plot(c, axis.tick.space=10,
      resnum.1=pdbs$resno[1,],
@@ -203,10 +205,10 @@ plot(c, axis.tick.space=10,
      grid.col="black",
      xlab="Residue No. (4q21)", ylab="Residue No. (521p)")
 </div>
-<p><img src='plot.dmat-16.png' alt='' width='400' height='400' /></p>
+<p><img src='plot.dmat-14.png' alt='' width='400' height='400' /></p>
 <div class='input'></div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>plot.dmat</li>
     </ul>
@@ -225,7 +227,7 @@ plot(c, axis.tick.space=10,
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=plot.dmat'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=plot.dmat'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

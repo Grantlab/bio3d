@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>normalize.vector. bio3d 1.2</title>
+<title>normalize.vector. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Lars Skjaerven ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -42,11 +43,11 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>normalize.vector(v, mass = NULL)</pre>
+    <pre>normalize.vector(x, mass = NULL)</pre>
     
     <h2>Arguments</h2>
     <dl>
-      <dt>v</dt>
+      <dt>x</dt>
       <dd> a numeric vector or matrix to be normalized. </dd>
       <dt>mass</dt>
       <dd> a numeric vector containing the atomic masses for
@@ -74,7 +75,7 @@
     <div class="Value">
       <h2>Value</h2>
       
-      <p>Returns the normalized vector (or matrix).</p>
+      <p>Returns the normalized vector(s).</p>
   
     </div>
 
@@ -86,7 +87,22 @@
     </div>
     
     <h2 id="examples">Examples</h2>
-    <pre class="examples"><div class='input'>## Fetch stucture
+    <pre class="examples"><div class='input'>x <- 1:3
+y <- matrix(1:9, ncol = 3, nrow = 3)
+
+normalize.vector(x)
+</div>
+<div class='output'>[1] 0.2672612 0.5345225 0.8017837
+</div>
+<div class='input'>normalize.vector(y)
+</div>
+<div class='output'>          [,1]      [,2]      [,3]
+[1,] 0.2672612 0.4558423 0.5025707
+[2,] 0.5345225 0.5698029 0.5743665
+[3,] 0.8017837 0.6837635 0.6461623
+</div>
+<div class='input'>
+## Application to normal modes
 pdb <- read.pdb("1hel")
 </div>
 <div class='output'>  Note: Accessing online PDB file
@@ -96,18 +112,21 @@ pdb <- read.pdb("1hel")
 ## Calculate (vibrational) normal modes
 modes <- nma(pdb)
 </div>
-<div class='output'> Building Hessian...		Done in 0.873 seconds.
- Diagonalizing Hessian...	Done in 0.14 seconds.
+<div class='output'> Building Hessian...		Done in 0.082 seconds.
+ Diagonalizing Hessian...	Done in 0.137 seconds.
 </div>
 <div class='input'>
 ## Returns a vector
-nv <- normalize.vector(modes$modes[,7], mass=modes$mass)
+nv <- normalize.vector(modes$modes[,7])
 
 ## Returns a matrix
-nv <- normalize.vector(modes$modes[,7:10], mass=modes$mass)
+nv <- normalize.vector(modes$modes[,7:10])
+
+## Mass-weighted
+nv <- normalize.vector(modes$modes[,7], mass=modes$mass)
 </div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>normalize.vector</li>
     </ul>
@@ -125,7 +144,7 @@ nv <- normalize.vector(modes$modes[,7:10], mass=modes$mass)
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=normalize.vector'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=normalize.vector'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

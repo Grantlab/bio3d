@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>com. bio3d 1.2</title>
+<title>com. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Lars Skjaerven ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -42,7 +43,7 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>com(pdb, inds = NULL, use.mass = TRUE, mass.custom = NULL, elety.custom = NULL, rescue = TRUE)
+    <pre>com(pdb, inds = NULL, use.mass = TRUE, ...)
 
 com.xyz(xyz, mass = NULL)</pre>
     
@@ -58,13 +59,8 @@ com.xyz(xyz, mass = NULL)</pre>
       <dt>use.mass</dt>
       <dd> logical, if TRUE the calculation will be mass
     weighted (center of mass). </dd>
-      <dt>mass.custom</dt>
-      <dd> a list of atom elements and their corresponding masses. </dd>
-      <dt>elety.custom</dt>
-      <dd> a list of atom names to element symbol mapping. </dd>
-      <dt>rescue</dt>
-      <dd> logical, if TRUE the atom element will be mapped to the
-    first character of the atom name. </dd>
+      <dt>...</dt>
+      <dd> additional arguments to <code>atom2mass</code>. </dd>
       <dt>xyz</dt>
       <dd> a numeric vector of Cartesian coordinates. </dd>
       <dt>mass</dt>
@@ -95,17 +91,12 @@ com.xyz(xyz, mass = NULL)</pre>
   names starting with character <code>H</code> will be mapped to hydrogen
   atoms.</p>
   
-      <p>The function reports the atomic masses in which the calculation is
-  based and the corresponding center of mass.</p>
-  
     </div>
 
     <div class="Value">
       <h2>Value</h2>
       
-      <p>Returns a list with the following components:
-  mass a numeric vector of atomic masses. 
-  xyz Cartesian coordinates of the center of mass.</p>
+      <p>Returns the Cartesian coordinates at the center of mass.</p>
   
     </div>
 
@@ -127,9 +118,11 @@ pdb <- read.pdb("3dnd")
 </div>
 <div class='input'>
 ## Center of mass:
-mycom <- com(pdb)
-write.pdb(xyz=mycom$xyz, file="dummy-1.pdb")
-
+com(pdb)
+</div>
+<div class='output'>[1]  9.524522  2.221727 -2.028334
+</div>
+<div class='input'>
 ## Center of mass of a selection
 inds <- atom.select(pdb, chain="I")
 </div>
@@ -141,8 +134,11 @@ Stest ""     "I"   ""     ""     ""     ""
 Natom "2916" "157" "2916" "2916" "2916" "2916"
  *  Selected a total of: 157 intersecting atoms  *
 </div>
-<div class='input'>mycom <- com(pdb, inds)
-
+<div class='input'>com(pdb, inds)
+</div>
+<div class='output'>[1] 22.7302589 -0.8920598  8.4012205
+</div>
+<div class='input'>
 ## Unknown atom names
 pdb <- read.pdb("3dnd", het2atom=TRUE)
 </div>
@@ -163,31 +159,20 @@ Natom "3214" "3214" "3214" "13"  "3214" "3214"
 <div class='input'>mycom <- com(pdb, inds, rescue=TRUE)
 </div>
 <strong class='warning'>Warning message:
-unknown element: mapped C8 to C</strong>
-<strong class='warning'>Warning message:
-unknown element: mapped C11 to C</strong>
-<strong class='warning'>Warning message:
-unknown element: mapped C13 to C</strong>
-<strong class='warning'>Warning message:
-unknown element: mapped C12 to C</strong>
-<strong class='warning'>Warning message:
-unknown element: mapped C9 to C</strong>
-<strong class='warning'>Warning message:
-unknown element: mapped C5 to C</strong>
-<strong class='warning'>Warning message:
-unknown element: mapped C2 to C</strong>
-<strong class='warning'>Warning message:
-unknown element: mapped C1 to C</strong>
-<strong class='warning'>Warning message:
-unknown element: mapped S4 to S</strong>
-<strong class='warning'>Warning message:
-unknown element: mapped C3 to C</strong>
-<strong class='warning'>Warning message:
-unknown element: mapped N6 to N</strong>
-<strong class='warning'>Warning message:
-unknown element: mapped C7 to C</strong>
-<strong class='warning'>Warning message:
-unknown element: mapped N10 to N</strong>
+
+	unknown element: mapped C8 to C
+	unknown element: mapped C11 to C
+	unknown element: mapped C13 to C
+	unknown element: mapped C12 to C
+	unknown element: mapped C9 to C
+	unknown element: mapped C5 to C
+	unknown element: mapped C2 to C
+	unknown element: mapped C1 to C
+	unknown element: mapped S4 to S
+	unknown element: mapped C3 to C
+	unknown element: mapped N6 to N
+	unknown element: mapped C7 to C
+	unknown element: mapped N10 to N</strong>
 <div class='input'>warnings()
 </div>
 <div class='output'>NULL
@@ -219,12 +204,11 @@ mycom <- com(pdb, inds, elety.custom=elety.cust, mass.custom=mass.cust,
              rescue=TRUE)
 </div>
 <strong class='warning'>Warning message:
-unknown element: mapped N1 to N</strong>
-<strong class='warning'>Warning message:
-unknown element: mapped N2 to N</strong>
-<div class='input'></div></pre>
+
+	unknown element: mapped N1 to N
+	unknown element: mapped N2 to N</strong></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>com</li><li>com.xyz</li>
     </ul>
@@ -233,7 +217,7 @@ unknown element: mapped N2 to N</strong>
     </ul> -->
       
     <h2>See also</h2>
-     <code><a href='read.pdb.html'>read.pdb</a></code>, <code><a href='atom.select.html'>atom.select</a></code> 
+     <code><a href='atom2mass.html'>atom2mass</a></code> 
     
     <h2>Author</h2>
      Lars Skjaerven 
@@ -242,7 +226,7 @@ unknown element: mapped N2 to N</strong>
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=com'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=com'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

@@ -1,0 +1,5 @@
+%\VignetteIndexEntry{Enhanced Methods for Normal Mode Analysis with Bio3D}
+\documentclass{article}
+\begin{document}
+dummy...
+\end{document}

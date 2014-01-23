@@ -2,14 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>trim.pdb. bio3d 1.2</title>
+<title>trim.pdb. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="author" content=" Barry Grant ">
+<meta name="author" content=" Barry Grant, Lars Skjaerven ">
 
 <link href="css/bootstrap.css" rel="stylesheet">
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -42,7 +43,7 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>trim.pdb(pdb, inds = NULL)</pre>
+    <pre>trim.pdb(pdb, inds = NULL, sse = TRUE)</pre>
     
     <h2>Arguments</h2>
     <dl>
@@ -52,19 +53,24 @@
       <dt>inds</dt>
       <dd> a list object of ATOM and XYZ indices as obtained from
     <code><a href='atom.select.html'>atom.select</a></code>. </dd>
+      <dt>sse</dt>
+      <dd> logical, if &#145;FALSE&#146; helix and sheet components are
+    omitted from output. </dd>
     </dl>
     
     <div class="Description">
       <h2>Description</h2>
       
-      <p>Produce a new smaller PDB object, containing a subset of atoms, from a given larger PDB object.</p>
+      <p>Produce a new smaller PDB object, containing a subset of atoms, from a
+  given larger PDB object.</p>
   
     </div>
 
     <div class="Details">
       <h2>Details</h2>
       
-      <p>This is a basic utility function for selecting a subset of a PDB object.</p>
+      <p>This is a basic utility function for creating a new PDB object based
+  on a selection of atoms.</p>
   
     </div>
 
@@ -83,6 +89,8 @@
     type sse, where start and end are residue numbers &#147;resno&#148;. 
   seqres  sequence from SEQRES field. 
   xyz  a numeric vector of ATOM coordinate data. 
+  xyz.models  a numeric matrix of ATOM coordinate data for
+    multi-model PDB files. 
   calpha  logical vector with length equal to <code>nrow(atom)</code>
     with TRUE values indicating a C-alpha &#147;elety&#148;.</p>
   
@@ -102,9 +110,11 @@
     <div class="Note">
       <h2>Note</h2>
       
+      <p><code>het</code> and <code>seqres</code> list components are returned unmodified.</p>
+  
       <p>For both <code>atom</code> and <code>het</code> list components the column names can be
   used as a convenient means of data access, namely:
-  Atom serial number &#147;eleno&#148; ,
+  Atom serial number &#147;eleno&#148;,
   Atom type &#147;elety&#148;,
   Alternate location indicator &#147;alt&#148;,
   Residue name &#147;resid&#148;,
@@ -121,28 +131,36 @@
     </div>
     
     <h2 id="examples">Examples</h2>
-    <pre class="examples"><div class='input'> pdb <- read.pdb( "5p21" )
+    <pre class="examples"><div class='input'>## Read a PDB file from the RCSB online database
+pdb <- read.pdb("1bg2")
 </div>
 <div class='output'>  Note: Accessing online PDB file
-  HEADER    ONCOGENE PROTEIN                        30-APR-90   5P21               
+  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
 </div>
-<div class='input'> npdb <- trim.pdb(pdb, inds=atom.select(pdb, "back"))
+<div class='input'>
+## Select calpha atoms
+sele <- atom.select(pdb, "calpha")
 </div>
 <div class='output'>
 Build selection from input string
 
 
- Using selection 'string' keyword shortcut: back = //////N,CA,C,O/ 
+ Using selection 'string' keyword shortcut: calpha = //////CA/ 
 
-      segid  chain  resno  resid  eleno  elety     
-Stest ""     ""     ""     ""     ""     "N,CA,C,O"
-Natom "1323" "1323" "1323" "1323" "1323" "664"     
- *  Selected a total of: 664 intersecting atoms  *
+      segid  chain  resno  resid  eleno  elety
+Stest ""     ""     ""     ""     ""     "CA" 
+Natom "2527" "2527" "2527" "2527" "2527" "323"
+ *  Selected a total of: 323 intersecting atoms  *
 </div>
-<div class='input'> write.pdb(npdb, file="backboneonly.pdb")
+<div class='input'>
+## Trim PDB
+new.pdb <- trim.pdb(pdb, inds=sele)
+
+## Write to file
+write.pdb(new.pdb, file="calpha.pdb")
 </div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>trim.pdb</li>
     </ul>
@@ -151,18 +169,17 @@ Natom "1323" "1323" "1323" "1323" "1323" "664"
     </ul> -->
       
     <h2>See also</h2>
-     <code><a href='atom.select.html'>atom.select</a></code>, <code><a href='write.pdb.html'>write.pdb</a></code>,
-  <code><a href='read.dcd.html'>read.dcd</a></code>, <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>,
-  <code><a href='read.fasta.html'>read.fasta</a></code> 
+     <code><a href='read.pdb.html'>read.pdb</a></code>, <code><a href='atom.select.html'>atom.select</a></code>,
+  <code><a href='write.pdb.html'>write.pdb</a></code> 
     
     <h2>Author</h2>
-     Barry Grant 
+     Barry Grant, Lars Skjaerven 
     
   </div>
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=trim.pdb'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=trim.pdb'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

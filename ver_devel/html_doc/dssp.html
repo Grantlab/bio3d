@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>dssp. bio3d 1.2</title>
+<title>dssp. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -37,38 +38,54 @@
         
       </header>
       
-      <h1> Secondary Structure Analysis with DSSP </h1>
+      <h1> Secondary Structure Analysis with DSSP or STRIDE </h1>
 
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>dssp(pdb, exepath = "", resno = TRUE)</pre>
+    <pre>dssp(pdb, exefile = "dssp", resno = TRUE, full = FALSE, verbose = FALSE)
+
+stride(pdb, exefile = "stride", resno = TRUE)
+
+print(x, ...)</pre>
     
     <h2>Arguments</h2>
     <dl>
       <dt>pdb</dt>
       <dd> a structure object of class <code>"pdb"</code>, obtained from
     <code><a href='read.pdb.html'>read.pdb</a></code>. </dd>
-      <dt>exepath</dt>
-      <dd> path to the &#145;DSSP&#146; program on your system
-    (i.e. the directory where &#145;DSSP&#146; is stored). </dd>
+      <dt>exefile</dt>
+      <dd> file path to the &#145;DSSP&#146; or &#145;STRIDE&#146; program 
+    on your system (i.e. how is &#145;DSSP&#146; or &#145;STRIDE&#146; invoked). </dd>
       <dt>resno</dt>
       <dd> logical, if TRUE output is in terms of residue numbers
     rather than residue index (position in sequence). </dd>
+      <dt>full</dt>
+      <dd> logical, if TRUE bridge pairs and hbonds columns are
+    parsed. </dd>
+      <dt>verbose</dt>
+      <dd> logical, if TRUE &#145;DSSP&#146; warning and error
+    messages are printed. </dd>
+      <dt>x</dt>
+      <dd> an <code>sse</code> object obtained from <code><a href='dssp.html'>dssp</a></code> or 
+    <code><a href='dssp.html'>stride</a></code>. </dd>
+      <dt>...</dt>
+      <dd> additional arguments to &#145;print&#146;. </dd>
     </dl>
     
     <div class="Description">
       <h2>Description</h2>
       
-      <p>Secondary structure assignment according to the method of Kabsch and Sander.</p>
+      <p>Secondary structure assignment according to the method of Kabsch and Sander (DSSP)
+  or the method of Frishman and Argos (STRIDE).</p>
   
     </div>
 
     <div class="Details">
       <h2>Details</h2>
       
-      <p>This function calls the &#145;DSSP&#146; program to define secondary
-  structure and psi and phi torsion angles.</p>
+      <p>This function calls the &#145;DSSP&#146; or &#145;STRIDE&#146; program to define 
+  secondary structure and psi and phi torsion angles.</p>
   
     </div>
 
@@ -86,7 +103,11 @@
     type sse, where start and end are residue numbers &#147;resno&#148;. 
   phi a numeric vector of phi angles. 
   psi a numeric vector of psi angles. 
-  acc a numeric vector of solvent accessibility.</p>
+  acc a numeric vector of solvent accessibility. 
+  sse a character vector of secondary structure type per residue. 
+  hbonds a 10 or 16 column matrix containing the bridge pair
+    records as well as backbone NH-->O and O-->NH H-bond records. 
+    (Only available for <code><a href='dssp.html'>dssp</a></code></p>
   
     </div>
 
@@ -95,19 +116,47 @@
       
       <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
   
-      <p>&#145;DSSP&#146; is the work of Kabsch and Sander:  
+      <p>&#145;DSSP&#146; is the work of Kabsch and Sander:
   Kabsch and Sander (1983) <em>Biopolymers.</em>  <b>12</b>, 2577--2637.</p>
   
-      <p>For information on obtaining &#145;DSSP&#146;, see: 
+      <p>For information on obtaining &#145;DSSP&#146;, see:
   <a href = 'http://swift.cmbi.ru.nl/gv/dssp/'>http://swift.cmbi.ru.nl/gv/dssp/</a>.</p>
+  
+      <p>&#145;STRIDE&#146; is the work of Frishman and Argos:
+  Frishman and Argos (1995) <em>Proteins.</em>  <b>3</b>, 566--579.</p>
+  
+      <p>For information on obtaining the &#145;STRIDE&#146; program, see:
+  <a href = 'http://webclu.bio.wzw.tum.de/stride/'>http://webclu.bio.wzw.tum.de/stride/</a>,
+  or copy it from an installation of VMD.</p>
   
     </div>
 
     <div class="Note">
       <h2>Note</h2>
       
-      <p>A system call is made to the &#145;DSSP&#146; program, which must be
-  installed on your system and in the search path for executables.</p>
+      <p>A system call is made to the &#145;DSSP&#146; or &#145;STRIDE&#146; program, 
+  which must be installed on your system and in the search path for executables.</p>
+  
+      <p>For the <code>hbonds</code> list component the column names can be
+  used as a convenient means of data access, namely:
+  Bridge pair 1            &#147;BP1&#148;,
+  Bridge pair 2            &#147;BP2&#148;,
+  Backbone H-bond (NH-->O) &#147;NH-O.1&#148;,
+  H-bond energy of NH-->O  &#147;E1&#148;,
+  Backbone H-bond (O-->NH) &#147;O-HN.1&#148;,
+  H-bond energy of O-->NH  &#147;E2&#148;,
+  Backbone H-bond (NH-->O) &#147;NH-O.2&#148;,
+  H-bond energy of NH-->O  &#147;E3&#148;,
+  Backbone H-bond (O-->NH) &#147;O-HN.2&#148;,
+  H-bond energy of O-->NH  &#147;E4&#148;.</p>
+  
+      <p>If &#145;resno=TRUE&#146; the following additional columns are included:
+  Chain ID of resno &#147;BP1&#148;:    &#147;ChainBP1&#148;,
+  Chain ID of resno &#147;BP2&#148;:    &#147;ChainBP2&#148;,
+  Chain ID of resno &#147;O-HN.1&#148;: &#147;Chain1&#148;,
+  Chain ID of resno &#147;NH-O.2&#148;: &#147;Chain2&#148;,
+  Chain ID of resno &#147;O-HN.1&#148;: &#147;Chain3&#148;,
+  Chain ID of resno &#147;NH-O.2&#148;: &#147;Chain4&#148;.</p>
   
     </div>
     
@@ -119,7 +168,66 @@ pdb <- read.pdb("1bg2")
   HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
 </div>
 <div class='input'>sse <- dssp(pdb)
+sse2 <- stride(pdb)
 
+## Short summary
+sse
+</div>
+<div class='output'>
+Call:
+  dssp(pdb = pdb)
+
+Class:
+  sse
+
+Helices:  13 
+        20-25 (A)      58-65 (A)      67-74 (A)      91-95 (A)    107-122 (A)
+      176-189 (A)    197-203 (A)    256-269 (A)    281-285 (A)    309-320 (A)
+      277-279 (A)    286-288 (A)    306-308 (A)
+
+Sheets:   14 
+         8-15 (A)      32-34 (A)      38-41 (A)      44-47 (A)      50-52 (A)
+        79-84 (A)    126-138 (A)    141-144 (A)    155-157 (A)    163-165 (A)
+      171-173 (A)    205-216 (A)    222-231 (A)    295-302 (A)
+
+Turns:   20 
+        26-26 (A)      35-37 (A)      42-43 (A)      54-55 (A)      66-66 (A)
+        75-76 (A)      87-88 (A)      96-96 (A)     99-100 (A)    102-104 (A)
+      139-140 (A)    148-149 (A)    159-160 (A)    166-167 (A)    190-193 (A)
+      217-219 (A)    246-247 (A)    270-271 (A)    289-289 (A)    321-321 (A)
+
+Output is provided in residue numbers
+
+</div>
+<div class='input'>sse2
+</div>
+<div class='output'>
+Call:
+  stride(pdb = pdb)
+
+Class:
+  sse
+
+Helices:  11 
+        20-25 (A)      58-75 (A)      91-96 (A)    107-122 (A)    176-190 (A)
+      197-203 (A)    256-270 (A)    281-286 (A)    309-321 (A)    277-279 (A)
+      306-308 (A)
+
+Sheets:   14 
+         9-15 (A)      32-34 (A)      38-41 (A)      44-47 (A)      50-52 (A)
+        79-84 (A)    126-138 (A)    141-144 (A)    154-157 (A)    163-166 (A)
+      171-173 (A)    205-216 (A)    222-231 (A)    295-302 (A)
+
+Turns:   18 
+          3-8 (A)      35-37 (A)      42-43 (A)      48-49 (A)      53-56 (A)
+        86-89 (A)     98-104 (A)    123-125 (A)    139-140 (A)    145-152 (A)
+      158-161 (A)    167-168 (A)    191-196 (A)    217-220 (A)    237-240 (A)
+      245-249 (A)    272-276 (A)    287-294 (A)
+
+Output is provided in residue numbers
+
+</div>
+<div class='input'>
 # Helix data
 sse$helix
 </div>
@@ -153,18 +261,19 @@ sum(sse$helix$length)/sum(pdb$calpha) * 100
 <div class='input'>sum(sse$sheet$length)/sum(pdb$calpha) * 100
 </div>
 <div class='output'>[1] 26.00619
-</div></pre>
+</div>
+<div class='input'></div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
-      <li>dssp</li>
+      <li>dssp</li><li>stride</li><li>print.sse</li>
     </ul>
     <ul>
       <li> utilities </li>
     </ul> -->
       
     <h2>See also</h2>
-     <code><a href='read.pdb.html'>read.pdb</a></code>, <code><a href='stride.html'>stride</a></code>,
+     <code><a href='read.pdb.html'>read.pdb</a></code>,
   <code><a href='torsion.pdb.html'>torsion.pdb</a></code>, <code><a href='torsion.xyz.html'>torsion.xyz</a></code>,
   <code><a href='plot.bio3d.html'>plot.bio3d</a></code>
 
@@ -176,7 +285,7 @@ sum(sse$helix$length)/sum(pdb$calpha) * 100
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=dssp'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=dssp'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

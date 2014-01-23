@@ -12,8 +12,8 @@ Utilities for the analysis of protein structure and sequence data.
 \tabular{ll}{
 Package: \tab bio3d\cr
 Type: \tab Package\cr
-Version: \tab 2.0\cr
-Date: \tab DEVEL VERSION: 2013-07-22\cr
+Version: \tab 2.0-1\cr
+Date: \tab 2013-11-13\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab \url{http://thegrantlab.org/bio3d/}\cr
 }
@@ -25,10 +25,9 @@ Features include the ability to read and write structure
 (\code{\link{read.dcd}}, \code{\link{read.ncdf}}, \code{\link{write.ncdf}}).
 
 Perform sequence database searches (\code{\link{blast.pdb}}), atom
-summaries (\code{\link{pdb.summary}}),  atom selection
+summaries (\code{\link{summary.pdb}}),  atom selection
 (\code{\link{atom.select}}),  re-orientation (\code{\link{orient.pdb}}),
-superposition (\code{\link{rot.lsq}},  \code{\link{fit.xyz}}), rigid core
-identification (\code{\link{core.find}},  \code{\link{plot.core}}, 
+alignment ((\code{\link{pdbaln}},  \code{\link{seqaln}})) superposition (\code{\link{rot.lsq}},  \code{\link{fit.xyz}}), rigid core identification (\code{\link{core.find}},  \code{\link{plot.core}}, 
 \code{\link{fit.xyz}}), torsion/dihedral analysis
 (\code{\link{torsion.pdb}},  \code{\link{torsion.xyz}}), clustering (via
 \code{\link{hclust}}), principal component analysis
@@ -41,6 +40,15 @@ Perform conservation analysis of sequence (\code{\link{seqaln}}, \code{\link{con
 \code{\link{seqidentity}},  \code{\link{entropy}},  \code{\link{consensus}})
 and structural (\code{\link{pdbaln}}, \code{\link{rmsd}},
 \code{\link{rmsf}}, \code{\link{core.find}}) data.
+
+Perform normal mode analysis (elastic network model) with
+(\code{\link{nma}}) and (\code{\link{build.hessian}}), ensemble normal
+mode analysis (\code{\link{nma.pdbs}}), mode comparison
+(\code{\link{rmsip}}) and (\code{\link{overlap}}), atomic fluctuation
+prediction (\code{\link{fluct.nma}}), cross-correlation analysis
+(\code{\link{dccm.nma}}), cross-correlation visualization (\code{\link{view.dccm}}), 
+deformation analysis (\code{\link{deformation.nma}}), and mode visualization
+(\code{\link{view.modes}}), (\code{\link{mktrj.nma}}). 
 
 In addition, various utility functions are provided to facilitate
 manipulation and analysis of biological sequence and structural data
@@ -79,7 +87,17 @@ help(read.pdb)
 ##    http://thegrantlab.org/bio3d/html/read.pdb.html
 
 \dontrun{
-##-- Read a PDB file
+##-- See the list of Bio3D demos 
+demo(package="bio3d")
+
+## Try some out, e.g: 
+demo(pdb) # PDB Manipulation, Serching and Alignment
+demo(pca) # Principal Component Analysis
+demo(md)  # Molecular Dynamics Trajectory Analysis
+demo(nma) # Normal Mode Analysis
+
+
+##-- Start by reading a PDB file
 pdb <- read.pdb("1BG2")
 
 ##

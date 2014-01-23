@@ -1,9 +1,16 @@
 `plot.blast` <-
 function(x, cutoff=NULL, cut.seed=110, mar=c(4, 4, 1, 2), cex.lab=1.5, ...) {
 
-  ## blast.pdb( seq.pdb(get.pdb("4q21", URLonly=TRUE)) )
-  ## plot(b2, 188)
+  ## b <- blast.pdb( pdbseq( read.pdb("4q21") ) )
+  ## plot(b, 188)
   
+  nhit <- length(x$mlog.evalue)
+  if(nhit > 2000) {
+    continue <- readline(" More than 2000 hits, clustering may take some time, continue [y/n]:")
+    continue <- ifelse(grepl("y",continue), TRUE, FALSE)
+    if(!continue) { stop("user stop") }
+  }
+
   ##- Setup Plot alignment stats overview
   opar <- par(no.readonly = TRUE)
   on.exit(par(opar))

@@ -1,31 +1,35 @@
 \name{dssp}
 \alias{dssp}
-\alias{print.dssp}
-\title{ Secondary Structure Analysis with DSSP }
+\alias{stride}
+\alias{print.sse}
+\title{ Secondary Structure Analysis with DSSP or STRIDE }
 \description{
-  Secondary structure assignment according to the method of Kabsch and Sander.
+  Secondary structure assignment according to the method of Kabsch and Sander (DSSP)
+  or the method of Frishman and Argos (STRIDE).
 }
 \usage{
 dssp(pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE)
-\method{print}{dssp}(x, \dots)
+stride(pdb, exefile = "stride", resno=TRUE)
+\method{print}{sse}(x, \dots)
 }
 \arguments{
   \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
     \code{\link{read.pdb}}. }
-  \item{exefile}{ file path to the \sQuote{DSSP} program on your system
-    (i.e. how is \sQuote{DSSP} invoked). }
+  \item{exefile}{ file path to the \sQuote{DSSP} or \sQuote{STRIDE} program 
+    on your system (i.e. how is \sQuote{DSSP} or \sQuote{STRIDE} invoked). }
   \item{resno}{ logical, if TRUE output is in terms of residue numbers
     rather than residue index (position in sequence). }
   \item{full}{ logical, if TRUE bridge pairs and hbonds columns are
     parsed. }
   \item{verbose}{ logical, if TRUE \sQuote{DSSP} warning and error
     messages are printed. } 
-  \item{x}{ an \code{dssp} object obtained from \code{\link{dssp}}. }
+  \item{x}{ an \code{sse} object obtained from \code{\link{dssp}} or 
+    \code{\link{stride}}. }
   \item{...}{ additional arguments to \sQuote{print}. }
   }
 \details{
-  This function calls the \sQuote{DSSP} program to define secondary
-  structure and psi and phi torsion angles.
+  This function calls the \sQuote{DSSP} or \sQuote{STRIDE} program to define 
+  secondary structure and psi and phi torsion angles.
 }
 \value{
   Returns a list with the following components:
@@ -42,7 +46,8 @@ dssp(pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE)
   \item{acc}{ a numeric vector of solvent accessibility. }
   \item{sse}{ a character vector of secondary structure type per residue. }
   \item{hbonds}{ a 10 or 16 column matrix containing the bridge pair
-    records as well as backbone NH-->O and O-->NH H-bond records. }
+    records as well as backbone NH-->O and O-->NH H-bond records. 
+    (Only available for \code{\link{dssp}} }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
@@ -52,11 +57,18 @@ dssp(pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE)
 
   For information on obtaining \sQuote{DSSP}, see:\cr
   \url{http://swift.cmbi.ru.nl/gv/dssp/}.
+
+  \sQuote{STRIDE} is the work of Frishman and Argos:
+  Frishman and Argos (1995) \emph{Proteins.}  \bold{3}, 566--579.
+
+  For information on obtaining the \sQuote{STRIDE} program, see:\cr
+  \url{http://webclu.bio.wzw.tum.de/stride/},
+  or copy it from an installation of VMD.
 }
 \author{ Barry Grant }
 \note{
-  A system call is made to the \sQuote{DSSP} program, which must be
-  installed on your system and in the search path for executables.
+  A system call is made to the \sQuote{DSSP} or \sQuote{STRIDE} program, 
+  which must be installed on your system and in the search path for executables.
 
   For the \code{hbonds} list component the column names can be
   used as a convenient means of data access, namely:\cr
@@ -79,7 +91,7 @@ dssp(pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE)
   Chain ID of resno \dQuote{O-HN.1}: \dQuote{Chain3},\cr
   Chain ID of resno \dQuote{NH-O.2}: \dQuote{Chain4}.
 }
-\seealso{ \code{\link{read.pdb}}, \code{\link{stride}},
+\seealso{ \code{\link{read.pdb}},
   \code{\link{torsion.pdb}}, \code{\link{torsion.xyz}},
   \code{\link{plot.bio3d}}
 }
@@ -88,9 +100,11 @@ dssp(pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE)
 # Read a PDB file
 pdb <- read.pdb("1bg2")
 sse <- dssp(pdb)
+sse2 <- stride(pdb)
 
 ## Short summary
 sse
+sse2
 
 # Helix data
 sse$helix
@@ -98,6 +112,7 @@ sse$helix
 # Precent SSE content
 sum(sse$helix$length)/sum(pdb$calpha) * 100
 sum(sse$sheet$length)/sum(pdb$calpha) * 100
+
 }
 }
 \keyword{ utilities }

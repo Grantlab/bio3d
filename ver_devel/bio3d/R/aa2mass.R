@@ -52,14 +52,19 @@
       new.aas <- names(mass.custom)
       if(any(duplicated(new.aas)) ||
          any(new.aas %in% mat[,"aa3"]))
-        stop("duplicate residue name(s) provided")
+        warning("duplicate residue name(s) provided")
       
       for(new.aa in new.aas) {
-        nr <- data.frame(list(aa3=new.aa, aa1="X",
-                              aaMass=mass.custom[[ new.aa ]],
-                              name=NA, formula=NA))
-        rownames(nr) <- new.aa
-        mat <- rbind(mat, nr)
+        if( new.aa %in% rownames(mat) ) {
+          mat[new.aa, "aaMass"] = mass.custom[[ new.aa ]]
+        }
+        else {
+          nr <- data.frame(list(aa3=new.aa, aa1="X",
+                                aaMass=mass.custom[[ new.aa ]],
+                                name=NA, formula=NA))
+          rownames(nr) <- new.aa
+          mat <- rbind(mat, nr)
+        }
       }
     }
 

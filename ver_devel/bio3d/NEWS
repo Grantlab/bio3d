@@ -1,10 +1,51 @@
 NEWS 
 ====
 
-For a more fine-grained list of changes or to report a bug, consult 
+Version 2.0 contains over 30 new functions including enhanced Normal Mode 
+Analysis facilities as well extensive improvements to existing code and 
+documentation. For a fine-grained list of changes or to report a bug, please 
+consult: 
 
 * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
 * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+
+Major new functions include:
+* aa2mass: Amino Acid Residues to Mass Converter
+* atom.index: Index of Atomic Masses
+* atom2mass(atom2ele, formula2mass): Atom Names to Mass Converter
+* binding.site: Binding Site Residues
+* com(com.xyz): Center of Mass
+* combine.sel: Combine Atom Selections From PDB Structure
+* dccm.enma: Cross-Correlation for Ensemble NMA (eNMA)
+* dccm.mean: Filter DCCM matrices
+* dccm.nma: Dynamic Cross-Correlation from Normal Modes Analysis
+* dccm.xyz: DCCM: Dynamical Cross-Correlation Matrix
+* deformation.nma: Deformation Analysis
+* dssp.trj: Secondary Structure Analysis of Trajectories with DSSP
+* fluct.nma: NMA Fluctuations
+* inner.prod: Mass-weighted Inner Product
+* is.pdb: Is an Object of Class pdb
+* is.select: Is an Object of Class atom.select
+* load.enmff(ff.calpha, ff.calphax, ff.anm, ff.pfanm, ff.sdenm, ff.reach): ENM Force Field Loader
+* mktrj.nma: NMA Atomic Displacement Trajectory
+* nma(build.hessian, print.nma): Normal Mode Analysis
+* nma.pdbs(print.enma): Ensemble Normal Mode Analysis
+* normalize.vector: Mass-Weighted Normalized Vector
+* pdb.annotate: Get Customizable Annotations From PDB
+* pdb2aln: Align a PDB structure to an existing alignment
+* pdb2aln.ind: Mapping between PDB atomic indices and alignment positions
+* pdbfit: PDB File Coordinate Superposition
+* pdbs2pdb: PDBs to PDB Converter
+* plot.enma: Plot eNMA Results
+* plot.nma: Plot NMA Results
+* plot.rmsip: Plot RMSIP Results
+* read.mol2: Read MOL2 File
+* sdENM: Index for the sdENM ff
+* sse.bridges: SSE Backbone Hydrogen Bonding
+* struct.aln: Structure Alignment Of Two PDB Files
+* view.dccm: Visualization of Dynamic Cross-Correlation
+* view.modes: Vector Field Visualization of Modes
+* vmd.colors: Color as in VMD Molecular Viewer
 
 
 Versioning
@@ -12,7 +53,9 @@ Versioning
 
 Releases will be numbered with the following semantic versioning format:
 
-<major>.<minor>.<patch>
+<major>.<minor>-<patch>
+
+E.g.: 2.0-1
 
 And constructed with the following guidelines:
 
@@ -25,38 +68,9 @@ And constructed with the following guidelines:
 For more information on SemVer, please visit http://semver.org/.
 
 
-v1.2-0
-------
+-----
 
-* [New functions](https://bitbucket.org/Grantlab/bio3d/wiki/New%20functions)
-
-Highlights include:
-* fit.xyz, rmsd, and dccm functions now support multicore
-* dccm supports "grpby" argument, which can be used for all-atom cross-correlation calculation
-* cmap supports multicore and input of structural ensemble
-* read.ncdf supports specifying time range
-* core.find, pdbaln, and read.fasta.pdb now support multicore
-* read.pdb and split.pdb support multi-model PDB files
-* binding.site: Determines the interacting residues between two PDB entities
-* read.mol2: Read a Sybyl MOL2 file
-* pdb2aln: Align a PDB structure to an existing alignment
-* rgyr: Calculation of the radius of gyration
-* struct.aln: Alignment of two PDB files with unequal number of atoms (with iterative refinement)
-* nma: Calculate coarse grained normal modes (elastic network model)
-* dccm.nma, fluct.nma, mktrj.nma, rmsip, overlap: Various analysis of normal modes
-* com, com.xyz: Calculate the center of mass of PDB entities
-* pdb.annotate: Get customizable annotations for query results from PDB
-* dssp, stride: Updated to return sse sequence and work with new version of dssp
-* dssp.trj: Run dssp on a trajectory
-* bounds: Bug fix
-* Rd doc file imporvments
-* pdbseq: renamed from previous seq.pdb()
-
-
-v1.1-6
-______
-
-For changes pior to v1.2-0 please see the bio3d wki:
+For changes pior to v1.1-6 please see the bio3d wki:
 * [Whats new wki page](http://bio3d.pbworks.com/w/page/7824486/WhatsNew)
 
 

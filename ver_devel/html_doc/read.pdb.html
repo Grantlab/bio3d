@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>read.pdb. bio3d 1.2</title>
+<title>read.pdb. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -42,10 +43,12 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>read.pdb(file, maxlines = 50000, multi = FALSE, rm.insert = FALSE, rm.alt = TRUE, 
-  het2atom = FALSE, verbose = TRUE)
+    <pre>read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE, rm.alt = TRUE, het2atom = FALSE, 
+  verbose = TRUE)
 
-print(x, ...)</pre>
+print(x, ...)
+
+summary(object, printseq = FALSE, ...)</pre>
     
     <h2>Arguments</h2>
     <dl>
@@ -55,7 +58,8 @@ print(x, ...)</pre>
     online file access. </dd>
       <dt>maxlines</dt>
       <dd> the maximum number of lines to read before giving up
-    with large files. Default is 50,000 lines. </dd>
+    with large files. By default if will read up to the end of input on
+    the connection. </dd>
       <dt>multi</dt>
       <dd> logical, if TRUE multiple ATOM records are read for all
     models in multi-model files. </dd>
@@ -72,6 +76,12 @@ print(x, ...)</pre>
       <dt>x</dt>
       <dd> a PDB structure object obtained from
     <code><a href='read.pdb.html'>read.pdb</a></code>.  </dd>
+      <dt>object</dt>
+      <dd> a PDB structure object obtained from
+    <code><a href='read.pdb.html'>read.pdb</a></code>.  </dd>
+      <dt>printseq</dt>
+      <dd> logical, if TRUE the PDB ATOM sequence will be printed
+    to the screen. See also <code><a href='pdbseq.html'>pdbseq</a></code>.  </dd>
       <dt>...</dt>
       <dd> additional arguments to &#145;print&#146;. </dd>
     </dl>
@@ -110,7 +120,8 @@ print(x, ...)</pre>
   xyz.models  a numeric matrix of ATOM coordinate data for
     multi-model PDB files. 
   calpha  logical vector with length equal to <code>nrow(atom)</code>
-    with TRUE values indicating a C-alpha &#147;elety&#148;.</p>
+    with TRUE values indicating a C-alpha &#147;elety&#148;. 
+  calpha  the matched call.</p>
   
     </div>
 
@@ -161,8 +172,8 @@ pdb$atom[1,]
 </div>
 <div class='output'>   eleno    elety      alt    resid    chain    resno   insert        x 
      "1"      "N"       NA    "ASP"      "A"      "3"       NA "43.743" 
-       y        z        o        b    segid 
-"-2.106" "39.408"   "1.00" "100.00"       NA 
+       y        z        o        b    segid    elesy   charge 
+"-2.106" "39.408"   "1.00" "100.00"       NA      "N"       NA 
 </div>
 <div class='input'>
 ## Look at the first het atom
@@ -170,8 +181,8 @@ pdb$het[1,]
 </div>
 <div class='output'>   eleno    elety      alt    resid    chain    resno   insert        x 
   "2529"     "MG"       NA     "MG"      "A"    "402"       NA "15.166" 
-       y        z        o        b    segid 
-"12.165" "39.274"   "1.00"  "24.10"       NA 
+       y        z        o        b    segid    elesy   charge 
+"12.165" "39.274"   "1.00"  "24.10"       NA     "MG"       NA 
 </div>
 <div class='input'>
 ## Print some coordinate data
@@ -335,15 +346,15 @@ Natom "2527" "2527" "53"                      "2527" "2527" "323"
 [6,] "679" "CA"  NA  "SER" "A"   "88"  NA     "10.892" "8.739" "43.249" "1.00"
 [7,] "685" "CA"  NA  "SER" "A"   "89"  NA     "13.318" "6.688" "45.344" "1.00"
 [8,] "691" "CA"  NA  "GLY" "A"   "90"  NA     "15.586" "9.633" "46.049" "1.00"
-     b       segid
-[1,] "13.72" NA   
-[2,] "13.26" NA   
-[3,] "8.52"  NA   
-[4,] "16.62" NA   
-[5,] "19.36" NA   
-[6,] "18.70" NA   
-[7,] "17.21" NA   
-[8,] "12.83" NA   
+     b       segid elesy charge
+[1,] "13.72" NA    "C"   NA    
+[2,] "13.26" NA    "C"   NA    
+[3,] "8.52"  NA    "C"   NA    
+[4,] "16.62" NA    "C"   NA    
+[5,] "19.36" NA    "C"   NA    
+[6,] "18.70" NA    "C"   NA    
+[7,] "17.21" NA    "C"   NA    
+[8,] "12.83" NA    "C"   NA    
 </div>
 <div class='input'>pdb$xyz[inds.pdb$xyz]
 </div>
@@ -361,9 +372,9 @@ pdb$atom[,"resno"] <- nums - (nums[1] - 1)
 ###write.pdb(pdb=pdb,file="eg.pdb")
 </div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
-      <li>read.pdb</li><li>print.pdb</li>
+      <li>read.pdb</li><li>print.pdb</li><li>summary.pdb</li>
     </ul>
     <ul>
       <li> IO </li>
@@ -381,7 +392,7 @@ pdb$atom[,"resno"] <- nums - (nums[1] - 1)
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=read.pdb'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=read.pdb'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

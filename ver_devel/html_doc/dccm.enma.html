@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>dccm.enma. bio3d 2.0-1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="container">
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
+  </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Cross-Correlation for Ensemble NMA (eNMA) </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>dccm(x, ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>x</dt>
+      <dd> an object of class <code>enma</code> as obtained from
+    function <code>nma.pdbs</code>. </dd>
+      <dt>...</dt>
+      <dd> additional arguments passed to <code>dccm.nma</code>. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Calculate the cross-correlation matrices from an ensemble of NMA
+  objects.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This is a wrapper function for calling <code>dccm.nma</code> on a collection
+  of &#145;nma&#146; objects as obtained from function <code>nma.pdbs</code>.</p>
+  
+      <p>See examples for more details.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a list with the following components:
+  all.dccm  an array or list containing the correlation matrices
+    for each &#145;nma&#146; object. An array is returned when the
+    &#145;enma&#146; object is calculated with &#145;rm.gaps=TRUE&#146;, and a
+    list is used when &#145;rm.gaps=FALSE&#146;. 
+  avg.dccm  a numeric matrix containing the average correlation
+    matrix. The average is only calculated when the &#145;enma&#146; object
+    is calculated with &#145;rm.gaps=TRUE&#146;.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Wynsberghe. A.W.V, Cui, Q. <em>Structure</em> <b>14</b>, 1647--1653.
+  Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>## Fetch PDB files and split to chain A only PDB files
+ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
+raw.files <- get.pdb(ids, path = "raw_pdbs")
+</div>
+<strong class='warning'>Warning message:
+ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
+<div class='input'>files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain")
+</div>
+<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
+</div>
+<div class='input'>
+## Sequence Alignement
+pdbs <- pdbaln(files)
+</div>
+<div class='output'>Reading PDB files:
+raw_pdbs/split_chain/1a70_A.pdb
+raw_pdbs/split_chain/1czp_A.pdb
+raw_pdbs/split_chain/1frd_A.pdb
+raw_pdbs/split_chain/1fxi_A.pdb
+raw_pdbs/split_chain/1iue_A.pdb
+raw_pdbs/split_chain/1pfd_A.pdb
+.   PDB has ALT records, taking A only, rm.alt=TRUE
+.....
+
+Extracting sequences
+
+pdb/seq: 1   name: raw_pdbs/split_chain/1a70_A.pdb 
+pdb/seq: 2   name: raw_pdbs/split_chain/1czp_A.pdb 
+   PDB has ALT records, taking A only, rm.alt=TRUE
+pdb/seq: 3   name: raw_pdbs/split_chain/1frd_A.pdb 
+pdb/seq: 4   name: raw_pdbs/split_chain/1fxi_A.pdb 
+pdb/seq: 5   name: raw_pdbs/split_chain/1iue_A.pdb 
+pdb/seq: 6   name: raw_pdbs/split_chain/1pfd_A.pdb 
+</div>
+<div class='input'>
+## Normal mode analysis on aligned data
+all.modes <- nma.pdbs(pdbs, full=TRUE, fit=TRUE, rm.gaps=TRUE)
+</div>
+<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
+</div>
+<div class='input'>
+## Calculate correlation matrices
+all.dccm <- dccm(all.modes)
+</div>
+<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |==============                                                        |  20%  |                                                                              |============================                                          |  40%  |                                                                              |==========================================                            |  60%  |                                                                              |========================================================              |  80%  |                                                                              |======================================================================| 100%
+</div>
+<div class='input'></div></pre>
+  </div>
+  <div class="span3">
+    <!-- <ul>
+      <li>dccm.enma</li>
+    </ul>
+    <ul>
+      <li> analysis </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='nma.html'>nma</a></code>, <code><a href='dccm.nma.html'>dccm.nma</a></code>, <code><a href='plot.dccm.html'>plot.dccm</a></code> 
+    
+    <h2>Author</h2>
+     Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=dccm.enma'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

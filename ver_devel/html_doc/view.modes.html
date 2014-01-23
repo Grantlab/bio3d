@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>view.modes. bio3d 2.0-1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="container">
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
+  </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Vector Field Visualization of Modes </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>view.modes(modes, mode = NULL, outprefix = "mode_vecs", scale = 5, dual = FALSE, 
+  launch = FALSE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>modes</dt>
+      <dd> an object of class <code>nma</code> or <code>pca</code> as obtained
+    from functions <code>nma</code> or <code>pca.xyz</code>. </dd>
+      <dt>mode</dt>
+      <dd> the mode number for which the vector field should be
+    made. </dd>
+      <dt>outprefix</dt>
+      <dd> character string specifying the file prefix. If
+    <code>NULL</code> the temp directory will be used. </dd>
+      <dt>scale</dt>
+      <dd> global scaling factor. </dd>
+      <dt>dual</dt>
+      <dd> logical, if TRUE mode vectors are also drawn in both
+    direction. </dd>
+      <dt>launch</dt>
+      <dd> logical, if TRUE PyMol will be launched. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Structural visualization of mode vectors obtained from PCA or NMA.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This function generates a PyMOL (python) script for drawing
+  mode vectors on a PDB structure.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Called for its action.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>## Fetch stucture
+pdb <- read.pdb("1hel")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    HYDROLASE(O-GLYCOSYL)                   10-JAN-92   1HEL               
+</div>
+<div class='input'>
+## Calculate normal modes
+modes <- nma(pdb)
+</div>
+<div class='output'> Building Hessian...		Done in 0.074 seconds.
+ Diagonalizing Hessian...	Done in 0.132 seconds.
+</div>
+<div class='input'>
+view.modes(modes, mode=7)
+</div></pre>
+  </div>
+  <div class="span3">
+    <!-- <ul>
+      <li>view.modes</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='nma.html'>nma</a></code>, <code><a href='pca.xyz.html'>pca.xyz</a></code> 
+    
+    <h2>Author</h2>
+     Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=view.modes'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

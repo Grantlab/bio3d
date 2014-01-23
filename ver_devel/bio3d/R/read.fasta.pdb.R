@@ -33,6 +33,12 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
   if(all(!toread))
     stop("No corresponding PDB files found")
 
+  # Avoid multi-thread downloading
+  if(any(substr(files,1,4) == "http")) {
+     ncore = 1
+     options(cores = ncore)
+  }
+
 #  coords <- NULL; res.nu <- NULL
 #  res.bf <- NULL; res.ch <- NULL
   blank <- rep(NA, ncol(aln$ali))

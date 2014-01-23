@@ -2,25 +2,39 @@
 ##   We do not support old-version DSSP any longer
 ##   Please update your DSSP program to the newest version
 "dssp" <-
-function (pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE) {
+  function (pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE) {
 
     ## Log the call
     cl <- match.call()
-
+    
+    ## Check if the program is executable
+    os1 <- .Platform$OS.type
+    status <- system(paste(exefile, "--version"),
+                     ignore.stderr = TRUE, ignore.stdout = TRUE)
+    
+    if(!(status %in% c(0,1)))
+      stop(paste("Launching external program 'DSSP' failed\n",
+                 "  make sure '", exefile, "' is in your search path", sep=""))
+    
     infile <- tempfile()
     outfile <- tempfile()
     write.pdb(pdb, file = infile)
-    os1 <- .Platform$OS.type
-    if(os1 == "windows") {
-       shell(paste(exefile, infile, outfile), 
-                 ignore.stderr = !verbose, ignore.stdout = !verbose)
-    } else {
-      success <- system(paste(exefile, infile, outfile), 
-                 ignore.stderr = !verbose, ignore.stdout = !verbose)
-      if(success==1)
-        stop("an error occurred")
-    }
+    cmd <- paste(exefile, infile, outfile)
 
+    if(verbose)
+      cat(paste("Running command:\n ", cmd , "\n"))
+    
+    if(os1 == "windows")
+      success <- shell(cmd, 
+                       ignore.stderr = !verbose, ignore.stdout = !verbose)
+    else 
+      success <- system(cmd,
+                        ignore.stderr = !verbose, ignore.stdout = !verbose)
+    
+    if(success!=0)
+      stop(paste("An error occurred while running command\n '",
+                 cmd, "'", sep=""))
+    
 ##
 ## For Debug (Tue Aug  3 18:22:11 PDT 2010)
 ##  -- Following multi chain error report from Heiko Strathmann
@@ -56,8 +70,22 @@ function (pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE) {
     
     res.id  <- as.numeric(substring(raw.lines, 1, 5))   ## dssp residue IDs
     res.num <- as.numeric(substring(raw.lines, 6, 10))  ## Residue numbers
+    res.insert <- substring(raw.lines, 11, 11)          ## Insertion codes
     res.ind <- 1:length(res.num)                        ## Internal indices
 
+    if(any(res.insert!=" ")) {
+       if(resno) {
+         warning("Insertions are found in PDB: Residue numbers may be incorrect.
+                Try again with resno=FALSE")
+       }
+       else { 
+         ii <- diff(res.num)
+         ii[ii==0] <- 1     #Consecutive numbers at insertion residues
+         ii[ii<0] <- 2      #Jumps at possible chain termination
+         res.num <- res.num[1] + c(0, cumsum(ii))
+       }
+    }
+    
     if(full) {
       ## Difference between sse res id and internal res indices
       diff        <- res.id - res.ind
@@ -76,15 +104,16 @@ function (pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE) {
       ## H-bond records
       hbonds <- split.line(split.line(substring(raw.lines, 40, 83), split=","), split=" ")
       hbonds <- matrix(as.numeric(hbonds), ncol=8, byrow=TRUE)
+      hbonds <- as.data.frame(hbonds)
       
       for(i in seq(1,7,by=2)) {
-        hbonds[which(hbonds[,i]==0), i] <- NA
+        hbonds[[i]][ which(hbonds[[i]]==0) ] <- NA
         
         ## Convert from relative to absolute residue numbering
-        hmm <- res.id + hbonds[,i]
+        hmm <- res.id + hbonds[[i]]
         
         ## Convert from dssp SSE residue IDs to internal residue indices
-        hbonds[!is.na(hmm),i] <- as.vector(hmm[ !is.na(hmm) ] -
+        hbonds[[i]][ !is.na(hmm) ] <- as.vector(hmm[ !is.na(hmm) ] -
                                            diff[as.character(hmm[!is.na(hmm)])])
       }
       
@@ -98,41 +127,42 @@ function (pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE) {
         tmp.map            <- cbind(res.num, cha)
         row.names(tmp.map) <- res.ind
 
-
         ## Add an additional matrix holding the Chain IDs
-        hbonds           <- cbind(hbonds, matrix(NA, ncol=6, nrow=nrow(tmp.map)))
+        hbonds           <- cbind(hbonds, data.frame(matrix(NA, ncol=6, nrow=nrow(tmp.map)),
+                                                     stringsAsFactors=FALSE))
+                                                     
         colnames(hbonds) <- c(cnames,
                               "ChainBP1", "ChainBP2", "Chain1", "Chain2", "Chain3", "Chain4")
 
         ## Add chain IDs for each entry
         tmp.inds                    <- which(!is.na(hbonds[,"BP1"]))
         tmp.names                   <- as.character(hbonds[tmp.inds,"BP1"])
-        hbonds[tmp.inds,"BP1"]      <- tmp.map[tmp.names, "res.num"]
+        hbonds[tmp.inds,"BP1"]      <- as.numeric(tmp.map[tmp.names, "res.num"])
         hbonds[tmp.inds,"ChainBP1"] <- tmp.map[tmp.names, "cha"]
 
         tmp.inds                    <- which(!is.na(hbonds[,"BP2"]))
         tmp.names                   <- as.character(hbonds[tmp.inds,"BP2"])
-        hbonds[tmp.inds,"BP2"]      <- tmp.map[tmp.names, "res.num"]
+        hbonds[tmp.inds,"BP2"]      <- as.numeric(tmp.map[tmp.names, "res.num"])
         hbonds[tmp.inds,"ChainBP2"] <- tmp.map[tmp.names, "cha"]
 
         tmp.inds                    <- which(!is.na(hbonds[,"NH-O.1"]))
         tmp.names                   <- as.character(hbonds[tmp.inds,"NH-O.1"])
-        hbonds[tmp.inds,"NH-O.1"]   <- tmp.map[tmp.names, "res.num"]
+        hbonds[tmp.inds,"NH-O.1"]   <- as.numeric(tmp.map[tmp.names, "res.num"])
         hbonds[tmp.inds,"Chain1"]   <- tmp.map[tmp.names, "cha"]
 
         tmp.inds                    <- which(!is.na(hbonds[,"O-HN.1"]))
         tmp.names                   <- as.character(hbonds[tmp.inds,"O-HN.1"])
-        hbonds[tmp.inds,"O-HN.1"]   <- tmp.map[tmp.names, "res.num"]
+        hbonds[tmp.inds,"O-HN.1"]   <- as.numeric(tmp.map[tmp.names, "res.num"])
         hbonds[tmp.inds,"Chain2"]   <- tmp.map[tmp.names, "cha"]
 
         tmp.inds                    <- which(!is.na(hbonds[,"NH-O.2"]))
         tmp.names                   <- as.character(hbonds[tmp.inds,"NH-O.2"])
-        hbonds[tmp.inds,"NH-O.2"]   <- tmp.map[tmp.names, "res.num"]
+        hbonds[tmp.inds,"NH-O.2"]   <- as.numeric(tmp.map[tmp.names, "res.num"])
         hbonds[tmp.inds,"Chain3"]   <- tmp.map[tmp.names, "cha"]
 
         tmp.inds                    <- which(!is.na(hbonds[,"O-HN.2"]))
         tmp.names                   <- as.character(hbonds[tmp.inds,"O-HN.2"])
-        hbonds[tmp.inds,"O-HN.2"]   <- tmp.map[tmp.names, "res.num"]
+        hbonds[tmp.inds,"O-HN.2"]   <- as.numeric(tmp.map[tmp.names, "res.num"])
         hbonds[tmp.inds,"Chain4"]   <- tmp.map[tmp.names, "cha"]
 
         ## Set row names to "RESNUM-CHAINID"
@@ -237,6 +267,6 @@ function (pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE) {
                 turn = turn, phi = phi, psi = psi, acc = acc,
                 sse = sse, call=cl)
 
-    class(out) <- "dssp"
+    class(out) <- "sse"
     return(out)
 }

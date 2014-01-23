@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>dccm.mean. bio3d 2.0-1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Guido Scarabelli &amp; Barry Grant ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="container">
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
+  </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> Atomic Correlation Matrix Consensus Filtering </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>dccm(x, cutoff.sims = dim(x)[3], cutoff.cij = 0.4, ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>x</dt>
+      <dd> A numeric array with 3 dimensions &#145;(NxNxZ)&#146; containing  
+  atomic correlation values for N residues or atoms from Z 
+  calculations. </dd>
+      <dt>cutoff.sims</dt>
+      <dd> A single element numeric vector corresponding 
+  to the minimum number of Z dimensions (i.e. dccm matrices) a 
+  correlation between two residues must be present and whose absolute 
+  value must be higher than <code>cutoff.cij</code>. If not, the matrix element 
+  will be set to 0 and not used for the average calculation. </dd>
+      <dt>cutoff.cij</dt>
+      <dd> A single element numeric vector corresponding to 
+  the minimum absolute value a correlation element must be equal to or 
+  higher to be used for the average calculation. If lower, the element 
+  will be set to 0 and not used for the average calculation. </dd>
+      <dt>...</dt>
+      <dd> extra arguments that are currently ignored. </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Filter a three-dimensional correlation matrix, or DCCM, composed of 
+results from multiple dccm calculations and return correlations 
+present in at least a chosen subset of the calculated matrices.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Returns a numeric &#145;NxN&#146; atomic correlation matrix of class &#145;dccm&#146;.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>
+# Select Protein Kinase PDB IDs
+ids <- c("4b7t_A", "2exm_A", "1opj_A", "4jaj_A", "1a9u_A", 
+		 "1tki_A", "1csn_A", "1lp4_A")
+
+# Download and split by chain ID
+raw.files <- get.pdb(ids, path = "raw_pdbs") 
+</div>
+<strong class='warning'>Warning message:
+ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
+<div class='input'>files <- pdbsplit(raw.files, ids)
+</div>
+<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |=========                                                             |  12%  |                                                                              |==================                                                    |  25%  |                                                                              |==========================                                            |  38%  |                                                                              |===================================                                   |  50%  |                                                                              |============================================                          |  62%  |                                                                              |====================================================                  |  75%  |                                                                              |=============================================================         |  88%  |                                                                              |======================================================================| 100%
+</div>
+<div class='input'>
+# Alignment of structures
+pdbs <- pdbaln(files) # Sequence identity
+</div>
+<div class='output'>Reading PDB files:
+split_chain/4b7t_A.pdb
+split_chain/2exm_A.pdb
+split_chain/1opj_A.pdb
+split_chain/4jaj_A.pdb
+split_chain/1a9u_A.pdb
+split_chain/1tki_A.pdb
+split_chain/1csn_A.pdb
+split_chain/1lp4_A.pdb
+........
+
+Extracting sequences
+
+pdb/seq: 1   name: split_chain/4b7t_A.pdb 
+pdb/seq: 2   name: split_chain/2exm_A.pdb 
+pdb/seq: 3   name: split_chain/1opj_A.pdb 
+pdb/seq: 4   name: split_chain/4jaj_A.pdb 
+pdb/seq: 5   name: split_chain/1a9u_A.pdb 
+pdb/seq: 6   name: split_chain/1tki_A.pdb 
+pdb/seq: 7   name: split_chain/1csn_A.pdb 
+pdb/seq: 8   name: split_chain/1lp4_A.pdb 
+</div>
+<div class='input'>summary(c(seqidentity(pdbs)))
+</div>
+<div class='output'>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.1520  0.2010  0.2530  0.3402  0.3150  1.0000 
+</div>
+<div class='input'>
+# NMA on all structures
+modes <- nma.pdbs(pdbs, full = TRUE)
+</div>
+<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |=========                                                             |  12%  |                                                                              |==================                                                    |  25%  |                                                                              |==========================                                            |  38%  |                                                                              |===================================                                   |  50%  |                                                                              |============================================                          |  62%  |                                                                              |====================================================                  |  75%  |                                                                              |=============================================================         |  88%  |                                                                              |======================================================================| 100%
+</div>
+<div class='input'>
+# Calculate correlation matrices for each structure
+cij <- dccm(modes)
+</div>
+<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |==========                                                            |  14%  |                                                                              |====================                                                  |  29%  |                                                                              |==============================                                        |  43%  |                                                                              |========================================                              |  57%  |                                                                              |==================================================                    |  71%  |                                                                              |============================================================          |  86%  |                                                                              |======================================================================| 100%
+</div>
+<div class='input'>
+# Set DCCM plot panel names for combined figure
+dimnames(cij$all.dccm) = list(NULL, NULL, ids) 
+plot.dccm(cij$all.dccm)
+</div>
+<p><img src='dccm.mean-14.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+# Filter to display only correlations present in all structures
+cij.all <- dccm.mean(cij$all.dccm, cutoff.sims = 8, cutoff.cij = 0) 
+plot.dccm(cij.all, main = "Consensus Residue Cross Correlation")
+</div>
+<p><img src='dccm.mean-16.png' alt='' width='400' height='400' /></p>
+<div class='input'></div></pre>
+  </div>
+  <div class="span3">
+    <!-- <ul>
+      <li>dccm.mean</li>
+    </ul>
+    <ul>
+      <li>analysis</li>
+    </ul> -->
+      
+    <h2>See also</h2>
+    
+	<code><a href='dccm.html'>dccm</a></code>, <code><a href='dccm.nma.html'>dccm.nma</a></code>, <code><a href='dccm.xyz.html'>dccm.xyz</a></code>, 
+	<code><a href='plot.dccm.html'>plot.dccm</a></code>
+
+    
+    <h2>Author</h2>
+     Guido Scarabelli & Barry Grant 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=dccm.mean'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -24,10 +24,15 @@ rmsf(xyz)
 \seealso{ \code{\link{read.dcd}}, \code{\link{fit.xyz}},
   \code{\link{read.fasta.pdb}} }
 \examples{
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+data(transducin)
+attach(transducin, warn.conflicts=FALSE)
 
-r <- rmsf(xyz)
-plot( r[aln$ali["d1bg2__",]!="-"], typ="h", ylab="RMSF (A)")
+# Ignore Gaps
+gaps <- gap.inspect(pdbs$ali)
+
+r <- rmsf(pdbs$xyz)
+plot( r[gaps$f.inds], typ="h", ylab="RMSF (A)")
+
+detach(transducin)
 }
 \keyword{ utilities }

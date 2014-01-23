@@ -75,6 +75,7 @@
     ## No mass-weighting
     else {
       masses <- NULL
+      bh.args <- bh.args[ !('aa.mass' %in% names(bh.args)) ]
     }
 
     ## Build the Hessian Matrix

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>plot.bio3d. bio3d 1.2</title>
+<title>plot.bio3d. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -92,7 +93,7 @@
     Lines are plotted in the first colour specified. </dd>
       <dt>sse</dt>
       <dd> secondary structure object as returned from
-    <code><a href='dssp.html'>dssp</a></code> or <code><a href='stride.html'>stride</a></code>. </dd>
+    <code><a href='dssp.html'>dssp</a></code> or <code><a href='dssp.html'>stride</a></code>. </dd>
       <dt>top</dt>
       <dd> logical, if TRUE rectangles for each sse are drawn towards
     the top of the plotting region.  </dd>
@@ -120,7 +121,7 @@
     <div class="Details">
       <h2>Details</h2>
       
-      <p>See the functions &#145;plot.default&#146;, <code><a href='dssp.html'>dssp</a></code> and <code><a href='stride.html'>stride</a></code> 
+      <p>See the functions &#145;plot.default&#146;, <code><a href='dssp.html'>dssp</a></code> and <code><a href='dssp.html'>stride</a></code> 
   for further details.</p>
   
     </div>
@@ -159,19 +160,18 @@ pdb <- read.pdb( "1bg2" )
 </div>
 <p><img src='plot.bio3d-4.png' alt='' width='400' height='400' /></p>
 <div class='input'>
-## <strong>Not run</strong>: 
-# ## Calculate secondary structure
-# #sse <- stride(pdb, resno=FALSE)
-# sse <- dssp(pdb, resno=FALSE)
-# 
-# ## Plot of B-factor values along with calculated secondary structure
-# plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor", typ="l",
-# col="blue", lwd=2)
-# ## <strong>End(Not run)</strong>
+## Calculate secondary structure
+#sse <- stride(pdb, resno=FALSE)
+sse <- dssp(pdb, resno=FALSE)
 
-</div></pre>
+## Plot of B-factor values along with calculated secondary structure
+plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor", typ="l",
+col="blue", lwd=2)
+</div>
+<p><img src='plot.bio3d-6.png' alt='' width='400' height='400' /></p>
+<div class='input'></div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>plot.bio3d</li>
     </ul>
@@ -180,7 +180,7 @@ pdb <- read.pdb( "1bg2" )
     </ul> -->
       
     <h2>See also</h2>
-     <code><a href='http://www.inside-r.org/r-doc/graphics/plot.default'>plot.default</a></code>, <code><a href='dssp.html'>dssp</a></code>, <code><a href='stride.html'>stride</a></code> 
+     <code><a href='http://www.inside-r.org/r-doc/graphics/plot.default'>plot.default</a></code>, <code><a href='dssp.html'>dssp</a></code>, <code><a href='dssp.html'>stride</a></code> 
     
     <h2>Author</h2>
      Barry Grant 
@@ -189,7 +189,7 @@ pdb <- read.pdb( "1bg2" )
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=plot.bio3d'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=plot.bio3d'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

@@ -2,17 +2,14 @@
 ##### This script removes the dontrun tags and so
 ##### all the example codes will be executed
 
-for i in ../bio3d/man/*.Rd; do
-   # skip some examples because of the missing data, run errors
-   # or just to avoid confusion of using attach(data) (pca.xyz.Rd)
-   # we may think of another consistent example in future 
-   if [ `basename $i` != "rmsip.Rd" ] && \
-      [ `basename $i` != "pca.xyz.Rd" ] && \
-      [ `basename $i` != "dssp.trj.Rd" ] && \
-      [ `basename $i` != "read.mol2.Rd" ] && \
-      [ `basename $i` != "##bio3d.package.Rd" ] && \
-      [ `basename $i` != "binding.site.Rd" ] && \
-      [ `basename $i` != "##plot.bio3d.Rd" ]; then
+for i in ./bio3d/man/*.Rd; do
+   # skip some examples because of the missing 
+   # data or run errors
+   if [ `basename $i` != "dssp.trj.Rd" ] && \
+      [ `basename $i` != "nma.Rd" ] && \
+      [ `basename $i` != "read.all.Rd" ] && \
+      [ `basename $i` != "store.atom.Rd" ] && \
+      [ `basename $i` != "read.mol2.Rd" ]; then
       echo $i
       # find and delete tags \dontrun{ and }
       awk 'BEGIN{bok=0; n=0} 

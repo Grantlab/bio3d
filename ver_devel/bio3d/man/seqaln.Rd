@@ -7,7 +7,7 @@
 }
 \usage{
 seqaln(aln, id=NULL, exefile="muscle", outfile="aln.fa", protein=TRUE,
-       seqgroup=FALSE, refine=FALSE, extra.args="")
+       seqgroup=FALSE, refine=FALSE, extra.args="", verbose=FALSE)
 }
 \arguments{
   \item{aln}{ a sequence character matrix, as obtained from
@@ -26,7 +26,8 @@ seqaln(aln, id=NULL, exefile="muscle", outfile="aln.fa", protein=TRUE,
   be aligned, and only tree dependent refinement is performed. }
   \item{extra.args}{ a single character string containing extra command
     line arguments for the alignment program. }
-
+  \item{verbose}{ logical, if TRUE \sQuote{MUSCLE} warning and error
+    messages are printed. } 
 }
 \details{
   Sequence alignment attempts to arrange the sequences of protein,

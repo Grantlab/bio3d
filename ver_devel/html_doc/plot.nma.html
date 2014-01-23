@@ -2,14 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>plot.nma. bio3d 1.2</title>
+<title>plot.nma. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="author" content=" Barry Grant ">
+<meta name="author" content=" Lars Skjaerven ">
 
 <link href="css/bootstrap.css" rel="stylesheet">
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -62,7 +63,8 @@
     which gives the number of lines of margin to be specified on the
     four sides of the plot.</dd>
       <dt>...</dt>
-      <dd> extra plotting arguments. </dd>
+      <dd> extra plotting arguments passed to <code>plot.bio3d</code>
+    that effect the atomic fluctuations plot only. </dd>
     </dl>
     
     <div class="Description">
@@ -105,16 +107,16 @@ pdb <- read.pdb("1hel")
 ## Calculate modes
 modes <- nma(pdb)
 </div>
-<div class='output'> Building Hessian...		Done in 0.813 seconds.
- Diagonalizing Hessian...	Done in 0.141 seconds.
+<div class='output'> Building Hessian...		Done in 0.075 seconds.
+ Diagonalizing Hessian...	Done in 0.133 seconds.
 </div>
 <div class='input'>
-plot(modes)
+plot(modes, sse=pdb)
 </div>
 <p><img src='plot.nma-6.png' alt='' width='400' height='400' /></p>
 <div class='input'></div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>plot.nma</li>
     </ul>
@@ -126,13 +128,13 @@ plot(modes)
      <code><a href='nma.html'>nma</a></code>, <code><a href='plot.bio3d.html'>plot.bio3d</a></code> 
     
     <h2>Author</h2>
-     Barry Grant 
+     Lars Skjaerven 
     
   </div>
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=plot.nma'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=plot.nma'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

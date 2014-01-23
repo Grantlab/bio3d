@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>load.enmff. bio3d 2.0-1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content=" Lars Skjaerven ">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="container">
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
+  </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1> ENM Force Field Loader </h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>load.enmff(ff = "calpha")
+
+ff.calpha(r, ...)
+
+ff.anm(r, cutoff = 15, gamma = 1, ...)
+
+ff.pfanm(r, cutoff = NULL, ...)
+
+ff.calphax(r, atom.id, ssdat = NULL, verbose = FALSE, ...)
+
+ff.sdenm(r, atom.id, ssdat = NULL, ...)
+
+ff.reach(r, atom.id, ssdat = NULL, ...)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>ff</dt>
+      <dd> a character string specifying the force field to use:
+    &#145;calpha&#146;, &#145;anm&#146;, &#145;pfanm&#146;, &#145;calphax&#146;,
+    &#145;reach&#146;, or  &#145;sdenm&#146;. </dd>
+      <dt>r</dt>
+      <dd> a numeric vector of c-alpha distances. </dd>
+      <dt>cutoff</dt>
+      <dd> numerical, cutoff for pair-wise interactions. </dd>
+      <dt>gamma</dt>
+      <dd> numerical, global scaling factor. </dd>
+      <dt>atom.id</dt>
+      <dd> atomic index. </dd>
+      <dt>ssdat</dt>
+      <dd> sequence and structure data. </dd>
+      <dt>verbose</dt>
+      <dd> logical, if TRUE interaction details are printed. </dd>
+      <dt>...</dt>
+      <dd> additional arguments (for technical reasons). </dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Load force field for elastic network normal mode calculation.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+      
+      <p>This function provides a collection of elastic network model (ENM)
+  force fields for normal modes analysis (NMA) of protein structures. It
+  returns a function for calculating the residue-residue spring force
+  constants.</p>
+  
+      <p>The &#145;calpha&#146; force field - originally developed by Konrad
+  Hinsen - is the recommended one for most applications. It employs a
+  spring force constant differentiating between nearest-neighbour pairs
+  along the backbone and all other pairs. The force constant function
+  was parameterized by fitting to a local minimum of a crambin model
+  using the AMBER94 force field.</p>
+  
+      <p>The implementation of the &#145;ANM&#146; (Anisotropic Network Model)
+  force field originates from the lab of Ivet Bahar. It uses a
+  simplified (step function) spring force constant based on the
+  pair-wise distance. A variant of this from the Jernigan lab is the
+  so-called &#145;pfANM&#146; (parameter free ANM) with interactions that
+  fall off with the square of the distance.</p>
+  
+      <p>The &#145;calphax&#146; force field is an extension of the original
+  &#145;calpha&#146; force field by Hinsen. In this implementation we have
+  included specific force constants for disulfide bridges, helix 1-4
+  interactions, and beta sheet bridges.</p>
+  
+      <p>The &#145;sdENM&#146; (by Dehouck and Mikhailov) employs residue specific
+  spring force constants. It has been parameterized through a
+  statistical analysis of a total of 1500 NMR ensembles.</p>
+  
+      <p>The &#145;REACH&#146; force field (by Moritsugu and Smith) is
+  parameterized based on variance-covariance matrices obtained from MD
+  simulations. It employs force constants that fall off exponentially
+  with distance for non-bonded pairs.</p>
+  
+      <p>See references for more details on the individual force fields.</p>
+  
+    </div>
+
+    <div class="Note">
+      <h2>Note</h2>
+      
+      <p>The arguments &#145;atom.id&#146; and &#145;ssdat&#146; are used
+  from within function &#145;build.hessian&#146; for functions that are not
+  simply a function of the pair-wise distance. e.g. the force constants
+  in the &#145;calphax&#146; model is a function of c-alpha distances, SSE 
+  information and SS-bonds, while the &#145;sdENM&#146; force field
+  computes the force constants based on a function of the residue types
+  and calpha distance.</p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>&#145;load.enmff&#146; returns a function for calculating the spring 
+  force constants. The &#145;ff&#146; functions returns a numeric vector of
+  residue-residue spring force constants.</p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+      
+      <p>Hinsen, K. et al. (2000) <em>Chemical Physics</em> <b>261</b>, 25--37.
+  Atilgan, A.R. et al. (2001) <em>Biophysical Journal</em> <b>80</b>, 505--515.
+  Dehouck Y. & Mikhailov A.S. (2013) <em>PLoS Comput Biol</em> <b>9</b>:e1003209.
+  Moritsugu K. & Smith J.C. (2008) <em>Biophysical Journal</em> <b>95</b>, 1639--1648.
+  Yang, L. et al. (2009) <em>PNAS</em> <b>104</b>, 12347-52.
+  Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>## Load the c-alpha force field
+pfc.fun <- load.enmff('calpha')
+
+## Calculate the pair force constant for a set of C-alpha distances
+force.constants <- pfc.fun( seq(4,8, by=0.5) )
+
+## Calculate the complete spring force constant matrix
+## Fetch PDB
+pdb <- read.pdb("1hel")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    HYDROLASE(O-GLYCOSYL)                   10-JAN-92   1HEL               
+</div>
+<div class='input'>
+## Fetch only c-alpha coordinates
+ca.inds <- atom.select(pdb, 'calpha')
+</div>
+<div class='output'>
+Build selection from input string
+
+
+ Using selection 'string' keyword shortcut: calpha = //////CA/ 
+
+      segid  chain  resno  resid  eleno  elety
+Stest ""     ""     ""     ""     ""     "CA" 
+Natom "1001" "1001" "1001" "1001" "1001" "129"
+ *  Selected a total of: 129 intersecting atoms  *
+</div>
+<div class='input'>xyz <- pdb$xyz[ca.inds$xyz]
+
+## Calculate distance matrix
+dists <- dm.xyz(xyz, mask.lower=FALSE)
+
+## all pair-wise spring force constants
+fc.matrix <- apply(dists, 1, pfc.fun)
+</div></pre>
+  </div>
+  <div class="span3">
+    <!-- <ul>
+      <li>load.enmff</li><li>ff.calpha</li><li>ff.calphax</li><li>ff.anm</li><li>ff.pfanm</li><li>ff.sdenm</li><li>ff.reach</li>
+    </ul>
+    <ul>
+      <li> utilities </li>
+    </ul> -->
+      
+    <h2>See also</h2>
+     <code><a href='nma.html'>nma</a></code>, <code><a href='nma.html'>build.hessian</a></code> 
+    
+    <h2>Author</h2>
+     Lars Skjaerven 
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=load.enmff'>Please let me know by filling out this short online survey</a>.</p>
+<p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

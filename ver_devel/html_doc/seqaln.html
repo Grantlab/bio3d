@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>seqaln. bio3d 1.2</title>
+<title>seqaln. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -42,8 +43,8 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>seqaln(aln, id = NULL, exepath = "", file = "aln.fa", protein = TRUE, seqgroup = FALSE, 
-  refine = FALSE, extra.args = "")</pre>
+    <pre>seqaln(aln, id = NULL, exefile = "muscle", outfile = "aln.fa", protein = TRUE, seqgroup = FALSE, 
+  refine = FALSE, extra.args = "", verbose = FALSE)</pre>
     
     <h2>Arguments</h2>
     <dl>
@@ -53,10 +54,10 @@
       <code><a href='read.fasta.html'>read.fasta</a></code>. </dd>
       <dt>id</dt>
       <dd> a vector of sequence names to serve as sequence identifers. </dd>
-      <dt>exepath</dt>
-      <dd> path to the &#145;MUSCLE&#146; program on your system (i.e.
-    the directory where &#145;MUSCLE&#146; is stored). </dd>
-      <dt>file</dt>
+      <dt>exefile</dt>
+      <dd> file path to the &#145;MUSCLE&#146; program on your system (i.e.
+    how is &#145;MUSCLE&#146; invoked). </dd>
+      <dt>outfile</dt>
       <dd> name of &#145;FASTA&#146; output file to which alignment
     should be written. </dd>
       <dt>protein</dt>
@@ -71,6 +72,9 @@
       <dt>extra.args</dt>
       <dd> a single character string containing extra command
     line arguments for the alignment program. </dd>
+      <dt>verbose</dt>
+      <dd> logical, if TRUE &#145;MUSCLE&#146; warning and error
+    messages are printed. </dd>
     </dl>
     
     <div class="Description">
@@ -147,7 +151,7 @@
     
     <h2 id="examples">Examples</h2>
     <pre class="examples"><div class='input'>##-- Read a folder/directory of PDB files
-#pdb.path <- "my_dir_of_pdbs/"
+#pdb.path <- "my_dir_of_pdbs"
 #files  <- list.files(path=pdb.path ,
 #                     pattern=".pdb",
 #                     full.names=TRUE)
@@ -167,10 +171,8 @@ for(i in 1:length(files)) {
 </div>
 <div class='input'>
 ##-- Align these sequences
-aln <- seqaln(raw, id=files, file="seqaln.fa")
-</div>
-<div class='output'>muscle -in /tmp/RtmpesXLkY/file5d6e1db6be83 -out seqaln.fa  -seqtype protein</div>
-<div class='input'>
+aln <- seqaln(raw, id=files, outfile="seqaln.fa")
+
 ##-- Read Aligned PDBs storing coordinate data
 pdbs <- read.fasta.pdb(aln) 
 </div>
@@ -179,7 +181,7 @@ pdb/seq: 2   name: http://www.rcsb.org/pdb/files/1ftn.pdb
 </div>
 <div class='input'>
 ## Sequence identity
-identity(aln)
+seqidentity(aln)
 </div>
 <div class='output'>      [,1]  [,2]
 [1,] 1.000 0.352
@@ -197,17 +199,16 @@ aln <- list(ali=seqbind(c("X","C","X","X","A","G","K"),
                         c("C","-","A","X","G","X","X","K")),
             id=c("a","b"))
 
-temp <- seqaln(aln=aln, file="temp.fas", protein=TRUE,
+temp <- seqaln(aln=aln, outfile="temp.fas", protein=TRUE,
                extra.args= paste("-matrix",
                 system.file("matrices/custom.mat", package="bio3d"),
                 "-gapopen -3.0 ",
                 "-gapextend -0.5",
                 "-center 0.0") )
-</div>
-<div class='output'>muscle -in /tmp/RtmpesXLkY/file5d6e2809c246 -out temp.fas -matrix /u2/xqyao/Project/bio3d/ver_devel/bio3d/matrices/custom.mat -gapopen -3.0  -gapextend -0.5 -center 0.0 -seqtype protein</div>
-<div class='input'></div></pre>
+
+</div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>seqaln</li>
     </ul>
@@ -227,7 +228,7 @@ temp <- seqaln(aln=aln, file="temp.fas", protein=TRUE,
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=seqaln'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=seqaln'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

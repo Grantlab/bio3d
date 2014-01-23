@@ -50,9 +50,11 @@ rmsd.filter(xyz = NULL, rmsd.mat = NULL, cutoff = 0.5,
 data(kinesin)
 attach(kinesin, warn.conflicts=FALSE)
 k <- rmsd.filter(xyz=pdbs,cutoff=0.5)
-aln$id[k$ind]
+pdbs$id[k$ind]
 plot(k$tree, ylab="RMSD")
 abline(h=0.5, col="gray")
+
+detach(kinesin)
 }
 }
 \keyword{ utilities }

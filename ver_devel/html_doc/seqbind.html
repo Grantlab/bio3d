@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>seqbind. bio3d 1.2</title>
+<title>seqbind. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -42,31 +43,29 @@
 <div class="row">
   <div class="span8">
     <h2>Usage</h2>
-    <pre>seqbind(a, b, blank = "-")</pre>
+    <pre>seqbind(..., blank = "-")</pre>
     
     <h2>Arguments</h2>
     <dl>
-      <dt>a</dt>
-      <dd> a vector or matrix. </dd>
-      <dt>b</dt>
-      <dd> a vector or matrix to be appended to <code>a</code>. </dd>
+      <dt>...</dt>
+      <dd> vectors and/or matrices to combine. </dd>
       <dt>blank</dt>
-      <dd> a character to add to the shorter argument, to achieve the
+      <dd> a character to add to short arguments, to achieve the
     same length as the longer argument. </dd>
     </dl>
     
     <div class="Description">
       <h2>Description</h2>
       
-      <p>Take a pair of vector or matrix arguments and combine them row-wise without
-  recycling the shorter argument (as is the case with <code><a href='http://www.inside-r.org/r-doc/base/cbind'>rbind</a></code>).</p>
+      <p>Take vectors and/or matrices arguments and combine them row-wise without
+  recycling them (as is the case with <code><a href='http://www.inside-r.org/r-doc/base/cbind'>rbind</a></code>).</p>
   
     </div>
 
     <div class="Value">
       <h2>Value</h2>
       
-      <p>A matrix combining the <code>a</code> and <code>b</code> input arguments row-wise.</p>
+      <p>A matrix combining input arguments row-wise.</p>
   
     </div>
 
@@ -96,7 +95,7 @@ seqs <- seqbind(aa321(a.pdb$atom[a.pdb$calpha,"resid"]),
 # seqaln(seqs)
 </div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>seqbind</li>
     </ul>
@@ -115,7 +114,7 @@ seqs <- seqbind(aa321(a.pdb$atom[a.pdb$calpha,"resid"]),
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=seqbind'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=seqbind'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

@@ -6,26 +6,19 @@
   Plot a dynamical cross-correlation matrix.
 }
 \usage{
-\method{plot}{dccm}(x, sse = NULL, colorkey = TRUE,
-                   at = c(-1, -0.75, -0.5, -0.25, 0.25, 0.5, 0.75, 1),
-                   main = "Residue Cross Correlation",
-                   helix.col = "gray20", sheet.col = "gray80",
-                   inner.box = TRUE, outer.box = FALSE,
-                   xlab = "Residue No.", ylab = "Residue No.", ...)
-
-  \method{plot}{dccm2}(x, sse=NULL, colorkey=TRUE,
-                     at=c(-1, -0.75, -0.5,  -0.25, 0.25, 0.5, 0.75, 1),
-                     main="Residue Cross Correlation",
-                     helix.col = "gray20", sheet.col = "gray80",
-                     inner.box=TRUE, outer.box=FALSE,
-                     xlab="Residue No.", ylab="Residue No.",
-                     margin.segments=NULL, segment.col=vmd.colors(), segment.min=1, ...)
+\method{plot}{dccm}(x, sse=NULL, colorkey=TRUE,
+                    at=c(-1, -0.75, -0.5,  -0.25, 0.25, 0.5, 0.75, 1),
+                    main="Residue Cross Correlation",
+                    helix.col = "gray20", sheet.col = "gray80",
+                    inner.box=TRUE, outer.box=FALSE,
+                    xlab="Residue No.", ylab="Residue No.",
+                    margin.segments=NULL, segment.col=vmd.colors(), segment.min=1, ...)
 }
 \arguments{
   \item{x}{ a numeric matrix of atom-wise cross-correlations as output by
     the \sQuote{dccm} function. }
   \item{sse}{ secondary structure object as returned from
-    \code{\link{dssp}} or \code{\link{stride}}. }
+    \code{\link{dssp}}, \code{\link{stride}} or \code{\link{read.pdb}}. }
   \item{colorkey}{ logical, if TRUE a key is plotted. }
   \item{at}{ numeric vector specifying the levels to be colored. }
   \item{main}{ a main title for the plot. }
@@ -43,11 +36,10 @@
   \item{segment.min}{ a single element numeric vector that will cause 
     margin.segments with a length below this value to be excluded from
     the plot. }
-   \item{\dots}{ additional graphical parameters for image. }
+   \item{\dots}{ additional graphical parameters for contourplot. }
 }
 \details{
-  See the functions \sQuote{plot.default}, \code{\link{dssp}} and
-  \code{\link{stride}} for further details.
+  See the \sQuote{contourplot} function from the lattice package for plot customization options, and the functions \code{\link{dssp}} and \code{\link{stride}} for further details.
 }
 \value{
   Called for its effect.
@@ -57,8 +49,7 @@
 }
 \author{ Barry Grant }
 \note{ Be sure to check the correspondence of your \sQuote{sse} object with the
-  \sQuote{cij} values being plotted as no internal checks are
-  performed.
+  \sQuote{cij} values being plotted as no internal checks are currently performed.
 }
 \seealso{ \code{\link{plot.bio3d}}, \code{\link{plot.dmat}},
   \code{\link{filled.contour}}, \code{\link{contour}},
@@ -81,50 +72,30 @@
   ## lsq fit of trj on pdb
   xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
 
+  ## Dynamic cross-correlations of atomic displacements
   cij <- dccm(xyz)
+
+  ## Default plot
   plot.dccm(cij)
 
-  ## SSE axis labs
-  scopfile <- 
-   "http://scop.berkeley.edu/downloads/pdbstyle/pdbstyle-1.75/hh/d1hhpa_.ent"
-  outfile = tempfile()
-  download.file(scopfile, outfile)
-  pdbaa <- read.pdb(outfile)
-  sse <- dssp(pdbaa, resno=FALSE)
+  ## Change the color scheme and the range of colored data levels
+  plot.dccm(cij, contour=F, col.regions=bwr.colors(200), at=seq(-1,1,by=0.01) )
 
-  ## set as homodimer
-  sse <- lapply(sse, function(x) {
-      if(!is.null(names(x))) 
-         lapply(x, rep, 2)
-      else 
-         rep(x,2)
-      })
-  sse <- lapply(sse, function(x) {
-      if(length(grep("start", names(x)))>0) {
-         i=length(x$start)
-         x$start[(i/2+1):i] = x$start[(i/2+1):i]+ncol(cij)/2 
-         x$end[(i/2+1):i] = x$end[(i/2+1):i]+ncol(cij)/2 
-         return(x)
-      }
-      return (x)
-    })
+  ## Add secondary structure annotation to plot margins
+  sse <- dssp(read.pdb("1W5Y"), resno=FALSE)
+  plot.dccm(cij, sse=sse) 
 
-  gridpoints <- c( sse$helix$start[sse$helix$length>4],
-                  sse$sheet$start[sse$sheet$length>4])
-  
-  scales <- list(at=gridpoints,
-                 labels=gridpoints, alternating=1, ticks=F)
-
-  plot.dccm(cij, sse=sse, scales=scales)
-  ##add.grid(sse)
-
-  ## Plot with changed colors
-  plot.dccm(cij, col.regions=rev(heat.colors(12)))
+  ## Add additional margin annotation for chains..
+  ch <- ifelse(pdb$atom[pdb$calpha,"chain"]=="A", 1,2)
+  plot.dccm(cij, sse=sse, margin.segments=ch)
 
   ## Plot with cluster annotation from dynamic network analysis
-  # net <- igraph.comms(cij)
-  # plot.dccm2(cij, margin.segments=net$membership, segment.col=c("red","blue","green","purple", "orange", "black"))
-  # plot.dccm2(cij, margin.segments=net$membership, segment.min=25)
+  #net <- cna(cij)
+  #plot.dccm2(cij, margin.segments=net$raw.communities$membership)
+
+  ## Focus on major communities (i.e. exclude those below a certain total length)
+  #plot.dccm2(cij, margin.segments=net$raw.communities$membership, segment.min=25)
+
 }
 
 }

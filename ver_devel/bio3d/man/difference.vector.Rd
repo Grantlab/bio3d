@@ -37,14 +37,14 @@ attach(kinesin, warn.conflicts=FALSE)
 gaps.pos <- gap.inspect(pdbs$xyz)
      
 #-- Do PCA
-pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
+pc.xray <- pca.xyz(pdbs$xyz[, gaps.pos$f.inds])
      
 # Define a difference vector between two structural states
 diff.inds <- c(grep("d1v8ja", pdbs$id), 
                grep("d1goja", pdbs$id))
 
 ## Calculate the difference vector
-dv <- difference.vector( xyz[diff.inds,], gaps.pos$f.inds )
+dv <- difference.vector( pdbs$xyz[diff.inds,], gaps.pos$f.inds )
 
 # Calculate the squared overlap between the PCs and the difference vector  
 o <- overlap(pc.xray, dv)

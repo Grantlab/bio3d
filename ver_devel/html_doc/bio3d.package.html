@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>bio3d-package. bio3d 1.2</title>
+<title>bio3d-package. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Barry Grant &lt;bjgrant@umich.edu&gt;
@@ -14,6 +14,7 @@ Lars Skjaerven &lt;larsss@gmail.com&gt;
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -21,19 +22,19 @@ Lars Skjaerven &lt;larsss@gmail.com&gt;
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -66,16 +67,17 @@ Type: </td>
 <td> Package</td>
 </tr><tr><td>
 Version: </td>
-<td> 1.2</td>
+<td> 2.0-1</td>
 </tr><tr><td>
-Date: </td>
-<td> DEVEL VERSION: 2013-04-18</td>
-</tr><tr><td>
+Date: 2013-11-13</td>
+<td>
 License: </td>
-<td> GPL version 2 or newer</td>
-</tr><tr><td>
+</tr><tr><td> GPL version 2 or newer</td>
+<td>
 URL: </td>
-<td> <a href = 'http://thegrantlab.org/bio3d/'>http://thegrantlab.org/bio3d/</a></td>
+</tr><tr><td> <a href = 'http://thegrantlab.org/bio3d/'>http://thegrantlab.org/bio3d/</a></td>
+<td>
+Package: </td>
 </tr></table></p>
   
       <p>Features include the ability to read and write structure
@@ -85,10 +87,9 @@ URL: </td>
 (<code><a href='read.dcd.html'>read.dcd</a></code>, <code><a href='read.ncdf.html'>read.ncdf</a></code>, <code><a href='write.ncdf.html'>write.ncdf</a></code>).</p>
   
       <p>Perform sequence database searches (<code><a href='blast.pdb.html'>blast.pdb</a></code>), atom
-summaries (<code><a href='atom.select.html'>pdb.summary</a></code>),  atom selection
+summaries (<code><a href='read.pdb.html'>summary.pdb</a></code>),  atom selection
 (<code><a href='atom.select.html'>atom.select</a></code>),  re-orientation (<code><a href='orient.pdb.html'>orient.pdb</a></code>),
-superposition (<code><a href='fit.xyz.html'>rot.lsq</a></code>,  <code><a href='fit.xyz.html'>fit.xyz</a></code>), rigid core
-identification (<code><a href='core.find.html'>core.find</a></code>,  <code><a href='plot.core.html'>plot.core</a></code>, 
+alignment ((<code><a href='pdbaln.html'>pdbaln</a></code>,  <code><a href='seqaln.html'>seqaln</a></code>)) superposition (<code><a href='fit.xyz.html'>rot.lsq</a></code>,  <code><a href='fit.xyz.html'>fit.xyz</a></code>), rigid core identification (<code><a href='core.find.html'>core.find</a></code>,  <code><a href='plot.core.html'>plot.core</a></code>, 
 <code><a href='fit.xyz.html'>fit.xyz</a></code>), torsion/dihedral analysis
 (<code><a href='torsion.pdb.html'>torsion.pdb</a></code>,  <code><a href='torsion.xyz.html'>torsion.xyz</a></code>), clustering (via
 <code><a href='http://www.inside-r.org/r-doc/stats/hclust'>hclust</a></code>), principal component analysis
@@ -98,14 +99,23 @@ cross-correlation analysis (<code><a href='dccm.html'>dccm</a></code>, <code><a 
 of structure data.</p>
   
       <p>Perform conservation analysis of sequence (<code><a href='seqaln.html'>seqaln</a></code>, <code><a href='conserv.html'>conserv</a></code>, 
-<code><a href='identity.html'>identity</a></code>,  <code><a href='entropy.html'>entropy</a></code>,  <code><a href='consensus.html'>consensus</a></code>)
+<code><a href='seqidentity.html'>seqidentity</a></code>,  <code><a href='entropy.html'>entropy</a></code>,  <code><a href='consensus.html'>consensus</a></code>)
 and structural (<code><a href='pdbaln.html'>pdbaln</a></code>, <code><a href='rmsd.html'>rmsd</a></code>,
 <code><a href='rmsf.html'>rmsf</a></code>, <code><a href='core.find.html'>core.find</a></code>) data.</p>
+  
+      <p>Perform normal mode analysis (elastic network model) with
+(<code><a href='nma.html'>nma</a></code>) and (<code><a href='nma.html'>build.hessian</a></code>), ensemble normal
+mode analysis (<code><a href='nma.pdbs.html'>nma.pdbs</a></code>), mode comparison
+(<code><a href='rmsip.html'>rmsip</a></code>) and (<code><a href='overlap.html'>overlap</a></code>), atomic fluctuation
+prediction (<code><a href='fluct.nma.html'>fluct.nma</a></code>), cross-correlation analysis
+(<code><a href='dccm.nma.html'>dccm.nma</a></code>), cross-correlation visualization (<code><a href='view.dccm.html'>view.dccm</a></code>), 
+deformation analysis (<code><a href='deformation.nma.html'>deformation.nma</a></code>), and mode visualization
+(<code><a href='view.modes.html'>view.modes</a></code>), (<code><a href='mktrj.nma.html'>mktrj.nma</a></code>).</p>
   
       <p>In addition, various utility functions are provided to facilitate
 manipulation and analysis of biological sequence and structural data
 (e.g. <code><a href='get.pdb.html'>get.pdb</a></code>, <code><a href='get.seq.html'>get.seq</a></code>, <code><a href='aa123.html'>aa123</a></code>,
-<code><a href='aa123.html'>aa321</a></code>, <code><a href='seq.pdb.html'>pdbseq</a></code>, <code><a href='aln2html.html'>aln2html</a></code>, <code><a href='atom.select.html'>atom.select</a></code>,
+<code><a href='aa123.html'>aa321</a></code>, <code><a href='pdbseq.html'>pdbseq</a></code>, <code><a href='aln2html.html'>aln2html</a></code>, <code><a href='atom.select.html'>atom.select</a></code>,
 <code><a href='fit.xyz.html'>rot.lsq</a></code>,  <code><a href='fit.xyz.html'>fit.xyz</a></code>, <code><a href='is.gap.html'>is.gap</a></code>, <code><a href='gap.inspect.html'>gap.inspect</a></code>,
 <code><a href='orient.pdb.html'>orient.pdb</a></code> and <code><a href='pairwise.html'>pairwise</a></code>).</p>
   
@@ -117,7 +127,8 @@ manipulation and analysis of biological sequence and structural data
       <p>The latest version and further documentation can be obtained from the
 bio3d website:
 <a href = 'http://thegrantlab.org/bio3d/'>http://thegrantlab.org/bio3d/</a>.
-<a href = 'http://thegrantlab.org/bio3d/html/'>http://thegrantlab.org/bio3d/html/</a>.</p>
+<a href = 'http://thegrantlab.org/bio3d/html/'>http://thegrantlab.org/bio3d/html/</a>.
+<a href = 'http://bitbucket.org/Grantlab/bio3d'>http://bitbucket.org/Grantlab/bio3d</a>.</p>
   
     </div>
 
@@ -130,49 +141,8 @@ bio3d website:
     
     <h2 id="examples">Examples</h2>
     <pre class="examples"><div class='input'>help(package="bio3d")     # list the functions within the package
-lbio3d()                  # list bio3d function names only
-</div>
-<div class='output'>  [1] "aa.index"          "aa123"             "aa2index"         
-  [4] "aa321"             "aln2html"          "angle.xyz"        
-  [7] "atom.index"        "atom.select"       "atom2xyz"         
- [10] "binding.site"      "blast.pdb"         "bounds"           
- [13] "build.hessian"     "bwr.colors"        "chain.pdb"        
- [16] "cmap"              "com"               "com.xyz"          
- [19] "combine.sel"       "consensus"         "conserv"          
- [22] "convert.pdb"       "core.find"         "dccm"             
- [25] "dccm.nma"          "diag.ind"          "difference.vector"
- [28] "dist.xyz"          "dm"                "dm.xyz"           
- [31] "dssp"              "entropy"           "fit.xyz"          
- [34] "fluct.nma"         "gap.inspect"       "get.pdb"          
- [37] "get.seq"           "ide.filter"        "identity"         
- [40] "inner.prod"        "is.gap"            "kinesin"          
- [43] "lbio3d"            "mktrj.nma"         "mktrj.pca"        
- [46] "mono.colors"       "motif.find"        "nma"              
- [49] "normalize.vector"  "orient.pdb"        "overlap"          
- [52] "pairwise"          "pca.project"       "pca.tor"          
- [55] "pca.xyz"           "pca.xyz2z"         "pca.z2xyz"        
- [58] "pdb.summary"       "pdb2aln"           "pdb2aln.ind"      
- [61] "pdbaln"            "pdbfit"            "pdbseq"           
- [64] "pdbsplit"          "plot.bio3d"        "plot.blast"       
- [67] "plot.core"         "plot.dccm"         "plot.dmat"        
- [70] "plot.nma"          "plot.pca"          "plot.pca.loadings"
- [73] "plot.pca.score"    "plot.pca.scree"    "print.core"       
- [76] "print.nma"         "print.pdb"         "print.rle2"       
- [79] "read.all"          "read.crd"          "read.dcd"         
- [82] "read.fasta"        "read.fasta.pdb"    "read.mol2"        
- [85] "read.ncdf"         "read.pdb"          "read.pdcBD"       
- [88] "read.pqr"          "rgyr"              "rle2"             
- [91] "rmsd"              "rmsd.filter"       "rmsf"             
- [94] "rmsip"             "rot.lsq"           "seq2aln"          
- [97] "seqaln"            "seqaln.pair"       "seqbind"          
-[100] "store.atom"        "stride"            "struct.aln"       
-[103] "torsion.pdb"       "torsion.xyz"       "trim.pdb"         
-[106] "unbound"           "vec2resno"         "wiki.tbl"         
-[109] "wrap.tor"          "write.crd"         "write.fasta"      
-[112] "write.ncdf"        "write.pdb"         "write.pqr"        
-[115] "xyz2atom"         
-</div>
-<div class='input'>
+#lbio3d()                  # list bio3d function names only
+
 ## Or visit:
 ##   http://thegrantlab.org/bio3d/html/
 
@@ -186,185 +156,1451 @@ you could try ‘??read.pdb’
 ## Or online:
 ##    http://thegrantlab.org/bio3d/html/read.pdb.html
 
-## <strong>Not run</strong>: 
-# ##-- Read a PDB file
-# pdb <- read.pdb("1BG2")
-# 
-# ##-- Distance matrix
-# k <- dm(pdb, selection="calpha")
-# plot(k)
-# 
-# ## Extract SEQRES PDB sequence
-# s <- aa321(pdb$seqres)
-# 
-# ## Extract ATOM PDB sequence
-# s2 <- pdbseq(pdb)
-# 
-# ## write a FASTA format sequence file
-# write.fasta(seqs=seqbind(s, s2), id=c("seqres","atom"), file="eg.fa")
-# 
-# 
-# 
-# ## Reorient and write a new PDB file
-# xyz <- orient.pdb(pdb)
-# write.pdb(pdb, xyz = xyz, file = "mov1.pdb")
-# 
-# 
-# ##-- Torsion angle analysis and basic Ramachandran plot
-# tor <- torsion.pdb(pdb)
-# plot(tor$phi, tor$psi)
-# 
-# 
-# ##-- Secondary structure assignment with DSSP
-# sse <- dssp(pdb, resno=FALSE)
-# 
-# ## Plot of B-factor values along with secondary structure
-# plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor")
-# 
-# 
-# 
-# ##-- Search for related structures in the PDB database
-# blast <- blast.pdb( pdbseq(pdb) )
-# hits  <- plot.blast(blast)
-# head(hits$hits)
-# ## Download these with function "get.pdb()"
-# #rawpdbs <- get.pdb( hits$pdb.id, "PDB_downloads")
-# 
-# ## Split by chain with function "pdbsplit()"
-# #pdbsplit(rawpdbs, path="PDB_downloads/split_chain/")
-# 
-# ## and then align with function "pdbaln()"
-# #hitfiles <- paste0("PDB_downloads/split_chain/", hits$pdb.id, ".pdb")
-# #pdbs <- pdbaln(hitfiles)
-# #xyz  <- pdbfit(pdbs)
-# 
-# ##-- Read an example FASTA alignment from PFAM
-# infile <- "http://pfam.sanger.ac.uk/family/PF00071/alignment/seed/format?format=fasta"
-# 
-# aln <- read.fasta( infile )
-# 
-# ## Entropy score for alignment positions
-# h <- entropy(aln)    # see also the "conserv()" function
-# plot(h$H.norm, typ="h", ylab="Normalized entropy score")
-# plot(new=TRUE)
-# plot( conserv(aln), typ="h", col="red")
-# 
-# # Alignment consensus
-# con <- consensus(aln)
-# con$seq
-# 
-# ## Render the alignment as coloured HTML
-# aln2html(aln, append=FALSE, file="eg.html")
-# 
-# 
-# 
-# ##-- Read an alignment of sequences and their corresponding structures
-# aln  <- read.fasta( system.file("examples/kif1a.fa", package="bio3d") )
-# pdbs <- read.fasta.pdb( aln, pdbext = ".ent",
-#                pdb.path = system.file("examples",package="bio3d") )
-# 
-# 
-# ##-- DDM: Difference Distance Matrix
-# a <- dm(pdbs$xyz[2,])
-# b <- dm(pdbs$xyz[3,])
-# ddm <- a - b
-# plot(ddm,key=FALSE, grid=FALSE)
-# 
-# 
-# ##-- Superpose structures on non gap positions
-# gaps <- gap.inspect(pdbs$xyz)
-# 
-# xyz  <- fit.xyz( fixed  = pdbs$xyz[1,],
-#                 mobile = pdbs$xyz,
-#                 fixed.inds  = gaps$f.inds,
-#                 mobile.inds = gaps$f.inds )
-# 
-# 
-# ##-- RMSD
-# rmsd(pdbs$xyz[1,gaps$f.inds], pdbs$xyz[,gaps$f.inds])
-# rmsd(pdbs$xyz[1,gaps$f.inds], pdbs$xyz[,gaps$f.inds], fit=TRUE)
-# 
-# 
-# 
-# ##-- Rigid 'core' identification
-# aln <- read.fasta(system.file("examples/kinesin_xray.fa",package="bio3d"))
-# pdb.path = system.file("examples/",package="bio3d")
-# pdbs <- read.fasta.pdb(aln, pdb.path = pdb.path, pdbext = ".ent")
-# 
-# core <- core.find(pdbs,
-#                   #write.pdbs=TRUE,
-#                   rm.island=TRUE,
-#                   verbose=TRUE)
-# 
-# ## Plot core volume vs length
-# plot(core)
-# 
-# ## Core fit the structures (superpose on rigid zones)
-# xyz <- fit.xyz( fixed = pdbs$xyz[1,],
-#                 mobile = pdbs,
-#               #  full.pdbs = TRUE,
-#               #  pdb.path = pdb.path,
-#               #  pdbext = ".ent",
-#               #  outpath = "fitlsq/",
-#                 fixed.inds  = core$c0.5A.xyz,
-#                 mobile.inds = core$c0.5A.xyz)
-# 
-# 
-# ##-- PCA of structures
-# cut.seqs <- which(pdbs$id %in% c("d1n6mb_","d1ry6a_"))
-# # Ignore gap containing positions
-# gaps.res <- gap.inspect(pdbs$ali[-cut.seqs,])
-# gaps.pos <- gap.inspect(pdbs$xyz[-cut.seqs,])
-# 
-# 
-# ##-- Do PCA
-# pc.xray <- pca.xyz(xyz[-cut.seqs, gaps.pos$f.inds])
-# 
-# ## Plot results
-# plot(pc.xray)
-# 
-# #x11()
-# plot.pca.loadings(pc.xray$U)
-# 
-# ## Write PC trajectory
-# a <- mktrj.pca(pc.xray, pc=1, file="pc1.pdb",
-#                resno = pdbs$resno[1, gaps.res$f.inds],
-#                resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
-# 
-# 
-# 
-# 
-# 
-# ##-- Read a CHARMM/X-PLOR/NAMD trajectory file
-# trtfile <- system.file("examples/hivp.dcd", package="bio3d")
-# trj <- read.dcd(trtfile)
-# 
-# ## Read the starting PDB file to determine atom correspondence
-# pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
-# pdb <- read.pdb(pdbfile)
-# 
-# ## Fit trj on PDB based on residues 23 to 31 and 84 to 87 in both chains
-# ##inds <- atom.select(pdb,"///23:31,84:87///CA/")
-# inds <- atom.select(pdb, resno=c(23:31,84:87), elety="CA")
-# fit.xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
-# 
-# ##-- RMSD of trj frames from PDB
-# r <- rmsd(a=pdb, b=fit.xyz)
-# 
-# ##-- PCA of trj
-# pc.trj <- pca.xyz(fit.xyz)
-# 
-# plot.pca.loadings(pc.trj)
-# 
-# ## Write PC trajectory for viewing as tube in VMD
-# a <- mktrj.pca(pc.trj, pc=1, file="pc1_trj.pdb")
-# 
-# ## <strong>End(Not run)</strong>
-## other examples include: sdm, alignment, clustering etc...
+##-- See the list of Bio3D demos 
+demo(package="bio3d")
+</div>
+<div class='output'>no demos found
+</div>
+<div class='input'>
+## Try some out, e.g: 
+demo(pdb) # PDB Manipulation, Serching and Alignment
+</div>
+<div class='output'>
+
+	demo(pdb)
+	---- ~~~
+
+> ###
+> ### Example of PDB file manipulation, serching, alignment etc.
+> ###
+> ### Authors Xin-Qiu Yao
+> ###         Lars Skjaerven
+> ###         Barry J Grant
+> ###
+> require(bio3d); require(graphics);
+
+> pause <- function() {
++   cat("Press ENTER/RETURN/NEWLINE to continue.")
++   readLines(n=1)
++   invisible()
++ }
+
+> #############################################
+> ##                                          #
+> ## Basic PDB file reading and manipulation  #
+> ##                                          #
+> #############################################
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> # Read an online RCSB Protein Data Bank structure
+> pdb <- read.pdb("4q21")
+  Note: Accessing online PDB file
+  HEADER    ONCOGENE PROTEIN                        25-SEP-91   4Q21               
+
+> # Whats in the new pdb object
+> print(pdb)
+
+ Call:  read.pdb(file = "4q21")
+
+  Atom Count: 1447 
+
+   Total ATOMs#: 1340 
+     Protein ATOMs#: 1340   ( Calpha ATOMs#: 168 ) 
+     Non-protein ATOMs#: 0   ( residues:  ) 
+     Chains#: 1   ( values: A ) 
+
+   Total HETATOMs: 107 
+     Residues HETATOMs#: 80   ( residues: MG GDP HOH ) 
+     Chains#: 1   ( values: A )
+
+   Sequence:
+      MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIEDSYRKQVVIDGETCLLDILDTAG
+      QEEYSAMRDQYMRTGEGFLCVFAINNTKSFEDIHQYREQIKRVKDSDDVPMVLVGNKCDL
+      AARTVESRQAQDLARSYGIPYIETSAKTRQGVEDAFYTLVREIRQHKL
+
++ attr: atom, het, helix, sheet, seqres,
+        xyz, xyz.models, calpha, call
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> # Most bio3d functions, including read.pdb(), return list objects
+> attributes(pdb)
+$names
+[1] "atom"       "het"        "helix"      "sheet"      "seqres"    
+[6] "xyz"        "xyz.models" "calpha"     "call"      
+
+$class
+[1] "pdb"
+
+
+> pdb$atom[1:3, c("resno", "resid", "elety", "x", "y", "z")]
+     resno resid elety x        y        z       
+[1,] "1"   "MET" "N"   "64.080" "50.529" "32.509"
+[2,] "1"   "MET" "CA"  "64.044" "51.615" "33.423"
+[3,] "1"   "MET" "C"   "63.722" "52.849" "32.671"
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> # Selection of substructure regions with 'atom.select()'' function
+> inds <- atom.select(pdb, elety = c("N","CA","C"), resno=4:6)
+
+Build selection from input components
+
+      segid  chain  resno   resid  eleno  elety   
+Stest ""     ""     "4,5,6" ""     ""     "N,CA,C"
+Natom "1340" "1340" "29"    "1340" "1340" "505"   
+ *  Selected a total of: 9 intersecting atoms  *
+
+> pdb$atom[inds$atom,]
+      eleno elety alt resid chain resno insert x        y        z       
+ [1,] "25"  "N"   NA  "TYR" "A"   "4"   NA     "62.736" "60.251" "33.384"
+ [2,] "26"  "CA"  NA  "TYR" "A"   "4"   NA     "61.817" "61.333" "33.161"
+ [3,] "27"  "C"   NA  "TYR" "A"   "4"   NA     "62.492" "62.578" "33.675"
+ [4,] "37"  "N"   NA  "LYS" "A"   "5"   NA     "62.654" "63.574" "32.804"
+ [5,] "38"  "CA"  NA  "LYS" "A"   "5"   NA     "63.343" "64.814" "33.163"
+ [6,] "39"  "C"   NA  "LYS" "A"   "5"   NA     "62.328" "65.837" "33.628"
+ [7,] "46"  "N"   NA  "LEU" "A"   "6"   NA     "62.263" "66.117" "34.955"
+ [8,] "47"  "CA"  NA  "LEU" "A"   "6"   NA     "61.321" "67.068" "35.557"
+ [9,] "48"  "C"   NA  "LEU" "A"   "6"   NA     "62.005" "68.430" "35.889"
+      o      b       segid elesy charge
+ [1,] "1.00" "26.38" NA    "N"   NA    
+ [2,] "1.00" "23.42" NA    "C"   NA    
+ [3,] "1.00" "25.05" NA    "C"   NA    
+ [4,] "1.00" "21.98" NA    "N"   NA    
+ [5,] "1.00" "21.34" NA    "C"   NA    
+ [6,] "1.00" "21.86" NA    "C"   NA    
+ [7,] "1.00" "19.48" NA    "N"   NA    
+ [8,] "1.00" "18.99" NA    "C"   NA    
+ [9,] "1.00" "25.96" NA    "C"   NA    
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> # Simple B-factor plot
+> ca.inds <- atom.select(pdb, "calpha")
+
+Build selection from input string
+
+
+ Using selection 'string' keyword shortcut: calpha = //////CA/ 
+
+      segid  chain  resno  resid  eleno  elety
+Stest ""     ""     ""     ""     ""     "CA" 
+Natom "1340" "1340" "1340" "1340" "1340" "168"
+ *  Selected a total of: 168 intersecting atoms  *
+
+> plot.bio3d( pdb$atom[ca.inds$atom,"b"], sse=pdb, ylab="B-factor")
+</div>
+<p><img src='bio3d.package-7.png' alt='' width='400' height='400' /></p>
+<div class='output'>
+> ###################################
+> ##                                #
+> ## Search for similar structures  #
+> ##                                #
+> ###################################
+> 
+> # Use sequence
+> aa <- pdbseq(pdb)
+
+> aa
+  1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20 
+"M" "T" "E" "Y" "K" "L" "V" "V" "V" "G" "A" "G" "G" "V" "G" "K" "S" "A" "L" "T" 
+ 21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40 
+"I" "Q" "L" "I" "Q" "N" "H" "F" "V" "D" "E" "Y" "D" "P" "T" "I" "E" "D" "S" "Y" 
+ 41  42  43  44  45  46  47  48  49  50  51  52  53  54  55  56  57  58  59  60 
+"R" "K" "Q" "V" "V" "I" "D" "G" "E" "T" "C" "L" "L" "D" "I" "L" "D" "T" "A" "G" 
+ 61  62  63  64  65  66  67  68  69  70  71  72  73  74  75  76  77  78  79  80 
+"Q" "E" "E" "Y" "S" "A" "M" "R" "D" "Q" "Y" "M" "R" "T" "G" "E" "G" "F" "L" "C" 
+ 81  82  83  84  85  86  87  88  89  90  91  92  93  94  95  96  97  98  99 100 
+"V" "F" "A" "I" "N" "N" "T" "K" "S" "F" "E" "D" "I" "H" "Q" "Y" "R" "E" "Q" "I" 
+101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 
+"K" "R" "V" "K" "D" "S" "D" "D" "V" "P" "M" "V" "L" "V" "G" "N" "K" "C" "D" "L" 
+121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 
+"A" "A" "R" "T" "V" "E" "S" "R" "Q" "A" "Q" "D" "L" "A" "R" "S" "Y" "G" "I" "P" 
+141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 
+"Y" "I" "E" "T" "S" "A" "K" "T" "R" "Q" "G" "V" "E" "D" "A" "F" "Y" "T" "L" "V" 
+161 162 163 164 165 166 167 168 
+"R" "E" "I" "R" "Q" "H" "K" "L" 
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> # Blast the RCSB PDB to find similar sequences 
+> blast <- blast.pdb(aa)
+ Searching ... please wait (updates every 5 seconds) RID = 8X1TFX14015 
+ ..
+ Reporting 289 hits
+
+> head(blast$hit.tbl)
+     queryid   subjectids                identity positives alignmentlength
+[1,] "unnamed" "gi|231226|pdb|6Q21|A"    "100.00" "100.00"  "168"          
+[2,] "unnamed" "gi|231227|pdb|6Q21|B"    "100.00" "100.00"  "168"          
+[3,] "unnamed" "gi|231228|pdb|6Q21|C"    "100.00" "100.00"  "168"          
+[4,] "unnamed" "gi|231229|pdb|6Q21|D"    "100.00" "100.00"  "168"          
+[5,] "unnamed" "gi|15988032|pdb|1IOZ|A"  "100.00" "100.00"  "168"          
+[6,] "unnamed" "gi|157829765|pdb|1AA9|A" "100.00" "100.00"  "168"          
+     mismatches gapopens q.start q.end s.start s.end evalue   bitscore
+[1,] "  0"      "0"      "1"     "168" " 1"    "168" "5e-123" "348"   
+[2,] "  0"      "0"      "1"     "168" " 1"    "168" "5e-123" "348"   
+[3,] "  0"      "0"      "1"     "168" " 1"    "168" "5e-123" "348"   
+[4,] "  0"      "0"      "1"     "168" " 1"    "168" "5e-123" "348"   
+[5,] "  0"      "0"      "1"     "168" " 1"    "168" "5e-123" "348"   
+[6,] "  0"      "0"      "1"     "168" " 1"    "168" "5e-123" "348"   
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> # Plot results
+> top.hits <- plot(blast)
+  * Possible cutoff values include:
+		 237 62 
+    Yielding Nhits:
+		 151 289  
+
+ ** Chosen cutoff value of:
+		 62 
+    Yielding Nhits:
+		 289  
+</div>
+<p><img src='bio3d.package-9.png' alt='' width='400' height='400' /></p>
+<div class='output'>
+> head(top.hits$hits)
+  pdb.id   gi.id       group
+1 "6Q21_A" "231226"    "1"  
+2 "6Q21_B" "231227"    "1"  
+3 "6Q21_C" "231228"    "1"  
+4 "6Q21_D" "231229"    "1"  
+5 "1IOZ_A" "15988032"  "1"  
+6 "1AA9_A" "157829765" "1"  
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ## Download and and analyze further ....
+> ## raw.files <- get.pdb(top.hits$pdb.id, path="raw_hits")
+> ## files <- pdbsplit(raw.files, top.hits$hits, path="top_hits")
+> ## pdbs <- pdbaln(files)
+> ## ...<ETC>...
+</div>
+<div class='input'>demo(pca) # Principal Component Analysis
+</div>
+<div class='output'>
+
+	demo(pca)
+	---- ~~~
+
+> ###
+> ### Example of PCA on a collection of PKA structures
+> ###    and a large collection of transducin structure
+> ###
+> ### Authors Xin-Qiu Yao
+> ###         Lars Skjaerven
+> ###         Barry J Grant
+> ###
+> require(bio3d); require(graphics);
+
+> pause <- function() {
++   cat("Press ENTER/RETURN/NEWLINE to continue.")
++   readLines(n=1)
++   invisible()
++ }
+
+> ################################################
+> ##                                             #
+> ## Basic PCA of related X-ray structures       #
+> ## (requires the 'muscle' program installed)   #
+> ##                                             #
+> ################################################
+> 
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### Set temp dir to store PDB files
+> tmp.dir <- tempdir()
+
+> ## Specify PDB identifiers
+> ids <- c("1cdk_A", "3agm_A", "1cmk_E",
++          "3dnd_A", "1q8w_A")
+
+> ## Download PDBs
+> raw.files <- get.pdb(ids, path=tmp.dir)
+</div>
+<strong class='warning'>Warning message:
+ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
+<div class='output'>
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ## Split PDBs by chain ID
+> files <- pdbsplit(raw.files, ids, path=tmp.dir)
+  |                                                                              |                                                                      |   0%  |                                                                              |==============                                                        |  20%  |                                                                              |============================                                          |  40%  |                                                                              |==========================================                            |  60%  |                                                                              |========================================================              |  80%  |                                                                              |======================================================================| 100%
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ## Sequence/structure alignment
+> pdbs <- pdbaln(files)
+Reading PDB files:
+/tmp/RtmpeKwoQP/1cdk_A.pdb
+/tmp/RtmpeKwoQP/3agm_A.pdb
+/tmp/RtmpeKwoQP/1cmk_E.pdb
+/tmp/RtmpeKwoQP/3dnd_A.pdb
+/tmp/RtmpeKwoQP/1q8w_A.pdb
+...   PDB has ALT records, taking A only, rm.alt=TRUE
+..
+
+Extracting sequences
+
+pdb/seq: 1   name: /tmp/RtmpeKwoQP/1cdk_A.pdb 
+pdb/seq: 2   name: /tmp/RtmpeKwoQP/3agm_A.pdb 
+pdb/seq: 3   name: /tmp/RtmpeKwoQP/1cmk_E.pdb 
+pdb/seq: 4   name: /tmp/RtmpeKwoQP/3dnd_A.pdb 
+   PDB has ALT records, taking A only, rm.alt=TRUE
+pdb/seq: 5   name: /tmp/RtmpeKwoQP/1q8w_A.pdb 
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ## Find invariant core
+> core <- core.find(pdbs)
+ core size 332 of 333  vol = 23.486 
+ core size 331 of 333  vol = 22.189 
+ core size 330 of 333  vol = 21.26 
+ core size 329 of 333  vol = 20.413 
+ core size 328 of 333  vol = 19.493 
+ core size 327 of 333  vol = 18.651 
+ core size 326 of 333  vol = 17.99 
+ core size 325 of 333  vol = 17.359 
+ core size 324 of 333  vol = 16.751 
+ core size 323 of 333  vol = 16.189 
+ core size 322 of 333  vol = 15.63 
+ core size 321 of 333  vol = 15.16 
+ core size 320 of 333  vol = 14.626 
+ core size 319 of 333  vol = 14.175 
+ core size 318 of 333  vol = 13.853 
+ core size 317 of 333  vol = 13.597 
+ core size 316 of 333  vol = 13.312 
+ core size 315 of 333  vol = 13.029 
+ core size 314 of 333  vol = 12.74 
+ core size 313 of 333  vol = 12.46 
+ core size 312 of 333  vol = 12.222 
+ core size 311 of 333  vol = 12.049 
+ core size 310 of 333  vol = 11.824 
+ core size 309 of 333  vol = 11.607 
+ core size 308 of 333  vol = 11.444 
+ core size 307 of 333  vol = 11.266 
+ core size 306 of 333  vol = 11.112 
+ core size 305 of 333  vol = 10.952 
+ core size 304 of 333  vol = 10.699 
+ core size 303 of 333  vol = 10.386 
+ core size 302 of 333  vol = 10.164 
+ core size 301 of 333  vol = 9.968 
+ core size 300 of 333  vol = 9.812 
+ core size 299 of 333  vol = 9.661 
+ core size 298 of 333  vol = 9.496 
+ core size 297 of 333  vol = 9.322 
+ core size 296 of 333  vol = 9.108 
+ core size 295 of 333  vol = 8.866 
+ core size 294 of 333  vol = 8.658 
+ core size 293 of 333  vol = 8.417 
+ core size 292 of 333  vol = 8.18 
+ core size 291 of 333  vol = 8.03 
+ core size 290 of 333  vol = 7.855 
+ core size 289 of 333  vol = 7.739 
+ core size 288 of 333  vol = 7.625 
+ core size 287 of 333  vol = 7.507 
+ core size 286 of 333  vol = 7.325 
+ core size 285 of 333  vol = 7.175 
+ core size 284 of 333  vol = 7.01 
+ core size 283 of 333  vol = 6.887 
+ core size 282 of 333  vol = 6.776 
+ core size 281 of 333  vol = 6.654 
+ core size 280 of 333  vol = 6.519 
+ core size 279 of 333  vol = 6.37 
+ core size 278 of 333  vol = 6.22 
+ core size 277 of 333  vol = 6.132 
+ core size 276 of 333  vol = 6.051 
+ core size 275 of 333  vol = 5.985 
+ core size 274 of 333  vol = 5.918 
+ core size 273 of 333  vol = 5.857 
+ core size 272 of 333  vol = 5.754 
+ core size 271 of 333  vol = 5.705 
+ core size 270 of 333  vol = 5.629 
+ core size 269 of 333  vol = 5.536 
+ core size 268 of 333  vol = 5.454 
+ core size 267 of 333  vol = 5.374 
+ core size 266 of 333  vol = 5.31 
+ core size 265 of 333  vol = 5.242 
+ core size 264 of 333  vol = 5.156 
+ core size 263 of 333  vol = 5.093 
+ core size 262 of 333  vol = 5.025 
+ core size 261 of 333  vol = 4.946 
+ core size 260 of 333  vol = 4.852 
+ core size 259 of 333  vol = 4.792 
+ core size 258 of 333  vol = 4.7 
+ core size 257 of 333  vol = 4.619 
+ core size 256 of 333  vol = 4.556 
+ core size 255 of 333  vol = 4.498 
+ core size 254 of 333  vol = 4.447 
+ core size 253 of 333  vol = 4.384 
+ core size 252 of 333  vol = 4.328 
+ core size 251 of 333  vol = 4.265 
+ core size 250 of 333  vol = 4.192 
+ core size 249 of 333  vol = 4.132 
+ core size 248 of 333  vol = 4.046 
+ core size 247 of 333  vol = 3.964 
+ core size 246 of 333  vol = 3.891 
+ core size 245 of 333  vol = 3.827 
+ core size 244 of 333  vol = 3.76 
+ core size 243 of 333  vol = 3.673 
+ core size 242 of 333  vol = 3.576 
+ core size 241 of 333  vol = 3.497 
+ core size 240 of 333  vol = 3.43 
+ core size 239 of 333  vol = 3.355 
+ core size 238 of 333  vol = 3.277 
+ core size 237 of 333  vol = 3.208 
+ core size 236 of 333  vol = 3.105 
+ core size 235 of 333  vol = 3.03 
+ core size 234 of 333  vol = 2.93 
+ core size 233 of 333  vol = 2.842 
+ core size 232 of 333  vol = 2.752 
+ core size 231 of 333  vol = 2.667 
+ core size 230 of 333  vol = 2.579 
+ core size 229 of 333  vol = 2.498 
+ core size 228 of 333  vol = 2.419 
+ core size 227 of 333  vol = 2.34 
+ core size 226 of 333  vol = 2.271 
+ core size 225 of 333  vol = 2.203 
+ core size 224 of 333  vol = 2.117 
+ core size 223 of 333  vol = 2.048 
+ core size 222 of 333  vol = 1.983 
+ core size 221 of 333  vol = 1.928 
+ core size 220 of 333  vol = 1.872 
+ core size 219 of 333  vol = 1.803 
+ core size 218 of 333  vol = 1.738 
+ core size 217 of 333  vol = 1.687 
+ core size 216 of 333  vol = 1.639 
+ core size 215 of 333  vol = 1.594 
+ core size 214 of 333  vol = 1.539 
+ core size 213 of 333  vol = 1.498 
+ core size 212 of 333  vol = 1.457 
+ core size 211 of 333  vol = 1.417 
+ core size 210 of 333  vol = 1.383 
+ core size 209 of 333  vol = 1.343 
+ core size 208 of 333  vol = 1.311 
+ core size 207 of 333  vol = 1.278 
+ core size 206 of 333  vol = 1.242 
+ core size 205 of 333  vol = 1.209 
+ core size 204 of 333  vol = 1.163 
+ core size 203 of 333  vol = 1.133 
+ core size 202 of 333  vol = 1.103 
+ core size 201 of 333  vol = 1.066 
+ core size 200 of 333  vol = 1.035 
+ core size 199 of 333  vol = 1.008 
+ core size 198 of 333  vol = 0.982 
+ core size 197 of 333  vol = 0.957 
+ core size 196 of 333  vol = 0.936 
+ core size 195 of 333  vol = 0.916 
+ core size 194 of 333  vol = 0.895 
+ core size 193 of 333  vol = 0.871 
+ core size 192 of 333  vol = 0.848 
+ core size 191 of 333  vol = 0.82 
+ core size 190 of 333  vol = 0.797 
+ core size 189 of 333  vol = 0.777 
+ core size 188 of 333  vol = 0.753 
+ core size 187 of 333  vol = 0.736 
+ core size 186 of 333  vol = 0.717 
+ core size 185 of 333  vol = 0.695 
+ core size 184 of 333  vol = 0.674 
+ core size 183 of 333  vol = 0.657 
+ core size 182 of 333  vol = 0.641 
+ core size 181 of 333  vol = 0.627 
+ core size 180 of 333  vol = 0.611 
+ core size 179 of 333  vol = 0.598 
+ core size 178 of 333  vol = 0.583 
+ core size 177 of 333  vol = 0.57 
+ core size 176 of 333  vol = 0.554 
+ core size 175 of 333  vol = 0.541 
+ core size 174 of 333  vol = 0.526 
+ core size 173 of 333  vol = 0.514 
+ core size 172 of 333  vol = 0.501 
+ core size 171 of 333  vol = 0.488 
+ FINISHED: Min vol ( 0.5 ) reached
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ## Fit structures to core region
+> xyz <- pdbfit(pdbs, inds=core$c1A.xyz)
+
+>            ## outpath="core_fit/", full.pdbs=T, het2atom=T)
+> 
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ## Locate gap containing positions
+> gaps.pos <- gap.inspect(pdbs$xyz)
+
+> ## Perform PCA on non-gap containing positions
+> pc.xray <- pca.xyz(xyz[,gaps.pos$f.inds])
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ## Plot x-ray results
+> plot(pc.xray)
+</div>
+<p><img src='bio3d.package-15.png' alt='' width='400' height='400' /></p>
+<div class='output'>
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> #############################################
+> ##                                          #
+> ## Larger transducin example                #
+> ##                                          #
+> #############################################
+> 
+> data(transducin)
+
+> attach(transducin, warn.conflicts=FALSE)
+
+> ## data 'transducin' contains objects
+> ## - pdbs:       aligned C-alpha coordinates for 53 transducin 
+> ##               structures from the PDB
+> ## - annotation: annotation of the 53 PDBs
+> 
+> ## Note that this data can be generated from scratch by following the
+> ## Comparative Structure Analysis with Bio3D Vignette available both
+> ## on-line and from within the Bio3D package.
+> 
+> pdbs <- transducin$pdbs
+
+> annotation <- transducin$annotation
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ## Inspect gaps
+> gaps.pos <- gap.inspect(pdbs$xyz)
+
+> ## Previously fitted coordinates invariance core
+> xyz <- pdbs$xyz
+
+> ## Do PCA
+> pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ## Plot overview
+> plot(pc.xray, col=annotation[, "color"])
+</div>
+<p><img src='bio3d.package-17.png' alt='' width='400' height='400' /></p>
+<div class='output'>
+> ## Plot atom wise loadings
+> plot.bio3d(pc.xray$au[,1], ylab="PC1 (A)")
+</div>
+<p><img src='bio3d.package-19.png' alt='' width='400' height='400' /></p>
+<div class='output'>
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> unlink(tmp.dir)
+</div>
+<div class='input'>demo(md)  # Molecular Dynamics Trajectory Analysis
+</div>
+<div class='output'>
+
+	demo(md)
+	---- ~~
+
+> ###
+> ### Example of basic molecular dynamics trajectory analysis
+> ###
+> ### Authors Xin-Qiu Yao
+> ###         Lars Skjaerven
+> ###         Barry J Grant
+> ###
+> require(bio3d); require(graphics);
+
+> pause <- function() {
++   cat("Press ENTER/RETURN/NEWLINE to continue.")
++   readLines(n=1)
++   invisible()
++ }
+
+> #############################################
+> ##                                          #
+> ## Basic analysis of HIVpr trajectory data  #
+> ##                                          #
+> #############################################
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> # Read example trajectory file
+> trtfile <- system.file("examples/hivp.dcd", package="bio3d")
+
+> trj <- read.dcd(trtfile)
+ NATOM = 198 
+ NFRAME= 351 
+ ISTART= 0 
+ last  = 351 
+ nstep = 351 
+ nfile = 351 
+ NSAVE = 1 
+ NDEGF = 0 
+ version 24 
+Reading (x100)  |                                                                              |                                                                      |   0%  |                                                                              |                                                                      |   1%  |                                                                              |=                                                                     |   1%  |                                                                              |=                                                                     |   2%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%  |                                                                              |===                                                                   |   4%  |                                                                              |===                                                                   |   5%  |                                                                              |====                                                                  |   5%  |                                                                              |====                                                                  |   6%  |                                                                              |=====                                                                 |   7%  |                                                                              |=====                                                                 |   8%  |                                                                              |======                                                                |   8%  |                                                                              |======                                                                |   9%  |                                                                              |=======                                                               |   9%  |                                                                              |=======                                                               |  10%  |                                                                              |=======                                                               |  11%  |                                                                              |========                                                              |  11%  |                                                                              |========                                                              |  12%  |                                                                              |=========                                                             |  12%  |                                                                              |=========                                                             |  13%  |                                                                              |==========                                                            |  14%  |                                                                              |==========                                                            |  15%  |                                                                              |===========                                                           |  15%  |                                                                              |===========                                                           |  16%  |                                                                              |============                                                          |  17%  |                                                                              |============                                                          |  18%  |                                                                              |=============                                                         |  18%  |                                                                              |=============                                                         |  19%  |                                                                              |==============                                                        |  19%  |                                                                              |==============                                                        |  20%  |                                                                              |==============                                                        |  21%  |                                                                              |===============                                                       |  21%  |                                                                              |===============                                                       |  22%  |                                                                              |================                                                      |  22%  |                                                                              |================                                                      |  23%  |                                                                              |=================                                                     |  24%  |                                                                              |=================                                                     |  25%  |                                                                              |==================                                                    |  25%  |                                                                              |==================                                                    |  26%  |                                                                              |===================                                                   |  27%  |                                                                              |===================                                                   |  28%  |                                                                              |====================                                                  |  28%  |                                                                              |====================                                                  |  29%  |                                                                              |=====================                                                 |  29%  |                                                                              |=====================                                                 |  30%  |                                                                              |=====================                                                 |  31%  |                                                                              |======================                                                |  31%  |                                                                              |======================                                                |  32%  |                                                                              |=======================                                               |  32%  |                                                                              |=======================                                               |  33%  |                                                                              |========================                                              |  34%  |                                                                              |========================                                              |  35%  |                                                                              |=========================                                             |  35%  |                                                                              |=========================                                             |  36%  |                                                                              |==========================                                            |  37%  |                                                                              |==========================                                            |  38%  |                                                                              |===========================                                           |  38%  |                                                                              |===========================                                           |  39%  |                                                                              |============================                                          |  39%  |                                                                              |============================                                          |  40%  |                                                                              |============================                                          |  41%  |                                                                              |=============================                                         |  41%  |                                                                              |=============================                                         |  42%  |                                                                              |==============================                                        |  42%  |                                                                              |==============================                                        |  43%  |                                                                              |===============================                                       |  44%  |                                                                              |===============================                                       |  45%  |                                                                              |================================                                      |  45%  |                                                                              |================================                                      |  46%  |                                                                              |=================================                                     |  47%  |                                                                              |=================================                                     |  48%  |                                                                              |==================================                                    |  48%  |                                                                              |==================================                                    |  49%  |                                                                              |===================================                                   |  49%  |                                                                              |===================================                                   |  50%  |                                                                              |===================================                                   |  51%  |                                                                              |====================================                                  |  51%  |                                                                              |====================================                                  |  52%  |                                                                              |=====================================                                 |  52%  |                                                                              |=====================================                                 |  53%  |                                                                              |======================================                                |  54%  |                                                                              |======================================                                |  55%  |                                                                              |=======================================                               |  55%  |                                                                              |=======================================                               |  56%  |                                                                              |========================================                              |  57%  |                                                                              |========================================                              |  58%  |                                                                              |=========================================                             |  58%  |                                                                              |=========================================                             |  59%  |                                                                              |==========================================                            |  59%  |                                                                              |==========================================                            |  60%  |                                                                              |==========================================                            |  61%  |                                                                              |===========================================                           |  61%  |                                                                              |===========================================                           |  62%  |                                                                              |============================================                          |  62%  |                                                                              |============================================                          |  63%  |                                                                              |=============================================                         |  64%  |                                                                              |=============================================                         |  65%  |                                                                              |==============================================                        |  65%  |                                                                              |==============================================                        |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=================================================                     |  71%  |                                                                              |==================================================                    |  71%  |                                                                              |==================================================                    |  72%  |                                                                              |===================================================                   |  72%  |                                                                              |===================================================                   |  73%  |                                                                              |====================================================                  |  74%  |                                                                              |====================================================                  |  75%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  77%  |                                                                              |======================================================                |  78%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  79%  |                                                                              |========================================================              |  80%  |                                                                              |========================================================              |  81%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================|  99%  |                                                                              |======================================================================| 100%
+
+> # Read the starting PDB file to determine atom correspondence
+> pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
+
+> pdb <- read.pdb(pdbfile)
+
+> # Whats in the new pdb object
+> print(pdb)
+
+ Call:  read.pdb(file = pdbfile)
+
+  Atom Count: 198 
+
+   Total ATOMs#: 198 
+     Protein ATOMs#: 198   ( Calpha ATOMs#: 198 ) 
+     Non-protein ATOMs#: 0   ( residues:  ) 
+     Chains#: 2   ( values: A B ) 
+
+   Total HETATOMs: 0 
+     Residues HETATOMs#: 0   ( residues:  ) 
+     Chains#: 0   ( values:  )
+
+   Sequence:
+      PQITLWQRPLVTIKIGGQLKEALLDTGADDTVLEEMSLPGRWKPKMIGGIGGFIKVRQYD
+      QILIEICGHKAIGTVLVGPTPVNIIGRNLLTQIGCTLNFPQITLWQRPLVTIKIGGQLKE
+      ALLDTGADDTVLEEMSLPGRWKPKMIGGIGGFIKVRQYDQILIEICGHKAIGTVLVGPTP
+      VNIIGRNLLTQIGCTLNF
+
++ attr: atom, het, helix, sheet, seqres,
+        xyz, xyz.models, calpha, call
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> # How many rows (frames) and columns (coords) present in trj
+> dim(trj)
+[1] 351 594
+
+> ncol(trj) == length(pdb$xyz)
+[1] TRUE
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> # Trajectory Frame Superposition on Calpha atoms
+> ca.inds <- atom.select(pdb, elety = "CA")
+
+Build selection from input components
+
+      segid chain resno resid eleno elety
+Stest ""    ""    ""    ""    ""    "CA" 
+Natom "198" "198" "198" "198" "198" "198"
+ *  Selected a total of: 198 intersecting atoms  *
+
+> xyz <- fit.xyz(fixed = pdb$xyz, mobile = trj, 
++ 	           fixed.inds = ca.inds$xyz, 
++ 	           mobile.inds = ca.inds$xyz)
+
+> # Root Mean Square Deviation (RMSD)
+> rd <- rmsd(xyz[1, ca.inds$xyz], xyz[, ca.inds$xyz])
+</div>
+<strong class='warning'>Warning message:
+No indices provided, using the 198 non NA positions
+</strong>
+<div class='output'>
+> plot(rd, typ = "l", ylab = "RMSD", xlab = "Frame No.")
+</div>
+<p><img src='bio3d.package-25.png' alt='' width='400' height='400' /></p>
+<div class='output'>
+> points(lowess(rd), typ = "l", col = "red", lty = 2, lwd = 2)
+
+> summary(rd)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.000   1.852   2.020   2.183   2.216   4.468 
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> # Root Mean Squared Fluctuations (RMSF)
+> rf <- rmsf(xyz[, ca.inds$xyz])
+
+> plot(rf, ylab = "RMSF", xlab = "Residue Position", typ="l")
+</div>
+<p><img src='bio3d.package-27.png' alt='' width='400' height='400' /></p>
+<div class='output'>
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> # Principal Component Analysis
+> pc <- pca.xyz(xyz[, ca.inds$xyz])
+
+> plot(pc, col = bwr.colors(nrow(xyz)))
+</div>
+<p><img src='bio3d.package-29.png' alt='' width='400' height='400' /></p>
+<div class='output'>
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> # Cluster in PC space
+> hc <- hclust(dist(pc$z[, 1:2]))
+
+> grps <- cutree(hc, k = 2)
+
+> plot(pc, col = grps)
+</div>
+<div class='output'>
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> # Cross-Correlation Analysis
+> cij <- dccm(xyz[, ca.inds$xyz])
+
+> plot(cij)
+</div>
+<strong class='message'>Loading required package: lattice</strong>
+<strong class='message'>Loading required package: grid</strong>
+<p><img src='bio3d.package-35.png' alt='' width='400' height='400' /></p>
+<div class='output'>
+> ## view.dccm(cij, pdb, launch = TRUE)
+</div>
+<div class='input'>demo(nma) # Normal Mode Analysis
+</div>
+<div class='output'>
+
+	demo(nma)
+	---- ~~~
+
+> ###
+> ### Examples from NMA Vignette
+> ###
+> ### Authors Lars Skjaerven
+> ###         Xin-Qiu Yao
+> ###         Barry J Grant
+> ###
+> require(bio3d); require(graphics);
+
+> pause <- function() {
++   cat("Press ENTER/RETURN/NEWLINE to continue.")
++   readLines(n=1)
++   invisible()
++ }
+
+> #############################################
+> ##                                          #
+> ## Basic usage                              #
+> ##                                          #
+> #############################################
+> 
+> ### Read PDB and Calculate Normal Modes
+> pdb <- read.pdb("1hel")
+  Note: Accessing online PDB file
+  HEADER    HYDROLASE(O-GLYCOSYL)                   10-JAN-92   1HEL               
+
+> modes <- nma(pdb)
+ Building Hessian...		Done in 0.072 seconds.
+ Diagonalizing Hessian...	Done in 0.133 seconds.
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### Print a summary
+> print(modes)
+
+Call:
+  nma(pdb = pdb)
+
+Class:
+  VibrationalModes (nma)
+
+Number of modes:
+  387 (6 trivial)
+
+Frequencies:
+  Mode 7: 	0.018
+  Mode 8: 	0.019
+  Mode 9: 	0.024
+  Mode 10: 	0.025
+  Mode 11: 	0.028
+  Mode 12: 	0.029
+
++ attr: modes, frequencies, force.constants, fluctuations,
+        U, L, xyz, mass, temp, triv.modes, natoms, call
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### Plot the nma object for a quick overview
+> plot(modes)
+</div>
+<div class='output'>
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### Calculate cross-correlations
+> cm <- dccm(modes)
+</div>
+<strong class='message'>Loading required package: multicore</strong>
+<strong class='message'>
+Attaching package: ‘multicore’
+</strong>
+<strong class='message'>The following object is masked from ‘package:lattice’:
+
+    parallel
+</strong>
+<p><img src='bio3d.package-43.png' alt='' width='400' height='400' /></p>
+<div class='output'>  |                                                                              |====================================================                  |  74%  |                                                                              |====================================================                  |  75%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  77%  |                                                                              |======================================================                |  78%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  79%  |                                                                              |========================================================              |  80%  |                                                                              |========================================================              |  81%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |=================================================================     |  94%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================|  99%  |                                                                              |======================================================================| 100%
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### Plot correlation map
+> plot(cm, sse=pdb)
+</div>
+<p><img src='bio3d.package-45.png' alt='' width='400' height='400' /></p>
+<div class='output'>
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### Calculate modes with force field ANM
+> modes.anm <- nma(pdb, ff="anm")
+ Building Hessian...		Done in 0.087 seconds.
+ Diagonalizing Hessian...	Done in 0.134 seconds.
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### Investigate modes similarity with RMSIP
+> r <- rmsip(modes, modes.anm)
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### Plot RMSIP results
+> plot(r, xlab="ANM", ylab="C-alpha FF")
+</div>
+<div class='output'>
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ################################################
+> ##                                             #
+> ## Ensemble NMA                                #
+> ## (requires the 'muscle' program installed)   #
+> ##                                             #
+> ################################################
+> 
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### Set temp dir to store PDB files
+> tmp.dir <- tempdir()
+
+> ### Download a set of Kinase structures
+> ids <- c("4b7t_A", "2exm_A", "1opj_A", 
++          "4jaj_A", "1a9u_A", "1tki_A")
+
+> ### Download and split by chain ID
+> raw.files <- get.pdb(ids, path=tmp.dir)
+</div>
+<strong class='warning'>Warning message:
+ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
+<p><img src='bio3d.package-49.png' alt='' width='400' height='400' /></p>
+<div class='output'>
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### Split PDB files by chain ID
+> files <- pdbsplit( raw.files, ids, path=tmp.dir)
+  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### Align structures
+> pdbs <- pdbaln(files)
+Reading PDB files:
+/tmp/RtmpeKwoQP/4b7t_A.pdb
+/tmp/RtmpeKwoQP/2exm_A.pdb
+/tmp/RtmpeKwoQP/1opj_A.pdb
+/tmp/RtmpeKwoQP/4jaj_A.pdb
+/tmp/RtmpeKwoQP/1a9u_A.pdb
+/tmp/RtmpeKwoQP/1tki_A.pdb
+......
+
+Extracting sequences
+
+pdb/seq: 1   name: /tmp/RtmpeKwoQP/4b7t_A.pdb 
+pdb/seq: 2   name: /tmp/RtmpeKwoQP/2exm_A.pdb 
+pdb/seq: 3   name: /tmp/RtmpeKwoQP/1opj_A.pdb 
+pdb/seq: 4   name: /tmp/RtmpeKwoQP/4jaj_A.pdb 
+pdb/seq: 5   name: /tmp/RtmpeKwoQP/1a9u_A.pdb 
+pdb/seq: 6   name: /tmp/RtmpeKwoQP/1tki_A.pdb 
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### View sequence identity
+> summary( c(seqidentity(pdbs)) )
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.1800  0.2320  0.2785  0.3884  0.3530  1.0000 
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### Calculate modes of aligned proteins
+> modes <- nma.pdbs(pdbs, fit=TRUE, outpath=NULL)
+  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ## Print a summary
+> print(modes)
+
+Call:
+  nma.pdbs(pdbs = pdbs, fit = TRUE, outpath = NULL)
+
+Class:
+  enma
+
+Number of structures:
+  6
+
+Attributes stored:
+  - Root mean square inner product (RMSIP)
+  - Aligned atomic fluctuations
+  - Aligned eigenvectors (gaps removed)
+  - Dimensions of x$U.subspace: 723x20x6
+
+Coordinates were aligned prior to NMA calculations
+
++ attr: fluctuations, rmsip, U.subspace, full.nma, call
+
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> ### Plot fluctuations
+> plot(modes, pdbs, type="h")
+</div>
+<p><img src='bio3d.package-51.png' alt='' width='400' height='400' /></p>
+<div class='output'>
+> pause()
+Press ENTER/RETURN/NEWLINE to continue.
+> unlink(tmp.dir)
+</div>
+<div class='input'>
+
+##-- Start by reading a PDB file
+pdb <- read.pdb("1BG2")
+</div>
+<div class='output'>  Note: Accessing online PDB file
+  HEADER    MOTOR PROTEIN                           04-JUN-98   1BG2               
+</div>
+<div class='input'>
+##
+##-- Distance matrix
+##
+k <- dm(pdb, selection="calpha")
+plot(k)
+</div>
+<p><img src='bio3d.package-56.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+## Extract SEQRES PDB sequence
+s <- aa321(pdb$seqres)
+
+## Extract ATOM PDB sequence
+s2 <- pdbseq(pdb)
+
+## write a FASTA format sequence file
+write.fasta(seqs=seqbind(s, s2), id=c("seqres","atom"), file="eg.fa")
+
+##----------------------------------------##
+
+##
+##-- Select alpha carbon atom subset
+##
+ca.inds <- atom.select(pdb, "calpha")
+</div>
+<div class='output'>
+Build selection from input string
+
+
+ Using selection 'string' keyword shortcut: calpha = //////CA/ 
+
+      segid  chain  resno  resid  eleno  elety
+Stest ""     ""     ""     ""     ""     "CA" 
+Natom "2527" "2527" "2527" "2527" "2527" "323"
+ *  Selected a total of: 323 intersecting atoms  *
+</div>
+<div class='input'>
+## Plot of B-factor values along with secondary structure
+plot.bio3d(pdb$atom[ca.inds$atom, "b"], sse=pdb, ylab="B-factor")
+</div>
+<p><img src='bio3d.package-60.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+## Secondary structure assignment with DSSP
+#sse <- dssp(pdb)
+
+##----------------------------------------##
+
+##
+##-- Torsion angle analysis and basic Ramachandran plot
+##
+tor <- torsion.pdb(pdb)
+plot(tor$phi, tor$psi)
+</div>
+<p><img src='bio3d.package-62.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+##----------------------------------------##
+
+##
+##-- Search for related structures in the PDB database
+blast <- blast.pdb( pdbseq(pdb) )
+</div>
+<div class='output'> Searching ... please wait (updates every 5 seconds) RID = 8X1WSJVR014 
+ ..........
+ Reporting 206 hits
+</div>
+<div class='input'>hits  <- plot.blast(blast)
+</div>
+<div class='output'>  * Possible cutoff values include:
+		 709 285 87 -3 
+    Yielding Nhits:
+		 11 15 186 206  
+
+ ** Chosen cutoff value of:
+		 87 
+    Yielding Nhits:
+		 186  
+</div>
+<p><img src='bio3d.package-67.png' alt='' width='400' height='400' /></p>
+<div class='input'>head(hits$hits)
+</div>
+<div class='output'>  pdb.id   gi.id       group
+1 "1BG2_A" "157830287" "1"  
+2 "2P4N_K" "193885175" "1"  
+3 "1MKJ_A" "24987772"  "1"  
+4 "4ATX_C" "406855617" "1"  
+5 "4HNA_K" "512125532" "1"  
+6 "2Y5W_A" "344189479" "1"  
+</div>
+<div class='input'>
+## Download these with function "get.pdb()"
+#rawpdbs <- get.pdb( hits$pdb.id, "PDB_downloads")
+
+## Split by chain with function "pdbsplit()"
+#pdbsplit(rawpdbs, path="PDB_downloads/split_chain")
+
+## and then align with "pdbaln()" and superpose with "pdbfit()"
+#hitfiles <- paste0("PDB_downloads/split_chain", hits$pdb.id, ".pdb")
+#pdbs <- pdbaln(hitfiles)
+#xyz  <- pdbfit(pdbs)
+
+##----------------------------------------##
+
+##
+##-- Read an example FASTA sequence alignment from PFAM
+##
+infile <- "http://pfam.sanger.ac.uk/family/PF00071/alignment/seed/format?format=fasta"
+
+aln <- read.fasta( infile )
+
+## Entropy and similarity scores for alignment positions
+h <- entropy(aln)   
+s <- conserv(aln)   # see other"conserv()" options
+plot(h$H.norm, typ="h", ylab="Normalized entropy score", col="gray")
+</div>
+<p><img src='bio3d.package-71.png' alt='' width='400' height='400' /></p>
+<div class='input'>points( s, typ="h", col="red")
+</div>
+<p><img src='bio3d.package-73.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+## Alignment consensus sequence
+con <- consensus(aln)
+con$seq
+</div>
+<div class='output'>  [1] "K" "-" "-" "-" "-" "G" "D" "-" "G" "V" "G" "K" "S" "-" "L" "-" "-" "-"
+ [19] "F" "-" "-" "-" "-" "F" "-" "-" "-" "-" "-" "-" "T" "I" "-" "-" "-" "-"
+ [37] "-" "-" "-" "-" "F" "-" "-" "-" "-" "-" "-" "-" "D" "-" "-" "-" "-" "-"
+ [55] "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "L" "-" "I" "W" "D" "T" "A" "G"
+ [73] "Q" "E" "-" "-" "-" "-" "-" "-" "-" "-" "Y" "Y" "R" "-" "-" "-" "G" "-"
+ [91] "-" "-" "V" "Y" "-" "-" "T" "-" "-" "-" "S" "F" "-" "-" "-" "-" "-" "-"
+[109] "W" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-"
+[127] "-" "-" "-" "-" "-" "-" "-" "-" "L" "V" "G" "N" "K" "-" "D" "L" "-" "-"
+[145] "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-"
+[163] "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "-" "R" "-"
+[181] "V" "-" "-" "-" "-" "-" "-" "-" "-" "A" "-" "-" "-" "-" "-" "-" "-" "-"
+[199] "-" "-" "-" "-" "-" "-" "F" "-" "E" "T" "S" "A" "K" "-" "-" "-" "N" "V"
+[217] "-" "-" "-" "F" "-" "-" "-" "-" "-" "-" "-" "-" "-"
+</div>
+<div class='input'>
+## add consensus sequence to conservation plot
+ind <- which(s > 0.6)
+text(ind, s[ind], labels=con$seq[ind])
+</div>
+<p><img src='bio3d.package-77.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+## Render the alignment as coloured HTML
+aln2html(aln, append=FALSE, file="eg.html")
+
+##----------------------------------------##
+
+##
+##-- Read an alignment of sequences and their corresponding structures
+##
+aln  <- read.fasta( system.file("examples/kif1a.fa", package="bio3d") )
+pdbs <- read.fasta.pdb( aln )
+</div>
+<div class='output'>pdb/seq: 1   name: http://www.rcsb.org/pdb/files/1bg2.pdb 
+pdb/seq: 2   name: http://www.rcsb.org/pdb/files/1i6i.pdb 
+   PDB has ALT records, taking A only, rm.alt=TRUE
+pdb/seq: 3   name: http://www.rcsb.org/pdb/files/1i5s.pdb 
+   PDB has ALT records, taking A only, rm.alt=TRUE
+pdb/seq: 4   name: http://www.rcsb.org/pdb/files/2ncd.pdb 
+</div>
+<div class='input'>
+##-- DDM: Difference Distance Matrix
+a <- dm(pdbs$xyz[2,])
+</div>
+<div class='output'>input is raw 'xyz' thus 'selection' ignored 
+</div>
+<div class='input'>b <- dm(pdbs$xyz[3,])
+</div>
+<div class='output'>input is raw 'xyz' thus 'selection' ignored 
+</div>
+<div class='input'>ddm <- a - b
+plot(ddm,key=FALSE, grid=FALSE)
+</div>
+<p><img src='bio3d.package-85.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+
+##-- Superpose structures on non gap positions
+xyz <- pdbfit(pdbs)
+
+##-- RMSD of non gap positions
+gaps <- gap.inspect(pdbs$xyz)
+rmsd(pdbs$xyz[, gaps$f.inds])
+</div>
+<strong class='warning'>Warning message:
+No indices provided, using the 293 non NA positions
+</strong>
+<div class='output'>       [,1]   [,2]   [,3]   [,4]
+[1,]  0.000 48.901 48.533 63.343
+[2,] 48.901  0.000 58.171 53.186
+[3,] 48.533 58.171  0.000 88.198
+[4,] 63.343 53.186 88.198  0.000
+</div>
+<div class='input'>rmsd(xyz[, gaps$f.inds])
+</div>
+<strong class='warning'>Warning message:
+No indices provided, using the 293 non NA positions
+</strong>
+<div class='output'>      [,1]  [,2]  [,3]  [,4]
+[1,] 0.000 2.654 2.412 2.775
+[2,] 2.654 0.000 2.202 3.063
+[3,] 2.412 2.202 0.000 2.905
+[4,] 2.775 3.063 2.905 0.000
+</div>
+<div class='input'>
+
+##-- Rigid 'core' identification
+core <- core.find(pdbs)
+</div>
+<div class='output'> core size 292 of 293  vol = 514.143 
+ core size 291 of 293  vol = 447.731 
+ core size 290 of 293  vol = 387.435 
+ core size 289 of 293  vol = 331.593 
+ core size 288 of 293  vol = 283.574 
+ core size 287 of 293  vol = 246.623 
+ core size 286 of 293  vol = 208.274 
+ core size 285 of 293  vol = 182.781 
+ core size 284 of 293  vol = 164.601 
+ core size 283 of 293  vol = 157.327 
+ core size 282 of 293  vol = 146.487 
+ core size 281 of 293  vol = 137.838 
+ core size 280 of 293  vol = 129.921 
+ core size 279 of 293  vol = 122.179 
+ core size 278 of 293  vol = 116.368 
+ core size 277 of 293  vol = 111.555 
+ core size 276 of 293  vol = 106.687 
+ core size 275 of 293  vol = 101.363 
+ core size 274 of 293  vol = 96.687 
+ core size 273 of 293  vol = 92.348 
+ core size 272 of 293  vol = 88.677 
+ core size 271 of 293  vol = 85.5 
+ core size 270 of 293  vol = 81.406 
+ core size 269 of 293  vol = 77.912 
+ core size 268 of 293  vol = 73.995 
+ core size 267 of 293  vol = 71.051 
+ core size 266 of 293  vol = 68.092 
+ core size 265 of 293  vol = 64.752 
+ core size 264 of 293  vol = 61.491 
+ core size 263 of 293  vol = 58.734 
+ core size 262 of 293  vol = 56.747 
+ core size 261 of 293  vol = 53.924 
+ core size 260 of 293  vol = 51.475 
+ core size 259 of 293  vol = 49.091 
+ core size 258 of 293  vol = 47.43 
+ core size 257 of 293  vol = 45.099 
+ core size 256 of 293  vol = 43.041 
+ core size 255 of 293  vol = 41.104 
+ core size 254 of 293  vol = 39.221 
+ core size 253 of 293  vol = 37.911 
+ core size 252 of 293  vol = 36.38 
+ core size 251 of 293  vol = 34.692 
+ core size 250 of 293  vol = 32.866 
+ core size 249 of 293  vol = 31.75 
+ core size 248 of 293  vol = 30.327 
+ core size 247 of 293  vol = 28.967 
+ core size 246 of 293  vol = 28.206 
+ core size 245 of 293  vol = 27.182 
+ core size 244 of 293  vol = 26.445 
+ core size 243 of 293  vol = 25.876 
+ core size 242 of 293  vol = 24.76 
+ core size 241 of 293  vol = 23.847 
+ core size 240 of 293  vol = 23.584 
+ core size 239 of 293  vol = 22.868 
+ core size 238 of 293  vol = 22.379 
+ core size 237 of 293  vol = 22.256 
+ core size 236 of 293  vol = 21.211 
+ core size 235 of 293  vol = 20.348 
+ core size 234 of 293  vol = 19.714 
+ core size 233 of 293  vol = 19.157 
+ core size 232 of 293  vol = 18.434 
+ core size 231 of 293  vol = 17.773 
+ core size 230 of 293  vol = 17.077 
+ core size 229 of 293  vol = 16.26 
+ core size 228 of 293  vol = 15.425 
+ core size 227 of 293  vol = 14.781 
+ core size 226 of 293  vol = 13.973 
+ core size 225 of 293  vol = 13.56 
+ core size 224 of 293  vol = 12.684 
+ core size 223 of 293  vol = 11.916 
+ core size 222 of 293  vol = 11.147 
+ core size 221 of 293  vol = 10.837 
+ core size 220 of 293  vol = 10.517 
+ core size 219 of 293  vol = 10.302 
+ core size 218 of 293  vol = 10.037 
+ core size 217 of 293  vol = 9.923 
+ core size 216 of 293  vol = 9.398 
+ core size 215 of 293  vol = 9.084 
+ core size 214 of 293  vol = 8.86 
+ core size 213 of 293  vol = 8.49 
+ core size 212 of 293  vol = 8.102 
+ core size 211 of 293  vol = 7.917 
+ core size 210 of 293  vol = 7.719 
+ core size 209 of 293  vol = 7.474 
+ core size 208 of 293  vol = 7.049 
+ core size 207 of 293  vol = 7.118 
+ core size 206 of 293  vol = 6.873 
+ core size 205 of 293  vol = 6.696 
+ core size 204 of 293  vol = 6.544 
+ core size 203 of 293  vol = 6.415 
+ core size 202 of 293  vol = 6.25 
+ core size 201 of 293  vol = 5.867 
+ core size 200 of 293  vol = 5.741 
+ core size 199 of 293  vol = 5.587 
+ core size 198 of 293  vol = 5.444 
+ core size 197 of 293  vol = 5.363 
+ core size 196 of 293  vol = 5.232 
+ core size 195 of 293  vol = 5.167 
+ core size 194 of 293  vol = 5.041 
+ core size 193 of 293  vol = 4.921 
+ core size 192 of 293  vol = 4.657 
+ core size 191 of 293  vol = 4.415 
+ core size 190 of 293  vol = 4.304 
+ core size 189 of 293  vol = 4.176 
+ core size 188 of 293  vol = 4.062 
+ core size 187 of 293  vol = 3.899 
+ core size 186 of 293  vol = 3.784 
+ core size 185 of 293  vol = 3.717 
+ core size 184 of 293  vol = 3.586 
+ core size 183 of 293  vol = 3.499 
+ core size 182 of 293  vol = 3.429 
+ core size 181 of 293  vol = 3.33 
+ core size 180 of 293  vol = 3.177 
+ core size 179 of 293  vol = 3.069 
+ core size 178 of 293  vol = 3.002 
+ core size 177 of 293  vol = 2.929 
+ core size 176 of 293  vol = 2.87 
+ core size 175 of 293  vol = 2.786 
+ core size 174 of 293  vol = 2.586 
+ core size 173 of 293  vol = 2.497 
+ core size 172 of 293  vol = 2.427 
+ core size 171 of 293  vol = 2.38 
+ core size 170 of 293  vol = 2.328 
+ core size 169 of 293  vol = 2.288 
+ core size 168 of 293  vol = 2.254 
+ core size 167 of 293  vol = 2.226 
+ core size 166 of 293  vol = 2.174 
+ core size 165 of 293  vol = 2.138 
+ core size 164 of 293  vol = 2.089 
+ core size 163 of 293  vol = 2.046 
+ core size 162 of 293  vol = 1.993 
+ core size 161 of 293  vol = 1.939 
+ core size 160 of 293  vol = 1.906 
+ core size 159 of 293  vol = 1.872 
+ core size 158 of 293  vol = 1.829 
+ core size 157 of 293  vol = 1.794 
+ core size 156 of 293  vol = 1.769 
+ core size 155 of 293  vol = 1.689 
+ core size 154 of 293  vol = 1.628 
+ core size 153 of 293  vol = 1.567 
+ core size 152 of 293  vol = 1.53 
+ core size 151 of 293  vol = 1.477 
+ core size 150 of 293  vol = 1.434 
+ core size 149 of 293  vol = 1.377 
+ core size 148 of 293  vol = 1.349 
+ core size 147 of 293  vol = 1.333 
+ core size 146 of 293  vol = 1.276 
+ core size 145 of 293  vol = 1.266 
+ core size 144 of 293  vol = 1.258 
+ core size 143 of 293  vol = 1.234 
+ core size 142 of 293  vol = 1.219 
+ core size 141 of 293  vol = 1.185 
+ core size 140 of 293  vol = 1.167 
+ core size 139 of 293  vol = 1.136 
+ core size 138 of 293  vol = 1.098 
+ core size 137 of 293  vol = 1.076 
+ core size 136 of 293  vol = 1.043 
+ core size 135 of 293  vol = 1.013 
+ core size 134 of 293  vol = 0.99 
+ core size 133 of 293  vol = 0.968 
+ core size 132 of 293  vol = 0.963 
+ core size 131 of 293  vol = 0.954 
+ core size 130 of 293  vol = 0.947 
+ core size 129 of 293  vol = 0.919 
+ core size 128 of 293  vol = 0.909 
+ core size 127 of 293  vol = 0.893 
+ core size 126 of 293  vol = 0.87 
+ core size 125 of 293  vol = 0.851 
+ core size 124 of 293  vol = 0.828 
+ core size 123 of 293  vol = 0.813 
+ core size 122 of 293  vol = 0.803 
+ core size 121 of 293  vol = 0.792 
+ core size 120 of 293  vol = 0.783 
+ core size 119 of 293  vol = 0.775 
+ core size 118 of 293  vol = 0.757 
+ core size 117 of 293  vol = 0.745 
+ core size 116 of 293  vol = 0.743 
+ core size 115 of 293  vol = 0.7 
+ core size 114 of 293  vol = 0.687 
+ core size 113 of 293  vol = 0.677 
+ core size 112 of 293  vol = 0.647 
+ core size 111 of 293  vol = 0.638 
+ core size 110 of 293  vol = 0.642 
+ core size 109 of 293  vol = 0.629 
+ core size 108 of 293  vol = 0.598 
+ core size 107 of 293  vol = 0.571 
+ core size 106 of 293  vol = 0.573 
+ core size 105 of 293  vol = 0.551 
+ core size 104 of 293  vol = 0.538 
+ core size 103 of 293  vol = 0.523 
+ core size 102 of 293  vol = 0.504 
+ core size 101 of 293  vol = 0.49 
+ FINISHED: Min vol ( 0.5 ) reached
+</div>
+<div class='input'>#plot(core)
+
+## Core fit the structures (superpose on rigid zones)
+xyz2 <- pdbfit(pdbs, inds=core$c0.5A.xyz)
+
+## Note larger overall RMSD but lower core-residue RMSF
+rmsd(xyz2[, gaps$f.inds])
+</div>
+<strong class='warning'>Warning message:
+No indices provided, using the 293 non NA positions
+</strong>
+<div class='output'>      [,1]  [,2]  [,3]  [,4]
+[1,] 0.000 2.828 2.455 2.805
+[2,] 2.828 0.000 2.326 3.155
+[3,] 2.455 2.326 0.000 2.927
+[4,] 2.805 3.155 2.927 0.000
+</div>
+<div class='input'>
+plot(rmsf(xyz), typ="l", col="blue", ylab="RMSF")
+</div>
+<p><img src='bio3d.package-98.png' alt='' width='400' height='400' /></p>
+<div class='input'>points(rmsf(xyz2), typ="l", col="red")
+</div>
+<p><img src='bio3d.package-100.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+
+
+##
+##-- PCA of experimental structures
+##
+# Ignore gap containing positions
+gaps.res <- gap.inspect(pdbs$ali)
+gaps.pos <- gap.inspect(pdbs$xyz)
+
+
+##-- Do PCA
+pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
+
+## Plot results
+plot(pc.xray)
+</div>
+<p><img src='bio3d.package-102.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+plot.pca.loadings(pc.xray$au)
+</div>
+<p><img src='bio3d.package-104.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+## Write a PC trajectory (for viewing as tube in VMD)
+rn <- pdbs$resno[1, gaps.res$f.inds]
+rd <- aa123(pdbs$ali[1, gaps.res$f.inds])
+
+#a <- mktrj.pca(pc.xray, pc=1, resno =rn, resid = rd, file="pc1.pdb")
+#b <- mktrj.pca(pc.xray, pc=2, resno =rn, resid = rd, file="pc2.pdb")
+c <- mktrj.pca(pc.xray, pc=3, resno =rn, resid = rd, file="pc3.pdb")
+
+
+##----------------------------------------##
+
+##
+##-- Read a CHARMM/X-PLOR/NAMD trajectory file
+##
+trtfile <- system.file("examples/hivp.dcd", package="bio3d")
+trj <- read.dcd(trtfile)
+</div>
+<div class='output'> NATOM = 198 
+ NFRAME= 351 
+ ISTART= 0 
+ last  = 351 
+ nstep = 351 
+ nfile = 351 
+ NSAVE = 1 
+ NDEGF = 0 
+ version 24 
+Reading (x100)  |                                                                              |                                                                      |   0%  |                                                                              |                                                                      |   1%  |                                                                              |=                                                                     |   1%  |                                                                              |=                                                                     |   2%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%  |                                                                              |===                                                                   |   4%  |                                                                              |===                                                                   |   5%  |                                                                              |====                                                                  |   5%  |                                                                              |====                                                                  |   6%  |                                                                              |=====                                                                 |   7%  |                                                                              |=====                                                                 |   8%  |                                                                              |======                                                                |   8%  |                                                                              |======                                                                |   9%  |                                                                              |=======                                                               |   9%  |                                                                              |=======                                                               |  10%  |                                                                              |=======                                                               |  11%  |                                                                              |========                                                              |  11%  |                                                                              |========                                                              |  12%  |                                                                              |=========                                                             |  12%  |                                                                              |=========                                                             |  13%  |                                                                              |==========                                                            |  14%  |                                                                              |==========                                                            |  15%  |                                                                              |===========                                                           |  15%  |                                                                              |===========                                                           |  16%  |                                                                              |============                                                          |  17%  |                                                                              |============                                                          |  18%  |                                                                              |=============                                                         |  18%  |                                                                              |=============                                                         |  19%  |                                                                              |==============                                                        |  19%  |                                                                              |==============                                                        |  20%  |                                                                              |==============                                                        |  21%  |                                                                              |===============                                                       |  21%  |                                                                              |===============                                                       |  22%  |                                                                              |================                                                      |  22%  |                                                                              |================                                                      |  23%  |                                                                              |=================                                                     |  24%  |                                                                              |=================                                                     |  25%  |                                                                              |==================                                                    |  25%  |                                                                              |==================                                                    |  26%  |                                                                              |===================                                                   |  27%  |                                                                              |===================                                                   |  28%  |                                                                              |====================                                                  |  28%  |                                                                              |====================                                                  |  29%  |                                                                              |=====================                                                 |  29%  |                                                                              |=====================                                                 |  30%  |                                                                              |=====================                                                 |  31%  |                                                                              |======================                                                |  31%  |                                                                              |======================                                                |  32%  |                                                                              |=======================                                               |  32%  |                                                                              |=======================                                               |  33%  |                                                                              |========================                                              |  34%  |                                                                              |========================                                              |  35%  |                                                                              |=========================                                             |  35%  |                                                                              |=========================                                             |  36%  |                                                                              |==========================                                            |  37%  |                                                                              |==========================                                            |  38%  |                                                                              |===========================                                           |  38%  |                                                                              |===========================                                           |  39%  |                                                                              |============================                                          |  39%  |                                                                              |============================                                          |  40%  |                                                                              |============================                                          |  41%  |                                                                              |=============================                                         |  41%  |                                                                              |=============================                                         |  42%  |                                                                              |==============================                                        |  42%  |                                                                              |==============================                                        |  43%  |                                                                              |===============================                                       |  44%  |                                                                              |===============================                                       |  45%  |                                                                              |================================                                      |  45%  |                                                                              |================================                                      |  46%  |                                                                              |=================================                                     |  47%  |                                                                              |=================================                                     |  48%  |                                                                              |==================================                                    |  48%  |                                                                              |==================================                                    |  49%  |                                                                              |===================================                                   |  49%  |                                                                              |===================================                                   |  50%  |                                                                              |===================================                                   |  51%  |                                                                              |====================================                                  |  51%  |                                                                              |====================================                                  |  52%  |                                                                              |=====================================                                 |  52%  |                                                                              |=====================================                                 |  53%  |                                                                              |======================================                                |  54%  |                                                                              |======================================                                |  55%  |                                                                              |=======================================                               |  55%  |                                                                              |=======================================                               |  56%  |                                                                              |========================================                              |  57%  |                                                                              |========================================                              |  58%  |                                                                              |=========================================                             |  58%  |                                                                              |=========================================                             |  59%  |                                                                              |==========================================                            |  59%  |                                                                              |==========================================                            |  60%  |                                                                              |==========================================                            |  61%  |                                                                              |===========================================                           |  61%  |                                                                              |===========================================                           |  62%  |                                                                              |============================================                          |  62%  |                                                                              |============================================                          |  63%  |                                                                              |=============================================                         |  64%  |                                                                              |=============================================                         |  65%  |                                                                              |==============================================                        |  65%  |                                                                              |==============================================                        |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=================================================                     |  71%  |                                                                              |==================================================                    |  71%  |                                                                              |==================================================                    |  72%  |                                                                              |===================================================                   |  72%  |                                                                              |===================================================                   |  73%  |                                                                              |====================================================                  |  74%  |                                                                              |====================================================                  |  75%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  77%  |                                                                              |======================================================                |  78%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  79%  |                                                                              |========================================================              |  80%  |                                                                              |========================================================              |  81%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================|  99%  |                                                                              |======================================================================| 100%
+</div>
+<div class='input'>
+## Read the starting PDB file to determine atom correspondence
+pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
+pdb <- read.pdb(pdbfile)
+
+## Fit trj on PDB based on residues 23 to 31 and 84 to 87 in both chains
+##inds <- atom.select(pdb,"///23:31,84:87///CA/")
+inds <- atom.select(pdb, resno=c(23:31,84:87), elety="CA")
+</div>
+<div class='output'>
+Build selection from input components
+
+      segid chain resno                                    resid eleno elety
+Stest ""    ""    "23,24,25,26,27,28,29,30,31,84,85,86,87" ""    ""    "CA" 
+Natom "198" "198" "26"                                     "198" "198" "198"
+ *  Selected a total of: 26 intersecting atoms  *
+</div>
+<div class='input'>fit.xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
+
+##-- RMSD of trj frames from PDB
+r <- rmsd(a=pdb, b=fit.xyz)
+</div>
+<strong class='warning'>Warning message:
+No indices provided, using the 198 non NA positions
+</strong>
+<div class='input'>
+##-- PCA of trj
+pc.trj <- pca.xyz(fit.xyz)
+
+## Plot PCA results
+plot(pc.trj)
+</div>
+<p><img src='bio3d.package-112.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+## Examine residue-wise contributions to PCs
+plot.pca.loadings(pc.trj$au)
+</div>
+<p><img src='bio3d.package-114.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+## cluster in PC1 subspace
+hc <- hclust(dist(pc.trj$z[,1]))
+plot(pc.trj, col=cutree(hc, k=2))
+</div>
+<p><img src='bio3d.package-116.png' alt='' width='400' height='400' /></p>
+<div class='input'>
+
+## Write PC trajectory for viewing as tube in VMD
+a <- mktrj.pca(pc.trj, pc=1, file="pc1_trj.pdb")
+
+## other examples include: normal mode analysis, alignment, clustering etc...
 
 </div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>bio3d-package</li><li>bio3d</li>
     </ul>
@@ -384,7 +1620,7 @@ Lars Skjaerven <larsss@gmail.com>
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=bio3d-package'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=bio3d-package'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

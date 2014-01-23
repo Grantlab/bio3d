@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>atom.select. bio3d 1.2</title>
+<title>atom.select. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Barry Grant ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -43,9 +44,7 @@
   <div class="span8">
     <h2>Usage</h2>
     <pre>atom.select(pdb, string = NULL, chain = NULL, resno = NULL, resid = NULL, eleno = NULL, 
-  elety = NULL, verbose = TRUE, rm.insert = FALSE)
-
-pdb.summary(pdb)</pre>
+  elety = NULL, verbose = TRUE, rm.insert = FALSE)</pre>
     
     <h2>Arguments</h2>
     <dl>
@@ -111,8 +110,7 @@ pdb.summary(pdb)</pre>
   <code>"h"</code> and <code>"noh"</code> may also be used. See below for examples.</p>
   
       <p>When called without a selection string, <code>atom.select</code> will print a
-  summary of <code>pdb</code> makeup.  <code>pdb.summary</code> is a simple
-  alias to <code>atom.select</code> with <code>string=NULL</code> and <code>verbose=T</code>.</p>
+  summary of <code>pdb</code> makeup.</p>
   
     </div>
 
@@ -143,59 +141,28 @@ pdb <- read.pdb( "http://www.rcsb.org/pdb/files/1BG2.pdb" )
 # Print structure summary
 atom.select(pdb)
 </div>
-<div class='output'>..| segid |..
-total #: 1 
-values : NA 
+<div class='output'>
+ Call:  read.pdb(file = "http://www.rcsb.org/pdb/files/1BG2.pdb")
 
+  Atom Count: 2733 
 
-..| chain |..
-total protein #: 1 
-values : A 
+   Total ATOMs#: 2527 
+     Protein ATOMs#: 2527   ( Calpha ATOMs#: 323 ) 
+     Non-protein ATOMs#: 0   ( residues:  ) 
+     Chains#: 1   ( values: A ) 
 
+   Total HETATOMs: 206 
+     Residues HETATOMs#: 174   ( residues: MG ACT ADP HOH ) 
+     Chains#: 1   ( values: A )
 
-..| resno |..
-total protein #: 323 
-in segments: 
+   Sequence:
+      DLAECNIKVMCRFRPLNESEVNRGDKYIAKFQGEDTVVIASKPYAFDRVFQSSTSQEQVY
+      NDCAKKIVKDVLEGYNGTIFAYGQTSSGKTHTMEGKLHDPEGMGIIPRIVQDIFNYIYSM
+      DENLEFHIKVSYFEIYLDKIRDLLDVSKTNLSVHEDKNRVPYVKGCTERFVCSPDEVMDT
+      IDEGKSNRHVAVTNMNEHSSRSHSIFLINVKQENTQTEQKLSGKL...<cut>...AKTI
 
-  start end length
-1     3 325    323
-
-
-..| resid |..
-total #: 19 ( diff types from 323 )
-values : 
-
-ALA ARG ASN ASP CYS GLN GLU GLY HIS ILE LEU LYS MET PHE PRO SER THR TYR VAL 
- 15  14  19  20   8  11  24  20   7  22  22  25   7  11   8  31  20  14  25 
-
-
-..| eleno |..
-total # : 2527 
-in segments: 
-
-  start  end length
-1     1 2527   2527
-
-
-..| elety |..
-total # : 31 ( diff types from 2527 )
-values : 
-
-  C  CA  CB  CD CD1 CD2  CE CE1 CE2  CG CG1 CG2  CZ   N ND1 ND2  NE NE2 NH1 NH2 
-323 323 303  81  69  54  32  32  25 181  47  67  38 323   7  19  13  18  13  13 
- NZ   O OD1 OD2 OE1 OE2  OG OG1  OH  SD  SG 
- 25 323  39  20  35  24  31  20  14   7   8 
-
-
-..| water |..
-total # : 0 
-
-
-..| summary |..
-atom     #: 2527 
-xyz      #: 7581 
-calpha   #: 323 
-sequence #: DLAECNIKVMCRFRPLNESEVNRGDKYIAKFQGEDTVVIASKPYAFDRVFQSSTSQEQVYNDCAKKIVKDVLEGYNGTIFAYGQTSSGKTHTMEGKLHDPEGMGIIPRIVQDIFNYIYSMDENLEFHIKVSYFEIYLDKIRDLLDVSKTNLSVHEDKNRVPYVKGCTERFVCSPDEVMDTIDEGKSNRHVAVTNMNEHSSRSHSIFLINVKQENTQTEQKLSGKLYLVDLAGSEKVSKTGAEGAVLDEAKNINKSLSALGNVISALAEGSTYVPYRDSKMTRILQDSLGGNCRTTIVICCSPSSYNESETKSTLLFGQRAKTI 
++ attr: atom, het, helix, sheet, seqres,
+        xyz, xyz.models, calpha, call
 </div>
 <div class='input'>
 # Select all C-alpha atoms with residues numbers between 65 and 143
@@ -290,9 +257,9 @@ Natom "2527" "2527" "115"     "2527" "2527" "1292"
  *  Selected a total of: 52 intersecting atoms  *
 </div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
-      <li>atom.select</li><li>pdb.summary</li>
+      <li>atom.select</li>
     </ul>
     <ul>
       <li>utilities</li>
@@ -308,7 +275,7 @@ Natom "2527" "2527" "115"     "2527" "2527" "1292"
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=atom.select'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=atom.select'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

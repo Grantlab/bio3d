@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>struct.aln. bio3d 1.2</title>
+<title>struct.aln. bio3d 2.0-1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content=" Lars Skjarven ">
 
@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 1.2</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -43,7 +44,7 @@
   <div class="span8">
     <h2>Usage</h2>
     <pre>struct.aln(fixed, mobile, fixed.inds = NULL, mobile.inds = NULL, write.pdbs = TRUE, 
-  outpath = "fitlsq/", prefix = c("fixed", "mobile"), max.cycles = 10, cutoff = 0.5, 
+  outpath = "fitlsq", prefix = c("fixed", "mobile"), max.cycles = 10, cutoff = 0.5, 
       ...)</pre>
     
     <h2>Arguments</h2>
@@ -146,26 +147,6 @@
      aln <- struct.aln(a, b)
 </div>
 <div class='output'>
-Build selection from input string
-
-
- Using selection 'string' keyword shortcut: all = /////// 
-
-      segid  chain  resno  resid  eleno  elety 
-Stest ""     ""     ""     ""     ""     ""    
-Natom "3009" "3009" "3009" "3009" "3009" "3009"
- *  Selected a total of: 3009 intersecting atoms  *
-
-Build selection from input string
-
-
- Using selection 'string' keyword shortcut: all = /////// 
-
-      segid  chain  resno  resid  eleno  elety 
-Stest ""     ""     ""     ""     ""     ""    
-Natom "2655" "2655" "2655" "2655" "2655" "2655"
- *  Selected a total of: 2655 intersecting atoms  *
-muscle -in /tmp/RtmpesXLkY/file5d6e1b055ec7 -out aln.fa  -seqtype protein
  Initial RMSD (320 atoms): 6.658
  Cycle 1: 7 atoms rejected
   Mean: 1.3 Std: 6.1 Cut: 13.4
@@ -181,20 +162,19 @@ muscle -in /tmp/RtmpesXLkY/file5d6e1b055ec7 -out aln.fa  -seqtype protein
   RMSD (246 of 320 atoms): 0.99
 </div>
 <div class='input'>
-     ## Should be the same as aln$rmsd
+     ## Should be the same as aln$rmsd (when using aln$a.inds and aln$b.inds)
      rmsd(a$xyz, b$xyz, aln$a.inds$xyz, aln$b.inds$xyz, fit=TRUE)
 </div>
 <div class='output'>[1] 0.99
 </div>
 <div class='input'>
-
      ## Align two subunits of GroEL (open and closed states)
-     a <- read.pdb("1sx4", maxlines=70000)
+     a <- read.pdb("1sx4")
 </div>
 <div class='output'>  Note: Accessing online PDB file
   HEADER    CHAPERONE                               30-MAR-04   1SX4               
 </div>
-<div class='input'>     b <- read.pdb("1xck", maxlines=70000)
+<div class='input'>     b <- read.pdb("1xck")
 </div>
 <div class='output'>  Note: Accessing online PDB file
   HEADER    CHAPERONE                               02-SEP-04   1XCK               
@@ -225,7 +205,7 @@ Natom "53970" "3855" "53970" "53970" "53970" "53970"
      ## Align and fit:
      aln <- struct.aln(a,b, a.inds, b.inds)
 </div>
-<div class='output'>muscle -in /tmp/RtmpesXLkY/file5d6e7165b0c4 -out aln.fa  -seqtype protein
+<div class='output'>
  Initial RMSD (524 atoms): 12.062
  Cycle 1: 42 atoms rejected
   Mean: 8.1 Std: 6.6 Cut: 21.4
@@ -251,10 +231,9 @@ Natom "53970" "3855" "53970" "53970" "53970" "53970"
  Cycle 8: 22 atoms rejected
   Mean: 1 Std: 0.9 Cut: 2.7
   RMSD (243 of 524 atoms): 0.976
-</div>
-<div class='input'></div></pre>
+</div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>struct.aln</li>
     </ul>
@@ -273,7 +252,7 @@ Natom "53970" "3855" "53970" "53970" "53970" "53970"
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=struct.aln'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=struct.aln'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>
