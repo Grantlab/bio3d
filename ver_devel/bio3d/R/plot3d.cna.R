@@ -1,7 +1,7 @@
 plot3d.cna <- function(x,
                        pdb = NULL,
                        node.size = NULL, ##
-                       weights=E(x$clustered.network)$weight*10,
+                       weights=E(x$community.network)$weight*10,
                        layout = layout.pdb(pdb, x),
                        col = NULL,
                        ...){
@@ -29,13 +29,13 @@ plot3d.cna <- function(x,
   }
   if(is.null(pdb) && is.null(layout)) {
     cat("Obtaning guestimated layout with fruchterman.reingold\n")
-    layout <- layout.fruchterman.reingold(x$clustered.network, weights=weights)
+    layout <- layout.fruchterman.reingold(x$community.network, weights=weights)
   }
   if(dim(layout)[2] != 3){
     stop("Input 'layout' must be an Nx3 matrix, where N is the number of communities")
   }
   
-  rglplot(x$clustered.network,
+  rglplot(x$community.network,
           edge.width = weights,
           layout = layout,
           vertex.size = node.size,

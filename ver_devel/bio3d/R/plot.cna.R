@@ -1,4 +1,7 @@
-plot.cna <- function(x, community=x$clustered.communities, weights=NULL,
+plot.cna <- #function(x, community=x$clustered.communities, weights=NULL,
+            #         layout=NULL, col=NULL, ...) {
+
+            function(x, weights=NULL,
                      layout=NULL, col=NULL, ...) {
 
   ##- Function for ploting cna networks the way we like them.
@@ -25,7 +28,7 @@ plot.cna <- function(x, community=x$clustered.communities, weights=NULL,
   ##    vmd.colors(18)== V(x$clustered.network)$color
 
   if(is.null(weights)){
-    weights <- E(x$clustered.network)$weight
+    weights <- E(x$community.network)$weight
     
     if(is.null(x$call$minus.log)){
       weights <- exp(-weights)
@@ -39,21 +42,12 @@ plot.cna <- function(x, community=x$clustered.communities, weights=NULL,
   }
   
   if(is.null(layout)) {
-      coords <- layout.fruchterman.reingold(x$clustered.network, weights=weights)
+      coords <- layout.fruchterman.reingold(x$community.network, weights=weights)
   } else { coords=layout }
   
-  if(is.null(community)) {
-    ## No community structure so call plot.igraph()
-    plot.igraph(x$clustered.network, edge.width=weights, layout=coords, vertex.color=col) ##, ...)
-    ## Note: col=ERROR here, should be vertex.color= for plot.igraph
-
-  } else {
-    ## Plot with community groups marked 
-    plot.communities(community, x$clustered.network, edge.width=weights, layout=coords,  col=col, ...)
-    ###plot.communities(community, x$clustered.network, edge.width=weights, layout=coords,
-    ###                 col=vmd.colors(), mark.col=vmd.colors(alpha=0.3), mark.border=vmd.colors() )
-  }
+  plot.igraph(x$community.network, edge.width=weights, layout=coords, vertex.color=col) ##, ...)
+    
   ## Silently return plot coordinates
-  class(coords) = "cna"
+  #class(coords) = "cna"
   layout <- coords
 }
