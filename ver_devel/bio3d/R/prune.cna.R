@@ -1,4 +1,4 @@
-prune.cna <- function(x, edges.min=1, size.min=1) {
+prune.cna <- function(x, edges.min=1, size.min=1, cluster.method="btwn") {
   
   ##-- Prune nodes based on number of edges and number of members
   ##     prune.cna(net)
@@ -40,7 +40,15 @@ prune.cna <- function(x, edges.min=1, size.min=1) {
     }
   
     d <- delete.vertices(network, rm.vs)
-    comms <- edge.betweenness.community(d, directed = FALSE)
+    cluster.options = c("btwn", "walk", "greed")
+    
+    comms <- switch(cluster.method,
+                    btwn = edge.betweenness.community(d, directed=FALSE),
+                    walk = walktrap.community(d), 
+                    greed = fastgreedy.community(d))
+
+    #comms <- edge.betweenness.community(d, directed = FALSE)
+    
     ## Will probably want to keep an edited old community object !!!
     
     output <- list("clustered.network"=d,

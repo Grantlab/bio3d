@@ -1,12 +1,26 @@
-view.cna <- function(x, layout=layout.pdb(pdb, x),
-                     col.sphere=0:32, col.lines="silver",
-                     weights=E(x$clustered.network)$weight,
+view.cna <- function(x, pdb, layout=layout.pdb(pdb, x),
+                     col.sphere=match(V(x$clustered.network)$color, vmd.colors())-1, 
+                     col.lines="silver",
+                     weights=NULL,
                      radius=table(x$raw.communities$membership)/5,
                      alpha=1,
                      vmdfile="network.vmd", pdbfile="network.pdb",
                      launch=FALSE) {
 
   ## Draw a cna network in VMD
+  
+  if(is.null(weights)){
+    weights <- E(x$clustered.network)$weight
+    
+    if(is.null(x$call$minus.log)){
+      weights <- exp(-weights)
+    }
+    else{
+      if(x$call$minus.log){
+        weights <- exp(-weights)
+      }
+    }
+  }
   
   ##-- VMD draw functions for sphere, lines and cone
   .vmd.sphere <- function(cent, radius=5, col="red", resolution=25) {
@@ -77,8 +91,12 @@ view.cna <- function(x, layout=layout.pdb(pdb, x),
 
   ## Edges
   edge.list <- unlist2(get.adjlist(x$clustered.network))
-  start <- layout[as.numeric(names(edge.list)),]
-  end <- layout[as.numeric((edge.list)),]
+  start.no <- as.numeric(names(edge.list))
+  end.no <- as.numeric((edge.list))
+  inds <- which(end.no > start.no)
+  
+  start <- layout[start.no[inds],]
+  end <- layout[end.no[inds],]
   ###weights=E(x$clustered.network)$weight ##/0.2
   scr <- c(scr, .vmd.lines( start=start, end=end,
                            radius=weights, col=col.lines))

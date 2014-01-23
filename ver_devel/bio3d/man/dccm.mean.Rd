@@ -64,7 +64,6 @@ plot.dccm(cij$all.dccm)
 cij.all <- dccm.mean(cij$all.dccm, cutoff.sims = 8, cutoff.cij = 0) 
 plot.dccm(cij.all, main = "Consensus Residue Cross Correlation")
 }
-
 }
 \keyword{analysis}
 

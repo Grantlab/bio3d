@@ -8,10 +8,12 @@
   structure in VMD
 }
 \usage{
-view.cna(x, layout = layout.pdb(pdb, x), col.sphere = 0:32, col.lines = "silver", weights = E(x$clustered.network)$weight, radius = table(x$raw.communities$membership)/5, alpha = 1, vmdfile = "network.vmd", pdbfile = "network.pdb", launch = FALSE)
+view.cna(x, pdb, layout = layout.pdb(pdb, x), col.sphere = 0:32, col.lines = "silver", weights = NULL, radius = table(x$raw.communities$membership)/5, alpha = 1, vmdfile = "network.vmd", pdbfile = "network.pdb", launch = FALSE)
 }
 \arguments{
   \item{x}{A 'cna' class object such as obtained from \sQuote{cna} function/
+}
+  \item{pdb}{A 'pdb' class object such as obtained from \sQuote{read.pdb} function.
 }
   \item{layout}{ A numeric matrix of Nx3, where N is the number of spheres
 (i.e. communities) to be drawn.
@@ -78,7 +80,7 @@ cij <- dccm(xyz)
 net <- cna(cij)
 
 # View cna
-view.cna(net, layout=layout.pdb(pdb,net), launch=TRUE)
+view.cna(net, pdb, layout=layout.pdb(pdb,net), launch=FALSE)
 }
 
 \keyword{ utility }

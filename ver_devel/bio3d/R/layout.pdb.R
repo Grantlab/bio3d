@@ -21,7 +21,7 @@ layout.pdb <- function(pdb, membership, renumber=TRUE, k=3){
 
   ##-- Check if the number of number of residues in 'pdb' equals
   ##   the length of 'membership' vector
-  if(length(pdb$atom[pdb$calpha,"resno"]) != length(membership)){
+  if(max(as.numeric(pdb$atom[,"resno"])) != length(membership)){
     stop("Number of residues in 'pdb' and length of 'membership' vector differ")
   }
 
@@ -31,13 +31,16 @@ layout.pdb <- function(pdb, membership, renumber=TRUE, k=3){
   }
 
   ##-- Calculate the geometric center of each community
-  n <- max(membership,na.rm=TRUE)
-  cent <- matrix(NA, nrow=n, ncol=3)
-  for(i in 1:n){
+  n <- unique(membership[!is.na(membership)])
+  
+  cent <- matrix(NA, nrow=length(n), ncol=3)
+  a <- 1
+  for(i in n){
     inds <- atom.select(pdb, resno=which(membership==i),
                         elety="CA", verbose=FALSE)
 
-    cent[i,] <- apply( matrix(pdb$xyz[inds$xyz], nrow=3), 1, mean)
+    cent[a,] <- apply( matrix(pdb$xyz[inds$xyz], nrow=3), 1, mean)
+    a <- a + 1 
   }
 
   if(k != 3) {

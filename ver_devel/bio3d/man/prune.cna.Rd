@@ -7,7 +7,7 @@
 Remove nodes and their associated edges from a cna network graph.
 }
 \usage{
-prune.cna(x, edges.min = 1, size.min = 1)
+prune.cna(x, edges.min = 1, size.min = 1, cluster.method="btwn")
 }
 \arguments{
   \item{x}{ A protein network graph object as obtained from the
@@ -19,6 +19,11 @@ prune.cna(x, edges.min = 1, size.min = 1)
      minimum node size that retained nodes should have. Nodes 
      with less composite residues than \sQuote{size.min} will be 
      pruned. }
+  \item{cluster.method}{ A character string specifying the method for
+    community determination. Supported methods are:\cr
+    btwn='Girvan-Newman betweenness'\cr
+    walk='Random walk'\cr
+    greed='Greedy algorithm for modularity optimization'\cr }
 }
 \details{
  This function is useful for cleaning up cna network plots by removing, 
