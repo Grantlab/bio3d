@@ -95,8 +95,8 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
       class(collapse.cij) <- c("dccm", "matrix")
     }
     else{
-      warning("There is only one community in the 'raw.community' object.
-               'clustered.cij' object will be set to 0.")
+      warning("There is only one community in the $communities object.
+               $community.cij object will be set to 0.")
 
       collapse.cij <- 0
     }
@@ -122,8 +122,8 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     cij.network[is.infinite(cij.network)] = 0
   }
   else{
-     cij.network <- cij.abs
-   }
+    cij.network <- cij.abs
+  }
 
   if(!is.null(cm)){  
     ##-- Filter cij by contact map
@@ -133,68 +133,67 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
   ## cij.network contains either the -log(abs.cij) or just abs.cij. It depends on your specification when you called the function (the default is minus.log=TRUE)
   
   ## Make an igraph network object
-  raw.network <- graph.adjacency(cij.network,
+  network <- graph.adjacency(cij.network,
                              mode="undirected",
                              weighted=TRUE,
                              diag=FALSE)
   
   ##-- Calculate the first set of communities
-  raw.communities <- cluster.network(raw.network, cluster.method)
+  communities <- cluster.network(network, cluster.method)
 
   ##-- Coarse grain the cij matrix to a new cluster/community matrix
-  clustered.cij <- contract.matrix(cij.network, raw.communities$membership, collapse.method, minus.log)
+  community.cij <- contract.matrix(cij.network, communities$membership, collapse.method, minus.log)
 
   ##-- Generate a coarse grained network
-  if(sum(clustered.cij)>0){
-    clustered.network <-  graph.adjacency(clustered.cij,
+  if(sum(community.cij)>0){
+    community.network <-  graph.adjacency(community.cij,
                                mode="undirected",
                                weighted=TRUE,
                                diag=FALSE)
 
     ##-- Cluster the community network to obtain super-communities
-    clustered.communities <- cluster.network(clustered.network, cluster.method)
+    clustered.communities <- cluster.network(community.network, cluster.method)
 
     ##-- Annotate the two networks with community information
     ## Check for duplicated colors
-    if(max(raw.communities$membership) > length(unique(cols)) ) {
+    if(max(communities$membership) > length(unique(cols)) ) {
       warning("The number of communities is larger than the number of unique 'colors' provided as input. Colors will be recycled")
     }
   
     ## Set node colors
-    V(raw.network)$color <- cols[raw.communities$membership]
-    ###V(clustered.network)$color <- cols[clustered.communities$membership]
-    V(clustered.network)$color <- cols[ 1:clustered.communities$vcount ]
+    V(network)$color <- cols[communities$membership]
+    ###V(community.network)$color <- cols[clustered.communities$membership]
+    V(community.network)$color <- cols[ 1:clustered.communities$vcount ]
   
     ## Set node sizes
-    V(raw.network)$size <- 1
-    V(clustered.network)$size <- table(raw.communities$membership)
+    V(network)$size <- 1
+    V(community.network)$size <- table(communities$membership)
   }
 
   else{
-    warning("The raw.community structure does not allow a second clustering (i.e. the collapsed cij.matrix contains only 0. 'clustered.network' and 'clustered.communities' objects will be set to NA")
+    warning("The $communities structure does not allow a second clustering (i.e. the collapsed community.cij matrix contains only 0. 'community.network' object will be set to NA")
       
-    clustered.network <- NA
+    community.network <- NA
     clustered.communities <- NA
       
-    if(max(raw.communities$membership) > length(unique(cols)) ) {
+    if(max(communities$membership) > length(unique(cols)) ) {
       warning("The number of communities is larger than the number of unique 'colors' provided as input. Colors will be recycled")
     }
   
     ## Set node colors
-    V(raw.network)$color <- cols[raw.communities$membership]
+    V(network)$color <- cols[communities$membership]
 
     ## Set node sizes
-    V(raw.network)$size <- 1
+    V(network)$size <- 1
   }
 
   
   ## Output
-  output <- list("raw.network"=raw.network,
-                 "raw.communities"=raw.communities,
-                 "clustered.network"=clustered.network,
-                 "clustered.communities"=clustered.communities,
-                 "clustered.cij"=clustered.cij,
-                 "raw.cij"=cij.network,
+  output <- list("network"=network,
+                 "communities"=communities,
+                 "community.network"=community.network,
+                 "community.cij"=community.cij,
+                 "cij"=cij.network,
                  call = cl)
 
   class(output)="cna"

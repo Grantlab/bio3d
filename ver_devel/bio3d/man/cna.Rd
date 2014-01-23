@@ -51,18 +51,16 @@
 \value{
   Returns a list object that includes igraph network and community
   objects with the following components:
-  \item{raw.network}{  An igraph residue-wise graph object. See below
+  \item{network}{ An igraph residue-wise graph object. See below
     for more details.}
-  \item{raw.communities}{ An igraph residue-wise community object. See
+  \item{communities}{ An igraph residue-wise community object. See
     below for more details. }
-  \item{clustered.network}{ An igraph community-wise graph object. See
+  \item{communitiy.network}{ An igraph community-wise graph object. See
     below for more details. }
-  \item{clustered.communities}{ An igraph community-wise community
-    object. See below for more details. }
-  \item{clustered.cij}{ Numeric square matrix containing the absolute values of
+  \item{community.cij}{ Numeric square matrix containing the absolute values of
     the atomic correlation input matrix for each community as obtained
-    from \sQuote{raw.cij} via application of  \sQuote{collapse.method}. }
-  \item{raw.cij}{ Numeric square matrix containing the absolute values of
+    from \sQuote{cij} via application of  \sQuote{collapse.method}. }
+  \item{cij}{ Numeric square matrix containing the absolute values of
     the atomic correlation input matrix. }
 }
 \details{
@@ -71,8 +69,6 @@
   functions. Optionaly, a contact map may also given as input to
   filter the correlation matrix.
 
-  TO BE UPDATED
-  
   Internally this function calls the igraph package
   functions \sQuote{graph.adjacency},
   \sQuote{edge.betweenness.community}, \sQuote{walktrap.community},
@@ -126,13 +122,10 @@ net <- cna(cij)
 
 # Plot coarse grain network based on dynamicaly coupled communities
 xy <- plot.cna(net)
-plot.dccm2(cij, margin.segments=net$raw.communities$membership)
-
-# Plot full residue network colored by communities - will be very slow!!
-## plot.cna(net$raw.network, net$raw.communities) ## BUG!!!
+plot.dccm2(cij, margin.segments=net$communities$membership)
 
 # Play with plot settings
-#plot.cna(net, layout=layout.mds(net$clustered.network), vertex.size=15,
+#plot.cna(net, layout=layout.mds(net$community.network), vertex.size=15,
 #col=c("blue","green") ) ## BUG ignores vertex.color!!
 
 \dontrun{
@@ -144,14 +137,14 @@ comms <-cna(node.50,method="btwn",cutoff.cij=0.2)
 
 # Plot colored by community membership
 par(mfcol=c(1,2), mar=c(0,0,0,0))
-plot(comms$raw.network)
+plot(comms$network)
 plot(comms)
 
 # Examine community structure
 comms
 
 attributes(comms)
-comms$raw.communities$members
+comms$communities$members
 ## More examples
 }
 }
