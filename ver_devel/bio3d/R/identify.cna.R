@@ -34,8 +34,8 @@ identify.cna <- function(x, labels=NULL, cna=NULL, labelshorten=TRUE, ...){
     ## labels <- summary.cna(cna)$members
     lab.all <- summary.cna(cna)
     if(labelshorten) {
-      labels <- lab.all$tbl$members
-      names(labels) <- lab.all$tbl$id
+      labels <- lab.all$members
+      names(labels) <- lab.all$id
     } else {
       labels <- lab.all$members
     }

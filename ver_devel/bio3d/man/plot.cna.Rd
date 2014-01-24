@@ -8,12 +8,11 @@
   Plot a protein dynamic network as obtained from the \sQuote{cna} function.
 }
 \usage{
-  plot.cna(x, community=x$clustered.communities,
-           weights=E(x$clustered.network)$weight*10,
+  plot.cna(x, weights=E(x$community.network)$weight*10,
            layout=NULL, col=NULL, ...)
 
   plot3d.cna(x, pdb = NULL, node.size = NULL,
-             weights=E(x$clustered.network)$weight*10,
+             weights=E(x$community.network)$weight*10,
              layout = layout.pdb(pdb, x), col = NULL, ...)
 }
 \arguments{
@@ -95,19 +94,19 @@ net <- cna(cij)
 
 # Plot coarse grain network based on dynamicaly coupled communities
 xy <- plot.cna(net)
-plot.dccm2(cij, margin.segments=net$raw.communities$membership)
+plot.dccm2(cij, margin.segments=net$communities$membership)
 
 # Plot full residue network colored by communities - will be very slow!!
-## plot.cna(net$raw.network, net$raw.communities) ## BUG!!!
+## plot.cna(net$network, net$communities) ## BUG!!!
 
 # Play with plot settings
-#plot.cna(net, layout=layout.mds(net$clustered.network), vertex.size=15,
+#plot.cna(net, layout=layout.mds(net$community.network), vertex.size=15,
 #col=c("blue","green") ) ## BUG ignores vertex.color!!
 
 \dontrun{
 ## 3D plot with RGL
 plot3d.cna(net, pdb)
-# rglplot(net$clustered.network)
+# rglplot(net$community.network)
 }
 
 }

@@ -1,8 +1,8 @@
 view.cna <- function(x, pdb, layout=layout.pdb(pdb, x),
-                     col.sphere=match(V(x$clustered.network)$color, vmd.colors())-1, 
+                     col.sphere=match(V(x$community.network)$color, vmd.colors())-1, 
                      col.lines="silver",
                      weights=NULL,
-                     radius=table(x$raw.communities$membership)/5,
+                     radius=table(x$communities$membership)/5,
                      alpha=1,
                      vmdfile="network.vmd", pdbfile="network.pdb",
                      launch=FALSE) {
@@ -90,7 +90,7 @@ view.cna <- function(x, pdb, layout=layout.pdb(pdb, x),
   scr <- c(scr, .vmd.sphere( layout, radius=radius, col=col.sphere))
 
   ## Edges
-  edge.list <- unlist2(get.adjlist(x$clustered.network))
+  edge.list <- unlist2(get.adjlist(x$community.network))
   start.no <- as.numeric(names(edge.list))
   end.no <- as.numeric((edge.list))
   inds <- which(end.no > start.no)
@@ -105,7 +105,7 @@ view.cna <- function(x, pdb, layout=layout.pdb(pdb, x),
 
   ## Output a PDB file with chain color
   # Use the chain field to store cluster membership data for color in VMD
-  ch <- vec2resno(vec=x$raw.communities$membership, resno=pdb$atom[,"resno"])
+  ch <- vec2resno(vec=x$communities$membership, resno=pdb$atom[,"resno"])
   write.pdb(pdb, chain=LETTERS[ch], file=pdbfile)
 
   ## Launch option ...

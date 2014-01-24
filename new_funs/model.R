@@ -3,19 +3,19 @@
 ##  Most of these are useful for protein structure modeling
 ##
 ## These include (list to be updaed):
-##  fit.pdbs    - Quick Fit Fitter for PDBs
+##  # fit.pdbs    - Quick Fit Fitter for PDBs
 ##  pdbname     - Extract PDB identifier from filename
 ##  srxn.bd     - Find BD trajectories that complete a give reaction
 ##  srxn2trj.bd - Make XML BD trajectorys given srxn output
-##  motif.find  - Return indices of a motif within a sequence
+##  # motif.find  - Return indices of a motif within a sequence
 ##  getArgs     - Parse command line options when using Rscript
 ##  txt2num     - Convert a character string to numeric
 ##  read.apbs   - Read elec binding energy from APBS log files
-##  chain.pdb   - Find possible chian breaks
-##  pdbaln      - Quick and dirty alignment of PDB sequences
+##  # chain.pdb   - Find possible chian breaks
+##  # pdbaln      - Quick and dirty alignment of PDB sequences
 ##  alitrim     - Trim cols from alignment data structure
-##   ncmap      - *see bio3d 'cmap'
-##   ndm        - *see bio3d 'dm.xyz'
+##  # ncmap      - *see bio3d 'cmap'
+##  # ndm        - *see bio3d 'dm.xyz'
 ##  seq2aln     - Add a sequence to an existing alignment
 ##  write.pir   - write alignment for modeler
 ##  write.sge   - write a series of Sun Grid Engine scripts
@@ -23,7 +23,7 @@
 ##  interp      - interpolate between two vectors, useful for
 ##                PCA z-score interpolation in combination
 ##                with "pca.z2xyz"
-##  fit         - A simple wrapper for fit.xyz when using
+##  # fit         - A simple wrapper for fit.xyz when using
 ##                pdbs style objects
 ##  ide.group   - Return the indices of the largest group of
 ##                sequences that have identity values above
@@ -32,10 +32,10 @@
 ##  plot.rama   - Ramachendron plot (basic)
 ##  aln2aln     - Add one alignment to another that contains
 ##                at least one similar entry
-##  get.pdb     - download PDB files from a list of ids
+##  # get.pdb     - download PDB files from a list of ids
 ##  get.uniprot - download FASTA sequence files from a list of
 ##                swissprot or uniprot ids
-##  seq.pdb     - Return basic 1-letter calpha ATOM sequence from a
+##  # seq.pdb     - Return basic 1-letter calpha ATOM sequence from a
 ##                pdb object
 ## read.propka  - Read the output of PropKa produced by pdb2pqr
 ## write.crdbox - Write AMBER CRD format trajectory files
@@ -46,11 +46,11 @@
 ## tlsq & ulsq  - Fitting rotation and translation matrices
 ## renumber.pdb - Renumber resno and eleno records
 ## vec2seq      - Match a vector via matching sequence to alignment
-## vec2resno    - Replicate a vector based on concetive resno entries
+## # vec2resno    - Replicate a vector based on concetive resno entries
 ## bgr.colors   - blue-gray-red color range
 ## lsos         - a better list of current objects sorted by size
 ## read.hmmer.tbl - read HMMER3 hmmsearch log files
-## cons.aln     - score residue conservation in an alignment
+## # cons.aln     - score residue conservation in an alignment
 ## dis.ftmap    - Process FTMAP results (min dist to residue of probes)
 ## bootstrap.rmsf - Bootstrap sampling of frames for RMSF determination.
 ## mustang        -  Structural alignment with mustang

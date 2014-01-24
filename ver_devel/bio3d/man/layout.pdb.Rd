@@ -31,7 +31,7 @@
 }
 \references{
 }
-\author{ Guido and Barry }
+\author{ Guido Scarabelli and Barry Grant }
 
 \seealso{ \code{\link{plot.igraph}}, \code{\link{plot.communities}},
   \code{\link{igraph.plotting}} \code{\link{plot.cna}}}

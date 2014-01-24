@@ -16,20 +16,25 @@ layout.pdb <- function(pdb, membership, renumber=TRUE, k=3){
     stop("Input 'k' should have a value of 3, 2 or 1")
   }
   if((class(membership) == "cna") || is.list(membership)) {
-    membership <- membership$raw.communities$membership
-  }
-
-  ##-- Check if the number of number of residues in 'pdb' equals
-  ##   the length of 'membership' vector
-  if(max(as.numeric(pdb$atom[,"resno"])) != length(membership)){
-    stop("Number of residues in 'pdb' and length of 'membership' vector differ")
+    membership <- membership$communities$membership
   }
 
   ## Renumber 'pdb' to match membership resno indices
   if(renumber) {
-    pdb <- convert.pdb(pdb, type="pdb", renumber=TRUE) ## verbose=FALSE
+    pdb <- convert.pdb(pdb, type="pdb", renumber=TRUE, rm.h=FALSE) ## verbose=FALSE
   }
 
+  ##-- Check if the number of number of residues in 'pdb' equals
+  ##   the length of 'membership' vector
+  notprotein.inds <- atom.select(pdb, "notprotein", verbose=FALSE)
+
+  if(length(notprotein.inds$atom)>0){
+    num.res <- length(pdb$atom[pdb$calpha,"resno"]) + length(unique(pdb$atom[notprotein.inds$atom,6]))
+  }
+  if(length(notprotein.inds$atom)==0){
+    num.res <- length(pdb$atom[pdb$calpha,"resno"])
+  }
+  
   ##-- Calculate the geometric center of each community
   n <- unique(membership[!is.na(membership)])
   
