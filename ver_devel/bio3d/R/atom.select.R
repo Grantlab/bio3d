@@ -109,7 +109,8 @@ function(pdb, string=NULL,
        return(match)
      }
      if (string=="noh") {
-       noh.atom <- which( !substr(pdb$atom[,"elety"], 1, 1) %in% "H" )
+      ## gsub fix added to catch non-standard 1HH1, 2HH1, 3HH1 etc... (Fri Jan 24 EST 2014)
+       noh.atom <- which( !substr( gsub("^[123]", "",pdb$atom[,"elety"]) , 1, 1) %in% "H" )
        match <- list(atom=noh.atom, xyz=atom2xyz(noh.atom))
        class(match) <- "select"
        if(verbose) 
