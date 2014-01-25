@@ -1,7 +1,7 @@
 plot3d.cna <- function(x,
                        pdb = NULL,
                        node.size = NULL, ##
-                       weights=E(x$community.network)$weight*10,
+                       weights=NULL,
                        layout = layout.pdb(pdb, x),
                        col = NULL,
                        ...){
@@ -20,6 +20,20 @@ plot3d.cna <- function(x,
   oops <- require(igraph)
   if (!oops) {
     warning("igraph package missing: Please install, see: ?install.packages")
+  }
+
+  if(is.null(weights)){
+    weights <- E(x$community.network)$weight
+    
+    if(is.null(x$call$minus.log)){
+      weights <- exp(-weights)
+    }
+    else{
+      if(x$call$minus.log){
+        weights <- exp(-weights)
+      }
+    }
+     weights <- weights*10
   }
   
   ## Obtain the plot coords...

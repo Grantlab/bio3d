@@ -29,8 +29,6 @@
 \value{
  A numeric matrix of Nxk, where N is the number of communities and k the number of dimensions requested.
 }
-\references{
-}
 \author{ Guido Scarabelli and Barry Grant }
 
 \seealso{ \code{\link{plot.igraph}}, \code{\link{plot.communities}},

@@ -9,11 +9,13 @@
   the terminal in a human readable form.
 }
 \usage{
-print.cna(x, ...)
-summary.cna(object, ...)
+  \method{print}{cna}(x, ...)
+  \method{summary}{cna}(object, ...)
 }
 \arguments{
   \item{x}{ A cna network and community object as obtained from the
+    function \sQuote{cna}.}
+  \item{object}{ A cna network and community object as obtained from the
     function \sQuote{cna}.}
   \item{\dots}{ Extra arguments passed to the \sQuote{write.table}
     function. }

@@ -151,8 +151,8 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
                                weighted=TRUE,
                                diag=FALSE)
 
-    ##-- Cluster the community network to obtain super-communities
-    clustered.communities <- cluster.network(community.network, cluster.method)
+    ##-- Cluster the community network to obtain super-communities -- OLD VERSION
+    ## clustered.communities <- cluster.network(community.network, cluster.method)
 
     ##-- Annotate the two networks with community information
     ## Check for duplicated colors
@@ -163,7 +163,7 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     ## Set node colors
     V(network)$color <- cols[communities$membership]
     ###V(community.network)$color <- cols[clustered.communities$membership]
-    V(community.network)$color <- cols[ 1:clustered.communities$vcount ]
+    V(community.network)$color <- cols[ 1:unique(length(communities$membership))]
   
     ## Set node sizes
     V(network)$size <- 1

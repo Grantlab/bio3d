@@ -8,19 +8,16 @@
   Plot a protein dynamic network as obtained from the \sQuote{cna} function.
 }
 \usage{
-  plot.cna(x, weights=E(x$community.network)$weight*10,
+  \method{plot}{cna}(x, weights=NULL,
            layout=NULL, col=NULL, ...)
 
   plot3d.cna(x, pdb = NULL, node.size = NULL,
-             weights=E(x$community.network)$weight*10,
+             weights=NULL,
              layout = layout.pdb(pdb, x), col = NULL, ...)
 }
 \arguments{
   \item{x}{ A protein network graph object as obtained from the
     \sQuote{cna} function. }
-  \item{community}{ A communities object as obtained from the
-    \sQuote{cna} function and contained within x or a numeric vector of
-    community or cluster membership. }
   \item{weights}{ A numeric vector containing the edge weights for the
     network. }
   \item{layout}{ Either a function or a numeric matrix. It specifies how the
