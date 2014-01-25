@@ -12,3 +12,4 @@ figure*
 *.log
 *.out
 tmp*
+.DS_Store
