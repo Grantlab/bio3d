@@ -7,7 +7,7 @@
   This function add labels to the objects in a two-dimensional CNA plot.
 }
 \usage{
-  identify.cna(x, labels=NULL, cna=NULL, labelshorten=TRUE, ...)
+  \method{identify}{cna}(x, labels=NULL, cna=NULL, labelshorten=TRUE, ...)
 }
 \arguments{
   \item{x}{ A numeric matrix with Nx2 dimensions, where N is equal to
@@ -31,8 +31,6 @@
   If \sQuote{labels} or \sQuote{cna} inputs are provided then a membership vector 
   will be returned with the selected communitiy ids and their members. Otherwise a 
   vector with the ids of the selected communities will be returned.
-}
-\references{
 }
 \author{ Guido Scarabelli and Barry Grant }
 
