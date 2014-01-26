@@ -1,6 +1,16 @@
 `blast.pdb` <-
 function(seq, database="pdb") {
-
+  if(inherits(seq, "fasta")) {
+    if(is.matrix(seq$ali)) {
+      if(nrow(seq$ali)>1)
+        warning("Multiple sequences detected - using only the first sequence in object")
+      seq <- as.vector(seq$ali[1,])
+    }
+    else {
+      seq <- as.vector(seq$ali)
+    }
+  }
+  
   ## Run NCBI blastp on a given 'seq' sequence against a given 'database'
   if(!is.vector(seq)) {
     stop("Input 'seq' should be a single sequence as a single or multi element character vector")

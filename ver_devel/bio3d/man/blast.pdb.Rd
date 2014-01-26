@@ -10,7 +10,8 @@ blast.pdb(seq, database = "pdb")
 }
 \arguments{
   \item{seq}{ a single element or multi-element character vector
-    containing the query sequence. }
+    containing the query sequence. Alternatively a \sQuote{fasta}
+    object from function \code{get.seq} can be provided. }
   \item{database}{ a single element character vector specifying the
     database against which to search. Current options are \sQuote{pdb},
     \sQuote{nr} and \sQuote{swissprot}. }
