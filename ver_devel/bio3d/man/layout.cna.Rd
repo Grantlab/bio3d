@@ -20,6 +20,9 @@
     calculated. } 
   \item{k}{ A single element numeric vector between 1 and 3 specifying the 
     returned coordinate dimensions. }
+  \item{full}{ Logical, if TRUE the full all-Calpha atom network coordinates will 
+    be returned rather than the default clustered network community coordinates. }       
+
 }
 \details{
   This function calculates the geometric center for each community from

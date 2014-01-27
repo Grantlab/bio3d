@@ -1,8 +1,5 @@
-plot.cna <- #function(x, community=x$clustered.communities, weights=NULL,
-            #         layout=NULL, col=NULL, ...) {
-
-            function(x, weights=NULL,
-                     layout=NULL, col=NULL, ...) {
+plot.cna <- function(x, weights=NULL,
+                     layout=NULL, col=NULL, full=FALSE, ...) {
 
   ##- Function for ploting cna networks the way we like them.
   ##   Returns the plot layout coordinates silently
@@ -27,10 +24,16 @@ plot.cna <- #function(x, community=x$clustered.communities, weights=NULL,
   ## col=V(x$clustered.network)$color
   ##    vmd.colors(18)== V(x$clustered.network)$color
 
+  if(full) {
+    y <- x$network 
+  } else {
+    y <- x$community.network
+  }
+
   if(is.null(weights)){
-    weights <- E(x$community.network)$weight
+    weights <- E(y)$weight
     
-    if(is.null(x$call$minus.log)){
+    if(is.null(x$call$minus.log)){  ## This stuff wont work!!!
       weights <- exp(-weights)
     }
     else{
@@ -39,13 +42,14 @@ plot.cna <- #function(x, community=x$clustered.communities, weights=NULL,
       }
     }
      weights <- weights*10
-  }
+  }  ## The above code is crap - should scale the weights to fit plot!!
   
+
   if(is.null(layout)) {
-      coords <- layout.fruchterman.reingold(x$community.network, weights=weights)
+      coords <- layout.fruchterman.reingold(y, weights=weights)
   } else { coords=layout }
   
-  plot.igraph(x$community.network, edge.width=weights, layout=coords, vertex.color=col) ##, ...)
+  plot.igraph(y, edge.width=weights, layout=coords, vertex.color=col, ...)
     
   ## Silently return plot coordinates
   #class(coords) = "cna"
