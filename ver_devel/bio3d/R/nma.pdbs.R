@@ -122,6 +122,9 @@
     modes.array <- array(NA, dim=c(length(gaps.pos$f.inds), keep, nrow(gaps.res$bin)))
   else
     modes.array <- array(NA, dim=c(ncol(pdbs$xyz), keep, nrow(gaps.res$bin)))
+
+  ## store eigenvalues of the first modes
+  L.mat <- matrix(NA, ncol=keep, nrow=nrow(gaps.res$bin))
   
   if(is.null(outpath))
     fname <- tempfile(fileext = "pdb")
@@ -242,7 +245,7 @@
     ## Perform deformation analysis
     if(defa)
       defo <- rowMeans(deformation.nma(modes, mode.inds=seq(7,11))$ei)
-
+    
     if(rm.gaps)
       modes.mat <- matrix(NA, ncol=keep, nrow=nrow(modes$U))
     else
@@ -259,8 +262,10 @@
 
     if(full)
       all.modes[[i]] <- modes
-    modes.array[,,i] <- modes.mat
     
+    modes.array[,,i] <- modes.mat
+    L.mat[i, ] <- modes$L[seq(7, keep+6)]
+        
     if(rm.gaps) {
       flucts[i, ] <- modes$fluctuations
       ##resnos[i, ] <- pdbs$resno[i,gaps.res$f.inds]
@@ -308,7 +313,7 @@
   
   rownames(flucts) <- basename(rownames(pdbs$xyz))
   out <- list(fluctuations=flucts, rmsip=rmsip.map, deformations=deform, ##resno=resnos,
-              U.subspace=modes.array, full.nma=all.modes, call=cl)
+              U.subspace=modes.array, L=L.mat, full.nma=all.modes, call=cl)
   class(out) = "enma"
   return(out)
 }
