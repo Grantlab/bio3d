@@ -1,15 +1,15 @@
 plot3d.cna <- function(x,
                        pdb = NULL,
                        node.size = NULL, ##
-                       weights=E(x$community.network)$weight*10,
-                       layout = layout.pdb(pdb, x),
+                       weights=NULL,
+                       layout = layout.cna(x, pdb, k=3),
                        col = NULL,
                        ...){
   ##
   ## Plot a cna network graph in 3D with RGL
   ##    plot3d.cna(net, pdb)
   ##  Or just
-  ##    rglplot(net$clustered.network)
+  ##    rglplot(net$community.network)
   ##
   
   ## Check if x has 'cna' class
@@ -17,9 +17,23 @@ plot3d.cna <- function(x,
     stop("Input 'x' object must be a 'cna' class object")
   }
 
-  oops <- require(igraph)
-  if (!oops) {
-    warning("igraph package missing: Please install, see: ?install.packages")
+##  oops <- require(igraph)
+##  if (!oops) {
+##    warning("igraph package missing: Please install, see: ?install.packages")
+##  }
+
+  if(is.null(weights)){
+    weights <- E(x$community.network)$weight
+    
+    if(is.null(x$call$minus.log)){
+      weights <- exp(-weights)
+    }
+    else{
+      if(x$call$minus.log){
+        weights <- exp(-weights)
+      }
+    }
+     weights <- weights*10
   }
   
   ## Obtain the plot coords...

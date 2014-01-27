@@ -1,13 +1,15 @@
-layout.pdb <- function(pdb, membership, renumber=TRUE, k=3, full=FALSE){
+layout.cna <- function(x, pdb, renumber=TRUE, k=2, full=FALSE){
 
-  warning("!!! USE 'layout.cna()' INSTEAD: THIS FUNCTION WILL BE DELETED !!!")
-  ## Return the coordinate centers of input communities 
-  ##  as defined in 'membership vector' using Calpha's in 'pdb'.
+  ## Return the coordinate centers of network communities 
+  ##  as defined in "x$communities$membership" 'membership vector' 
+  ##  using Calpha's in 'pdb'.
+  ##
   ##  If k=3 the xyz geometric centers are returned. if k<3 then
   ##  multidimensional scaling is used for k space ordination.
   ##
-  ##   co2 <- layout.pdb(pdb, net$communities$membership, k=2)
-  ##   co2 <- layout.pdb(pdb, net, k=2)
+  ##   co2  <- layout.cna(net, pdb)
+  ##   co3  <- layout.cna(net, pdb, k=3)
+  ##   all2 <- layout.cna(net, pdb, k=2, full=TRUE)
   ##   plot.cna(net, layout=co2)
 
   if( class(pdb) != "pdb" ) {
@@ -16,19 +18,20 @@ layout.pdb <- function(pdb, membership, renumber=TRUE, k=3, full=FALSE){
   if(!k %in% c(1,2,3)) {
     stop("Input 'k' should have a value of 3, 2 or 1")
   }
-  if((class(membership) == "cna") || is.list(membership)) {
+  if((class(x) == "cna") || is.list(x)) {
     if(!full) {
       ## We want community coords
-      membership <- membership$communities$membership
+      membership <- x$communities$membership
     } else {  
       ## We want full all-atom/Calpha coords (check network for number)
-      membership <- c(1:length(net$communities$membership))
+      membership <- c(1:length(x$communities$membership))
     }
   } else {
     if(full) {
       ## Assuming we want Calpha coords - this is a BIG assumption! 
       membership <- c(1:sum(pdb$calpha))
     }
+    stop("Input object 'x' should be of class cna")
   }
 
   ## Renumber 'pdb' to match membership resno indices

@@ -3,13 +3,14 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
                   cols=vmd.colors(), minus.log=TRUE){
 
     
-  ## Check for presence of igraph package
-  oops <- require(igraph)
-  if (!oops) {
-    stop("igraph package missing: Please install, see: ?install.packages")
-  }
+  ## Check for presence of igraph package (now in Depends.)
+ ## oops <- require(igraph)
+ ## if (!oops) {
+ ##   stop("igraph package missing: Please install, see: ?install.packages")
+ ## }
+
   if (dim(cij)[1] != dim(cij)[2]) {
-    stop("Input 'cij' should be a nXn matrix (where n is typically the number of nodes) containing atomic correlation data. See 'dccm()' function")
+    stop("Input 'cij' should be a square matrix as obtained from the 'dccm()' function")
   }
 
   ## Check vnames/colnames if present. These are used to name nodes
@@ -17,21 +18,23 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     vnames <- 1:ncol(cij)
   }
   if( length(vnames) != ncol(cij) ) {
-    stop("Length of input vnames and number of cols in cij do not match")
+    stop("Length of input 'vnames' and number of cols in input 'cij' do not match")
   }
-  colnames(cij) <- 1:ncol(cij)
+  colnames(cij) <- vnames
   
+  ## Check 'cm' contact map if present.
   if(!is.null(cm)){
     if (dim(cm)[1] != dim(cm)[2]) {
-      stop("Input 'cm' should be a binary nXn matrix (contat map), where n is the number of residues")
+      stop("Input 'cm' should be a square contact matrix as obtained from the 'cmap()' function")
+    }
+    if any(range(cm, na.rm=T) != c(0,1)) {
+      stop("Input 'cm' should be a binary contact matrix as obtained from the 'cmap()' function")
     }
     if (dim(cm)[1] != dim(cij)[1]) {
-      stop("Input 'cij' and 'cm' should be both nXn matrices, where n is the number of residues")
+      stop("Inputs 'cij' and 'cm' should have the same dimensions")
     }
   }
 
-  ##- Set dimnames if not present - these could be residue numbers
-  
   
   ##-- Functions for later
   cluster.network <- function(network, cluster.method="btwn"){
@@ -45,13 +48,12 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
               walk = walktrap.community(network),
               greed = fastgreedy.community(network) )
     
-    ###names(comms$membership) <- c(1:length(comms$membership))
     names(comms$membership) <- V(network)$name
     return(comms)
   }
 
   contract.matrix <- function(cij.network, membership,## membership=comms$membership,
-                              collapse.method="max", minus.log){
+                              collapse.method="max", minus.log=TRUE){
     
     ## Function to collapse a NxN matrix to an mxm matrix
     ##  where m is the communities of N. The collapse method
@@ -66,7 +68,7 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     collapse.options=c("max", "median", "mean", "trimmed")
     collapse.method <- match.arg(tolower(collapse.method), collapse.options)
 
-    ## Fill a 'collapse.cij' community by community matrix
+    ## Fill a 'collapse.cij' nxn community by community matrix
     node.num <- max(membership)
     if(node.num > 1){
       collapse.cij <- matrix(0, nrow=node.num, ncol=node.num)
@@ -89,17 +91,19 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
         collapse.cij[collapse.cij>0] <- -log(collapse.cij[collapse.cij>0])
       }
       
-      ## Copy values to lower triangle of matrix and set class and colnames
+      ## Copy values to lower triangle of matrix and set colnames
       collapse.cij[ inds[,c(2,1)] ] = collapse.cij[ inds ]
       colnames(collapse.cij) <- 1:ncol(collapse.cij)
-      class(collapse.cij) <- c("dccm", "matrix")
     }
     else{
       warning("There is only one community in the $communities object.
-               $community.cij object will be set to 0.")
+               $community.cij object will be set to 0 in the 
+               contract.matrix() function.")
 
       collapse.cij <- 0
     }
+
+    class(collapse.cij) <- c("dccm", "matrix")
     return(collapse.cij)
   }
   
@@ -130,9 +134,10 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     cij.network <- cij.network * cm
   }
 
-  ## cij.network contains either the -log(abs.cij) or just abs.cij. It depends on your specification when you called the function (the default is minus.log=TRUE)
+  ##  cij.network contains either the -log(abs.cij) or just abs.cij. 
+  ##   (the default is minus.log=TRUE)
   
-  ## Make an igraph network object
+  ##-- Make an igraph network object
   network <- graph.adjacency(cij.network,
                              mode="undirected",
                              weighted=TRUE,
@@ -142,42 +147,45 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
   communities <- cluster.network(network, cluster.method)
 
   ##-- Coarse grain the cij matrix to a new cluster/community matrix
-  community.cij <- contract.matrix(cij.network, communities$membership, collapse.method, minus.log)
+  community.cij <- contract.matrix(cij.network, communities$membership, 
+                                   collapse.method, minus.log)
 
-  ##-- Generate a coarse grained network
+  ##-- Generate a coarse grained network --##
   if(sum(community.cij)>0){
     community.network <-  graph.adjacency(community.cij,
                                mode="undirected",
                                weighted=TRUE,
                                diag=FALSE)
 
-    ##-- Cluster the community network to obtain super-communities
-    clustered.communities <- cluster.network(community.network, cluster.method)
+    ##-- Cluster the community network to obtain super-communities -- OLD VERSION
+    ## clustered.communities <- cluster.network(community.network, cluster.method)
 
     ##-- Annotate the two networks with community information
     ## Check for duplicated colors
     if(max(communities$membership) > length(unique(cols)) ) {
-      warning("The number of communities is larger than the number of unique 'colors' provided as input. Colors will be recycled")
+      warning("The number of communities is larger than the number of unique 
+              'colors' provided as input. Colors will be recycled")
     }
   
     ## Set node colors
     V(network)$color <- cols[communities$membership]
-    ###V(community.network)$color <- cols[clustered.communities$membership]
-    V(community.network)$color <- cols[ 1:clustered.communities$vcount ]
+    V(community.network)$color <- cols[ 1:max(communities$membership)]
   
     ## Set node sizes
     V(network)$size <- 1
     V(community.network)$size <- table(communities$membership)
-  }
 
-  else{
-    warning("The $communities structure does not allow a second clustering (i.e. the collapsed community.cij matrix contains only 0. 'community.network' object will be set to NA")
+  } else{
+    warning("The $communities structure does not allow a second clustering 
+            (i.e. the collapsed community.cij matrix contains only 0). 
+            'community.network' object will be set to NA")
       
     community.network <- NA
     clustered.communities <- NA
       
     if(max(communities$membership) > length(unique(cols)) ) {
-      warning("The number of communities is larger than the number of unique 'colors' provided as input. Colors will be recycled")
+      warning("The number of communities is larger than the number of unique 
+              'colors' provided as input. Colors will be recycled")
     }
   
     ## Set node colors

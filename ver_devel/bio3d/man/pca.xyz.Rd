@@ -6,7 +6,7 @@
    numeric data matrix.
  }
 \usage{
-pca.xyz(xyz, subset = rep(TRUE, nrow(as.matrix(xyz)), use.svd = FALSE))
+pca.xyz(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE)
 }
 \arguments{
   \item{xyz}{ numeric matrix of Cartesian coordinates with a row per

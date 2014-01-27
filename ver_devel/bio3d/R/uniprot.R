@@ -1,4 +1,7 @@
 uniprot <- function(accid) {
+  oops <- require(XML)
+  if(!oops)
+    stop("Please install the XML package from CRAN")
   
   url <- paste('http://www.uniprot.org/uniprot/', accid, '.xml', sep="")
 

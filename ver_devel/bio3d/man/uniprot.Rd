@@ -34,7 +34,7 @@ uniprot(accid)
   \url{http://www.uniprot.org/}.
 }
 \author{ Lars Skjaerven }
-\seealso{ \code{\link{blast.pdb}} }
+\seealso{ \code{\link{blast.pdb}}, \code{\link{get.seq}} }
 \examples{
 prot <- uniprot('PH4H_HUMAN')
 prot$fullName

@@ -8,39 +8,38 @@
   Plot a protein dynamic network as obtained from the \sQuote{cna} function.
 }
 \usage{
-  plot.cna(x, weights=E(x$community.network)$weight*10,
-           layout=NULL, col=NULL, ...)
+  \method{plot}{cna}(x, weights=NULL,
+           layout=NULL, col=NULL, full=FALSE, ...)
 
   plot3d.cna(x, pdb = NULL, node.size = NULL,
-             weights=E(x$community.network)$weight*10,
-             layout = layout.pdb(pdb, x), col = NULL, ...)
+             weights=NULL,
+             layout = layout.cna(x, pdb, k=3), col = NULL, ...)
 }
 \arguments{
   \item{x}{ A protein network graph object as obtained from the
     \sQuote{cna} function. }
-  \item{community}{ A communities object as obtained from the
-    \sQuote{cna} function and contained within x or a numeric vector of
-    community or cluster membership. }
   \item{weights}{ A numeric vector containing the edge weights for the
     network. }
   \item{layout}{ Either a function or a numeric matrix. It specifies how the
-    vertices will be placed on the plot. }
+    vertices will be placed on the plot. See \sQuote{layout.cna}. }
   \item{col}{ A vector of colors used for node/vertex rendering. If NULL
     these values are taken from the input network
-    V(x$clustered.network)$color }
+    V(x$community.network)$color }
+  \item{full}{ Logical, if TRUE the full all-atom network rather than the 
+    clustered community  network will be plotted. }       
   \item{pdb}{ A PDB structure object obtained from \sQuote{read.pdb}. }
   \item{node.size}{ A numeric vector of node/community sizes. If NULL
     the size will be proportional to the residue membership of each community. }
-  \item{\dots}{ Additional graphical parameters for
-    \sQuote{plot.igraph}. }
+  \item{\dots}{ Additional graphical parameters for \sQuote{plot.igraph}. }
 }
 \details{
-  This function calls  \sQuote{plot.igraph} or \sQuote{plot.communities}
+  This function calls \sQuote{plot.igraph} or \sQuote{plot.communities}
   from the igraph package to plot cna networks the way we like them.
 
-  The plot layout is user setable, we like the options of: 
-  \sQuote{layout.fruchterman.reingold},  \sQuote{layout.mds} or
-  \sQuote{layout.svd}.
+  The plot layout is user settable, we like the options of: 
+  \sQuote{layout.cna}, \sQuote{layout.fruchterman.reingold},  
+  \sQuote{layout.mds} or \sQuote{layout.svd}. Note that first of these 
+  uses PDB structure information to produce a more meaningful layout.
 
   \dots can contain:
   col=vmd.colors(),
@@ -96,12 +95,18 @@ net <- cna(cij)
 xy <- plot.cna(net)
 plot.dccm2(cij, margin.segments=net$communities$membership)
 
-# Plot full residue network colored by communities - will be very slow!!
-## plot.cna(net$network, net$communities) ## BUG!!!
+# Plot the community network
+plot.cna(net)
 
-# Play with plot settings
-#plot.cna(net, layout=layout.mds(net$community.network), vertex.size=15,
-#col=c("blue","green") ) ## BUG ignores vertex.color!!
+# Chose a different PDB informed layout
+plot.cna(net, layout=layout.cna(net,pdb))
+
+# Plot full residue network colored by communities - will be very slow!!
+plot.cna(net, layout=layout.cna(net,pdb, full=T), full=T, vertex.size=10, weights=1)
+
+
+# Play with plot settings example
+plot.cna(net, layout=layout.mds(net$community.network), col=c("blue","green") ) 
 
 \dontrun{
 ## 3D plot with RGL
