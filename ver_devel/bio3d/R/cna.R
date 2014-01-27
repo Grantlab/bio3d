@@ -162,15 +162,15 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
   
     ## Set node colors
     V(network)$color <- cols[communities$membership]
-    ###V(community.network)$color <- cols[clustered.communities$membership]
-    V(community.network)$color <- cols[ 1:unique(length(communities$membership))]
+    ###V(community.network)$color <- cols[communities$membership]
+    ###V(community.network)$color <- cols[ 1:unique(length(communities$membership))]
+    V(community.network)$color <- cols[ 1:max(communities$membership)]
   
     ## Set node sizes
     V(network)$size <- 1
     V(community.network)$size <- table(communities$membership)
-  }
-
-  else{
+    
+  } else{
     warning("The $communities structure does not allow a second clustering (i.e. the collapsed community.cij matrix contains only 0. 'community.network' object will be set to NA")
       
     community.network <- NA
