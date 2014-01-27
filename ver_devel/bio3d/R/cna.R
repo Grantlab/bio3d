@@ -27,7 +27,7 @@ cna <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     if (dim(cm)[1] != dim(cm)[2]) {
       stop("Input 'cm' should be a square contact matrix as obtained from the 'cmap()' function")
     }
-    if any(range(cm, na.rm=T) != c(0,1)) {
+    if (any(range(cm, na.rm=T) != c(0,1))) {
       stop("Input 'cm' should be a binary contact matrix as obtained from the 'cmap()' function")
     }
     if (dim(cm)[1] != dim(cij)[1]) {
