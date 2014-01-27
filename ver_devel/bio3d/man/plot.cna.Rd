@@ -91,7 +91,7 @@ cij <- dccm(xyz)
 # Build, and betweeness cluster, a network graph 
 net <- cna(cij)
 
-# Plot coarse grain network based on dynamicaly coupled communities
+# Plot coarse grain network based on dynamically coupled communities
 xy <- plot.cna(net)
 plot.dccm2(cij, margin.segments=net$communities$membership)
 
@@ -101,8 +101,8 @@ plot.cna(net)
 # Chose a different PDB informed layout
 plot.cna(net, layout=layout.cna(net,pdb))
 
-# Plot full residue network colored by communities - will be very slow!!
-plot.cna(net, layout=layout.cna(net,pdb, full=T), full=T, vertex.size=10, weights=1)
+# Plot full residue network colored by communities - will be slow due to number of edges!!
+#plot.cna(net, layout=layout.cna(net,pdb, full=T), full=T, vertex.size=10, weights=1)
 
 
 # Play with plot settings example

@@ -1,4 +1,4 @@
-view.cna <- function(x, pdb, layout=layout.pdb(pdb, x),
+view.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
                      col.sphere=NULL, 
                      col.lines="silver",
                      weights=NULL,
@@ -130,7 +130,7 @@ view.cna <- function(x, pdb, layout=layout.pdb(pdb, x),
       shell(shQuote(cmd))
     } else{
       if(Sys.info()["sysname"]=="Darwin") {
-        system(paste("/Applications/VMD\\ 1.9.1.app/Contents/MacOS/startup.command",pdbfile, "-e", vmdfile))
+        system(paste("/Applications/VMD\\ 1.9.*app/Contents/MacOS/startup.command",pdbfile, "-e", vmdfile))
       }
       else{
         system(cmd)
