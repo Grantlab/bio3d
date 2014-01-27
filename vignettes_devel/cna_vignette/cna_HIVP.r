@@ -94,45 +94,62 @@ view.dccm(cij, pdb, launch=TRUE)
 #+ Network1
 # Build and betweeness cluster a correlation network graph 
 net <- cna(cij)
+net
 
 #' ### cna function output
 #'
 #' The output of the **cna()** function consists of an object containing the following attributes:
 #'
-#' - $network: A protein structure network with a node per residue and connecting edges weighted by their corresponding filtered correlation values (i.e. input cij values filtered by 'cutoff.cij').
+#' - **$network**: The **full** protein structure network with a node per residue and connecting edges weighted by their corresponding filtered correlation values (i.e. input cij values filtered by 'cutoff.cij'). This filtered cij matrix is also returned as **$cij**.
 #'
-#' - $communities: A community object obtained by clustering the object $network
+#' - **$communities**: A community clustering object detailing the results of clustering the $network. Notable attributes include **$communities$membership** and **$communities$algorithm** that detail **$network** nodes (i.e. residues) belonging to each community and the clustering algorithm used respectively.  
 #'
-#' - $cij: The filtered cij matrix used to build the network.
+#' - **$cij**: The filtered cij matrix used to build the network.
 #'
-#' - $community.network: A network with the nodes equal to the number of communities present in $communities.
+#' - **$community.network**: A coarse-grained community network object with the number of nodes equal to the number of communities present in **$communities** (i.e. the clustering of the full network) and edges based on the inter-community coupling as determined by the input 'collapse.method' (by default this is the maximum coupling between the original nodes of the respective communities).
 #'
-#' - $community.cij: A cij matrix obtained by applying a "collapse.method" on $cij. The rows and columns match the number of communities in $communities. The values are based on the cij couplings of inter-communities residue. (collapse.method available are: max, mean, trimmed and median).
+#' - **$community.cij**: A cij matrix obtained by applying a "collapse.method" on $cij. The rows and columns match the number of communities in $communities. The values are based on the cij couplings of inter-communities residue. (collapse.method available are: max, mean, trimmed and median).
 #'
+#' Data access
+head( V(net$network)$color )
+V(net$community.network)$size
+E(net$community.network)$weight
+V(net$community.network)$name
+
+#' 
 #' ## Plot the network
 #'
 #' The function **plot.cna()** plots the obtained network.
 
-# Plot a simple network graph highlighting communities/clusters pattern
+# Plot a simple network graph highlighting community clusters
 #+ coordinates
-coords.network <- layout.pdb(pdb, c(1:length(net$communities$membership)), k=2)
-coords.coarse.network <- layout.pdb(pdb, net, k=2)
-## layout.pdb uses a multi dimensional scaling function. To make the view the same in the two plots, we need to invert the sign of the x coordinates in coords.coarse.network
-# !! NEED TO IMPROVE layout.pdb WITH A CHECK FOR THIS !!
-coords.coarse.network[,1] <- coords.coarse.network[,1] * (-1)
+x <- plot(net)
+
+#' To pick out the the residue corespondance of each community you can use the **identify.cna function()**
+# identify.cna(x, net) ## to add labels to plot
 
 
-#+                             
-#+ fig.cap="(left) $network plot, (right) $communities plot"
+#' Different plot layout schemes are available including those based on PDB coordinates
 par(mfcol=c(1,2), mar=c(0,0,0,0))
-plot(net$network, vertex.size=5, layout=coords.network)
-plot.cna(net, layout=coords.coarse.network)
-#'
+x <- layout.cna(net, pdb)
+plot(net, layout=x)
+
+y <- layout.cna(net, pdb, full=TRUE)
+plot(net, layout=y, full=TRUE, vertex.size=10, weights=1)
+
+#' You could multiply y by -1 to enforce a similar layout in the two plots.
+#plot3d.cna(net, pdb, layout=layout.cna(net, pdb, k=3))
+# plot3d.cna(net, pdb)
+
+#+ viewcna, eval=FALSE
+# View the correlations in pymol
+view.cna(net, pdb, launch=TRUE)
+
 #' In addition, a cij matrix can be plotted with the community colors calling the function **plot.dccm()** and declaring the margin.segments option equal to the community memberships obtained from the network analysis.
 #'
 # This plot will be anotated with the same colors as the network plots and VMD output.
 #+ fig.cap="cij couplings. Communities are shown on the bottom and left axes, secondary structure elements on the top and right ones."
-plot.dccm(cij, margin.segments=net$communities$membership, sse=sse)
+plot.dccm(cij, margin.segments=net$communities$membership)
 #'
 #' ### Sidenote:
 #'
@@ -144,7 +161,7 @@ plot.dccm(cij, margin.segments=net$communities$membership, sse=sse)
 #' The plot on the right is the community network, which has a node for each community. Each of these nodes is scaled by the number of residues within that community and shows a clearer representation of the community clustering.
 #'
 #'
-#' \includegraphics{HIVP_comms_colors.png}
+#' \includegraphics{figure/HIVP_comms_colors.png}
 #'
 #'
 #' ### Sidenote: On network graph visualization
@@ -215,7 +232,7 @@ identify.cna(xy, cna=net)
 #'
 
 #+ layout.coords, echo=FALSE
-layout3D <- layout.pdb(pdb, net)
+layout3D <- layout.pdb(pdb, net) ## EDIT these!!
 layout2D <- layout.pdb(pdb, net, k=2)
 
 #' ### Network as 3D plots
@@ -236,7 +253,7 @@ rgl.quit()
 ## view.cna(net, layout=layout.pdb(pdb,net), launch=TRUE)
 #'
 #+ fig.cap="example of **view.cna()**"
-#' \includegraphics{output_view_cna.png}
+#' \includegraphics{figure/output_view_cna.png}
 #'
 #'
 #' ## Collapse and/or prune nodes.
@@ -275,7 +292,35 @@ plot.cna(net.cmap, layout=layout2D.cmap)
 
 #' The cm filter removes a lot of cij couplings, as consequence it might exclude useful information. In our example, the application of the cm filter affects the resulting network breaking the protein into small communities.
 #'
+#' ### Network Generation From Normal Mode Analysis
+#' For this example section we apply normal mode analysis to the Human Immunodeficiency Virus aspartic protease (HIVpr). This trajectory is included with the Bio3D package and stored in CHARMM/NAMD DCD format. Note that all solvent and non C-alpha protein atoms have been excluded to reduce overall file size.
+modes <- nma(pdb)
 
+## Calculate correlation matrix
+cm <- dccm.nma(modes)
+
+#+ nmaDCCMplot
+## Plot correlation map
+plot(cm)
+#plot(cm, contour = FALSE, col.regions = bwr.colors(20), at = seq(-1, 1, 0.1))
+
+## Network analysis
+net2 <- cna(cm)
+
+#+ nmaNETplot
+par(mfcol=c(1,2), mar=c(0,0,0,0))
+plot(net2, layout=layout.cna(net2, pdb))
+plot(net2, layout=layout.cna(net2, pdb, full=T), full=T, vertex.size=12)
+
+
+#+ viewCNA, eval=FALSE
+# View the community network in VMD
+view.cna(net2, pdb, launch=TRUE)
+
+#+ fig.cap="example of NMA derived community structure network produced by **view.cna()**"
+#' \includegraphics{figure/nma_network.png}
+
+#'
 #' ## Conclusions
 #'
 #' Now you have played with the main functions of feature-cna branch and should have an idea of the different output that can help you to analyse the information in a correlation matrix.
