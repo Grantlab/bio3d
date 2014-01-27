@@ -20,8 +20,13 @@ function( alignment , normalize=TRUE, ncore=1, nseg.scale=1) {
         nseg.scale=1
      }
   }
- 
-  if(is.list(alignment)) alignment <- alignment$ali
+
+  ids <- NULL
+  if(is.list(alignment)) {
+    if(inherits(alignment, c("fasta", "3dalign")))
+      ids <- alignment$id
+    alignment <- alignment$ali
+  }
   alignment[is.gap(alignment)] = NA
 
   ide <- function(x, y) {
@@ -70,6 +75,11 @@ function( alignment , normalize=TRUE, ncore=1, nseg.scale=1) {
     sm[inds[,2], inds[,1]]<-s
   } else {
     sm[inds[,c(2,1)]]<-s 
+  }
+
+  if(!is.null(ids)) {
+    rownames(sm) <- ids
+    colnames(sm) <- ids
   }
   return(sm) # ide matrix
 }

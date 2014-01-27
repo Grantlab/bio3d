@@ -6,7 +6,7 @@
   Perform NMA on an ensemble of aligned protein structures.
 }
 \usage{
-nma.pdbs(pdbs, fit=TRUE, full=FALSE, rm.gaps=TRUE, defa=FALSE, 
+nma.pdbs(pdbs, fit=TRUE, full=FALSE, defa=FALSE, rm.gaps=TRUE,
          outpath="pdbs_nma", \dots)
 
 \method{print}{enma}(x, \dots)

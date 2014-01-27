@@ -1,57 +1,64 @@
 \name{view.cna}
 \alias{view.cna}
 \title{
-  View cna commumnity output in VMD
+  View CNA Protein Structure Network Commumnity Output in VMD
 }
 \description{
-  This function generates a file that can be superimposed to the protein
-  structure in VMD
+  This function generates a VMD scene file and a PDB file that can be 
+  read and rendered by the VMD molecular viewer. Chose \sQuote{color by chain} 
+  to see corresponding regions of structure colored by community along with 
+  the community protein structure network. 
 }
 \usage{
-view.cna(x, pdb, layout = layout.pdb(pdb, x), col.sphere=match(V(x$community.network)$color, vmd.colors())-1, col.lines = "silver", weights = NULL, radius = table(x$communities$membership)/5, alpha = 1, vmdfile = "network.vmd", pdbfile = "network.pdb", launch = FALSE)
+view.cna(x, pdb, layout = layout.cna(x, pdb, k=3), 
+		col.sphere=NULL, col.lines = "silver", weights = NULL, 
+		radius = table(x$communities$membership)/5, alpha = 1, 
+		vmdfile = "network.vmd", pdbfile = "network.pdb", 
+		launch = FALSE)
 }
 \arguments{
   \item{x}{A 'cna' class object such as obtained from \sQuote{cna} function/
-}
+  }
   \item{pdb}{A 'pdb' class object such as obtained from \sQuote{read.pdb} function.
-}
-  \item{layout}{ A numeric matrix of Nx3, where N is the number of spheres
-(i.e. communities) to be drawn.
-}
+  }
+  \item{layout}{ A numeric matrix of Nx3 XYZ coordinate matrix, where N is the 
+  number of community spheres to be drawn.
+  }
   \item{col.sphere}{ A numeric vector containing the sphere colors.
-}
+  }
   \item{col.lines}{ A character object specifying the color of the
     edges (default 'silver'). Must use VMD colors names.
-}
+  }
   \item{weights}{ A numeric vector specifying the edge width. Default is
-    taken from E(x$clustered.network)$weight.
-}
+    taken from E(x$community.network)$weight.
+  }
   \item{radius}{ A numeric vector containing the sphere radii. Default
     is taken from the number of community members divided by 5.
-}
-  \item{alpha}{ A numeric element specifying VMD alpha
-    parameter. Default is set to 1.
-}
-  \item{vmdfile}{ A character element specifying the drawing file name to be
-    loaded in VMD. The residue chain is assigned according to the
-    community number (it makes easier to color the communities).
-}
-  \item{pdbfile}{ A character element specifying the pdb file name to be
+  }
+  \item{alpha}{ A single element numeric vector specifying the VMD alpha
+    transparency parameter. Default is set to 1.
+  }
+  \item{vmdfile}{ A character element specifying the output VMD scene file 
+    name that will be loaded in VMD.
+  }
+  \item{pdbfile}{ A character element specifying the output pdb file name to be
     loaded in VMD.
-}
+  }
   \item{launch}{ Logical. If TRUE, a VMD session will be started with
-    the output of \sQuote{view.cna}
+    the output of \sQuote{view.cna}.
 }
 }
-\details{ This function generates a ball and stick representation of the
-  community clustering that overlaps the protein structure. It can be
-  visualized in VMD. The sphere radii and the edge thickness are
-  proportional to the community members and the edge weights, respectively.
+\details{ 
+  This function generates a scaled sphere (communities) and stick (edges) 
+  representation of the community network along with the corresponding protein 
+  structure divided into chains, one chain for each community. The sphere radii 
+  are proportional to the number of community members and the edge widths correspond 
+  to network edge weights.
 }
 \value{
-Two files are generated as output. A pdb file with the residue chains
-assigned according to the community and a text file containing the
-drawing commands for the community representation.
+  Two files are generated as output. A pdb file with the residue chains
+  assigned according to the community and a text file containing The
+  drawing commands for the community representation.
 }
 \references{ Humphrey, W., Dalke, A. and Schulten, K., ``VMD - Visual Molecular Dynamics'' J. Molec. Graphics 1996, 14.1, 33-38.
 }
@@ -59,6 +66,7 @@ drawing commands for the community representation.
 Barry Grant}
 
 \examples{
+\dontrun{
 trtfile <- system.file("examples/hivp.dcd", package="bio3d")
 trj <- read.dcd(trtfile)
 
@@ -80,7 +88,8 @@ cij <- dccm(xyz)
 net <- cna(cij)
 
 # View cna
-view.cna(net, pdb, layout=layout.pdb(pdb,net), launch=FALSE)
+view.cna(net, pdb), launch=FALSE)
+}
 }
 
 \keyword{ utility }

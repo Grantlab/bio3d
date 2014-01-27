@@ -22,32 +22,37 @@ The output matrix is a nXn binary matrix (n = residue number). Elements equal to
 cmap (require bio3d package)
 }
 \examples{
-## load example data
-data(pdb)
-data(trj.1)
-data(trj.2)
-data(trj.3)
+  ## load example data
+  require(abind)
+  pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
+  pdb <- read.pdb(pdbfile)
 
-## Lets work with Calpha atoms only
-library(bio3d)
-ca.inds <- atom.select(pdb, "calpha")
-#noh.inds <- atom.select(pdb, "noh")
+  trtfile <- system.file("examples/hivp.dcd", package="bio3d")
+  trj <- read.dcd(trtfile, verbose=FALSE)
 
-## calculate single contact map matrices
-cm.1 <- cmap(trj.1[,ca.inds$xyz], pcut=0.3, scut=0, dcut=7, mask.lower=FALSE)
-cm.2 <- cmap(trj.1[,ca.inds$xyz], pcut=0.3, scut=0, dcut=7, mask.lower=FALSE)
-cm.3 <- cmap(trj.3[,ca.inds$xyz], pcut=0.3, scut=0, dcut=7, mask.lower=FALSE)
+  ## split the trj example in two
+  num.of.frames <- dim(trj)[1]
+  trj1 <- trj[1:(num.of.frames/2),]
+  trj2 <- trj[((num.of.frames/2)+1):num.of.frames,]
 
-## create a 3D contact matrix from 3 simulations
-library(abind)
-cm.all <- abind(cm.1, cm.2, cm.3, along=3)
+  ## Lets work with Calpha atoms only
+  ca.inds <- atom.select(pdb, "calpha")
+  #noh.inds <- atom.select(pdb, "noh")
 
-## calculate average contact matrix
-cm.filter <- cmap.filter(cm=cm.all, cutoff.sims=1)
+  ## calculate single contact map matrices
+  cm.1 <- cmap(trj1[,ca.inds$xyz], pcut=0.3, scut=0, dcut=7, mask.lower=FALSE)
+  cm.2 <- cmap(trj2[,ca.inds$xyz], pcut=0.3, scut=0, dcut=5, mask.lower=FALSE)
 
-## plot the result
-par(pty="s", mfcol=c(1,2))
-image(cm.3, col=c(NA,"black"))
-image(cm.filter, col=c(NA,"black"))
+  ## create a 3D contact matrix from 3 simulations
+  cm.all <- abind(cm.1, cm.2, along=3)
+
+  ## calculate average contact matrix
+  cm.filter <- cmap.filter(cm=cm.all, cutoff.sims=2)
+
+  ## plot the result
+  par(pty="s", mfcol=c(1,3))
+  image(cm.1, col=c(NA,"black"))
+  image(cm.2, col=c(NA,"black"))
+  image(cm.filter, col=c(NA,"black"))
 }
 \keyword{analysis}

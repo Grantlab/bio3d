@@ -9,7 +9,8 @@
 seqbind(..., blank = "-")
 }
 \arguments{
-  \item{\dots}{ vectors and/or matrices to combine. }
+  \item{\dots}{ vectors, matrices, and/or alignment \sQuote{fasta}
+    objects to combine. }
   \item{blank}{ a character to add to short arguments, to achieve the
     same length as the longer argument. }
 }

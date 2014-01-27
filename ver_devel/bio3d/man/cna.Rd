@@ -12,7 +12,6 @@
   of the community based network.
 }
 \usage{
-  cna(cij, vnames=colnames(cij), cutoff.cij=0.4, cm=NULL, method="btwn")
   cna(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
       cluster.method="btwn", collapse.method="max", 
       cols=vmd.colors(), minus.log=TRUE)
@@ -34,9 +33,9 @@
     to residue numbers in later analysis. }  
   \item{cluster.method}{ A character string specifying the method for
     community determination. Supported methods are:\cr
-    btwn='Girvan-Newman betweenness'\cr
-    walk='Random walk'\cr
-    greed='Greedy algorithm for modularity optimization'\cr }  
+    btwn="Girvan-Newman betweenness"\cr
+    walk="Random walk"\cr
+    greed="Greedy algorithm for modularity optimization"\cr }  
   \item{collapse.method}{ A single element character vector specifing
     the \sQuote{cij} collapse method, can be one of \sQuote{max}, \sQuote{median},
     \sQuote{mean}, or \sQuote{trimmed}. By defualt the \sQuote{max} method is
@@ -81,7 +80,7 @@
   of the edges and again removing the one with the highest score, etc. 
   The best community partition is the one with the highest modularity value.
   \sQuote{walktrap.community} implements the Pons and Latapy algorithm based on the idea that
-  random walks on a graph tend to get “trapped” into densely connected parts of it,
+  random walks on a graph tend to get "trapped" into densely connected parts of it,
   i.e. a community. The random walk process is used to determine a distance
   between nodes. Nodes with low distance values are joined in the same community.
   \sQuote{fastgreedy.community} instead determines the community structure based on the

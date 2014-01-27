@@ -1,14 +1,20 @@
 \name{plot.fasta}
 \alias{plot.fasta}
-\title{ Plot Multiple Sequence Alignment }
+\title{ Plot a Multiple Sequence Alignment }
 \description{
   Produces a schematic representation of a multiple sequence alignment.
 }
 \usage{
-\method{plot}{fasta}(x, plot.labels=TRUE, plot.conserv=TRUE,
-                     conserv.col=NULL, conserv.height.scale=1,
-                     conserv.intervals=c(1, .75, .5, .25),
-                     row.height=100, row.spacer=20,
+\method{plot}{fasta}(x, plot.labels = TRUE,
+                     plot.bars = TRUE,
+                     plot.lines = FALSE,
+                     plot.axis = TRUE, 
+                     color.conserved = TRUE,
+                     cutoff=0.5, 
+                     col=NULL,
+                     bars.scale=5,
+                     row.spacing=0.1,
+                     aln.col="grey50",
                      cex.text=1, add=FALSE, ...)
 }
 \arguments{
@@ -16,17 +22,21 @@
     obtained from  \code{\link{seqaln}}. }
   \item{plot.labels}{ logical, if TRUE labels will be printed next to
     the sequence bar. }
-  \item{plot.conserv}{ logical, if TRUE an additional bar representing
+  \item{plot.bars}{ logical, if TRUE an additional bar representing
     sequence conservation will be plotted. }
-  \item{conserv.col}{ character vector with color codes for the
-    conservation bar. Must be of length(conserv.intervals) -
-    1. By default, \code{heat.colors} will be used. }
-  \item{conserv.height.scale }{ scaling factor for the height of the
-    conservation bar. }
-  \item{conserv.intervals }{ numeric vector providing the intervals at
-    which the conservation bar should be plotted. }
-  \item{row.height }{ height of each sequence bar. } 
-  \item{row.spacer }{ space between the sequence bars. }
+  \item{plot.lines}{ logical, if TRUE sequence conservation will be
+    represented with a plot. }
+  \item{plot.axis}{ logical, if TRUE x-axis will be plotted. }
+  \item{color.conserved}{ logical, if TRUE conserved residues will be
+    colored according to \dQuote{clustal} coloring scheme. }
+  \item{cutoff}{ conservation \sQuote{cutoff} value below which
+    alignment columns are not colored. }
+  \item{col}{ character vector with color codes for the
+    conservation bars. By default, \code{heat.colors} will be used. }
+  \item{bars.scale }{ scaling factor for the height of the
+    conservation bar when \sQuote{plot.bars=TRUE}. }
+  \item{row.spacing }{ space between the sequence bars. }
+  \item{aln.col }{ color of the alignment bars. }
   \item{cex.text }{ scaling factor for the labels. }
   \item{add }{ logical, if TRUE \code{plot.new()} will not be called. }
   \item{\dots}{ additional arguments not paseed anywhere. }
@@ -43,7 +53,7 @@
 }
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{seqaln}}, \code{\link{read.fasta}},
-  \code{\link{entropy}}. }
+  \code{\link{entropy}}, \code{\link{aln2html}}. }
 \examples{
 # Read alignment
 aln<-read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
@@ -51,16 +61,10 @@ aln<-read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
 ## alignment plot
 plot(aln)
 
-
 \dontrun{
-seq <- get.seq("P00439")
-blast <- blast.pdb(paste(seq$ali, collapse=""), database="swissprot")
-
-hits <- plot.blast(blast, cutoff = 200)
-all.seqs <- get.seq(hits$gi.id)
-aln <- seqaln(all.seqs)
-
-plot(aln, cex.text=0.5, conserv.height.scale=3)
+infile <- "http://pfam.sanger.ac.uk/family/PF00071/alignment/seed/format?format=fasta"
+aln <- read.fasta( infile )
+plot(aln)
 }
 }
 \keyword{ hplot }
