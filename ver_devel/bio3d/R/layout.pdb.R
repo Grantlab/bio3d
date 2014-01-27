@@ -49,7 +49,7 @@ layout.pdb <- function(pdb, membership, renumber=TRUE, k=3){
   }
 
   if(k != 3) {
-    ##-- Multidimensional dcaling for 2D or 1D projection
+    ##-- Multidimensional scaling for 2D or 1D projection
     ##   note. dist(centers) and dist.xyz(centers) give same answer
     cent <- cmdscale(dist(cent),k=k)
   }

@@ -1,5 +1,5 @@
 view.cna <- function(x, pdb, layout=layout.pdb(pdb, x),
-                     col.sphere=match(V(x$community.network)$color, vmd.colors())-1, 
+                     col.sphere=NULL, 
                      col.lines="silver",
                      weights=NULL,
                      radius=table(x$communities$membership)/5,
@@ -10,7 +10,7 @@ view.cna <- function(x, pdb, layout=layout.pdb(pdb, x),
   ## Draw a cna network in VMD
   
   if(is.null(weights)){
-    weights <- E(x$clustered.network)$weight
+    weights <- E(x$community.network)$weight
     
     if(is.null(x$call$minus.log)){
       weights <- exp(-weights)
@@ -22,6 +22,18 @@ view.cna <- function(x, pdb, layout=layout.pdb(pdb, x),
     }
   }
   
+  if(is.null(col.sphere)) {
+    ## Get colors from network and convert to 0:17 VMD color index
+    col.sphere <- match(V(x$community.network)$color, vmd.colors())-1
+  } else {
+    ## Check supplied color(s) will work in VMD
+    if(!all(col.sphere %in% c(0:17))) {
+      warning("Input 'col.sphere' may not work properly in VMD
+               - should be 0:17 color index value")
+    }
+  }
+
+
   ##-- VMD draw functions for sphere, lines and cone
   .vmd.sphere <- function(cent, radius=5, col="red", resolution=25) {
     ## .vmd.sphere( matrix(c(0,0,0, 1,1,1), ncol=3,byrow=T) )
@@ -85,7 +97,7 @@ view.cna <- function(x, pdb, layout=layout.pdb(pdb, x),
                  alpha,"\ndraw material Transparent\n")
   
   ##- Lets get drawing
-  ##radius = V(x$clustered.network)$size
+  ##radius = V(x$community.network)$size
   ###radius = table(x$raw.communities$membership)/5
   scr <- c(scr, .vmd.sphere( layout, radius=radius, col=col.sphere))
 
@@ -97,7 +109,7 @@ view.cna <- function(x, pdb, layout=layout.pdb(pdb, x),
   
   start <- layout[start.no[inds],]
   end <- layout[end.no[inds],]
-  ###weights=E(x$clustered.network)$weight ##/0.2
+  ###weights=E(x$community.network)$weight ##/0.2
   scr <- c(scr, .vmd.lines( start=start, end=end,
                            radius=weights, col=col.lines))
 

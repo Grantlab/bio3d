@@ -8,7 +8,11 @@
   structure in VMD
 }
 \usage{
-view.cna(x, pdb, layout = layout.pdb(pdb, x), col.sphere=match(V(x$community.network)$color, vmd.colors())-1, col.lines = "silver", weights = NULL, radius = table(x$communities$membership)/5, alpha = 1, vmdfile = "network.vmd", pdbfile = "network.pdb", launch = FALSE)
+view.cna(x, pdb, layout = layout.pdb(pdb, x), 
+		col.sphere=NULL, col.lines = "silver", weights = NULL, 
+		radius = table(x$communities$membership)/5, alpha = 1, 
+		vmdfile = "network.vmd", pdbfile = "network.pdb", 
+		launch = FALSE)
 }
 \arguments{
   \item{x}{A 'cna' class object such as obtained from \sQuote{cna} function/
