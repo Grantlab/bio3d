@@ -32,7 +32,7 @@ function(pdb.files, ids=NULL, path="split_chain", verbose=FALSE, ...) {
       tmp.names <- paste(substr(basename(pdb.files[i]), 
                                 1, 4), "_", chains, sep = "")
 
-      tmp.inds <- unique(unlist(lapply(ids, grep, tmp.names)))
+      tmp.inds <- unique(unlist(lapply(toupper(ids), grep, toupper(tmp.names))))
       if(length(tmp.inds)==0) {
         ## Skip pdb file if no match were found
         unused <- c(unused, substr(basename(pdb.files[i]), 1, 4))
@@ -93,7 +93,7 @@ function(pdb.files, ids=NULL, path="split_chain", verbose=FALSE, ...) {
     if(length(out)>0) {
       ids.used <- sub(".pdb$", "", basename(out))
       tmp.fun <- function(x, y) { ifelse(length(grep(x,y))>0, TRUE, FALSE) }
-      tmp.inds <- unlist(lapply(ids, tmp.fun, ids.used))
+      tmp.inds <- unlist(lapply(toupper(ids), tmp.fun, toupper(ids.used)))
       nonmatch <- ids[!tmp.inds]
     }
 
