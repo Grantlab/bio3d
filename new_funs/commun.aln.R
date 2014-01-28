@@ -27,15 +27,17 @@ commun.aln <- function(nets, col=vmd.colors()) {
    grps <- cutree(hc, h=0.99)
    #plot(hc)
 
-   # Re-color
+   # Re-coloring for aligned communities
    str <- strsplit(names(grps), "\\.")
+   new.nets <- nets
    for(i in 1:length(str)) {
      nid <- as.numeric(str[[i]][1])
      cid <- as.numeric(str[[i]][2])
      res <- nets[[nid]]$communities$membership==cid
-     V(nets[[nid]]$network)$color[res] <- col[grps[i]]
-     V(nets[[nid]]$community.network)$color[cid] <- col[grps[i]]
+     V(new.nets[[nid]]$network)$color[res] <- col[grps[i]]
+     V(new.nets[[nid]]$community.network)$color[cid] <- col[grps[i]]
+#     new.nets[[nid]]$communities$membership[res] <- grps[i]
    }
    
-   return(list(dismat=dismat, hc=hc, grps=grps, nets=nets))
+   return(list(dismat=dismat, hc=hc, grps=grps, nets=new.nets))
 }
