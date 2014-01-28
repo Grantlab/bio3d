@@ -1,4 +1,4 @@
-#' # Correlation Network Analysis with Bio3D 
+#' # Protein Structure Networks with Bio3D 
 
 #+ setup, include=FALSE
 library(knitr)
@@ -12,27 +12,55 @@ date()
 #system("pandoc -o cna_HIVP.pdf cna_HIVP.md")
 #'
 #' ## Overview
-#' The Bio3D package (version 2.1 and above) contains functionality for the creation and analysis of protein structure networks. Here we will introduce this functionality by building and analyzing networks obtained from atomic correlation data derived from molecular dynamics and normal mode analysis. 
+#' The Bio3D package (version 2.1 and above) contains functionality for the creation and analysis of protein structure networks. Here we will introduce this functionality by building and analyzing networks obtained from atomic correlation data derived from molecular dynamics, normal mode analysis, and large ensembles of crystal structures. We will also explore network visualization options and discuss some limitations of the current approach. 
 #'
-#' Key functions for **C**orrelation **N**etwork **A**nalysis (CNA) include:
+#' Key functions we will cover in this vignette include:
 #'
-#' - **cna()**. Create a protein structure network from an input correlation matrix and perform a community clustering analysis.
+#' - **cna()**. **C**orrelation **N**etwork **A**nalysis (CNA), create a protein structure network from an input correlation matrix and perform a community clustering analysis.
 #'
-#' - **summary.cna()**, **print.cna()**. Print information about a given protein structure network.
+#' - **summary.cna()** and **print.cna()**. Summarize and print information about a given protein structure network.
 #'
-#' - **plot.cna()**, **plot3d.cna()**, **layout.pdb()**. Plot a protein structure network in 2D or 3D with structure derived community coordinates. 
+#' - **plot.cna()**, **plot3d.cna()**, **layout.cna()**, **identify.cna()**, and **view.cna()**. Utilities for protein structure network visualization in 2D or 3D with structure derived community coordinates, as well as rendering network community structure into a VMD molecular graphics session. 
 #'
 #' - **prune.cna()** Remove small communities from a network object.
 #'
-#' - **view.cna()**. Render the community structure into a VMD session.
+#' - **dccm()** and **lmi()**, Determine the correlations of atomic displacements. 
 #'
-#' - **dccm.mean()**, **cmap.filter()** Calculate the consensus of dynamical cross-correlation or contact map matrices from multiple inputs.
+#' - **dccm.mean()**, **cmap.filter()** Calculate the consensus of dynamical correlation or contact map matrices from multiple inputs.
 #'
 #'
-#' ### Network Generation From Trajectory Data
+#' ### Network Generation From Normal Mode Analysis 
+#' Bio3D contains extensive functionality for normal mode analysis (NMA). For an introduction to these features please refer to the [NMA vignette](http://thegrantlab.org/bio3d/tutorials/normal-mode-analysis) available online. Here we will focus on correlation network analysis derived from NMA. The code below first reads an example PDB structure, performs NMA, then dynamic cross-correlation analysis, and finally network construction.
+
+#+ NMAbasic, results="hide"
+library(bio3d)
+pdb <- read.pdb("1rv7")
+modes <- nma(pdb)
+cij <- dccm(modes)
+net <- cna(cij)
+
+#+ NMAsmmary
+# Summary information
+net
+
+#' Next we will plot the network
+#+ NMAplot
+par(mfcol=c(1,2), mar=c(0,0,0,0))
+plot(net, pdb, full=TRUE)
+plot(net, pdb)
+
+#+ viewNMA, eval=FALSE
+# View the network in VMD
+view.cna(net, pdb, launch=TRUE)
+
+#+NMAcij
+plot.dccm(cij, margin.segments=net$communities$membership, sse=pdb)
+
+#'
+#' ### Network Generation From Molecular Dynamics Trajectory Data
 #' For this example section we apply correlation network analysis to a short molecular dynamics trajectory of Human Immunodeficiency Virus aspartic protease (HIVpr). This trajectory is included with the Bio3D package and stored in CHARMM/NAMD DCD format. Note that all solvent and non C-alpha protein atoms have been excluded to reduce overall file size.
 
-#' The code snippet below sets the file paths for the example HIVpr starting structure (pdbfile) and trajectory data (dcdfile) before reading the data.
+#' The code snippet below loads the Bio3D package, sets the file paths for the example HIVpr starting structure (pdbfile) and trajectory data (dcdfile), and finally reads these files (producing the objects dcd and pdb).
 
 #+ readtrj, results="hide"
 library(bio3d)
@@ -41,16 +69,20 @@ pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 dcd <- read.dcd(dcdfile)
 pdb <- read.pdb(pdbfile)
 
-#' For further details of trajectory IO and analysis please refer to the Trajectory Analysis vignette available [online](http://thegrantlab.org/bio3d/html/index.html).
+#' For further details of trajectory IO and subsequent analysis please refer to the Trajectory Analysis vignette available [online](http://thegrantlab.org/bio3d/html/index.html).
+#'
+#' The steps for correlation network analysis typically entail 
 #'
 #' ### Cross-Correlation Analysis
-#' The extent to which the atomic fluctuations/displacements of a system are correlated with one another can be assessed by examining the magnitude of all pairwise cross-correlation coefficients. The Bio3D `dccm()` function returns a matrix of all atom-wise cross-correlations whose elements may be displayed in a graphical representation frequently termed a dynamical cross-correlation map, or DCCM. Prior to this calculation we will superpose the frames of our trajectory based on the the C-alpha atoms of residues 24 to 27 and 85 to 90 in both chains. 
+#' The extent to which the atomic fluctuations/displacements of a system are correlated with one another can be assessed by examining the magnitude of all pairwise cross-correlation coefficients. The Bio3D `dccm()` function returns a matrix of all atom-wise cross-correlations whose elements may be displayed in a graphical representation frequently termed a dynamical cross-correlation map, or DCCM. Prior to this calculation we will superpose the trajectory frames based on the the C-alpha atoms of residues 24 to 27 and 85 to 90 in both chains. 
 
 #+ fitting, results="hide"
 inds <- atom.select(pdb, resno=c(24:27,85:90), elety="CA")
 xyz <- fit.xyz(fixed=pdb$xyz, mobile=dcd,
                fixed.inds=inds$xyz,
                mobile.inds=inds$xyz)
+
+#'
 ca.inds <- atom.select(pdb, "calpha")
 cij <- dccm(xyz[,ca.inds$xyz])
 
