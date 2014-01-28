@@ -55,8 +55,8 @@
 ## bootstrap.rmsf - Bootstrap sampling of frames for RMSF determination.
 ## mustang        -  Structural alignment with mustang
 ## add.dccm.grid  -  Add a grid or colored boxes to a plot.dccm() plot.
-## col.wheel    - useful for picking plot colors (e.g. col.wheel("dark") ) 
-##
+## col.wheel      - useful for picking plot colors (e.g. col.wheel("dark") ) 
+## linMap         - scale a input vector to lie between min and max values
 ##
 ## See also:
 ##  ~/work/scop/scop.sf  - Have access to the full SCOP database in R
@@ -2884,4 +2884,10 @@ col.wheel <- function(str, cex=0.75) {
   cols <- colors()[grep(str, colors())]
   pie(rep(1, length(cols)), labels=cols, col=cols, cex=cex)
   cols
+}
+
+linMap <- function(x, from, to) {
+  ## Scale a input vector 'x' to lie between min 'from' and max 'to'
+  ## linMap(c(0.5, 0.7,1), 10,20)
+    (x - min(x)) / max(x - min(x)) * (to - from) + from
 }

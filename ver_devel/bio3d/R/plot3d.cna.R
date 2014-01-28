@@ -1,7 +1,7 @@
 plot3d.cna <- function(x,
                        pdb = NULL,
-                       node.size = NULL, ##
                        weights=NULL,
+                       vertex.size = NULL,
                        layout = layout.cna(x, pdb, k=3),
                        col = NULL,
                        ...){
@@ -39,7 +39,7 @@ plot3d.cna <- function(x,
   ## Obtain the plot coords...
   if(!is.null(pdb) && is.null(layout)) {
     cat("Obtaning layout from PDB structure\n")
-    layout = layout.pdb(pdb, x)
+    layout = layout.cna(x, pdb, k=3)
   }
   if(is.null(pdb) && is.null(layout)) {
     cat("Obtaning guestimated layout with fruchterman.reingold\n")
@@ -52,7 +52,7 @@ plot3d.cna <- function(x,
   rglplot(x$community.network,
           edge.width = weights,
           layout = layout,
-          vertex.size = node.size,
+          vertex.size = vertex.size,
           vertex.color <- col)
 }
 
