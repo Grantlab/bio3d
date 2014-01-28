@@ -50,24 +50,25 @@
   Common parameters to alter include:
 
   \describe{
-    \item{vertex.label}{Node labels, \code{V(x$network)$name}. Use NA to omit.}
-    \item{vertex.label.color}{Node label colors, see also \code{vertex.label.cex} etc. }
-    \item{edge.color}{Edge colors:  \code{E(x$network)$color}. }
-    \item{mark.groups}{Community highlighting: list object, see also \code{mark.col} etc.}
+    \item{vertex.label:}{Node labels, \code{V(x$network)$name}. Use NA to omit.}
+    \item{vertex.label.color:}{Node label colors, see also \code{vertex.label.cex} etc. }
+    \item{edge.color:}{Edge colors,  \code{E(x$network)$color}. }
+    \item{mark.groups:}{Community highlighting, a community list object, see also \code{mark.col} etc.}
   }
   
 }
 \value{
-  Called for its effect.
-  Also returns the plot layout coordinates silently.
+  Produces a network plot on the active graphics device.
+  Also returns the plot layout coordinates silently, which can be passed to the 
+  \sQuote{identify.cna} function.
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Barry Grant }
-\note{ Be sure to check the correspondence of your \sQuote{sse} object with the
-  \sQuote{cij} values being plotted as no internal checks are
-  performed.
+\note{ Be sure to check the correspondence of your \sQuote{pdb} object with your
+  network object \sQuote{x}, as few internal checks are currently performed by the 
+  \sQuote{layout.cna} function.
 }
 \seealso{ \code{\link{plot.igraph}}, \code{\link{plot.communities}},
   \code{\link{igraph.plotting}} }
