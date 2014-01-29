@@ -6,7 +6,10 @@
   formats.
 }
 \usage{
-convert.pdb(pdb, type, renumber = FALSE, first.resno = 1, first.eleno = 1, rm.h = TRUE, rm.wat = FALSE)
+convert.pdb(pdb, type="original",   
+                renumber = FALSE, first.resno = 1, first.eleno = 1,
+                consecutive=TRUE, rm.h = TRUE, rm.wat = FALSE,
+                verbose=TRUE)
 }
 \arguments{
   \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
@@ -18,8 +21,13 @@ convert.pdb(pdb, type, renumber = FALSE, first.resno = 1, first.eleno = 1, rm.h 
     \sQuote{renumber} is TRUE. }
   \item{first.eleno}{ first element number to be used if
     \sQuote{renumber} is TRUE. }
+  \item{consecutive}{ logical, if TRUE renumbering will result in 
+    consecutive residue numbers throughout. Otherwise residue numbers 
+    will begin at \sQuote{first.resno} for each chain. }
   \item{rm.h}{ logical, if TRUE hydrogen atoms are removed. }
   \item{rm.wat}{ logical, if TRUE water atoms are removed. }
+  \item{verbose}{ logical, if TRUE details of the conversion process 
+    are printed. }
 }
 \details{
   Convert atom names and residue names, renumber atom and residue
