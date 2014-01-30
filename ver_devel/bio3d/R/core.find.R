@@ -14,13 +14,8 @@ function(aln,
   ##  (core positions are those with low ellipsoid volume)
 
   # Parallelized by multicore package (Fri Apr 26 16:49:38 EDT 2013)
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) {
-     oops <- require(multicore)
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -112,7 +107,6 @@ function(aln,
           error.ellipsoid( xyz.moved[, new.xyz.inds[atom2xyz(j)]] )$vol
        })
        volume <- unlist(e)
-       readChildren() 
     } else {
        while(j<=length( new.xyz.inds )) {
          e<-error.ellipsoid(xyz.moved[,new.xyz.inds[i:j]])
