@@ -7,7 +7,7 @@
 }
 \usage{
 nma.pdbs(pdbs, fit=TRUE, full=FALSE, defa=FALSE, rm.gaps=TRUE, 
-         outpath="pdbs_nma", \dots)
+         outpath="pdbs_nma", ncore=1, \dots)
 
 \method{print}{enma}(x, \dots)
 }
@@ -26,6 +26,8 @@ nma.pdbs(pdbs, fit=TRUE, full=FALSE, defa=FALSE, rm.gaps=TRUE,
     first 5 modes. }
   \item{outpath}{ character string specifing the output directory to
     which the PDB structures should be written. }
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires multicore package installed. }
   \item{x}{ an \code{enma} object obtained from \code{\link{nma.pdbs}}. }
   \item{...}{ additional arguments to \code{nma}, \code{aa2mass}, and
     \code{print}. }
