@@ -55,8 +55,11 @@ test_that("eNMA works", {
               0.9353, 0.8870, 1.0000)
   expect_that(c(modes$rmsip), equals(rmsips, tolerance=1e-6))
 
+  ### Multicore (same arguments as above!)
+  invisible(capture.output(mmc <- nma.pdbs(pdbs, fit=TRUE, rm.gaps=TRUE, ncore=4)))
+  expect_that(mmc$fluctuations, equals(modes$fluctuations))
+  expect_that(mmc$U.subspace, equals(modes$U.subspace))
   
-
   
 })
           
