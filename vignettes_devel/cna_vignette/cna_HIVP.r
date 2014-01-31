@@ -49,6 +49,13 @@ par(mfcol=c(1,2), mar=c(0,0,0,0))
 plot(net, pdb, full=TRUE)
 plot(net, pdb)
 
+## Quick 3D visualisation of structure
+col2=vec2resno(V(net$network)$color, pdb$atom[,"resno"])
+visualize(pdb, col=col2)
+
+visualize(layout.cna(net, pdb, k=3),col=V(net$community.network)$color, radii=V(net$community.network)$size, type="s")
+
+
 #+ viewNMA, eval=FALSE
 # View the network in VMD
 view.cna(net, pdb, launch=TRUE)

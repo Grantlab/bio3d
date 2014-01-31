@@ -36,7 +36,7 @@ layout.cna <- function(x, pdb, renumber=TRUE, k=2, full=FALSE){
 
   ## Renumber 'pdb' to match membership resno indices
   if(renumber) {
-    pdb <- convert.pdb(pdb, type="pdb", renumber=TRUE, rm.h=FALSE) ## verbose=FALSE
+    pdb <- convert.pdb(pdb, renumber=TRUE, rm.h=FALSE, verbose=FALSE)
   }
 
   ##-- Check if the number of number of residues in 'pdb' equals
