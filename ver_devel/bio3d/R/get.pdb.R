@@ -5,16 +5,11 @@
       gzip <- FALSE
     
     # Parallelized by multicore package (Tue Oct 15 15:23:36 EDT 2013)
-    if(ncore > 1) {
-       oops <- require(multicore)
-       if(!oops)
-          stop("Please install the multicore package from CRAN")
-       if(ncore > 4) {
-          # To avoid too frequent access to PDB server
-          warning("Exceed maximum ncore (=4) to access PDB server. Use ncore=4")
-          ncore = 4
-       }
-       options(cores = ncore)
+    ncore <- setup.ncore(ncore)
+    if(ncore > 4) {
+       # To avoid too frequent access to PDB server
+       warning("Exceed maximum ncore (=4) to access PDB server. Use ncore=4")
+       ncore <- setup.ncore(ncore = 4)
     }
 
     if (any(nchar(ids) != 4)) {
@@ -47,7 +42,6 @@
           }
           return(rtn)
        }))
-       readChildren()
     } else {
        for (k in 1:length(pdb.files)) {
          if (!file.exists(sub(".gz$", "", put.files[k])) | overwrite ) {

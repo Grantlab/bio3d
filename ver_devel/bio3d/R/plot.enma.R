@@ -1,8 +1,11 @@
 "plot.enma" <-
-  function(x, pdbs=NULL, entropy=FALSE, col=NULL, signif=FALSE,
+  function(x, y="fluctuations", 
+           pdbs=NULL, entropy=FALSE, variance=FALSE, 
+           col=NULL, signif=FALSE,
            pcut=0.005, qcut=0.04,
            xlab="Residue Position", ylab="Fluctuations",
-           mar = c(4, 5, 2, 2), 
+           ylim=NULL,
+           mar = c(4, 5, 2, 2),
            ...) {
     
     if(!inherits(x, "enma"))
@@ -15,6 +18,11 @@
     else
       rm.gaps <- FALSE
     
+    if(y=="deformations")
+      yval <- x$deform
+    else
+      yval <- x$fluctuations
+        
     dots <- list(...)
     sse.aln <- NULL
     if(!is.null(pdbs)) {
@@ -67,14 +75,24 @@
     }
     
     if(is.null(col))
-      col <- seq(1, nrow(x$fluctuations))
-
+      col <- seq(1, nrow(yval))
+    
+    nrows <- 1
+    if(entropy)
+      nrows=nrows+1
+    if(variance)
+      nrows=nrows+1
+    
     op <- par(no.readonly=TRUE)
     on.exit(par(op))
-    if(entropy)
-      par(mfrow=c(3,1), mar=mar)
+   
+    if(nrows>1)
+      par(mfrow=c(nrows,1), mar=mar)
     else
       par(mar=mar)
+
+    if(is.null(ylim))
+      ylim=c(0,max(yval, na.rm=TRUE))
     
     if(signif) {
       # Do student's t-test
@@ -85,20 +103,20 @@
          inds1 <- which(col==ns[1])
          inds2 <- which(col==ns[2])
          p <- NULL; q <- NULL
-         for(i in 1:ncol(x$fluctuations)) {
-           p <- c(p, t.test(x$fluctuations[inds1,i],
-                         x$fluctuations[inds2,i],
+         for(i in 1:ncol(yval)) {
+           p <- c(p, t.test(yval[inds1,i],
+                         yval[inds2,i],
                          alternative="two.sided")$p.value)
-           m <- mean(x$fluctuations[inds1,i])
-           n <- mean(x$fluctuations[inds2,i])
+           m <- mean(yval[inds1,i])
+           n <- mean(yval[inds2,i])
            q <- c(q, abs(m-n))
          }
          sig <- which(p<pcut & q>qcut)
       
          # Plot significance as shaded blocks
-         maxy <- max(x$fluctuations, na.rm=TRUE)
-         do.call('plot.bio3d', c(list(x=x$fluctuations[1,], xlab=xlab, ylab=ylab,
-                                      ylim=c(0,maxy),
+         maxy <- max(yval, na.rm=TRUE)
+         do.call('plot.bio3d', c(list(x=yval[1,], xlab=xlab, ylab=ylab,
+                                      ylim=ylim,
                                       col=col[1]), type="n", dots))
          bds <- bounds(sig)
          ii <- 1:nrow(bds) 
@@ -107,47 +125,45 @@
               col=rep("lightblue", length(ii)), border=NA)
 #         ii <- which(bds[, 3]<=1)
 #         lines(bds[ii, 1], rep(maxy, length(ii)), type="h", col="lightblue")
-         lines( x$fluctuations[1,], col=col[1], type="h" )
+         lines( yval[1,], col=col[1], type="h" )
       }
     } else {
-    
-       ## Plot fluctuations plot
-       do.call('plot.bio3d', c(list(x=x$fluctuations[1,], xlab=xlab, ylab=ylab,
-                                    ylim=c(0,max(x$fluctuations, na.rm=TRUE)),
+      
+      
+      ## Plot fluctuations plot
+      do.call('plot.bio3d', c(list(x=yval[1,], xlab=xlab, ylab=ylab,
+                                    ylim=ylim,
                                     col=col[1]), dots))
     }
-    for(i in 2:nrow(x$fluctuations)) {
-      lines( x$fluctuations[i,], col=col[i] )
+    for(i in 2:nrow(yval)) {
+      lines( yval[i,], col=col[i] )
     }
 
 
-    ## Entropy and fluct.variance
+    ## Fluct variance
+    if (variance) {
+      fluct.sd <- apply(yval, 2, var, na.rm=T)
+      do.call('plot.bio3d', c(list(x=fluct.sd,
+                                   xlab="Residue position", 
+                                   ylab="Fluct. variance", 
+                                   col=col[1]), dots))
+    }
+
+    ## Sequence Entropy 
     if (entropy) {
-      ## Fluctuation variance
-      fluct.sd <- apply(x$fluctuations, 2, var, na.rm=T)
-      
-      ## Sequence Entropy
       if(rm.gaps) {
         h   <- entropy(pdbs$ali[,gaps.res$f.inds])
       }
       else {
         h   <- entropy(pdbs)
       }
+      ##H <- h$H.10.norm
       H <- h$H.norm
       
-      mp <- barplot(fluct.sd, ylab="Fluct. variance")
-      axis(side=1, at=mp[ seq(1, nrow(mp), by=50) ],
-           labels=seq(0,length(H),by=50))
-      box()
-      
-      
-      mp <- barplot(H, border=NA, ylab = "Seq. entropy",
-                    ylim=c(0,1))
-      axis(side=2, at=c(0.2,0.4, 0.6, 0.8))
-      axis(side=1, at=mp[ seq(1, nrow(mp), by=50) ],
-           labels=seq(0,length(H),by=50))
-      box()
-      
+      do.call('plot.bio3d', c(list(x=H,
+                                   ylab="Seq. entropy",
+                                   xlab="Residue position",
+                                   col=col[1]), dots))
     }
     
   }

@@ -5,19 +5,24 @@
   Produces a plot of atomic fluctuations of aligned normal modes.
 }
 \usage{
-\method{plot}{enma}(x, pdbs = NULL, entropy = FALSE, col = NULL,
-        signif = FALSE, pcut = 0.005, qcut = 0.04,
+\method{plot}{enma}(x, y="fluctuations",
+        pdbs = NULL, entropy = FALSE, variance = FALSE, 
+        col = NULL, signif = FALSE,
+        pcut = 0.005, qcut = 0.04,
         xlab = "Residue Position", ylab = "Fluctuations",
+        ylim = NULL,
         mar = c(4, 5, 2, 2), ...)
 }
 \arguments{
   \item{x}{ the results of ensemble NMA obtained with
     \code{\link{nma.pdbs}}. }
+  \item{y}{ plot either \sQuote{fluctuations} (atom fluctuations) or
+    \sQuote{deformations} (average deformation energies). }
   \item{pdbs}{ an object of class \sQuote{3dalign} in which the
     \sQuote{enma} object \code{x} was obtained from. If provided SSE
     data of the first structure of \code{pdbs} will drawn. }
-  \item{entropy}{ logical, if TRUE entropy and fluctuation variance is
-    plotted. }
+  \item{entropy}{ logical, if TRUE sequence entropy is plotted. }
+  \item{variance}{ logical, if TRUE fluctuation variance is plotted. }
   \item{col}{ a character vector of plotting colors.  }
   \item{signif}{ logical, if TRUE significance of difference is plotted. }
   \item{pcut}{ P-value cutoff for the significance. }
@@ -28,6 +33,7 @@
   \item{mar}{ A numerical vector of the form c(bottom, left, top, right)
     which gives the number of lines of margin to be specified on the
     four sides of the plot.}
+  \item{ylim}{ the y limits of the plot. }
   \item{\dots}{ extra plotting arguments passed to \code{plot.bio3d}
     that effect the atomic fluctuations plot only. }
 }

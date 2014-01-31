@@ -2,13 +2,8 @@
 function(x, reference=apply(xyz,2,mean), grpby=NULL, ncore=1, nseg.scale=1, ... ) {
   xyz <- x
   # Parallelized by multicore package (Wed Dec 12 18:36:39 EST 2012)
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) { 
-     oops <- require(multicore)
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -56,7 +51,6 @@ function(x, reference=apply(xyz,2,mean), grpby=NULL, ncore=1, nseg.scale=1, ... 
      cclist <- unlist(cclist)
      for(i in 1:ni) ccmat[inds[i,1], inds[i,2]] <-
           ccmat[inds[i,2], inds[i,1]] <- cclist[i]
-     readChildren()
   } else {       # Single version
      for(i in 2:natm) {
        for(j in 1:(i-1)) {

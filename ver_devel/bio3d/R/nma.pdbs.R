@@ -3,7 +3,7 @@
 ## 2 - return the full objects
 
 "nma.pdbs" <- function(pdbs, fit=TRUE, full=FALSE, defa = FALSE, 
-                       rm.gaps=TRUE, outpath = "pdbs_nma", ...) {
+                       rm.gaps=TRUE, outpath = "pdbs_nma", ncore=1, ...) {
 
   if(class(pdbs)!="3dalign")
     stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
@@ -13,6 +13,34 @@
   
   if(!is.null(outpath))
     dir.create(outpath, FALSE)
+
+  ## Parallelized by multicore package
+  if(is.null(ncore) || ncore > 1) {
+    ##oops <- require(multicore)
+    oops <- require(parallel)
+    if(!oops) {
+      if(is.null(ncore))
+        ncore <- 1
+      else
+        stop("Please install the multicore package from CRAN\n\tor\n\tset ncore=1 for serial computation")
+    }
+    oops <- require(bigmemory)
+    if(!oops) {
+      if(is.null(ncore))
+        ncore <- 1
+      else
+        stop("Please install the bigmemory package from CRAN for running with multicore")
+    }
+    
+    if(is.null(ncore))
+      ncore = multicore:::detectCores()
+    options(cores = ncore)
+  }
+
+  if(ncore>1)
+    mylapply <- mclapply
+  else
+    mylapply <- lapply
   
   ## Passing arguments to functions aa2mass and nma
   am.names <- names(formals( aa2mass ))
@@ -36,10 +64,10 @@
   else
     temp <- 300
   if("keep" %in% names(nm.args))
-    nm.keep <- nm.args$temp
+    nm.keep <- nm.args$keep
   else
     nm.keep <- NULL
-  
+
   if(!all((names(nm.args) %in% c("mass", "ff", "temp", "keep")))) {
     war <- paste(names(nm.args)[! names(nm.args) %in% c("mass", "ff", "temp", "keep") ], collapse=", ")
     warning(paste("ignoring arguments:", war))
@@ -84,6 +112,9 @@
   
   ## Use for later indexing
   pdbs$inds <- matrix(NA, ncol=ncol(pdbs$resno), nrow=nrow(pdbs$resno))
+
+  ## Force field
+  pfc.fun <- load.enmff(ff)
   
   ## Number of modes to keep  
   keep <- 20
@@ -94,7 +125,6 @@
   if(fit) {
     xyz <- fit.xyz(fixed = pdbs$xyz[1, ], mobile = pdbs,
                    fixed.inds = gaps.pos$f.inds, mobile.inds = gaps.pos$f.inds)
-                   ##pdb.path = ".", pdbext = "", outpath = "core_fitlsq", full.pdbs = TRUE, het2atom = TRUE)
   }
   else
     xyz <- pdbs$xyz
@@ -105,8 +135,11 @@
   else
     flucts <- matrix(NA, nrow=nrow(gaps.res$bin), ncol=ncol(gaps.res$bin))
 
-  ## if we do deformation analysis
-  deform <- flucts
+  ## Deformation analysis
+  if(defa)
+    deform <- flucts
+  else
+    deform <- NULL
 
   ## store residue numbers (same as pdbs$id[,gaps$f.inds])
   ##resnos <- flucts
@@ -122,97 +155,170 @@
     modes.array <- array(NA, dim=c(length(gaps.pos$f.inds), keep, nrow(gaps.res$bin)))
   else
     modes.array <- array(NA, dim=c(ncol(pdbs$xyz), keep, nrow(gaps.res$bin)))
+
+  ## store eigenvalues of the first modes
+  L.mat <- matrix(NA, ncol=keep, nrow=nrow(gaps.res$bin))
   
   if(is.null(outpath))
     fname <- tempfile(fileext = "pdb")
+
   
-  pb <- txtProgressBar(min=0, max=nrow(pdbs$xyz), style=3)
+  ##### Start modes calculation #####
+  pb <- txtProgressBar(min=0, max=length(pdbs$id), style=3)
+  
+  ## shared memory to follow progress bar
+  if(ncore>1)
+    iipb <<- big.matrix(1, length(pdbs$id), init=NA)
 
-  ## Loop through each structure in 'pdbs'
-  for ( i in 1:nrow(pdbs$xyz) ) {
+  ## call .calcAlnModes for each structure in 'pdbs'
+  alnModes <- mylapply(1:length(pdbs$id), .calcAlnModes,
+                       pdbs, xyz, gaps.res,
+                       mass, am.args, nm.keep, temp, keep, 
+                       rm.gaps, defa, 
+                       pfc.fun, ff, outpath, pb, ncore)
+  close(pb)
 
-    ## Set indices for this structure only
-    f.inds <- NULL
-    f.inds$res <- which(gaps.res$bin[i,]==0)
-    f.inds$pos <- atom2xyz(f.inds$res)
-
-    ## similar to $resno but sequential indices
-    pdbs$inds[i, f.inds$res] <- seq(1, length(f.inds$res))
+  if(ncore>1)
+    rm(iipb, pos = ".GlobalEnv")
+  
+  ##### Collect data #####
+  for(i in 1:length(alnModes)) {
+    tmp.modes <- alnModes[[i]]
     
-    ## Indices to extract from Hessian
-    inds.inc <- pdbs$inds[i, gaps.res$f.inds]
-    inds.exc <- pdbs$inds[i, gaps.res$t.inds][ !is.na(pdbs$inds[i, gaps.res$t.inds]) ]
+    modes.array[,,i] = tmp.modes$U
+    L.mat[i, ]       = tmp.modes$L
+    flucts[i, ]      = tmp.modes$flucts
 
-    inds.inc.xyz <- atom2xyz(inds.inc)
-    inds.exc.xyz <- atom2xyz(inds.exc)
+    if(full)
+      all.modes[[i]]   = tmp.modes$modes
 
-    ## Generate content of PDB object
-    tmp.xyz <- xyz[i, f.inds$pos]
-    resno   <- pdbs$resno[i,f.inds$res]
-    chain   <- pdbs$chain[i,f.inds$res]
-    
-    ## Fix for missing chain IDs
-    chain[is.na(chain)] <- ""
-    
-    ## Check if protein is 'complete'
-    if(nrow(bounds(as.numeric(pdbs$resno[i,])))>1)
-      warning(paste(basename(pdbs$id[i]), "might have missing residue(s) in structure:\n",
-                    "  Fluctuations at neighboring positions may be affected."))
-    
-    ## Workaround for unknown residue types
-    if(any(pdbs$ali[i,]=="X") && mass==TRUE) {
-      if(!file.exists(pdbs$id[i])) {
-        cat("\n")
-        stop(paste("Non-standard residue type found in", basename(pdbs$id[i]), "\n",
-                   "  attempt to re-read PDB file failed."))
-      }
-      
-      pdb   <- read.pdb(pdbs$id[i])
-      resid <- pdb$atom[atom.select(pdb, 'calpha', verbose=FALSE)$atom, "resid"]
-    }
-    else {
-      resid <- aa123(pdbs$ali[i,f.inds$res])
-    }
-    
-    ## Make a PDB object by writing to disk and re-read file
-    if(!is.null(outpath))
-      fname <- file.path(outpath, basename(pdbs$id[i]))
-
-    write.pdb(pdb=NULL, xyz=tmp.xyz, resno=resno, chain=chain,
-              resid=resid, file=fname)
-    tmp.pdb <- read.pdb(fname)
-        
-    if(is.null(outpath))
-      unlink(fname)
-
-    if(mass) {
-      masses <- try(
-                    do.call('aa2mass', c(list(pdb=tmp.pdb, inds=NULL), am.args)),
-                    silent=TRUE
-                    )
-      
-      if(inherits(masses, "try-error")) {
-        hmm <- attr(masses,"condition")
-        cat("\n\n")
-        stop(paste(hmm$message, "in file", basename(pdbs$id[i])))
-      }
-    }
+    if(defa)
+      deform[i, ]    = tmp.modes$deform
     else
-      masses <- NULL
-    
-    pfc.fun <- load.enmff(ff)
-    
-    if(rm.gaps) {
-      ## Build the hessian of the complete structure
-      sequ    <- tmp.pdb$atom[,"resid"]
-      hess    <- build.hessian(tmp.pdb$xyz, pfc.fun, aa.mass=masses, sequ=sequ)
+      deform <- NULL
+  }
 
-      ## Effective hessian for atoms in the aligned core
-      if(length(inds.exc)>0) {
-        kaa     <- hess[inds.inc.xyz, inds.inc.xyz]
-        kqq.inv <- solve(hess[inds.exc.xyz, inds.exc.xyz])
-        kaq     <- hess[inds.inc.xyz, inds.exc.xyz]
-        kqa     <- t(kaq)
+  ##### RMSIP ######
+  rmsip.map <- NULL
+  if(rm.gaps) {
+    rmsip.map <- .calcRMSIP(modes.array)
+    rownames(rmsip.map) <- basename(rownames(pdbs$xyz))
+    colnames(rmsip.map) <- basename(rownames(pdbs$xyz))
+
+    if(!fit)
+      warning("rmsip calculated on non-fitted structures:
+               ensure that your input coordinates are pre-fitted.")
+  }
+
+  rownames(flucts) <- basename(rownames(pdbs$xyz))
+  out <- list(fluctuations=flucts, rmsip=rmsip.map,
+              deformations=deform, ##resno=resnos,
+              U.subspace=modes.array, L=L.mat, full.nma=all.modes, call=cl)
+  class(out) = "enma"
+  return(out)
+}
+
+.calcRMSIP <- function(x) {
+  n <- dim(x)[3]
+  mat <- matrix(NA, n, n)
+  inds <- rbind(pairwise(n),
+                matrix(rep(1:n,each=2), ncol=2, byrow=T))
+  
+  for(i in 1:nrow(inds)) { 
+    mat[inds[i,1], inds[i,2]] <- rmsip(x[,,inds[i,1]],
+                                       x[,,inds[i,2]])$rmsip
+  }
+  mat[ inds[,c(2,1)] ] = mat[ inds ]
+  return(round(mat, 4))
+}
+
+
+## Calculate 'aligned' normal modes of structure i in pdbs
+.calcAlnModes <- function(i, pdbs, xyz, gaps.res,
+                          mass, am.args, nm.keep, temp, keep,
+                          rm.gaps, defa, 
+                          pfc.fun, ff, outpath, pb, ncore) {
+  
+  ## Set indices for this structure only
+  f.inds <- NULL
+  f.inds$res <- which(gaps.res$bin[i,]==0)
+  f.inds$pos <- atom2xyz(f.inds$res)
+  
+  ## similar to $resno but sequential indices
+  pdbs$inds[i, f.inds$res] <- seq(1, length(f.inds$res))
+  
+  ## Indices to extract from Hessian
+  inds.inc <- pdbs$inds[i, gaps.res$f.inds]
+  inds.exc <- pdbs$inds[i, gaps.res$t.inds][ !is.na(pdbs$inds[i, gaps.res$t.inds]) ]
+
+  inds.inc.xyz <- atom2xyz(inds.inc)
+  inds.exc.xyz <- atom2xyz(inds.exc)
+  
+  ## Generate content of PDB object
+  tmp.xyz <- xyz[i, f.inds$pos]
+  resno   <- pdbs$resno[i,f.inds$res]
+    chain   <- pdbs$chain[i,f.inds$res]
+  
+  ## Fix for missing chain IDs
+  chain[is.na(chain)] <- ""
+  
+  ## Check if protein is 'complete'
+  if(nrow(bounds(as.numeric(pdbs$resno[i,])))>1)
+    warning(paste(basename(pdbs$id[i]), "might have missing residue(s) in structure:\n",
+                  "  Fluctuations at neighboring positions may be affected."))
+  
+  ## Workaround for unknown residue types
+  if(any(pdbs$ali[i,]=="X") && mass==TRUE) {
+    if(!file.exists(pdbs$id[i])) {
+      cat("\n")
+      stop(paste("Non-standard residue type found in", basename(pdbs$id[i]), "\n",
+                 "  attempt to re-read PDB file failed."))
+    }
+    
+    pdb   <- read.pdb(pdbs$id[i])
+    resid <- pdb$atom[atom.select(pdb, 'calpha', verbose=FALSE)$atom, "resid"]
+  }
+  else {
+    resid <- aa123(pdbs$ali[i,f.inds$res])
+  }
+  
+  ## Make a PDB object by writing to disk and re-read file
+  if(!is.null(outpath))
+    fname <- file.path(outpath, basename(pdbs$id[i]))
+  
+  write.pdb(pdb=NULL, xyz=tmp.xyz, resno=resno, chain=chain,
+            resid=resid, file=fname)
+  tmp.pdb <- read.pdb(fname)
+  
+  if(is.null(outpath))
+    unlink(fname)
+  
+  if(mass) {
+    masses <- try(
+      do.call('aa2mass', c(list(pdb=tmp.pdb, inds=NULL), am.args)),
+      silent=TRUE
+      )
+    
+    if(inherits(masses, "try-error")) {
+      hmm <- attr(masses,"condition")
+      cat("\n\n")
+      stop(paste(hmm$message, "in file", basename(pdbs$id[i])))
+    }
+  }
+  else
+    masses <- NULL
+  
+  if(rm.gaps) {
+    ## Build the hessian of the complete structure
+    sequ    <- tmp.pdb$atom[,"resid"]
+    hess    <- build.hessian(tmp.pdb$xyz, pfc.fun, aa.mass=masses, sequ=sequ)
+    
+    ## Effective hessian for atoms in the aligned core
+    if(length(inds.exc)>0) {
+      kaa     <- hess[inds.inc.xyz, inds.inc.xyz]
+      kqq.inv <- solve(hess[inds.exc.xyz, inds.exc.xyz])
+      kaq     <- hess[inds.inc.xyz, inds.exc.xyz]
+      kqa     <- t(kaq)
         k <- kaa - ((kaq %*% kqq.inv) %*% kqa)
       }
       else {
@@ -242,7 +348,7 @@
     ## Perform deformation analysis
     if(defa)
       defo <- rowMeans(deformation.nma(modes, mode.inds=seq(7,11))$ei)
-
+    
     if(rm.gaps)
       modes.mat <- matrix(NA, ncol=keep, nrow=nrow(modes$U))
     else
@@ -257,58 +363,42 @@
       j <- j+1
     }
 
-    if(full)
-      all.modes[[i]] <- modes
-    modes.array[,,i] <- modes.mat
-    
-    if(rm.gaps) {
-      flucts[i, ] <- modes$fluctuations
-      ##resnos[i, ] <- pdbs$resno[i,gaps.res$f.inds]
-
-      if(defa)
-        deform[i, ] <- defo
-    }
-    else {
-      flucts[i, f.inds$res] <- modes$fluctuations
-      ##resnos[i, f.inds$res] <- resno
-
-      if(defa)
-        deform[i, f.inds$res] <- defo
-    }
-
-    setTxtProgressBar(pb, i)
-  }
-  close(pb)
-
-  calc.rmsip <- function(x) {
-    n <- dim(x)[3]
-    mat <- matrix(NA, n, n)
-    inds <- rbind(pairwise(n),
-                  matrix(rep(1:n,each=2), ncol=2, byrow=T))
-    
-    for(i in 1:nrow(inds)) { 
-      mat[inds[i,1], inds[i,2]] <- rmsip(x[,,inds[i,1]],
-                                         x[,,inds[i,2]])$rmsip
-    }
-    mat[ inds[,c(2,1)] ] = mat[ inds ]
-    ##diag(mat) <- 1 ## better to calculate it
-    return(round(mat, 4))
-  }
-
-  rmsip.map <- NULL
+  deform <- NULL
   if(rm.gaps) {
-    rmsip.map <- calc.rmsip(modes.array)
-    rownames(rmsip.map) <- basename(rownames(pdbs$xyz))
-    colnames(rmsip.map) <- basename(rownames(pdbs$xyz))
-
-    if(!fit)
-      warning("rmsip calculated on non-fitted structures:
-               ensure that your input coordinates are pre-fitted.")
+    flucts <- modes$fluctuations
+    
+    if(defa)
+      deform <- defo
   }
-  
-  rownames(flucts) <- basename(rownames(pdbs$xyz))
-  out <- list(fluctuations=flucts, rmsip=rmsip.map, deformations=deform, ##resno=resnos,
-              U.subspace=modes.array, full.nma=all.modes, call=cl)
-  class(out) = "enma"
+  else {
+    flucts <- rep(NA, length=ncol(pdbs$resno))
+    deform <- rep(NA, length=ncol(pdbs$resno))
+    
+    flucts[f.inds$res] <- modes$fluctuations
+    
+    if(defa)
+      deform[f.inds$res] <- defo
+  }
+
+  ## Progress bar
+  if(ncore>1) {
+    iipb[1,i] <<- 1
+    j <- length(which(!is.na(bigmemory::as.matrix(iipb))))
+  }
+  else
+    j <- i
+  setTxtProgressBar(pb, j)
+
+  out <- list(modes=modes,
+              U=modes.mat,
+              L=modes$L[seq(7, keep+6)],
+              flucts=flucts,
+              defa=deform,
+              f.inds=f.inds)
   return(out)
 }
+  
+  
+
+
+

@@ -3,9 +3,9 @@
   if(!class(enma)=="enma")
     stop("input should be an 'enma' object as obtained from 'nma.pdbs'")
   
-  if(is.null(enma$full.nma))
-    stop(paste("incompatible 'enma' object. \n", 
-               " run 'nma.pdbs' with 'full=TRUE'"))
+  ##if(is.null(enma$full.nma))
+  ##  stop(paste("incompatible 'enma' object. \n", 
+  ##             " run 'nma.pdbs' with 'full=TRUE'"))
 
   if(any(is.na(enma$U.subspace)))
     arr <- FALSE
@@ -23,8 +23,22 @@
   pb <- txtProgressBar(min=1, max=dims[3L], style=3)
   
   for( i in 1:dims[3L] ) {
-    invisible(capture.output(
-      cm.tmp <- dccm.nma(enma$full.nma[[i]], ...) ))
+
+    if(is.null(enma$full.nma)) {
+      dummy.nma <- list(U=enma$U.subspace[,,i],
+                        L=enma$L[i,],
+                        force.constants=enma$L[i,],
+                        triv.modes=0,
+                        natoms=nrow(enma$U.subspace[,,i])/3)
+      class(dummy.nma) <- "nma"
+
+      invisible(capture.output(
+        cm.tmp <- dccm.nma(dummy.nma, ...) ))
+    }
+    else {
+      invisible(capture.output(
+        cm.tmp <- dccm.nma(enma$full.nma[[i]], ...) ))
+    }
 
     if(arr)
       all.dccm[,,i] <- cm.tmp

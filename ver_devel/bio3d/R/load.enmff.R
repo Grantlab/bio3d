@@ -208,13 +208,19 @@
   inds.k12 <- c(atom.id -1, atom.id+1)
   inds.k12 <- inds.k12[ intersect(which(inds.k12 > 0), which(inds.k12 <= natoms)) ]
   ks[inds.k12] <- 43.52
+  ks[atom.id]=0
+
+  ## should in principle not get this far ...
+  if(any(is.na(ks))) {
+    stop(paste("Incompatible protein sequence:\n",
+               " Paramters only exists for standard amino acid residues"))
+  }
   
   ## sdENM FF is in arbitrary units
   ## The values given were arbitrarily normalized, so that
   ## the average kappa (over all amino acid pairs) is equal to 1, at d = 6 Ang.
   ## scale to kJ / mol / A^2 range:
   ks <- ks * 0.0083144621 * 300 * 10
-  ks[is.na(ks)]=0
   return(ks)
 }
 
