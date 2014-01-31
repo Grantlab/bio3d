@@ -5,11 +5,14 @@
   Internally used in parallelized functions.
 }
 \usage{
-  setup.ncore(ncore)
+  setup.ncore(ncore, bigmem = FALSE)
 }
 \arguments{
   \item{ncore}{
     User set (or default) value of \sQuote{ncore}.
+  }
+  \item{bigmem}{
+    logical, if TRUE also check the availability of \sQuote{bigmemory} package.
   }
 }
 \details{

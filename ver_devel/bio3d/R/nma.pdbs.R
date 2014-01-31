@@ -15,27 +15,7 @@
     dir.create(outpath, FALSE)
 
   ## Parallelized by multicore package
-  if(is.null(ncore) || ncore > 1) {
-    ##oops <- require(multicore)
-    oops <- require(parallel)
-    if(!oops) {
-      if(is.null(ncore))
-        ncore <- 1
-      else
-        stop("Please install the multicore package from CRAN\n\tor\n\tset ncore=1 for serial computation")
-    }
-    oops <- require(bigmemory)
-    if(!oops) {
-      if(is.null(ncore))
-        ncore <- 1
-      else
-        stop("Please install the bigmemory package from CRAN for running with multicore")
-    }
-    
-    if(is.null(ncore))
-      ncore = multicore:::detectCores()
-    options(cores = ncore)
-  }
+  ncore <- setup.ncore(ncore, bigmem = TRUE)
 
   if(ncore>1)
     mylapply <- mclapply
