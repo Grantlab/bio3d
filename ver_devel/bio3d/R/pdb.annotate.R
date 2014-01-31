@@ -10,7 +10,12 @@ pdb.annotate <- function(ids, anno.terms=NULL) {
     ## All availalbe annotation terms (note 'citation' is a meta term)
     anno.allterms <- c("structureId", "experimentalTechnique", "resolution", "chainId", "ligandId",
                        "ligandName", "source", "scopDomain", "classification", "compound", "title",
-                       "citation", "citationAuthor", "journalName", "publicationYear")
+                       "citation", "citationAuthor", "journalName", "publicationYear",
+                       
+                       "structureTitle","depositionDate","structureMolecularWeight","macromoleculeType",
+                       "chainId","entityId","sequence","chainLength","db_id","db_name")
+
+                       ##"molecularWeight","secondaryStructure","entityMacromoleculeType")
     
     if(is.null(anno.terms)) {
       anno.terms <- anno.allterms
@@ -38,7 +43,7 @@ pdb.annotate <- function(ids, anno.terms=NULL) {
     }
     if (any(nchar(ids) != 4)) 
     {
-        warning("ids should be standard 4 character PDB formart: trying first 4 char...")
+        warning("ids should be standard 4 character PDB format: trying first 4 char...")
         ids <- substr(basename(ids), 1, 4)
     }
     

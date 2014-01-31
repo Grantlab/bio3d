@@ -1,10 +1,5 @@
 lmi <- function (trj, grpby = NULL, ncore=1) {
-    if (ncore > 1) {
-        oops <- require(multicore)
-        if (!oops) 
-            stop("Please install the multicore package from CRAN")
-        options(cores = ncore)
-    }
+    ncore <- setup.ncore(ncore)
 
 # rm:r-value matrix
     cm <- var(trj)

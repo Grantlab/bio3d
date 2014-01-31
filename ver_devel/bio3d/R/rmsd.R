@@ -12,13 +12,8 @@ function(a, b=NULL,
    
   # Parallelized by multicore package -Wed Dec 12 11:15:20 EST 2012
   # nseg.scale - to resolve the memory problem of using multicore
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) {
-     oops <- require(multicore)
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -79,7 +74,6 @@ function(a, b=NULL,
                mc.preschedule=TRUE)
          }
          s <- unlist(s)
-         readChildren()
       } else {               # Single version
          s <- rep(NA, ni)
          for(i in 1:ni) {
@@ -156,7 +150,6 @@ function(a, b=NULL,
                mc.preschedule=TRUE)
          }
          irmsd <- unlist(irmsd)
-         readChildren()
       } else {                  # Single version
          irmsd <- sqrt( apply((apply(b[,b.inds],1,"-",a[a.inds])^2),2,sum)/(length(a[a.inds])/3) )
       }

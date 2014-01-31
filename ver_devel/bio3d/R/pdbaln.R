@@ -15,13 +15,8 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
   ## pdb.list[[1]]$atom[1:3,]
 
   # Parallelized by multicore package (Fri Apr 26 19:24:18 EDT 2013)
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) {
-     oops <- require(multicore)
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -89,7 +84,8 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
 
   s <- t(sapply(s, `[`, 1:max(sapply(s, length))))
   s[is.na(s)] <- "-"
-  s <- seqaln(s, id=files, extra.args="-quiet", ...)
+  ##s <- seqaln(s, id=files, extra.args="-quiet", ...)
+  s <- seqaln(s, id=files, ...)
   cat("\n")
   s <- read.fasta.pdb(s, prefix = "", pdbext = "", ncore=ncore, nseg.scale=nseg.scale)
 

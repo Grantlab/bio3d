@@ -17,19 +17,7 @@
   }
     
   ## Check for multiple cores
-  if(is.null(ncore) || ncore>1) {
-    oops <- require(multicore)
-    if (oops) {
-        if(is.null(ncore))
-          ncore <- multicore:::detectCores()
-        
-        options(cores = ncore)
-      }
-    else {
-      warning("multicore package missing")
-      ncore <- 1
-    }
-  }
+  ncore <- setup.ncore(ncore)
 
   ## calcualte deformation energies for a specific mode
   def.mode <- function(mode.id, nma, xyz, ff, natoms) {
