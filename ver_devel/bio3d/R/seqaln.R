@@ -7,18 +7,45 @@ function(aln, id=NULL,
                    refine = FALSE,
                    extra.args = "",
                    verbose = FALSE) {
+  
+  if(length(grep(tolower(exefile), "clustalo"))>0) {
+    prg <- "clustalo"
+    ver <- "--version"
+    args <- c("--in", "--out")
+    extra.args <- paste(extra.args,"--force")
 
+    if(verbose)
+      extra.args <- paste(extra.args,"--verbose")
+    
+    #if(protein) {
+    #  extra.args <- paste(extra.args,"-seqtype protein")
+    #} else { extra.args <- paste(extra.args,"-seqtype dna") }
+  }
+  else {
+    prg <- "muscle"
+    ver <- "-version"
+    args <- c("-in", "-out")
+
+    if(refine) extra.args <- paste(extra.args,"-refine")
+    if(protein) {
+      extra.args <- paste(extra.args,"-seqtype protein")
+    } else { extra.args <- paste(extra.args,"-seqtype dna") }
+  }
+  
+  
   ## Check if the program is executable
   os1 <- .Platform$OS.type
-  status <- system(paste(exefile, "-version"),
+  status <- system(paste(exefile, ver),
                    ignore.stderr = TRUE, ignore.stdout = TRUE)
-  
+
   if(!(status %in% c(0,1)))
-    stop(paste("Launching external program 'MUSCLE' failed\n",
+    stop(paste("Launching external program failed\n",
                "  make sure '", exefile, "' is in your search path", sep=""))
   
   as.aln <- function(mat, id=NULL) {
-    if(is.null(id))
+    if(is.null(id) && !is.null(rownames(mat)))
+      id=rownames(mat)
+    if(is.null(id) && is.null(rownames(mat)))
       id=paste("seq",1:nrow(mat),sep="")
     return(list(id=id, ali=mat))
   }
@@ -33,14 +60,8 @@ function(aln, id=NULL,
   if(is.null(outfile)) fa <- tempfile() 
   else fa <- outfile
 
-###  if(!seqgroup)  extra.args <- paste(extra.args,"-stable")
-  if(refine) extra.args <- paste(extra.args,"-refine")
-  if(protein) {
-    extra.args <- paste(extra.args,"-seqtype protein")
-  } else { extra.args <- paste(extra.args,"-seqtype dna") }
-   
-  cmd <- paste(exefile, " -in ",toaln," -out ",
-               fa," ",extra.args, sep="")
+  cmd <- paste(exefile, args[1], toaln, args[2],
+               fa, extra.args, sep=" ")
   if(verbose)
     cat(paste("Running command:\n ", cmd , "\n"))
   
