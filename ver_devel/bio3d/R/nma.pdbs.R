@@ -62,7 +62,7 @@
   gaps.pos <- gap.inspect(pdbs$xyz)
 
   ## check for missing masses before we start calculating
-  if(any(pdbs$ali=="X") && mass==TRUE && FALSE) {
+  if(any(pdbs$ali=="X") && mass==TRUE) {
     mat.file <- system.file(paste("matrices/aa_mass.mat",sep=""), package="bio3d")
     mat <- read.table(mat.file)
     resnames <- c(row.names(mat), names(am.args$mass.custom))
