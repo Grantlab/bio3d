@@ -3,8 +3,9 @@
 ## 2 - return the full objects
 
 "nma.pdbs" <- function(pdbs, fit=TRUE, full=FALSE, defa = FALSE, 
-                       rm.gaps=TRUE, outpath = "pdbs_nma", ncore=1, ...) {
-
+                       rm.gaps=TRUE, outpath = NULL, ncore=1, ...) {
+ 
+  
   if(class(pdbs)!="3dalign")
     stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
 
@@ -15,33 +16,16 @@
     dir.create(outpath, FALSE)
 
   ## Parallelized by multicore package
-  if(is.null(ncore) || ncore > 1) {
-    ##oops <- require(multicore)
-    oops <- require(parallel)
-    if(!oops) {
-      if(is.null(ncore))
-        ncore <- 1
-      else
-        stop("Please install the multicore package from CRAN\n\tor\n\tset ncore=1 for serial computation")
-    }
-    oops <- require(bigmemory)
-    if(!oops) {
-      if(is.null(ncore))
-        ncore <- 1
-      else
-        stop("Please install the bigmemory package from CRAN for running with multicore")
-    }
-    
-    if(is.null(ncore))
-      ncore = multicore:::detectCores()
-    options(cores = ncore)
-  }
-
-  if(ncore>1)
+  ncore <- setup.ncore(ncore, bigmem = TRUE)
+  prev.warn <- getOption("warn")
+  
+  if(ncore>1) {
     mylapply <- mclapply
+    options(warn=1)
+  }
   else
     mylapply <- lapply
-  
+
   ## Passing arguments to functions aa2mass and nma
   am.names <- names(formals( aa2mass ))
   nm.names <- names(formals( nma ))
@@ -89,6 +73,7 @@
     for(i in 1:nrow(ops.inds)) {
       j <- ops.inds[i]
       if(!file.exists(pdbs$id[j])) {
+        options(warn=prev.warn)
         cat("\n")
         stop(paste("Non-standard residue type found in", basename(pdbs$id[j]), "\n",
                    "  attempt to re-read PDB file failed."))
@@ -104,6 +89,7 @@
     }
 
     if(length(unknowns)>0) {
+      options(warn=prev.warn)
       unknowns <- paste(unique(unknowns), collapse=", ")
       stop(paste("Unknown aminoacid identifier(s):", unknowns,
                  "\n  Use 'mass=FALSE' or 'mass.custom=list(UNK=156.2)'"))
@@ -170,6 +156,7 @@
   if(ncore>1)
     iipb <<- big.matrix(1, length(pdbs$id), init=NA)
 
+  
   ## call .calcAlnModes for each structure in 'pdbs'
   alnModes <- mylapply(1:length(pdbs$id), .calcAlnModes,
                        pdbs, xyz, gaps.res,
@@ -178,9 +165,6 @@
                        pfc.fun, ff, outpath, pb, ncore)
   close(pb)
 
-  if(ncore>1)
-    rm(iipb, pos = ".GlobalEnv")
-  
   ##### Collect data #####
   for(i in 1:length(alnModes)) {
     tmp.modes <- alnModes[[i]]
@@ -190,7 +174,7 @@
     flucts[i, ]      = tmp.modes$flucts
 
     if(full)
-      all.modes[[i]]   = tmp.modes$modes
+      all.modes[[i]] = tmp.modes$modes
 
     if(defa)
       deform[i, ]    = tmp.modes$deform
@@ -201,7 +185,7 @@
   ##### RMSIP ######
   rmsip.map <- NULL
   if(rm.gaps) {
-    rmsip.map <- .calcRMSIP(modes.array)
+    rmsip.map <- .calcRMSIP(modes.array, ncore=ncore)
     rownames(rmsip.map) <- basename(rownames(pdbs$xyz))
     colnames(rmsip.map) <- basename(rownames(pdbs$xyz))
 
@@ -210,6 +194,11 @@
                ensure that your input coordinates are pre-fitted.")
   }
 
+  if(ncore>1) {
+    rm(iipb, pos = ".GlobalEnv")  ## remove global iipb variable
+    options(warn=prev.warn)       ## restore warning option
+  }
+  
   rownames(flucts) <- basename(rownames(pdbs$xyz))
   out <- list(fluctuations=flucts, rmsip=rmsip.map,
               deformations=deform, ##resno=resnos,
@@ -218,27 +207,61 @@
   return(out)
 }
 
-.calcRMSIP <- function(x) {
+.calcRMSIP <- function(x, ncore=1) {
+  if(ncore>1)
+    mylapply <- mclapply
+  else
+    mylapply <- lapply
+  
   n <- dim(x)[3]
   mat <- matrix(NA, n, n)
   inds <- rbind(pairwise(n),
                 matrix(rep(1:n,each=2), ncol=2, byrow=T))
+
+  mylist <- mylapply(1:nrow(inds), function(row) {
+    return(list(
+      rmsip=rmsip(x[,,inds[row,1]], x[,,inds[row,2]])$rmsip,
+      i=inds[row,1], j=inds[row,2])
+           )
+  })
   
-  for(i in 1:nrow(inds)) { 
-    mat[inds[i,1], inds[i,2]] <- rmsip(x[,,inds[i,1]],
-                                       x[,,inds[i,2]])$rmsip
+  for ( i in 1:length(mylist)) {
+    tmp.rmsip <- mylist[[i]]
+    mat[tmp.rmsip$i, tmp.rmsip$j] <- tmp.rmsip$rmsip
   }
+  
   mat[ inds[,c(2,1)] ] = mat[ inds ]
   return(round(mat, 4))
 }
 
+.buildDummyPdb <- function(pdb=NULL, xyz=NULL, resno=NULL, chain=NULL, resid=NULL) {
+
+  tmp.pdb <- NULL
+  tmp.pdb$atom           = matrix(NA, nrow=length(resno), ncol=15)
+  colnames(tmp.pdb$atom) = c("eleno", "elety", "alt", "resid", "chain", "resno", "insert",
+                             "x", "y", "z", "o", "b", "segid", "elesy", "charge")
+  
+  tmp.pdb$atom[,"eleno"]          = 1:nrow(tmp.pdb$atom)
+  tmp.pdb$atom[,"elety"]          = "CA"
+  tmp.pdb$atom[,"alt"]            = NA
+  tmp.pdb$atom[,"resid"]          = resid
+  tmp.pdb$atom[,"resno"]          = resno
+  tmp.pdb$atom[,"chain"]          = chain
+  tmp.pdb$atom[,c("x", "y", "z")] = matrix(xyz, ncol=3, byrow=T)
+  
+  tmp.pdb$xyz    = xyz
+  tmp.pdb$calpha = rep(TRUE, nrow(tmp.pdb$atom))
+  
+  class(tmp.pdb) = "pdb"
+  return(tmp.pdb)
+}
 
 ## Calculate 'aligned' normal modes of structure i in pdbs
 .calcAlnModes <- function(i, pdbs, xyz, gaps.res,
                           mass, am.args, nm.keep, temp, keep,
                           rm.gaps, defa, 
                           pfc.fun, ff, outpath, pb, ncore) {
-  
+
   ## Set indices for this structure only
   f.inds <- NULL
   f.inds$res <- which(gaps.res$bin[i,]==0)
@@ -257,7 +280,7 @@
   ## Generate content of PDB object
   tmp.xyz <- xyz[i, f.inds$pos]
   resno   <- pdbs$resno[i,f.inds$res]
-    chain   <- pdbs$chain[i,f.inds$res]
+  chain   <- pdbs$chain[i,f.inds$res]
   
   ## Fix for missing chain IDs
   chain[is.na(chain)] <- ""
@@ -267,31 +290,16 @@
     warning(paste(basename(pdbs$id[i]), "might have missing residue(s) in structure:\n",
                   "  Fluctuations at neighboring positions may be affected."))
   
-  ## Workaround for unknown residue types
-  if(any(pdbs$ali[i,]=="X") && mass==TRUE) {
-    if(!file.exists(pdbs$id[i])) {
-      cat("\n")
-      stop(paste("Non-standard residue type found in", basename(pdbs$id[i]), "\n",
-                 "  attempt to re-read PDB file failed."))
-    }
-    
-    pdb   <- read.pdb(pdbs$id[i])
-    resid <- pdb$atom[atom.select(pdb, 'calpha', verbose=FALSE)$atom, "resid"]
-  }
-  else {
-    resid <- aa123(pdbs$ali[i,f.inds$res])
-  }
+  ## 3-letter AA code is provided in the pdbs object
+  ## avoid using aa123() here (translates TPO to THR)
+  resid <- pdbs$resid[i,f.inds$res]
   
-  ## Make a PDB object by writing to disk and re-read file
-  if(!is.null(outpath))
+  ## Build a dummy PDB to use with function nma()
+  tmp.pdb <- .buildDummyPdb(pdb=NULL, xyz=tmp.xyz, resno=resno, chain=chain,  resid=resid)
+  if(!is.null(outpath)) {
     fname <- file.path(outpath, basename(pdbs$id[i]))
-  
-  write.pdb(pdb=NULL, xyz=tmp.xyz, resno=resno, chain=chain,
-            resid=resid, file=fname)
-  tmp.pdb <- read.pdb(fname)
-  
-  if(is.null(outpath))
-    unlink(fname)
+    write.pdb(tmp.pdb, file=fname)
+  }
   
   if(mass) {
     masses <- try(
@@ -395,6 +403,7 @@
               flucts=flucts,
               defa=deform,
               f.inds=f.inds)
+
   return(out)
 }
   

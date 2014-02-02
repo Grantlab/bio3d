@@ -22,7 +22,18 @@
       yval <- x$deform
     else
       yval <- x$fluctuations
-        
+
+    if(!is.null(col) && any(is.na(col)))
+      inds.plot <- which(!is.na(col))
+    else
+      inds.plot <- 1:nrow(yval)
+
+    if(is.null(col))
+      col <- seq(1, nrow(yval))
+
+    if(is.null(ylim))
+      ylim=c(0,max(yval))
+    
     dots <- list(...)
     sse.aln <- NULL
     if(!is.null(pdbs)) {
@@ -73,10 +84,39 @@
     if( !"sse" %in% names(dots) ) {
       dots$sse <- sse.aln
     }
+
+    ## Perform test of significance
+    ns <- levels(as.factor(col))
+    if((length(ns) !=2) && signif) {
+      warning("Number of states is not equal to 2. Ignoring significance test")
+      signif <- FALSE
+    }
     
-    if(is.null(col))
-      col <- seq(1, nrow(yval))
-    
+    sig <- NULL
+    if(signif) {
+      inds1 <- which(col==ns[1])
+      inds2 <- which(col==ns[2])
+      
+      if(length(inds1)>1 & length(inds2)>1) {
+        p <- NULL; q <- NULL
+        for(i in 1:ncol(yval)) {
+          p <- c(p, t.test(yval[inds1,i],
+                           yval[inds2,i],
+                           alternative="two.sided")$p.value)
+          m <- mean(yval[inds1,i])
+          n <- mean(yval[inds2,i])
+          q <- c(q, abs(m-n))
+        }
+        sig <- which(p<pcut & q>qcut)
+      }
+      
+      ## Plot significance as shaded blocks
+      if(is.null(sig))
+        warning("Too few data points. Ignoring significance test")
+    }
+
+
+    ## Configure plot
     nrows <- 1
     if(entropy)
       nrows=nrows+1
@@ -85,68 +125,40 @@
     
     op <- par(no.readonly=TRUE)
     on.exit(par(op))
-   
+    
     if(nrows>1)
       par(mfrow=c(nrows,1), mar=mar)
     else
       par(mar=mar)
-
-    if(is.null(ylim))
-      ylim=c(0,max(yval, na.rm=TRUE))
     
-    if(signif) {
-      # Do student's t-test
-      ns <- levels(as.factor(col))
-      if(length(ns) !=2) {
-        warning("Number of states is not equal to 2. Ignore plot of significance")
-      } else {
-         inds1 <- which(col==ns[1])
-         inds2 <- which(col==ns[2])
-         p <- NULL; q <- NULL
-         for(i in 1:ncol(yval)) {
-           p <- c(p, t.test(yval[inds1,i],
-                         yval[inds2,i],
-                         alternative="two.sided")$p.value)
-           m <- mean(yval[inds1,i])
-           n <- mean(yval[inds2,i])
-           q <- c(q, abs(m-n))
-         }
-         sig <- which(p<pcut & q>qcut)
-      
-         # Plot significance as shaded blocks
-         maxy <- max(yval, na.rm=TRUE)
-         do.call('plot.bio3d', c(list(x=yval[1,], xlab=xlab, ylab=ylab,
-                                      ylim=ylim,
-                                      col=col[1]), type="n", dots))
-         bds <- bounds(sig)
-         ii <- 1:nrow(bds) 
-         rect(bds[ii,1], rep(0, length(ii)), bds[ii,2], 
-              rep(maxy, length(ii)), 
-              col=rep("lightblue", length(ii)), border=NA)
-#         ii <- which(bds[, 3]<=1)
-#         lines(bds[ii, 1], rep(maxy, length(ii)), type="h", col="lightblue")
-         lines( yval[1,], col=col[1], type="h" )
-      }
-    } else {
-      
-      
-      ## Plot fluctuations plot
-      do.call('plot.bio3d', c(list(x=yval[1,], xlab=xlab, ylab=ylab,
-                                    ylim=ylim,
-                                    col=col[1]), dots))
+
+    ## Plot fluctuations / deformations
+    do.call('plot.bio3d', c(list(x=yval[inds.plot[1],], xlab=xlab, ylab=ylab,
+                                 ylim=ylim, col=1), dots))
+
+    ## If significance test was performed successfully
+    if(!is.null(sig)) {
+      maxy <- max(yval, na.rm=TRUE)
+      bds <- bounds(sig)
+      ii <- 1:nrow(bds) 
+      rect(bds[ii,1], rep(0, length(ii)), bds[ii,2], 
+           rep(maxy, length(ii)), 
+           col=rep("lightblue", length(ii)), border=NA)
     }
-    for(i in 2:nrow(yval)) {
+
+    ## Plot all lines (col==NA will not be plotted)
+    for(i in 1:nrow(yval)) {
       lines( yval[i,], col=col[i] )
     }
-
-
-    ## Fluct variance
+    
+    
+    ## Fluctuation / deformations variance
     if (variance) {
       fluct.sd <- apply(yval, 2, var, na.rm=T)
       do.call('plot.bio3d', c(list(x=fluct.sd,
                                    xlab="Residue position", 
                                    ylab="Fluct. variance", 
-                                   col=col[1]), dots))
+                                   col=1), dots))
     }
 
     ## Sequence Entropy 
@@ -163,7 +175,7 @@
       do.call('plot.bio3d', c(list(x=H,
                                    ylab="Seq. entropy",
                                    xlab="Residue position",
-                                   col=col[1]), dots))
+                                   col=1), dots))
     }
     
   }
