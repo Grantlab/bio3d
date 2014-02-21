@@ -18,27 +18,27 @@ test_that("eNMA works", {
   expect_that(dim(modes$fluctuations), equals(c(3, 336)))
   
   ## structure 1- mode1:
-  U1 <- c(0.01786246, -0.02389142, -0.02582718,
-          0.01604795, -0.02540172, -0.03498606)
+  U1 <- c(-0.01713449,  0.02317549,  0.02522696,
+          -0.01565469,  0.02459163,  0.03433094)
   nowU1 <- head(modes$U.subspace[,1,1], n=6)
   expect_that(nowU1, equals(U1, tolerance=1e-6))
 
   ## structure 1- mode2:
-  U2 <- c(-0.022345000,  0.011023258,  0.007367781,
-          -0.014114932,  0.013401786,  0.004408638)
+  U2 <- c(0.022968348, -0.012008463, -0.008486024,
+          0.014687499, -0.014436478, -0.005957756)
   nowU2 <- head(modes$U.subspace[,2,1], n=6)
   expect_that(nowU2, equals(U2, tolerance=1e-6))
 
   ## structure 2- mode3:
-  U3 <- c(-0.003280028, -0.031958422, -0.022230036,
-          0.004565429,  -0.034818546, -0.037598946)
+  U3 <- c(0.003026549,  0.031369659,  0.021926428,
+          -0.004656332,  0.034181381, 0.036996015)
   nowU3 <- head(modes$U.subspace[,3,2], n=6)
   expect_that(nowU3, equals(U3, tolerance=1e-6))
 
   ## Fluctuations:
-  f1 <- c(0.2798631, 0.3138516, 0.3420618, 0.2781450, 0.2188392, 0.2738726)
-  f2 <- c(0.2598829, 0.3041458, 0.3361500, 0.2729427, 0.2239635, 0.2608458)
-  f3 <- c(0.5795548, 0.5200072, 0.4702284, 0.3596465, 0.2311072, 0.2841777)
+  f1 <- c(0.2799137, 0.3139167, 0.3421285, 0.2781802, 0.2188650, 0.2739127)
+  f2 <- c(0.2600824, 0.3043772, 0.3363984, 0.2731422, 0.2240850, 0.2610135)
+  f3 <- c(0.5796615, 0.5201151, 0.4703789, 0.3598020, 0.2312163, 0.2843633)
   expect_that(modes$fluctuations[1,1:6], equals(f1, tolerance=1e-6))
   expect_that(modes$fluctuations[2,1:6], equals(f2, tolerance=1e-6))
   expect_that(modes$fluctuations[3,1:6], equals(f3, tolerance=1e-6))
@@ -50,9 +50,10 @@ test_that("eNMA works", {
               equals(0, tolerance=1e-6))
 
   ## RMSIP
-  rmsips <- c(1.0000, 0.8971, 0.9353,
-              0.8971, 1.0000, 0.8870,
-              0.9353, 0.8870, 1.0000)
+  rmsips <- c(1.0000, 0.8948,  0.9333,
+              0.8948, 1.0000,  0.8899,
+              0.9333, 0.8899,  1.0000)
+              
   expect_that(c(modes$rmsip), equals(rmsips, tolerance=1e-6))
 
   ### Multicore (same arguments as above!)
