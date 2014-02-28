@@ -10,13 +10,15 @@
 }
 \usage{
   \method{print}{cna}(x, ...)
-  \method{summary}{cna}(object, ...)
+  \method{summary}{cna}(object, verbose=TRUE, ...)
 }
 \arguments{
   \item{x}{ A cna network and community object as obtained from the
     function \sQuote{cna}.}
   \item{object}{ A cna network and community object as obtained from the
     function \sQuote{cna}.}
+  \item{verbose}{ Logical, if TRUE a community summary table is prited 
+    to screen.} 
   \item{\dots}{ Extra arguments passed to the \sQuote{write.table}
     function. }
 }
