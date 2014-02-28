@@ -79,16 +79,15 @@ plot.bio3d(pc.xray$au[,1], ylab="PC1 (A)")
 
 ## Plot loadings in relation to reference structure "1TAG_A"
 pdb <- read.pdb("1tag")
-sse <- dssp(pdb, resno=FALSE)
 
 ind <- grep("1TAG", pdbs$id)
 res.ref <- which(!is.gap(pdbs$ali[ind,]))
 res.ind <- which(res.ref \%in\% gaps.res$f.ind)
 op <- par(no.readonly=TRUE)
 par(mfrow = c(3, 1), cex = 0.6, mar = c(3, 4, 1, 1))
-plot.bio3d(res.ind, pc.xray$au[,1], sse=sse, ylab="PC1 (A)")
-plot.bio3d(res.ind, pc.xray$au[,2], sse=sse, ylab="PC2 (A)")
-plot.bio3d(res.ind, pc.xray$au[,3], sse=sse, ylab="PC3 (A)")
+plot.bio3d(res.ind, pc.xray$au[,1], sse=pdb, ylab="PC1 (A)")
+plot.bio3d(res.ind, pc.xray$au[,2], sse=pdb, ylab="PC2 (A)")
+plot.bio3d(res.ind, pc.xray$au[,3], sse=pdb, ylab="PC3 (A)")
 par(op)
 
 \dontrun{
