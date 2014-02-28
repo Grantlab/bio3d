@@ -63,7 +63,10 @@ eleno=NULL, elety=NULL, verbose=TRUE, rm.insert=FALSE)
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Barry Grant }
-\seealso{ \code{\link{read.pdb}}, \code{\link{write.pdb}}, \code{\link{read.dcd}} }
+\seealso{ 
+  \code{\link{combine.sel}}, \code{\link{read.pdb}}, 
+  \code{\link{write.pdb}}, \code{\link{read.dcd}} 
+}
 \examples{
 
 # Read a PDB file

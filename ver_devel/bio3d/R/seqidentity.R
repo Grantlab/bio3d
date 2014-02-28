@@ -2,13 +2,8 @@
 function( alignment , normalize=TRUE, ncore=1, nseg.scale=1) {
 
   # Parallelized by multicore package (Sun Jul  7 17:35:38 EDT 2013)
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) {
-     oops <- require(multicore)
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -20,8 +15,13 @@ function( alignment , normalize=TRUE, ncore=1, nseg.scale=1) {
         nseg.scale=1
      }
   }
- 
-  if(is.list(alignment)) alignment <- alignment$ali
+
+  ids <- NULL
+  if(is.list(alignment)) {
+    if(inherits(alignment, c("fasta", "3dalign")))
+      ids <- alignment$id
+    alignment <- alignment$ali
+  }
   alignment[is.gap(alignment)] = NA
 
   ide <- function(x, y) {
@@ -55,7 +55,6 @@ function( alignment , normalize=TRUE, ncore=1, nseg.scale=1) {
           }) )
      }
      s <- unlist(s)
-     readChildren()
   } else {
      s <- rep(NA, ni)
    
@@ -70,6 +69,11 @@ function( alignment , normalize=TRUE, ncore=1, nseg.scale=1) {
     sm[inds[,2], inds[,1]]<-s
   } else {
     sm[inds[,c(2,1)]]<-s 
+  }
+
+  if(!is.null(ids)) {
+    rownames(sm) <- ids
+    colnames(sm) <- ids
   }
   return(sm) # ide matrix
 }

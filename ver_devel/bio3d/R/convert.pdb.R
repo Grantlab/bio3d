@@ -1,136 +1,145 @@
 "convert.pdb" <-
-function(pdb, type,
+function(pdb, type="original",
          renumber=FALSE, first.resno=1, first.eleno=1,
-         rm.h=TRUE, rm.wat=FALSE) {
+         consecutive=TRUE,
+         rm.h=TRUE, rm.wat=FALSE, verbose=TRUE) {
 
-  ## !!This function is very poor and needs to be re-writen!!
-  
-  options <- c("ori", "pdb","charmm","amber","gromacs")
-  type <- match.arg(tolower(type), options)
-
-  if(type != "ori") {
-  cat(paste(" Converting to", type, "format"),"\n")
-
-  ## residue and atom types from PDB
-  restype <- unique(pdb$atom[,"resid"])
-  #eletype <- unique(pdb$atom[,"elety"])
-
-  ## Determine input PDB type based on restype and eletype
-  ## NOT IMPLIMENTED YET!
-
-  
-  ## different his resids
-  his <- matrix( c("HIS", "HSD", "HID","HISA",
-                   "HIS", "HSE", "HIE","HISB",
-                   "HIS", "HSP", "HIP","HISH"),
-                nrow=3, byrow=TRUE,
-                dimnames = list(c("d","e","b"),
-                  c("pdb","charmm","amber","gromacs")) )
-  
-  standard <- c("MET", "PRO", "LEU", "VAL", "ALA",
-                "ASP", "GLY", "ARG", "CYS", "THR",
-                "GLU", "ILE", "LYS", "PHE", "GLN",
-                "SER", "ASN", "TYR", "TRP", his)
-
-  non.standard <- !(restype %in% standard)
-  
-  if(sum( non.standard ) > 0) {
-    cat(paste(" Found ",sum( non.standard ),
-              " non standard residues:"),
-        restype[non.standard], sep="\n")
-  }
-
-  ## Convert HIS resid
-  type.inds <-  (colnames(his) %in% type)
-  conv.inds <- !(colnames(his) %in% c(type,"pdb"))
-
-  his.d.ind <- (pdb$atom[,"resid"] %in% his["d", !type.inds ])
-  his.e.ind <- (pdb$atom[,"resid"] %in% his["e", conv.inds ])
-  his.b.ind <- (pdb$atom[,"resid"] %in% his["b", conv.inds ])
-  
-  pdb$atom[his.d.ind,"resid"] <- his["d", type.inds ]
-  pdb$atom[his.e.ind,"resid"] <- his["e", type.inds ]
-  pdb$atom[his.b.ind,"resid"] <- his["b", type.inds ]
-
-  ## Convert ILE CD elety
-  if (type=="charmm") {
-    ile.ind <- colSums( rbind((pdb$atom[,"elety"] %in% "CD1"),
-                              (pdb$atom[,"resid"] %in% "ILE"))) ==2
-    pdb$atom[ile.ind,"elety"] <- "CD"
-
-    pdb$atom[,"chain"]=NA # strip chain
-  } else {
-    ile.ind <- colSums( rbind((pdb$atom[,"elety"] %in% "CD"),
-                            (pdb$atom[,"resid"] %in% "ILE"))) ==2
-    pdb$atom[ile.ind,"elety"] <- "CD1"
-  }
-} ## END type != "ori"
-
-  ## Strip hydrogen
-  if(rm.h) {
-    h.ind <- which(substr(pdb$atom[,"elety"],1,1) %in% "H")
-    if(length(h.ind) > 0) {
-      pdb$atom <- pdb$atom[-h.ind,]
-      pdb$xyz <- pdb$xyz[-c((h.ind*3)-2, (h.ind*3)-1, (h.ind*3))]
-      ##pdb$calpha <- pdb$calpha[-h.ind]
-    }
-    if(!is.null(pdb$het)) {
-      h.ind <- which(substr(pdb$het[,"elety"],1,1) %in% "H")
-      if(length(h.ind) > 0) {
-        pdb$het <- pdb$het[-h.ind,]
-      }
-    }
-  } else {
-    ## convert hydrogen atom types
-    if(type=="pdb") {
-      pdb$atom[ pdb$atom[,"elety"]=="HN", "elety"] = "H"
-      ###!!! DO MORE ATOM TYPE CONVERSION WHEN I GET TIME !!!###
-    }
-  }
+  ##-- Check the requested output format is one of 'type.options' 
+  type.options <- c("original", "pdb", "charmm", "amber", "gromacs")
+  type <- match.arg(type, type.options)
 
 
-  
-  ## Strip water
+  ##-- Water and hydrogen removal
+  inds <- NULL
   if(rm.wat) {
-    wat <- c("H2O",  "OH2", "HOH", "HHO", "OHH", "SOL",
-             "WAT", "TIP", "TIP2", "TIP3", "TIP4")
-  
-    wat.ind <- which(pdb$atom[,"resid"] %in% wat)
-    if(length(wat.ind) > 0) {
-      pdb$atom <- pdb$atom[-wat.ind,]
-      pdb$xyz <- pdb$xyz[-c((wat.ind*3)-2, (wat.ind*3)-1, (wat.ind*3))]
-      pdb$calpha <- pdb$calpha[-wat.ind]
+    inds <- atom.select(pdb, "notwater", verbose=FALSE)
+    if(verbose){
+      cat(paste("\t Retaining", length(inds$atom),"non-water atoms\n"))
+    } 
+  }
+  if(rm.h) {
+    inds <- combine.sel(inds, atom.select(pdb, "noh", verbose=FALSE), verbose=FALSE) 
+    if(verbose){
+      cat(paste("\t Retaining", length(inds$atom),"non-hydrogen atoms\n"))
+    } 
+  }
+  if(!is.null(inds)){
+    nrm <- nrow(pdb$atom) - length(inds$atom)
+    if( nrm > 0) {  
+      if(verbose){
+        cat(paste("\t Removing a total of", nrm," atoms\n"))
+      } 
+      pdb <- trim.pdb(pdb, inds)
     }
   }
 
-  ## Renumber 
+  
+  ##-- Renumbering of residues and atoms
   if(renumber) {
+    if(verbose){
+      cat(paste("\t Renumbering residues ( from",first.resno,") and atoms ( from",first.eleno,")\n"))
+    } 
+
+    ## Assign consecutive atom numbers 
     pdb$atom[,"eleno"] <- seq(first.eleno, length=nrow(pdb$atom))
+
+    ## Determine chain start and end indices
     s.ind <- which(!duplicated(pdb$atom[,"chain"]))
     e.ind   <- c(s.ind[-1]-1, nrow(pdb$atom))
 
-    ibase = 0
+    ##- Assign new (consecutive) residue numbers for each chain
+    prev.chain.res = 0  ## Number of residues in previous chain
     for (i in 1:length(s.ind)) {
-       # the combination of resno and insertion code specifically define a residue - wwpdb.org
-       resno0 <- paste(pdb$atom[s.ind[i]:e.ind[i], "resno"], 
-                       pdb$atom[s.ind[i]:e.ind[i], "insert"], sep="")
-#       nums <- as.numeric(resno0)
-       ##pdb$atom[,"resno"] <- nums - (nums[1] - first.resno)
-   
-       ## concetive residue numbers
-#       tbl <- table(nums)
-       tbl <- table(resno0)
-       
-       #new.nums <- first.resno:(first.resno+length(tbl))
-       new.nums <- (first.resno+ibase):(first.resno+length(tbl)-1+ibase)
-       pdb$atom[s.ind[i]:e.ind[i],"resno"] <- rep(new.nums, tbl[unique(resno0)])
-       ibase = ibase + length(tbl)
+      ## Combination of resno and insert code define a residue (wwpdb.org)
+      resno0 <- paste0(pdb$atom[s.ind[i]:e.ind[i], "resno"], 
+                       pdb$atom[s.ind[i]:e.ind[i], "insert"])
+
+      ## Ordered table of residue occurrences
+      tbl <- table(resno0)[unique(resno0)]
+      n.chain.res <- length(tbl)
+
+
+      new.nums <- (first.resno+prev.chain.res):(first.resno+n.chain.res-1+prev.chain.res)
+      pdb$atom[s.ind[i]:e.ind[i],"resno"] <- rep(new.nums, tbl)
+
+      if(consecutive) {
+        ## Update prev.chain.res for next iteration 
+        prev.chain.res = prev.chain.res + n.chain.res
+      }
     }
   }
+
+
+  ##-- Format conversion
+  if(type != "original") {
+    if(verbose){
+      cat(paste0("\t Converting to '", type, "' format\n"))
+    }
+    ## residue and atom types from PDB
+    restype <- unique(pdb$atom[,"resid"])
+
+    #eletype <- unique(pdb$atom[,"elety"])
+    ## In future could determine 'input type' based on resid/elety
+
+    ##- Check for non-standard residue names
+    if(verbose){
+      not.prot.inds <- atom.select(pdb, "notprotein", verbose = FALSE)$atom
+      if(length(not.prot.inds) > 0) { 
+        not.prot.res <- paste(unique(pdb$atom[not.prot.inds, "resid"]), collapse = " ")
+        cat(paste("\t Non-standard residue names present (",not.prot.res,")\n") )
+      }
+    }
+
+    ##- Convert HIS resid
+    his <- matrix( c("HIS", "HSD", "HID","HISA",
+                     "HIS", "HSE", "HIE","HISB",
+                     "HIS", "HSP", "HIP","HISH"),
+                  nrow=3, byrow=TRUE,
+                  dimnames = list(c("d","e","b"),
+                    c("pdb","charmm","amber","gromacs")) )
   
-  ## (split by chain or segid)
-  #unique(pdb$atom[,"chain"])
-  #unique(pdb$atom[,"segid"])
+    type.inds <-  (colnames(his) %in% type)
+    conv.inds <- !(colnames(his) %in% c(type,"pdb"))
+
+    his.d.ind <- (pdb$atom[,"resid"] %in% his["d", !type.inds ])
+    his.e.ind <- (pdb$atom[,"resid"] %in% his["e", conv.inds ])
+    his.b.ind <- (pdb$atom[,"resid"] %in% his["b", conv.inds ])
+  
+    pdb$atom[his.d.ind,"resid"] <- his["d", type.inds ]
+    pdb$atom[his.e.ind,"resid"] <- his["e", type.inds ]
+    pdb$atom[his.b.ind,"resid"] <- his["b", type.inds ]
+
+    ##- Convert ILE CD1 to CD elety and remove chainID
+    if (type=="charmm") {
+      ile.ind <- atom.select(pdb, resid="ILE", elety="CD1", verbose=FALSE)$atom
+      pdb$atom[ile.ind,"elety"] <- "CD"
+
+      pdb$atom[,"chain"]=NA ## strip chain ID
+
+      ## Could also add a SEGID via call to chain.pdb() function
+      pdb$atom[,"segid"] <- chain.pdb(pdb)
+
+    } else {
+      ile.ind <- atom.select(pdb, resid="ILE", elety="CD", verbose=FALSE)$atom
+      pdb$atom[ile.ind,"elety"] <- "CD1"
+    }
+  } ## END type != "original" (conversion)
+  
+
+  ##-- Convert hydrogen atom types (unfinished!)
+  if(!rm.h) { 
+    if(type=="pdb") {  
+      pdb$atom[ pdb$atom[,"elety"]=="HN", "elety"] = "H"
+      ###!!! ADD Many MORE ATOM TYPE CONVERSIONS HERE !!!###
+    }
+    if(verbose){
+      warning(paste("\t Additional hydrogen elety names may need converting.",
+                    "\t   N.B. It is often best to remove hydrogen (rm.h=TRUE)", 
+                    "\t        before building systems for simulation",sep="\n"))
+    }  
+    ## Add other atom name conversions here as the need arises...
+
+  } 
 
   return(pdb)
 }

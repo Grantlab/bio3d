@@ -14,13 +14,8 @@ function(fixed,
          ...) {
 
   # Parallelized by multicore package (Tue Dec 11 17:41:08 EST 2012)
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) {
-     oops <- require(multicore) 
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -96,7 +91,6 @@ function(fixed,
                mc.preschedule=TRUE)
          }
          fit <- matrix(unlist(fit), ncol=ncol(mobile$xyz), byrow=TRUE)
-         readChildren()
       } else {           # Single version
          fit <- t( apply(mobile$xyz, 1, rot.lsq,
                          yy = fixed,
@@ -198,7 +192,6 @@ function(fixed,
                  mc.preschedule=TRUE)
            }
            fit <- matrix(unlist(fit), ncol=ncol(mobile), byrow=TRUE)
-           readChildren()
         } else {         # Single version
            fit <- t( apply(mobile, 1, rot.lsq,
                            yy = fixed,

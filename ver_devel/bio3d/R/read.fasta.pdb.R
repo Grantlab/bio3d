@@ -2,13 +2,8 @@
 function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
 
   # Parallelized by multicore package (Fri Apr 26 17:58:26 EDT 2013)
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) {
-     oops <- require(multicore)
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -118,7 +113,6 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
     } # end else
     return (list(coords=coords, res.nu=res.nu, res.bf=res.bf, res.ch=res.ch, res.id=res.id))
   } ) # end mylapply
-  if(ncore > 1) readChildren()
   retval <- do.call(rbind, retval)
   coords <- matrix(unlist(retval[, "coords"]), nrow=length(aln$id), byrow=TRUE)
   res.nu <- matrix(unlist(retval[, "res.nu"]), nrow=length(aln$id), byrow=TRUE)
