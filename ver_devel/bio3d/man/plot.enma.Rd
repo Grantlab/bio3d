@@ -51,6 +51,7 @@
 \seealso{ \code{\link{nma.pdbs}}, \code{\link{nma}},
   \code{\link{plot.bio3d}}, \code{\link{entropy}}.  }
 \examples{
+\dontrun{
 ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
 raw.files <- get.pdb(ids, path = "raw_pdbs")
 files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain")
@@ -63,5 +64,6 @@ all.modes <- nma.pdbs(pdbs, rm.gaps=FALSE)
 
 ## Plot fluctuations
 plot.enma(all.modes, pdbs)
+}
 }
 \keyword{ hplot }
