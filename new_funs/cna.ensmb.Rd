@@ -1,5 +1,5 @@
-\name{cna.cijs}
-\alias{cna.cijs}
+\name{cna.ensmb}
+\alias{cna.ensmb}
 \title{
   Ensemble Protein Dynamic Correlation Network Construction and Community Analysis
 }
@@ -13,10 +13,10 @@
   of the community based network.
 }
 \usage{
-  cna.cijs(cijs, \dots, ncore = NULL)
+  cna.ensmb(ensmb, \dots, ncore = NULL)
 }
 \arguments{
-  \item{cijs}{ A numeric array with 3 dimensions (nXnXm) containing atomic
+  \item{ensmb}{ A numeric array with 3 dimensions (nXnXm) containing atomic
     correlation values, where "n" is the residue number and "m" the 
     system/frame number, or a \sQuote{list} object with each cell containing
     nXn matrix. The matrix elements should be in between 0 and 1 
@@ -44,9 +44,8 @@ attach(transducin)
 gaps.pos <- gap.inspect(pdbs$xyz)
 modes <- nma.pdbs(pdbs, full=TRUE)
 dccms <- dccm.enma(modes)
-cijs <- dccms$all.dccm
 
-nets <- cna.cijs(cijs)
+nets <- cna(dccms)
 
 # plot all-residue and coarse-grained (community) networks
 pdb <- pdbs2pdb(pdbs, inds=1, rm.gaps=TRUE)[[1]]

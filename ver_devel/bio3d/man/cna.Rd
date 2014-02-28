@@ -1,26 +1,33 @@
 \name{cna}
 \alias{cna}
+\alias{cna.dccm}
+\alias{cna.ensmb}
 \title{
   Protein Dynamic Correlation Network Construction and Community Analysis
 }
 \description{
   This function builds both residue-based and community-based undirected weighted
   network graphs from an input correlation matrix, as obtained from the
-  functions \sQuote{dccm} and \sQuote{dccm.nma}. Community
+  functions \sQuote{dccm}, \sQuote{dccm.nma}, and \sQuote{dccm.enma}. Community
   detection/clustering is performed on the initial residue based 
   network to determine the community organization and network structure
   of the community based network.
 }
 \usage{
-  cna(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
+  cna(cij, ...)
+  \method{cna}{dccm}(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
       cluster.method="btwn", collapse.method="max", 
       cols=vmd.colors(), minus.log=TRUE)
+  \method{cna}{ensmb}(cij, ..., ncore = NULL)
 }
 \arguments{
   \item{cij}{ A numeric array with 2 dimensions (nXn) containing atomic
     correlation values, where "n" is the residue number. The matrix
-    elements should be in between 0 and 1 (atomic correlations). See
+    elements should be in between 0 and 1 (atomic correlations). Can be
+    also a set of correlation matrices for ensemble network analysis. See
      \sQuote{dccm} function in bio3d package for further details. }
+  \item{\dots}{  Additional arguments passed to the methods
+    \code{cna.dccm} and \code{cna.ensmb}. }
   \item{cutoff.cij}{ Numeric element specifying the cutoff on cij matrix
     values. Coupling below cutoff.cij are set to 0. }
   \item{cm}{ (optinal) A numeric array with 2 dimensions (nXn)
@@ -46,6 +53,8 @@
   \item{cols}{ A vector of colors assigned to network nodes. }
   \item{minus.log}{ Logical, indicating whether \sQuote{-log(abs(cij))}
     values should be used for network construction. } 
+  \item{ncore}{ Number of CPU cores used to do the calculation. By default,
+    use all available cores. }
 }
 \value{
   Returns a list object that includes igraph network and community
