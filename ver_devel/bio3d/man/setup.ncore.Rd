@@ -1,8 +1,8 @@
 \name{setup.ncore}
 \alias{setup.ncore}
-\title{ Setup for Running Function with Multiple CPU Cores }
+\title{ Setup for Running Bio3D Functions using Multiple CPU Cores }
 \description{
-  Internally used in parallelized functions.
+  Internally used in parallelized Bio3D functions.
 }
 \usage{
   setup.ncore(ncore, bigmem = FALSE)
@@ -20,9 +20,6 @@
 }
 \value{
   The actual value of \sQuote{ncore}.
-}
-
-\seealso{
 }
 \examples{
    setup.ncore(NULL)
