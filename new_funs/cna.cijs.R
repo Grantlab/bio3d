@@ -1,9 +1,8 @@
 # ensemble CNA calculation optimized with multicore
 cna.cijs <- function(cijs, ..., ncore = NULL) {
-   require(parallel)
-   if(is.null(ncore)) ncore = detectCores()
-   options(mc.cores=ncore)
+   ncore <- setup.ncore(ncore)
    
+   if("all.dccm" %in% names(cijs)) cijs <- cijs$all.dccm 
    if(is.matrix(cijs)) {
       net <- cna(cijs, ...)
    } else {
