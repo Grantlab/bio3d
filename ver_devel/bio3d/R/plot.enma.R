@@ -32,8 +32,8 @@
       col <- seq(1, nrow(yval))
 
     if(is.null(ylim))
-      ylim=c(0,max(yval))
-    
+      ylim=c(0,max(yval, na.rm=TRUE))
+
     dots <- list(...)
     sse.aln <- NULL
     if(!is.null(pdbs)) {
