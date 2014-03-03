@@ -12,7 +12,8 @@
        ncore <- setup.ncore(ncore = 4)
     }
 
-    if (any(nchar(ids) != 4)) {
+    if (any(nchar(ids) < 4)) stop("ids should be standard 4 character PDB-IDs")
+    if (any(nchar(ids) > 4)) {
         warning("ids should be standard 4 character PDB-IDs: trying first 4 characters...")
         ids <- substr(basename(ids), 1, 4)
     }
@@ -27,11 +28,14 @@
        dir.create(path)
     rtn <- rep(NA, length(pdb.files))
 
-    if(ncore>1) {
+    if(ncore > 1) {
        rtn <- unlist(mclapply(1:length(pdb.files), function(k) {
           if (!file.exists(sub(".gz$", "", put.files[k])) | overwrite ) {
-            rtn <- download.file(get.files[k], put.files[k], quiet = !verbose)
-            if(gzip) {
+            rtn <- try(download.file(get.files[k], put.files[k], quiet = !verbose), silent = TRUE)
+            if(inherits(rtn, "try-error")) {
+               rtn <- 1
+               file.remove(put.files[k])
+            } else if(gzip) {
                cmd <- paste("gunzip -f", put.files[k])
                system(cmd)
             }
@@ -45,8 +49,12 @@
     } else {
        for (k in 1:length(pdb.files)) {
          if (!file.exists(sub(".gz$", "", put.files[k])) | overwrite ) {
-           rtn[k] <- download.file(get.files[k], put.files[k], quiet = !verbose)
-           if(gzip) {
+           rt <- try(download.file(get.files[k], put.files[k], quiet = !verbose), silent=TRUE)
+           rtn[k] <- rt
+           if(inherits(rt, "try-error")) {
+              rtn[k] <- 1
+              file.remove(put.files[k])
+           } else if(gzip) {
               cmd <- paste("gunzip -f", put.files[k])
               system(cmd)
            }
@@ -55,7 +63,6 @@
            rtn[k] <- put.files[k]
            warning(paste(put.files[k], " exists. Skipping download"))
          }
-         
        }
     }
     
