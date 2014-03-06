@@ -2888,12 +2888,13 @@ col.wheel <- function(str, cex=0.75) {
 }
 
 
-fill.blanks <- function(x, blank="") {
+fill.blanks <- function(x, blank="" , boundary.check=FALSE) {
 
-  ## Function to copy previously occuring non-blank (non-missing) 
+  ## Function to copy previously occurring non-blank (non-missing) 
   ## values to consecutive blank (missing) values in a vector.
   ##    x=c(1,"",3,3,4,"", "", 5); fill.blanks(x)
-  ##
+  ##    x=c(1,"",1,3,3,4,"", "", 5); fill.blanks(x, boundary.check=T)
+
   ## ToDo: Adapt to work if first element is blank
 
   ## Details of 'blank' vector element runs 
@@ -2910,6 +2911,16 @@ fill.blanks <- function(x, blank="") {
   name.inds <- name.inds[!name.inds %in% length(x)] 
   name <- x[ name.inds ]
 
+
+  if(boundary.check) {
+    ## Only fill missing elements if boundary elements match 
+    ## (i.e check if both sides of gap segment are the same)
+    end.match <- x[blank.inds[,"end"]+1]==name
+    blank.inds <- blank.inds[end.match, ,drop=FALSE]
+    name <- name[ end.match ]
+    warning( paste0("Non-matching boundary elements found (",sum(end.match),")") )
+  }
+
   if(length(name) != nrow(blank.inds)) {
     stop("Miss-match in number of non-blank elements and consecutive blank runs")
   }
@@ -2919,4 +2930,5 @@ fill.blanks <- function(x, blank="") {
   }
   return(x) 
 }
+
 
