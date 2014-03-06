@@ -56,6 +56,7 @@
 ## mustang        -  Structural alignment with mustang
 ## add.dccm.grid  -  Add a grid or colored boxes to a plot.dccm() plot.
 ## col.wheel    - useful for picking plot colors (e.g. col.wheel("dark") ) 
+## fill.blanks  - fill in consecutive missing values in a vector 
 ##
 ##
 ## See also:
@@ -2885,3 +2886,37 @@ col.wheel <- function(str, cex=0.75) {
   pie(rep(1, length(cols)), labels=cols, col=cols, cex=cex)
   cols
 }
+
+
+fill.blanks <- function(x, blank="") {
+
+  ## Function to copy previously occuring non-blank (non-missing) 
+  ## values to consecutive blank (missing) values in a vector.
+  ##    x=c(1,"",3,3,4,"", "", 5); fill.blanks(x)
+  ##
+  ## ToDo: Adapt to work if first element is blank
+
+  ## Details of 'blank' vector element runs 
+  blank.inds <- bounds( which(x == blank) )
+  if (is.null( nrow(blank.inds) )) {
+    warning("No blank elements, returning unaltered input vector")
+    return(x)
+  }
+
+  ## Indices of non-blank vector elements
+  name.inds <- bounds( which(x != blank) )[,"end"]
+
+  ## Check for last element being non-blank
+  name.inds <- name.inds[!name.inds %in% length(x)] 
+  name <- x[ name.inds ]
+
+  if(length(name) != nrow(blank.inds)) {
+    stop("Miss-match in number of non-blank elements and consecutive blank runs")
+  }
+  for(i in 1:length(name)) {
+    inds <- blank.inds[i,"start"]:blank.inds[i,"end"]
+    x[inds] = name[i]
+  }
+  return(x) 
+}
+
