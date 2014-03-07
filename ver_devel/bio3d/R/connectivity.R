@@ -26,11 +26,11 @@ connectivity.default <- function(x, ele.symb, safety = 1.2, by.block = FALSE, ..
     bond.dist <- outer(data$radii, data$radii, "+")
     M <- lower.tri(r) & (r < bond.dist)
     if(all(!M)) return(NULL)
-    eleid <- matrix(rownames(data), nrow = nat, ncol = nat)   
-    eleid.1 <- as.integer(t(eleid)[M])
-    eleid.2 <- as.integer(  eleid [M])
-    con <- data.frame(eleid.1=eleid.1, eleid.2=eleid.2)
-    if(order) con <- con[order(con$eleid.1, con$eleid.2),]
+    eleno <- matrix(rownames(data), nrow = nat, ncol = nat)   
+    eleno.1 <- as.integer(t(eleno)[M])
+    eleno.2 <- as.integer(  eleno [M])
+    con <- data.frame(eleno.1=eleno.1, eleno.2=eleno.2)
+    if(order) con <- con[order(con$eleno.1, con$eleno.2),]
     return(con)
   }
   
@@ -68,7 +68,7 @@ connectivity.default <- function(x, ele.symb, safety = 1.2, by.block = FALSE, ..
     con <- apply(shift, 1, get.con, x, radii, width)
     if(!is.null(con)){
       con <- unique(do.call(rbind, con))
-      con <- con[order(con$eleid.1, con$eleid.2),]
+      con <- con[order(con$eleno.1, con$eleno.2),]
     }
     
     rownames(con) <- NULL

@@ -23,7 +23,7 @@ connectivity(...)
 A distance matrix is computed, then, for each pair of atom the distance is compared to a bounding distance computed from atomic radii. If this distance is lower than the bounding distance then the atoms are assumed to be connected. If \code{by.block == TRUE}, a grid is defined to determined the connectivity by block. The method is slow but allow to deal with very large systems avoiding memory issues. 
 }
 \value{
-A two-columns data.frame containing the indexes of bonded atoms. The column names are: \code{eleid.1} and \code{eleid.2}.
+A two-columns data.frame containing the indexes of bonded atoms. The column names are: \code{eleno.1} and \code{eleno.2}.
 }
 
 \author{Julien Idé}
