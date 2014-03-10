@@ -129,6 +129,8 @@ visualize.pdb <- function(
 visualize.cna <- function(cna, pdb, safety = 2.7, ...){
   if(!"cna" %in% class(cna))
     stop("'cna' must an object of class 'cna'")
+  if(missing(pdb))
+    stop("Please specify a 'pdb' object")
   if(!is.pdb(pdb))
     stop("'pdb' must an object of class 'pdb'")
   
