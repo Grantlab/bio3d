@@ -134,7 +134,7 @@ visualize.cna <- function(cna, pdb, safety = 2.7, ...){
   if(!is.pdb(pdb))
     stop("'pdb' must an object of class 'pdb'")
   
-  ca.pdb <- trim.pdb(pdb, atom.select(pdb, "calpha"))
+  ca.pdb <- trim.pdb(pdb, atom.select(pdb, "calpha", verbose = FALSE))
   ca.con <- connectivity(ca.pdb,safety=safety)
   net.vertex.color <- V(cna$network)$color
   visualize(ca.pdb, con = ca.con, col = net.vertex.color)
@@ -145,7 +145,7 @@ visualize.cna <- function(cna, pdb, safety = 2.7, ...){
   com.net.weight <- E(net$community.network)$weight
   membership.centres <- centres(ca.pdb, factor = cna$communities$membership)
   membership.centres <- matrix(membership.centres, ncol=3, byrow=TRUE)
-  spheres3d(membership.centres, col = com.net.vertex.color, radius = radii, apha = 0.5)
+  spheres3d(membership.centres, col = com.net.vertex.color, radius = radii, alpha = 0.5)
   
   com.net.con <- apply(get.edgelist(net$community.network), 2, as.integer)
   cyls <- apply(com.net.con, 1,
