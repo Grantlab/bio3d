@@ -64,7 +64,8 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
       }
     }
     ## Lets scale the weights to lie between 1 and 5
-    weights <- (weights - min(weights)) / max(weights - min(weights)) * (1 - 5) + 5
+#    weights <- (weights - min(weights)) / max(weights - min(weights)) * (1 - 5) + 5
+    weights <- (weights - min(weights)) / max(weights - min(weights)) * 4 + 1
   }
   
   ##- Obtain the plot layout coords
