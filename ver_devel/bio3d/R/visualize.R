@@ -115,7 +115,7 @@ visualize.pdb <- function(
   cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
   add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...){
 
-  if(!is.pdb(x)) stop("'pdb' must be an object of class pdb. See read.pdb")
+  if(!is.pdb(pdb)) stop("'pdb' must be an object of class pdb. See read.pdb")
 
   ele.symb <- atom2ele(pdb$atom[,"elety"], elety.custom)
 
@@ -138,7 +138,7 @@ visualize.cna <- function(cna, pdb, safety = 2.7, ...){
   ca.con <- connectivity(ca.pdb,safety=safety)
   net.vertex.color <- V(cna$network)$color
   visualize(ca.pdb, con = ca.con, col = net.vertex.color)
-  
+
   com.net.vertex.color <- V(cna$community.network)$color
   radii <- V(net$community.network)$size
   radii <- 5*radii/max(radii)
