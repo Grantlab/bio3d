@@ -43,6 +43,8 @@ visualize.default <- function(
       warning("Cell parameters are not specified: 'pdb.box' has been set to FALSE")
     }
   }
+#   par.save <- par3d(skipRedraw=TRUE)
+#   on.exit(par3d(par.save))
 
   if(!add){
     open3d()
@@ -54,31 +56,30 @@ visualize.default <- function(
   if(xyz.axes) ids <- rbind(ids, addXYZ(lwd = lwd.xyz, cex = cex.xyz))
   if(abc.axes) ids <- rbind(ids, addABC(cell, lwd = lwd.abc, cex = cex.abc))
   if(pbc.box ) ids <- rbind(ids, addPBCBox(cell, lwd = lwd.pbc.box))
-
-  if(is.null(con)) {
-    warning("Unspecifyed connectivity: Computing connectivity from coordinates...")
-    con <- connectivity(x = xyz, ele.symb = ele.symb, by.block = TRUE)
-  }
-  
-  if(is.null(con)){
-    warning("'con' is empty: 'type' has been set to 'p'.")
-    type <- "p"
-  }
   
   if(nchar(type)>1) type <- strsplit(type, "")[[1]]
   if(!all(type %in% c("l","s","p")))
     stop("Unrecognized 'type'")
-
+  
   if("l" %in% type) {
-    ind <- t(con)
-    seg.id <- segments3d(
-    xyz[seq(1,length(xyz),3)][ind],
-    xyz[seq(2,length(xyz),3)][ind],
-    xyz[seq(3,length(xyz),3)][ind],
-    color = col[ind], lwd=lwd, ...)
+    if(is.null(con)) {
+      warning("Unspecifyed connectivity: Computing connectivity from coordinates...")
+      con <- connectivity(x = xyz, ele.symb = ele.symb, by.block = TRUE)
+    }
+    if(!is.null(con)){
+      ind <- t(con)
+      seg.id <- segments3d(
+      xyz[seq(1,length(xyz),3)][ind],
+      xyz[seq(2,length(xyz),3)][ind],
+      xyz[seq(3,length(xyz),3)][ind],
+      color = col[ind], lwd=lwd, ...)
 
-    seg.id <- data.frame(id = seg.id, type = "atom.seg")
-    ids <- rbind(ids, seg.id)
+      seg.id <- data.frame(id = seg.id, type = "atom.seg")
+      ids <- rbind(ids, seg.id)
+    } else{
+      warning("'con' is empty: 'type' has been set to 'p'.")
+      type <- "p"
+    }
   }
   if("s" %in% type) {
     if(is.character(radii[1])){
@@ -108,7 +109,7 @@ visualize.default <- function(
 }
 
 visualize.pdb <- function(
-  x, elety.custom = NULL, con = NULL, cell = NULL, type = "l",
+  pdb, elety.custom = NULL, con = NULL, cell = NULL, type = "l",
   xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, 
   lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
   cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
@@ -116,74 +117,39 @@ visualize.pdb <- function(
 
   if(!is.pdb(x)) stop("'pdb' must be an object of class pdb. See read.pdb")
 
-  ele.symb <- atom2ele(x$atom[,"elety"], elety.custom)
+  ele.symb <- atom2ele(pdb$atom[,"elety"], elety.custom)
 
   visualize.default(
-    x$xyz, ele.symb = ele.symb, con, cell, type,
+    pdb$xyz, ele.symb = ele.symb, con, cell, type,
     xyz.axes, abc.axes, pbc.box, lwd, lwd.xyz, lwd.abc, lwd.pbc.box,
     cex.xyz, cex.abc, col, radii, bg.col, add, windowRect,
     userMatrix, FOV, ...)
 }
 
-# visualize.cna <- function(x, layout, weights=NULL, vertex.size = NULL, col = NULL,
-#  ...){
-# if(is.pdb(layout)) layout <- layout.cna(layout, layout, k=3), 
-# 
-#   plot3d.cna <- function(x,
-# pdb = NULL,
-# weights=NULL,
-# vertex.size = NULL,
-# layout = layout.cna(x, pdb, k=3),
-# col = NULL,
-# ...){
-#   ##
-#   ## Plot a cna network graph in 3D with RGL
-#   ##    plot3d.cna(net, pdb)
-#   ##  Or just
-#   ##    rglplot(net$community.network)
-#   ##
-#   
-#   ## Check if x has 'cna' class
-#   if(!"cna" %in% class(x)){
-#     stop("Input 'x' object must be a 'cna' class object")
-#   }
-#   
-#   ##  oops <- require(igraph)
-#   ##  if (!oops) {
-#   ##    warning("igraph package missing: Please install, see: ?install.packages")
-#   ##  }
-#   
-#   if(is.null(weights)){
-#     weights <- E(x$community.network)$weight
-#     
-#     if(is.null(x$call$minus.log)){
-#       weights <- exp(-weights)
-#     }
-#     else{
-#       if(x$call$minus.log){
-#         weights <- exp(-weights)
-#       }
-#     }
-#     weights <- weights*10
-#   }
-#   
-#   ## Obtain the plot coords...
-#   if(!is.null(pdb) && is.null(layout)) {
-#     cat("Obtaning layout from PDB structure\n")
-#     layout = layout.cna(x, pdb, k=3)
-#   }
-#   if(is.null(pdb) && is.null(layout)) {
-#     cat("Obtaning guestimated layout with fruchterman.reingold\n")
-#     layout <- layout.fruchterman.reingold(x$community.network, weights=weights)
-#   }
-#   if(dim(layout)[2] != 3){
-#     stop("Input 'layout' must be an Nx3 matrix, where N is the number of communities")
-#   }
-#   
-#   rglplot(x$community.network,
-#           edge.width = weights,
-#           layout = layout,
-#           vertex.size = vertex.size,
-#           vertex.color <- col)
-# }
-# }
+visualize.cna <- function(cna, pdb, safety = 2.7, ...){
+  if(!"cna" %in% class(cna))
+    stop("'cna' must an object of class 'cna'")
+  if(!is.pdb(pdb))
+    stop("'pdb' must an object of class 'pdb'")
+  
+  ca.pdb <- trim.pdb(pdb, atom.select(pdb, "calpha"))
+  ca.con <- connectivity(ca.pdb,safety=safety)
+  net.vertex.color <- V(cna$network)$color
+  visualize(ca.pdb, con = ca.con, col = net.vertex.color)
+  
+  com.net.vertex.color <- V(cna$community.network)$color
+  radii <- V(net$community.network)$size
+  radii <- 5*radii/max(radii)
+  com.net.weight <- E(net$community.network)$weight
+  membership.centres <- centres(ca.pdb, factor = cna$communities$membership)
+  membership.centres <- matrix(membership.centres, ncol=3, byrow=TRUE)
+  spheres3d(membership.centres, col = com.net.vertex.color, radius = radii, apha = 0.5)
+  
+  com.net.con <- apply(get.edgelist(net$community.network), 2, as.integer)
+  cyls <- apply(com.net.con, 1,
+    function(ids){
+      cyl <- cylinder3d(membership.centres[ids,], radius=com.net.weight, sides=20)
+      return(cyl)
+    })
+  cyls.ids <- lapply(cyls, shade3d, col = "white")
+}
