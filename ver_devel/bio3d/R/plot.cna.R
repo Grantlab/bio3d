@@ -1,5 +1,5 @@
 plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
-                     layout=NULL, col=NULL, full=FALSE, ...) {
+                     layout=NULL, col=NULL, full=FALSE, scale = TRUE, ...) {
 
   ##- Function for plotting cna networks the way we like them.
   ##   Returns the plot layout coordinates silently. These can 
@@ -65,7 +65,8 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
     }
     ## Lets scale the weights to lie between 1 and 5
 #    weights <- (weights - min(weights)) / max(weights - min(weights)) * (1 - 5) + 5
-    weights <- (weights - min(weights)) / max(weights - min(weights)) * 4 + 1
+    if(scale) weights <- (weights - min(weights)) / max(weights - min(weights)) * 4 + 1
+    else weights <- 10 * weights
   }
   
   ##- Obtain the plot layout coords

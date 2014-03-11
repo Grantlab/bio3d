@@ -9,7 +9,7 @@
 }
 \usage{
   \method{plot}{cna}(x, pdb = NULL, weights=NULL, vertex.size=NULL,
-            layout=NULL, col=NULL, full=FALSE, ...)
+            layout=NULL, col=NULL, full=FALSE, scale=TRUE, ...)
 
   plot3d.cna(x, pdb = NULL, weights=NULL, vertex.size = NULL,
             layout = layout.cna(x, pdb, k=3), col = NULL, ...)
@@ -33,7 +33,8 @@
     these values are taken from the input network
     \sQuote{V(x$community.network)$color}. }
   \item{full}{ Logical, if TRUE the full all-atom network rather than the 
-    clustered community network will be plotted. }       
+    clustered community network will be plotted. }    
+  \item{scale}{ Logical, if TRUE weights are scaled with respect to the network. }   
   \item{\dots}{ Additional graphical parameters for \sQuote{plot.igraph}. }
 }
 \details{
