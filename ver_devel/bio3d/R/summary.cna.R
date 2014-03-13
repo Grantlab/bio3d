@@ -1,4 +1,4 @@
-summary.cna <- function(object, ...) {
+summary.cna <- function(object, verbose=TRUE, ...) {
 
   ## summary.cna(net)
   ## y <- summary.cna(net, file="tmp.tbl", col.names=FALSE, append=T)
@@ -37,21 +37,21 @@ summary.cna <- function(object, ...) {
         members[i] <- single.member
       }
     }
-  }
-  else{
+  } else{
     ##- non numeric vectors can not be condensed
     members <- unlist(lapply(memb, paste, collapse=", "))
   }
   
-  z <- cbind(id, size, members)
+  ## Output silently as a list  
+  tbl <- data.frame( id=as.numeric(id), 
+              size=as.numeric(size), 
+              members=members,
+              stringsAsFactors=FALSE )
 
-  ## Output silently as a list
-  
-  tbl <- data.frame( apply(z[,1:2],2,as.numeric), members=z[,3],
-                    stringsAsFactors=FALSE )
-  
   y <- list("id"=id, "size"=size, "members"=memb, "tbl"=tbl)
   
+  if(verbose) { print.data.frame(tbl, row.names=FALSE) }
+
   return(y)
 }
 
