@@ -120,7 +120,7 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     ##-- Calculate the -log of cij
     ## change cij 1 to 0.9 to avoid log(1) = 0
     cij.network <- cij.abs
-    cij.network[cij.network==1] = 0.9999
+    cij.network[cij.network >= 1] = 0.9999
     cij.network <- -log(cij.network)
     ## remove infinite values
     cij.network[is.infinite(cij.network)] = 0
