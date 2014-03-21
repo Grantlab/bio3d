@@ -1,6 +1,6 @@
 `pdbsplit` <-
-function(pdb.files, ids=NULL, path="split_chain", verbose=FALSE, ...) {
-  out <- c(); unused <- c()
+function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE, ncore=1, ...) {
+  
   toread <- file.exists(pdb.files)
   toread[substr(pdb.files, 1, 4) == "http"] <- TRUE
   if (all(!toread)) 
@@ -12,18 +12,43 @@ function(pdb.files, ids=NULL, path="split_chain", verbose=FALSE, ...) {
     pdb.files <- pdb.files[toread]
   }
 
+  ## Parallelized by multicore package
+  ncore <- setup.ncore(ncore, bigmem = TRUE)
+
+  if(ncore>1) {
+    mylapply <- mclapply
+    prev.warn <- getOption("warn")
+    options(warn=1)
+  }
+  else
+    mylapply <- lapply
+
+  ## Faster method to fetch chain IDs in a PDB file
+  "quickscan" <- function(pdbfile) {
+    fi <- readLines(pdbfile)
+    fi = fi[ grep("^ATOM", fi) ]
+    return(unique(substr(fi, 22,22)))
+  }
+
   if(!verbose)
     pb <- txtProgressBar(min=0, max=length(pdb.files), style=3)
   
   if(!file.exists(path)) 
      dir.create(path)
-  for (i in 1:length(pdb.files)) {
-    if(!verbose)
+  
+  "splitOnePdb" <- function(i, pdb.files, ids, path, overwrite, verbose, ...) {
+    out <- c(); skipped <- c(); unused <- NULL;
+    if(!overwrite && !verbose) {
+      chains <- quickscan(pdb.files[i])
+    }
+    else if(overwrite && !verbose) {
       invisible(capture.output( pdb <- read.pdb(pdb.files[i], verbose=verbose, ...) ))
-    else
+      chains <- unique(pdb$atom[, "chain"])
+    }
+    else {
       pdb <- read.pdb(pdb.files[i], verbose=verbose, ...)
-    
-    chains <- unique(pdb$atom[, "chain"])
+      chains <- unique(pdb$atom[, "chain"])
+    }
     
     if(!is.null(ids)) {
       ids <- unique(ids)
@@ -35,11 +60,29 @@ function(pdb.files, ids=NULL, path="split_chain", verbose=FALSE, ...) {
       tmp.inds <- unique(unlist(lapply(toupper(ids), grep, toupper(tmp.names))))
       if(length(tmp.inds)==0) {
         ## Skip pdb file if no match were found
-        unused <- c(unused, substr(basename(pdb.files[i]), 1, 4))
+        unused <- substr(basename(pdb.files[i]), 1, 4)
         chains <- c()
       }
       else {
         chains <- chains[tmp.inds]
+      }
+    }
+
+    if(!overwrite && !verbose) {
+      tmp.names <- paste(substr(basename(pdb.files[i]), 
+                                1, 4), "_", chains, ".pdb", sep = "")
+      new.name <- file.path(path, tmp.names)
+      if(all(file.exists(new.name))) {
+        out <- c(out, new.name)
+        skipped <- paste(basename(pdb.files[i]), " (",
+                       paste(chains, collapse=","), ")", sep="")
+        return( list(out=out, unused=unused, skipped=skipped) )
+      }
+      else {
+        if(!verbose)
+          invisible(capture.output( pdb <- read.pdb(pdb.files[i], verbose=verbose, ...) ))
+        else
+          pdb <- read.pdb(pdb.files[i], verbose=verbose, ...)
       }
     }
     
@@ -75,7 +118,10 @@ function(pdb.files, ids=NULL, path="split_chain", verbose=FALSE, ...) {
             new.name <- paste(substr(basename(pdb.files[i]), 
                                      1, 4), "_", chains[j], ".pdb", sep = "")
             new.name <- file.path(path, new.name)
-            write.pdb(new.pdb, file = new.name)
+
+            if(!file.exists(new.name) || overwrite)
+              write.pdb(new.pdb, file = new.name)
+
             out <- c(out, new.name)
           }
         }
@@ -83,15 +129,33 @@ function(pdb.files, ids=NULL, path="split_chain", verbose=FALSE, ...) {
     }
     if(!verbose)
       setTxtProgressBar(pb, i)
+    
+    return( list(out=out, unused=unused, skipped=skipped) )
   }
   
+  outdata <- mylapply(1:length(pdb.files), splitOnePdb,
+                      pdb.files, ids, path, overwrite, verbose, ...)
+
+  if(ncore>1)
+    options(warn=prev.warn)
+  
+  ##### Collect data #####
+  outfiles <- c()
+  unused <- c(); skipped <- c();
+  for(i in 1:length(outdata)) {
+    tmp.out <- outdata[[i]]
+    outfiles <- c(outfiles, tmp.out$out)
+    unused <- c(unused, tmp.out$unused)
+    skipped <- c(skipped, tmp.out$skipped)
+  }
+
   if(!verbose)
     close(pb)
   
   if(!is.null(ids)) {
     ids.used <- NULL; nonmatch <- NULL
-    if(length(out)>0) {
-      ids.used <- sub(".pdb$", "", basename(out))
+    if(length(outfiles)>0) {
+      ids.used <- sub(".pdb$", "", basename(outfiles))
       tmp.fun <- function(x, y) { ifelse(length(grep(x,y))>0, TRUE, FALSE) }
       tmp.inds <- unlist(lapply(toupper(ids), tmp.fun, toupper(ids.used)))
       nonmatch <- ids[!tmp.inds]
@@ -109,5 +173,10 @@ function(pdb.files, ids=NULL, path="split_chain", verbose=FALSE, ...) {
       warning(paste("unmatched ids:", nonmatch))
     }
   }
-  return(out)
+
+  if(length(skipped)>0) {
+    warning(paste(skipped, collapse=", "))
+  }
+
+  return(outfiles)
 }

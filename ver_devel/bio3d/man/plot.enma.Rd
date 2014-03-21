@@ -10,7 +10,7 @@
         col = NULL, signif = FALSE,
         pcut = 0.005, qcut = 0.04,
         xlab = "Residue Position", ylab = "Fluctuations",
-        ylim = NULL,
+        xlim = NULL, ylim = NULL,
         mar = c(4, 5, 2, 2), ...)
 }
 \arguments{
@@ -33,6 +33,7 @@
   \item{mar}{ A numerical vector of the form c(bottom, left, top, right)
     which gives the number of lines of margin to be specified on the
     four sides of the plot.}
+  \item{xlim}{ the x limits of the plot. }
   \item{ylim}{ the y limits of the plot. }
   \item{\dots}{ extra plotting arguments passed to \code{plot.bio3d}
     that effect the atomic fluctuations plot only. }

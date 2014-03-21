@@ -12,6 +12,6 @@
     image(1:ncol(x$overlap), 1:nrow(x$overlap), x$overlap,
           col=col, zlim=zlim,
           xlab=xlab, ylab=ylab, ...)
-    mtext(paste("RMSIP:", round(x$rmsip, 2)), side=3, line=0.5, at=0.5, adj=0)
+    mtext(paste("RMSIP:", round(x$rmsip, 2)), side=3, line=0.5, at=0.5, adj=0, ...)
     
   }

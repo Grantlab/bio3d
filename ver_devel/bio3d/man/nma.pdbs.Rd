@@ -6,7 +6,8 @@
   Perform NMA on an ensemble of aligned protein structures.
 }
 \usage{
-nma.pdbs(pdbs, fit = TRUE, full = FALSE, defa = FALSE, rm.gaps = TRUE, 
+nma.pdbs(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
+         rm.gaps = TRUE, sse = FALSE, defa = FALSE, 
          outpath = NULL, ncore = 1, \dots)
 
 \method{print}{enma}(x, \dots)
@@ -19,9 +20,13 @@ nma.pdbs(pdbs, fit = TRUE, full = FALSE, defa = FALSE, rm.gaps = TRUE,
     prior to normal mode calculations. }
   \item{full}{ logical, if TRUE return the complete, full structure, 
     \sQuote{nma} objects. }
+  \item{subspace}{ number of eigenvectors to store for further
+    analysis. }
   \item{rm.gaps}{ logical, if TRUE obtain the hessian matrices for only
     atoms in the aligned positions (non-gap positions in all aligned
     structures). Thus, gap positions are removed from output. }
+  \item{sse}{ logical, if TRUE strip loop atoms from the aligned core in
+    which the comparison should be made. }
   \item{defa}{ logical, if TRUE perform deformation analysis on the
     first 5 modes. }
   \item{outpath}{ character string specifing the output directory to
@@ -57,7 +62,7 @@ nma.pdbs(pdbs, fit = TRUE, full = FALSE, defa = FALSE, rm.gaps = TRUE,
   \item{deformations }{ a numeric matrix with aligned atomic
     deformation energies. }
   \item{U.subspace }{ a three-dimensional array with aligned
-    eigenvectors  (corresponding to the subspace defined by the first 20
+    eigenvectors  (corresponding to the subspace defined by the first N
     non-trivial eigenvectors (\sQuote{U}) of the \sQuote{nma} object). }
   \item{full.nma }{ a list with a \code{nma} object for each input
     structure. }
