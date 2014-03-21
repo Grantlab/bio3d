@@ -101,23 +101,13 @@
     unknowns <- c()
     
     for(i in 1:nrow(ops.inds)) {
-      j <- ops.inds[i]
-      if(!file.exists(pdbs$id[j])) {
-        options(warn=prev.warn)
-        cat("\n")
-        stop(paste("Non-standard residue type found in", basename(pdbs$id[j]), "\n",
-                   "  attempt to re-read PDB file failed."))
-      }
-      else {
-        pdb.tmp <- read.pdb(pdbs$id[j])
-        resid <- pdb.tmp$atom[atom.select(pdb.tmp, 'calpha', verbose=FALSE)$atom, "resid"]
-        
-        if(any(!(resid %in% resnames))) {
-          unknowns <- c(unknowns, resid[!resid%in%resnames])
-        }
-      }
+      j <- ops.inds[i, ]
+      
+      resid <- pdbs$resid[j[1], j[2]]
+      if(any(!(resid %in% resnames)))
+        unknowns <- c(unknowns, resid[!resid%in%resnames])
     }
-
+    
     if(length(unknowns)>0) {
       options(warn=prev.warn)
       unknowns <- paste(unique(unknowns), collapse=", ")
@@ -376,11 +366,6 @@
   
   ## Fix for missing chain IDs
   chain[is.na(chain)] <- ""
-  
-  ## Check if protein is 'complete' <--- moved up before mode calc
-  #if(nrow(bounds(as.numeric(pdbs$resno[i,])))>1)
-  #  warning(paste(basename(pdbs$id[i]), "might have missing residue(s) in structure:\n",
-  #                "  Fluctuations at neighboring positions may be affected."))
   
   ## 3-letter AA code is provided in the pdbs object
   ## avoid using aa123() here (translates TPO to THR)
