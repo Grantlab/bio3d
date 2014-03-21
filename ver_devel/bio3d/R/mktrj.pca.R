@@ -30,5 +30,5 @@
                    minus, minus[,rev(1:ncol(minus))]))
 
   write.pdb(xyz=coor, file=file, ...)
-  return(coor)
+  invisible(coor)
 }
