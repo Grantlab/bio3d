@@ -124,8 +124,8 @@
           row.ind <- nongap.inds[k]
 
           aa <- x$ali[row.ind, col.ind]
-          if(aa=="-")
-            print(aa)
+          #if(aa=="-")
+          #  print(aa)
           
           aacol <- aa2col(aa, default=aln.col)
 
@@ -164,7 +164,7 @@
           ystart <- ((i-1) * row.height) + 0.5
           yend <- ystart + (conserv.height*hn[cons.inds[k]])
           
-          print( paste(ystart, yend, hn[cons.inds[k]] ))
+          ##print( paste(ystart, yend, hn[cons.inds[k]] ))
           
           rect(xstart, ystart, xend, yend,
                col=col[j], border=NA)
