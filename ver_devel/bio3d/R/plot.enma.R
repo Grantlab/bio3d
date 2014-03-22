@@ -154,11 +154,11 @@
   
     ## If significance test was performed successfully
     if(!is.null(sig)) {
-      maxy <- max(yval, na.rm=TRUE)
+      ##maxy <- max(yval, na.rm=TRUE)
       bds <- bounds(sig)
       ii <- 1:nrow(bds)
       rect(bds[ii,1], rep(0, length(ii)), bds[ii,2],
-           rep(maxy, length(ii)),
+           rep(ylim[2], length(ii)),
            col=rep("lightblue", length(ii)), border=NA)
     }
 
