@@ -6,11 +6,13 @@
   objects. 
 }
 \usage{
-\method{dccm}{enma}(x, \dots)
+\method{dccm}{enma}(x, ncore = NULL, \dots)
 }
 \arguments{
   \item{x}{ an object of class \code{enma} as obtained from
     function \code{nma.pdbs}. }
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires multicore package installed. }
   \item{\dots}{ additional arguments passed to \code{dccm.nma}. }
 }
 \details{

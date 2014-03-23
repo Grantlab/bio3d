@@ -37,12 +37,12 @@
   MODELS:
   \item{simple}{ Remove edges with abs(cij) < cutoff.cij. }
   \item{minimal}{ 1. Remove edges with max(abs(cij)) < cutoff.cij; 
-     2. Remove edges with min(abs(cij)) < cutoff.cij && min(dij) > cutoff.dm; 
+     2. Remove edges with min(abs(cij)) < cutoff.cij && max(dij) > cutoff.dm; 
      3. Remove edges with var(abs(cij)) >= cutoff.var. }
   \item{full}{ 1. Remove edges with max(abs(cij)) < cutoff.cij;
-     2. Remove edges with min(abs(cij)) < cutoff.cij && min(dij) > cutoff.dm. }
+     2. Remove edges with min(abs(cij)) < cutoff.cij && max(dij) > cutoff.dm. }
   \item{pca}{ 1. Remove edges with max(abs(cij)) < cutoff.cij; 
-     2. Remove edges with min(abs(cij)) < cutoff.cij && min(dij) > cutoff.dm; 
+     2. Remove edges with min(abs(cij)) < cutoff.cij && max(dij) > cutoff.dm; 
      3. Remove edges with var(abs(cij)) >= cutoff.var && intersect({pc-loading_n(ij) < cutoff.loading; n=1:nmodes}). }
 }  
 \seealso{

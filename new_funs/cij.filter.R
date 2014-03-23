@@ -3,14 +3,14 @@
 #    Remove edges with abs(cij) < cutoff.cij
 # B. minimal
 #    1. Remove edges with max(abs(cij)) < cutoff.cij
-#    2. Remove edges with min(abs(cij)) < cutoff.cij && min(dij) > cutoff.dm
+#    2. Remove edges with min(abs(cij)) < cutoff.cij && max(dij) > cutoff.dm
 #    3. Remove edges with var(abs(cij)) >= cutoff.var
 # C. full
 #    1. Remove edges with max(abs(cij)) < cutoff.cij
-#    2. Remove edges with min(abs(cij)) < cutoff.cij && min(dij) > cutoff.dm
+#    2. Remove edges with min(abs(cij)) < cutoff.cij && max(dij) > cutoff.dm
 # D. pca
 #    1. Remove edges with max(abs(cij)) < cutoff.cij
-#    2. Remove edges with min(abs(cij)) < cutoff.cij && min(dij) > cutoff.dm
+#    2. Remove edges with min(abs(cij)) < cutoff.cij && max(dij) > cutoff.dm
 #    3. Remove edges with var(abs(cij)) >= cutoff.var && intersect({pc-loading_n(ij) < cutoff.loading; n=1:nmodes})
 
 cij.filter <- function(cij, inds = 1:dim(cij)[3L], xyz = NULL,
