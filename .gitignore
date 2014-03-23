@@ -13,3 +13,5 @@ figure*
 *.out
 tmp*
 *.DS_Store
+
+*.vmd
