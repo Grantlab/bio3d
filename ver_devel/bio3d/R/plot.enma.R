@@ -4,12 +4,17 @@
            col=NULL, signif=FALSE,
            pcut=0.005, qcut=0.04,
            xlab="Residue Position", ylab="Fluctuations",
-           ylim=NULL,
+           xlim=NULL, ylim=NULL,
            mar = c(4, 5, 2, 2),
            ...) {
 
     if(!inherits(x, "enma"))
       stop("provide a enma object as obtained from 'nma.pdbs'")
+
+    if(is.null(pdbs) && entropy) {
+      entropy=FALSE
+      warning("forcing 'entropy=FALSE': entropy plot requires the corresponding 'pdbs' object")
+    }
 
     if(is.null(x$call$rm.gaps))
       rm.gaps <- TRUE
@@ -32,7 +37,10 @@
       col <- seq(1, nrow(yval))
 
     if(is.null(ylim))
-      ylim=c(0,max(yval, na.rm=TRUE))
+      ylim <- c(0,max(yval, na.rm=TRUE))
+    
+    if(is.null(xlim))
+      xlim <- c(0,ncol(yval))
 
     dots <- list(...)
     sse.aln <- NULL
@@ -118,6 +126,11 @@
       ## Plot significance as shaded blocks
       if(is.null(sig))
         warning("Too few data points. Ignoring significance test")
+
+      if(length(sig)==0) {
+        ##warning("No significant differences found")
+        sig <- NULL
+      }
     }
 
 
@@ -136,26 +149,29 @@
     else
       par(mar=mar)
 
-
-    ## Plot fluctuations / deformations
-    do.call('plot.bio3d', c(list(x=yval[inds.plot[1],], xlab=xlab, ylab=ylab,
-                                 ylim=ylim, col=1), dots))
-
+    plot.new()
+    plot.window(xlim=xlim, ylim=ylim, ...)
+  
     ## If significance test was performed successfully
     if(!is.null(sig)) {
-      maxy <- max(yval, na.rm=TRUE)
+      ##maxy <- max(yval, na.rm=TRUE)
       bds <- bounds(sig)
       ii <- 1:nrow(bds)
       rect(bds[ii,1], rep(0, length(ii)), bds[ii,2],
-           rep(maxy, length(ii)),
+           rep(ylim[2], length(ii)),
            col=rep("lightblue", length(ii)), border=NA)
     }
 
+    ## Plot fluctuations / deformations
+    par(new=TRUE)
+    do.call('plot.bio3d', c(list(x=yval[inds.plot[1],], xlab=xlab, ylab=ylab,
+                                 ylim=ylim, xlim=xlim, col=1), type='h',
+                            dots))
+    
     ## Plot all lines (col==NA will not be plotted)
     for(i in 1:nrow(yval)) {
-      lines( yval[i,], col=col[i] )
+      lines( yval[i,], col=col[i], lwd=2, ... )
     }
-
 
     ## Fluctuation / deformations variance
     if (variance) {
@@ -163,6 +179,7 @@
       do.call('plot.bio3d', c(list(x=fluct.sd,
                                    xlab="Residue position",
                                    ylab="Fluct. variance",
+                                   ylim=ylim, xlim=xlim,
                                    col=1), dots))
     }
 
@@ -183,4 +200,7 @@
                                    col=1), dots))
     }
 
+
+    out <- list(singnif=sig, sse=sse.aln)
+    invisible(out)                
   }

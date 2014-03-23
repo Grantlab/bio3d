@@ -2,8 +2,9 @@
 ## 1 -  use k <- kaa - ((kaq %*% kqq.inv) %*% kqa) to derive hessian for core atoms
 ## 2 - return the full objects
 
-"nma.pdbs" <- function(pdbs, fit=TRUE, full=FALSE, defa = FALSE, 
-                       rm.gaps=TRUE, outpath = NULL, ncore=1, ...) {
+"nma.pdbs" <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL,
+                       rm.gaps=TRUE, sse=FALSE,
+                       defa = FALSE, outpath = NULL, ncore=1, ...) {
  
   
   if(class(pdbs)!="3dalign")
@@ -56,10 +57,39 @@
     war <- paste(names(nm.args)[! names(nm.args) %in% c("mass", "ff", "temp", "keep") ], collapse=", ")
     warning(paste("ignoring arguments:", war))
   }
+
+  ## SSE analysis
+  if(sse) {
+    sse <- dssp.pdbs(pdbs)
+    sse[ which(sse=="T") ] = "-"
+  }
+  else
+    sse <- NULL
   
   ## Set indicies
   gaps.res <- gap.inspect(pdbs$ali)
   gaps.pos <- gap.inspect(pdbs$xyz)
+
+  gaps.sse <- NULL
+  if(!is.null(sse)) {
+    gaps.sse <- gap.inspect(sse)
+    
+    gtmp <- NULL
+    gtmp$bin <- gaps.res$bin
+    gtmp$bin[ which(gaps.sse$bin==1) ] = 1
+
+    gtmp$f.inds <- which( apply(gtmp$bin, 2, function(x) all(x==0)) )
+    gtmp$t.inds <- which( apply(gtmp$bin, 2, function(x) any(x==1)) )
+    
+    gtmp$row <- unlist(apply(gtmp$bin, 1, function(x) length(which(x==1))))
+    gtmp$col <- unlist(apply(gtmp$bin, 2, function(x) length(which(x==1))))
+    gaps.res = gtmp
+    
+    gtmp <- NULL
+    gtmp$f.inds <- atom2xyz(gaps.res$f.inds)
+    gtmp$t.inds <- atom2xyz(gaps.res$t.inds)
+    gaps.pos <- gtmp
+  }
 
   ## check for missing masses before we start calculating
   if(any(pdbs$ali=="X") && mass==TRUE) {
@@ -71,23 +101,13 @@
     unknowns <- c()
     
     for(i in 1:nrow(ops.inds)) {
-      j <- ops.inds[i]
-      if(!file.exists(pdbs$id[j])) {
-        options(warn=prev.warn)
-        cat("\n")
-        stop(paste("Non-standard residue type found in", basename(pdbs$id[j]), "\n",
-                   "  attempt to re-read PDB file failed."))
-      }
-      else {
-        pdb.tmp <- read.pdb(pdbs$id[j])
-        resid <- pdb.tmp$atom[atom.select(pdb.tmp, 'calpha', verbose=FALSE)$atom, "resid"]
-        
-        if(any(!(resid %in% resnames))) {
-          unknowns <- c(unknowns, resid[!resid%in%resnames])
-        }
-      }
+      j <- ops.inds[i, ]
+      
+      resid <- pdbs$resid[j[1], j[2]]
+      if(any(!(resid %in% resnames)))
+        unknowns <- c(unknowns, resid[!resid%in%resnames])
     }
-
+    
     if(length(unknowns)>0) {
       options(warn=prev.warn)
       unknowns <- paste(unique(unknowns), collapse=", ")
@@ -95,18 +115,31 @@
                  "\n  Use 'mass=FALSE' or 'mass.custom=list(UNK=156.2)'"))
     }
   }
-  
+
+  ## Check connectivity
+  con <- inspect.connectivity(pdbs, cut=4.05)
+  if(!all(con)) {
+    warning(paste(paste(basename(pdbs$id[which(!con)]), collapse=", "),
+                  "might have missing residue(s) in structure:\n",
+                  "  Fluctuations at neighboring positions may be affected."))
+  }
+            
   ## Use for later indexing
   pdbs$inds <- matrix(NA, ncol=ncol(pdbs$resno), nrow=nrow(pdbs$resno))
 
   ## Force field
   pfc.fun <- load.enmff(ff)
   
-  ## Number of modes to keep  
-  keep <- 20
-  if (length(gaps.pos$f.inds) < (keep+6))
-    keep <- length(gaps.pos$f.inds)*3 - 6
-
+  ## Number of modes to store in U.subspace
+  if(is.null(subspace)) {
+    keep <- length(gaps.pos$f.inds)-6
+  }
+  else {
+    keep <- subspace
+    if (length(gaps.pos$f.inds) < (keep+6))
+      keep <- length(gaps.pos$f.inds)-6
+  }
+  
   ## Coordiantes - fit or not
   if(fit) {
     xyz <- fit.xyz(fixed = pdbs$xyz[1, ], mobile = pdbs,
@@ -127,9 +160,9 @@
   else
     deform <- NULL
 
-  ## store residue numbers (same as pdbs$id[,gaps$f.inds])
+  ## store residue numbers (same as pdbs$inds[,gaps$f.inds])
   ##resnos <- flucts
-  
+
   ## List object to store each modes object
   if(full)
     all.modes <- list()
@@ -144,10 +177,54 @@
 
   ## store eigenvalues of the first modes
   L.mat <- matrix(NA, ncol=keep, nrow=nrow(gaps.res$bin))
-  
+
   if(is.null(outpath))
     fname <- tempfile(fileext = "pdb")
 
+  ### Memory usage ###
+  dims <- dim(modes.array)
+  mem.usage <- sum(c(as.numeric(object.size(modes.array)),
+                     as.numeric(object.size(L.mat)),
+                     as.numeric(object.size(deform)),
+                     as.numeric(object.size(flucts)),
+                     as.numeric(object.size(matrix(NA, ncol=dims[3], nrow=dims[3]))) ))*2
+                   
+  if(full) {
+    if(is.null(nm.keep))
+      tmpncol <- dims[2]
+    else
+      tmpncol <- nm.keep
+    
+    size.mat <- object.size(matrix(0.00000001, ncol=tmpncol, nrow=dims[1]))
+    size.vec <- object.size(vector(length=dims[1], 'numeric'))
+
+    tot.size <- ((size.mat * 2) + (size.vec * 4)) * length(pdbs$id)
+    mem.usage <- mem.usage+tot.size
+  }
+  mem.usage=round(mem.usage/1048600,1)
+  
+
+  #### Print overview of scheduled calcualtion ####
+  cat("\nDetails of Scheduled Calculation:\n")
+  cat(paste("  ...", length(pdbs$id), "input structures", "\n"))
+  if(keep>0)
+    cat(paste("  ...", "storing", keep, "eigenvectors for each structure", "\n"))
+  if(keep>0)
+    cat(paste("  ...", "dimension of x$U.subspace: (",
+              paste(dims[1], dims[2], dims[3], sep="x"), ")\n"))
+  
+  if(fit)
+    cat(paste("  ...", "coordinate superposition prior to NM calculation", "\n"))
+
+  if(full)
+    cat(paste("  ... individual complete 'nma' objects will be stored", "\n"))
+  if(rm.gaps)
+    cat(paste("  ... aligned eigenvectors (gap containing positions removed) ", "\n"))
+
+  if(mem.usage>0)
+    cat(paste("  ...", "estimated memory usage of final 'eNMA' object:", mem.usage, "Mb \n"))
+  
+  cat("\n")
   
   ##### Start modes calculation #####
   pb <- txtProgressBar(min=0, max=length(pdbs$id), style=3)
@@ -161,10 +238,10 @@
   alnModes <- mylapply(1:length(pdbs$id), .calcAlnModes,
                        pdbs, xyz, gaps.res,
                        mass, am.args, nm.keep, temp, keep, 
-                       rm.gaps, defa, 
+                       rm.gaps, defa, full, 
                        pfc.fun, ff, outpath, pb, ncore)
   close(pb)
-
+  
   ##### Collect data #####
   for(i in 1:length(alnModes)) {
     tmp.modes <- alnModes[[i]]
@@ -177,11 +254,14 @@
       all.modes[[i]] = tmp.modes$modes
 
     if(defa)
-      deform[i, ]    = tmp.modes$deform
+      deform[i, ]    = tmp.modes$defa
     else
       deform <- NULL
   }
 
+  remove(alnModes)
+  invisible(gc())
+  
   ##### RMSIP ######
   rmsip.map <- NULL
   if(rm.gaps) {
@@ -198,11 +278,13 @@
     rm(iipb, pos = ".GlobalEnv")  ## remove global iipb variable
     options(warn=prev.warn)       ## restore warning option
   }
-  
+
   rownames(flucts) <- basename(rownames(pdbs$xyz))
   out <- list(fluctuations=flucts, rmsip=rmsip.map,
-              deformations=deform, ##resno=resnos,
-              U.subspace=modes.array, L=L.mat, full.nma=all.modes, call=cl)
+              deformations=deform, 
+              U.subspace=modes.array, L=L.mat, full.nma=all.modes,
+              ##gaps.res=gaps.res,
+              call=cl)
   class(out) = "enma"
   return(out)
 }
@@ -229,7 +311,7 @@
     tmp.rmsip <- mylist[[i]]
     mat[tmp.rmsip$i, tmp.rmsip$j] <- tmp.rmsip$rmsip
   }
-  
+
   mat[ inds[,c(2,1)] ] = mat[ inds ]
   return(round(mat, 4))
 }
@@ -259,7 +341,7 @@
 ## Calculate 'aligned' normal modes of structure i in pdbs
 .calcAlnModes <- function(i, pdbs, xyz, gaps.res,
                           mass, am.args, nm.keep, temp, keep,
-                          rm.gaps, defa, 
+                          rm.gaps, defa, full, 
                           pfc.fun, ff, outpath, pb, ncore) {
 
   ## Set indices for this structure only
@@ -284,11 +366,6 @@
   
   ## Fix for missing chain IDs
   chain[is.na(chain)] <- ""
-  
-  ## Check if protein is 'complete'
-  if(nrow(bounds(as.numeric(pdbs$resno[i,])))>1)
-    warning(paste(basename(pdbs$id[i]), "might have missing residue(s) in structure:\n",
-                  "  Fluctuations at neighboring positions may be affected."))
   
   ## 3-letter AA code is provided in the pdbs object
   ## avoid using aa123() here (translates TPO to THR)
@@ -353,10 +430,10 @@
       invisible(capture.output( modes <- nma(pdb=tmp.pdb, ff=ff, mass=mass, temp=temp, keep=nm.keep, aa.mass=masses)))
     }
 
-    ## Perform deformation analysis
+    ## deformation analysis
     if(defa)
-      defo <- rowMeans(deformation.nma(modes, mode.inds=seq(7,11))$ei)
-    
+      defo <- rowMeans(deformation.nma(modes, ncore=1, mode.inds=seq(7,11))$ei)
+
     if(rm.gaps)
       modes.mat <- matrix(NA, ncol=keep, nrow=nrow(modes$U))
     else
@@ -397,13 +474,20 @@
     j <- i
   setTxtProgressBar(pb, j)
 
+  L <- modes$L[seq(7, keep+6)]
+  if(!full) {
+    remove(modes)
+    modes <- NULL
+  }
+  
   out <- list(modes=modes,
               U=modes.mat,
-              L=modes$L[seq(7, keep+6)],
+              L=L,
               flucts=flucts,
-              defa=deform,
-              f.inds=f.inds)
-
+              defa=deform)
+              ##f.inds=f.inds)
+  
+  invisible(gc())
   return(out)
 }
   
