@@ -14,7 +14,7 @@
 #    3. Remove edges with var(abs(cij)) >= cutoff.var && intersect({pc-loading_n(ij) < cutoff.loading; n=1:nmodes})
 
 cij.filter <- function(cij, inds = 1:dim(cij)[3L], xyz = NULL,
-         model = c("simple", "minimal", "full", "pca"), nmodes = 3,
+         model = c("simple", "minimal", "full", "pca", "dist"), nmodes = 3,
          cutoff.var = 0.0025, cutoff.cij = 0.4,
          cutoff.loading = 0.02, cutoff.dm = 15, extra.filter = NULL) {
 
@@ -68,6 +68,9 @@ cij.filter <- function(cij, inds = 1:dim(cij)[3L], xyz = NULL,
             f2 <- TRUE
             for(i in 1:nmodes) f2 <- f2 & abs(pca.cij$U[, i]) < cutoff.loading
             f | (cij.var >= cutoff.var && f2)
+         },
+         "dist" = {
+            dm.max > cutoff.dm
        } )
        matrix(rep(!fil, length(inds)), nrow=length(fil))
    } )
@@ -85,4 +88,4 @@ cij.filter <- function(cij, inds = 1:dim(cij)[3L], xyz = NULL,
    }
    if(length(inds) == 1) new.cij <- new.cij[,,1]
    return(new.cij)
-} 
+}
