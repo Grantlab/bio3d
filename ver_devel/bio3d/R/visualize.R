@@ -10,6 +10,9 @@ visualize.default <- function(
   cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
   add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...){
   
+  if(length(xyz)==0)
+    stop("No coordinates to plot. (length(xyz)==0)")
+  
   oops <- require(rgl)
   if(!oops)
     stop("Please install the rgl package from CRAN")
