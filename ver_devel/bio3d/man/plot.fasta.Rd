@@ -8,12 +8,13 @@
 \method{plot}{fasta}(x, plot.labels = TRUE,
                      plot.bars = TRUE,
                      plot.lines = FALSE,
-                     plot.axis = TRUE, 
-                     color.conserved = TRUE,
+                     plot.axis = TRUE,
+                     seq.index = NULL,
+                     color.conserved = FALSE,
                      cutoff=0.5, 
                      col=NULL,
-                     bars.scale=5,
-                     row.spacing=0.1,
+                     bars.scale=2,
+                     row.spacing=0.5,
                      aln.col="grey50",
                      cex.text=1, add=FALSE, ...)
 }
@@ -27,6 +28,8 @@
   \item{plot.lines}{ logical, if TRUE sequence conservation will be
     represented with a plot. }
   \item{plot.axis}{ logical, if TRUE x-axis will be plotted. }
+  \item{seq.index}{ printed tick labels will correspond to the sequence
+    of the provided index. }
   \item{color.conserved}{ logical, if TRUE conserved residues will be
     colored according to \dQuote{clustal} coloring scheme. }
   \item{cutoff}{ conservation \sQuote{cutoff} value below which
