@@ -179,7 +179,8 @@
       do.call('plot.bio3d', c(list(x=fluct.sd,
                                    xlab="Residue position",
                                    ylab="Fluct. variance",
-                                   ylim=ylim, xlim=xlim,
+                                   ##ylim=ylim,
+                                   xlim=xlim,
                                    col=1), dots))
     }
 
@@ -201,6 +202,6 @@
     }
 
 
-    out <- list(singnif=sig, sse=sse.aln)
+    out <- list(signif=sig, sse=sse.aln)
     invisible(out)                
   }

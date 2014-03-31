@@ -8,16 +8,17 @@
       stop(paste(files[i], "does not exist"))
     
     if(i!=ref) {
-      alns[[j]] <- tmalign.pair(files[i], files[ref])
+      alns[[j]] <- tmalign.pair(files[ref], files[i])
       j=j+1
     }
   }
-
-  cat("\nCombining pairwise alignments ...\n")
   
   aln <- alns[[1]]
-  for ( i in 2:length(alns)) {
-    aln <- .tmalignCombine(aln, alns[[i]])
+  if(length(alns)>2) {
+    cat("\nCombining pairwise alignments ...\n")
+    for ( i in 2:length(alns)) {
+      aln <- .tmalignCombine(aln, alns[[i]])
+    }
   }
 
   out <- NULL
@@ -55,8 +56,8 @@
   system(cmd)
 
   rawlines <- readLines(outfile)
-  seqa <- unlist(strsplit(rawlines[34], ""))
-  seqb <- unlist(strsplit(rawlines[36], ""))
+  seqa <- unlist(strsplit(rawlines[36], ""))
+  seqb <- unlist(strsplit(rawlines[34], ""))
 
   seqs <- seqbind(seqa, seqb)
   return(seqs)
@@ -113,9 +114,12 @@
           tmp[dims[1], 1]=res.b
 
           if(j>0)
-              tmp=cbind(new[, 1:j], tmp)
+            tmp=cbind(new[, 1:j], tmp)
 
-          new=cbind(tmp, new[, (j+1):ncol(new)])
+          if(j<ncol(new))
+            new=cbind(tmp, new[, (j+1):ncol(new)])
+          if(j==ncol(new))
+            new=tmp
           j=j+1
       }
   }
@@ -138,7 +142,7 @@
 
 
 .tmalignGapRefine <- function(aln) {
-
+  
   tmpfasta <- tempfile()  
   gaps <- gap.inspect(aln)
   dims <- dim(aln)
@@ -147,7 +151,7 @@
     return(aln)
   
   bs <- bounds(gaps$t.inds)
-  bs=bs[which(bs[,"length"]>1),]
+  bs=bs[which(bs[,"length"]>1),, drop=FALSE]
 
   hmm <- list()
   for ( i in 1:nrow(bs)) {
