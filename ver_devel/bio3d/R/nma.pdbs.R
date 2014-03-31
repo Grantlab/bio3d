@@ -67,7 +67,8 @@
     sse <- NULL
   
   ## Set indicies
-  gaps.res <- gap.inspect(pdbs$ali)
+  #gaps.res <- gap.inspect(pdbs$ali)
+  gaps.res <- gap.inspect(pdbs$resno)
   gaps.pos <- gap.inspect(pdbs$xyz)
 
   gaps.sse <- NULL
@@ -363,7 +364,7 @@
   tmp.xyz <- xyz[i, f.inds$pos]
   resno   <- pdbs$resno[i,f.inds$res]
   chain   <- pdbs$chain[i,f.inds$res]
-  
+
   ## Fix for missing chain IDs
   chain[is.na(chain)] <- ""
   
