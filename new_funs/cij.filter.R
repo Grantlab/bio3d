@@ -16,7 +16,7 @@
 cij.filter <- function(cij, inds = 1:dim(cij)[3L], xyz = NULL,
          model = c("simple", "minimal", "full", "pca", "dist"), nmodes = 3,
          cutoff.var = 0.0025, cutoff.cij = 0.4,
-         cutoff.loading = 0.02, cutoff.dm = 15, extra.filter = NULL) {
+         cutoff.loading = 0.02, cutoff.dm = 15, cutoff.pcon = 1, extra.filter = NULL) {
 
    model <- match.arg(model)
    if(inherits(xyz, "3dalign")) {
@@ -45,7 +45,9 @@ cij.filter <- function(cij, inds = 1:dim(cij)[3L], xyz = NULL,
           d <- dm.xyz(x)
           d[upper.tri(d)]} )
 #       dm.min <- apply(dms, 1, min)
-       dm.max <- apply(dms, 1, max)
+#       dm.max <- apply(dms, 1, max)
+       pcon <- apply(dms, 1, function(x) sum(x<=cutoff.dm)/length(x))
+
        # cij variance
        cij.var <- apply(abs(pcij), 1, var)
        cij.min = apply(abs(pcij), 1, min)
@@ -54,23 +56,23 @@ cij.filter <- function(cij, inds = 1:dim(cij)[3L], xyz = NULL,
        fil <- switch(model, 
           "minimal" = {
             f <- cij.max < cutoff.cij
-            f <- f | (cij.min < cutoff.cij & dm.max > cutoff.dm)
+            f <- f | (cij.min < cutoff.cij & pcon < cutoff.pcon)
             f | cij.var >= cutoff.var
           },
           "full" = {
             f <- cij.max < cutoff.cij
-            f | (cij.min < cutoff.cij & dm.max > cutoff.dm)
+            f | (cij.min < cutoff.cij & pcon < cutoff.pcon)
           },
           "pca" = {
             pca.cij <- pca.xyz(abs(t(pcij)), use.svd=TRUE)
             f <- cij.max < cutoff.cij
-            f | (cij.min < cutoff.cij & dm.max > cutoff.dm)
+            f | (cij.min < cutoff.cij & pcon < cutoff.pcon)
             f2 <- TRUE
             for(i in 1:nmodes) f2 <- f2 & abs(pca.cij$U[, i]) < cutoff.loading
             f | (cij.var >= cutoff.var && f2)
          },
          "dist" = {
-            dm.max > cutoff.dm
+            pcon < cutoff.pcon
        } )
        matrix(rep(!fil, length(inds)), nrow=length(fil))
    } )
