@@ -26,7 +26,7 @@ function(file, rm.dup=TRUE, to.upper=FALSE, to.dash=TRUE) {
   }
 
   ##seq.format( cbind(ind.s[1], ind.e[1], seq.dim[1]) )
-  store.fa <- t(apply(cbind(ind.s, ind.e, seq.dim), 1, seq.format))
+  store.fa <- t(matrix(apply(cbind(ind.s, ind.e, seq.dim), 1, seq.format), ncol=length(ind)))
   rownames(store.fa) <- gsub("^>| .*", "",raw.fa[ind], perl=TRUE)
   
 ##  if (to.dash) { store.fa <- gsub("[/.]","-", store.fa ) }
