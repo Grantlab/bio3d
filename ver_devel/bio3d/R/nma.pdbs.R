@@ -187,7 +187,7 @@
                      as.numeric(object.size(L.mat)),
                      as.numeric(object.size(deform)),
                      as.numeric(object.size(flucts)),
-                     as.numeric(object.size(flucts[,1:dims[3]])) ))*2
+                     as.numeric(object.size(matrix(NA, ncol=dims[3], nrow=dims[3]))) ))*2
                    
   if(full) {
     if(is.null(nm.keep))

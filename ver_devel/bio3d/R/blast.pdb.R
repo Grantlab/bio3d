@@ -1,5 +1,5 @@
 `blast.pdb` <-
-function(seq, database="pdb") {
+function(seq, database="pdb", time.out=90) {
   if(inherits(seq, "fasta")) {
     if(is.matrix(seq$ali)) {
       if(nrow(seq$ali)>1)
@@ -26,7 +26,6 @@ function(seq, database="pdb") {
                   paste(seq,collapse=""),
                   sep="")
 
-
   txt <- scan(urlput, what="raw", sep="\n", quiet=TRUE)
   rid <- sub("^.*RID = " ,"",txt[ grep("RID =",txt) ])
 
@@ -50,8 +49,10 @@ function(seq, database="pdb") {
   
   ## Check for job completion (retrive html or cvs?)
   html <- 1
-  while(length(html) == 1) {
+  t.count <- 0
+  while(length(html) == 1 && t.count < time.out) {
     cat("."); Sys.sleep(5)
+    t.count <- t.count + 5
     
     raw  <- try(read.csv(urlget,
                      header = FALSE, sep = ",", quote="\"", dec=".",
@@ -59,7 +60,11 @@ function(seq, database="pdb") {
     if(class(raw)=="try-error") { stop("No hits found: thus no output generated") }
     html <- grep("DOCTYPE", raw[1,])
   }
-
+  if(length(html) == 1) {
+     warning("\nTime out (", time.out, "s): Retrieve results with returned link\n", 
+        urlget, "\n", sep="")
+     return(urlget)
+  }
   
   colnames(raw) <- c("queryid", "subjectids", "identity", "positives",
                      "alignmentlength", "mismatches", "gapopens",
