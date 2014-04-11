@@ -81,8 +81,7 @@ plot.bio3d(pc.xray$au[,1], ylab="PC1 (A)")
 pdb <- read.pdb("1tag")
 
 ind <- grep("1TAG", pdbs$id)
-res.ref <- which(!is.gap(pdbs$ali[ind,]))
-res.ind <- which(res.ref \%in\% gaps.res$f.ind)
+res.ind <- pdbs$resno[ind, gaps.res$f.ind]
 op <- par(no.readonly=TRUE)
 par(mfrow = c(3, 1), cex = 0.6, mar = c(3, 4, 1, 1))
 plot.bio3d(res.ind, pc.xray$au[,1], sse=pdb, ylab="PC1 (A)")
