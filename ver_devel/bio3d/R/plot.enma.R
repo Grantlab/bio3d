@@ -165,7 +165,7 @@
     ## Plot fluctuations / deformations
     par(new=TRUE)
     do.call('plot.bio3d', c(list(x=yval[inds.plot[1],], xlab=xlab, ylab=ylab,
-                                 ylim=ylim, xlim=xlim, col=1), type='h',
+                                 ylim=ylim, xlim=xlim, col=col[1]), type='h',
                             dots))
     
     ## Plot all lines (col==NA will not be plotted)
