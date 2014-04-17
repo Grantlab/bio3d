@@ -1,8 +1,8 @@
 
-## UNREFINED functions for Bio3D incoperation at some point
+## UNREFINED functions for Bio3D incorporation at some point
 ##  Most of these are useful for protein structure modeling
 ##
-## These include (list to be updaed):
+## These include (list to be updated):
 ##  # fit.pdbs    - Quick Fit Fitter for PDBs
 ##  pdbname     - Extract PDB identifier from filename
 ##  srxn.bd     - Find BD trajectories that complete a give reaction
@@ -11,7 +11,7 @@
 ##  getArgs     - Parse command line options when using Rscript
 ##  txt2num     - Convert a character string to numeric
 ##  read.apbs   - Read elec binding energy from APBS log files
-##  # chain.pdb   - Find possible chian breaks
+##  # chain.pdb   - Find possible chain breaks
 ##  # pdbaln      - Quick and dirty alignment of PDB sequences
 ##  alitrim     - Trim cols from alignment data structure
 ##  # ncmap      - *see bio3d 'cmap'
@@ -28,8 +28,8 @@
 ##  ide.group   - Return the indices of the largest group of
 ##                sequences that have identity values above
 ##                a particular 'cutoff'
-##  rama.inds   - Return xyz indices for PHI-PSI Ramachendran atoms
-##  plot.rama   - Ramachendron plot (basic)
+##  rama.inds   - Return xyz indices for PHI-PSI Ramachandran atoms
+##  plot.rama   - Ramachandran plot (basic)
 ##  aln2aln     - Add one alignment to another that contains
 ##                at least one similar entry
 ##  # get.pdb     - download PDB files from a list of ids
@@ -46,7 +46,7 @@
 ## tlsq & ulsq  - Fitting rotation and translation matrices
 ## renumber.pdb - Renumber resno and eleno records
 ## vec2seq      - Match a vector via matching sequence to alignment
-## # vec2resno    - Replicate a vector based on concetive resno entries
+## # vec2resno    - Replicate a vector based on consecutive resno entries
 ## bgr.colors   - blue-gray-red color range
 ## lsos         - a better list of current objects sorted by size
 ## read.hmmer.tbl - read HMMER3 hmmsearch log files
@@ -57,6 +57,8 @@
 ## add.dccm.grid  -  Add a grid or colored boxes to a plot.dccm() plot.
 ## col.wheel      - useful for picking plot colors (e.g. col.wheel("dark") ) 
 ## linMap         - scale a input vector to lie between min and max values
+## fill.blanks   - copy previously occurring non-missing values to consecutive missing values in a vector
+## read.protdist - read a PHYLIP protdist matrix
 ##
 ## See also:
 ##  ~/work/scop/scop.sf  - Have access to the full SCOP database in R
@@ -133,7 +135,7 @@ srxn.bd <- function(traj.file, reaction, outdir="trjout/") {
                 " > ", log.file, sep="")
 
 
-  srxlog <- function(logfile) {
+srxlog <- function(logfile) {
 
     htrj <- scan(logfile, what="", sep="\n", quiet=TRUE)
     hind <- cbind( grep("<trajectory>", htrj),
@@ -2891,3 +2893,71 @@ linMap <- function(x, from, to) {
   ## linMap(c(0.5, 0.7,1), 10,20)
     (x - min(x)) / max(x - min(x)) * (to - from) + from
 }
+
+
+
+fill.blanks <- function(x, blank="" , boundary.check=FALSE) {
+
+  ## Function to copy previously occurring non-blank (non-missing) 
+  ## values to consecutive blank (missing) values in a vector.
+  ##    x=c(1,"",3,3,4,"", "", 5); fill.blanks(x)
+  ##    x=c(1,"",1,3,3,4,"", "", 5); fill.blanks(x, boundary.check=T)
+
+  ## ToDo: Adapt to work if first element is blank
+
+  ## Details of 'blank' vector element runs 
+  blank.inds <- bounds( which(x == blank) )
+  if (is.null( nrow(blank.inds) )) {
+    warning("No blank elements, returning unaltered input vector")
+    return(x)
+  }
+
+  ## Indices of non-blank vector elements
+  name.inds <- bounds( which(x != blank) )[,"end"]
+
+  ## Check for last element being non-blank
+  name.inds <- name.inds[!name.inds %in% length(x)] 
+  name <- x[ name.inds ]
+
+
+  if(boundary.check) {
+    ## Only fill missing elements if boundary elements match 
+    ## (i.e check if both sides of gap segment are the same)
+    end.match <- x[blank.inds[,"end"]+1]==name
+    blank.inds <- blank.inds[end.match, ,drop=FALSE]
+    name <- name[ end.match ]
+    warning( paste0("Non-matching boundary elements found (",sum(end.match),")") )
+  }
+
+  if(length(name) != nrow(blank.inds)) {
+    stop("Miss-match in number of non-blank elements and consecutive blank runs")
+  }
+  for(i in 1:length(name)) {
+    inds <- blank.inds[i,"start"]:blank.inds[i,"end"]
+    x[inds] = name[i]
+  }
+  return(x) 
+}
+
+
+gap.omit <- function(x) {
+  ## Like na.omit for sequences
+  #x[is.gap(x)] = NA
+  #return(na.omit(x))
+  return(x[!is.gap(x)])
+} 
+
+
+read.protdist <- function(infile) {
+  ##-- Read a PHYLIP protdist matrix
+  raw <- scan(infile, what="raw")
+  n <- as.numeric(raw[1])+1
+  m <- matrix(raw[-1], ncol=n, nrow=n, byrow=TRUE)
+
+  ids <- m[-n,1]
+  mn  <- apply(m[-n,-1], 1, as.numeric)
+  rownames(mn) = ids
+  mnd <- as.dist(mn)
+  return(mnd)
+}
+
