@@ -154,18 +154,18 @@
   
     ## If significance test was performed successfully
     if(!is.null(sig)) {
-      maxy <- max(yval, na.rm=TRUE)
+      ##maxy <- max(yval, na.rm=TRUE)
       bds <- bounds(sig)
       ii <- 1:nrow(bds)
       rect(bds[ii,1], rep(0, length(ii)), bds[ii,2],
-           rep(maxy, length(ii)),
+           rep(ylim[2], length(ii)),
            col=rep("lightblue", length(ii)), border=NA)
     }
 
     ## Plot fluctuations / deformations
     par(new=TRUE)
     do.call('plot.bio3d', c(list(x=yval[inds.plot[1],], xlab=xlab, ylab=ylab,
-                                 ylim=ylim, xlim=xlim, col=1), type='h',
+                                 ylim=ylim, xlim=xlim, col=col[1]), type='h',
                             dots))
     
     ## Plot all lines (col==NA will not be plotted)
@@ -179,7 +179,8 @@
       do.call('plot.bio3d', c(list(x=fluct.sd,
                                    xlab="Residue position",
                                    ylab="Fluct. variance",
-                                   ylim=ylim, xlim=xlim,
+                                   ##ylim=ylim,
+                                   xlim=xlim,
                                    col=1), dots))
     }
 
@@ -201,6 +202,6 @@
     }
 
 
-    out <- list(singnif=sig, sse=sse.aln)
+    out <- list(signif=sig, sse=sse.aln)
     invisible(out)                
   }
