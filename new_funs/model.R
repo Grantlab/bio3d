@@ -56,9 +56,10 @@
 ## mustang        -  Structural alignment with mustang
 ## add.dccm.grid  -  Add a grid or colored boxes to a plot.dccm() plot.
 ## col.wheel      - useful for picking plot colors (e.g. col.wheel("dark") ) 
-## linMap         - scale a input vector to lie between min and max values
-## fill.blanks   - copy previously occurring non-missing values to consecutive missing values in a vector
-## read.protdist - read a PHYLIP protdist matrix
+## linMap         - Scale a input vector to lie between min and max values
+## fill.blanks   - Copy previously occurring non-missing values to consecutive missing values in a vector
+## read.protdist - Eead a PHYLIP protdist matrix
+## print.aln     - Print sequence alignment in a nice formated way
 ##
 ## See also:
 ##  ~/work/scop/scop.sf  - Have access to the full SCOP database in R
@@ -2960,4 +2961,85 @@ read.protdist <- function(infile) {
   mnd <- as.dist(mn)
   return(mnd)
 }
+
+
+print.aln <- function(x, width=60) {
+
+  ##-- Print sequence alignment in a nice formated way
+  ##    x<-read.fasta("poo.fa")
+  ##    print.aln(x)
+  ##
+  ##    file <- system.file("examples/kif1a.fa",package="bio3d")
+  ##    aln  <- read.fasta(file)
+  ##    print.aln(aln, width=40)
+  ##
+  ## Could use this as print.fasta() default 
+  ##
+
+
+  if(class(x) %in% c("fasta", "3dalign")) {
+    id <- x$id
+    ali <- x$ali
+  } else {
+    id <- rownames(x)
+    ali <- x
+  }
+
+
+  ##- Format sequence identifiers
+  ids.nchar <- max(nchar(id))+2 ## with a gap of 2 spaces
+  ids.format <- paste0("%-",ids.nchar,"s")
+  ids <- sprintf(ids.format, id)
+  ## for later use in annotation printing
+  pad.format <- paste0("%+",(ids.nchar+1),"s")
+
+
+  ##- Work out sequence block widths
+  nseq <- length(ids)
+  nres <- ncol(ali)
+
+  block.start <- seq(1, nres, by=width)
+  block.end <- unique(c( seq(width, nres, by=width), nres))
+  nblocks <- length(block.start)
+
+  blank.annot <- rep(" ", width)
+  block.annot <- blank.annot
+  block.annot[ c(1,seq(10, width, by=10)) ] = "."
+
+  blocks <- matrix(NA, ncol=nblocks, nrow=nseq) 
+  for(i in 1:nblocks) {
+    ##- Sequence block
+    positions <- block.start[i]:block.end[i]
+    blocks[,i] <- paste0(ids, apply(ali[, positions, drop=FALSE], 1, paste, collapse=""))
+
+    ##- Annotations for each sequence block
+    number.annot = blank.annot[1:length(positions)]
+    number.annot[1] = sprintf(pad.format, block.start[i])
+    number.annot[length(positions)] = block.end[i]
+
+    block.annot = block.annot[1:length(positions)]
+    block.annot[1] = sprintf(pad.format, "|")
+    block.annot[length(positions)] = "|"
+
+    end.annot = block.annot
+    end.annot[1] = number.annot[1]
+    end.annot[length(end.annot)] = number.annot[length(number.annot)]
+
+    ##-- Formated Printing of annotations and sequence blocks
+    cat("\n")
+    ##- Numbers & ticks
+    cat(paste(number.annot, collapse=""),sep="\n")
+    cat(paste(block.annot, collapse=""),sep="\n")
+    ##- Sequence block
+    cat(blocks[,i], sep="\n")
+    ##- Ticks + numbers again
+    cat(paste(end.annot, collapse=""),"\n")
+  }
+
+  j <- paste(attributes(x)$names, collapse = ", ")
+  cat("\n")
+  cat(strwrap(paste(" + attr:", j, "( dim(x$ali) =", paste(dim(ali),collapse="x"),")\n"), width = 70, exdent = 8), sep = "\n")
+
+}
+
 
