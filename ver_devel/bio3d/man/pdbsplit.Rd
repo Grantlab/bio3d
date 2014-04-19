@@ -6,15 +6,20 @@
   files with one file for each chain.
 }
 \usage{
-pdbsplit(pdb.files, ids = NULL, path = "split_chain", verbose = FALSE, \dots)
+pdbsplit(pdb.files, ids = NULL, path = "split_chain", overwrite=TRUE,
+         verbose = FALSE, ncore = 1, \dots)
 }
 \arguments{
   \item{pdb.files}{ a character vector of PDB file names. }
   \item{ids}{ a character vector of PDB and chain identifiers
     (\sQuote{pdbId_chainId}). Used for filtering chain IDs for output. }
   \item{path}{ output path for chain-split files. }
+  \item{overwrite}{ logical, if FALSE the PDB structures will not be
+    read and written if split files already exist. }
   \item{verbose}{ logical, if TRUE details of the PDB header and
     chain selections are printed. }
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires multicore package installed. }
   \item{...}{ additional arguments to \code{read.pdb}. Useful e.g. for
     parsing multi model PDB files, or include HETATM records in the
     split files. }

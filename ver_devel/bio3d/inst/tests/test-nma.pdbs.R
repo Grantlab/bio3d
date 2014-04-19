@@ -13,8 +13,8 @@ test_that("eNMA works", {
   invisible(capture.output(modes <- nma.pdbs(pdbs, fit=TRUE, rm.gaps=TRUE, ncore=1)))
 
   ## check dimensions
-  expect_that(dim(modes$U), equals(c(1008, 20, 3)))
-  expect_that(dim(modes$L), equals(c(3, 20)))
+  expect_that(dim(modes$U), equals(c(1008, 1002, 3)))
+  expect_that(dim(modes$L), equals(c(3, 1002)))
   expect_that(dim(modes$fluctuations), equals(c(3, 336)))
   
   ## structure 1- mode1:
