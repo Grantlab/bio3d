@@ -21,7 +21,7 @@ cij.filter <- function(cij, inds = 1:dim(cij)[3L], xyz = NULL,
    model <- match.arg(model)
    if(inherits(xyz, "3dalign")) {
       gaps.pos <- gap.inspect(xyz$xyz)
-      xyz <- xyz$xyz[, gaps.pos$f.inds]
+      xyz <- xyz$xyz[inds, gaps.pos$f.inds]
    }
 
    # check cij
@@ -41,7 +41,7 @@ cij.filter <- function(cij, inds = 1:dim(cij)[3L], xyz = NULL,
           stop("Non-simple model needs xyz and at least two cij matrices")
 
        # distance filter 
-       dms <- apply(xyz[inds, ], 1, function(x) {
+       dms <- apply(xyz, 1, function(x) {
           d <- dm.xyz(x)
           d[upper.tri(d)]} )
 #       dm.min <- apply(dms, 1, min)
