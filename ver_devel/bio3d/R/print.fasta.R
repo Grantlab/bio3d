@@ -15,7 +15,8 @@ print.fasta <- function(x, width=NULL, col.inds=NULL, numbers=TRUE, ...) {
   ##     y=x; y$ali=x$ali[,1]
 
 
-  if(class(x) %in% c("fasta", "3dalign")) {
+  if ( (inherits(x, "fasta") | inherits(x, "3dalign")) ){ 
+#  if(class(x) %in% c("fasta", "3dalign")) {
     id <- x$id
     ali <- as.matrix(x$ali)
   } else {

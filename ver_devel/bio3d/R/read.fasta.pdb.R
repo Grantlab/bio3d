@@ -130,7 +130,7 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
   
   out<-list(xyz=coords, resno=res.nu, b=res.bf,
             chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id)
-  class(out)="3dalign"
+  class(out)=c("3dalign","fasta")
   return(out)
 }
 
