@@ -3,32 +3,34 @@
 \alias{visualize}
 \alias{visualize.default}
 \alias{visualize.pdb}
+\alias{visualize.cna}
 \title{Visualize a Molecular Structure}
 \description{Use the rgl library to visualize in 3D a molecular structure.}
 \usage{
 visualize(...)
 
 \method{visualize}{default}(
-xyz, ele.symb = NULL, con = NULL, cell = NULL, type = "p", 
-xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, lwd = 2, 
-lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd, cex.xyz = 2, 
-cex.abc = 2, col = NULL, radii = "rvdw", bg.col = "#FAFAD2", 
-add = FALSE, windowRect = c(0, 0, 800, 600), userMatrix = diag(4), 
-FOV = 0, ...)
+xyz, ele.symb = NULL, con = NULL, cell = NULL, type = "l",
+xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, 
+lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
+cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
+add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
 
 \method{visualize}{pdb}(
-x, elety.custom = NULL, con = NULL, cell = NULL, type = "s", 
-xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, lwd = 2, 
-lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd, cex.xyz = 2, 
-cex.abc = 2, col = NULL, radii = "rvdw", bg.col = "#FAFAD2", 
-add = FALSE, windowRect = c(0, 0, 800, 600), userMatrix = diag(4), 
-FOV = 0, ...)
+pdb, elety.custom = NULL, con = NULL, cell = NULL, type = "l",
+xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, 
+lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
+cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
+add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
 
+\method{visualize}{cna}(cna, pdb, safety = 2.7, ...)
 }
 \arguments{
-  \item{x}{an object of class \sQuote{pdb} containing the molecular structure to visualize.}
+  \item{pdb}{an object of class \sQuote{pdb} containing the molecular structure to visualize.}
   \item{elety.custom}{a customized data.frame used to convert atom names/types into atomic symbols (see \code{\link{atom2ele}} and \code{\link{atom.index}}).}
   \item{xyz}{a numeric vector of Cartesian coordinates like the \code{xyz} component of objects of class \sQuote{pdb}.}
+  \item{cna}{an object of class \sQuote{cna}.}
+  \item{safety}{a numeric value used to compute the connectivity between Calpha (see \code{connectivity}).}
   \item{ele.symb}{a character vector containing atomic symbols (If \code{length(ele.symb)!=length(xyz)/3} \code{ele.symb} is recycled).}
   \item{con}{a two-column data.frame containing by row the \code{eleno} of bonded atoms (or xyz indices as returned by \code{xyz2atom} for the default method) defining the connectivity of the system.}
   \item{cell}{a length 6 numeric vector containing the a, b, c, alpha, beta and gamma lattice parameters.}
@@ -64,6 +66,7 @@ Three different visualization modes are allowed.
     \item   When \code{radii="rvdw"}: Van der Waals radii, taken from the \code{elements} data set, are used (default).
     \item   When \code{radii} is a numeric vector: The numeric values are used to assign to each atom a radius. If \code{length(radii) != length(xyz)/3} \code{radii} is recycled.}
         }
+Using \code{type="ls"} is allowed for "balls and sticks" representation. In that case, \code{radii} is set to half the covalent radii.
 }
 \value{
 Return (using invisible) a two-column data.frame containing the IDs
@@ -72,32 +75,14 @@ and type indicators of the objects added to the scene.
 \author{Julien Idé}
 
 \seealso{
-\code{\link{addXYZ}}, \code{\link{addABC}}, \code{\link{addPBCBox}}, \code{rgl.cur}, \code{par3d}
+\code{\link{addXYZ}}, \code{\link{addABC}}, \code{\link{addPBCBox}}, \code{rgl.pop}, \code{rgl.cur}, \code{par3d}
 }
 \examples{
 ## Read a PDB file from the RCSB online database
 pdb <- read.pdb("1bg2")
-visualize(pdb)
-
-## Lets try to determine the connectivity
-nat <- nrow(pdb$atom)
-ele.symb <- atom2ele(pdb$atom[,"elety"])
-x <- pdb$xyz[seq(1,length(pdb$xyz),3)]
-y <- pdb$xyz[seq(2,length(pdb$xyz),3)]
-z <- pdb$xyz[seq(3,length(pdb$xyz),3)]
-r <- sqrt(
-  outer(x, x, "-")^2 +
-  outer(y, y, "-")^2 +
-  outer(z, z, "-")^2
-  )
-safety <- 1.4
-radii <- elements[match(ele.symb, elements[,"symb"]),"rcov"]*safety
-bond.dist <- outer(radii, radii, "+")
-M <- lower.tri(r) & (r < bond.dist)
-eleid <- matrix(pdb$atom[,"eleno"], nrow = nat, ncol = nat)   
-eleid.1 <- t(eleid)[M]
-eleid.2 <-   eleid [M]
-con <- data.frame(eleid.1 = eleid.1, eleid.2 = eleid.2)
-visualize(pdb, con=con, type="l")
+visualize(pdb, type = "p" , windowRect=c(0  ,0  ,400,400))
+visualize(pdb, type = "l" , windowRect=c(400,0  ,800,400))
+visualize(pdb, type = "s" , windowRect=c(0  ,400,400,800))
+visualize(pdb, type = "ls", windowRect=c(400,400,800,800))
 }
 \keyword{ dynamic }
