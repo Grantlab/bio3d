@@ -224,8 +224,9 @@ function(pdb, string=NULL,
          match.inds[insert] <- FALSE
        }
        ## return XYZ indices
-       xyz.inds <- matrix(1:length( pdb$atom[,c("x","y","z")] ),nrow=3,byrow=FALSE)
-       xyz.inds <- as.vector(xyz.inds[,match.inds])
+       #xyz.inds <- matrix(1:length( pdb$atom[,c("x","y","z")] ),nrow=3,byrow=FALSE)
+       #xyz.inds <- as.vector(xyz.inds[,match.inds])
+       xyz.inds <- atom2xyz(which(match.inds))
    
        if (verbose) {
          sel <- rbind( sel, apply(sel.inds, 2, sum, na.rm=TRUE) )
