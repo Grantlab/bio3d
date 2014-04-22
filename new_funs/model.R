@@ -56,6 +56,7 @@
 ## mustang        -  Structural alignment with mustang
 ## add.dccm.grid  -  Add a grid or colored boxes to a plot.dccm() plot.
 ## col.wheel    - useful for picking plot colors (e.g. col.wheel("dark") ) 
+## fill.blanks  - fill in consecutive missing values in a vector 
 ##
 ##
 ## See also:
@@ -2885,3 +2886,49 @@ col.wheel <- function(str, cex=0.75) {
   pie(rep(1, length(cols)), labels=cols, col=cols, cex=cex)
   cols
 }
+
+
+fill.blanks <- function(x, blank="" , boundary.check=FALSE) {
+
+  ## Function to copy previously occurring non-blank (non-missing) 
+  ## values to consecutive blank (missing) values in a vector.
+  ##    x=c(1,"",3,3,4,"", "", 5); fill.blanks(x)
+  ##    x=c(1,"",1,3,3,4,"", "", 5); fill.blanks(x, boundary.check=T)
+
+  ## ToDo: Adapt to work if first element is blank
+
+  ## Details of 'blank' vector element runs 
+  blank.inds <- bounds( which(x == blank) )
+  if (is.null( nrow(blank.inds) )) {
+    warning("No blank elements, returning unaltered input vector")
+    return(x)
+  }
+
+  ## Indices of non-blank vector elements
+  name.inds <- bounds( which(x != blank) )[,"end"]
+
+  ## Check for last element being non-blank
+  name.inds <- name.inds[!name.inds %in% length(x)] 
+  name <- x[ name.inds ]
+
+
+  if(boundary.check) {
+    ## Only fill missing elements if boundary elements match 
+    ## (i.e check if both sides of gap segment are the same)
+    end.match <- x[blank.inds[,"end"]+1]==name
+    blank.inds <- blank.inds[end.match, ,drop=FALSE]
+    name <- name[ end.match ]
+    warning( paste0("Non-matching boundary elements found (",sum(end.match),")") )
+  }
+
+  if(length(name) != nrow(blank.inds)) {
+    stop("Miss-match in number of non-blank elements and consecutive blank runs")
+  }
+  for(i in 1:length(name)) {
+    inds <- blank.inds[i,"start"]:blank.inds[i,"end"]
+    x[inds] = name[i]
+  }
+  return(x) 
+}
+
+
