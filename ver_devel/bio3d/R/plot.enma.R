@@ -72,16 +72,20 @@
 
         ## inds points now to the position in the alignment where the helices are
         new.sse <- bounds( seq(1, length(resnos))[inds] )
-        sse.aln$helix$start <- new.sse[,"start"]
-        sse.aln$helix$end <- new.sse[,"end"]
+        if(length(new.sse) > 0) {
+           sse.aln$helix$start <- new.sse[,"start"]
+           sse.aln$helix$end <- new.sse[,"end"]
+        }
 
         ## Sheets
         resno.sheet <- unbound(sse.ref$sheet$start, sse.ref$sheet$end)
         inds <- which(resnos %in% as.character(resno.sheet))
 
         new.sse <- bounds( seq(1, length(resnos))[inds] )
-        sse.aln$sheet$start <- new.sse[,"start"]
-        sse.aln$sheet$end <- new.sse[,"end"]
+        if(length(new.sse) > 0) {
+           sse.aln$sheet$start <- new.sse[,"start"]
+           sse.aln$sheet$end <- new.sse[,"end"]
+        }
       }
       else {
           msg <- NULL
@@ -165,7 +169,7 @@
     ## Plot fluctuations / deformations
     par(new=TRUE)
     do.call('plot.bio3d', c(list(x=yval[inds.plot[1],], xlab=xlab, ylab=ylab,
-                                 ylim=ylim, xlim=xlim, col=1), type='h',
+                                 ylim=ylim, xlim=xlim, col=col[1]), type='h',
                             dots))
     
     ## Plot all lines (col==NA will not be plotted)

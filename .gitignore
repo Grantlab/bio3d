@@ -12,3 +12,5 @@ figure*
 *.log
 *.out
 tmp*
+
+/vignettes_devel/.DS_Store
