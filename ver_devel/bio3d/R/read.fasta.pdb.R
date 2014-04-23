@@ -1,6 +1,9 @@
 "read.fasta.pdb" <-
 function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
 
+  ## Log the call
+  cl <- match.call()
+  
   # Parallelized by multicore package (Fri Apr 26 17:58:26 EDT 2013)
   ncore <- setup.ncore(ncore)
   if(ncore > 1) {
@@ -129,7 +132,8 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
   rownames(res.id) <- aln$id
   
   out<-list(xyz=coords, resno=res.nu, b=res.bf,
-            chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id)
+            chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id,
+            call = cl)
   class(out)=c("3dalign","fasta")
   return(out)
 }

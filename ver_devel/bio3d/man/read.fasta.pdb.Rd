@@ -41,6 +41,7 @@ read.fasta.pdb(aln, prefix = "", pdbext = "",
   \item{id}{character vector of PDB sequence/structure names.}
   \item{ali}{character matrix of aligned sequences.}
   \item{resid}{character matrix of aligned 3-letter residue names.}
+  \item{call}{ the matched call. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.

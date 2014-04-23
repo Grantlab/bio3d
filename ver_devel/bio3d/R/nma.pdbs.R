@@ -7,7 +7,7 @@
                        defa = FALSE, outpath = NULL, ncore=1, ...) {
  
   
-  if(class(pdbs)!="3dalign")
+  if(!inherits(pdbs, "3dalign"))
     stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
 
   ## Log the call
