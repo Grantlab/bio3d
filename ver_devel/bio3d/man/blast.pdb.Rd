@@ -6,7 +6,7 @@
   swissprot sequence databases.
 }
 \usage{
-blast.pdb(seq, database = "pdb")
+blast.pdb(seq, database = "pdb", time.out = NULL)
 }
 \arguments{
   \item{seq}{ a single element or multi-element character vector
@@ -15,6 +15,8 @@ blast.pdb(seq, database = "pdb")
   \item{database}{ a single element character vector specifying the
     database against which to search. Current options are \sQuote{pdb},
     \sQuote{nr} and \sQuote{swissprot}. }
+  \item{time.out}{ integer specifying the number of seconds to wait for
+    the blast reply before a time out occurs. }
 }
 \details{
   This function employs direct HTTP-encoded requests to the NCBI web

@@ -1,5 +1,5 @@
 "seqaln" <-
-function(aln, id=NULL,
+function(aln, id=NULL, profile=NULL,
                    exefile = "muscle",
                    outfile = "aln.fa",
                    protein = TRUE,
@@ -7,31 +7,59 @@ function(aln, id=NULL,
                    refine = FALSE,
                    extra.args = "",
                    verbose = FALSE) {
+
+  as.aln <- function(mat, id=NULL) {
+    if(is.null(id) && !is.null(rownames(mat)))
+      id=rownames(mat)
+    if(is.null(id) && is.null(rownames(mat)))
+      id=paste("seq",1:nrow(mat),sep="")
+    return(list(id=id, ali=mat))
+  }
+  
+  if( (!is.list(aln)) | is.na(aln['id']) )
+    aln <- as.aln(aln,id=id)
+  if(!is.null(profile) & !inherits(profile, "fasta"))
+    stop("profile must be of class 'fasta'")
   
   if(length(grep(tolower(exefile), "clustalo"))>0) {
     prg <- "clustalo"
     ver <- "--version"
-    args <- c("--in", "--out")
-    extra.args <- paste(extra.args,"--force")
+    
+    if(!is.null(profile))
+      args <- c("", "--profile1", "--in", "--out")
+    else
+      args <- c("--in", "--out")
 
+    extra.args <- paste(extra.args,"--force")
+    if(seqgroup)
+      extra.args <- paste(extra.args, "--output-order=tree-order")
+    else
+      extra.args <- paste(extra.args, "--output-order=input-order")
+    
     if(verbose)
       extra.args <- paste(extra.args,"--verbose")
     
-    #if(protein) {
-    #  extra.args <- paste(extra.args,"-seqtype protein")
-    #} else { extra.args <- paste(extra.args,"-seqtype dna") }
+    #if(protein)
+    #  extra.args <- paste(extra.args,"--seqtype Protein")
+    #else
+    #  extra.args <- paste(extra.args,"--seqtype DNA")
   }
   else {
     prg <- "muscle"
     ver <- "-version"
-    args <- c("-in", "-out")
+    
+    if(!is.null(profile))
+      args <- c("-profile", "-in1", "-in2", "-out")
+    else
+      args <- c("-in", "-out")
 
-    if(refine) extra.args <- paste(extra.args,"-refine")
-    if(protein) {
+    if(refine)
+      extra.args <- paste(extra.args,"-refine")
+    if(protein)
       extra.args <- paste(extra.args,"-seqtype protein")
-    } else { extra.args <- paste(extra.args,"-seqtype dna") }
+    else
+      extra.args <- paste(extra.args,"-seqtype dna")
   }
-  
   
   ## Check if the program is executable
   os1 <- .Platform$OS.type
@@ -42,26 +70,32 @@ function(aln, id=NULL,
     stop(paste("Launching external program failed\n",
                "  make sure '", exefile, "' is in your search path", sep=""))
   
-  as.aln <- function(mat, id=NULL) {
-    if(is.null(id) && !is.null(rownames(mat)))
-      id=rownames(mat)
-    if(is.null(id) && is.null(rownames(mat)))
-      id=paste("seq",1:nrow(mat),sep="")
-    return(list(id=id, ali=mat))
-  }
 
-  if( (!is.list(aln)) | is.na(aln['id']) )
-    aln<-as.aln(aln,id=id)
-
-
+  ## Generate temporary files
   toaln <- tempfile()  
   write.fasta(aln, file=toaln)
-  
-  if(is.null(outfile)) fa <- tempfile() 
-  else fa <- outfile
 
-  cmd <- paste(exefile, args[1], toaln, args[2],
-               fa, extra.args, sep=" ")
+  profilealn <- NULL
+  if(!is.null(profile)) {
+    profilealn <- tempfile()  
+    write.fasta(profile, file=profilealn)
+  }
+  
+  if(is.null(outfile))
+    fa <- tempfile() 
+  else
+    fa <- outfile
+
+  ## Build command to external program
+  if(is.null(profile)) {
+    cmd <- paste(exefile, args[1], toaln, args[2],
+                 fa, extra.args, sep=" ")
+  }
+  else {
+    cmd <- paste(exefile, args[1], args[2], profilealn, args[3], toaln, args[4],
+                 fa, extra.args, sep=" ")
+  }
+  
   if(verbose)
     cat(paste("Running command:\n ", cmd , "\n"))
   
@@ -75,19 +109,20 @@ function(aln, id=NULL,
     stop(paste("An error occurred while running command\n '",
                exefile, "'", sep=""))
 
-  ### Update for muscle v3.8 with no "-stable" option
-  ###  Thu Aug 26 18:29:38 PDT 2010
+  ## Re-group sequences to initial alignment order
+  ## (muscle groups similar sequences by default)
   naln <- read.fasta(fa, rm.dup=FALSE)
   if(!seqgroup) {
-    ord <- match(aln$id, naln$id)
-##    if( any( duplicated(ord) ) ) {
-##      stop(" Duplicated sequence id's, so can't perserve input order\n\tPlease run with 'seqgroup=TRUE' option")
-##    }
-    naln$id <- naln$id[ord]
-    naln$ali <- naln$ali[ord,]
+    if(is.null(profile)) {
+      ord <- match(aln$id, naln$id)
+      naln$id <- naln$id[ord]
+      naln$ali <- naln$ali[ord,]
+    }
   }
-  ####
-  
+
+  ## Delete temporary files
+  if(!is.null(profile))
+    unlink(profilealn)
   unlink(toaln)
   if(is.null(outfile)) unlink(fa)
   return(naln)
