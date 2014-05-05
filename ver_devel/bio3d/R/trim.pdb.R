@@ -21,23 +21,21 @@
   } else {
     xyz <-  pdb$xyz[,inds$xyz]
   }
-
-  ## new xyz component is a matrix:
-  #xyz <-  pdb$xyz[,inds$xyz, drop=FALSE]
   
   helix <- NULL; sheet <- NULL;
 
-  if(sse) {
-    sse=FALSE
-    warning("no sse information in trimmed pdb")
-  }
+#  if(sse) {
+#    sse=FALSE
+#    warning("no sse information in trimmed pdb")
+#  }
   
   if(sse) {
     ##-- Build reference SSE sequence matrix 'ss'
     ref <- paste(pdb$atom[pdb$calpha, "resno"], 
                  pdb$atom[pdb$calpha, "chain"], sep="_")
-    ss <- matrix(NA, ncol=length(ref), nrow=3) ## sse vector
-    colnames(ss) = pdb$atom[pdb$calpha, "resno"]
+    ss <- matrix(NA, ncol=length(ref), nrow=4) ## sse reference matrix
+    ss[4,] <- pdb$atom[pdb$calpha, "resno"]    ## resno
+    colnames(ss) <- ref
 
     ##- Trimed positions
     ref.trim <- paste(atom[calpha, "resno"], 
@@ -51,9 +49,9 @@
 
       ##- Use reference vector for filling 'ss'
       ref.h <- paste(resno.h, chain.h, sep="_")
-      ss[1,ref %in% ref.h]="H"
-      ss[2,ref %in% ref.h]=chain.h
-      ss[3,ref %in% ref.h]=type.h
+      ss[1, ref.h]="H"
+      ss[2, ref.h]=chain.h
+      ss[3, ref.h]=type.h
     }
 
 
@@ -65,35 +63,37 @@
 
       ##- Use reference vector for filling 'ss'
       ref.e <- paste(resno.e, chain.e, sep="_")
-      ss[1,ref %in% ref.e]="E"
-      ss[2,ref %in% ref.e]=chain.e
-      ss[3,ref %in% ref.e]=type.e
+      ss[1, ref.e]="E"
+      ss[2, ref.e]=chain.e
+      ss[3, ref.e]=type.e
     }
 
     ##- Lookup trimed positions 'ref.trim' in 'ss'
-    s <- ss[,ref %in% ref.trim, drop=FALSE]
+    s <- ss[, ref.trim, drop=FALSE]
 
     if( any(s[1,] =="H",na.rm=TRUE) ) {
-      h.bounds <- bounds( as.numeric(names(s[1,][s[1,]=="H"])) )
+      sh <- (s[, s[1,] %in% "H"])
+      h.bounds <- bounds( as.numeric(sh[4,]) )
+      h.inds <- rle2(rep(1:nrow(h.bounds), h.bounds[,"length"]))$inds
+
       helix$start = h.bounds[,"start"]
       helix$end = h.bounds[,"end"]
-      helix$chain = ss[2,as.character(h.bounds[,"start"])]
-      helix$type = ss[3,as.character(h.bounds[,"start"])]
-    } #else {
-      #hexix$start=NULL; helix$end=NULL
-      #helix$chain=NULL; helix$type=NULL
-    #}
+
+      helix$chain = sh[2, h.inds]
+      helix$type = sh[3, h.inds]
+    }
 
     if( any(s[1,] =="E",na.rm=TRUE) ) {
-      e.bounds <- bounds( as.numeric(names(s[1,][s[1,]=="E"])) )
+      se <- (s[, s[1,] %in% "E"])
+      e.bounds <- bounds( as.numeric(se[4,]) )
+      e.inds <- rle2(rep(1:nrow(e.bounds), e.bounds[,"length"]))$inds
+
       sheet$start = e.bounds[,"start"]
       sheet$end = e.bounds[,"end"]
-      sheet$chain = ss[2,as.character(e.bounds[,"start"])]
-      sheet$sense = ss[3,as.character(e.bounds[,"start"])]
-    } #else {
-      #sheet$start=NULL; sheet$end=NULL
-      #sheet$chain=NULL; sheet$sense=NULL
-    #}
+
+      sheet$chain = se[2, e.inds]
+      sheet$sense = se[3, e.inds]
+    } 
   }
 
   output<-list(atom=atom,
