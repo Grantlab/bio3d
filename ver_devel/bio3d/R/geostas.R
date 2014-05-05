@@ -1,25 +1,25 @@
 geostas <- function(xyz, amsm=NULL, k=3, method="pairwise", fit=TRUE, ...) {
 
-  if(! (is.matrix(xyz) || class(xyz)=="3dalign" || is.pdb(xyz)) )
+  if(all(c(!is.matrix(xyz), !inherits(xyz, "3dalign"), !is.pdb(xyz))))
     stop(paste("'xyz' should be a trajectory matrix, a 'pdb' object, or\n\t",
                "a list object as obtained from 'read.fasta.pdb'"))
   
   if(!method %in% c("pairwise", "columnwise"))
     stop("'method' should be 'pairwise' or 'columnwise'")
   
-  if(class(xyz)=="3dalign") {
+  if(inherits(xyz, "3dalign")) {
     pdbs <- xyz
     gaps.pos <- gap.inspect(pdbs$xyz)
     xyz <- pdbs$xyz[, gaps.pos$f.inds]
   }
 
-  if(class(xyz)=="pdb") {
-    if(is.null(pdb$xyz.models))
+  if(is.pdb(xyz)) {
+    if(!is.matrix(pdb$xyz))
       stop("incompatible input. provide a multimodel 'pdb' object")
     
     pdb <- xyz
     ca.inds <- atom.select(pdb, 'calpha')
-    xyz <- pdb$xyz.models[,ca.inds$xyz]
+    xyz <- pdb$xyz[,ca.inds$xyz]
   }
 
   ##if(fit) {

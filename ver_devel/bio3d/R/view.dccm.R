@@ -2,7 +2,7 @@
   function(dccm, pdb, step=0.2, omit=0.2, type="pymol",
            outprefix="corr", launch=FALSE) {
 
-    if(class(pdb)=="pdb") {
+    if(is.pdb(pdb)) {
       ca.inds <- atom.select(pdb, 'calpha', verbose=FALSE)
       bb.inds <- atom.select(pdb, 'backbone', verbose=FALSE)
       xyz <- pdb$xyz[ca.inds$xyz]
@@ -55,7 +55,7 @@
       scr <- c(scr, paste("cmd.load('", pdbfile, "', 'prot')", sep=""))
       scr <- c(scr, "cmd.show('cartoon')")
 
-      if(class(pdb)!="pdb" || ca.pdb)
+      if(!is.pdb(pdb) || ca.pdb)
         scr <- c(scr, "cmd.set('cartoon_trace_atoms', 1)")
       
       ## define color range 
@@ -163,7 +163,7 @@
     }
     
     ## Write PDB structure file
-    if(class(pdb)=="pdb")
+    if(is.pdb(pdb))
       write.pdb(pdb, file=pdbfile)
     else
       write.pdb(xyz=xyz, file=pdbfile)

@@ -1,5 +1,5 @@
 "trim.pdb" <-function(pdb, inds=NULL, sse=TRUE) {
-  if(inherits(pdb, "pdb"))
+  if(!is.pdb(pdb))
     stop("input 'pdb' must be a PDB list object as returned from 'read.pdb'")
 
   if(is.null(inds))
@@ -14,16 +14,24 @@
   ## Trim main components
   atom <- pdb$atom[inds$atom,]
   calpha <- as.logical(atom[,"elety"]=="CA")
-
+  
+  
   if(is.null(nrow(pdb$xyz))) {
     xyz <-  pdb$xyz[inds$xyz]
   } else {
-    ## Multi-model records
     xyz <-  pdb$xyz[,inds$xyz]
   }
 
+  ## new xyz component is a matrix:
+  #xyz <-  pdb$xyz[,inds$xyz, drop=FALSE]
+  
   helix <- NULL; sheet <- NULL;
 
+  if(sse) {
+    sse=FALSE
+    warning("no sse information in trimmed pdb")
+  }
+  
   if(sse) {
     ##-- Build reference SSE sequence matrix 'ss'
     ref <- paste(pdb$atom[pdb$calpha, "resno"], 

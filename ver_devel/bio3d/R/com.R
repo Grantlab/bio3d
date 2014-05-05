@@ -3,7 +3,7 @@
     
     if (missing(pdb))
       stop("com: must supply 'pdb' object, i.e. from 'read.pdb'")
-    if(inherits(pdb, "pdb"))
+    if(is.pdb(pdb))
       stop("com: 'pdb' must be of type 'pdb'")
     
     if(is.null(inds)) {

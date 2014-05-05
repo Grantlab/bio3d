@@ -26,8 +26,8 @@ function(a, b=NULL,
      }
   }
 
-  if(is.list(a)) a=a$xyz
-  if(is.list(b)) b=b$xyz
+  if(is.pdb(a)) a=a$xyz
+  if(is.pdb(b)) b=b$xyz
 
   if( is.null(a.inds) && is.null(b.inds) ) {
     a.inds <- gap.inspect(a)$f.inds

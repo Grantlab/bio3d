@@ -163,10 +163,10 @@ function (file, maxlines=-1, multi=FALSE,
   ##-- End data.frame update
 
 
-  ##- Coordinates only object 
+  ##- Coordinates only object
   xyz.models <- c(t(atom[,c("x","y","z")]))
-
-
+  ##xyz.models <- matrix(as.numeric(c(t(atom[,c("x","y","z")]))), nrow=1)
+  
   ##- Multi-model coordinate extraction 
   if (length(raw.end) > 1 && multi) {
       raw.atom  <- raw.lines.multi[ type.multi %in% c("ATOM  ","HETATM") ]

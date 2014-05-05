@@ -2,7 +2,7 @@ summary.pdb <- function(object, printseq=FALSE, ...) {
 
   ## Print a summary of basic PDB object features
 
-  if( !"pdb" %in% class(object) ) {
+  if( !is.pdb(object) ) {
     stop("Input should be a pdb object, as obtained from 'read.pdb()'")
   }
 
