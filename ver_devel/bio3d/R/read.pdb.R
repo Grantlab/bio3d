@@ -213,14 +213,15 @@ function (file, maxlines=-1, multi=FALSE,
   calpha = (atom[,"elety"]=="CA") & (atom[,"resid"] !="CA")
 
   output<-list(atom=atom,
-               #het=atom[atom$type=="HETATM",], ##--- To be removed!!!
+               #het=atom[atom$type=="HETATM",],
                helix=helix,
                sheet=sheet,
                seqres=seqres,
                xyz=xyz.models,
                calpha = calpha, call=cl)
 
-  class(output) <- "pdb"
+  class(output) <- c("pdb", "sse")
+  class(output$xyz) <- c("numeric","xyz")
   return(output)
 
 }
