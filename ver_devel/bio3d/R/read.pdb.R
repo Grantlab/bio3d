@@ -164,8 +164,8 @@ function (file, maxlines=-1, multi=FALSE,
 
 
   ##- Coordinates only object
-  xyz.models <- c(t(atom[,c("x","y","z")]))
-  ##xyz.models <- matrix(as.numeric(c(t(atom[,c("x","y","z")]))), nrow=1)
+  ###xyz.models <- c(t(atom[,c("x","y","z")]))
+  xyz.models <- matrix(as.numeric(c(t(atom[,c("x","y","z")]))), nrow=1)
   
   ##- Multi-model coordinate extraction 
   if (length(raw.end) > 1 && multi) {
@@ -197,6 +197,7 @@ function (file, maxlines=-1, multi=FALSE,
       alt.inds <- which( (atom[,"alt"] != first.alt) ) # take first alt only
       if(length(alt.inds)>0)
         atom <- atom[-alt.inds,]
+        xyz.models <- xyz.models[ ,-atom2xyz(alt.inds) ] 
     }
   }
 
@@ -206,6 +207,7 @@ function (file, maxlines=-1, multi=FALSE,
       cat("   PDB has INSERT records, removing, rm.insert=TRUE\n")
       insert.inds <- which(!is.na(atom[,"insert"])) # rm insert positions
       atom <- atom[-insert.inds,]
+      xyz.models <- xyz.models[ ,-atom2xyz(insert.inds) ]
     }
   }
   
