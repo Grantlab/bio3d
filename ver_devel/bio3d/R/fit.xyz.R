@@ -49,8 +49,9 @@ function(fixed,
   if (length(fixed.inds) != length(mobile.inds))
     stop("length of 'fixed.inds' != length of 'mobile.inds'")
 
-  if(!is.vector(fixed) || !is.numeric(fixed))
-    stop("input 'fixed' should be a numeric vector")
+#  if(!is.xyz(fixed) || !is.numeric(fixed))
+  if(!is.numeric(fixed))
+    stop("input 'fixed' should be a numeric 'xyz' vector or matrix")
 
   if(is.vector(mobile)) {   # INPUT is a single vector
     if(!is.numeric(mobile))

@@ -51,7 +51,10 @@ xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
 cij <- lmi(xyz)
 
 ## Plot LMI matrix
-plot(cij)
+#plot(cij)
+col.scale <- colorRampPalette(c("gray95", "cyan"))(5)
+plot(cij, at=seq(0.4,1, length=5), col.regions=col.scale)
+
 }
 
 
