@@ -120,7 +120,8 @@ function(pdb, string=NULL,
      
      ##-- Check for string 'shortcuts'
      i <- switch(string,
-                 calpha = "//////CA/",
+                 ##calpha = "//////CA/",
+                 calpha = paste("////",paste(prot.aa, collapse=","), "//CA/",sep=""),
                  cbeta = "//////N,CA,C,O,CB/",
                  backbone = "//////N,CA,C,O/",
                  back = "//////N,CA,C,O/",

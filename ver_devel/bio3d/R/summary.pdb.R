@@ -52,7 +52,7 @@ summary.pdb <- function(object, printseq=FALSE, ...) {
 
              "\n\n     Non-protein Atoms#: ", nhet.atom,
              "  (residues: ", nhet.res, ")",
-             "\n     Non-protein resid values: [", hetres,"]",
+             "\n     Non-protein resid values: [", hetres," ]",
              "\n\n")
               
   cat(s)
