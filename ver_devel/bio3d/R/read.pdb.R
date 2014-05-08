@@ -46,8 +46,8 @@ function (file, maxlines=-1, multi=FALSE,
                           6,     'numeric',   "b",       # b
                          -6,     NA,           NA,       # (blank)
                           4,     'character', "segid",   # seg_id
-                          2,     'character', "elesy",   # element symbol
-                          2,     'numeric',   "charge"   # charge on the atom
+                          2,     'character', "elesy",   # element_symbol
+                          2,     'character', "charge"   # atom_charge (should be 'numeric']
                          ), ncol=3, byrow=TRUE,
                        dimnames = list(c(1:19), c("widths","what","name")) )
 
