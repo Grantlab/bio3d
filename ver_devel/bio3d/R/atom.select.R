@@ -120,7 +120,8 @@ function(pdb, string=NULL,
      
      ##-- Check for string 'shortcuts'
      i <- switch(string,
-                 calpha = "//////CA/",
+                 ##calpha = "//////CA/",
+                 calpha = paste("////",paste(prot.aa, collapse=","), "//CA/",sep=""),
                  cbeta = "//////N,CA,C,O,CB/",
                  backbone = "//////N,CA,C,O/",
                  back = "//////N,CA,C,O/",
@@ -150,8 +151,8 @@ function(pdb, string=NULL,
 
      } else {
        ##- Use string shortcut from switch function
-       if(verbose)
-         cat(paste("\n Using selection 'string' keyword shortcut:",string, "=", i, "\n\n"))
+       ###if(verbose)
+       ###  cat(paste("\n Using selection 'string' keyword shortcut:",string, "=", i, "\n\n"))
        string = i
      }
      
@@ -230,7 +231,7 @@ function(pdb, string=NULL,
    
        if (verbose) {
          sel <- rbind( sel, apply(sel.inds, 2, sum, na.rm=TRUE) )
-         rownames(sel)=c("Stest","Natom"); print(sel)
+         rownames(sel)=c("Stest","Natom"); ###print(sel)
          cat(paste(" *  Selected a total of:",sum(match.inds),
                    "intersecting atoms  *"),sep="\n")
        }
@@ -270,7 +271,7 @@ function(pdb, string=NULL,
   sel2 <- NULL
   if(got.string) {
     if(verbose) 
-       cat("\nBuild selection from input string\n\n")
+       cat("\n Build selection from input string\n")
     sel1 <- parse.string(pdb, string, verbose, rm.insert)
   }
 
@@ -285,13 +286,13 @@ function(pdb, string=NULL,
                     paste(elety, collapse=","),"/",sep="")
     rm(chain,resno,resid,eleno,elety)
     if(verbose) 
-       cat("\nBuild selection from input components\n\n")
+       cat("\n Build selection from input components\n")
     sel2 <- parse.string(pdb, string, verbose, rm.insert)
   }
 
   if(!is.null(sel1) && !is.null(sel2))
      if(verbose)
-        cat("\nCombine selections from input string and components\n\n")
+        cat("\n Combine selections from input string and components\n")
 
   match <- combine.sel(sel1, sel2, op="AND", verbose=verbose)
   

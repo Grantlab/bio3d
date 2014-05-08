@@ -2,53 +2,58 @@ summary.pdb <- function(object, printseq=FALSE, ...) {
 
   ## Print a summary of basic PDB object features
 
-  if( !"pdb" %in% class(object) ) {
+  if( !is.pdb(object) ) {
     stop("Input should be a pdb object, as obtained from 'read.pdb()'")
   }
 
-  natom <- length(object$xyz)/3
-  nprot <-length(atom.select(object, "protein", verbose=FALSE)$atom)
-  nres <- sum(object$calpha)
-  atom.chains <- unique(object$atom[,"chain"])
-
-  nhet <- nrow(object$het)
-  if(is.null(nhet)) {
-    nhet <- 0
-    hetres <- "none"
-    hetnres <- 0
-    het.chains <- 0
-  } else { 
-    hetres <- paste( unique(object$het[,"resid"]), collapse=" ")
-    hetnres <- length( unique(object$het[,"resno"]) )
-    het.chains <- unique(object$het[,"chain"])
+  ## Multi-model check and total atom count
+  nmodel <- nrow(object$xyz)
+  if( is.null(nmodel) ) {
+    ntotal <- length(object$xyz)/3
+    nmodel = 1
+  } else {
+    ntotal <- length(object$xyz[1,])/3
   }
-  
-  ntotal <- natom+nhet
-  not.prot.inds <- atom.select(object, "notprotein",verbose=FALSE)$atom
-  nother.atom <- length( not.prot.inds )
-  not.prot.res <- object$atom[not.prot.inds, "resid"]
-  not.prot.res <- paste(unique(not.prot.res), collapse=" ")
- 
-  if(length(not.prot.res) == 0)
-    not.prot.res <- "none"
 
+  nxyz <- length(object$xyz)
+  nres <- sum(object$calpha)
+  chains <- unique(object$atom[,"chain"])
+
+  nprot <-length(atom.select(object, "protein", verbose=FALSE)$atom)
+  other.inds <- atom.select(object, "notprotein", verbose=FALSE)$atom
+  het <- object$atom[other.inds,]
+  nhet.atom <- nrow(het)
+
+  if(is.null(nhet.atom)) {
+    nhet.atom <- 0
+    nhet.res <- 0
+    hetres <- "none"
+  } else { 
+  	hetres.resno <- apply(het[,c("chain","resno","resid")], 1, paste, collapse=".")
+  	nhet.res <- length(unique(hetres.resno))
+	hetres.nres <- table(het[,c("resid")][!duplicated(hetres.resno)])
+  	hetres <- paste( paste0( names(hetres.nres), " (",hetres.nres, ")"), collapse=", ")
+  }
+
+  if((nprot+nhet.atom) != ntotal)
+    warning("nPROTEIN + nNON-PROTEIN != nTotal")
+
+ 
   cat("\n Call:  ", paste(deparse(object$call), sep = "\n", collapse = "\n"),
         "\n", sep = "")
 
-  s <- paste("\n  Atom Count:", ntotal,
-             "\n\n   Total ATOMs#:", natom,
-             "\n     Protein ATOMs#:", nprot,
-             "  ( Calpha ATOMs#:", nres,")",
-             "\n     Non-protein ATOMs#:", nother.atom,
-             "  ( residues:", not.prot.res,")",
-             "\n     Chains#:", length(atom.chains), 
-             "  ( values:", paste(atom.chains, collapse=" "),")",
+  s <- paste0("\n   Total Models#: ", nmodel, 
+  			  "\n     Total Atoms#: ", ntotal, ",  XYZs#: ", nxyz, 
+  			  "  Chains#: ", length(chains),
+  			  "  (values: ", paste(chains, collapse=" "),")",
 
-             "\n\n   Total HETATOMs:", nhet,
-             "\n     Residues HETATOMs#:", hetnres,
-             "  ( residues:", hetres,")",
-             "\n     Chains#:", length(het.chains), 
-             "  ( values:", paste(het.chains, collapse=" "),")\n\n")
+             "\n\n     Protein Atoms#: ", nprot,
+             "  (residues/Calpha atoms#: ", nres,")",
+
+             "\n\n     Non-protein Atoms#: ", nhet.atom,
+             "  (residues: ", nhet.res, ")",
+             "\n     Non-protein resid values: [", hetres," ]",
+             "\n\n")
               
   cat(s)
 
@@ -67,7 +72,7 @@ summary.pdb <- function(object, printseq=FALSE, ...) {
   i <- paste( attributes(object)$names, collapse=", ")
   cat(strwrap(paste(" + attr:",i,"\n"),width=45, exdent=8), sep="\n")
 
-  invisible( c(ntotal=ntotal, ntotal=natom, nprot=nprot, 
-               ca=nres, nother=nother.atom, ligs=not.prot.res,
-               nhet=nhet, nhetres=hetnres, hetres=hetres) )
+  invisible( c(nmodel=nmodel, natom=ntotal, nxyz=nxyz, nchains=length(chains),  
+               nprot=nprot, nprot.res=nres, nother=nhet.atom, nother.res=nhet.res) )
+
 }

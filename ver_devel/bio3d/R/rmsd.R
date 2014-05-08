@@ -26,21 +26,26 @@ function(a, b=NULL,
      }
   }
 
-  if(is.list(a)) a=a$xyz
-  if(is.list(b)) b=b$xyz
+  if(is.pdb(a)) a=a$xyz
+  if(is.pdb(b)) b=b$xyz
 
   if( is.null(a.inds) && is.null(b.inds) ) {
     a.inds <- gap.inspect(a)$f.inds
-    if(!is.null(b)) a.inds <- intersect(a.inds, gap.inspect(b)$f.inds)
+
+    if(!is.null(b)) { 
+      a.inds <- intersect(a.inds, gap.inspect(b)$f.inds)
+    }
     b.inds <- a.inds
-    warning(paste("No indices provided, using the",
+    if(length(a.inds) != length(a)) {
+      warning(paste("No indices provided, using the",
                   length(a.inds)/3,  "non NA positions\n"))
+    }
   }
 
   if (is.null(a.inds)) a.inds <- gap.inspect(a)$f.inds
   if (is.null(b.inds) && !is.null(b)) b.inds <- gap.inspect(b)$f.inds
 
-  if(is.vector(a)) {
+  if(is.vector(a) || nrow(a)==1) {
     if(is.null(b)) {
       stop("No comparison can be made, input was only a single vector 'a'")
     }
@@ -102,7 +107,7 @@ function(a, b=NULL,
     }
   }
 
-  if(is.vector(b)) {
+  if(is.vector(b) || nrow(b)==1) {
     if (length(a.inds) != length(b.inds)) {
       stop("dimension mismatch:
               a[a.inds] and b[b.inds] should be the same length")
@@ -120,7 +125,7 @@ function(a, b=NULL,
     return(round(irmsd,3))
 
   } else {
-    if(is.matrix(b)) {
+    if(is.matrix(b) && (nrow(b) > 1)) {
       if (length(a.inds) != length(b.inds)) {
           stop("dimension mismatch:
                   a[a.inds] and b[,b.inds] should be the same length")

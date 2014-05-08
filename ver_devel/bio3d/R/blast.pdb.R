@@ -1,5 +1,5 @@
 `blast.pdb` <-
-function(seq, database="pdb", time.out=90) {
+function(seq, database="pdb", time.out=NULL) {
   if(inherits(seq, "fasta")) {
     if(is.matrix(seq$ali)) {
       if(nrow(seq$ali)>1)
@@ -10,7 +10,7 @@ function(seq, database="pdb", time.out=90) {
       seq <- as.vector(seq$ali)
     }
   }
-  
+
   ## Run NCBI blastp on a given 'seq' sequence against a given 'database'
   if(!is.vector(seq)) {
     stop("Input 'seq' should be a single sequence as a single or multi element character vector")
@@ -50,7 +50,7 @@ function(seq, database="pdb", time.out=90) {
   ## Check for job completion (retrive html or cvs?)
   html <- 1
   t.count <- 0
-  while(length(html) == 1 && t.count < time.out) {
+  while(length(html) == 1) {
     cat("."); Sys.sleep(5)
     t.count <- t.count + 5
     
@@ -59,7 +59,11 @@ function(seq, database="pdb", time.out=90) {
                      fill = TRUE, comment.char=""), silent=TRUE)
     if(class(raw)=="try-error") { stop("No hits found: thus no output generated") }
     html <- grep("DOCTYPE", raw[1,])
+    
+    if(!is.null(time.out) && (t.count > time.out) && (length(html) == 1))
+      break;
   }
+  
   if(length(html) == 1) {
      warning("\nTime out (", time.out, "s): Retrieve results with returned link\n", 
         urlget, "\n", sep="")

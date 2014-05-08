@@ -4,7 +4,7 @@
     
     if(missing(pdb))
       stop("nma: must supply 'pdb' object, i.e. from 'read.pdb'")
-    if(class(pdb)!="pdb")
+    if(!is.pdb(pdb))
       stop("nma: 'pdb' must be of type 'pdb'")
 
     ## Log the call
