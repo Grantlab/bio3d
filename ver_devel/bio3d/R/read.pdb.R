@@ -195,9 +195,10 @@ function (file, maxlines=-1, multi=FALSE,
       first.alt <- sort( unique(na.omit(atom[,"alt"])) )[1]
       cat(paste("   PDB has ALT records, taking",first.alt,"only, rm.alt=TRUE\n"))
       alt.inds <- which( (atom[,"alt"] != first.alt) ) # take first alt only
-      if(length(alt.inds)>0)
+      if(length(alt.inds)>0) {
         atom <- atom[-alt.inds,]
         xyz.models <- xyz.models[ ,-atom2xyz(alt.inds) ] 
+      }
     }
   }
 
