@@ -44,9 +44,10 @@
 
       ##- Use reference vector for filling 'ss'
       ref.h <- paste(resno.h, chain.h, sep="_")
-      ss[1, ref.h]="H"
-      ss[2, ref.h]=chain.h
-      ss[3, ref.h]=type.h
+      i <- ref.h %in% ref ## Fix for HETATOM in SSE (1P3Q)
+      ss[1, ref.h[i]]="H"
+      ss[2, ref.h[i]]=chain.h[i]
+      ss[3, ref.h[i]]=type.h[i]
     }
 
 
@@ -58,9 +59,10 @@
 
       ##- Use reference vector for filling 'ss'
       ref.e <- paste(resno.e, chain.e, sep="_")
-      ss[1, ref.e]="E"
-      ss[2, ref.e]=chain.e
-      ss[3, ref.e]=type.e
+      i <- ref.e %in% ref
+      ss[1, ref.e[i]]="E"
+      ss[2, ref.e[i]]=chain.e[i]
+      ss[3, ref.e[i]]=type.e[i]
     }
 
     ##- Lookup trimed positions 'ref.trim' in 'ss'
