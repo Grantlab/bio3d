@@ -2,7 +2,7 @@
 function(pdb, selection="calpha", verbose=TRUE) {
   # Distance Matrix analysis
 
-  if(class(pdb)=="pdb") {
+  if(is.pdb(pdb)) {
     xyz  <- matrix(pdb$xyz, ncol=3, byrow=TRUE)
     inds <- atom.select(pdb, string=selection, verbose=FALSE)
     d    <- as.matrix(dist(xyz[inds$atom,]))

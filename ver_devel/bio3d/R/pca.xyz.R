@@ -5,7 +5,10 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE) {
 
   xyz <- as.matrix(xyz)
   if (any(!is.finite(xyz)))
-    stop("infinite or missing values in x")
+    stop( paste("  Infinite or missing values in 'xyz' input.",
+      "\t Likely solution is to remove gap positions (cols)",
+      "\t or gap containing structures (rows) from input.", sep="\n") )
+
   dx <- dim(xyz)
   n <- dx[1]; p <- dx[2]
   if (!n || !p)
@@ -19,7 +22,7 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE) {
   if(p > 3000 && n <= 0.4*p && !use.svd) {
      cat("NOTE: In input xyz (MxN),  N > 3000 and M < N\n",
          "     Singular Value Decomposition (SVD) approach is faster\n",
-         "     and is recommended (set use.svd = TRUE)\n\n", sep=" ")
+         "     and is recommended (set 'use.svd = TRUE')\n\n", sep=" ")
      flush(stdout())
   }
      

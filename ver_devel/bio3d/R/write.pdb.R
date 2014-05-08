@@ -27,7 +27,7 @@ function (pdb = NULL,
   if(any(is.na(xyz)))
     stop("write.pdb: 'xyz' coordinates must have no NA's.")
   
-  if (is.vector(xyz)) {
+  if ( is.null(nrow(xyz)) ) {
     natom <- length(xyz)/3
     nfile <- 1
   } else if (is.matrix(xyz)) {
