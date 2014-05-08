@@ -48,7 +48,7 @@ pdbsplit(pdb.files, ids = NULL, path = "split_chain", overwrite=TRUE,
   \code{\link{write.pdb}}, \code{\link{get.pdb}}. }
 \examples{
   ## Fetch PDBs
-  pdb.ids <- c("1YX5", "3NOB", "1P3Q", "2D3G", "1F9J")
+  pdb.ids <- c("1YX5", "3NOB")
   outdir <- paste(tempdir(), "/raw_pdbs", sep="")
   raw.files <- get.pdb(pdb.ids, path = outdir)
 
