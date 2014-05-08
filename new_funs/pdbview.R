@@ -7,7 +7,7 @@ calpha.connectivity <- function(x, d.cut = 4) {
 	##     ToDo: - add checks for Calpha only input files
 	##           - warn if no connections are found
 
-	if(class(x) == "pdb") {
+	if(is.pdb(x)) {
 		x <- x$xyz
 	}
 	natom <- length(x)/3
@@ -160,9 +160,11 @@ pdbsview2 <- function(x, sel, col=NULL, add=FALSE, ...) {
 
 ##
 ##- The default output for the visualize function are not that useful for 
-##   large structures in my view. E.g.
+##   large structures and also now a little slow with the new data.frame $atom 
+##    E.g.
 ##
-visualize(pdb, col=sse.color(pdb)) ## => hard to see fold topology and sse
+pdb=read.pdb("4q21")
+visualize(pdb, col=sse.color(pdb)) ## => hard to see fold topology and sse also rotation offset by 'xyz.axes'
 
 ## Lets try restricting to Calpha atoms 
 ca.pdb <- trim.pdb(pdb, atom.select(pdb,"calpha"))
@@ -176,15 +178,17 @@ visualize(ca.pdb, typ="l", con=ca.con)   ## => Better but some 'bad' connections
 ca.con <- calpha.connectivity(ca.pdb)    ## => This look much better :-)  
 visualize(ca.pdb, typ="l", con=ca.con, col=sse.color(ca.pdb))
 
+##--##
 
 ##
-##-- Overall the above view should be easier to obtain and be able to show Caplpha trace 
-##    along with sidechains and ligands. This motivated the following functions:
+##-- Overall the above view should be easier to obtain and be able to show C-alpha trace 
+##    along with sidechains and ligands. This motivated the following functions as starting 
+##    point suggestions for new visualize functions:
 ##
 
 ##- 1. Read and view a PDB file in a useful way 
 ##
-pdb <- read.pdb("1bg2", het2atom=T)
+pdb <- read.pdb("1bg2")
 
 pdbview(pdb)            ## Default PDB view 
 pdbview(pdb, "calpha")  ## Calpha trace PDB view 
