@@ -12,9 +12,9 @@
     status <- system(paste(exefile, "--version"),
                      ignore.stderr = TRUE, ignore.stdout = TRUE)
     
-    if(!(status %in% c(0,1)))
-      stop(paste("Launching external program 'DSSP' failed\n",
-                 "  make sure '", exefile, "' is in your search path", sep=""))
+###    if(!(status %in% c(0,1)))
+###      stop(paste("Launching external program 'DSSP' failed\n",
+###                 "  make sure '", exefile, "' is in your search path", sep=""))
     
     infile <- tempfile()
     outfile <- tempfile()
