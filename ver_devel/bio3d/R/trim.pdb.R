@@ -13,7 +13,7 @@
 
   ## Trim main components
   atom <- pdb$atom[inds$atom,]
-  calpha <- as.logical(atom[,"elety"]=="CA")
+  calpha = (atom[,"elety"]=="CA") & (atom[,"resid"]!="CA") & (atom[,"type"]=="ATOM")
   
   
   if(is.null(nrow(pdb$xyz))) {
@@ -23,11 +23,6 @@
   }
   
   helix <- NULL; sheet <- NULL;
-
-#  if(sse) {
-#    sse=FALSE
-#    warning("no sse information in trimmed pdb")
-#  }
   
   if(sse) {
     ##-- Build reference SSE sequence matrix 'ss'

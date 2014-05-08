@@ -212,10 +212,9 @@ function (file, maxlines=-1, multi=FALSE,
     }
   }
   
-  ##- Vector of Calpha positions - check for calcium resid
-  calpha = (atom[,"elety"]=="CA") & (atom[,"resid"] !="CA")
-  ## Limit 'calpha' to ATOM records only
-  calpha = colSums(rbind(atom$type=="ATOM", calpha))==2
+  ##- Vector of Calpha positions 
+  ##  check for calcium resid and restrict to ATOM records only
+  calpha = (atom[,"elety"]=="CA") & (atom[,"resid"]!="CA") & (atom[,"type"]=="ATOM")
 
   output<-list(atom=atom,
                #het=atom[atom$type=="HETATM",],
