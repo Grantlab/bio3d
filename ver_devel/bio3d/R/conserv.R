@@ -20,7 +20,7 @@ function(x,
   composition <- table(x)
   unk <- composition[!names( composition  ) %in% aa]
   if(length(unk) > 0) {
-    warning(paste("\nnon standard residue code:",names(unk),"maped to X"))
+    warning(paste("non standard residue code:",names(unk),"mapped to X\n  "))
     for(i in 1:length(unk))
       x[x==names(unk[i])]="X"
   }
