@@ -1,5 +1,4 @@
 
-
 calpha.connectivity <- function(x, d.cut = 4) {
 	##-- Quick and dirty Calpha trace connectivity determination
 	##    Connects consecutive atoms excluding those more than d.cut 
@@ -44,9 +43,12 @@ sse.color <- function(x, col.coil="gray", col.helix="purple", col.sheet="blue") 
 
 vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
 	##-- Define a color scale from a numeric vector
-	##     To Do - make independent of classInit package?
-	require(classInt)
-	return( findColours(classIntervals(vec, n=n, style="equal"), pal) )
+	col <- colorRampPalette(pal)(n)
+    vec.cut <- cut(vec, seq(min(vec), max(vec), length.out=n),
+	               include.lowest = TRUE)
+    levels(vec.cut) <- 1:length(col)
+    col <- col[vec.cut]
+    return(col)
 }
 
 
