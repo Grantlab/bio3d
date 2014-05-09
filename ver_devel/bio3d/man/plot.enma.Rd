@@ -6,10 +6,11 @@
 }
 \usage{
 \method{plot}{enma}(x, y="fluctuations",
-        pdbs = NULL, entropy = FALSE, variance = FALSE, 
+        pdbs = NULL, conservation = NULL, variance = FALSE, 
         col = NULL, signif = FALSE,
         pcut = 0.005, qcut = 0.04,
-        xlab = "Residue Position", ylab = "Fluctuations",
+        xlab = "Residue Position",
+        ylab=c("Fluctuations", "Fluct.variance", "Seq.conservation"),
         xlim = NULL, ylim = NULL,
         mar = c(4, 5, 2, 2), ...)
 }
@@ -21,9 +22,11 @@
   \item{pdbs}{ an object of class \sQuote{3dalign} in which the
     \sQuote{enma} object \code{x} was obtained from. If provided SSE
     data of the first structure of \code{pdbs} will drawn. }
-  \item{entropy}{ logical, if TRUE sequence entropy is plotted.
-    Note that also a numeric vector can be provided (e.g if sequence
-    conservation is calculated manually). }
+  \item{conservation}{ logical, if TRUE sequence conservation is
+    plotted. Alternatively, provide the conservation assement method
+    (\sQuote{similarity}, \sQuote{identity}, \sQuote{entropy22}, or
+    \sQuote{entropy10}). A numeric vector of residue conservation values
+    are also allowed. }    
   \item{variance}{ logical, if TRUE fluctuation variance is plotted. }
   \item{col}{ a character vector of plotting colors.  }
   \item{signif}{ logical, if TRUE significance of difference is plotted. }
@@ -31,8 +34,8 @@
   \item{qcut}{ Cutoff for the minimal difference of mean fluctuation to plot 
              the significance. }
   \item{xlab}{ a label for the x axis. }
-  \item{ylab}{ a label for the y axis. }
-  \item{mar}{ A numerical vector of the form c(bottom, left, top, right)
+  \item{ylab}{ labels for the y axes. }
+  \item{mar}{ a numerical vector of the form c(bottom, left, top, right)
     which gives the number of lines of margin to be specified on the
     four sides of the plot.}
   \item{xlim}{ the x limits of the plot. }
@@ -63,10 +66,10 @@ files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain")
 pdbs <- pdbaln(files)
 
 ## Normal mode analysis on aligned data
-all.modes <- nma.pdbs(pdbs, rm.gaps=FALSE)
+all.modes <- nma.pdbs(pdbs, rm.gaps=TRUE)
 
 ## Plot fluctuations
-plot.enma(all.modes, pdbs)
+plot.enma(all.modes, pdbs=pdbs, conservation=TRUE)
 }
 }
 \keyword{ hplot }

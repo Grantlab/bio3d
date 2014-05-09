@@ -1,9 +1,10 @@
 "plot.enma" <-
   function(x, y="fluctuations",
-           pdbs=NULL, entropy=FALSE, variance=FALSE,
+           pdbs=NULL, conservation=NULL, variance=FALSE,
            col=NULL, signif=FALSE,
            pcut=0.005, qcut=0.04,
-           xlab="Residue Position", ylab="Fluctuations",
+           xlab="Residue Position",
+           ylab=c("Fluctuations", "Fluct.variance", "Seq.conservation"),
            xlim=NULL, ylim=NULL,
            mar = c(4, 5, 2, 2),
            ...) {
@@ -11,17 +12,12 @@
     if(!inherits(x, "enma"))
       stop("provide a enma object as obtained from 'nma.pdbs'")
 
-    h <- NULL
-    if(!is.logical(entropy)) {
-      h=entropy
-      entropy=TRUE
+    y.allowed <- c("fluctuations", "deformations")
+    if(!all(y%in%y.allowed)) {
+      warning("allowed option for 'y' is 'fluctuations' or 'deformations'")
+      y="fluctuations"
     }
     
-    if(is.null(pdbs) && entropy && is.null(h)) {
-      entropy=FALSE
-      warning("forcing 'entropy=FALSE': entropy plot requires the corresponding 'pdbs' object")
-    }
-
     if(is.null(x$call$rm.gaps))
       rm.gaps <- TRUE
     else if(x$call$rm.gaps=="T" || x$call$rm.gaps=="TRUE")
@@ -29,6 +25,59 @@
     else
       rm.gaps <- FALSE
 
+    if(!is.null(pdbs))
+      gaps.res <- gap.inspect(pdbs$ali)
+    else
+      gaps.res <- NULL
+    
+    dims <- dim(x$fluctuations)
+
+    ## Sequence conservation
+    h <- NULL
+    cons.options <- c("similarity", "identity", "entropy22", "entropy10")
+    if(is.null(conservation))
+      conservation=FALSE
+    
+    if(!is.logical(conservation)) {
+      
+      if(length(conservation)>1) {
+        h <- conservation
+        conservation=TRUE
+        if(length(h)!=dims[2L]) {
+          warning("dimension mismatch of supplied 'conservation' vector")
+          h <- NULL
+          conservation=FALSE
+        }
+      }
+      
+      if(!is.logical(conservation) && length(conservation)==1) {
+        if(all(conservation %in% cons.options)) {
+          conserv.method <- conservation
+        }
+        else {
+          warning("unknown option for 'conservation'")
+          conserv.method <- "similarity"
+        }
+        conservation=TRUE
+      }
+    }
+    else {
+      conserv.method <- cons.options[1]
+    }
+    
+    if(is.null(pdbs) & conservation) {
+      conservation=FALSE
+      warning("forcing 'conservation=FALSE': sequence conservation plot requires the corresponding 'pdbs' object")
+    }
+    
+    if(conservation && is.null(h)) {
+      if(rm.gaps)
+        h <- conserv(pdbs$ali[,gaps.res$f.inds], method=conserv.method)
+      else
+        h <- conserv(pdbs, method=conserv.method)
+    }
+        
+    ## Configure plot
     if(y=="deformations")
       yval <- x$deform
     else
@@ -65,7 +114,6 @@
 
       if(!inherits(sse.ref, "try-error") && !inherits(pdb.ref, "try-error")) {
         if(rm.gaps) {
-          gaps.res <- gap.inspect(pdbs$ali)
           resnos <- pdbs$resno[1, gaps.res$f.inds]
         }
         else {
@@ -143,13 +191,15 @@
       }
     }
 
-
     ## Configure plot
     nrows <- 1
-    if(entropy)
+    if(conservation)
       nrows=nrows+1
     if(variance)
       nrows=nrows+1
+    
+    if(nrows>length(ylab) & !is.null(ylab))
+      warning("insufficient y labels")
 
     op <- par(no.readonly=TRUE)
     on.exit(par(op))
@@ -174,7 +224,7 @@
 
     ## Plot fluctuations / deformations
     par(new=TRUE)
-    do.call('plot.bio3d', c(list(x=yval[inds.plot[1],], xlab=xlab, ylab=ylab,
+    do.call('plot.bio3d', c(list(x=yval[inds.plot[1],], xlab=xlab, ylab=ylab[1],
                                  ylim=ylim, xlim=xlim, type='h', col=1), ##col=col[inds.plot[1]]),
                             dots))
     
@@ -187,32 +237,20 @@
     if (variance) {
       fluct.sd <- apply(yval, 2, var, na.rm=T)
       do.call('plot.bio3d', c(list(x=fluct.sd,
-                                   xlab="Residue position",
-                                   ylab="Fluct. variance",
+                                   xlab=xlab, 
+                                   ylab=ylab[2],
                                    ##ylim=ylim,
                                    xlim=xlim,
                                    col=1), dots))
     }
 
-    ## Sequence Entropy
-    if (entropy) {
-      if(is.null(h)) {
-        if(rm.gaps) {
-          h   <- entropy(pdbs$ali[,gaps.res$f.inds])
-        }
-        else {
-          h   <- entropy(pdbs)
-        }
-        ##H <- h$H.10.norm
-        h <- h$H.norm
-      }
-
+    ## Plot sequence conservation / entropy
+    if (conservation) {
       do.call('plot.bio3d', c(list(x=h,
-                                   ylab="Seq. entropy",
-                                   xlab="Residue position",
+                                   ylab=ylab[3],
+                                   xlab=xlab,
                                    col=1), dots))
     }
-
 
     out <- list(signif=sig, sse=sse.aln)
     invisible(out)                
