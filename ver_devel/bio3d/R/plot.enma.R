@@ -11,7 +11,13 @@
     if(!inherits(x, "enma"))
       stop("provide a enma object as obtained from 'nma.pdbs'")
 
-    if(is.null(pdbs) && entropy) {
+    h <- NULL
+    if(!is.logical(entropy)) {
+      h=entropy
+      entropy=TRUE
+    }
+    
+    if(is.null(pdbs) && entropy && is.null(h)) {
       entropy=FALSE
       warning("forcing 'entropy=FALSE': entropy plot requires the corresponding 'pdbs' object")
     }
@@ -169,7 +175,7 @@
     ## Plot fluctuations / deformations
     par(new=TRUE)
     do.call('plot.bio3d', c(list(x=yval[inds.plot[1],], xlab=xlab, ylab=ylab,
-                                 ylim=ylim, xlim=xlim, col=col[1]), type='h',
+                                 ylim=ylim, xlim=xlim, type='h', col=1), ##col=col[inds.plot[1]]),
                             dots))
     
     ## Plot all lines (col==NA will not be plotted)
@@ -190,16 +196,18 @@
 
     ## Sequence Entropy
     if (entropy) {
-      if(rm.gaps) {
-        h   <- entropy(pdbs$ali[,gaps.res$f.inds])
+      if(is.null(h)) {
+        if(rm.gaps) {
+          h   <- entropy(pdbs$ali[,gaps.res$f.inds])
+        }
+        else {
+          h   <- entropy(pdbs)
+        }
+        ##H <- h$H.10.norm
+        h <- h$H.norm
       }
-      else {
-        h   <- entropy(pdbs)
-      }
-      ##H <- h$H.10.norm
-      H <- h$H.norm
 
-      do.call('plot.bio3d', c(list(x=H,
+      do.call('plot.bio3d', c(list(x=h,
                                    ylab="Seq. entropy",
                                    xlab="Residue position",
                                    col=1), dots))

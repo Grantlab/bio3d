@@ -21,7 +21,9 @@
   \item{pdbs}{ an object of class \sQuote{3dalign} in which the
     \sQuote{enma} object \code{x} was obtained from. If provided SSE
     data of the first structure of \code{pdbs} will drawn. }
-  \item{entropy}{ logical, if TRUE sequence entropy is plotted. }
+  \item{entropy}{ logical, if TRUE sequence entropy is plotted.
+    Note that also a numeric vector can be provided (e.g if sequence
+    conservation is calculated manually). }
   \item{variance}{ logical, if TRUE fluctuation variance is plotted. }
   \item{col}{ a character vector of plotting colors.  }
   \item{signif}{ logical, if TRUE significance of difference is plotted. }
