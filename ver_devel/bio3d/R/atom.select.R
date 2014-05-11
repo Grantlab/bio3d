@@ -3,37 +3,7 @@ function(pdb, string=NULL,
          chain=NULL, resno=NULL, resid=NULL,
          eleno=NULL, elety=NULL,
          verbose=TRUE, rm.insert=FALSE) {
-  ## Version 0.6 ... Wed Jul  3 12:25:18 EDT 2013
-  ##
-  ##  Include the function to take the intersection
-  ##  of string and component (Xinqiu)
-  ##
-  ## Version 0.5 ... Fri Nov 30 13:10:24 EST 2012
-  ##
-  ##  Re-worte large parts of the keyword matching
-  ##   code to make it slightly more transparent
-  ##
-  ## Version 0.4 ... Thu Nov 29 15:27:03 EST 2012
-  ##
-  ##  Added string="protein" and a few other keywords
-  ##
-  ## Version 0.3 ... Thu May 12 17:38:25 PDT 2011
-  ##
-  ##  Removed old "pdb.summary()" section and replaced
-  ##   with call to new "print.pdb()" function.
-  ##
-  ## Version 0.2 ... Tue Jun 23 18:15:28 PDT 2009
-  ##
-  ##  Builds selection string from components 
-  ##   chain, resno, resid, eleno, elety
-  ##
-  ## Version 0.1 ... Tue Mar 21 10:58:43 PST 2006
-  ##
-  ##   Prints a summary of 'pdb' makeup if called 
-  ##    without a selection 'string'.
-  ##   Also added 'string' shortcuts "calpha", 
-  ##    "back", "backbone" and "cbeta"
-  ##
+
   ## Version 0.0 ... Fri Mar 17 14:45:37 PST 2006
   ##
   ##  Description:
@@ -58,7 +28,8 @@ function(pdb, string=NULL,
   ##   inds<-atom.select(pdb, "//A/130:142///N,CA,C,O/")
 
 
-  
+  cl <- match.call()
+
   sel.txt2nums <- function(num.sel.txt) {
     ##- Splitting function for numbers  - split on coma & colon
     num1 <- unlist( strsplit(num.sel.txt, split=",") )
@@ -117,7 +88,7 @@ function(pdb, string=NULL,
          cat(paste(" *  Selected", length(noh.atom), "non-hydrogen atoms *\n"))
        return(match)
      }
-     
+
      ##-- Check for string 'shortcuts'
      i <- switch(string,
                  ##calpha = "//////CA/",
@@ -236,7 +207,7 @@ function(pdb, string=NULL,
                    "intersecting atoms  *"),sep="\n")
        }
          
-       match <- list(atom=which(match.inds), xyz=xyz.inds)
+       match <- list(atom=which(match.inds), xyz=xyz.inds, call = cl) #######<=====
        class(match) <- "select"
        return(match)
      }

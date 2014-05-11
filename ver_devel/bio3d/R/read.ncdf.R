@@ -164,5 +164,6 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
      # take every "stride" frame
      retval <- subset(retval, (1:nrow(retval)) %in% seq(1, nrow(retval), stride))
   }
+  class(retval)="xyz"
   return(retval)
 }

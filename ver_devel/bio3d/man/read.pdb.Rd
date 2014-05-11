@@ -1,145 +1,97 @@
-\name{read.pdb}
-\alias{read.pdb}
-\alias{print.pdb}
-\alias{summary.pdb}
-\title{ Read PDB File}
+\name{atom.select}
+\alias{atom.select}
+\title{ Atom Selection From PDB Structure }
 \description{
-  Read a Protein Data Bank (PDB) coordinate file.
+  Return the atom and xyz coordinates indices of a \sQuote{pdb} structure
+  object corresponding to the intersection of a hierarchical selection.
 }
 \usage{
-read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
-         rm.alt = TRUE, verbose = TRUE)
-\method{print}{pdb}(x, \dots)
-\method{summary}{pdb}(object, printseq=FALSE, \dots)
+atom.select(pdb, string=NULL, chain=NULL, resno=NULL, resid=NULL,
+eleno=NULL, elety=NULL, verbose=TRUE, rm.insert=FALSE)
+\method{print}{select}(x, \dots)
+
 }
 \arguments{
-  \item{file}{ a single element character vector containing the name of
-    the PDB file to be read, or the four letter PDB identifier for
-    online file access. }
-  \item{maxlines}{ the maximum number of lines to read before giving up
-    with large files. By default if will read up to the end of input on
-    the connection. }
-  \item{multi}{ logical, if TRUE multiple ATOM records are read for all
-    models in multi-model files and their coordinates returned. }
-  \item{rm.insert}{ logical, if TRUE PDB insert records are ignored. }
-  \item{rm.alt}{ logical, if TRUE PDB alternate records are ignored. }
-  \item{verbose}{ print details of the reading process. }
-  \item{x}{ a PDB structure object obtained from
-    \code{\link{read.pdb}}.  }
-  \item{object}{ a PDB structure object obtained from
-    \code{\link{read.pdb}}.  }
-  \item{printseq}{ logical, if TRUE the PDB ATOM sequence will be printed
-    to the screen. See also \code{\link{pdbseq}}.  }
-  \item{...}{ additional arguments to \sQuote{print}. }
-   
+  \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
+    \code{\link{read.pdb}}. }
+  \item{string}{ a character selection string with the following syntax:\cr
+    \code{/segid/chain/resno/resid/eleno/elety/}. Or a single selection keyword from 
+    \code{calpha} \code{cbeta} \code{backbone} \code{protein} \code{notprotein} \code{ligand} \code{water} \code{notwater} \code{h} \code{noh} }
+  \item{chain}{ a character vector of chain identifiers. }
+  \item{resno}{ a numeric or character vector of residue numbers. }
+  \item{resid}{ a character vector of residue name identifiers. }
+  \item{eleno}{ a numeric or character vector of element numbers. }
+  \item{elety}{ a character vector of atom names. }
+  \item{verbose}{ logical, if TRUE details of the selection are printed. }
+  \item{rm.insert}{ logical, if TRUE insert ATOM records from the
+    \code{pdb} object are ignored. }
+  \item{x}{ a atom.select object as obtained from \code{\link{atom.select}}.  }   
+  \item{...}{ additional arguments to \sQuote{print}. Currently ignored. }
 }
 \details{
-  \code{maxlines} may be set so as to restrict the reading to a portion
-  of input files. Note that the preferred means of reading large 
-  multi-model files is via binary DCD or NetCDF format trajectory files 
-  (see the \code{\link{read.dcd}} and \code{\link{read.ncdf}} functions).
+  This function allows for the selection of atom and coordinate data
+  corresponding to the intersection of input criteria (such as a
+  \sQuote{chain}, \sQuote{resno}, \sQuote{elety} etc.  Or a hierarchical
+  \sQuote{selection string} \code{string} with a strict format.
+  
+  The selection \code{string} should be a single element character
+  vector containing a string composed of six sections separated by a
+  \sQuote{/} character.
+  
+  Each section of this \sQuote{selection string} corresponds to a
+  different level in the PDB structure hierarchy, namely:
+  (1) segment identifier,
+  (2) chain identifier,
+  (3) residue number,
+  (4) residue name,
+  (5) element number, and
+  (6) element name.
+
+  For example, the string \code{//A/65:143///CA/} selects all C-alpha
+  atoms from residue numbers 65 to 143, of chain A.
+
+  A simpler alternative would be \code{chain="A", resno=65:143,
+    elety="CA"}. In addition, the character \code{string} shortcuts
+  \code{"calpha"}, \code{"back"}, \code{"backbone"}, \code{"cbeta"},
+  \code{"h"} and \code{"noh"} may also be used. See below for examples.
+
+  When called without a selection string, \code{atom.select} will print a
+  summary of \code{pdb} makeup.
 }
 \value{
-  Returns a list of class \code{"pdb"} with the following components:
-  \item{atom}{ a data.frame containing all atomic coordinate ATOM and HETATM data, with a row per ATOM/HETATM and a column per record type.  See below for details of the record type naming convention (useful for accessing columns). }
-  \item{helix }{ \sQuote{start}, \sQuote{end} and \sQuote{length} of H
-    type sse, where start and end are residue numbers \dQuote{resno}. }
-  \item{sheet }{ \sQuote{start}, \sQuote{end} and \sQuote{length} of E
-    type sse, where start and end are residue numbers \dQuote{resno}. }
-  \item{seqres }{ sequence from SEQRES field. }
-  \item{xyz }{ a numeric vector (or matrix for multi-model PDB files) of ATOM and HETATM coordinate data. }
-  \item{calpha }{ logical vector with length equal to \code{nrow(atom)}
-    with TRUE values indicating a C-alpha \dQuote{elety}. }
-  \item{call }{ the matched call. }
+  Returns a list of class \code{"select"} with components:
+  \item{atom }{atom indices of selected atoms.}
+  \item{xyz }{xyz indices of selected atoms.}
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
-  
-  For a description of PDB format (version3.3) see:\cr
-  \url{http://www.wwpdb.org/documentation/format33/v3.3.html}.
 }
 \author{ Barry Grant }
-\note{ 
-  For both \code{atom} and \code{het} list components the column names can be
-  used as a convenient means of data access, namely:
-  Atom serial number \dQuote{eleno} ,
-  Atom type \dQuote{elety},
-  Alternate location indicator \dQuote{alt},
-  Residue name \dQuote{resid},
-  Chain identifier \dQuote{chain},
-  Residue sequence number \dQuote{resno},
-  Code for insertion of residues \dQuote{insert},
-  Orthogonal coordinates \dQuote{x},
-  Orthogonal coordinates \dQuote{y},
-  Orthogonal coordinates \dQuote{z},
-  Occupancy \dQuote{o}, and
-  Temperature factor \dQuote{b}.
-  See examples for further details.
+\seealso{ 
+  \code{\link{combine.sel}}, \code{\link{read.pdb}}, 
+  \code{\link{write.pdb}}, \code{\link{read.dcd}} 
 }
-\seealso{ \code{\link{atom.select}}, \code{\link{write.pdb}},
-  \code{\link{read.dcd}}, \code{\link{read.fasta.pdb}},
-  \code{\link{read.fasta}} }
 \examples{
-## Read a PDB file from the RCSB online database
-pdb <- read.pdb("4q21")
 
-## Read a PDB file from those included with the package
-###pdb <- read.pdb( system.file("examples/1bg2.pdb", package="bio3d") )
+# Read a PDB file
+pdb <- read.pdb( "http://www.rcsb.org/pdb/files/1BG2.pdb" )
 
-## Print a brief composition summary
-pdb
+# Print structure summary
+atom.select(pdb)
 
-## Examine the storage format (or internal *str*ucture)
-str(pdb)
-
-## Print data for the first four atom
-pdb$atom[1:4,]
-
-## Print some coordinate data
-head(pdb$atom[, c("x","y","z")])
-
-## Or coordinates as a numeric vector
-head(pdb$xyz)
-
-## Print C-alpha coordinates (can also use 'atom.select' function)
-head(pdb$atom[pdb$calpha, c("resid","elety","x","y","z")])
-inds <- atom.select(pdb, elety="CA")
-head( pdb$atom[inds$atom, ] )
-
-## The atom.select() function returns 'indices' (row numbers)
-## that can be used for accessing subsets of PDB objects, e.g.
-inds <- atom.select(pdb,"ligand")
-pdb$atom[inds$atom,]
-pdb$xyz[inds$xyz]
-
-## See the help page for atom.select() function for more details.
-
+# Select all C-alpha atoms with residues numbers between 65 and 143
+ca.inds <- atom.select(pdb, resno=65:143, elety="CA")
+print( pdb$atom[ ca.inds$atom, "resid" ] )
+print( pdb$xyz[ ca.inds$xyz ] )
 
 \dontrun{
-## Print SSE data for helix and sheet,
-##  see also dssp() and stride() functions
-print.sse(pdb)
-pdb$helix
-pdb$sheet$start
-  
-## Print SEQRES data
-pdb$seqres
+# Select all C-alphas
+ca.inds <- atom.select(pdb, "calpha")
 
-## SEQRES as one letter code
-aa321(pdb$seqres)
-
-## Where is the P-loop motif in the ATOM sequence
-inds.seq <- motif.find("G....GKT", pdbseq(pdb))
-pdbseq(pdb)[inds.seq]
-
-## Where is it in the structure
-inds.pdb <- atom.select(pdb,resno=inds.seq, elety="CA")
-pdb$atom[inds.pdb$atom,]
-pdb$xyz[inds.pdb$xyz]
-
-## View in interactive 3D mode
-#view(pdb)
+# String examples (see above).
+ca.inds <- atom.select(pdb, "///65:143///CA/")
+inds <- atom.select(pdb, "///130:142///N,CA,C,O/")
 }
-
 }
-\keyword{ IO }
+\keyword{utilities}
+
