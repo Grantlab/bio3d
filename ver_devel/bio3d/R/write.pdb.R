@@ -2,6 +2,7 @@
 function (pdb = NULL,
           file = "R.pdb",
           xyz = pdb$xyz,
+          type = NULL,
           resno = NULL,
           resid = NULL,
           eleno = NULL,
@@ -14,7 +15,6 @@ function (pdb = NULL,
           segid = NULL,
           elesy = NULL,
           charge = NULL,
-          het = FALSE,
           append = FALSE,
           verbose =FALSE,
           chainter = FALSE,
@@ -40,51 +40,21 @@ function (pdb = NULL,
     stop("write.pdb: 'xyz' or 'pdb$xyz' must be either a vector or matrix")
   }
 
-  card <- rep("ATOM", natom)
+#  card <- rep("ATOM", natom)
+  card <- type
   
   if (!is.null(pdb)) {
-    if(natom == 1)
-      ## make sure we are a matrix
-      pdb$atom <- t(as.matrix(pdb$atom))
-    
-    if (het) 
-      card <- c( rep("ATOM", nrow(pdb$atom)), rep("HETATM", nrow(pdb$het)) )
-    if (is.null(resno)) {
-      resno = pdb$atom[, "resno"]
-      if (het) { resno = c(resno, pdb$het[, "resno"]) }}
-    
-    if (is.null(resid)) {
-      resid = pdb$atom[, "resid"]
-      if (het) { resid = c(resid, pdb$het[, "resid"]) }}
-    
-    if (is.null(eleno)) {
-      eleno = pdb$atom[, "eleno"]
-      if (het) { eleno = c(eleno, pdb$het[, "eleno"]) }}
-    
-    if (is.null(elety)) {
-      elety = pdb$atom[, "elety"]
-      if (het) { elety = c(elety, pdb$het[, "elety"]) }}
-    
-    if (is.null(chain)) {
-      chain = pdb$atom[, "chain"]
-      if (het) { chain = c(chain, pdb$het[, "chain"]) }}
-    
-    if (is.null(insert)) {
-      insert = pdb$atom[, "insert"]
-      if (het) { insert = c(insert, pdb$het[, "insert"]) }}
+    if (is.null(card)) card <- pdb$atom$type
+    if (is.null(resno)) resno = pdb$atom[, "resno"]
+    if (is.null(resid)) resid = pdb$atom[, "resid"]
+    if (is.null(eleno)) eleno = pdb$atom[, "eleno"]
+    if (is.null(elety)) elety = pdb$atom[, "elety"]
+    if (is.null(chain)) chain = pdb$atom[, "chain"]
+    if (is.null(insert)) insert = pdb$atom[, "insert"]
+    if (is.null(alt)) alt = pdb$atom[, "alt"]
+    if (is.null(o)) o = pdb$atom[, "o"]
+    if (is.null(b)) b = pdb$atom[, "b"]
 
-    if (is.null(alt)) {
-      alt = pdb$atom[, "alt"]
-      if (het) { alt = c(alt, pdb$het[, "alt"]) }}
-    
-    if (is.null(o)) {
-      o = pdb$atom[, "o"]
-      if (het) { o = c(o, pdb$het[, "o"]) }}
-    
-    if (is.null(b)) {
-      b = pdb$atom[, "b"]
-      if (het) { b = c(b, pdb$het[, "b"]) }}
-     
     if (any(is.na(o))) {      o = rep("1.00", natom) }
     if (any(is.na(b))) {      b = rep("0.00", natom) }
     #if (any(is.na(chain))) { chain = rep(" ", natom) }
@@ -92,21 +62,15 @@ function (pdb = NULL,
     insert[is.na(insert)] = ""
     alt[is.na(alt)] = ""
     
-    if (is.null(segid)) {
-       segid = pdb$atom[, "segid"]
-       if (het) { segid = c(segid, pdb$het[, "segid"]) }}
+    if (is.null(segid)) segid = pdb$atom[, "segid"]
     segid[is.na(segid)] = ""
  
-    if (is.null(elesy)) {
-       elesy = pdb$atom[, "elesy"]
-       if (het) { elesy = c(elesy, pdb$het[, "elesy"]) }}
+    if (is.null(elesy)) elesy = pdb$atom[, "elesy"]
     elesy[is.na(elesy)] = ""
    
-    if (is.null(charge)) {
-       charge = pdb$atom[, "charge"]
-       if (het) { charge = c(charge, pdb$het[, "charge"]) }}
-   
+    if (is.null(charge)) charge = pdb$atom[, "charge"]
   } else {
+    if (is.null(card)) card = rep("ATOM", natom)
     if (is.null(resno)) resno = c(1:natom)
     if (is.null(resid)) resid = rep("ALA", natom)
     if (is.null(eleno)) eleno = c(1:natom)
@@ -121,7 +85,6 @@ function (pdb = NULL,
     if (is.null(charge)) charge = rep("", natom)
   }
 
-  
   if (!is.logical(append)) 
     stop("write.pdb: 'append' must be logical TRUE/FALSE")
   
