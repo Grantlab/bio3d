@@ -70,7 +70,7 @@
 
     if( any(s[1,] =="H",na.rm=TRUE) ) {
       sh <- (s[, s[1,] %in% "H"])
-      h.bounds <- bounds( as.numeric(sh[4,]) )
+      h.bounds <- bounds( as.numeric(sh[4,]), pre.sort=FALSE)
       h.inds <- rle2(rep(1:nrow(h.bounds), h.bounds[,"length"]))$inds
 
       helix$start = h.bounds[,"start"]
@@ -82,7 +82,7 @@
 
     if( any(s[1,] =="E",na.rm=TRUE) ) {
       se <- (s[, s[1,] %in% "E"])
-      e.bounds <- bounds( as.numeric(se[4,]) )
+      e.bounds <- bounds( as.numeric(se[4,]), pre.sort=FALSE)
       e.inds <- rle2(rep(1:nrow(e.bounds), e.bounds[,"length"]))$inds
 
       sheet$start = e.bounds[,"start"]
