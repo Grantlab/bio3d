@@ -8,6 +8,8 @@
 \usage{
 atom.select(pdb, string=NULL, chain=NULL, resno=NULL, resid=NULL,
 eleno=NULL, elety=NULL, verbose=TRUE, rm.insert=FALSE)
+\method{print}{select}(x, \dots)
+
 }
 \arguments{
   \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
@@ -23,6 +25,8 @@ eleno=NULL, elety=NULL, verbose=TRUE, rm.insert=FALSE)
   \item{verbose}{ logical, if TRUE details of the selection are printed. }
   \item{rm.insert}{ logical, if TRUE insert ATOM records from the
     \code{pdb} object are ignored. }
+  \item{x}{ a atom.select object as obtained from \code{\link{atom.select}}.  }   
+  \item{...}{ additional arguments to \sQuote{print}. Currently ignored. }
 }
 \details{
   This function allows for the selection of atom and coordinate data

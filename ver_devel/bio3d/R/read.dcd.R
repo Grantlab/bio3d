@@ -249,6 +249,7 @@ function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
 
     if(cell) to.return <- c( u[c(1,3,6)], (180/pi)*acos(u[c(5,4,2)]))
     else to.return <- as.vector(rbind(x,y,z))
+    class(to.return) = "xyz"
     return(to.return)
   }
   
@@ -304,7 +305,8 @@ function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
 #  if(verbose) { cat("done",sep="\n") }
   if(verbose) { cat("\n") }
   close(trj)
-  ##class(xyz)="trj"
+
+  class(to.return) = "xyz"
   return(to.return) 
 }
 

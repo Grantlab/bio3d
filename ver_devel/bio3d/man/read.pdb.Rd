@@ -41,13 +41,17 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
 }
 \value{
   Returns a list of class \code{"pdb"} with the following components:
-  \item{atom}{ a data.frame containing all atomic coordinate ATOM and HETATM data, with a row per ATOM/HETATM and a column per record type.  See below for details of the record type naming convention (useful for accessing columns). }
+  \item{atom}{ a data.frame containing all atomic coordinate ATOM and 
+    HETATM data, with a row per ATOM/HETATM and a column per record type.  
+    See below for details of the record type naming convention (useful for 
+    accessing columns). }
   \item{helix }{ \sQuote{start}, \sQuote{end} and \sQuote{length} of H
     type sse, where start and end are residue numbers \dQuote{resno}. }
   \item{sheet }{ \sQuote{start}, \sQuote{end} and \sQuote{length} of E
     type sse, where start and end are residue numbers \dQuote{resno}. }
   \item{seqres }{ sequence from SEQRES field. }
-  \item{xyz }{ a numeric vector (or matrix for multi-model PDB files) of ATOM and HETATM coordinate data. }
+  \item{xyz }{ a numeric vector (or matrix for multi-model PDB files) of 
+     ATOM and HETATM coordinate data. }
   \item{calpha }{ logical vector with length equal to \code{nrow(atom)}
     with TRUE values indicating a C-alpha \dQuote{elety}. }
   \item{call }{ the matched call. }
@@ -143,3 +147,4 @@ pdb$xyz[inds.pdb$xyz]
 
 }
 \keyword{ IO }
+

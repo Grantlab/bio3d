@@ -67,6 +67,8 @@ function(fixed,
                    xfit=mobile.inds,
                    yfit=fixed.inds,
                    verbose=verbose)
+
+    class(fit)="xyz"
     return(fit)
   } else {
     if(is.list(mobile)) {      # INPUT is a list object
@@ -166,6 +168,7 @@ function(fixed,
           return (NULL)
         } )
       }
+      class(fit)="xyz"
       return(fit)
     } else {
       if(full.pdbs)
@@ -200,6 +203,7 @@ function(fixed,
                            yfit = fixed.inds,
                            verbose=verbose))
         }
+        class(fit)="xyz"
         return(fit)
       }
     }
