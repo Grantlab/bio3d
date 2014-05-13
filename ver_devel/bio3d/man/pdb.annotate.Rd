@@ -5,7 +5,7 @@
   Get customizable annotations for query results from PDB.  
 }
 \usage{
-pdb.annotate(ids, anno.terms=NULL)
+pdb.annotate(ids, anno.terms=NULL, unique=FALSE)
 }
 \arguments{
   \item{ids}{ A charater vector of one or more 4-letter PDB
@@ -16,11 +16,14 @@ pdb.annotate(ids, anno.terms=NULL)
     "compound","title",  "citation", "citationAuthor", "journalName",
     "publicationYear".  If anno.terms=NULL, all information would be
     returned. }
+  \item{unique}{ logical, if TRUE the annotation is provided for unique
+    PDB entries. By default the annotation is provided in the same order
+    (and length) as the input list of PDB ids. }
 }
 \details{
   Given a list of PDB IDs and query terms, this function will download
-  the required information  from PDB, remove redundant information and
-  return a matrix of query results. 
+  the required information from PDB, and return a data frame of query
+  results.
 }
 \value{
   Returns a data frame of query results with a row for each PDB record,
