@@ -1,4 +1,4 @@
-`plot.blast` <-
+`plot.blast3` <-
 function(x, cutoff=NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5, ...) {
 
   ## b <- blast.pdb( pdbseq( read.pdb("4q21") ) )
@@ -82,8 +82,9 @@ function(x, cutoff=NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5
     cutoff <- floor( gp.nums[ i ] )
   }
 
+  inds <- x$mlog.evalue >= cutoff
   cat("  * Chosen cutoff value of:   ", cutoff, "\n",
-      "           Yielding Nhits:   ", gp.inds[i], "\n")
+      "           Yielding Nhits:   ", sum(inds), "\n")
       
 
   ##- Plot each alignment statistic with annotated grps
@@ -94,7 +95,6 @@ function(x, cutoff=NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5
 
 
   ##- Return details of hits above cutoff
-  inds <- x$mlog.evalue >= cutoff
   out <- cbind("pdb.id"=x$pdb.id[inds], "gi.id"=x$gi.id[inds], "group"=gps[inds])
   rownames(out) <- which(inds)
   return(list(hits=out, pdb.id=x$pdb.id[inds], gi.id=x$gi.id[inds]))
