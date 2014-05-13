@@ -9,28 +9,27 @@
 \usage{
 visualize(...)
 
-\method{visualize}{default}(
-xyz, ele.symb = NULL, con = NULL, cell = NULL, type = "l",
+\method{visualize}{xyz}(
+xyz, ele.symb = NULL, con = NULL, cell = NULL, type = "l", safety = 1.2,
 xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, 
 lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
 cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
 add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
 
 \method{visualize}{pdb}(
-pdb, elety.custom = NULL, con = NULL, cell = NULL, type = "l",
+pdb, elety.custom = NULL, con = NULL, cell = NULL, type = "l", safety = 1.2,
 xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, 
 lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
 cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
 add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
 
-\method{visualize}{cna}(cna, pdb, safety = 2.7, ...)
 }
 \arguments{
   \item{pdb}{an object of class \sQuote{pdb} containing the molecular structure to visualize.}
   \item{elety.custom}{a customized data.frame used to convert atom names/types into atomic symbols (see \code{\link{atom2ele}} and \code{\link{atom.index}}).}
   \item{xyz}{a numeric vector of Cartesian coordinates like the \code{xyz} component of objects of class \sQuote{pdb}.}
   \item{cna}{an object of class \sQuote{cna}.}
-  \item{safety}{a numeric value used to compute the connectivity between Calpha (see \code{connectivity}).}
+  \item{safety}{a numeric value used to compute the connectivity when need (see \code{connectivity}).}
   \item{ele.symb}{a character vector containing atomic symbols (If \code{length(ele.symb)!=length(xyz)/3} \code{ele.symb} is recycled).}
   \item{con}{a two-column data.frame containing by row the \code{eleno} of bonded atoms (or xyz indices as returned by \code{xyz2atom} for the default method) defining the connectivity of the system.}
   \item{cell}{a length 6 numeric vector containing the a, b, c, alpha, beta and gamma lattice parameters.}
@@ -82,7 +81,7 @@ and type indicators of the objects added to the scene.
 pdb <- read.pdb("1bg2")
 visualize(pdb, type = "p" , windowRect=c(0  ,0  ,400,400))
 visualize(pdb, type = "l" , windowRect=c(400,0  ,800,400))
-visualize(pdb, type = "s" , windowRect=c(0  ,400,400,800))
+visualize(pdb, type = "s" , windowRect=c(0  ,400,400,800), radii = "rvdw")
 visualize(pdb, type = "ls", windowRect=c(400,400,800,800))
 }
 \keyword{ dynamic }

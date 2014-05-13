@@ -8,7 +8,7 @@
 \usage{
 centres(...)
 
-\method{centres}{default}(x, w = NULL, factor = NULL, unsplit = FALSE, \dots)
+\method{centres}{xyz}(x, w = NULL, factor = NULL, unsplit = FALSE, \dots)
 
 \method{centres}{pdb}(x, w = atom2mass(x), factor = as.factor(x$atom[,"resno"]), unsplit = FALSE, \dots)
 
@@ -23,7 +23,6 @@ centres(...)
 \details{
 \code{centres} is a generic function to compute centres-of-geometry and centres-of-mass from an object containing atomic coordinates.
 
-The default method can be used for the 'xyz' component of objects of class \sQuote{pdb}.
 The coordinates of \code{x} are first splitted into groups defined by \code{factor} using the \code{\link{split}} function.
 For each group, the weighted mean of the \code{x}, \code{y} and \code{z} coordinates are calculated using \code{w}.
 Finally, if \code{unplit = TRUE} the coordinates of the centres are unsplitted using the \code{\link{unsplit}} function
@@ -34,11 +33,10 @@ Thus, the centre-of-mass of the different resdiues is computed.
 Notice that coordinates can be neglected for the calculation of the centres using NA values in \code{factor}.
 }
 \value{
-Return a 'xyz' vector containing the coordinates of the centres.
+Return a single row 'xyz' matrix containing the coordinates of the centres.
 }
 
-\author{
-Julien Idé}
+\author{Julien Idé}
 
 \seealso{
 \code{\link{split}}, \code{\link{unsplit}}, \code{\link{factor}}

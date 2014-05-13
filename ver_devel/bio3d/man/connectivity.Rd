@@ -8,22 +8,28 @@
 \usage{
 connectivity(...)
 
-\method{connectivity}{default}(x, ele.symb, safety = 1.2, by.block = FALSE, \dots)
+\method{connectivity}{default}(eleno.1, eleno.2, ...)
+
+\method{connectivity}{connectivity}(x, ...)
+
+\method{connectivity}{xyz}(x, ele.symb, safety = 1.2, by.block = FALSE, \dots)
 
 \method{connectivity}{pdb}(x, safety = 1.2, by.block = FALSE, \dots)
 }
 \arguments{
-  \item{x}{an R object containing atomic coordinates.}
+  \item{x}{an R object used to create a connectivity object.}
   \item{ele.symb}{a character vector containing atomic symbols used to find covalent radii.}
   \item{safety}{a numeric value used to extend the atomic radii.}
   \item{by.block}{a logical value indicating whether the connectivity has to be determine by block (see details).}
   \item{\dots}{arguments passed to methods.}
 }
 \details{
-A distance matrix is computed, then, for each pair of atom the distance is compared to a bounding distance computed from atomic radii. If this distance is lower than the bounding distance then the atoms are assumed to be connected. If \code{by.block == TRUE}, a grid is defined to determined the connectivity by block. The method is slow but allow to deal with very large systems avoiding memory issues. 
+The default method is a builder function which create an object of class \sQuote{connectivity} from its components (\code{eleno.1} and \code{eleno.2}). The method for object of class \sQuote{connectivity} is a validity function. It returns the same object as its argument if it is valid. Otherwise an error is returned.
+
+For \sQuote{xyz} and \sQuote{pdb} objects, a distance matrix is computed, then, for each pair of atom the distance is compared to a bounding distance computed from atomic radii. If this distance is lower than the bounding distance then the atoms are assumed to be connected. If \code{by.block == TRUE}, a grid is defined to determined the connectivity by block. The method is slow but allow to deal with very large systems avoiding memory issues. 
 }
 \value{
-A two-columns data.frame containing the indexes of bonded atoms. The column names are: \code{eleno.1} and \code{eleno.2}.
+A two-columns \sQuote{connectivity} data.frame containing the indexes of bonded atoms. The column names are: \code{eleno.1} and \code{eleno.2}.
 }
 
 \author{Julien Idé}
