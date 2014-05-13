@@ -26,6 +26,6 @@ pdbs.filter <- function(pdbs, row.inds=NULL, col.inds=NULL) {
   new$resid =pdbs$resid[row.inds, col.inds]
   new$call  =cl
   
-  class(new) <- "3dalign"
+  class(new) <- c("3dalign", "fasta")
   return(new)
 }
