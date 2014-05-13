@@ -1,4 +1,4 @@
-`plot.blast` <-
+`plot.blast3` <-
 function(x, cutoff=NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5, ...) {
 
   ## b <- blast.pdb( pdbseq( read.pdb("4q21") ) )
