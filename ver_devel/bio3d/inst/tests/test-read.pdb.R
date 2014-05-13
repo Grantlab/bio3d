@@ -61,8 +61,8 @@ test_that("trim.pdb() works properly", {
    expect_is(pdb1, "pdb")
    expect_equal(nrow(pdb1$atom), 228)
    expect_equal(sum(pdb1$calpha), 224)
-   expect_equivalent(pdb1$helix$start, sort(pdb$helix$start))
-   expect_equivalent(pdb1$sheet$end, sort(pdb$sheet$end))
+   expect_equivalent(pdb1$helix$start, pdb$helix$start)
+   expect_equivalent(sort(pdb1$sheet$end), sort(pdb$sheet$end))
 
    pdb2 <- trim.pdb(pdb, inds = atom.select(pdb, "protein", chain="U", verbose=FALSE))
    expect_equal(nrow(pdb2$atom), 593)
@@ -72,4 +72,5 @@ test_that("trim.pdb() works properly", {
    expect_equivalent(pdb2$sheet, list(start=c(2,12,41,48,66), end=c(7,16,45,49,71), 
        chain=rep("U",5), sense=c("-1","0","-1","-1","1")))
 })
+
 
