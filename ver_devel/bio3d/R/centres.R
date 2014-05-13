@@ -1,10 +1,11 @@
 centres <- function(...)
   UseMethod("centres")
 
-centres.default <- function(x, w = NULL, factor = NULL, unsplit = FALSE, ...){
-  if(is.matrix(x))
-    if(nrow(x)!=1)
-      stop("'x' must be a single row 'xyz' matrix")
+centres.xyz <- function(x, w = NULL, factor = NULL, unsplit = FALSE, ...){
+  if(!inherits(x, "xyz"))
+    stop("'x' must be an object of class 'xyz'")
+  if(nrow(x) != 1)
+    stop("'x' must be a single row 'xyz' matrix")
   x <- matrix(x, ncol=3, byrow=TRUE)
   if(is.null(w)) w <- rep(1, nrow(x))
   if(is.null(factor)) factor <- as.factor(rep(1, nrow(x)))
@@ -36,6 +37,7 @@ centres.default <- function(x, w = NULL, factor = NULL, unsplit = FALSE, ...){
   x3.mean <- unlist(x3.mean)
 
   x <- c(rbind(x1.mean, x2.mean, x3.mean))
+  attr(x, "class") <- c("numeric", "xyz")
   
   return(x)
 }
@@ -47,6 +49,6 @@ centres.pdb <- function(x, w = atom2mass(x), factor = as.factor(x$atom[,"resno"]
     stop("length(w) must be equal to the number of atom inside 'x'")
   if(nrow(x$atom) != length(factor))
     stop("length(factor) must be equal to the number of atom inside 'x'")
-  x <- centres.default(x$xyz, w, factor, unsplit)
+  x <- centres.xyz(x$xyz, w, factor, unsplit)
   return(x)
 }

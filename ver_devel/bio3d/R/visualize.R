@@ -3,12 +3,15 @@
 visualize <- function(...)
   UseMethod("visualize")
 
-visualize.default <- function(
-  xyz, ele.symb = NULL, con = NULL, cell = NULL, type = "l",
+visualize.xyz <- function(
+  xyz, ele.symb = NULL, con = NULL, cell = NULL, type = "l", safety = 1.2,
   xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, 
   lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
-  cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
+  cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "black",
   add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...){
+
+  if(!inherits(xyz, "xyz"))
+    stop("'xyz' must be an object of class 'xyz'")
   
   if(length(xyz)==0)
     stop("No coordinates to plot. (length(xyz)==0)")
@@ -67,7 +70,7 @@ visualize.default <- function(
   if("l" %in% type) {
     if(is.null(con)) {
       warning("Unspecifyed connectivity: Computing connectivity from coordinates...")
-      con <- connectivity(x = xyz, ele.symb = ele.symb, by.block = TRUE)
+      con <- connectivity.xyz(x = xyz, ele.symb = ele.symb, safety = safety, by.block = TRUE)
     }
     if(!is.null(con)){
       ind <- t(con)
@@ -112,49 +115,49 @@ visualize.default <- function(
 }
 
 visualize.pdb <- function(
-  pdb, elety.custom = NULL, con = NULL, cell = NULL, type = "l",
+  pdb, elety.custom = NULL, con = NULL, cell = NULL, type = "l", safety = 1.2,
   xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, 
   lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
-  cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
+  cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "black",
   add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...){
 
   if(!is.pdb(pdb)) stop("'pdb' must be an object of class pdb. See read.pdb")
 
   ele.symb <- atom2ele(pdb$atom[,"elety"], elety.custom)
 
-  visualize.default(
-    pdb$xyz, ele.symb = ele.symb, con, cell, type,
+  visualize.xyz(
+    pdb$xyz, ele.symb = ele.symb, con, cell, type, safety,
     xyz.axes, abc.axes, pbc.box, lwd, lwd.xyz, lwd.abc, lwd.pbc.box,
     cex.xyz, cex.abc, col, radii, bg.col, add, windowRect,
     userMatrix, FOV, ...)
 }
 
-visualize.cna <- function(cna, pdb, safety = 2.7, ...){
-  if(!"cna" %in% class(cna))
-    stop("'cna' must an object of class 'cna'")
-  if(missing(pdb))
-    stop("Please specify a 'pdb' object")
-  if(!is.pdb(pdb))
-    stop("'pdb' must an object of class 'pdb'")
-  
-  ca.pdb <- trim.pdb(pdb, atom.select(pdb, "calpha", verbose = FALSE))
-  ca.con <- connectivity(ca.pdb,safety=safety)
-  net.vertex.color <- V(cna$network)$color
-  visualize(ca.pdb, con = ca.con, col = net.vertex.color)
-
-  com.net.vertex.color <- V(cna$community.network)$color
-  radii <- V(net$community.network)$size
-  radii <- 5*radii/max(radii)
-  com.net.weight <- E(net$community.network)$weight
-  membership.centres <- centres(ca.pdb, factor = cna$communities$membership)
-  membership.centres <- matrix(membership.centres, ncol=3, byrow=TRUE)
-  spheres3d(membership.centres, col = com.net.vertex.color, radius = radii, alpha = 0.5)
-  
-  com.net.con <- apply(get.edgelist(net$community.network), 2, as.integer)
-  cyls <- apply(com.net.con, 1,
-    function(ids){
-      cyl <- cylinder3d(membership.centres[ids,], radius=com.net.weight, sides=20)
-      return(cyl)
-    })
-  cyls.ids <- lapply(cyls, shade3d, col = "white")
-}
+# visualize.cna <- function(cna, pdb, safety = 2.7, ...){
+#   if(!"cna" %in% class(cna))
+#     stop("'cna' must an object of class 'cna'")
+#   if(missing(pdb))
+#     stop("Please specify a 'pdb' object")
+#   if(!is.pdb(pdb))
+#     stop("'pdb' must an object of class 'pdb'")
+#   
+#   ca.pdb <- trim.pdb(pdb, atom.select(pdb, "calpha", verbose = FALSE))
+#   ca.con <- connectivity(ca.pdb,safety=safety)
+#   net.vertex.color <- V(cna$network)$color
+#   visualize(ca.pdb, con = ca.con, col = net.vertex.color)
+# 
+#   com.net.vertex.color <- V(cna$community.network)$color
+#   radii <- V(net$community.network)$size
+#   radii <- 5*radii/max(radii)
+#   com.net.weight <- E(net$community.network)$weight
+#   membership.centres <- centres(ca.pdb, factor = cna$communities$membership)
+#   membership.centres <- matrix(membership.centres, ncol=3, byrow=TRUE)
+#   spheres3d(membership.centres, col = com.net.vertex.color, radius = radii, alpha = 0.5)
+#   
+#   com.net.con <- apply(get.edgelist(net$community.network), 2, as.integer)
+#   cyls <- apply(com.net.con, 1,
+#     function(ids){
+#       cyl <- cylinder3d(membership.centres[ids,], radius=com.net.weight, sides=20)
+#       return(cyl)
+#     })
+#   cyls.ids <- lapply(cyls, shade3d, col = "white")
+# }

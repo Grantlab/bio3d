@@ -1,4 +1,4 @@
-addXYZ <- function(lwd = 2, labels= TRUE, cex = 2){
+addXYZ <- function(lwd = 2, labels= TRUE, cex = 2, col = "white"){
   
   oops <- require(rgl)
   if(!oops)
@@ -10,7 +10,7 @@ addXYZ <- function(lwd = 2, labels= TRUE, cex = 2){
       c(0,0,0), c(0,5,0),
       c(0,0,0), c(0,0,5)
     ),
-    lwd = lwd
+    lwd = lwd, col = col
   )
   seg.id <-data.frame(id = seg.id, type = "xyz.seg")
 
@@ -23,7 +23,7 @@ addXYZ <- function(lwd = 2, labels= TRUE, cex = 2){
         c(0,0,0) + c(0.0    ,0.0    ,5.0+1.0)
       ),
       texts=c("x","y","z"),
-      cex = cex
+      cex = cex, col = col
     )
     lab.id <- data.frame(id = lab.id, type = "xyz.lab")
   }

@@ -1,9 +1,27 @@
 connectivity <- function(...)
   UseMethod("connectivity")
 
-connectivity.default <- function(x, ele.symb, safety = 1.2, by.block = FALSE, ...){
+connectivity.default <- function(eleno.1, eleno.2, ...){
+  if(missing(eleno.1) | missing(eleno.2))
+    stop("Please specify 'eleno.1' and 'eleno.2'")
+  if(length(eleno.1) != length(eleno.2))
+    stop("'eleno.1' and 'eleno.2' must have the same length")
+  con <- data.frame(eleno.1 = eleno.1, eleno.2 = eleno.2, ...)
+  con <- con[order(eleno.1, eleno.2),]
+  attr(con, "class") <- c("connectivity", "data.frame")
+  return(con)
+}
+
+connectivity.connectivity <- function(x, ...)
+  connectivity.default(x$eleno.1, x$eleno.2, ...)
+
+connectivity.xyz <- function(x, ele.symb, safety = 1.2, by.block = FALSE, ...){
   if(missing(ele.symb))
     stop("Please specify 'ele.symb'")
+  if(!inherits(x, "xyz"))
+    stop("'x' must be an object of class 'xyz'")
+  if(nrow(x) != 1)
+    stop("'x' must be a single row 'xyz' matrix")
   if(length(ele.symb) != length(x)/3)
     stop("'x' and 'ele.symb' must have matching lengths")
   if(any(is.na(match(ele.symb, elements$symb))))
@@ -12,7 +30,7 @@ connectivity.default <- function(x, ele.symb, safety = 1.2, by.block = FALSE, ..
   
   radii <- elements[match(ele.symb, elements$sym), "rcov"]*safety
   x <- as.data.frame(matrix(x, ncol=3, byrow=TRUE,
-                              dimnames = list(NULL, c("x1","x2","x3"))))
+                            dimnames = list(NULL, c("x1","x2","x3"))))
   data <- cbind(x, radii)
 
   findCon <- function(data, order = TRUE) {
@@ -79,5 +97,5 @@ connectivity.default <- function(x, ele.symb, safety = 1.2, by.block = FALSE, ..
 }
 
 connectivity.pdb <- function(x, safety = 1.2, by.block = FALSE, ...)
-  connectivity.default(x = x$xyz, ele.symb = x$atom[,"elety"],
+  connectivity.xyz(x = x$xyz, ele.symb = x$atom[,"elety"],
                        safety = safety, by.block = by.block)

@@ -1,4 +1,4 @@
-addPBCBox <- function(x, lwd = 2){
+addPBCBox <- function(x, lwd = 2, col = "white"){
 
   oops <- require(rgl)
   if(!oops)
@@ -20,7 +20,7 @@ addPBCBox <- function(x, lwd = 2){
       cell[,2]+cell[,3]         , cell[,2],
       cell[,2]+cell[,3]         , cell[,3]
     ),
-    col = "black",
+    col = col,
     lwd = lwd
   )
   seg.id <- data.frame(id = seg.id, type = "pbc.box")
