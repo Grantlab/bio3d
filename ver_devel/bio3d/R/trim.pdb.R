@@ -13,23 +13,25 @@
 
   ## Trim main components
   atom <- pdb$atom[inds$atom,]
-  calpha = (atom[,"elety"]=="CA") & (atom[,"resid"]!="CA") & (atom[,"type"]=="ATOM")
+  ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
+  calpha <- inds$atom %in% ca.inds$atom
+#  calpha = (atom[,"elety"]=="CA") & (atom[,"resid"]!="CA") & (atom[,"type"]=="ATOM")
   
   
   if(is.null(nrow(pdb$xyz))) {
-    xyz <-  pdb$xyz[inds$xyz]
+    xyz <-  pdb$xyz[inds$xyz, drop=FALSE]
   } else {
-    xyz <-  pdb$xyz[,inds$xyz]
+    xyz <-  pdb$xyz[,inds$xyz, drop=FALSE]
   }
   
   helix <- NULL; sheet <- NULL;
   
   if(sse) {
     ##-- Build reference SSE sequence matrix 'ss'
-    ref <- paste(pdb$atom[pdb$calpha, "resno"], 
-                 pdb$atom[pdb$calpha, "chain"], sep="_")
+    ref <- paste(pdb$atom[ca.inds$atom, "resno"], 
+                 pdb$atom[ca.inds$atom, "chain"], sep="_")
     ss <- matrix(NA, ncol=length(ref), nrow=4) ## sse reference matrix
-    ss[4,] <- pdb$atom[pdb$calpha, "resno"]    ## resno
+    ss[4,] <- pdb$atom[ca.inds$atom, "resno"]    ## resno
     colnames(ss) <- ref
 
     ##- Trimed positions
@@ -93,6 +95,7 @@
     } 
   }
 
+  calpha = (atom[,"elety"]=="CA") & (atom[,"resid"]!="CA") & (atom[,"type"]=="ATOM")
   output<-list(atom=atom,
                helix=helix, 
                sheet=sheet, 
