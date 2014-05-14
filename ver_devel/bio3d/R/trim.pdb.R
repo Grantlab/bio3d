@@ -19,9 +19,9 @@
   
   
   if(is.null(nrow(pdb$xyz))) {
-    xyz <-  pdb$xyz[inds$xyz]
+    xyz <-  pdb$xyz[inds$xyz, drop=FALSE]
   } else {
-    xyz <-  pdb$xyz[,inds$xyz]
+    xyz <-  pdb$xyz[,inds$xyz, drop=FALSE]
   }
   
   helix <- NULL; sheet <- NULL;
