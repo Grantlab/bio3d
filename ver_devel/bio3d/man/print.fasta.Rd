@@ -5,14 +5,17 @@
     Print method for fasta and 3dalign sequence alignment objects.
 }
 \usage{
-\method{print}{fasta}(x, width = NULL, col.inds = NULL, numbers = TRUE, ...)
+\method{print}{fasta}(x, alignment=TRUE,
+                      width = NULL, col.inds = NULL, numbers = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ a sequence alignment object as obtained from the functions  
   \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}}, \code{\link{pdbaln}}, \code{\link{seqaln}}, etc.
 }
-  \item{width}{ a single numeric value giving the number of residues per 
+\item{alignment}{ logical, if TRUE the sequence alignment will be
+  printed to screen. }
+\item{width}{ a single numeric value giving the number of residues per 
   printed sequence block. By default this is determined from considering 
   alignment identifier widths given a standard 85 column terminal window.
 }
