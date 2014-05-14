@@ -1,5 +1,4 @@
-print.fasta <- function(x, alignment=TRUE, ##limit.out=TRUE,
-                        width=NULL, col.inds=NULL, numbers=TRUE, ...) {
+print.fasta <- function(x, alignment=TRUE, ...) {
   
   if ( (inherits(x, "fasta") | inherits(x, "3dalign")) ){ 
     id <- x$id
@@ -24,27 +23,32 @@ print.fasta <- function(x, alignment=TRUE, ##limit.out=TRUE,
   dims.nongap <- dim(ali[, gaps$f.inds, drop=FALSE])
   dims.gap <- dim(ali[, gaps$t.inds, drop=FALSE])
 
-  cat("\nCall:\n  ", call,
-      "\n\n", sep = "")
+  if(alignment)
+    .print.fasta.ali(ali, id=id, ...)
+                     #width=width, 
+                     #col.inds=col.inds, numbers=numbers)
+  else
+    cat("\n")
+
+  if(!is.na(call)) {
+    cat("Call:\n  ", call,
+        "\n\n", sep = "")
+    
+    cat("Class:\n  ", paste(cn, collapse=", "),
+        "\n\n", sep = "")
+  }
   
-  cat("Class:\n  ", paste(cn, collapse=", "),
-      "\n\n", sep = "")
+  ##cat("Number of ", row.desc, ":\n  ", nstruct,
+  ##    "\n\n", sep="")
   
-  cat("Number of ", row.desc, ":\n  ", nstruct,
-      "\n\n", sep="")
-  
-  cat("Dimension of alignment:\n  ", dims[1L], "x", dims[2L],
-      "  (", dims.nongap[2L], " non-gap, ", dims.gap[2L], " gap columns) ", 
+  cat("Alignment dimensions:\n  ",
+      dims[1L], " sequence rows; ",
+      dims[2L], " position columns",
+      " (", dims.nongap[2L], " non-gap, ", dims.gap[2L], " gap) ", 
       "\n", sep="")
   
   cat("\n")
 
-  if(alignment)
-    .print.fasta.ali(ali, id=id, ##limit.out=limit.out,
-                     width=width, 
-                     col.inds=col.inds, numbers=numbers)
-  
-  cat("\n")
  
   ## Attribute summary
   j <- paste(attributes(x)$names, collapse = ", ")
@@ -52,9 +56,9 @@ print.fasta <- function(x, alignment=TRUE, ##limit.out=TRUE,
 
 }
 
-.print.fasta.ali <- function(ali, id, ##limit.out=NULL,
+.print.fasta.ali <- function(x, ##limit.out=NULL,
                              width=NULL, col.inds=NULL,
-                             numbers=TRUE) {
+                             numbers=TRUE, ...) {
   ##-- Print sequence alignment in a nice formated way
   ##    source("print.aln.R")
   ##    x<-read.fasta("poo.fa")
@@ -69,12 +73,12 @@ print.fasta <- function(x, alignment=TRUE, ##limit.out=TRUE,
   ##   Does not work if alignment contains only one position (one seq?)
   ##     y=x; y$ali=x$ali[,1]
 
-  if ( (inherits(ali, "fasta") | inherits(ali, "3dalign")) ){ 
-    id <- ali$id
-    ali <- as.matrix(ali$ali)
+  if ( (inherits(x, "fasta") | inherits(x, "3dalign")) ){ 
+    id <- x$id
+    ali <- as.matrix(x$ali)
   } else {
-    ali <- as.matrix(ali)
-    id <- rownames(ali)
+    ali <- as.matrix(x)
+    id <- rownames(x)
   }
   
   ##- Trim to 'col.inds' if provided 
