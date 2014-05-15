@@ -131,8 +131,12 @@ visualize.pdb <- function(
 
   if(!is.pdb(pdb)) stop("'pdb' must be an object of class pdb. See read.pdb")
 
-  pdb <- trim.pdb(pdb, atom.sel)  
-  ele.symb <- atom2ele(pdb$atom[,"elety"], elety.custom)
+  pdb <- trim.pdb(pdb, atom.sel)
+  if(!all(pdb$atom$elesym %in% elements$symb))
+    ele.symb <- atom2ele(pdb$atom$elety, elety.custom)
+  else
+    ele.symb <- pdb$atom$elesy
+
   con <- connectivity.pdb(pdb)
   
   visualize.xyz(
