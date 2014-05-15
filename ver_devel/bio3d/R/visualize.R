@@ -122,7 +122,7 @@ visualize.xyz <- function(
 }
 
 visualize.pdb <- function(
-  pdb, elety.custom = NULL, atom.sel = atom.select(pdb, "notwater"),
+  pdb, elety.custom = NULL, atom.sel = atom.select(pdb, "notwater", verbose = FALSE),
   cell = NULL, type = "l", safety = 1.2,
   xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
   lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
