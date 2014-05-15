@@ -1,5 +1,5 @@
 "pdbs2pdb" <- function(pdbs, inds=NULL, rm.gaps=FALSE) {
-  if(class(pdbs)!="3dalign") {
+  if(!inherits(pdbs, "3dalign")) {
     stop("Input 'pdbs' should be of class '3dalign', e.g. from pdbaln() or read.fasta.pdb()")
   }
   

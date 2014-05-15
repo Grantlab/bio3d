@@ -16,5 +16,6 @@
     sse[i,  which(gaps.res$bin[i,]==0)] = tmp.sse$sse
   }
 
+  sse[is.na(sse)]="-"
   return(sse)
 }

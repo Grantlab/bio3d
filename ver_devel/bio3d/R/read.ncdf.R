@@ -104,11 +104,11 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
         }
      }
      tlen = ee - ss + 1
+     conv <- att.get.ncdf( nc, varid=0, "Conventions")$value
      if(verbose) {
        print(paste("Reading file", nc$filename))
        print(paste("Produced by program:",
          att.get.ncdf( nc, varid=0, "program")$value))
-       conv <- att.get.ncdf( nc, varid=0, "Conventions")$value
        print(paste("File conventions",conv, "version",
          att.get.ncdf( nc, varid=0, "ConventionVersion")$value))
        print(paste("Frames:",nc$dim$frame$len))
