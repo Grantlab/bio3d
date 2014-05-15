@@ -2,7 +2,7 @@
 ######## and identifies potentially key residues based on 
 ######## sub-optimal paths analysis of dynamical networks
 
-subopt.path <- function(path, state = 1:length(path), pdb = NULL, rm.gaps = TRUE, cutoff.npath = 50) {
+subopt.path <- function(path, state = 1:length(path), pdb = NULL, rm.gaps = TRUE, cutoff.npath = 50, normalize = TRUE) {
    require(bio3d)
    require(ggplot2)
 
@@ -74,6 +74,7 @@ subopt.path <- function(path, state = 1:length(path), pdb = NULL, rm.gaps = TRUE
    }
    names(o) <- state 
    out$degeneracy <- do.call(rbind, o)
+   if(normalize) out$degeneracy <- out$degeneracy / max(out$degeneracy) 
    write.csv(out$degeneracy, file = "degeneracy.csv")
    return(out)
 }
