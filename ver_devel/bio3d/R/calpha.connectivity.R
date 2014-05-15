@@ -20,10 +20,10 @@ calpha.connectivity.xyz <- function(x, d.cut = 4, ...){
   return( con )
 }
 
-calpha.connectivity.pdb <- function(x, d.cut = 4, ...){
+calpha.connectivity.pdb <- function(x, atom.sel = atom.select(x, "protein"), d.cut = 4, ...){
   if(!is.pdb(x))
     stop("'x' must be an object of class 'pdb'")
-  
+  x <- trim.pdb(x, atom.sel)
   x <- trim.pdb(x, atom.select(x, "calpha", verbose=FALSE))
   calpha.connectivity.xyz(x$xyz, d.cut = d.cut, ...)
 }

@@ -14,14 +14,14 @@ connectivity(...)
 
 \method{connectivity}{xyz}(x, ele.symb, safety = 1.2, by.block = FALSE, \dots)
 
-\method{connectivity}{pdb}(x, atom.only = TRUE, d.cut = 4, safety = 1.2, by.block = TRUE, \dots)
+\method{connectivity}{pdb}(x, atom.sel = atom.select(x, "protein"), d.cut = 4, safety = 1.2, by.block = TRUE, \dots)
 }
 \arguments{
   \item{x}{an R object used to create a connectivity object.}
   \item{ele.symb}{a character vector containing atomic symbols used to find covalent radii.}
   \item{safety}{a numeric value used to extend the atomic radii.}
   \item{by.block}{a logical value indicating whether the connectivity has to be determine by block (see details).}
-  \item{atom.only}{a logical value. If TRUE, HETAM are removed before computing the connectivity}
+  \item{atom.sel}{an object of class \sQuote{select} indicating the atoms for which to compute the connectivity}
   \item{d.cut}{a numeric value. Use to compute Calpha connectivity (see \code{\link{calpha.connectivity}})}
   \item{\dots}{arguments passed to methods.}
 }
