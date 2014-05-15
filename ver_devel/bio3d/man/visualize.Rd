@@ -11,15 +11,15 @@ visualize(...)
 
 \method{visualize}{xyz}(
 xyz, ele.symb = NULL, con = NULL, cell = NULL, type = "l", safety = 1.2,
-xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, 
+xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
 lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
 cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
 add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
 
 \method{visualize}{pdb}(
-pdb, elety.custom = NULL, atom.sel = atom.select(pdb, "protein"), con = NULL,
+pdb, elety.custom = NULL, atom.sel = atom.select(pdb, "notwater"),
 cell = NULL, type = "l", safety = 1.2,
-xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, 
+xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
 lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
 cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
 add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
@@ -39,6 +39,7 @@ add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
   \item{xyz.axes}{a logical value indicating whether the x, y and z axes have to be added to the scene.}
   \item{abc.axes}{a logical value indicating whether the lattice vectors have to be added to the scene.}
   \item{pbc.box}{a logical value indicating whether the pbc box has to be added to the scene.}
+  \item{centre}{a logical value indicating if the structure as to be translated to its barrycentre.}
   \item{lwd}{a numeric value indication the line width used to plot the axes, the pbc box and atomic bonds when \code{type = "l"}.}
   \item{lwd.xyz}{a numeric value indicating the line width used to plot the x, y and z axes.}
   \item{lwd.abc}{a numeric value indicating the line width used to plot the lattice vectors.}

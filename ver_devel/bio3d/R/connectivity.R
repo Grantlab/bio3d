@@ -94,7 +94,7 @@ connectivity.xyz <- function(x, ele.symb, safety = 1.2, by.block = FALSE, ...){
   return(con)
 }
 
-connectivity.pdb <- function(x, atom.sel = atom.select(x, "protein"), d.cut = 4, safety = 1.2, by.block = TRUE, ...) {
+connectivity.pdb <- function(x, atom.sel = atom.select(x, "notwater"), d.cut = 4, safety = 1.2, by.block = TRUE, ...) {
   if(!is.pdb(x))
     stop("'x' must be an object of class 'pdb'")
   x <- trim.pdb(x, atom.sel)
