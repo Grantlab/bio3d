@@ -165,6 +165,7 @@ pdb.annotate <- function(ids, anno.terms=NULL, unique=FALSE) {
     out <- as.data.frame(out.tbl, stringsAsFactors=FALSE)
 
     if(!unique) {
+      ids <- toupper(ids)
       ## indices to match with input ids
       inds <- NULL
       for(i in 1:length(ids))

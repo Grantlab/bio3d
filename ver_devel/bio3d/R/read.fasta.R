@@ -1,9 +1,11 @@
 "read.fasta" <-
 function(file, rm.dup=TRUE, to.upper=FALSE, to.dash=TRUE) {
-
+  ## Log the call
+  cl <- match.call()
+  
   ## Version   0.3 ... Thu Apr 26 19:17:09 PDT 2007
   ##                    uses scan instead of read.table
-    
+  
   raw.fa <- scan(file, what=character(0), sep="\n", quiet = TRUE)
   ind <- grep(">", raw.fa) ## seq id lines
   if(length(ind) == 0) {
@@ -42,7 +44,7 @@ function(file, rm.dup=TRUE, to.upper=FALSE, to.dash=TRUE) {
     }
   }
   
-  output <- list(id=rownames(store.fa), ali=store.fa)
+  output <- list(id=rownames(store.fa), ali=store.fa, call=cl)
   class(output) <- "fasta"
   return(output)
 }
