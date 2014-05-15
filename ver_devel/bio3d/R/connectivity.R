@@ -91,11 +91,17 @@ connectivity.xyz <- function(x, ele.symb, safety = 1.2, by.block = FALSE, ...){
     
     rownames(con) <- NULL
   }
-#   if(is.null(con))
-#     warning("No bonded atoms have been found")
   return(con)
 }
 
-connectivity.pdb <- function(x, safety = 1.2, by.block = FALSE, ...)
-  connectivity.xyz(x = x$xyz, ele.symb = x$atom[,"elety"],
-                       safety = safety, by.block = by.block)
+connectivity.pdb <- function(x, atom.sel = atom.select(x, "protein"), d.cut = 4, safety = 1.2, by.block = TRUE, ...) {
+  if(!is.pdb(x))
+    stop("'x' must be an object of class 'pdb'")
+  x <- trim.pdb(x, atom.sel)
+  are.calpha <- (x$atom$elety == "CA") & (x$atom$resid != "CA")
+  if(all(are.calpha))
+    calpha.connectivity.xyz(x$xyz, d.cut, ...)
+  else
+    connectivity.xyz(x = x$xyz, ele.symb = x$atom[,"elety"],
+                     safety = safety, by.block = by.block)
+}

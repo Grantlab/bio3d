@@ -17,7 +17,8 @@ cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
 add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
 
 \method{visualize}{pdb}(
-pdb, elety.custom = NULL, con = NULL, cell = NULL, type = "l", safety = 1.2,
+pdb, elety.custom = NULL, atom.sel = atom.select(pdb, "protein"), con = NULL,
+cell = NULL, type = "l", safety = 1.2,
 xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, 
 lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
 cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
@@ -27,6 +28,7 @@ add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
 \arguments{
   \item{pdb}{an object of class \sQuote{pdb} containing the molecular structure to visualize.}
   \item{elety.custom}{a customized data.frame used to convert atom names/types into atomic symbols (see \code{\link{atom2ele}} and \code{\link{atom.index}}).}
+  \item{atom.sel}{an object of class \sQuote{select} indicating the atoms to visualize}
   \item{xyz}{a numeric vector of Cartesian coordinates like the \code{xyz} component of objects of class \sQuote{pdb}.}
   \item{cna}{an object of class \sQuote{cna}.}
   \item{safety}{a numeric value used to compute the connectivity when need (see \code{connectivity}).}

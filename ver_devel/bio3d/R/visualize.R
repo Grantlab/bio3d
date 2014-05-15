@@ -115,7 +115,8 @@ visualize.xyz <- function(
 }
 
 visualize.pdb <- function(
-  pdb, elety.custom = NULL, con = NULL, cell = NULL, type = "l", safety = 1.2,
+  pdb, elety.custom = NULL, atom.sel = atom.select(pdb, "protein"), con = NULL,
+  cell = NULL, type = "l", safety = 1.2,
   xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, 
   lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
   cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "black",
@@ -123,6 +124,7 @@ visualize.pdb <- function(
 
   if(!is.pdb(pdb)) stop("'pdb' must be an object of class pdb. See read.pdb")
 
+  pdb <- trim.pdb(pdb, atom.sel)  
   ele.symb <- atom2ele(pdb$atom[,"elety"], elety.custom)
 
   visualize.xyz(

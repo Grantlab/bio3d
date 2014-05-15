@@ -1,31 +1,34 @@
 "atom.select" <-
 function(pdb, string=NULL,
          chain=NULL, resno=NULL, resid=NULL,
-         eleno=NULL, elety=NULL,
+         eleno=NULL, elety=NULL, type=NULL,
          verbose=TRUE, rm.insert=FALSE) {
 
   ## Version 0.0 ... Fri Mar 17 14:45:37 PST 2006
   ##
   ##  Description:
   ##   Atom selection function
-  ##    Losely based on PyMol selection Macro:
-  ##   see: http://www.pymolwiki.org/index.php/Selection_Macros
-  ##
-  ##   String Selection Syntax:
+  ##    String Selection Syntax:
   ##    "//A/130:142///N,CA,C,O/"
   ##    "/segid/chain/resno/resid/eleno/elety/"
   ##
   ##  E.g.
   ##   # read a PDB file
-  ##   pdb<-read.pdb("1bg2.pdb")
+  ##   pdb<-read.pdb("1bg2")
   ##   # print a structure summary
   ##   atom.select(pdb)
-  ##   # select all C-alpha atoms from resno 65 to 143
-  ##   ca.inds   <- atom.select(pdb, "///65:143///CA/")
-  ##   # or all C-alphas
-  ##   ca.inds   <- atom.select(pdb, "calpha")
+  ##   # select all C-alpha atoms from resno 65 to 70
+  ##   ca.inds   <- atom.select(pdb, "///65:70///CA/")
+  ##
+  ##   # or use C-alpha string shortcut
+  ##   ca.inds <- atom.select(pdb, "calpha")
+  ##   ca.inds <- atom.select(pdb, "calpha", resno=65:70)
+  ##
   ##   # more examples
   ##   inds<-atom.select(pdb, "//A/130:142///N,CA,C,O/")
+  ##
+  ##   # or using string shortcut
+  ##   inds <- atom.select(pdb, "back", resno=65:70)
 
 
   cl <- match.call()
@@ -52,7 +55,7 @@ function(pdb, string=NULL,
   }
   
   ##-- Parse string and return the selection
-  parse.string <- function(pdb, string, verbose, rm.insert) {
+  parse.string <- function(pdb, string, verbose, rm.insert, type="") {
 
      ##-- We have input selection string
      aa <- unique(pdb$atom[,"resid"])
@@ -91,7 +94,6 @@ function(pdb, string=NULL,
 
      ##-- Check for string 'shortcuts'
      i <- switch(string,
-                 ##calpha = "//////CA/",
                  calpha = paste("////",paste(prot.aa, collapse=","), "//CA/",sep=""),
                  cbeta = "//////N,CA,C,O,CB/",
                  backbone = "//////N,CA,C,O/",
@@ -134,8 +136,9 @@ function(pdb, string=NULL,
        if(length(sel) != 6) {
          print("missing elements, should be:\n/segid/chain/resno/resid/eleno/elety/")
        }
-   
-       names(sel) <- c("segid","chain","resno","resid","eleno","elety")
+       ## Add type ATOM/HETATM
+       sel <- c(sel, paste(type,collapse=","))
+       names(sel) <- c("segid","chain","resno","resid","eleno","elety","type")
        ##print(sel)
    
        blank <- rep(TRUE, nrow(pdb$atom) )
@@ -188,16 +191,21 @@ function(pdb, string=NULL,
                              sel.txt2type( sel["elety"] )) )
        } else {  sel.inds <- cbind(sel.inds, elety=blank)  }
    
-       match.inds <- ( (apply(sel.inds, 1, sum, na.rm=TRUE)==6) )
-       ## In future, could take the inverse here for NOT selection
+       ##- TYPE ATOM/HETATM
+       if(type != "") {
+         sel.inds <- cbind(sel.inds,
+                           elety=is.element(pdb$atom[,"type"],
+                             type ) )
+       } else {  sel.inds <- cbind(sel.inds, elety=blank)  }
+
+       ##- Take intersection of all seven components
+       match.inds <- ( (apply(sel.inds, 1, sum, na.rm=TRUE)==7) )
        
        if (rm.insert) { # ignore INSERT records
          insert <- which(!is.na(pdb$atom[,"insert"]))
          match.inds[insert] <- FALSE
        }
        ## return XYZ indices
-       #xyz.inds <- matrix(1:length( pdb$atom[,c("x","y","z")] ),nrow=3,byrow=FALSE)
-       #xyz.inds <- as.vector(xyz.inds[,match.inds])
        xyz.inds <- atom2xyz(which(match.inds))
    
        if (verbose) {
@@ -222,21 +230,16 @@ function(pdb, string=NULL,
   got.string <- TRUE
   got.component <- TRUE
   if(is.null(string)) { got.string <- FALSE }
-  if(is.null(c(chain,resno,resid,eleno,elety)))  { got.component <- FALSE }
+  if(is.null(c(chain,resno,resid,eleno,elety,type)))  { got.component <- FALSE }
 
-  ## No selection string or component, then just print PDB summary
+  ## No selection string or component, then just print PDB summary and exit
   if( !any(got.string,  got.component) ) {
     return( print.pdb(pdb) )
   }
 
-## Modified for combining string and component, (Jul 3, 2013)
-#  ## Selection string and component, then component is ignored
-#  if(all(got.string, got.component)) {
-#    warning("Selection string AND selection component given: using first input string only!")
-#    ## Could Change this to combine string and component here!!
-#  } else {
-
+  ##
   ##-- Main function  
+  ##
 
   sel1 <- NULL
   sel2 <- NULL
@@ -248,8 +251,8 @@ function(pdb, string=NULL,
 
   if(got.component) {
 
-    ## Build selection string from input components
-    ## /segid/chain/resno/resid/eleno/elety/
+    ##- Build selection string from input components
+    ##   /segid/chain/resno/resid/eleno/elety/
     string <- paste("//",paste(chain, collapse=","),"/",
                     paste(resno, collapse=","),"/",
                     paste(resid, collapse=","),"/",
@@ -258,15 +261,25 @@ function(pdb, string=NULL,
     rm(chain,resno,resid,eleno,elety)
     if(verbose) 
        cat("\n Build selection from input components\n")
-    sel2 <- parse.string(pdb, string, verbose, rm.insert)
+
+    ##- Check on 'type="ATOM"'' component
+    if(!is.null(type)) {
+      if( !all(type %in% c("ATOM", "HETATM")) ) {
+        warning("Ignoring input 'type' component (should be one of'ATOM' or 'HETATM' only)")        
+        type = ""
+      }
+      } else { type = ""}
+ 
+    sel2 <- parse.string(pdb, string, verbose, rm.insert, type=type)
   }
 
-  if(!is.null(sel1) && !is.null(sel2))
-     if(verbose)
-        cat("\n Combine selections from input string and components\n")
+#  if(!is.null(sel1) && !is.null(sel2))
+#     if(verbose)
+#        cat("\n Combine selections from input string and components\n")
 
+  ##- Combine selections from input string and components
   match <- combine.sel(sel1, sel2, op="AND", verbose=verbose)
-  
+
   return(match)
 }
 
