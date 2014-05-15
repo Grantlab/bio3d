@@ -12,7 +12,7 @@ combine.sel <-
    op <- op.tbl[match(op, c("AND","and","&","OR","or","|","+","NOT","not","!","-"))]
    sel <- switch(op, 
       "AND"= {
-         if(verbose) { cat("Intersection of sel1 and sel2\n") }
+         if(verbose) { cat(" Intersection of sel1 and sel2\n") }
          list(atom = intersect(sel1$atom, sel2$atom), 
               xyz = intersect(sel1$xyz, sel2$xyz))
       },
