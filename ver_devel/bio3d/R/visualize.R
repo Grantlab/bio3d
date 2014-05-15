@@ -5,7 +5,7 @@ visualize <- function(...)
 
 visualize.xyz <- function(
   xyz, ele.symb = NULL, con = NULL, cell = NULL, type = "l", safety = 1.2,
-  xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, 
+  xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
   lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
   cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "black",
   add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...){
@@ -67,6 +67,13 @@ visualize.xyz <- function(
   if(!all(type %in% c("l","s","p")))
     stop("Unrecognized 'type'")
   
+  if(centre) {
+    cent <- centres(xyz)
+    xyz[seq(1, length(xyz), 3)] <- xyz[seq(1, length(xyz), 3)] - cent[1]
+    xyz[seq(2, length(xyz), 3)] <- xyz[seq(2, length(xyz), 3)] - cent[2]
+    xyz[seq(3, length(xyz), 3)] <- xyz[seq(3, length(xyz), 3)] - cent[3]
+  }
+
   if("l" %in% type) {
     if(is.null(con)) {
       warning("Unspecifyed connectivity: Computing connectivity from coordinates...")
@@ -115,9 +122,9 @@ visualize.xyz <- function(
 }
 
 visualize.pdb <- function(
-  pdb, elety.custom = NULL, atom.sel = atom.select(pdb, "protein"), con = NULL,
+  pdb, elety.custom = NULL, atom.sel = atom.select(pdb, "notwater"),
   cell = NULL, type = "l", safety = 1.2,
-  xyz.axes = TRUE, abc.axes = FALSE, pbc.box = FALSE, 
+  xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
   lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
   cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "black",
   add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...){
@@ -126,10 +133,11 @@ visualize.pdb <- function(
 
   pdb <- trim.pdb(pdb, atom.sel)  
   ele.symb <- atom2ele(pdb$atom[,"elety"], elety.custom)
-
+  con <- connectivity.pdb(pdb)
+  
   visualize.xyz(
     pdb$xyz, ele.symb = ele.symb, con, cell, type, safety,
-    xyz.axes, abc.axes, pbc.box, lwd, lwd.xyz, lwd.abc, lwd.pbc.box,
+    xyz.axes, abc.axes, pbc.box, centre, lwd, lwd.xyz, lwd.abc, lwd.pbc.box,
     cex.xyz, cex.abc, col, radii, bg.col, add, windowRect,
     userMatrix, FOV, ...)
 }

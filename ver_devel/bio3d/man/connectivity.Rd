@@ -14,7 +14,7 @@ connectivity(...)
 
 \method{connectivity}{xyz}(x, ele.symb, safety = 1.2, by.block = FALSE, \dots)
 
-\method{connectivity}{pdb}(x, atom.sel = atom.select(x, "protein"), d.cut = 4, safety = 1.2, by.block = TRUE, \dots)
+\method{connectivity}{pdb}(x, atom.sel = atom.select(x, "notwater"), d.cut = 4, safety = 1.2, by.block = TRUE, \dots)
 }
 \arguments{
   \item{x}{an R object used to create a connectivity object.}

@@ -7,7 +7,7 @@
 \usage{
 calpha.connectivity(...)
 \method{calpha.connectivity}{xyz}(x, d.cut = 4, ...)
-\method{calpha.connectivity}{pdb}(x, atom.sel = atom.select(x, "protein"), d.cut = 4, ...)
+\method{calpha.connectivity}{pdb}(x, atom.sel = atom.select(x, "notwater"), d.cut = 4, ...)
 }
 \arguments{
   \item{x}{an R object for which to compute the connectivity.}
