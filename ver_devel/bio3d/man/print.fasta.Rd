@@ -7,23 +7,23 @@
 }
 \usage{
 \method{print}{fasta}(x, alignment=TRUE, ...)
-.print.fasta.ali(x, width = NULL, col.inds = NULL, numbers = TRUE)
+.print.fasta.ali(x, width = NULL, col.inds = NULL, numbers = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ a sequence alignment object as obtained from the functions  
-  \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}},
-  \code{\link{pdbaln}}, \code{\link{seqaln}}, etc. }
-\item{alignment}{ logical, if TRUE the sequence alignment will be
-  printed to screen. }
-\item{width}{ a single numeric value giving the number of residues per 
-  printed sequence block. By default this is determined from considering 
-  alignment identifier widths given a standard 85 column terminal
-  window. }
+    \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}},
+    \code{\link{pdbaln}}, \code{\link{seqaln}}, etc. }
+  \item{alignment}{ logical, if TRUE the sequence alignment will be
+    printed to screen. }
+  \item{width}{ a single numeric value giving the number of residues per 
+    printed sequence block. By default this is determined from considering 
+    alignment identifier widths given a standard 85 column terminal
+    window. }
   \item{col.inds}{ an optional numeric vector that can be used to select 
-  subsets of alignment positions/columns for printing. } 
+    subsets of alignment positions/columns for printing. } 
   \item{numbers}{ logical, if TRUE position numbers and a tick-mark every 
-  10 positions are printed above and below sequence blocks. }
+    10 positions are printed above and below sequence blocks. }
   \item{\dots}{ additional arguments to \sQuote{.print.fasta.ali}. }
 }
 \value{
