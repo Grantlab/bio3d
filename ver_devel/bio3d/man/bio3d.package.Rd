@@ -68,6 +68,7 @@ bio3d website:\cr
 Barry Grant <bjgrant@umich.edu>
 Xin-Qiu Yao <xinqyao@umich.edu>
 Lars Skjaerven <larsss@gmail.com>
+Julien Ide <julien.ide.fr@gmail.com>
 }
 \references{
 Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
