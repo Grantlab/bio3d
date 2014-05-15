@@ -16,7 +16,14 @@ atom2ele.default <- function(x, elety.custom=NULL, rescue=TRUE, ...){
   if(any(is.unknown)) {
     if(rescue) {
       symb[is.unknown] <- substr(x[is.unknown],1,1)
-      warning(paste("\n\tunknown element: mapped ", x[is.unknown], " to ", symb[is.unknown], sep=""))
+      if(length(x[is.unknown]) < 5)
+        warning(paste0("\n\tunknown element: mapped ", x[is.unknown],
+                       " to ", symb[is.unknown]))
+      else
+        warning(paste0(
+          paste0("\n\tunknown element: mapped ", x[is.unknown][1:5],
+                 " to ", symb[is.unknown][1:5])), " [... truncated]")
+        
     }
     else {
       stop(paste("\n\tatom2symb: element of '", x[is.unknown], "' unknown", sep=""))
