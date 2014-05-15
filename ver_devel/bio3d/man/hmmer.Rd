@@ -6,7 +6,7 @@
   databases. 
 }
 \usage{
-hmmer(seq, type="phmmer", db = NULL, verbose=TRUE, timeout = 90)
+hmmer(seq, type="phmmer", db = NULL, verbose = TRUE, timeout = 90)
 }
 \arguments{
   \item{seq}{ a single element or multi-element character vector
@@ -17,6 +17,8 @@ hmmer(seq, type="phmmer", db = NULL, verbose=TRUE, timeout = 90)
   \item{db}{ a single element character vector specifying the
     database against which to search. Current options are \sQuote{pdb},
     \sQuote{nr} and \sQuote{swissprot}. More here... }
+  \item{verbose}{ logical, if TRUE details of the download process
+    is printed. }
   \item{timeout}{ integer specifying the number of seconds to wait for
     the blast reply before a time out occurs. }
 }

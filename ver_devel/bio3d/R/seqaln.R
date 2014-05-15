@@ -16,6 +16,9 @@ function(aln, id=NULL, profile=NULL,
     return(list(id=id, ali=mat))
   }
 
+  ## Log the call
+  cl <- match.call()
+  
   if(is.vector(aln) & !is.list(aln))
     aln=matrix(aln, nrow=1)
   if( (!is.list(aln)) | is.na(aln['id']) )
@@ -130,6 +133,7 @@ function(aln, id=NULL, profile=NULL,
     unlink(profilealn)
   unlink(toaln)
   if(is.null(outfile)) unlink(fa)
+  naln$call=cl
   return(naln)
 }
 
