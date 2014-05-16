@@ -22,6 +22,9 @@ function( alignment , normalize=TRUE, similarity=FALSE, ncore=1, nseg.scale=1) {
       ids <- alignment$id
     alignment <- alignment$ali
   }
+  else {
+    ids <- rownames(alignment)
+  }
 
   ## calculate similarity instead of identity?
   if(similarity) {

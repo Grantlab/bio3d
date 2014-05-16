@@ -15,12 +15,17 @@ function(aln, id=NULL, profile=NULL,
       id=paste("seq",1:nrow(mat),sep="")
     return(list(id=id, ali=mat))
   }
+
+  ## Log the call
+  cl <- match.call()
   
+  if(is.vector(aln) & !is.list(aln))
+    aln=matrix(aln, nrow=1)
   if( (!is.list(aln)) | is.na(aln['id']) )
     aln <- as.aln(aln,id=id)
   if(!is.null(profile) & !inherits(profile, "fasta"))
     stop("profile must be of class 'fasta'")
-  
+
   if(length(grep(tolower(exefile), "clustalo"))>0) {
     prg <- "clustalo"
     ver <- "--version"
@@ -38,7 +43,10 @@ function(aln, id=NULL, profile=NULL,
     
     if(verbose)
       extra.args <- paste(extra.args,"--verbose")
-    
+
+    if(!is.null(profile) && length(grep("dealign", extra.args))==0)
+      warning("profile alignment with clustalo: consider using extra.args='--dealign'")
+      
     #if(protein)
     #  extra.args <- paste(extra.args,"--seqtype Protein")
     #else
@@ -125,6 +133,7 @@ function(aln, id=NULL, profile=NULL,
     unlink(profilealn)
   unlink(toaln)
   if(is.null(outfile)) unlink(fa)
+  naln$call=cl
   return(naln)
 }
 

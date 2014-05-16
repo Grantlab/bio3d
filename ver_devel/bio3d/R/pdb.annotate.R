@@ -2,7 +2,7 @@
 # date: 08/06/2013, edited 08/30/2013
 # returns a data.frame of requested annotation terms.
 
-pdb.annotate <- function(ids, anno.terms=NULL) {
+pdb.annotate <- function(ids, anno.terms=NULL, unique=FALSE) {
     oops <- require(XML)
     if(!oops)
         stop("Please install the XML package from CRAN")
@@ -37,6 +37,7 @@ pdb.annotate <- function(ids, anno.terms=NULL) {
                        paste(anno.allterms, collapse=", ")) )
     }
 
+    ids.short <- ids
     if (missing(ids)) 
     {
         stop("please specify PDB ids for annotating")
@@ -44,10 +45,10 @@ pdb.annotate <- function(ids, anno.terms=NULL) {
     if (any(nchar(ids) != 4)) 
     {
         warning("ids should be standard 4 character PDB format: trying first 4 char...")
-        ids <- substr(basename(ids), 1, 4)
+        ids.short <- substr(basename(ids), 1, 4)
     }
     
-    ids1 <- paste(unique(ids), collapse=",")
+    ids1 <- paste(unique(ids.short), collapse=",")
 
     query1 = paste(anno.allterms[anno.allterms != "citation"], collapse=",")
     ##- Instead of looking up all therms we could specify only those requested here... 
@@ -118,8 +119,8 @@ pdb.annotate <- function(ids, anno.terms=NULL) {
         new.tbl <- rbind(new.tbl, row.store)
       }
     }
-    ## format the colnames
     
+    ## format the colnames
     colnames(new.tbl) <- colnames(tmp3)
     
     
@@ -152,14 +153,30 @@ pdb.annotate <- function(ids, anno.terms=NULL) {
 
     colnames(out.tbl) <- anno.terms
     
-    unq.ids <- unique(substr(basename(ids), 1, 4))
+    unq.ids <- unique(substr(basename(ids.short), 1, 4))
     if(nrow(out.tbl)!=length(unq.ids)) {
       tmp.ids <- out.tbl[,"structureId"]
       missing <- paste(unq.ids[!unq.ids %in% tmp.ids], collapse=", ")
       warning(paste("Annotation data could not be found for PDB ids:\n  ",
                     missing))
     }
-    
+
     ## return a data frame of required annotation
-    return(as.data.frame(out.tbl, stringsAsFactors=FALSE))
+    out <- as.data.frame(out.tbl, stringsAsFactors=FALSE)
+
+    if(!unique) {
+      ids <- toupper(ids)
+      ## indices to match with input ids
+      inds <- NULL
+      for(i in 1:length(ids))
+        inds <- c(inds, which(out$structureId %in% substr(basename(ids),1,4)[i]))
+      
+      ## build a new data frame with the same ordering as input ids
+      new <- NULL
+      for ( i in 1:length(inds) ) {
+        new = rbind(new, out[inds[i], ])
+      }
+      out=new
+    }
+    return(out)
 }

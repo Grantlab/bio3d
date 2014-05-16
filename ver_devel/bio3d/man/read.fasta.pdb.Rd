@@ -6,7 +6,7 @@
   coordinates, residue numbers, residue type and B-factors.
 }
 \usage{
-read.fasta.pdb(aln, prefix = "", pdbext = "", 
+read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
              ncore = 1, nseg.scale = 1, ...)
 }
 \arguments{
@@ -14,6 +14,8 @@ read.fasta.pdb(aln, prefix = "", pdbext = "",
     \code{\link{read.fasta}}. }
   \item{prefix}{ prefix to aln$id to locate PDB files. }
   \item{pdbext}{ the file name extention of the PDB files. }
+  \item{fix.ali}{ logical, if TRUE check consistence between \code{$ali} 
+    and \code{$resno}, and correct \code{$ali} if they don't match. }
   \item{ncore }{ number of CPU cores used to do the calculation.
     \code{ncore>1} requires multicore package installed. }
   \item{nseg.scale }{ split input data into specified number of segments

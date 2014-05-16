@@ -72,6 +72,7 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   \item{ali}{ an alignment character matrix with a row per sequence and
     a column per equivalent aminoacid/nucleotide. }
   \item{ids}{ sequence names as identifers.}
+  \item{call}{ the matched call. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.

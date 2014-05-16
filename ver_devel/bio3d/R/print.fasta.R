@@ -1,5 +1,64 @@
-print.fasta <- function(x, width=NULL, col.inds=NULL, numbers=TRUE, ...) {
+print.fasta <- function(x, alignment=TRUE, ...) {
+  
+  if ( (inherits(x, "fasta") | inherits(x, "3dalign")) ){ 
+    id <- x$id
+    ali <- as.matrix(x$ali)
+    call <- paste(deparse(x$call), sep = "\n", collapse = "\n")
+  } else {
+    ali <- as.matrix(x)
+    id <- rownames(ali)
+    call <- NA
+  }
 
+  if(inherits(x, "3dalign"))
+    row.desc <- "structures"
+  else
+    row.desc <- "sequences"
+  
+  cn      <- class(x)
+  nstruct <- length(id)
+  dims    <- dim(ali)
+  
+  gaps <- gap.inspect(ali)
+  dims.nongap <- dim(ali[, gaps$f.inds, drop=FALSE])
+  dims.gap <- dim(ali[, gaps$t.inds, drop=FALSE])
+
+  if(alignment)
+    .print.fasta.ali(ali, id=id, ...)
+                     #width=width, 
+                     #col.inds=col.inds, numbers=numbers)
+  else
+    cat("\n")
+
+  if(!is.na(call)) {
+    cat("Call:\n  ", call,
+        "\n\n", sep = "")
+    
+    cat("Class:\n  ", paste(cn, collapse=", "),
+        "\n\n", sep = "")
+  }
+  
+  ##cat("Number of ", row.desc, ":\n  ", nstruct,
+  ##    "\n\n", sep="")
+  
+  cat("Alignment dimensions:\n  ",
+      dims[1L], " sequence rows; ",
+      dims[2L], " position columns",
+      " (", dims.nongap[2L], " non-gap, ", dims.gap[2L], " gap) ", 
+      "\n", sep="")
+  
+  cat("\n")
+
+ 
+  ## Attribute summary
+  j <- paste(attributes(x)$names, collapse = ", ")
+  cat(strwrap(paste(" + attr:",j,"\n"),width=60, exdent=8), sep="\n")
+
+}
+
+.print.fasta.ali <- function(x, ##limit.out=NULL,
+                             width=NULL, col.inds=NULL,
+                             numbers=TRUE, ...) {
   ##-- Print sequence alignment in a nice formated way
   ##    source("print.aln.R")
   ##    x<-read.fasta("poo.fa")
@@ -14,59 +73,57 @@ print.fasta <- function(x, width=NULL, col.inds=NULL, numbers=TRUE, ...) {
   ##   Does not work if alignment contains only one position (one seq?)
   ##     y=x; y$ali=x$ali[,1]
 
-
   if ( (inherits(x, "fasta") | inherits(x, "3dalign")) ){ 
-#  if(class(x) %in% c("fasta", "3dalign")) {
     id <- x$id
     ali <- as.matrix(x$ali)
   } else {
     ali <- as.matrix(x)
-    id <- rownames(ali)
+    id <- rownames(x)
   }
-
+  
   ##- Trim to 'col.inds' if provided 
   if(!is.null(col.inds)) {
     ali <- ali[,col.inds, drop=FALSE]
   }
-
+  
   ##- Format sequence identifiers
   ids.nchar <- max(nchar(id))+3 ## with a gap of 3 spaces btwn id and sequence
   ids.format <- paste0("%-",ids.nchar,"s")
   ids <- sprintf(ids.format, id)
-
+  
   ## Format for annotation printing (see below)
   pad.format <- paste0("%+",(ids.nchar+1),"s")
-
+  
   ##- Scale 'width' of output if not specified in input call
   tput.col <- 85  ## typical terminal width from system("tput cols")
   if(is.null(width)) {
     width <- tput.col - ids.nchar - 4
-   }
-
+  }
+  
   ## Make sure we end on a 10 block
   width <- floor(width/10)*10
-
+  
   ##- Work out sequence block widths
   nseq <- length(ids)
   nres <- ncol(ali)
-
+  
   block.start <- seq(1, nres, by=width)
   if(nres < width) {
     block.end <- nres
   } else {
-   block.end <- unique(c( seq(width, nres, by=width), nres))
+    block.end <- unique(c( seq(width, nres, by=width), nres))
   }
   nblocks <- length(block.start)
-
+  
   block.annot  <- rep(" ", width)
   block.annot[ c(1,seq(10, width, by=10)) ] = "."
-
+  
   blocks <- matrix(NA, ncol=nblocks, nrow=nseq) 
   for(i in 1:nblocks) {
     ##- Sequence block
     positions <- block.start[i]:block.end[i]
     blocks[,i] <- paste0(ids, apply(ali[, positions, drop=FALSE], 1, paste, collapse=""))
-
+    
     ##-- Formated Printing of annotations (numbers & ticks) and sequence blocks
     if(numbers) {
       ##- Annotations for each sequence block
@@ -75,22 +132,16 @@ print.fasta <- function(x, width=NULL, col.inds=NULL, numbers=TRUE, ...) {
       annot[1] = sprintf(pad.format, block.start[i])
       cat(paste(annot, collapse=""),"\n")
     }
-
+    
     ##- Sequence block
     cat(blocks[,i], sep="\n")
-
+    
     ##- Ticks + numbers again
     if(numbers) {
       cat(paste(annot, collapse=""),"\n\n")
     } else{ cat("\n") }
   }
-
-  ## Attribute summary
-  j <- paste(attributes(x)$names, collapse = ", ")
-  cat(strwrap(paste(" + attr:", j, "( dim(x$ali) =", 
-    paste(dim(ali),collapse="x"),")\n"), 
-    width = 70, exdent = 8), sep = "\n")
-
+  
   ##invisible(blocks) ## Can be useful for plot.fasta() later!!
 }
 
