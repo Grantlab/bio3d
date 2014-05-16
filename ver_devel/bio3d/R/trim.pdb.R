@@ -95,15 +95,27 @@
     } 
   }
 
+  ## Filtring the 'connectivity' component
+  if(!is.null(pdb$con)) {
+    r <-     pdb$con$eleno.1 %in% pdb$atom$eleno
+    r <- r & pdb$con$eleno.2 %in% pdb$atom$eleno
+    if(any(r))
+      pdb$con <- pdb$con[r, , drop = FALSE]
+    else
+      pdb["con"] <- list(NULL)
+  }
+
   calpha = (atom[,"elety"]=="CA") & (atom[,"resid"]!="CA") & (atom[,"type"]=="ATOM")
   output<-list(atom=atom,
                helix=helix, 
                sheet=sheet, 
                seqres=pdb$seqres, ## return unmodified
                xyz=xyz,
+               con=pdb$con,
                calpha = calpha)
   
   class(output) <- c("pdb", "sse")
   class(output$xyz) <- c("numeric","xyz")
+
   return(output)
 }

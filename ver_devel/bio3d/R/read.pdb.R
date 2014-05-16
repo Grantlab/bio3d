@@ -118,7 +118,8 @@ function (file, maxlines=-1, multi=FALSE,
   raw.helix  <- raw.lines[type == "HELIX "]
   raw.sheet  <- raw.lines[type == "SHEET "]
   raw.atom   <- raw.lines[type %in% c("ATOM  ","HETATM")]
-
+  raw.con    <- raw.lines[type == "CONECT"]
+  
   if (verbose) {
     if (!is.character0(raw.header)) { cat(" ", raw.header, "\n") }
   }
@@ -188,7 +189,34 @@ function (file, maxlines=-1, multi=FALSE,
   }
   rm(raw.lines, raw.atom)
 
-
+  ## Read connectivity
+ if(length(raw.con) == 0)
+   con <- NULL
+ else {
+   trim <- function(str)
+     sub(' +$','',sub('^ +', '', str))
+ 
+   eleno.1 <- rep(trim(substr(raw.con,  7, 11)), 4)
+   eleno.2 <-   c(trim(substr(raw.con, 12, 16)),
+                  trim(substr(raw.con, 17, 21)),
+                  trim(substr(raw.con, 22, 26)),
+                  trim(substr(raw.con, 27, 31)))
+ 
+   eleno.1 <- suppressWarnings(as.integer(eleno.1[nzchar(eleno.2)]))
+   eleno.2 <- suppressWarnings(as.integer(eleno.2[nzchar(eleno.2)]))
+ 
+   if(any(is.na(eleno.1)) | any(is.na(eleno.2)) )
+     warning("NA values have been produce when reading connectivity. Please check your data.")
+ 
+    eleno.1 <- subset(eleno.1, !is.na(eleno.2))
+    eleno.2 <- subset(eleno.2, !is.na(eleno.2))
+ 
+   con <- connectivity.default(eleno.1 = eleno.1, eleno.2 = eleno.2)
+   if(!all(unlist(con) %in% atom$eleno))
+     stop("Ill defined connectivity")
+ }
+  ## End read connectivity
+ 
   ##- Possibly remove 'Alt records' (m[,"alt"] != NA)
   if (rm.alt) {
     if ( sum( !is.na(atom[,"alt"]) ) > 0 ) {
@@ -222,6 +250,7 @@ function (file, maxlines=-1, multi=FALSE,
                sheet=sheet,
                seqres=seqres,
                xyz=xyz.models,
+               con=con,
                calpha = calpha, call=cl)
 
   class(output) <- c("pdb", "sse")
