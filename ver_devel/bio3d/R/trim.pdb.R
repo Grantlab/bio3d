@@ -95,10 +95,10 @@
     } 
   }
 
-  ## Filtring the 'connectivity' component
+  ## Filtering the 'connectivity' component
   if(!is.null(pdb$con)) {
-    r <-     pdb$con$eleno.1 %in% pdb$atom$eleno
-    r <- r & pdb$con$eleno.2 %in% pdb$atom$eleno
+    r <-     pdb$con$eleno.1 %in% atom$eleno
+    r <- r & pdb$con$eleno.2 %in% atom$eleno
     if(any(r))
       pdb$con <- pdb$con[r, , drop = FALSE]
     else
