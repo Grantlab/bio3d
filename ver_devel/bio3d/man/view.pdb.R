@@ -58,6 +58,9 @@ view.pdb <- function(pdb, sel = "default", col = NULL, cna = NULL, ...) {
       tot.sel <- combine.sel( tot.sel,   ca.sel, op="OR" ,verbose=FALSE)
       if(length(tot.sel$atom) != 0) {
         pdb <- trim.pdb(pdb, tot.sel)
+        ca.con <- calpha.connectivity(pdb)
+#         connectivity(pdb) <- rbind(pdb$con, ca.con)
+        ## Problem with centre when using trim.pdb!!!
         visualize(pdb, con = FALSE, add = TRUE, type = "l", col = "gray", lwd = 1)        
       }
      

@@ -51,7 +51,7 @@ visualize.xyz <- function(
   }
   #   par.save <- par3d(skipRedraw=TRUE)
   #   on.exit(par3d(par.save))
-  
+
   if(!add){
     open3d()
     par3d(windowRect = windowRect, userMatrix=userMatrix, FOV = FOV, ...)
@@ -67,13 +67,6 @@ visualize.xyz <- function(
     type <- strsplit(type, "")[[1]]
   if(!all(type %in% c("l","s","p")))
     stop("Unrecognized 'type'")
-  
-  if(centre) {
-    cent <- centres(xyz)
-    xyz[seq(1, length(xyz), 3)] <- xyz[seq(1, length(xyz), 3)] - cent[1]
-    xyz[seq(2, length(xyz), 3)] <- xyz[seq(2, length(xyz), 3)] - cent[2]
-    xyz[seq(3, length(xyz), 3)] <- xyz[seq(3, length(xyz), 3)] - cent[3]
-  }
   
   if("l" %in% type) {
     if(is.null(con)) {
@@ -118,6 +111,10 @@ visualize.xyz <- function(
       color = col, ...)
     pts.id <- data.frame(id = pts.id, type = "atom.pts")
     ids <- rbind(ids, pts.id)
+  }
+  if(centre) {
+    cent <- centres(xyz)
+    userMatrix <- t(translationMatrix(x = cent[1], y = cent[2], z = cent[3]))
   }
   invisible(ids)
 }

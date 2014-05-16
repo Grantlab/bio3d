@@ -31,7 +31,7 @@ connectivity.xyz <- function(x, elesy, safety = 1.2, by.block = FALSE, ...){
   if(length(elesy) != length(x)/3)
     stop("'x' and 'elesy' must have matching lengths")
   if(!all(are.symb(elesy) & !is.na(elesy)))
-    ele.symb[!are.symb(ele.symb) & is.na(elesy)] <- "Xx"
+    elesy[!are.symb(elesy) & is.na(elesy)] <- "Xx"
   
   radii <- elements[match(elesy, elements$symb), "rcov"]*safety
   x <- as.data.frame(matrix(x, ncol=3, byrow=TRUE,
