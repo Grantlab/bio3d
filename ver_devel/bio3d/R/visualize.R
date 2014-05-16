@@ -4,41 +4,41 @@ visualize <- function(...)
   UseMethod("visualize")
 
 visualize.xyz <- function(
-  xyz, ele.symb = NULL, con = NULL, cell = NULL, type = "l", safety = 1.2,
+  xyz, elesy = NULL, con = NULL, cell = NULL, type = "l",
   xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
   lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
   cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "black",
-  add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...){
+  add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...) {
 
   if(!inherits(xyz, "xyz"))
     stop("'xyz' must be an object of class 'xyz'")
   
-  if(length(xyz)==0)
-    stop("No coordinates to plot. (length(xyz)==0)")
+  if(nrow(xyz) != 1)
+    stop("'x' must be a single row 'xyz' matrix")
   
   oops <- require(rgl)
   if(!oops)
     stop("Please install the rgl package from CRAN")
   
-  if(is.null(ele.symb))
-    ele.symb <- rep("Xx", length(xyz)/3)
+  if(is.null(elesy)) {
+    warning("'elesy' is not defined. All atoms have been considered as dummy atoms")
+    elesy <- rep("Xx", length(xyz)/3)
+  }
+    
+  if(length(elesy) != length(xyz)/3)
+    stop("'xyz' and 'elesy' must have matching lengths")
   
-  if(length(ele.symb) != length(xyz)/3)
-    stop("'xyz' and 'ele.symb' must have matching lengths")
-  if(any(is.na(match(ele.symb, elements$symb))))
-    ele.symb <- atom2ele(ele.symb)
-  ele.symb[is.na(ele.symb)] <- "Xx"
-
-  M <- match(ele.symb,elements[,"symb"])
+  M <- match(elesy,elements[,"symb"])
   M[is.na(M)] <- 1 # Unrecognized elements are considered as dummy atoms    
-
+  
   if(is.null(col))
     col <- do.call(rgb, elements[M, c("red","green","blue")])
   if(length(col) != length(xyz)/3){
-    if(length(col)!=1) warning("'col' has been recycled")
+    if(length(col) != 1)
+      warning("'col' has been recycled")
     col <- rep(col, length = length(xyz)/3)
   }
-
+  
   if(is.null(cell)) {
     if(abc.axes) {
       abc.axes <- FALSE
@@ -49,21 +49,22 @@ visualize.xyz <- function(
       warning("Cell parameters are not specified: 'pdb.box' has been set to FALSE")
     }
   }
-#   par.save <- par3d(skipRedraw=TRUE)
-#   on.exit(par3d(par.save))
-
+  #   par.save <- par3d(skipRedraw=TRUE)
+  #   on.exit(par3d(par.save))
+  
   if(!add){
     open3d()
     par3d(windowRect = windowRect, userMatrix=userMatrix, FOV = FOV, ...)
     bg3d(color=bg.col)
   }
   ids <- rgl.ids()
-
+  
   if(xyz.axes) ids <- rbind(ids, addXYZ(lwd = lwd.xyz, cex = cex.xyz))
   if(abc.axes) ids <- rbind(ids, addABC(cell, lwd = lwd.abc, cex = cex.abc))
   if(pbc.box ) ids <- rbind(ids, addPBCBox(cell, lwd = lwd.pbc.box))
   
-  if(nchar(type)>1) type <- strsplit(type, "")[[1]]
+  if(nchar(type)>1)
+    type <- strsplit(type, "")[[1]]
   if(!all(type %in% c("l","s","p")))
     stop("Unrecognized 'type'")
   
@@ -73,20 +74,20 @@ visualize.xyz <- function(
     xyz[seq(2, length(xyz), 3)] <- xyz[seq(2, length(xyz), 3)] - cent[2]
     xyz[seq(3, length(xyz), 3)] <- xyz[seq(3, length(xyz), 3)] - cent[3]
   }
-
+  
   if("l" %in% type) {
     if(is.null(con)) {
       warning("Unspecifyed connectivity: Computing connectivity from coordinates...")
-      con <- connectivity.xyz(x = xyz, ele.symb = ele.symb, safety = safety, by.block = TRUE)
+      con <- connectivity.xyz(x = xyz, elesy = elesy, by.block = TRUE)
     }
     if(!is.null(con)){
       ind <- t(con)
       seg.id <- segments3d(
-      xyz[seq(1,length(xyz),3)][ind],
-      xyz[seq(2,length(xyz),3)][ind],
-      xyz[seq(3,length(xyz),3)][ind],
-      color = col[ind], lwd=lwd, ...)
-
+        xyz[seq(1,length(xyz),3)][ind],
+        xyz[seq(2,length(xyz),3)][ind],
+        xyz[seq(3,length(xyz),3)][ind],
+        color = col[ind], lwd=lwd, ...)
+      
       seg.id <- data.frame(id = seg.id, type = "atom.seg")
       ids <- rbind(ids, seg.id)
     } else{
@@ -122,28 +123,43 @@ visualize.xyz <- function(
 }
 
 visualize.pdb <- function(
-  pdb, elety.custom = NULL, atom.sel = atom.select(pdb, "notwater", verbose = FALSE),
-  cell = NULL, type = "l", safety = 1.2,
+  pdb, cell = NULL, type = "l", con = TRUE,
   xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
   lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
   cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "black",
   add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...){
-
-  if(!is.pdb(pdb)) stop("'pdb' must be an object of class pdb. See read.pdb")
-
-  pdb <- trim.pdb(pdb, atom.sel)
-  if(!all(pdb$atom$elesym %in% elements$symb))
-    ele.symb <- atom2ele(pdb$atom$elety, elety.custom)
-  else
-    ele.symb <- pdb$atom$elesy
-
-  con <- connectivity.pdb(pdb)
   
+  if(!is.pdb(pdb))
+    stop("'pdb' must be an object of class pdb. See read.pdb")
+  
+  if(any(!are.symb(pdb$atom$elesy) & is.na(pdb$atom$elesy)))
+    stop("'pdb' contains unvalid 'elesy'")
+  
+  if(con & grepl("l", type) | is.null(pdb$con)) {
+    cat("Computing connectivity from coordinates...")
+    pdb$con <- connectivity(pdb)
+  }
+  pdb$con$eleno.1 <- match(pdb$con$eleno.1, pdb$atom$eleno)
+  pdb$con$eleno.2 <- match(pdb$con$eleno.2, pdb$atom$eleno)
   visualize.xyz(
-    pdb$xyz, ele.symb = ele.symb, con, cell, type, safety,
+    pdb$xyz, elesy = pdb$atom$elesy, pdb$con, cell, type,
     xyz.axes, abc.axes, pbc.box, centre, lwd, lwd.xyz, lwd.abc, lwd.pbc.box,
     cex.xyz, cex.abc, col, radii, bg.col, add, windowRect,
     userMatrix, FOV, ...)
+}
+
+visualize.character <- function(
+  file, cell = NULL, type = "l", con = TRUE,
+  xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
+  lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
+  cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "black",
+  add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...) {
+  
+  x <- read.pdb(file)
+  visualize.pdb(
+    x, cell, type, con, xyz.axes, abc.axes, pbc.box, centre,
+    lwd, lwd.xyz, lwd.abc, lwd.pbc.box, cex.xyz, cex.abc, col,
+    radii, bg.col, add, windowRect, userMatrix, FOV, ...)
 }
 
 # visualize.cna <- function(cna, pdb, safety = 2.7, ...){

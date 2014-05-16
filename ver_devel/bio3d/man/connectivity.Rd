@@ -1,20 +1,23 @@
 \encoding{UTF-8}
 \name{connectivity}
+\alias{are.symb}
 \alias{connectivity}
 \alias{connectivity.default}
 \alias{connectivity.pdb}
 \title{Compute Connectivity From Coordinates}
 \description{Search the atoms at a distance lower than the bonding distance (sum of covalent radii) to define the connectivity.}
 \usage{
+are.symb(x)
+
 connectivity(...)
-
 \method{connectivity}{default}(eleno.1, eleno.2, ...)
-
 \method{connectivity}{connectivity}(x, ...)
+\method{connectivity}{xyz}(x, elesy, safety = 1.2, by.block = FALSE, \dots)
+\method{connectivity}{pdb}(x, safety = 1.2, by.block = TRUE, \dots)
 
-\method{connectivity}{xyz}(x, ele.symb, safety = 1.2, by.block = FALSE, \dots)
+connectivity(object) <- value
+\method{connectivity}{pdb}(object) <- value
 
-\method{connectivity}{pdb}(x, atom.sel = atom.select(x, "notwater"), d.cut = 4, safety = 1.2, by.block = TRUE, \dots)
 }
 \arguments{
   \item{x}{an R object used to create a connectivity object.}
@@ -23,6 +26,8 @@ connectivity(...)
   \item{by.block}{a logical value indicating whether the connectivity has to be determine by block (see details).}
   \item{atom.sel}{an object of class \sQuote{select} indicating the atoms for which to compute the connectivity}
   \item{d.cut}{a numeric value. Use to compute Calpha connectivity (see \code{\link{calpha.connectivity}})}
+  \item{object}{an R object for whihc to replace the \sQuote{connectivity} component.}
+  \item{value}{an object of class \sQuote{connectivity}.}
   \item{\dots}{arguments passed to methods.}
 }
 \details{

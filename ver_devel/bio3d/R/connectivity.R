@@ -1,3 +1,9 @@
+are.symb <- function(x) {
+  to.return <- (x %in% elements$symb)
+  to.return[is.na(x)] <- NA
+  return(to.return)
+}
+
 connectivity <- function(...)
   UseMethod("connectivity")
 
@@ -15,20 +21,19 @@ connectivity.default <- function(eleno.1, eleno.2, ...){
 connectivity.connectivity <- function(x, ...)
   connectivity.default(x$eleno.1, x$eleno.2, ...)
 
-connectivity.xyz <- function(x, ele.symb, safety = 1.2, by.block = FALSE, ...){
-  if(missing(ele.symb))
-    stop("Please specify 'ele.symb'")
+connectivity.xyz <- function(x, elesy, safety = 1.2, by.block = FALSE, ...){
+  if(missing(elesy))
+    stop("Please specify 'elesy'")
   if(!inherits(x, "xyz"))
     stop("'x' must be an object of class 'xyz'")
   if(nrow(x) != 1)
     stop("'x' must be a single row 'xyz' matrix")
-  if(length(ele.symb) != length(x)/3)
-    stop("'x' and 'ele.symb' must have matching lengths")
-  if(any(is.na(match(ele.symb, elements$symb))))
-    ele.symb <- atom2ele(ele.symb)
-  ele.symb[is.na(ele.symb)] <- "Xx"
+  if(length(elesy) != length(x)/3)
+    stop("'x' and 'elesy' must have matching lengths")
+  if(!all(are.symb(elesy) & !is.na(elesy)))
+    ele.symb[!are.symb(ele.symb) & is.na(elesy)] <- "Xx"
   
-  radii <- elements[match(ele.symb, elements$sym), "rcov"]*safety
+  radii <- elements[match(elesy, elements$symb), "rcov"]*safety
   x <- as.data.frame(matrix(x, ncol=3, byrow=TRUE,
                             dimnames = list(NULL, c("x1","x2","x3"))))
   data <- cbind(x, radii)
@@ -36,7 +41,7 @@ connectivity.xyz <- function(x, ele.symb, safety = 1.2, by.block = FALSE, ...){
   findCon <- function(data, order = TRUE) {
     nat <- nrow(data)
     if(nat==0) return(NULL)
-      r <- sqrt(
+    r <- sqrt(
         outer(data$x1, data$x1, "-")^2 +
         outer(data$x2, data$x2, "-")^2 +
         outer(data$x3, data$x3, "-")^2
@@ -94,15 +99,28 @@ connectivity.xyz <- function(x, ele.symb, safety = 1.2, by.block = FALSE, ...){
   return(con)
 }
 
-connectivity.pdb <- function(x, atom.sel = atom.select(x, "notwater", verbose = FALSE),
-                             d.cut = 4, safety = 1.2, by.block = TRUE, ...) {
+connectivity.pdb <- function(x, safety = 1.2, by.block = TRUE, ...) {
   if(!is.pdb(x))
-    stop("'x' must be an object of class 'pdb'")
-  x <- trim.pdb(x, atom.sel)
-  are.calpha <- (x$atom$elety == "CA") & (x$atom$resid != "CA")
-  if(all(are.calpha))
-    calpha.connectivity.xyz(x$xyz, d.cut, ...)
-  else
-    connectivity.xyz(x = x$xyz, ele.symb = x$atom[,"elety"],
-                     safety = safety, by.block = by.block)
+    stop("'x' must be an object of class 'pdb'")   
+  x <- connectivity.xyz(x = x$xyz, elesy = x$atom$elesy,
+                        safety = safety, by.block = by.block)
+  x$con$eleno.1 <- x$atom$eleno[x$con$eleno.1]
+  x$con$eleno.2 <- x$atom$eleno[x$con$eleno.2]
+  return(x)
 }
+
+## Setter
+"connectivity<-" <- function(object, value)
+  UseMethod("connectivity<-", object)
+
+# Setter for object of class pdb
+# Set the connectivity component of an object of class pdb
+# Not really need as the "$" syntaxe can be used.
+# However, the syntaxe "x$con <- value" will completly remove the cell component
+# if value is NULL. This is not really a probleme as x$con will still return NULL 
+# if this component is removed. To avoid this, we define a setter function
+"connectivity<-.pdb" <- function(object, value, ...) {
+  object["con"] <- list(value)
+  return(object)
+}  
+

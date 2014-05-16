@@ -3,6 +3,7 @@
 \alias{visualize}
 \alias{visualize.default}
 \alias{visualize.pdb}
+\alias{visualize.character}
 \alias{visualize.cna}
 \title{Visualize a Molecular Structure}
 \description{Use the rgl library to visualize in 3D a molecular structure.}
@@ -10,30 +11,33 @@
 visualize(...)
 
 \method{visualize}{xyz}(
-xyz, ele.symb = NULL, con = NULL, cell = NULL, type = "l", safety = 1.2,
-xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
-lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
-cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
-add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
+xyz, elesy = NULL, con = NULL, cell = NULL, type = "l",
+  xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
+  lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
+  cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "black",
+  add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
 
 \method{visualize}{pdb}(
-pdb, elety.custom = NULL, atom.sel = atom.select(pdb, "notwater"),
-cell = NULL, type = "l", safety = 1.2,
-xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
-lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
-cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "#FAFAD2",
-add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
+  pdb, cell = NULL, type = "l", con = TRUE,
+  xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
+  lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
+  cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "black",
+  add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
+  
+\method{visualize}{character}(
+  file, cell = NULL, type = "l", con = TRUE,
+  xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
+  lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
+  cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "black",
+  add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
 
 }
 \arguments{
   \item{pdb}{an object of class \sQuote{pdb} containing the molecular structure to visualize.}
-  \item{elety.custom}{a customized data.frame used to convert atom names/types into atomic symbols (see \code{\link{atom2ele}} and \code{\link{atom.index}}).}
-  \item{atom.sel}{an object of class \sQuote{select} indicating the atoms to visualize}
   \item{xyz}{a numeric vector of Cartesian coordinates like the \code{xyz} component of objects of class \sQuote{pdb}.}
   \item{cna}{an object of class \sQuote{cna}.}
-  \item{safety}{a numeric value used to compute the connectivity when need (see \code{connectivity}).}
-  \item{ele.symb}{a character vector containing atomic symbols (If \code{length(ele.symb)!=length(xyz)/3} \code{ele.symb} is recycled).}
-  \item{con}{a two-column data.frame containing by row the \code{eleno} of bonded atoms (or xyz indices as returned by \code{xyz2atom} for the default method) defining the connectivity of the system.}
+  \item{elesy}{a character vector containing atomic symbols (If \code{length(ele.symb)!=length(xyz)/3} \code{elesy} is recycled).}
+  \item{con}{an object of class \sQuote{connectivity} or a logical value indicating if the connectivity has to be calculated}
   \item{cell}{a length 6 numeric vector containing the a, b, c, alpha, beta and gamma lattice parameters.}
   \item{type}{a character string indicating the visualization mode (See details).}
   \item{xyz.axes}{a logical value indicating whether the x, y and z axes have to be added to the scene.}
@@ -53,6 +57,7 @@ add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
   \item{windowRect}{a vector of four integers indicating the left, top, right and bottom of the displayed window in pixels (see \code{par3d}).}
   \item{userMatrix}{a 4 by 4 matrix describing user actions to display the scene (see \code{par3d}).}
   \item{FOV}{the field of view. This controls the degree of parallax in the perspective view (see par3d).}
+  \item{file}{the name of a PDB file to visualize.}
   \item{\dots}{further arguments passed to or from other methods.}
 }
 \details{
