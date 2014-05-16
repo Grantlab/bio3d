@@ -8,7 +8,7 @@
 }
 \usage{
 read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
-         rm.alt = TRUE, verbose = TRUE)
+         rm.alt = TRUE, verbose = TRUE, elety.custom = NULL)
 \method{print}{pdb}(x, \dots)
 \method{summary}{pdb}(object, printseq=FALSE, \dots)
 }
@@ -24,6 +24,7 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
   \item{rm.insert}{ logical, if TRUE PDB insert records are ignored. }
   \item{rm.alt}{ logical, if TRUE PDB alternate records are ignored. }
   \item{verbose}{ print details of the reading process. }
+  \item{elety.custom}{a customized data.frame containing atom names/types and corresponding atomic symbols use to convert atom names into atomic symbols.}
   \item{x}{ a PDB structure object obtained from
     \code{\link{read.pdb}}.  }
   \item{object}{ a PDB structure object obtained from
