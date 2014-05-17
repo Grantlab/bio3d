@@ -202,6 +202,11 @@ view.character <- function(file, type="default", atom.sel=NULL, col=NULL, cna=NU
   view.pdb(pdb=x, type=type, atom.sel=atom.sel, col=col, cna=cna, ...)
 }
 
+## We better add a method for class '3dalign' here, I think.
+# view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
+#
+# }
+
 view.pdbs <- function(x, type=1, col=NULL, add=FALSE, ...) {
   ##-- Wrapper to visualize() for multiple structures
 
