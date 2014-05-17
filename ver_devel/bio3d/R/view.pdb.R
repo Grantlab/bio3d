@@ -41,14 +41,16 @@ sse.color <- function(x, atom.sel=NULL, col.coil="gray", col.helix="purple", col
   return(col)
 }
 
-  vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
-    ##-- Define a color scale from a numeric vector
-    ##     To Do - make independent of classInit package?
-    ##   (I think Julien posted a new version but I cant find it currently)
-    require(classInt)
-    return( findColours(classIntervals(vec, n=n, style="equal"), pal) )
-  }
+vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
+  col <- colorRampPalette(pal)(n)
+  vec.cut <- cut(vec, seq(min(vec), max(vec), length.out=n), include.lowest = TRUE)
+  levels(vec.cut) <- 1:length(col)
+  col <- col[vec.cut]
+  return(col)
+}
 
+view <- function(...)
+  UseMethod("view")
 
 view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL, ...) {
    ##-- Wrapper for visualize() to view larger PDBs the way Barry 
@@ -194,7 +196,11 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL, ...
    #    visualize.cna(cna, pdb, ...) ## need to think more about this
    #}
 }
-  
+
+view.character <- function(file, type="default", atom.sel=NULL, col=NULL, cna=NULL, ...) {
+  x <- read.pdb(file)
+  view.pdb(pdb=x, type=type, atom.sel=atom.sel, col=col, cna=cna, ...)
+}
 
 view.pdbs <- function(x, type=1, col=NULL, add=FALSE, ...) {
   ##-- Wrapper to visualize() for multiple structures
