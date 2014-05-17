@@ -102,11 +102,11 @@ connectivity.xyz <- function(x, elesy, safety = 1.2, by.block = FALSE, ...){
 connectivity.pdb <- function(x, safety = 1.2, by.block = TRUE, ...) {
   if(!is.pdb(x))
     stop("'x' must be an object of class 'pdb'")   
-  x <- connectivity.xyz(x = x$xyz, elesy = x$atom$elesy,
+  con <- connectivity.xyz(x = x$xyz, elesy = x$atom$elesy,
                         safety = safety, by.block = by.block)
-  x$con$eleno.1 <- x$atom$eleno[x$con$eleno.1]
-  x$con$eleno.2 <- x$atom$eleno[x$con$eleno.2]
-  return(x)
+  con$eleno.1 <- x$atom$eleno[con$eleno.1]
+  con$eleno.2 <- x$atom$eleno[con$eleno.2]
+  return(con)
 }
 
 ## Setter

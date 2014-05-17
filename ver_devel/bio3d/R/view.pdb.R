@@ -149,7 +149,7 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL, ...
     ## Just protein
       prot.sel <- atom.select(pdb, "protein", verbose = FALSE)
       prot.pdb <- trim.pdb(pdb, prot.sel)
-      connectivity(prot.pdb) <- connectivity(prot.pdb)
+#       connectivity(prot.pdb) <- connectivity(prot.pdb)
 
       col <- col[prot.sel$atom]
 
@@ -162,7 +162,7 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL, ...
    if(type=="back") {
     back.sel <- atom.select(pdb,"back", verbose=FALSE)
     back.pdb <- trim.pdb(pdb, back.sel)
-      connectivity(back.pdb) <- connectivity(pdb) ## <--- Using back.pdb here gives strange result!!!
+#      connectivity(back.pdb) <- connectivity(back.pdb) ## <--- Using back.pdb here gives strange result!!!
 
       col <- col[back.sel$atom] 
  
@@ -172,23 +172,15 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL, ...
    }
 
    if(type=="all") {
-    ## STILL A BUG HERE IN visualize() FOR LIGAND!! - Need to fix
-      ### visualize(pdb, con=FALSE, col=col,...) ###
+     ## type == all, is it everything but water?
+      nowat.sel <- atom.select(pdb, "notwater", verbose = FALSE)
+      nowat.pdb <- trim.pdb(pdb, nowat.sel)
+      connectivity(nowat.pdb) <- connectivity(nowat.pdb)
 
-      ## Tmp fix draw ligand separately without lines
-      lig.sel  <- atom.select(pdb, "ligand", verbose = FALSE)
-      if(length(lig.sel$atom) != 0){
-          visualize(trim.pdb(pdb, lig.sel), con=FALSE, type="s")
-      }
+      col <- col[nowat.sel$atom]
 
-      prot.sel <- atom.select(pdb, "protein", verbose = FALSE)
-      prot.pdb <- trim.pdb(pdb, prot.sel)
-      connectivity(prot.pdb) <- connectivity(prot.pdb)
-
-      col <- col[prot.sel$atom]
-
-      if(length(prot.pdb$xyz)!=0){
-        visualize(prot.pdb, con = FALSE, add=TRUE, col=col, ...) ## col=col ?
+      if(length(nowat.pdb$xyz)!=0){
+        visualize(nowat.pdb, con = FALSE, col=col, ...) ## col=col ?
       }
 
     }
