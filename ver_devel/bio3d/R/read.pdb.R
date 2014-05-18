@@ -1,6 +1,6 @@
 "read.pdb" <-
-function (file, maxlines=-1, multi=FALSE,
-          rm.insert=FALSE, rm.alt=TRUE, verbose=TRUE, elety.custom = NULL) {
+function (file, maxlines=-1, multi=FALSE, rm.insert=FALSE, rm.alt=TRUE,
+          verbose=TRUE, elety.custom = NULL, read.con = FALSE) {
 
   if(missing(file)) {
     stop("read.pdb: please specify a PDB 'file' for reading")
@@ -190,30 +190,33 @@ function (file, maxlines=-1, multi=FALSE,
   rm(raw.lines, raw.atom)
 
   ## Read connectivity
- if(length(raw.con) == 0)
-   con <- NULL
- else {
-   trim <- function(str)
-     sub(' +$','',sub('^ +', '', str))
- 
-   eleno.1 <- rep(trim(substr(raw.con,  7, 11)), 4)
-   eleno.2 <-   c(trim(substr(raw.con, 12, 16)),
-                  trim(substr(raw.con, 17, 21)),
-                  trim(substr(raw.con, 22, 26)),
-                  trim(substr(raw.con, 27, 31)))
- 
-   eleno.1 <- suppressWarnings(as.integer(eleno.1[nzchar(eleno.2)]))
-   eleno.2 <- suppressWarnings(as.integer(eleno.2[nzchar(eleno.2)]))
- 
-   if(any(is.na(eleno.1)) | any(is.na(eleno.2)) )
-     warning("NA values have been produce when reading connectivity. Please check your data.")
- 
-    eleno.1 <- subset(eleno.1, !is.na(eleno.2))
-    eleno.2 <- subset(eleno.2, !is.na(eleno.2))
- 
-   con <- connectivity.default(eleno.1 = eleno.1, eleno.2 = eleno.2)
-   if(!all(unlist(con) %in% atom$eleno))
-     stop("Ill defined connectivity")
+ con <- NULL
+ if(read.con) {
+   if(length(raw.con) == 0)
+     con <- NULL
+   else {
+     trim <- function(str)
+       sub(' +$','',sub('^ +', '', str))
+     
+     eleno.1 <- rep(trim(substr(raw.con,  7, 11)), 4)
+     eleno.2 <-   c(trim(substr(raw.con, 12, 16)),
+                    trim(substr(raw.con, 17, 21)),
+                    trim(substr(raw.con, 22, 26)),
+                    trim(substr(raw.con, 27, 31)))
+     
+     eleno.1 <- suppressWarnings(as.integer(eleno.1[nzchar(eleno.2)]))
+     eleno.2 <- suppressWarnings(as.integer(eleno.2[nzchar(eleno.2)]))
+     
+     if(any(is.na(eleno.1)) | any(is.na(eleno.2)) )
+       warning("NA values have been produce when reading connectivity. Please check your data.")
+     
+     eleno.1 <- subset(eleno.1, !is.na(eleno.2))
+     eleno.2 <- subset(eleno.2, !is.na(eleno.2))
+     
+     con <- connectivity.default(eleno.1 = eleno.1, eleno.2 = eleno.2)
+     if(!all(unlist(con) %in% atom$eleno))
+       stop("Ill defined connectivity")
+   }
  }
   ## End read connectivity
  
