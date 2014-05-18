@@ -94,7 +94,12 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL, ...
     col <- col[atom.sel$atom]
    }
 
-
+   ## Bonds
+   if(is.null(pdb$con)) {
+     cat("Computing connectivity from coordinates...\n")
+     connectivity(pdb) <- connectivity(pdb)
+   }
+   
    if(type=="default") { 
       ## Calpha trace plus sidechains and ligand
       ca.sel   <- atom.select(pdb, "calpha", verbose = FALSE)
@@ -104,30 +109,25 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL, ...
       side.sel <- combine.sel(prot.sel, back.sel, op="NOT", verbose = FALSE)
       side.sel <- combine.sel(side.sel, ca.sel, op="OR", verbose = FALSE)
       
-      ## Bonds
-      if(!is.null(pdb$con)){
-        connectivity(pdb) <- connectivity(pdb)
-      }
-
       ## Ligand
-      if(length(lig.sel$atom) != 0){
+      if(length(lig.sel$atom) != 0){        
           visualize(trim.pdb(pdb, lig.sel), con=FALSE, type="s")
       }
 
       ## Sidechain
       if(length(side.sel$atom) != 0) {
-        visualize(trim.pdb(pdb, side.sel), con = FALSE, add = TRUE, type = "l", col = "gray", lwd = 1)
-    }
+        visualize(trim.pdb(pdb, side.sel), con = FALSE, add = TRUE, type = "l", col = "gray", lwd = 1)        
+      }
 
-    ## Calpha
+      ## Calpha
       if(length(ca.sel$atom) != 0) {
         ca.pdb <- trim.pdb(pdb, ca.sel)
         connectivity(ca.pdb) <- calpha.connectivity(ca.pdb)
 
         col <- col[ca.sel$atom]
 
-      visualize(ca.pdb, con=FALSE, col=col, add = TRUE, type = "l", lwd=3, ...)
-    }
+        visualize(ca.pdb, con=FALSE, col=col, add = TRUE, type = "l", lwd=3, ...)
+      }
     } 
 
 
@@ -180,7 +180,7 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL, ...
       col <- col[nowat.sel$atom]
 
       if(length(nowat.pdb$xyz)!=0){
-        visualize(nowat.pdb, con = FALSE, col=col, ...) ## col=col ?
+        visualize(nowat.pdb, con = FALSE, col=col, ...)
       }
 
     }

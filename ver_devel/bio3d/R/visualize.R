@@ -132,8 +132,8 @@ visualize.pdb <- function(
   if(any(!are.symb(pdb$atom$elesy) & is.na(pdb$atom$elesy)))
     stop("'pdb' contains unvalid 'elesy'")
   
-  if(con & grepl("l", type) | is.null(pdb$con)) {
-    cat("Computing connectivity from coordinates...")
+  if(grepl("l", type) & (is.null(pdb$con) | con)) {
+    cat("Computing connectivity from coordinates...\n")
     pdb$con <- connectivity(pdb)
   }
   pdb$con$eleno.1 <- match(pdb$con$eleno.1, pdb$atom$eleno)
