@@ -1,6 +1,9 @@
 `pdbaln` <-
 function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
 
+  ## Log the call
+  cl <- match.call()
+
   ##- Quick and dirty alignment of pdb sequences
   ##   pdbs <- pdbaln(files)
   ##
@@ -88,7 +91,8 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
   s <- seqaln(s, id=files, ...)
   cat("\n")
   s <- read.fasta.pdb(s, prefix = "", pdbext = "", ncore=ncore, nseg.scale=nseg.scale)
-
+  s$call=cl
+  
   if(fit)
     s$xyz <- pdbfit(s)
   return(s)

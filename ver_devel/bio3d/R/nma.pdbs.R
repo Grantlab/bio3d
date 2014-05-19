@@ -7,7 +7,7 @@
                        defa = FALSE, outpath = NULL, ncore=1, ...) {
  
   
-  if(class(pdbs)!="3dalign")
+  if(!inherits(pdbs, "3dalign"))
     stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
 
   ## Log the call
@@ -67,7 +67,8 @@
     sse <- NULL
   
   ## Set indicies
-  gaps.res <- gap.inspect(pdbs$ali)
+  #gaps.res <- gap.inspect(pdbs$ali)
+  gaps.res <- gap.inspect(pdbs$resno)
   gaps.pos <- gap.inspect(pdbs$xyz)
 
   gaps.sse <- NULL
@@ -363,7 +364,7 @@
   tmp.xyz <- xyz[i, f.inds$pos]
   resno   <- pdbs$resno[i,f.inds$res]
   chain   <- pdbs$chain[i,f.inds$res]
-  
+
   ## Fix for missing chain IDs
   chain[is.na(chain)] <- ""
   

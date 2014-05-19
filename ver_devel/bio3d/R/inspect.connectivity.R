@@ -1,3 +1,5 @@
+## Useful for checking the connectivity in a 3dalign pdbs object
+
 "inspect.connectivity" <- function(pdbs, cut=4.) {
   xyz <- NULL; ids <- NULL;
   if(inherits(pdbs, "3dalign")) {
@@ -5,7 +7,7 @@
     n <- length(pdbs$id)
     ids <- pdbs$id
   }
-  else if(inherits(pdbs, "pdb")) {
+  else if(is.pdb(pdbs)) {
     ca.inds <- atom.select(pdbs, 'calpha')
     xyz <- matrix(pdbs$xyz[ca.inds$xyz], nrow=1, byrow=TRUE)
     n <- 1

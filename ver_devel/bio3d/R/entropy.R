@@ -8,9 +8,16 @@ function(alignment) {
   aa <- c("V","I","L","M",  "F","W","Y",  "S","T",
           "N","Q",  "H","K","R",  "D","E",
           "A","G",  "P",  "C",  "-","X")
-
+  
+  composition <- table(alignment)
+  unk <- composition[!names( composition  ) %in% aa]
+  if(length(unk) > 0) {
+    warning(paste("non standard residue code:",names(unk),"mapped to X\n  "))
+    for(i in 1:length(unk))
+      alignment[alignment==names(unk[i])]="X"
+  }
+  
   len <- ncol(alignment)
-
   freq.22 <- matrix(0, nrow = 22, ncol = ncol(alignment),
                     dimnames = list(aa,seq(1:len)))
 

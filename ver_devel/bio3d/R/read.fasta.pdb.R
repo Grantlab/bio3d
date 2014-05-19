@@ -1,6 +1,9 @@
 "read.fasta.pdb" <-
-function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
+function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...) {
 
+  ## Log the call
+  cl <- match.call()
+  
   # Parallelized by multicore package (Fri Apr 26 17:58:26 EDT 2013)
   ncore <- setup.ncore(ncore)
   if(ncore > 1) {
@@ -73,11 +76,11 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
       ##-- Numeric vec, 'nseq', for mapping aln to pdb
       nseq <- rep(NA,length(aliseq))
       ali.res.ind <- which(!is.gap(aliseq))
-      if( length(ali.res.ind) > length(pdbseq) ) {
+      if( length(ali.res.ind) > (length(pdbseq) - start.num + 1) ) {
         warning(paste(aln$id[i],
          ": sequence has more residues than PDB has Calpha's"))
-        ali.res.ind <- ali.res.ind[1:length(pdbseq)] ## exclude extra
-        tomatch <-  tomatch[1:length(pdbseq)]        ## terminal residues
+        ali.res.ind <- ali.res.ind[1:(length(pdbseq)-start.num+1)] ## exclude extra
+        tomatch <-  tomatch[1:(length(pdbseq)-start.num+1)]        ## terminal residues
       }
       nseq[ali.res.ind] = start.num:((start.num - 1) + length(tomatch))
 
@@ -127,9 +130,18 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
   rownames(res.bf) <- aln$id
   rownames(res.ch) <- aln$id
   rownames(res.id) <- aln$id
-  
+ 
+  if(fix.ali) {
+     i1 <- which(is.na(res.nu))
+     i2 <- which(is.gap(aln$ali))
+     if(!identical(i1, i2)) {
+        aln$ali[i1] <- aln$ali[i2[1]]
+        warning("$ali component is modified to match $resno")
+     }
+  }
   out<-list(xyz=coords, resno=res.nu, b=res.bf,
-            chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id)
+            chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id,
+            call = cl)
   class(out)=c("3dalign","fasta")
   return(out)
 }

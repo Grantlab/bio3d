@@ -1,12 +1,14 @@
 \name{blast.pdb}
 \alias{blast.pdb}
+\alias{get.blast}
 \title{ NCBI BLAST Sequence Search }
 \description{
   Run NCBI blastp, on a given sequence, against the PDB, NR and
   swissprot sequence databases.
 }
 \usage{
-blast.pdb(seq, database = "pdb")
+blast.pdb(seq, database = "pdb", time.out = NULL)
+get.blast(urlget, time.out = NULL)
 }
 \arguments{
   \item{seq}{ a single element or multi-element character vector
@@ -15,6 +17,10 @@ blast.pdb(seq, database = "pdb")
   \item{database}{ a single element character vector specifying the
     database against which to search. Current options are \sQuote{pdb},
     \sQuote{nr} and \sQuote{swissprot}. }
+  \item{time.out}{ integer specifying the number of seconds to wait for
+    the blast reply before a time out occurs. }
+  \item{urlget}{ the URL to retrieve BLAST results; Usually it is returned
+    by blast.pdb if time.out is set and met. }
 }
 \details{
   This function employs direct HTTP-encoded requests to the NCBI web
