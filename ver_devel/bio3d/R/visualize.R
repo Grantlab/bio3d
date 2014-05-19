@@ -33,7 +33,7 @@ visualize.xyz <- function(
   
   if(is.null(col))
     col <- do.call(rgb, elements[M, c("red","green","blue")])
-  if(length(col) != length(xyz)/3){
+  if(length(col) != ncol(xyz)/3){
     if(length(col) != 1)
       warning("'col' has been recycled")
     col <- rep(col, length = length(xyz)/3)
@@ -76,9 +76,9 @@ visualize.xyz <- function(
     if(!is.null(con)){
       ind <- t(con)
       seg.id <- segments3d(
-        xyz[seq(1,length(xyz),3)][ind],
-        xyz[seq(2,length(xyz),3)][ind],
-        xyz[seq(3,length(xyz),3)][ind],
+        xyz[seq(1,ncol(xyz),3)][ind],
+        xyz[seq(2,ncol(xyz),3)][ind],
+        xyz[seq(3,ncol(xyz),3)][ind],
         color = col[ind], lwd=lwd, ...)
       
       seg.id <- data.frame(id = seg.id, type = "atom.seg")

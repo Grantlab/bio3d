@@ -199,9 +199,96 @@ view.character <- function(file, type="default", atom.sel=NULL, col=NULL, cna=NU
 }
 
 ## We better add a method for class '3dalign' here, I think.
-# view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
-#
-# }
+view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
+  ##-- Wrapper to visualize() for multiple structures
+  
+  as.xyz <- function(x, ...) {
+    x <- matrix(x,nrow=3)
+    x <- matrix(x[,!is.na(x[1,])], nrow=1)
+    class(x) <- "xyz"
+    return(x)
+  }
+  
+  ## 3dalign object should contains an 'xyz' object, not a old style vector!!
+  xyz.list <- split(x$xyz, 1:nrow(x$xyz))
+  xyz.list <- lapply(xyz.list, as.xyz)
+  con.list <- lapply(xyz.list, calpha.connectivity)
+  
+  ## -- The 'type' argument is for trying to sort out 'col' color specification 
+  ##     for different purposes.  Note. 'col' input could be: 
+  ##      1. a) single element vector to be applied to all structures, 
+  ##         b) a multiple element vector with a color per structure, 
+  ##      2. a) a vector with a color per atom, or
+  ##         b) a matrix with a column per atom position and row per structure
+  ## 
+  ##     This is specified by 'type=1' or 'type=2' 
+  ##     Eventually we want to be a bit smarter and remove the need for the 'type' argument 
+  
+  nstru <- length(xyz.list)
+  xyz.lengths <- sapply(xyz.list, length)/3
+  npos  <- ncol(x$resno)
+  ## Sort out color options with the aid of type argument
+  if(type==1) {
+    ## Option No. #1 above
+    if( is.null(col) ) {
+      col.list <- vmd.colors(nstru)
+    } else {
+      if(length(col)==1) {
+        col.list <- replicate(col, nstru, simplify = FALSE)
+      }
+      if(length(col) != nstru) {
+        stop("For type=1: Color vector should be the same length as the number of structures")
+      } else {
+        col.list <- as.list( col )
+      }
+    }
+  }
+  if(type==2) {
+    ## Option No. #2 above
+    if( is.null(col) ) {
+      col.list <- lapply(xyz.lengths, function(n) vec2color(1:n))
+    } else {
+      if(is.list(col)) {
+        col.lengths <- lapply(col, length)
+        if(any(col.length != xyz.lengths)) {
+          stop("When 'col' is a list, each component length must match the number of atoms in each model")
+        }
+        col.list <- col
+      }
+      if( is.null(nrow(col)) ) {
+        ## We have an input 'col' vector we want to apply to all structures
+        if(length(col) == npos) {
+#           cat("IN HERE\n\n")
+          col    <- replicate(nstru, col, simplify = FALSE)
+          are.na <- lapply(split(x$resno, 1:nstru), is.na)
+          col.list <- mapply(function(col, M) return(col[!M]), col.list, are.na)
+#           cat(dim(col))
+        }
+        else {
+          stop("For type=2: Color vector should be same length as ncol pdbs$ali")
+          ## unclear what the user might want here...
+        }
+      } else {
+        ## we have a color matrix
+        if(dim(col) != dim(x)) {
+          stop("For type=2: Color matrix should be same dim as pdbs$ali")
+          ## again unclear what the user might want here...
+        } else {
+          col.list <- split(col, 1:nstru)
+          are.na <- lapply(split(x$resno, 1:nstru), is.na)
+          col.list <- mapply(function(col, M) return(col[!M]), col.list, are.na)
+        }
+      }
+    }
+  }
+
+  elesy <- rep("C", length(xyz.list[[1]])/3)
+  visualize(xyz.list[[1]], elesy = elesy, con = con.list[[1]], col = col.list[[1]], add = FALSE, ...)
+  mapply(function(x, con, col){
+           elesy <- rep("C", length(x)/3)
+           visualize(x, elesy = elesy, con = con, col = col, add = TRUE, ...)
+         }, xyz.list, con.list, col.list)
+}
 
 view.pdbs <- function(x, type=1, col=NULL, add=FALSE, ...) {
   ##-- Wrapper to visualize() for multiple structures

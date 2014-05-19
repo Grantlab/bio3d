@@ -1,6 +1,6 @@
 are.symb <- function(x) {
   to.return <- (x %in% elements$symb)
-  to.return[is.na(x)] <- NA
+#   to.return[is.na(x)] <- NA
   return(to.return)
 }
 
