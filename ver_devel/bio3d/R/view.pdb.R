@@ -52,7 +52,8 @@ vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
 view <- function(...)
   UseMethod("view")
 
-view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL, ...) {
+view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
+                     elety.custom = atom.index, ...) {
    ##-- Wrapper for visualize() to view larger PDBs the way Barry 
    ##    likes to see them most often.
    ##      To Do - Check validity on "atom.sel" input 
@@ -89,6 +90,9 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL, ...
     }
    }
 
+   if(!all(are.symb(pdb$atom$elesy)))
+     pdb$atom$elesy <- atom2ele(pdb$atom$elesy, elety.custom)
+   
    if(!is.null(atom.sel)) {
     pdb <- trim.pdb(pdb, atom.sel)
     col <- col[atom.sel$atom]

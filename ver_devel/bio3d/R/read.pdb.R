@@ -1,6 +1,6 @@
 "read.pdb" <-
 function (file, maxlines=-1, multi=FALSE, rm.insert=FALSE, rm.alt=TRUE,
-          verbose=TRUE, elety.custom = NULL, read.con = FALSE) {
+          verbose=TRUE, read.con = FALSE) {
 
   if(missing(file)) {
     stop("read.pdb: please specify a PDB 'file' for reading")
@@ -244,9 +244,10 @@ function (file, maxlines=-1, multi=FALSE, rm.insert=FALSE, rm.alt=TRUE,
   }
  
   ## To create a "valid" pdb object for visualization, atom$elesy have to be well defined
-  atom$elesy <- atom2ele(atom$elety, elety.custom)
-  if(!all(are.symb(atom$elesy)))
-    atom$elesy[!are.symb] <- "Xx"
+ elesy <- atom$elesy
+ substr(elesy, 1, 1) <- toupper(substr(elesy, 1, 1))
+ substr(elesy, 2, 2) <- tolower(substr(elesy, 2, 2))
+ atom$elesy <- elesy
   
   ##- Vector of Calpha positions 
   ##  check for calcium resid and restrict to ATOM records only
