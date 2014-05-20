@@ -113,8 +113,10 @@ visualize.xyz <- function(
     ids <- rbind(ids, pts.id)
   }
   if(centre) {
-    cent <- centres(xyz)
-    userMatrix <- t(translationMatrix(x = cent[1], y = cent[2], z = cent[3]))
+    cent <- centres(xyz, w=1)
+    print(cent)
+    userMatrix <- t(translationMatrix(x = -cent[1], y = -cent[2], z = -cent[3]))
+    par3d(userMatrix=userMatrix)
   }
   invisible(ids)
 }
