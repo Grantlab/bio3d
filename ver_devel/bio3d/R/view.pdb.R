@@ -115,12 +115,13 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
       
       ## Ligand
       if(length(lig.sel$atom) != 0){        
-          visualize(trim.pdb(pdb, lig.sel), con=FALSE, type="s")
+          visualize(trim.pdb(pdb, lig.sel), con=FALSE, type="s", centre=FALSE)
       }
 
       ## Sidechain
       if(length(side.sel$atom) != 0) {
-        visualize(trim.pdb(pdb, side.sel), con = FALSE, add = TRUE, type = "l", col = "gray", lwd = 1)        
+        visualize(trim.pdb(pdb, side.sel), con = FALSE, add = TRUE,
+                  type = "l", col = "gray", lwd = 1, centre=FALSE)        
       }
 
       ## Calpha
@@ -130,7 +131,8 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
 
         col <- col[ca.sel$atom]
 
-        visualize(ca.pdb, con=FALSE, col=col, add = TRUE, type = "l", lwd=3, ...)
+        visualize(ca.pdb, con=FALSE, col=col, add = TRUE,
+                  type = "l", lwd=3, centre=FALSE, ...)
       }
     } 
 
@@ -144,7 +146,7 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
 
         col <- col[ca.sel$atom]
 
-      visualize(ca.pdb, con=FALSE, col=col, type = "l", lwd=3, ...)
+      visualize(ca.pdb, con=FALSE, col=col, type = "l", lwd=3, centre=FALSE, ...)
     }
    }
    
@@ -158,7 +160,7 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
       col <- col[prot.sel$atom]
 
       if(length(prot.pdb$xyz)!=0){
-        visualize(prot.pdb, con = FALSE, col=col, ...) ## col=col ?
+        visualize(prot.pdb, con = FALSE, col=col, centre=FALSE, ...) ## col=col ?
       }
    }
 
@@ -171,7 +173,7 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
       col <- col[back.sel$atom] 
  
     if(length(back.pdb$xyz)!=0) {
-      visualize(back.pdb, con=FALSE, col=col, ...)
+      visualize(back.pdb, con=FALSE, col=col, centre=FALSE, ...)
     }
    }
 
@@ -184,7 +186,7 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
       col <- col[nowat.sel$atom]
 
       if(length(nowat.pdb$xyz)!=0){
-        visualize(nowat.pdb, con = FALSE, col=col, ...)
+        visualize(nowat.pdb, con = FALSE, col=col, centre=FALSE, ...)
       }
 
     }
@@ -283,11 +285,12 @@ view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
   }
 
   elesy <- rep("C", length(xyz.list[[1]])/3)
-  visualize(xyz.list[[1]], elesy = elesy, con = con.list[[1]], col = col.list[[1]], add = FALSE, ...)
+  visualize(xyz.list[[1]], elesy = elesy, con = con.list[[1]],
+            col = col.list[[1]], add = FALSE, centre=FALSE, ...)
   if(length(xyz.list) > 1) {
     useless <- mapply(function(x, con, col){
             elesy <- rep("C", length(x)/3)
-            visualize(x, elesy = elesy, con = con, col = col, add = TRUE, ...)
+            visualize(x, elesy = elesy, con = con, col = col, add = TRUE, centre=FALSE, ...)
            }, xyz.list, con.list, col.list)
   }
 }
@@ -374,9 +377,9 @@ view.pdbs <- function(x, type=1, col=NULL, add=FALSE, ...) {
     xcol = na.omit(col[i,])
     ## cat( paste( "  ** length x:", (length(xt)/3), "  length col:", length(xcol),"\n") )
     if(i==1) {
-      visualize(xt, con=calpha.connectivity(xt), add=add, col=xcol, ...)
+      visualize(xt, con=calpha.connectivity(xt), add=add, col=xcol, centre=FALSE, ...)
     } else {
-      visualize(xt, con=calpha.connectivity(xt), add=TRUE, col=xcol, ...)   
+      visualize(xt, con=calpha.connectivity(xt), add=TRUE, col=xcol, centre=FALSE, ...)   
     }
   }
 }
