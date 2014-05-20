@@ -259,9 +259,9 @@ view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
         ## We have an input 'col' vector we want to apply to all structures
         if(length(col) == npos) {
 #           cat("IN HERE\n\n")
-          col    <- replicate(nstru, col, simplify = FALSE)
+          col    <- replicate(nstru, col, simplify = FALSE)          
           are.na <- lapply(split(x$resno, 1:nstru), is.na)
-          col.list <- mapply(function(col, M) return(col[!M]), col.list, are.na)
+          col.list <- mapply(function(col, M) return(col[!M]), col, are.na)
 #           cat(dim(col))
         }
         else {
@@ -284,10 +284,12 @@ view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
 
   elesy <- rep("C", length(xyz.list[[1]])/3)
   visualize(xyz.list[[1]], elesy = elesy, con = con.list[[1]], col = col.list[[1]], add = FALSE, ...)
-  mapply(function(x, con, col){
-           elesy <- rep("C", length(x)/3)
-           visualize(x, elesy = elesy, con = con, col = col, add = TRUE, ...)
-         }, xyz.list, con.list, col.list)
+  if(length(xyz.list) > 1) {
+    useless <- mapply(function(x, con, col){
+            elesy <- rep("C", length(x)/3)
+            visualize(x, elesy = elesy, con = con, col = col, add = TRUE, ...)
+           }, xyz.list, con.list, col.list)
+  }
 }
 
 view.pdbs <- function(x, type=1, col=NULL, add=FALSE, ...) {
