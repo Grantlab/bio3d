@@ -5,7 +5,7 @@
   Determine the cross-correlations of atomic displacements.
 }
 \usage{
-\method{dccm}{xyz}(x, reference = apply(xyz, 2, mean), grpby=NULL,
+\method{dccm}{xyz}(x, reference = NULL, grpby=NULL,
 ncore=1, nseg.scale=1, \dots)
 }
 \arguments{
