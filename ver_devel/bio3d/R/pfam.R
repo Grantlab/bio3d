@@ -1,5 +1,10 @@
 "pfam" <- function(id, alignment='seed', verbose=FALSE) {
   ##alignment <- 'full' ## seed, ncbi, full, metagenomics
+  
+  oops <- require(RCurl)
+  if(!oops)
+    stop("Please install the XML and RCurl package from CRAN")
+  
   cl <- match.call()
   format <- "fasta"
   
