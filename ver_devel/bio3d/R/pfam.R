@@ -3,7 +3,7 @@
   
   oops <- require(RCurl)
   if(!oops)
-    stop("Please install the XML and RCurl package from CRAN")
+    stop("Please install the RCurl package from CRAN")
   
   cl <- match.call()
   format <- "fasta"
