@@ -6,15 +6,15 @@ opts_chunk$set(dev='pdf')
 
 #+ preamble, include=FALSE, eval=FALSE
 library(knitr)
-spin('Bio3D_nma-dhfr-partIII.r')
-system("pandoc -o Bio3D_nma-dhfr-partIII.pdf Bio3D_nma-dhfr-partIII.md")
+spin('Bio3D_nma-dhfr-partII.r')
+system("pandoc -o Bio3D_nma-dhfr-partII.pdf Bio3D_nma-dhfr-partII.md")
 
 #' ## Background:
 #' Bio3D is an R package that provides interactive tools for structural bioinformatics. 
 #' The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data.
 
 #'
-#' ## Part III:  Ensemble NMA across multiple species of DHFR
+#' ## Part II:  Ensemble NMA across multiple species of DHFR
 #' In this vignette we extend the analysis from Part I by including 
 #' a more extensive search of distant homologues within the 
 #' DHFR family. Based on a HMMER search we identify and collect 
@@ -276,8 +276,8 @@ a <- mktrj.pca(pc.xray, pc=1, file="pc1.pdb",
 
 #+ close, include=TRUE, eval=FALSE
 library(knitr)
-spin('Bio3D_nma-dhfr-partIII.r')
-system("pandoc -o Bio3D_nma-dhfr-partIII.pdf Bio3D_nma-dhfr-partIII.md")
+spin('Bio3D_nma-dhfr-partII.r')
+system("pandoc -o Bio3D_nma-dhfr-partII.pdf Bio3D_nma-dhfr-partII.md")
 
 #'
 #' ## Information About the Current Bio3D Session
