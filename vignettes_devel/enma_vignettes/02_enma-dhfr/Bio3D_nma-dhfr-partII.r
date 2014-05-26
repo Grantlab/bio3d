@@ -14,6 +14,11 @@ system("pandoc -o Bio3D_nma-dhfr-partII.pdf Bio3D_nma-dhfr-partII.md")
 #' The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data.
 
 #'
+#' #### Requirements:
+#' Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/download/download.html) available both on-line and from within the Bio3D package. In addition to Bio3D the _MUSCLE_ and _CLUSTALO_ multiple sequence alignment programs (available from the [muscle home page](http://www.drive5.com/muscle/) and [clustalo home page](http://www.clustal.org/omega)) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
+
+
+#'
 #' ## Part II:  Ensemble NMA across multiple species of DHFR
 #' In this vignette we extend the analysis from Part I by including 
 #' a more extensive search of distant homologues within the 
@@ -221,7 +226,7 @@ mktrj.enma(modes, pdbs, mode=1, ind=grep("albicans", species)[1])
 mktrj.enma(modes, pdbs, mode=1, ind=grep("sapiens", species)[1]) 
 
 
-#' ![Mode comparison of (A) *E.coli*, (B) *Mycobacterium tuberculosis*, (C) *C.albicans*, and (D) *H.sapiens*. The trajectories are made with function **mktrj.enma** and visualized in PyMol.](visualize-4hfrs.png)
+#' ![Mode comparison of (A) *E.coli*, (B) *Mycobacterium tuberculosis*, (C) *C.albicans*, and (D) *H.sapiens*. The trajectories are made with function **mktrj.enma** and visualized in PyMol.](figure/visualize-4hfrs.png)
 
 
 #'

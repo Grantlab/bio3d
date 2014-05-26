@@ -13,6 +13,11 @@ system("pandoc -o Bio3D_nma-dhfr-partI.pdf Bio3D_nma-dhfr-partI.md")
 #' Bio3D is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data.
 
 #'
+#' #### Requirements:
+#' Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/download/download.html) available both on-line and from within the Bio3D package. In addition to Bio3D the _MUSCLE_ and _CLUSTALO_ multiple sequence alignment programs (available from the [muscle home page](http://www.drive5.com/muscle/) and [clustalo home page](http://www.clustal.org/omega)) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
+
+
+#'
 #' ## Part I: Ensemble NMA - Bacterial DHFR structures
 #' In this vignette we calculate normal modes on an ensemble of *E.coli* Dihydrofolate
 #' reductase (DHFR) structures, and compare the resulting flexibility profiles with 3 
@@ -290,7 +295,7 @@ mktrj.enma(modes, pdbs, mode=1, which(grps==3)[1]) ## B. anthracis
 mktrj.enma(modes, pdbs, mode=1, which(grps==4)[1]) ## Y. pestis
 
 
-#' ![Comparison of modes fluctuations profiles of *E.coli* (left panel) and *B.anthracis* (rigth panel).](modes-compare.png)
+#' ![Comparison of modes fluctuations profiles of *E.coli* (left panel) and *B.anthracis* (rigth panel).](figure/modes-compare.png)
 
 
 #'

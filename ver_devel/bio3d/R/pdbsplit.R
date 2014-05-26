@@ -13,7 +13,7 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
   }
 
   ## Parallelized by multicore package
-  ncore <- setup.ncore(ncore, bigmem = TRUE)
+  ncore <- setup.ncore(ncore, bigmem = FALSE)
 
   if(ncore>1) {
     mylapply <- mclapply
