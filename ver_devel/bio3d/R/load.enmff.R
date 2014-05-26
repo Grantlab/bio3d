@@ -1,3 +1,10 @@
+"ff.aaenm" <- function(r, ...) {
+  a <- 7424;
+  k <- a * r^(-6)
+  k[k>1500]=1500
+  return(k)
+}
+
 "ff.anm" <- function(r, cutoff=15, gamma=1, ...) {
   ifelse( r>cutoff, 0, gamma )
 }
@@ -292,7 +299,12 @@
   else if(ff=="reach") {
     ff <- ff.reach
   }
-
+  
+  ## All-atom ENM
+  else if(ff=="aaenm") {
+    ff <- ff.aaenm
+  }
+  
   else {
     stop("force field not defined")
   }
