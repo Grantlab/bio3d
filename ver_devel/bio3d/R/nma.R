@@ -206,10 +206,15 @@
 
 ".nma.hess" <- function(xyz, init=NULL, sequ=NULL, masses=NULL,
                         hessian=NULL, inc.inds=NULL) {
+  if(length(masses)>0)
+    mass <- TRUE
+  else
+    mass <- FALSE
+
   natoms <- length(xyz)/3
   dimchecks <- c(length(masses)==natoms)
   
-  if(!all(dimchecks))
+  if(mass && !all(dimchecks))
     stop(paste("dimension mismatch when generating hessian\n",
                paste(checks, collapse=", ")))
   
@@ -261,7 +266,7 @@
 
   dims <- dim(ei$vectors)
   dimchecks <- c(length(xyz)/3==natoms,
-              length(masses)==natoms,
+              ifelse(mass, length(masses)==natoms, TRUE),
               dims[1]/3==natoms,
               dims[2]/3==natoms)
   
