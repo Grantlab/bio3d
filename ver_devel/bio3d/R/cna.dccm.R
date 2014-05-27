@@ -4,10 +4,10 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
 
     
   ## Check for presence of igraph package (now in Depends.)
- ## oops <- require(igraph)
- ## if (!oops) {
- ##   stop("igraph package missing: Please install, see: ?install.packages")
- ## }
+ oops <- require(igraph)
+ if (!oops) {
+    stop("igraph package missing: Please install, see: ?install.packages")
+ }
 
   if (dim(cij)[1] != dim(cij)[2]) {
     stop("Input 'cij' should be a square matrix as obtained from the 'dccm()' function")
