@@ -55,6 +55,7 @@
     each hit above the chosen threshold. }
   \item{inds}{ a numeric vector containing the indices of the hits
                relative to the input hmmer object.}
+}
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
@@ -67,6 +68,5 @@
 seq <- get.seq("2abl_A")
 res <- hmmer(seq, db="pdb")
 plot.hmmer(res)
-}
 }
 \keyword{ hplot }
