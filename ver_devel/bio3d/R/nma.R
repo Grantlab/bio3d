@@ -1,101 +1,92 @@
 
+
 ## all-atom NMA
-"aanma" <- function(pdb, inds=NULL, ff='aaenm', pfc.fun=NULL, mass=TRUE,
+"aanma" <- function(pdb, ff='aaenm', pfc.fun=NULL, mass=TRUE,
                     temp=300.0, keep=NULL, hessian=NULL, outmodes='calpha', ... ) {
-  outmodes.allowed <- c("calpha", "noh")
-  if(!outmodes%in%outmodes.allowed)
-    stop("outmodes must be 'calpha' or 'noh'")
   
   ## Log the call
   cl <- match.call()
-  
+
+  ## Indices for effective hessian
+  if(!outmodes %in% c("calpha", "noh") && !is.select(outmodes) && is.null(hessian))
+    stop("outmodes must be 'calpha', 'noh', or an atom selection by 'atom.select()'")
+      
   if(!is.pdb(pdb))
     stop("nma: 'pdb' must be of type 'pdb'")
   
   ## Initialize
   init <- .nma.init(ff=ff, pfc.fun=pfc.fun, ...)
-  
-  ## Trim PDB to match user selection
-  if ( !is.null(inds) ) {
-    pdb <- trim.pdb(pdb, inds)
+
+  if(!is.null(hessian)) {
+    pdb.in <- pdb
+    dims <- dim(hessian)
+    if(dims[1]!=dims[2] | dims[1]!=length(pdb.in$xyz))
+      stop("dimension mismatch")
+  }
+  else {
+    tmp.inds <- atom.select(pdb, "noh", verbose=FALSE)
+    pdb.in <- trim.pdb(pdb, tmp.inds)
   }
   
-  aa.inds <- atom.select(pdb, "all", verbose=FALSE)
-  ha.inds <- atom.select(pdb, "noh", verbose=FALSE)
-  ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
-  ha.pdb <- trim.pdb(pdb, ha.inds)
-  ca.pdb <- trim.pdb(pdb, ca.inds)
+  ## Indices
+  if(is.select(outmodes)) {
+    ## since pdb.in is 'noh' (from trim.pdb above), we need to re-select :P
+    tmp.inds <- outmodes
+    inc.inds <- .match.sel(pdb, pdb.in, tmp.inds)
+    pdb.out <- trim.pdb(pdb.in, inc.inds)
+  }
+  else if(outmodes=="calpha") {
+    inc.inds <- atom.select(pdb.in, "calpha", verbose=FALSE)
+    pdb.out <- trim.pdb(pdb.in, inc.inds)
+  }
+  else {
+    inc.inds <- atom.select(pdb.in, "noh", verbose=FALSE)
+    pdb.out <- trim.pdb(pdb.in, inc.inds)
+  }
   
-  sequ    <- pdbseq(ca.pdb)
-  ca.atoms  <- length(ca.inds$atom)
-  ha.atoms  <- length(ha.inds$atom)
-  aa.atoms  <- length(aa.inds$atom)
+  sequ    <- pdbseq(pdb.in)
+  natoms.in <- length(pdb.in$xyz)/3
+  natoms.out <- length(pdb.out$xyz)/3
   
-  if (ca.atoms<3)
-    stop("nma: insufficient number of CA atoms in structure")
+  if (natoms.in<3 | natoms.out<3)
+    stop("nma: insufficient number of atoms in selection")
   
   ## Use aa2mass to fetch residue mass
   if (mass) {
-    aa.masses <- atom2mass(pdb)
-    ha.masses <- atom2mass(ha.pdb)
-    ca.masses <- atom2mass(ha.pdb, grpby=ha.pdb$atom[,"resno"])
+    masses.in <-  atom2mass(pdb.in)
+    ##masses.out <- atom2mass(pdb.out, grpby=pdb.out$atom[,"resno"])
+    masses.out <- aa2mass(pdb.out)
   }
   
   ## Residue mass is provided by user
-  else if (!is.null(init$bh.args$aa.mass)) {
-    warning("provided masses not in effect at the moment")
-  }
+  #else if (!is.null(init$bh.args$aa.mass)) {
+  #  warning("provided masses not in effect at the moment")
+  #}
   
   ## No mass-weighting
   else {
-    ha.masses <- NULL; ca.masses <- NULL;
+    masses.in <- NULL; masses.out <- NULL;
     init$bh.args <- init$bh.args[ !('aa.mass' %in% names(bh.args)) ]
-  }
-
-  ## use 'in' for build.hessian, 'out' for nma.finalize
-  masses.in <- ha.masses
-  xyz.in <- ha.pdb$xyz
-  inc.inds <- NULL
-  
-  if(!is.null(hessian)) {
-    xyz.in <- NULL
-    masses.in <- NULL
-
-    if(outmodes=="calpha")
-      inc.inds <- atom.select(pdb, "calpha", verbose=FALSE)
-    else
-      inc.inds <- atom.select(pdb, "noh", verbose=FALSE)
-  }
-
-  if(outmodes=="calpha") {
-    inc.inds <- atom.select(ha.pdb, "calpha", verbose=FALSE)
-    masses.out <- ca.masses
-    natoms <- length(ca.masses)
-    xyz.out <- ca.pdb$xyz
-  }
-  else {
-    masses.out <- ha.masses
-    natoms <- length(ha.masses)
-    xyz.out <- ha.pdb$xyz
   }
   
   ## NMA hessian
   ## sequ is here of length ca.pdb, which is different from natoms !!!
-  hessian <- .nma.hess(xyz.in, init=init, sequ=sequ, masses=masses.in,
+  hessian <- .nma.hess(pdb.in$xyz, init=init, sequ=sequ, masses=masses.in,
                        hessian=hessian, inc.inds=inc.inds)
   
   ## diagaonalize - get eigenvectors
   ei <- .nma.diag(hessian)
 
   ## make a NMA object
-  nmaobject <- .nma.finalize(ei, xyz=xyz.out, temp=temp, masses=masses.out,
-                             natoms=natoms, keep=keep, call=cl)
+  nmaobject <- .nma.finalize(ei, xyz=pdb.out$xyz, temp=temp, masses=masses.out,
+                             natoms=natoms.out, keep=keep, call=cl)
   return(nmaobject)
 }
 
 ## calpha NMA
-"nma" <- function(pdb, inds=NULL, ff='calpha', pfc.fun=NULL, mass=TRUE,
-                  temp=300.0, keep=NULL, hessian=NULL,  ... ) {
+"nma" <- function(pdb, ff='calpha', pfc.fun=NULL, mass=TRUE,
+                  temp=300.0, keep=NULL, hessian=NULL, outmodes=NULL, ... ) {
+  
   ## Log the call
   cl <- match.call()
 
@@ -105,50 +96,61 @@
   ## Initialize
   init <- .nma.init(ff=ff, pfc.fun=pfc.fun, ...)
   
-  ## Trim PDB to match user selection
-  if ( !is.null(inds) ) {
-    pdb <- trim.pdb(pdb, inds)
-  }
-  
   ## Trim to only CA atoms
   ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
-  pdb <- trim.pdb(pdb, ca.inds)
-  sequ    <- pdbseq(pdb)
-  natoms  <- length(ca.inds$atom)
-  if (natoms<3)
+  pdb.in <- trim.pdb(pdb, ca.inds)
+  
+  if(is.select(outmodes)) {
+    ## since pdb.in is 'noh' (from trim.pdb above), we need to re-select :P
+    tmp.inds <- outmodes
+    inc.inds <- .match.sel(pdb, pdb.in, tmp.inds)
+    pdb.out <- trim.pdb(pdb.in, inc.inds)
+  }
+  else {
+    pdb.out <- pdb.in
+    inc.inds <- atom.select(pdb.in, "all")
+  }
+  
+  sequ    <- pdbseq(pdb.in)
+  natoms.in <- length(pdb.in$xyz)/3
+  natoms.out <- length(pdb.out$xyz)/3
+
+  if (natoms.in<3)
     stop("nma: insufficient number of CA atoms in structure")
-    
+  
   ## Use aa2mass to fetch residue mass
-  if (mass && is.null(init$bh.args$aa.mass) ) {
-    masses <- do.call('aa2mass', c(list(pdb=sequ, inds=NULL), init$am.args))
+  ##if (mass && is.null(init$bh.args$aa.mass) ) {
+  if (mass) {
+    masses.in <- do.call('aa2mass', c(list(pdb=sequ, inds=NULL), init$am.args))
+    masses.out <- masses.in[ inc.inds$atom ]
   }
   
   ## Residue mass is provided by user
-  else if (!is.null(init$bh.args$aa.mass)) {
-    masses <- init$bh.args$aa.mass
-    init$bh.args <- init$bh.args[ !('aa.mass' %in% names(init$bh.args)) ]
-    if(!mass) {
-      warning("incompatible arguments: forcing mass weighting")
-      mass <- TRUE
-    }
-  }
+  #else if (!is.null(init$bh.args$aa.mass)) {
+  #  masses <- init$bh.args$aa.mass
+  #  init$bh.args <- init$bh.args[ !('aa.mass' %in% names(init$bh.args)) ]
+  #  if(!mass) {
+  #    warning("incompatible arguments: forcing mass weighting")
+  #    mass <- TRUE
+  #  }
+  #}
   
   ## No mass-weighting
   else {
-    masses <- NULL
+    masses.in <- NULL; masses.out <- NULL;
     init$bh.args <- init$bh.args[ !('aa.mass' %in% names(bh.args)) ]
   }
   
   ## NMA hessian
-  hessian <- .nma.hess(pdb$xyz, init=init, sequ=sequ, masses=masses,
-                       hessian=hessian, inc.inds=NULL)
+  hessian <- .nma.hess(pdb.in$xyz, init=init, sequ=sequ, masses=masses.in,
+                       hessian=hessian, inc.inds=inc.inds)
 
   ## diagaonalize - get eigenvectors
   ei <- .nma.diag(hessian)
 
   ## make a NMA object
-  nmaobject <- .nma.finalize(ei, xyz=pdb$xyz, temp=temp, masses=masses,
-                             natoms=natoms, keep=keep, call=cl)
+  nmaobject <- .nma.finalize(ei, xyz=pdb.out$xyz, temp=temp, masses=masses.out,
+                             natoms=natoms.out, keep=keep, call=cl)
   return(nmaobject)
 }
 
@@ -161,7 +163,7 @@
     
     dots <- list(...)
     bh.args <- dots[names(dots) %in% bh.names]
-    am.args <- dots[names(dots) %in% am.names]   
+    am.args <- dots[names(dots) %in% am.names]
 
     ## Define force field
     if (is.null(pfc.fun)) {
@@ -224,7 +226,6 @@
     cat(" Building Hessian...")
     ptm <- proc.time()
     H <- do.call('build.hessian', list(xyz=xyz, pfc.fun=init$pfcfun, sequ=sequ, aa.mass=masses))
-    ##H <- build.hessian(xyz, pfc.fun=pfcfun, aa.mass=masses)
     t <- proc.time() - ptm
     cat("\t\tDone in", t[[3]], "seconds.\n")
   }
@@ -234,11 +235,13 @@
   
   ## Effective Hessian
   if(!is.null(inc.inds)) {
-    cat(" Extracting effective Hessian...")
-    ptm <- proc.time()
-    H <- .nma.trim.hessian(H, inc.inds=inc.inds$xyz)
-    t <- proc.time() - ptm
-    cat("\t\tDone in", t[[3]], "seconds.\n")
+    if(length(xyz)>length(inc.inds$xyz)) {
+      cat(" Extracting effective Hessian..")
+      ptm <- proc.time()
+      H <- .nma.trim.hessian(H, inc.inds=inc.inds$xyz)
+      t <- proc.time() - ptm
+      cat("\tDone in", t[[3]], "seconds.\n")
+    }
   }
   return(H)
 }
@@ -373,3 +376,23 @@
 
     return(nma)
   }
+
+".match.sel" <- function(a, b, inds) {
+  ## a= original pdb
+  ## b= trimmed pdb
+  ## inds= indices of pdb 'a' to keep
+  ## find corresponding atoms in b
+  
+  names.a <- paste(a$atom[inds$atom, "resno"],
+                   a$atom[inds$atom, "elety"],
+                   a$atom[inds$atom, "eleno"], sep="-")
+  
+  names.b <- paste(b$atom[, "resno"],
+                   b$atom[, "elety"],
+                   b$atom[, "eleno"], sep="-")
+  
+  inds <- which(names.b %in% names.a)
+  out <- list(atom=inds, xyz=atom2xyz(inds))
+  class(out) <- "select"
+  return(out)
+}
