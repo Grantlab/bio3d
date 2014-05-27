@@ -86,6 +86,15 @@ print.fasta <- function(x, alignment=TRUE, ...) {
     ali <- ali[,col.inds, drop=FALSE]
   }
   
+  ## Check and truncate possilbe long ids
+  if(any(nchar(id) > 20)) {
+    id <- basename(id)
+    if(any(nchar(id) > 17)) {
+        id <- substr(id,1,10)
+    }
+    id <-paste0("[Truncated_Name:", 1:length(id),"]",id)
+  }
+
   ##- Format sequence identifiers
   ids.nchar <- max(nchar(id))+3 ## with a gap of 3 spaces btwn id and sequence
   ids.format <- paste0("%-",ids.nchar,"s")

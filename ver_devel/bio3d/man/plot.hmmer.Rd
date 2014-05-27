@@ -1,16 +1,16 @@
-\name{plot.blast}
-\alias{plot.blast}
-\title{ Plot a Summary of BLAST Hit Statistics. }
+\name{plot.hmmer}
+\alias{plot.hmmer}
+\title{ Plot a Summary of HMMER Hit Statistics. }
 \description{
   Produces a number of basic plots that should facilitate hit selection
-  from the match statistics of a BLAST result.
+  from the match statistics of a HMMER result.
 }
 \usage{
- \method{plot}{blast}(x, cutoff = NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5, ...)
+ \method{plot}{hmmer}(x, cutoff = NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.1, ...)
 }
 \arguments{
-  \item{x}{ BLAST results as obtained from the function
-    \code{\link{blast.pdb}}. }
+  \item{x}{ HMMER results as obtained from the function
+    \code{\link{hmmer}}. }
   \item{cutoff}{ A numeric cutoff value, in terms of minus the log of
     the evalue, for returned hits.  If null then the function will
   try to find a suitable cutoff near \sQuote{cut.seed} which can be used
@@ -25,13 +25,13 @@
   \item{mar}{ A numerical vector of the form c(bottom, left, top, right)
     which gives the number of lines of margin to be specified on the
     four sides of the plot.}
-  \item{cex}{ a numerical single element vector giving the amount by
+  \item{cex.lab}{ a numerical single element vector giving the amount by
     which plot labels should be magnified relative to the default. }
   \item{\dots}{ extra plotting arguments. }  
 }
 \details{
-  Examining plots of BLAST alignment lengths, scores, E-values and normalized
-  scores (-log(E-Value), see \sQuote{blast.pdb} function) can aid in the
+  Examining plots of HMMER scores, E-values and normalized
+  scores (-log(E-Value), see \sQuote{hmmer} function) can aid in the
   identification sensible hit similarity thresholds.
 
   If a \sQuote{cutoff} value is not supplied then a basic hierarchical
@@ -41,7 +41,7 @@
   to refine the value of \sQuote{cut.seed} or indeed
   \sQuote{cutoff}. As the \sQuote{cutoff} value can vary depending on
   the desired application and indeed the properties of the system under
-  study it is envisaged that \sQuote{plot.blast} will be called multiple
+  study it is envisaged that \sQuote{plot.hmmer} will be called multiple
   times to aid selection of a suitable \sQuote{cutoff} value. See the
   examples below for further details.
 }
@@ -51,32 +51,22 @@
   \item{hits}{ an ordered matrix detailing the subset of hits with a normalized
     score above the chosen cutoff. Database identifiers are listed along
     with their cluster group number. }
-  \item{pdb.id}{ a character vector containing the PDB database identifier of
+  \item{acc}{ a character vector containing the database accession identifier of
     each hit above the chosen threshold. }
-  \item{gi.id}{ a character vector containing the gi database identifier of
-    each hit above the chosen threshold. }
-}
+  \item{inds}{ a numeric vector containing the indices of the hits
+               relative to the input hmmer object.}
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
-\author{ Barry Grant }
+\author{ Barry Grant, Lars Skjaerven }
 \note{ TO BE IMPROVED. 
 }
-\seealso{ \code{\link{blast.pdb}} }
+\seealso{ \code{\link{hmmer}}, \code{\link{blast.pdb}} }
 \examples{
-b2 <-  blast.pdb( pdbseq(read.pdb( get.pdb("4q21", URLonly=TRUE) )) )
-raw.hits <- plot.blast(b2)
-top.hits <- plot.blast(b2, 188)
-head(top.hits$hits)
-
-\dontrun{
-blast <- blast.pdb( pdbseq(read.pdb( get.pdb("2BN3", URLonly=TRUE) )))
-raw.hits <- plot(blast)
-top.hits <- plot(blast, cut.seed=20)
-
-head(top.hits$pdb.id)
-#pdbFiles <- get.pdb(substr(top.hits$pdb.id, 1, 4), path="downloadedPDBs")
-#pdbsplit(pdbFiles, path="downloadedPDBs/PDB_chains")
+##- PHMMER
+seq <- get.seq("2abl_A")
+res <- hmmer(seq, db="pdb")
+plot.hmmer(res)
 }
 }
 \keyword{ hplot }

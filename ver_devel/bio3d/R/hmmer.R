@@ -1,10 +1,12 @@
 "hmmer" <- function(seq, type='phmmer', db=NULL, verbose=TRUE, timeout=90) {
+  cl <- match.call()
+    
   oopsa <- require(XML)
   oopsb <- require(RCurl)
   if(!all(c(oopsa, oopsb)))
      stop("Please install the XML and RCurl package from CRAN")
  
-  alnToSeq <- function(seq) {
+  seqToStr <- function(seq) {
     if(inherits(seq, "fasta"))
       seq <- seq$ali
     if(is.matrix(seq)) {
@@ -17,15 +19,15 @@
     return(paste(seq, collapse=""))
   }
   
-  ##alnToStr <- function(seq) {
-  ##  if(!inherits(seq, "fasta"))
-  ##    stop("seq must be of type 'fasta'")
-  ##  tmpfile <- tempfile()
-  ##  write.fasta(seq, file=tmpfile)
-  ##  rawlines <- paste(readLines(tmpfile), collapse="\n")
-  ##  unlink(tmpfile)
-  ##  return(rawlines)
-  ##}
+  alnToStr <- function(seq) {
+    if(!inherits(seq, "fasta"))
+      stop("seq must be of type 'fasta'")
+    tmpfile <- tempfile()
+    write.fasta(seq, file=tmpfile)
+    rawlines <- paste(readLines(tmpfile), collapse="\n")
+    unlink(tmpfile)
+    return(rawlines)
+  }
   
   types.allowed <- c("phmmer", "hmmscan", "hmmsearch", "jackhmmer")
   if(! type%in%types.allowed )
@@ -34,7 +36,7 @@
   ## PHMMER (protein sequence vs protein sequence database)
   ## seq is a sequence
   if(type=="phmmer") {
-    seq <- alnToSeq(seq)
+    seq <- seqToStr(seq)
     if(is.null(db))
       db="pdb"
     db.allowed <- c("env_nr", "nr", "refseq", "pdb", "rp15", "rp35", "rp55",
@@ -47,13 +49,13 @@
     seqdb <- db
     hmmdb <- NULL
     iter <- NULL
-    curl <- TRUE
+    rcurl <- TRUE
   }
 
   ## HMMSCAN (protein sequence vs profile-HMM database)
   ## seq is a sequence
   if(type=="hmmscan") {
-    seq <- alnToSeq(seq)
+    seq <- seqToStr(seq)
     if(is.null(db))
       db="pfam"
     db.allowed <- tolower(c("pfam", "gene3d", "superfamily", "tigrfam"))
@@ -64,17 +66,18 @@
     seqdb <- NULL
     hmmdb <- db
     iter <- NULL
-    curl <- TRUE
+    rcurl <- TRUE
   }
 
   ## HMMSEARCH (protein alignment/profile-HMM vs protein sequence database)
-  ## seq must be a stockholm format alignement
+  ## seq is an alignment
   if(type=="hmmsearch") {
     if(!inherits(seq, "fasta"))
       stop("please provide 'seq' as a 'fasta' object")
     
-    alnfile <- tempfile()
-    seq <- write.fasta(seq, file=alnfile)
+    ##alnfile <- tempfile()
+    ##seq <- write.fasta(seq, file=alnfile)
+    seq <- alnToStr(seq)
 
     if(is.null(db))
       db="pdb"
@@ -86,7 +89,7 @@
     seqdb <- db
     hmmdb <- NULL
     iter <- NULL
-    curl <- FALSE
+    rcurl <- TRUE
   }
 
   ## JACKHMMER (iterative search vs protein sequence database)
@@ -96,8 +99,9 @@
     if(!inherits(seq, "fasta"))
       stop("please provide 'seq' as a 'fasta' object")
     
-    alnfile <- tempfile()
-    seq <- write.fasta(seq, file=alnfile)
+    ##alnfile <- tempfile()
+    ##seq <- write.fasta(seq, file=alnfile)
+    seq <- alnToStr(seq)
     
     if(is.null(db))
       db="pdb"
@@ -111,13 +115,13 @@
     seqdb <- db
     hmmdb <- NULL
     iter <- NULL
-    curl <- FALSE
+    rcurl <- TRUE
   }
   
   
   ## Make the request to the HMMER website
   url <- paste('http://hmmer.janelia.org/search/', type, sep="")
-  if(curl) {
+  if(rcurl) {
     curl.opts <- list(httpheader = "Expect:",
                       httpheader = "Accept:text/xml",
                       ##timeout = timeout, 
@@ -166,6 +170,29 @@
   xml <- xmlParse(hmm)
   data <- as.data.frame(t(xpathSApply(xml, '///hits', xpathSApply, '@*')),
                         stringsAsFactors=FALSE)
+  
+  ## convert to numeric
+  fieldsToNumeric <- c("evalue", "pvalue", "score", "archScore", "ndom", "nincluded",
+                       "niseqs", "nregions", "nreported", "bias", "dcl", "hindex")
+  inds <- which(names(data) %in% fieldsToNumeric)
+  
+  for(i in 1:length(inds)) {
+    tryCatch({
+      data[[inds[i]]] = as.numeric(data[[inds[i]]])
+    },
+    warning = function(w) {
+      #print(w)
+      return(data[[inds[i]]])
+    },
+    error = function(e) {
+      #print(e)
+      return(data[[inds[i]]])
+    }
+    )
+  }
+  
+  class(data) <- c("hmmer", type, "data.frame")
+  ##data$call <- cl
   return(data)
 }
 
