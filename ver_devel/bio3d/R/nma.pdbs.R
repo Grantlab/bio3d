@@ -373,15 +373,15 @@
   resid <- pdbs$resid[i,f.inds$res]
   
   ## Build a dummy PDB to use with function nma()
-  tmp.pdb <- .buildDummyPdb(pdb=NULL, xyz=tmp.xyz, resno=resno, chain=chain,  resid=resid)
+  pdb.in <- .buildDummyPdb(pdb=NULL, xyz=tmp.xyz, resno=resno, chain=chain,  resid=resid)
   if(!is.null(outpath)) {
     fname <- file.path(outpath, basename(pdbs$id[i]))
-    write.pdb(tmp.pdb, file=fname)
+    write.pdb(pdb.in, file=fname)
   }
   
   if(mass) {
     masses <- try(
-      do.call('aa2mass', c(list(pdb=tmp.pdb, inds=NULL), am.args)),
+      do.call('aa2mass', c(list(pdb=pdb.in, inds=NULL), am.args)),
       silent=TRUE
       )
     
@@ -390,49 +390,53 @@
       cat("\n\n")
       stop(paste(hmm$message, "in file", basename(pdbs$id[i])))
     }
+    masses.in <- masses
+    masses.out <- masses
   }
-  else
-    masses <- NULL
+  else {
+    masses.in <- NULL
+    masses.out <- NULL
+  }
+
+  sequ    <- pdbseq(pdb.in)
+  natoms.in <- length(pdb.in$xyz)/3
+  natoms.out <- natoms.in
   
   if(rm.gaps) {
-    ## Build the hessian of the complete structure
-    sequ    <- tmp.pdb$atom[,"resid"]
-    hess    <- build.hessian(tmp.pdb$xyz, pfc.fun, aa.mass=masses, sequ=sequ)
+    ## Second PDB - containing only the aligned atoms
+    sele <- list(atom=inds.inc, xyz=inds.inc.xyz)
+    class(sele) <- "select"
     
-    ## Effective hessian for atoms in the aligned core
-    if(length(inds.exc)>0) {
-      kaa     <- hess[inds.inc.xyz, inds.inc.xyz]
-      kqq.inv <- solve(hess[inds.exc.xyz, inds.exc.xyz])
-      kaq     <- hess[inds.inc.xyz, inds.exc.xyz]
-      kqa     <- t(kaq)
-        k <- kaa - ((kaq %*% kqq.inv) %*% kqa)
-      }
-      else {
-        k <- hess
-      }
-      
-      ## Second PDB - containing only the aligned atoms
-      tmp2.pdb <- NULL
-      tmp2.pdb$atom <- tmp.pdb$atom[inds.inc,]
-      tmp2.pdb$xyz <-  tmp.pdb$xyz[inds.inc.xyz]
-      tmp2.pdb$calpha <- (tmp2.pdb$atom[,"elety"]=="CA") && (tmp2.pdb$atom[,"resid"]!="CA")
-      class(tmp2.pdb) <- "pdb"
+    pdb.out <- trim.pdb(pdb.in, sele)
+    natoms.out <- length(pdb.out$xyz)/3
 
-      if(mass)
-        masses <- do.call('aa2mass', c(list(pdb=tmp2.pdb, inds=NULL), am.args))
-      else
-        masses <- NULL
+    if(mass)
+      masses.out <- masses.in[ inds.inc ]
 
-      ## Calculate the modes
-      invisible(capture.output( modes <- nma(tmp2.pdb, ff=ff, mass=mass, temp=temp, keep=nm.keep, hessian=k, aa.mass=masses)))
-    }
-    else {
-      ## Calculate the modes
-      invisible(capture.output( modes <- nma(pdb=tmp.pdb, ff=ff, mass=mass, temp=temp, keep=nm.keep, aa.mass=masses)))
-    }
+    inc.inds <- list(xyz=inds.inc.xyz)
+  }
+  else {
+    pdb.out <- pdb.in
+    inc.inds <- NULL
+  }
+  
+  ## Build effective hessian 
+  invisible(capture.output( hessian <-
+                           .nma.hess(pdb.in$xyz, init=list(pfcfun=pfc.fun), 
+                                     sequ=sequ, masses=masses.in,
+                                     inc.inds=inc.inds) ))
+  
+  ## Diagonalize
+  invisible(capture.output( ei <- .nma.diag(hessian) ))
 
-    ## deformation analysis
-    if(defa)
+  ## Build an NMA object
+  invisible(capture.output( modes <-
+                           .nma.finalize(ei, xyz=pdb.out$xyz, temp=temp,
+                                         masses=masses.out,
+                                         natoms=natoms.out, keep=nm.keep, call=NULL) ))
+  
+  ## deformation analysis
+  if(defa)
       defo <- rowMeans(deformation.nma(modes, ncore=1, mode.inds=seq(7,11))$ei)
 
     if(rm.gaps)

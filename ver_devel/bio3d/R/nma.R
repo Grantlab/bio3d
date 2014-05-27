@@ -7,7 +7,6 @@
   ## Log the call
   cl <- match.call()
 
-  ## Indices for effective hessian
   if(!outmodes %in% c("calpha", "noh") && !is.select(outmodes) && is.null(hessian))
     stop("outmodes must be 'calpha', 'noh', or an atom selection by 'atom.select()'")
       
@@ -30,9 +29,8 @@
   
   ## Indices
   if(is.select(outmodes)) {
-    ## since pdb.in is 'noh' (from trim.pdb above), we need to re-select :P
-    tmp.inds <- outmodes
-    inc.inds <- .match.sel(pdb, pdb.in, tmp.inds)
+    ## since pdb.in is 'noh' (from trim.pdb above), we need to re-select
+    inc.inds <- .match.sel(pdb, pdb.in, outmodes)
     pdb.out <- trim.pdb(pdb.in, inc.inds)
   }
   else if(outmodes=="calpha") {
@@ -51,26 +49,19 @@
   if (natoms.in<3 | natoms.out<3)
     stop("nma: insufficient number of atoms in selection")
   
-  ## Use aa2mass to fetch residue mass
+  ## Use atom2mass to fetch atom mass
   if (mass) {
     masses.in <-  atom2mass(pdb.in)
-    ##masses.out <- atom2mass(pdb.out, grpby=pdb.out$atom[,"resno"])
-    masses.out <- aa2mass(pdb.out)
+    masses.out <- masses.in[ inc.inds$atom ]
   }
-  
-  ## Residue mass is provided by user
-  #else if (!is.null(init$bh.args$aa.mass)) {
-  #  warning("provided masses not in effect at the moment")
-  #}
   
   ## No mass-weighting
   else {
     masses.in <- NULL; masses.out <- NULL;
-    init$bh.args <- init$bh.args[ !('aa.mass' %in% names(bh.args)) ]
   }
   
   ## NMA hessian
-  ## sequ is here of length ca.pdb, which is different from natoms !!!
+  ## sequ is here of length calpha-pdb, which is different from natoms !!!
   hessian <- .nma.hess(pdb.in$xyz, init=init, sequ=sequ, masses=masses.in,
                        hessian=hessian, inc.inds=inc.inds)
   
@@ -101,14 +92,13 @@
   pdb.in <- trim.pdb(pdb, ca.inds)
   
   if(is.select(outmodes)) {
-    ## since pdb.in is 'noh' (from trim.pdb above), we need to re-select :P
-    tmp.inds <- outmodes
-    inc.inds <- .match.sel(pdb, pdb.in, tmp.inds)
+    ## since pdb.in is 'noh' (from trim.pdb above), we need to re-select
+    inc.inds <- .match.sel(pdb, pdb.in, outmodes)
     pdb.out <- trim.pdb(pdb.in, inc.inds)
   }
   else {
     pdb.out <- pdb.in
-    inc.inds <- atom.select(pdb.in, "all")
+    inc.inds <- atom.select(pdb.in, "all", verbose=FALSE)
   }
   
   sequ    <- pdbseq(pdb.in)
@@ -119,26 +109,14 @@
     stop("nma: insufficient number of CA atoms in structure")
   
   ## Use aa2mass to fetch residue mass
-  ##if (mass && is.null(init$bh.args$aa.mass) ) {
   if (mass) {
     masses.in <- do.call('aa2mass', c(list(pdb=sequ, inds=NULL), init$am.args))
     masses.out <- masses.in[ inc.inds$atom ]
   }
   
-  ## Residue mass is provided by user
-  #else if (!is.null(init$bh.args$aa.mass)) {
-  #  masses <- init$bh.args$aa.mass
-  #  init$bh.args <- init$bh.args[ !('aa.mass' %in% names(init$bh.args)) ]
-  #  if(!mass) {
-  #    warning("incompatible arguments: forcing mass weighting")
-  #    mass <- TRUE
-  #  }
-  #}
-  
   ## No mass-weighting
   else {
     masses.in <- NULL; masses.out <- NULL;
-    init$bh.args <- init$bh.args[ !('aa.mass' %in% names(bh.args)) ]
   }
   
   ## NMA hessian
@@ -149,8 +127,8 @@
   ei <- .nma.diag(hessian)
 
   ## make a NMA object
-  nmaobject <- .nma.finalize(ei, xyz=pdb.out$xyz, temp=temp, masses=masses.out,
-                             natoms=natoms.out, keep=keep, call=cl)
+  nmao <- .nma.finalize(ei, xyz=pdb.out$xyz, temp=temp, masses=masses.out,
+                        natoms=natoms.out, keep=keep, call=cl)
   return(nmaobject)
 }
 
@@ -177,13 +155,16 @@
       ff <- pfc.fun
     }
 
+    ## aa.mass to build.hessian not allowed anymore
+    bh.args <- bh.args[ !('aa.mass' %in% names(bh.args)) ]
+
     ## Check for optional arguments to pfc.fun
     ff.names <- names(formals( ff ))
     ff.args  <- dots[names(dots) %in% ff.names]
 
     ## Redirect them to build.hessian
     bh.args  <- c(bh.args, ff.args)
-
+    
     ## Arguments without destination
     all.names <- unique(c(bh.names, am.names, ff.names))
     if(!all(names(dots) %in% all.names)) {
@@ -219,13 +200,15 @@
   return(k)
 }
 
-".nma.hess" <- function(xyz, init, sequ, masses, hessian, inc.inds=NULL) {
+".nma.hess" <- function(xyz, init=NULL, sequ=NULL, masses=NULL,
+                        hessian=NULL, inc.inds=NULL) {
   
   ## Build the Hessian Matrix
   if(is.null(hessian)) {
     cat(" Building Hessian...")
     ptm <- proc.time()
-    H <- do.call('build.hessian', list(xyz=xyz, pfc.fun=init$pfcfun, sequ=sequ, aa.mass=masses))
+    H <- do.call('build.hessian', list(xyz=xyz, pfc.fun=init$pfcfun, sequ=sequ,
+                                       aa.mass=masses))
     t <- proc.time() - ptm
     cat("\t\tDone in", t[[3]], "seconds.\n")
   }
