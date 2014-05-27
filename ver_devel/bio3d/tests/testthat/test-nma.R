@@ -7,7 +7,7 @@ test_that("NMA", {
   invisible(capture.output(pdb <- read.pdb("1hel")))
 
   ## Calculate modes with default arguments
-  invisible(capture.output(modes <- nma(pdb, inds=NULL, ff='calpha',
+  invisible(capture.output(modes <- nma(pdb, ff='calpha',
                                         mass=TRUE, temp=300.0)))
 
   ## Check first eigenvector
@@ -21,7 +21,7 @@ test_that("NMA", {
   U8 <- c(-0.06418497, -0.02734926,  0.02436005,
           -0.01149358, -0.02942601,  0.01439773)
   nowU8 <- head(modes$U[,8])
-  expect_that(nowU8, equals(U8, tolerance=1e-6))
+  expect_that(-1*nowU8, equals(U8, tolerance=1e-6))
 
   ## Check Mode vector
   mode7 <- c(-0.092583306, -0.091942327,  0.001781907,
@@ -119,6 +119,7 @@ test_that("NMA", {
   mmtk7 <- c(0.010350805923938345, 0.009267077807430083, -3.701643999426641e-05,
              0.008268033266170226, 0.009606710315232818, 0.0003705525203545053,
              0.006767227535558591, 0.005694101052352917, 0.001077079483122824)
+  mmtk7 <- mmtk7 * (-1)
   nowMmtk7 <- head(modes$modes[,7], n=9)
   expect_that(nowMmtk7, equals(mmtk7, tolerance=1e-6))
   
@@ -129,7 +130,8 @@ test_that("NMA", {
   anm7 <- c(0.041345308400364066, 0.03345000499525146, 0.008604839963113613,
             0.03755854024944313, 0.036973377719312125, 0.008638534251932818,
             0.033187347539802, 0.022779436981185324, 0.004702511702428035)
-  nowAnm7 <- head(modes$modes[,7], n=9)
+  anm7 <- anm7 * (-1)
+  nowAnm7 <- head(modes$modes[,7], n=9) 
   expect_that(nowAnm7, equals(anm7, tolerance=1e-6))
 
 

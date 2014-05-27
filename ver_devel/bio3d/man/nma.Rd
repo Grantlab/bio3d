@@ -1,5 +1,6 @@
 \name{nma}
 \alias{nma}
+\alias{aanma}
 \alias{build.hessian}
 \alias{print.nma}
 \title{ Normal Mode Analysis }
@@ -8,8 +9,11 @@
   of a protein structure.
 }
 \usage{
-nma(pdb, inds = NULL, ff = 'calpha', pfc.fun = NULL, mass = TRUE,
-    temp = 300.0, keep = NULL, hessian = NULL, \dots )
+nma(pdb, ff = 'calpha', pfc.fun = NULL, mass = TRUE,
+    temp = 300.0, keep = NULL, hessian = NULL, outmodes = NULL, \dots )
+
+aanma(pdb, ff = 'aaenm', pfc.fun = NULL, mass = TRUE,
+    temp = 300.0, keep = NULL, hessian = NULL, outmodes = 'calpha', \dots )
 
 build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
     sequ = NULL, ss.bonds = NULL, \dots)
@@ -19,9 +23,6 @@ build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
 \arguments{
   \item{pdb}{ an object of class \code{pdb} as obtained from
     function \code{read.pdb}. }
-  \item{inds}{ atom and xyz coordinate indices obtained from \code{atom.select}
-    that selects the elements of \code{pdb} upon which the calculation
-    should be based.}
   \item{ff}{ character string specifying the force field to use:
     \sQuote{calpha}, \sQuote{anm}, \sQuote{pfanm}, \sQuote{calphax}, 
    \sQuote{reach}, or \sQuote{sdenm}. }
@@ -40,6 +41,10 @@ build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
   \item{hessian}{ hessian matrix as obtained from
     \code{build.hessian}. For internal purposes and generally not
     intended for public use. }
+  \item{outmodes}{ atom indices as obtained from \code{\link{atom.select}}) 
+    specifying the atoms to include in the resulting mode object. For
+    \code{aanma}, also character strings \sQuote{calpha} (which is the default) 
+    or \sQuote{noh} can be used. }
   \item{xyz}{ a numeric vector of Cartesian coordinates. }
   \item{aa.mass}{ a numeric vector of amino acid residue masses as
     obtained from function \code{aa2mass}. }
@@ -59,9 +64,10 @@ build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
     \sQuote{mass.custom}, see the \code{aa2mass} function for details. }
 }
 \details{
-  This function calculates the normal modes of a C-alpha model of a
-  protein structure. A number of force fields are implemented all of
-  whhich employ the elastic network model (ENM).
+  Functions \code{nma()} and \code{aanma()} calculates the normal modes
+  of a C-alpha and all-atom model of a protein structure,
+  respectively. A number of force fields are implemented all of
+  which employ the elastic network model (ENM).
 
   The \sQuote{calpha} force field - originally developed by Konrad
   Hinsen - is the recommended one for most applications. It employs a
@@ -129,8 +135,12 @@ build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Lars Skjaerven }
-\seealso{ \code{\link{fluct.nma}}, \code{\link{mktrj.nma}},
-  \code{\link{dccm.nma}}, \code{\link{overlap}}, \code{\link{rmsip}}  }
+\seealso{
+  \code{\link{nma.pdbs}},  \code{\link{mktrj.nma}},
+  \code{\link{fluct.nma}}, \code{\link{deformation.nma}},
+  \code{\link{load.enmff}}, \code{\link{overlap}},
+  \code{\link{dccm.nma}}, \code{\link{pca.xyz}}
+}
 \examples{
 ## Fetch stucture
 pdb <- read.pdb("1hel")
@@ -145,11 +155,38 @@ print(modes)
 plot(modes)
 
 ## Visualize modes
-m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
+mktrj.nma(modes, mode=7, file="mode_7.pdb")
 
 \dontrun{
-## Use Anisotropic Network Model
+## Anisotropic Network Model
 modes <- nma(pdb, ff="anm", mass=FALSE, temp=NULL, cutoff=15)
+
+## All-atom NMA
+m <- aanma(pdb, outmodes="calpha")
+m <- aanma(pdb, outmodes="noh")
+
+## Use 'outmodes' to calculate effective hessian for selected atoms
+sele <- atom.select(pdb, resno=1:20)
+m <- nma(pdb, outmodes=sele)
+
+
+## Modes with a user defined energy function
+## Note: Must take a vector of distances
+"my.ff" <- function(r) {
+   ifelse( r>15, 0, 1 )
+}
+
+modes <- nma(pdb, pfc.fun=my.ff)
+
+
+## A more manual approach for NMA calculation through
+## function build.hessian()
+ca.inds <- atom.select(pdb, "calpha")
+ca.pdb <- trim.pdb(pdb, ca.inds)
+
+hessian <- build.hessian(ca.pdb$xyz, my.ff, aa.mass=aa2mass(ca.pdb))
+modes <- nma(ca.pdb, hessian=hessian, mass=TRUE)
+
 
 ## Use SSE information and SS-bonds
 sse      <- dssp(pdb, resno=FALSE, full=TRUE)
@@ -159,26 +196,8 @@ ss.bonds <- matrix(c(76,94, 64,80, 30,115, 6,127),
 modes <- nma(pdb, ff="calphax", sse=sse, ss.bonds=ss.bonds)
 
 
-## User defined energy function
-## Note: Must take a vector of distances
-"my.ff" <- function(r) {
-   ifelse( r>15, 0, 1 )
-}
-
-## Modes with a user defined energy function
-modes <- nma(pdb, pfc.fun=my.ff)
-
-
-## A more manual approach
-sele <- atom.select(pdb, "//A////CA/")
-xyz <- pdb$xyz[sele$xyz]
-
-hessian <- build.hessian(xyz, my.ff)
-modes <- eigen(hessian)
-
 ## Dealing with unconventional residues
 pdb <- read.pdb("1xj0", het2atom=TRUE)
-## nma(pdb)
 modes <- nma(pdb, mass.custom=list(CSX=121.166))
 }
 }

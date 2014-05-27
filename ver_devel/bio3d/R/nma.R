@@ -7,11 +7,11 @@
   ## Log the call
   cl <- match.call()
 
-  if(!outmodes %in% c("calpha", "noh") && !is.select(outmodes) && is.null(hessian))
+  if(!outmodes %in% c("calpha", "noh") && !is.select(outmodes))
     stop("outmodes must be 'calpha', 'noh', or an atom selection by 'atom.select()'")
       
   if(!is.pdb(pdb))
-    stop("nma: 'pdb' must be of type 'pdb'")
+    stop("please provide a 'pdb' object as obtained from 'read.pdb()'")
   
   ## Initialize
   init <- .nma.init(ff=ff, pfc.fun=pfc.fun, ...)
@@ -27,7 +27,7 @@
     pdb.in <- trim.pdb(pdb, tmp.inds)
   }
   
-  ## Indices
+  ## Indices for effective hessian
   if(is.select(outmodes)) {
     ## since pdb.in is 'noh' (from trim.pdb above), we need to re-select
     inc.inds <- .match.sel(pdb, pdb.in, outmodes)
@@ -47,7 +47,7 @@
   natoms.out <- length(pdb.out$xyz)/3
   
   if (natoms.in<3 | natoms.out<3)
-    stop("nma: insufficient number of atoms in selection")
+    stop("aanma: insufficient number of atoms")
   
   ## Use atom2mass to fetch atom mass
   if (mass) {
@@ -69,9 +69,9 @@
   ei <- .nma.diag(hessian)
 
   ## make a NMA object
-  nmaobject <- .nma.finalize(ei, xyz=pdb.out$xyz, temp=temp, masses=masses.out,
+  m <- .nma.finalize(ei, xyz=pdb.out$xyz, temp=temp, masses=masses.out,
                              natoms=natoms.out, keep=keep, call=cl)
-  return(nmaobject)
+  return(m)
 }
 
 ## calpha NMA
@@ -82,7 +82,10 @@
   cl <- match.call()
 
   if(!is.pdb(pdb))
-    stop("nma: 'pdb' must be of type 'pdb'")
+    stop("please provide a 'pdb' object as obtained from 'read.pdb()'")
+
+  if(!is.null(outmodes) & !is.select(outmodes))
+    stop("provide 'outmodes' as obtained from function atom.select()")
   
   ## Initialize
   init <- .nma.init(ff=ff, pfc.fun=pfc.fun, ...)
@@ -90,7 +93,8 @@
   ## Trim to only CA atoms
   ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
   pdb.in <- trim.pdb(pdb, ca.inds)
-  
+
+  ## Indices for effective hessian
   if(is.select(outmodes)) {
     ## since pdb.in is 'noh' (from trim.pdb above), we need to re-select
     inc.inds <- .match.sel(pdb, pdb.in, outmodes)
@@ -106,7 +110,7 @@
   natoms.out <- length(pdb.out$xyz)/3
 
   if (natoms.in<3)
-    stop("nma: insufficient number of CA atoms in structure")
+    stop("nma: insufficient number of atoms")
   
   ## Use aa2mass to fetch residue mass
   if (mass) {
@@ -127,9 +131,9 @@
   ei <- .nma.diag(hessian)
 
   ## make a NMA object
-  nmao <- .nma.finalize(ei, xyz=pdb.out$xyz, temp=temp, masses=masses.out,
+  m <- .nma.finalize(ei, xyz=pdb.out$xyz, temp=temp, masses=masses.out,
                         natoms=natoms.out, keep=keep, call=cl)
-  return(nmaobject)
+  return(m)
 }
 
 
@@ -202,6 +206,13 @@
 
 ".nma.hess" <- function(xyz, init=NULL, sequ=NULL, masses=NULL,
                         hessian=NULL, inc.inds=NULL) {
+  natoms <- length(xyz)/3
+  dimchecks <- c(length(masses)==natoms)
+  
+  if(!all(dimchecks))
+    stop(paste("dimension mismatch when generating hessian\n",
+               paste(checks, collapse=", ")))
+  
   
   ## Build the Hessian Matrix
   if(is.null(hessian)) {
@@ -247,6 +258,16 @@
     mass <- TRUE
   else
     mass <- FALSE
+
+  dims <- dim(ei$vectors)
+  dimchecks <- c(length(xyz)/3==natoms,
+              length(masses)==natoms,
+              dims[1]/3==natoms,
+              dims[2]/3==natoms)
+  
+  if(!all(dimchecks))
+    stop(paste("dimension mismatch when generating nma object\n",
+               paste(checks, collapse=", ")))
   
   if(!is.null(keep)) {
     if(keep>ncol(ei$vectors))
