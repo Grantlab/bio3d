@@ -44,6 +44,9 @@
       type.h <- rep(pdb$helix$type, (pdb$helix$end-pdb$helix$start+1))
       resno.h <- unbound(pdb$helix$start, pdb$helix$end)
 
+      ## catch for missing chain identifier
+      chain.h[chain.h == " "] = NA
+
       ##- Use reference vector for filling 'ss'
       ref.h <- paste(resno.h, chain.h, sep="_")
       i <- ref.h %in% ref ## Fix for HETATOM in SSE (1P3Q)
@@ -59,12 +62,16 @@
       type.e <- rep(pdb$sheet$sense, (pdb$sheet$end-pdb$sheet$start+1))
       resno.e <- unbound(pdb$sheet$start, pdb$sheet$end)
 
+      ## catch for missing chain identifier
+      chain.e[chain.e == " "] = NA
+
       ##- Use reference vector for filling 'ss'
       ref.e <- paste(resno.e, chain.e, sep="_")
       i <- ref.e %in% ref
       ss[1, ref.e[i]]="E"
       ss[2, ref.e[i]]=chain.e[i]
-      ss[3, ref.e[i]]=type.e[i]
+      if(!is.null(type.e))
+        ss[3, ref.e[i]]=type.e[i]
     }
 
     ##- Lookup trimed positions 'ref.trim' in 'ss'
