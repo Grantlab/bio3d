@@ -26,7 +26,7 @@ setup.ncore <- function(ncore, bigmem = FALSE) {
          }
        }
        if(is.null(ncore))
-         ncore = parallel:::detectCores()
+         ncore = parallel::detectCores()
        options(mc.cores = ncore)
     }
   }
