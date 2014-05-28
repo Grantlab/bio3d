@@ -2,7 +2,7 @@
 function(x) {
   
   # Report the number of gaps, ("-",".",NA), per
-  # row (i.e.seq) and col (i.e. position) in a
+  # row (i.e. seq) and col (i.e. position) in a
   # given "alignment" 'x'
 
   if(is.vector(x)) {
@@ -14,9 +14,11 @@ function(x) {
     gap.row <- sum(gaps)
   } else {
     if(is.list(x)) {
-      x <- x$ali
-      if(class(x)=="3dalign")
-        x <- x$xyz; warning("Taking $xyz component (NOT $ali)")
+      if(inherits(x, "3dalign")) {
+        x <- x$xyz; warning("Taking $xyz component (NOT $ali for which you should use 'gap.inspect(x$ali)')")
+      } else {
+        x <- x$ali
+      }
     }
     
     gap.pos1 <-( as.numeric(x=="-") + as.numeric(x==".") )
