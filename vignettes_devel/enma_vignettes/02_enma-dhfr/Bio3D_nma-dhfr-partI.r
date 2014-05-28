@@ -27,8 +27,9 @@ system("pandoc -o Bio3D_nma-dhfr-partI.pdf Bio3D_nma-dhfr-partI.md")
 
 
 #+ example1a, results="hide"
-library(devtools)
-load_all("~/workspace/bio3d/ver_devel/bio3d")
+#library(devtools)
+#load_all("~/workspace/bio3d/ver_devel/bio3d")
+library(bio3d)
 
 #' ### Blast search
 #' Below we perform a blast search of the PDB database to identify related structures 
