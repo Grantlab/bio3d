@@ -32,6 +32,12 @@
     ## since pdb.in is 'noh' (from trim.pdb above), we need to re-select
     inc.inds <- .match.sel(pdb, pdb.in, outmodes)
     pdb.out <- trim.pdb(pdb.in, inc.inds)
+    
+    unq.elety <- unique(pdb.out$atom[,"elety"])
+    outmodes="noh"
+    if(length(unq.elety)==1)
+      if(unq.elety=="CA")
+        outmodes="calpha"
   }
   else if(outmodes=="calpha") {
     inc.inds <- atom.select(pdb.in, "calpha", verbose=FALSE)
@@ -41,8 +47,8 @@
     inc.inds <- atom.select(pdb.in, "noh", verbose=FALSE)
     pdb.out <- trim.pdb(pdb.in, inc.inds)
   }
-  
-  sequ    <- pdbseq(pdb.in)
+
+  ##sequ    <- pdbseq(pdb.in)
   natoms.in <- length(pdb.in$xyz)/3
   natoms.out <- length(pdb.out$xyz)/3
   
@@ -51,18 +57,24 @@
   
   ## Use atom2mass to fetch atom mass
   if (mass) {
-    masses.in <-  atom2mass(pdb.in)
-    masses.out <- masses.in[ inc.inds$atom ]
+    if(outmodes=="noh") {
+      ##masses.in <-  atom2mass(pdb.in)
+      ##masses.out <- masses.in[ inc.inds$atom ]
+      masses.out <-  atom2mass(pdb.out)
+    }
+
+    if(outmodes=="calpha") {
+      masses.out <- do.call('aa2mass', c(list(pdb=pdb.out, inds=NULL), init$am.args))
+    }
   }
-  
+
   ## No mass-weighting
   else {
-    masses.in <- NULL; masses.out <- NULL;
+    masses.out <- NULL;
   }
   
   ## NMA hessian
-  ## sequ is here of length calpha-pdb, which is different from natoms !!!
-  hessian <- .nma.hess(pdb.in$xyz, init=init, sequ=sequ, 
+  hessian <- .nma.hess(pdb.in$xyz, init=init, sequ=NULL, 
                        hessian=hessian, inc.inds=inc.inds)
 
   ## mass weight hessian
@@ -124,7 +136,7 @@
   
   ## No mass-weighting
   else {
-    masses.in <- NULL; masses.out <- NULL;
+    masses.out <- NULL;
   }
   
   ## NMA hessian
@@ -167,9 +179,6 @@
       ff <- pfc.fun
     }
 
-    ## aa.mass to build.hessian not allowed anymore
-    bh.args <- bh.args[ !('aa.mass' %in% names(bh.args)) ]
-
     ## Check for optional arguments to pfc.fun
     ff.names <- names(formals( ff ))
     ff.args  <- dots[names(dots) %in% ff.names]
@@ -198,15 +207,15 @@
 
 
 ## extract effective hessian
-".nma.trim.hessian" <- function(hess, inc.inds=NULL) {
-  if(!is.matrix(hess))
-    stop("hess must be a matrix")
+".nma.trim.hessian" <- function(hessian, inc.inds=NULL) {
+  if(!is.matrix(hessian))
+    stop("hessian must be a matrix")
   if(is.null(inc.inds))
     stop("indices must be provided")
   
-  kaa     <- hess[inc.inds, inc.inds]
-  kqq.inv <- solve(hess[-inc.inds, -inc.inds])
-  kaq     <- hess[inc.inds, -inc.inds]
+  kaa     <- hessian[inc.inds, inc.inds]
+  kqq.inv <- solve(hessian[-inc.inds, -inc.inds])
+  kaq     <- hessian[inc.inds, -inc.inds]
   kqa     <- t(kaq)
   k <- kaa - ((kaq %*% kqq.inv) %*% kqa)
   return(k)
@@ -214,11 +223,21 @@
 
 ## mass-weight hessian
 ".nma.mwhessian" <- function(hessian, masses=NULL) {
-  masses <- sqrt(masses)
+  if(!is.matrix(hessian))
+    stop("hessian must be a matrix")
+  if(is.null(masses))
+    stop("masses must be provided")
 
+  #cat(" Mass weighting Hessian...")
+  #ptm <- proc.time()
+   
   dims <- dim(hessian)
   natoms <- dims[1] / 3
+
+  if(length(masses)!=natoms)
+    stop("dimension mismatch")
   
+  masses <- sqrt(masses)
   inds <- rep(1:natoms, each=3)
   col.inds <- seq(1, ncol(hessian), by=3)
 
@@ -227,7 +246,10 @@
     hessian[,m:(m+2)] <- hessian[,m:(m+2)] * (1/masses[i])
     hessian[,m:(m+2)] <- hessian[,m:(m+2)] * (1/masses[inds])
   }
-  
+
+  #t <- proc.time() - ptm
+  #cat("\tDone in", t[[3]], "seconds.\n")
+
   return(hessian)
 }
 

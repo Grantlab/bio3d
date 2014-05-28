@@ -15,8 +15,8 @@ nma(pdb, ff = 'calpha', pfc.fun = NULL, mass = TRUE,
 aanma(pdb, ff = 'aaenm', pfc.fun = NULL, mass = TRUE,
     temp = 300.0, keep = NULL, hessian = NULL, outmodes = 'calpha', \dots )
 
-build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
-    sequ = NULL, ss.bonds = NULL, \dots)
+build.hessian(xyz, pfc.fun, fc.weights = NULL, sse = NULL,  sequ = NULL,
+    ss.bonds = NULL, \dots)
 
 \method{print}{nma}(x, nmodes=6, \dots)
 }
@@ -46,8 +46,6 @@ build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
     \code{aanma}, also character strings \sQuote{calpha} (which is the default) 
     or \sQuote{noh} can be used. }
   \item{xyz}{ a numeric vector of Cartesian coordinates. }
-  \item{aa.mass}{ a numeric vector of amino acid residue masses as
-    obtained from function \code{aa2mass}. }
   \item{fc.weights}{ a numeric matrix of size NxN (where N is the number
     of calpha atoms) containg scaling factors for the pariwise force
     constants. See examples below. }
@@ -142,36 +140,36 @@ build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
   \code{\link{dccm.nma}}, \code{\link{pca.xyz}}
 }
 \examples{
-## Fetch stucture
+#- Fetch stucture
 pdb <- read.pdb("1hel")
 
-## Calculate normal modes
+#- Calculate normal modes
 modes <- nma(pdb)
 
-## Print modes
+#- Print modes
 print(modes)
 
-## Plot modes
+#- Plot modes
 plot(modes)
 
-## Visualize modes
+#- Visualize modes
 mktrj.nma(modes, mode=7, file="mode_7.pdb")
 
 \dontrun{
-## Anisotropic Network Model
+#- Anisotropic Network Model
 modes <- nma(pdb, ff="anm", mass=FALSE, temp=NULL, cutoff=15)
 
-## All-atom NMA
+#- All-atom NMA
 m <- aanma(pdb, outmodes="calpha")
 m <- aanma(pdb, outmodes="noh")
 
-## Use 'outmodes' to calculate effective hessian for selected atoms
+#- Use 'outmodes' to calculate effective hessian for selected atoms
 sele <- atom.select(pdb, resno=1:20)
 m <- nma(pdb, outmodes=sele)
 
 
-## Modes with a user defined energy function
-## Note: Must take a vector of distances
+#- Modes with a user defined energy function
+#- Note: Must take a vector of distances
 "my.ff" <- function(r) {
    ifelse( r>15, 0, 1 )
 }
@@ -179,16 +177,24 @@ m <- nma(pdb, outmodes=sele)
 modes <- nma(pdb, pfc.fun=my.ff)
 
 
-## A more manual approach for NMA calculation through
-## function build.hessian()
+#- A more manual approach
 ca.inds <- atom.select(pdb, "calpha")
 ca.pdb <- trim.pdb(pdb, ca.inds)
 
-hessian <- build.hessian(ca.pdb$xyz, my.ff, aa.mass=aa2mass(ca.pdb))
+#- build hessian
+hessian <- build.hessian(ca.pdb$xyz, my.ff)
+
+#- use hessian in function nma()
 modes <- nma(ca.pdb, hessian=hessian, mass=TRUE)
 
+#- or diagonalize with eigen() to fetch eigenvectors
+## ei <- eigen(hessian, symmetric=TRUE)
+## ei$vectors ## eigenvectors
+## ei$values ## eigenvalues
 
-## Use SSE information and SS-bonds
+
+
+#- Use SSE information and SS-bonds
 sse      <- dssp(pdb, resno=FALSE, full=TRUE)
 ss.bonds <- matrix(c(76,94, 64,80, 30,115, 6,127),
                    ncol=2, byrow=TRUE)
@@ -196,7 +202,7 @@ ss.bonds <- matrix(c(76,94, 64,80, 30,115, 6,127),
 modes <- nma(pdb, ff="calphax", sse=sse, ss.bonds=ss.bonds)
 
 
-## Dealing with unconventional residues
+#- Dealing with unconventional residues
 pdb <- read.pdb("1xj0", het2atom=TRUE)
 modes <- nma(pdb, mass.custom=list(CSX=121.166))
 }

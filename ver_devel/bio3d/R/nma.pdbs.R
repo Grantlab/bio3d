@@ -423,12 +423,15 @@
   ## Build effective hessian 
   invisible(capture.output( hessian <-
                            .nma.hess(pdb.in$xyz, init=list(pfcfun=pfc.fun), 
-                                     sequ=sequ, masses=masses.in,
-                                     inc.inds=inc.inds) ))
+                                     sequ=sequ, inc.inds=inc.inds) ))
+  
+  ## Mass-weight hessian
+  if(!is.null(masses.out))
+    invisible(capture.output( hessian <- .nma.mwhessian(hessian, masses=masses.out)))
   
   ## Diagonalize
   invisible(capture.output( ei <- .nma.diag(hessian) ))
-
+  
   ## Build an NMA object
   invisible(capture.output( modes <-
                            .nma.finalize(ei, xyz=pdb.out$xyz, temp=temp,
@@ -437,22 +440,22 @@
   
   ## deformation analysis
   if(defa)
-      defo <- rowMeans(deformation.nma(modes, ncore=1, mode.inds=seq(7,11))$ei)
-
+    defo <- rowMeans(deformation.nma(modes, ncore=1, mode.inds=seq(7,11))$ei)
+  
+  if(rm.gaps)
+    modes.mat <- matrix(NA, ncol=keep, nrow=nrow(modes$U))
+  else
+    modes.mat <- matrix(NA, ncol=keep, nrow=ncol(pdbs$xyz))
+  
+  j <- 1
+  for(k in 7:(keep+6)) {
     if(rm.gaps)
-      modes.mat <- matrix(NA, ncol=keep, nrow=nrow(modes$U))
+      modes.mat[, j] <- modes$U[,k]
     else
-      modes.mat <- matrix(NA, ncol=keep, nrow=ncol(pdbs$xyz))
-    
-    j <- 1
-    for(k in 7:(keep+6)) {
-      if(rm.gaps)
-        modes.mat[, j] <- modes$U[,k]
-      else
-        modes.mat[f.inds$pos, j] <- modes$U[,k]
-      j <- j+1
-    }
-
+      modes.mat[f.inds$pos, j] <- modes$U[,k]
+    j <- j+1
+  }
+  
   deform <- NULL
   if(rm.gaps) {
     flucts <- modes$fluctuations
