@@ -5,9 +5,13 @@
 pdb.annotate <- function(ids, anno.terms=NULL, unique=FALSE) {
     oops <- require(XML)
     if(!oops)
-        stop("Please install the XML package from CRAN")
+        stop("Please install the XML package from CRAN:\n\t e.g. 'install.packages('XML', dependencies=TRUE)' ")
 
-    ## All availalbe annotation terms (note 'citation' is a meta term)
+    if(!is.vector(ids)) {
+      stop("Input argument 'ids' should be a vector of PDB identifiers/accession codes")
+    }
+
+    ## All available annotation terms (note 'citation' is a meta term)
     anno.allterms <- c("structureId", "experimentalTechnique", "resolution", "chainId", "ligandId",
                        "ligandName", "source", "scopDomain", "classification", "compound", "title",
                        "citation", "citationAuthor", "journalName", "publicationYear",
@@ -51,7 +55,7 @@ pdb.annotate <- function(ids, anno.terms=NULL, unique=FALSE) {
     ids1 <- paste(unique(ids.short), collapse=",")
 
     query1 = paste(anno.allterms[anno.allterms != "citation"], collapse=",")
-    ##- Instead of looking up all therms we could specify only those requested here... 
+    ##- Instead of looking up all terms we could specify only those requested here... 
     ##query1 = paste(anno.terms[anno.terms != "citation"], collapse=",")
     ##- if 'citation' is asked for we would then need to make sure we look up year, author and journal
     ##query1 <- unique( c(query1, "citationAuthor", "journalName", "publicationYear" ) )
@@ -156,7 +160,7 @@ pdb.annotate <- function(ids, anno.terms=NULL, unique=FALSE) {
     unq.ids <- unique(substr(basename(ids.short), 1, 4))
     if(nrow(out.tbl)!=length(unq.ids)) {
       tmp.ids <- out.tbl[,"structureId"]
-      missing <- paste(unq.ids[!unq.ids %in% tmp.ids], collapse=", ")
+      missing <- paste(unq.ids[!toupper(unq.ids) %in% tmp.ids], collapse=", ")
       warning(paste("Annotation data could not be found for PDB ids:\n  ",
                     missing))
     }
