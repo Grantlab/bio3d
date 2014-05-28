@@ -65,6 +65,7 @@
        raw.lines <- raw.lines[-which(aa == "!")]
 
     cha      <- substring(raw.lines, 12, 12)
+    cha[cha == " "] <- NA   # catch for missing chain identifier
     sse      <- substring(raw.lines, 17, 17)
     res.name <- substring(raw.lines, 14, 14)
     
