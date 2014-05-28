@@ -431,11 +431,13 @@
   ## inds= indices of pdb 'a' to keep
   ## find corresponding atoms in b
   
-  names.a <- paste(a$atom[inds$atom, "resno"],
+  names.a <- paste(a$atom[inds$atom, "chain"],
+                   a$atom[inds$atom, "resno"],
                    a$atom[inds$atom, "elety"],
                    a$atom[inds$atom, "eleno"], sep="-")
   
-  names.b <- paste(b$atom[, "resno"],
+  names.b <- paste(b$atom[, "chain"],
+                   b$atom[, "resno"], 
                    b$atom[, "elety"],
                    b$atom[, "eleno"], sep="-")
   
