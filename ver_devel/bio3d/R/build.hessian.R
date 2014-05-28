@@ -1,5 +1,5 @@
 "build.hessian" <-
-  function(xyz, pfc.fun, aa.mass=NULL, fc.weights=NULL,
+  function(xyz, pfc.fun, fc.weights=NULL,
            sse=NULL, sequ=NULL, ss.bonds=NULL, ... )  {
 
     if(missing(xyz))
@@ -12,15 +12,6 @@
     xyz    <- matrix(xyz, ncol=3, byrow=TRUE)
     natoms <- nrow(xyz)
 
-    ## Check provided vector of residue masses
-    if(!is.null(aa.mass)) {
-      if(natoms!=length(aa.mass))
-        stop("build.hessian: 'aa.mass' and number of atoms does not match")
-
-      ## Mass weights should be the sqrt of residue masses
-      aa.mass <- sqrt(aa.mass)
-    }
-    
     ## Check provided weight matrix
     if(!is.null(fc.weights)) {
       if(!is.matrix(fc.weights))
@@ -32,7 +23,7 @@
     }
 
     build.submatrix <- function(xyz, natoms, 
-                                aa.mass=NULL, fc.weights=NULL, 
+                                fc.weights=NULL, 
                                 ssdat=NULL, ...) {
      
       ## Full Hessian
@@ -113,12 +104,6 @@
         Hsm[inds.y[i], m+2] <- sum(Hsm[inds.y, m+2]) * (-1)
         Hsm[inds.z[i], m+2] <- sum(Hsm[inds.z, m+2]) * (-1)
 
-        ## Mass weight Hessian
-        if(!is.null(aa.mass)) {
-          m.tmp <- aa.mass[i] ## mass of atom n
-          Hsm[,m:(m+2)] <- Hsm[,m:(m+2)] * (1/m.tmp)
-          Hsm[,m:(m+2)] <- Hsm[,m:(m+2)] * (1/aa.mass[inds])
-        }
       }
       return(Hsm)
     }
@@ -180,7 +165,6 @@
     }
 
     H <- build.submatrix(xyz=xyz, natoms=natoms,
-                         aa.mass=aa.mass,
                          fc.weights=fc.weights,
                          ssdat=ssdat, ... )
     

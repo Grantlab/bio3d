@@ -62,8 +62,12 @@
   
   ## NMA hessian
   ## sequ is here of length calpha-pdb, which is different from natoms !!!
-  hessian <- .nma.hess(pdb.in$xyz, init=init, sequ=sequ, masses=masses.in,
+  hessian <- .nma.hess(pdb.in$xyz, init=init, sequ=sequ, 
                        hessian=hessian, inc.inds=inc.inds)
+
+  ## mass weight hessian
+  if(!is.null(masses.out))
+    hessian <- .nma.mwhessian(hessian, masses=masses.out)
   
   ## diagaonalize - get eigenvectors
   ei <- .nma.diag(hessian)
@@ -124,8 +128,12 @@
   }
   
   ## NMA hessian
-  hessian <- .nma.hess(pdb.in$xyz, init=init, sequ=sequ, masses=masses.in,
+  hessian <- .nma.hess(pdb.in$xyz, init=init, sequ=sequ, 
                        hessian=hessian, inc.inds=inc.inds)
+
+  ## mass weight hessian
+  if(!is.null(masses.out))
+    hessian <- .nma.mwhessian(hessian, masses=masses.out)
 
   ## diagaonalize - get eigenvectors
   ei <- .nma.diag(hessian)
@@ -189,7 +197,7 @@
 
 
 
-## effective hessian
+## extract effective hessian
 ".nma.trim.hessian" <- function(hess, inc.inds=NULL) {
   if(!is.matrix(hess))
     stop("hess must be a matrix")
@@ -204,27 +212,36 @@
   return(k)
 }
 
-".nma.hess" <- function(xyz, init=NULL, sequ=NULL, masses=NULL,
+## mass-weight hessian
+".nma.mwhessian" <- function(hessian, masses=NULL) {
+  masses <- sqrt(masses)
+
+  dims <- dim(hessian)
+  natoms <- dims[1] / 3
+  
+  inds <- rep(1:natoms, each=3)
+  col.inds <- seq(1, ncol(hessian), by=3)
+
+  for ( i in 1:natoms ) {
+    m <- col.inds[i]
+    hessian[,m:(m+2)] <- hessian[,m:(m+2)] * (1/masses[i])
+    hessian[,m:(m+2)] <- hessian[,m:(m+2)] * (1/masses[inds])
+  }
+  
+  return(hessian)
+}
+
+## wrapper for generating the hessian matrix
+".nma.hess" <- function(xyz, init=NULL, sequ=NULL, 
                         hessian=NULL, inc.inds=NULL) {
-  if(length(masses)>0)
-    mass <- TRUE
-  else
-    mass <- FALSE
 
   natoms <- length(xyz)/3
-  dimchecks <- c(length(masses)==natoms)
-  
-  if(mass && !all(dimchecks))
-    stop(paste("dimension mismatch when generating hessian\n",
-               paste(checks, collapse=", ")))
-  
   
   ## Build the Hessian Matrix
   if(is.null(hessian)) {
     cat(" Building Hessian...")
     ptm <- proc.time()
-    H <- do.call('build.hessian', list(xyz=xyz, pfc.fun=init$pfcfun, sequ=sequ,
-                                       aa.mass=masses))
+    H <- do.call('build.hessian', list(xyz=xyz, pfc.fun=init$pfcfun, sequ=sequ))
     t <- proc.time() - ptm
     cat("\t\tDone in", t[[3]], "seconds.\n")
   }
@@ -245,8 +262,7 @@
   return(H)
 }
 
-  
-## build a NMA object
+## diagonalize hessian
 ".nma.diag" <- function(H) {
   
   ## Diagonalize matrix
@@ -258,6 +274,7 @@
   return(ei)
 }
 
+## build a NMA object
 ".nma.finalize" <- function(ei, xyz, temp, masses, natoms, keep, call) {
   if(length(masses)>0)
     mass <- TRUE
@@ -272,7 +289,7 @@
   
   if(!all(dimchecks))
     stop(paste("dimension mismatch when generating nma object\n",
-               paste(checks, collapse=", ")))
+               paste(dimchecks, collapse=", ")))
   
   if(!is.null(keep)) {
     if(keep>ncol(ei$vectors))
