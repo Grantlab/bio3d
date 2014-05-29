@@ -11,33 +11,42 @@
     Interactive 3D visualization of biomolecular structures from various sources within the Bio3D package. 
 }
 \usage{
-view.pdb(pdb, type = "default", atom.sel = NULL, col = NULL, cna = NULL, ...)
-view.pdbs(x, type = 1, col = NULL, add = FALSE, ...)
+view(...)
+
+\method{view}{pdb}(pdb, mode = "default", atom.sel = NULL, col = NULL, cna = NULL, ...)
+
+\method{view}{xyz}(x, type = 1, col = NULL, add = FALSE, ...)
+
+\method{view}{3dalign}(x, type = 1, col = NULL, add = FALSE, ...)
+
 vec2color(vec, pal = c("blue", "green", "red"), n = 30)
-sse.color(x, atom.sel=NULL, col.coil="gray", col.helix="purple", col.sheet="yellow") 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{pdb}{ a PDB object as obtained from read.pdb.}
-  \item{type}{ Render type - see examples.}
-  \item{atom.sel}{ A selection object from atom.select}
+  \item{mode}{ View/render mode - see examples.}
+  \item{atom.sel}{ A selection object from atom.select.}
   \item{col}{ A vector or matrix of colors.}
   \item{cna}{ A protein structure network object. Not yet implemented. }
   \item{\dots}{ Extra arguments for visualize functions. }
   \item{vec}{ a numeric vector for color mapping. }
   \item{pal}{ color pallet specification. }
   \item{n}{ Number of desired color range mappings. }
-  \item{x}{ a numeric coordinate matix or 3dalign object of pdbs. }
+  \item{x}{ a numeric coordinate matrix or 3dalign object of pdbs. }
+  \item{type}{ A single element numeric vector with values of 1 or 2
+  that specifies the Color type rendering for multi-structure viewing 
+  - see examples.}
 }
 \details{
-    The view.pdb and view.pdbs functions are wrappers for the visualize function.
-Basically, they attempt to view larger PDBs the way Barry likes to see them most often.
+    The view.pdb and view.xyz functions are wrappers for the visualize function.
+Basically, they attempt to view larger PDBs in a useful way (i.e. the way we like to see them most often). 
 To Do
  - Write this man page
- - Check validity on "atom.sel" input 
- - Check validity of "col" input and add "keyword" color types
- - Add input more args, e.g. lwd=NULL, lwd.ca=3, lwd.nca=1 etc.
+ - Check validity of "atom.sel" input 
+ - Check validity of "col" input and add "keyword" for color types
+ - Add more input args, e.g. lwd=NULL, lwd.ca=3, lwd.nca=1 etc.
  - Add cna code.
+ - Merge view.3dalign and view.xyz codes
 
 N.B. In general this is still a quick and dirty prototype with 
 no consideration of efficiency and little error checking. 
@@ -58,54 +67,53 @@ view.pdb(pdb)
 
 \dontrun{
 
-view.pdb(pdb, "calpha")
-view.pdb(pdb, "back")
-view.pdb(pdb, "all")
-
-#view.pdb(pdb, "trace", col=vec2color(pdb$atom$b))
-
-view.pdb(pdb, "all", col=vec2color(pdb$atom$b))
+# 1. view.pdb examples
+view(pdb, "calpha")
+view(pdb, "back")
+view(pdb, "all")
+view(pdb, "all", col=vec2color(pdb$atom$b))
 
 
 
-##- 2. View a structural fit from a pdbs object!!
+##- 2. View a structural fit from a '3dalign' class object
 data(transducin)
 attach(transducin)
 
-# view.pdbs(pdbs)   ###<-- lots of elesy related warnings !!! 
-view.pdbs(pdbs, col=annotation[,"color"])
-view.pdbs(pdbs)   ###<-- lots of 'elesy' related warnings !!! 
-view.pdbs(pdbs, col="gray")
+view(pdbs)
+view(pdbs, type=2)
+
+view(pdbs, col=annotation[,"color"])
+view(pdbs, col="gray")
 
 rf=vec2color(rmsf(pdbs$xyz))
-view.pdbs(pdbs, col=rf, type=2)
+view(pdbs, col=rf, type=2)
 
 
 
-##- 3. View the results of PCA on this structure set
+##- 3. View the results of PCA on this structure set (i.e. a 'xyz' class object)
 example(pca.xyz) ## Press RTN.
 
 a <- mktrj.pca(pc.xray, pc=1, file="pc1.pdb")
-view.pdbs(a, col="gray")
-view.pdbs(a, col=vec2color(rmsf(a)), type=2 ) ## Cool!! 
+view.xyz(a, col="gray")
+view.xyz(a, col=vec2color(rmsf(a)), type=2 ) ## Cool!! 
 
 
 
 ## can add to previous view
-view.pdbs(pdbs)
-view.pdbs(a, col="#808080", add=T)
+view.xyz(pdbs)
+view.xyz(a, col="#808080", add=T)
 
 
 
-##- 4. View the results of NMA
+##- 4. View the results of NMA (i.e. a 'xyz' class object)
 #pdb <- read.pdb("1hel")
 
 modes <- nma(pdb)
 m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
-view.pdbs(m7, col=vec2color(rmsf(m7)), type=2)  
+view.xyz(m7, col=vec2color(rmsf(m7)), type=2)  
 
 
-##- 5. View the results of CNA
+##- 5. View the results of CNA (i.e. a 'cna' class object)
 #example(plot.cna)
 #visualize.cna(net, pdb, xyz.axes=F) ##=> cant turn axis off??? View is offset from center??
 ## Need to think more about what is most useful here.
@@ -120,11 +128,12 @@ motif <- "G....GK[ST]"
 aa.seq <- pdbseq(pdb)
 pos <- motif.find(motif, aa.seq)
 
-natom <- sum(pdb$calpha)
-col <- rep("gray", natom)
-col[pos]="red"
+aa.seq[pos]
 
-pdbview(pdb, "trace", col=col)
+col <- rep("gray", nrow(pdb$atom))
+col[ pdb$atom$resno %in% names(aa.seq[pos]) ] = "red"
+
+view(pdb, "calpha", col=col)
 
 
 

@@ -1,45 +1,3 @@
-sse.color <- function(x, atom.sel=NULL, col.coil="gray", col.helix="purple", col.sheet="yellow") {
-  ##-- Define a color vector with helix and sheet 
-  ##    annotations taken from input PDB file.
-  ##      ToDo: - if no $helix and $sheet defined take 
-  ##            annotation from dssp() or stride()
-  ##
-  ## MV inside view.pdb() function
-  ##
-  
-#  if(!is.null(atom.sel)) {
-#    x <- trim.pdb(x, atom.sel)
-#  }
-  
-  resno <- x$atom$resno
-  col <- rep(col.coil, length(resno))
-
-  if(is.null(x$helix) && is.null(x$sheet)) {
-    ## No SSE defined in PDB calling dssp()
-    ####x <- dssp(x)
-    if(is.null(x$helix) && is.null(x$sheet)) {
-      ## Still no SSE return coil color
-      return(col)
-    }
-  }
-
-  if(!is.null(x$helix$start)) {
-    h.resno <- unbound(x$helix$start, x$helix$end)
-    col[(resno %in% h.resno)] = col.helix
-  }
-
-  if(!is.null(x$sheet$start)) {
-    e.resno <- unbound(x$sheet$start, x$sheet$end)
-    col[(resno %in% e.resno)] = col.sheet
-  }
-
-  ## N.B. The above will not work with multi chain input
-  ##  i.e. PDB files with overlapping resno, in which 
-  ##   case we need to match both chain & resno 
-  ##   - See trim.pdb() for example code
-  
-  return(col)
-}
 
 vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
   col <- colorRampPalette(pal)(n)
@@ -52,8 +10,9 @@ vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
 view <- function(...)
   UseMethod("view")
 
-view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
+view.pdb <- function(pdb, mode="default", atom.sel=NULL, col=NULL, cna=NULL,
                      elety.custom = atom.index, ...) {
+
    ##-- Wrapper for visualize() to view larger PDBs the way Barry 
    ##    likes to see them most often.
    ##      To Do - Check validity on "atom.sel" input 
@@ -66,20 +25,21 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
    ##
 
 
-   type.options <- c("default", "calpha", "back", "protein", "all")
-   type <- match.arg(type, type.options)
+   mode.options <- c("default", "calpha", "back", "protein", "all")
+   mode <- match.arg(mode, mode.options)
 
    ##- Check on 'col' input 
    ##   This section of code could be improved
    ##   'col' could be a vector of colors or a "keyword" 
    ##    e.g. "sse", "index", "atom", etc. ) 
    if(is.null(col)) {
-    if(type=="all") {
+    if(mode=="all") {
       ## Color by index
       col <- vec2color(1:nrow(pdb$atom))
     } else {
       ## Color by secondary structure
-      col <- sse.color(pdb)
+      ##col <- sse.color(pdb)
+      col <- sse.vector(pdb, coil="gray", helix="purple", sheet="yellow", calpha=FALSE)
     }
    } else {
     if(length(col) == 1) {
@@ -104,7 +64,7 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
      connectivity(pdb) <- connectivity(pdb)
    }
    
-   if(type=="default") { 
+   if(mode=="default") { 
       ## Calpha trace plus sidechains and ligand
       ca.sel   <- atom.select(pdb, "calpha", verbose = FALSE)
       prot.sel <- atom.select(pdb, "protein", verbose = FALSE)
@@ -137,7 +97,7 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
     } 
 
 
-   if(type=="calpha") {
+   if(mode=="calpha") {
     ## SSE colored C-alpha trace
     ca.sel <- atom.select(pdb,"calpha", verbose=FALSE)
     if(length(ca.sel$atom) != 0) {
@@ -151,7 +111,7 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
    }
    
 
-   if(type=="protein") {
+   if(mode=="protein") {
     ## Just protein
       prot.sel <- atom.select(pdb, "protein", verbose = FALSE)
       prot.pdb <- trim.pdb(pdb, prot.sel)
@@ -165,7 +125,7 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
    }
 
    
-   if(type=="back") {
+   if(mode=="back") {
     back.sel <- atom.select(pdb,"back", verbose=FALSE)
     back.pdb <- trim.pdb(pdb, back.sel)
 #      connectivity(back.pdb) <- connectivity(back.pdb) ## <--- Using back.pdb here gives strange result!!!
@@ -177,8 +137,8 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
     }
    }
 
-   if(type=="all") {
-     ## type == all, is it everything but water?
+   if(mode=="all") {
+     ## mode == all, is it everything but water?
       nowat.sel <- atom.select(pdb, "notwater", verbose = FALSE)
       nowat.pdb <- trim.pdb(pdb, nowat.sel)
       connectivity(nowat.pdb) <- connectivity(nowat.pdb)
@@ -195,15 +155,21 @@ view.pdb <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL,
    #}
 }
 
-view.character <- function(file, type="default", atom.sel=NULL, col=NULL, cna=NULL, ...) {
+view.character <- function(file, mode="default", atom.sel=NULL, col=NULL, cna=NULL, ...) {
+  ## This function is probably not needed
   x <- read.pdb(file)
-  view.pdb(pdb=x, type=type, atom.sel=atom.sel, col=col, cna=cna, ...)
+  view.pdb(pdb=x, mode=mode, atom.sel=atom.sel, col=col, cna=cna, ...)
 }
 
-## We better add a method for class '3dalign' here, I think.
+
+
 view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
   ##-- Wrapper to visualize() for multiple structures
-  
+  ##
+  ## ToDo.   Combine/merge with view.xyz() below and then simply 
+  ##          call view,xyz() within view.3dalign() view.nma() 
+  ##          view.pca(), view.cna() etc.
+
   as.xyz <- function(x, ...) {
     x <- matrix(x,nrow=3)
     x <- matrix(x[,!is.na(x[1,])], nrow=1)
@@ -295,8 +261,16 @@ view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
   }
 }
 
-view.pdbs <- function(x, type=1, col=NULL, add=FALSE, ...) {
+
+
+
+view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
   ##-- Wrapper to visualize() for multiple structures
+  ##
+  ## ToDo. - Incorporate best bits of view.3dalign()
+  ##       - Ask user if more than 300 frames are to be drawn
+  ##       - Generally speed up - no need to re-calculate connectivity 
+  ##          for xyz input (but required for 3dalign input)
 
   as.xyz <- function(x, nrow=1, ncol=length(x), byrow=TRUE) {
     y <- matrix(as.numeric(x), nrow=nrow, ncol=ncol, byrow=byrow)
@@ -304,15 +278,21 @@ view.pdbs <- function(x, type=1, col=NULL, add=FALSE, ...) {
     return(y)
   }
 
-  if(class(x) == "3dalign") {
+  if( inherits(x, "3dalign") ){
     gap.ind <- is.gap(x$ali)
     x <- x$xyz
   } else {
-    ###gap.ind <- is.na( x[seq(1, to=length(x), by=3)] ) ##<-- Wrong !!
-    gap.ind <- NULL
+    gap.ind <- is.gap( x[,seq(1, to=ncol(x), by=3)] )
   }
   nstru <- nrow(x)
   npos  <- (ncol(x)/3)
+
+###  if(nstru > 300) {
+###    warning( paste("Input 'x' has",nstru, "frames. Only drawing first 300") )
+###    x <- x[1:300,]
+###    nstru <- 300
+###  }
+
 
   ## -- The 'type' argument is for trying to sort out 'col' color specification 
   ##     for different purposes.  Note. 'col' input could be: 
@@ -325,7 +305,7 @@ view.pdbs <- function(x, type=1, col=NULL, add=FALSE, ...) {
   ##     Eventually we want to be a bit smarter and remove the need for the 'type' argument 
 
 
-  ## Sort out color options with the aid of type argument
+  ##-- Sort out color options with the aid of type argument
   if(type==1) {
     ## Option No. #1 above
     if( is.null(col) ) {
@@ -350,9 +330,7 @@ view.pdbs <- function(x, type=1, col=NULL, add=FALSE, ...) {
       if( is.null(nrow(col)) ) {
         ## We have an input 'col' vector we want to apply to all structures
         if(length(col) == npos) {
-          cat("IN HERE\n\n")
           col <- matrix(rep(col, nstru),ncol=npos,nrow=nstru, byrow=TRUE)
-          cat(dim(col))
         }
         else {
           stop("For type=2: Color vector should be same length as ncol pdbs$ali")
@@ -368,20 +346,17 @@ view.pdbs <- function(x, type=1, col=NULL, add=FALSE, ...) {
     }
     ## Mark gap/missing positions in color matrix for later exclusion
     if( !is.null(gap.ind) )
-      col[gap.ind]=NA  ## <---- Trouble here if input is not a pdbs object!!
-    ##cat( paste(dim(col), collapse="  x  " ), "\n" )
+      col[gap.ind]=NA  
   }
 
+  ##- Visualize each structure
   for(i in 1:nstru) {
     xt = as.xyz( na.omit(x[i,]) )
     xcol = na.omit(col[i,])
-    ## cat( paste( "  ** length x:", (length(xt)/3), "  length col:", length(xcol),"\n") )
     if(i==1) {
-      visualize(xt, con=calpha.connectivity(xt), add=add, col=xcol, centre=FALSE, ...)
+      visualize(xt, con=calpha.connectivity(xt), add=add, col=xcol, centre=FALSE, elesy=rep("C", length(xt)/3), ...)
     } else {
-      visualize(xt, con=calpha.connectivity(xt), add=TRUE, col=xcol, centre=FALSE, ...)   
+      visualize(xt, con=calpha.connectivity(xt), add=TRUE, col=xcol, centre=FALSE, elesy=rep("C", length(xt)/3), ...)   
     }
   }
 }
-
-
