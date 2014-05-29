@@ -25,7 +25,7 @@
   \item{mar}{ A numerical vector of the form c(bottom, left, top, right)
     which gives the number of lines of margin to be specified on the
     four sides of the plot.}
-  \item{cex.lab}{ a numerical single element vector giving the amount by
+  \item{cex}{ a numerical single element vector giving the amount by
     which plot labels should be magnified relative to the default. }
   \item{\dots}{ extra plotting arguments. }  
 }
