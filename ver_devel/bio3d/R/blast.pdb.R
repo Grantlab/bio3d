@@ -1,5 +1,5 @@
 `blast.pdb` <-
-function(seq, database="pdb", time.out=NULL) {
+function(seq, database="pdb", time.out=NULL, chain.single=TRUE) {
   if(inherits(seq, "fasta")) {
     if(is.matrix(seq$ali)) {
       if(nrow(seq$ali)>1)
@@ -21,7 +21,12 @@ function(seq, database="pdb", time.out=NULL) {
     stop("Option database should be one of pdb, nr or swissprot")
 
   ##- Submit
-  urlput <- paste("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?CMD=Put&DATABASE=",
+#  urlput <- paste("http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?CMD=Put&DATABASE=",
+#                  database,"&HITLIST_SIZE=20000&PROGRAM=blastp&CLIENT=web&QUERY=",
+#                  paste(seq,collapse=""),
+#                  sep="")
+
+  urlput <- paste("http://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Put&DATABASE=",
                   database,"&HITLIST_SIZE=20000&PROGRAM=blastp&CLIENT=web&QUERY=",
                   paste(seq,collapse=""),
                   sep="")
@@ -37,6 +42,6 @@ function(seq, database="pdb", time.out=NULL) {
                   "&ALIGNMENTS=20000",
                   "&RID=",rid, sep="")
 
-  blast <- get.blast(urlget, time.out = time.out)
+  blast <- get.blast(urlget, time.out = time.out, chain.single=chain.single)
   return(blast)
 }

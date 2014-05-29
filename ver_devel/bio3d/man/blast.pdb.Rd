@@ -7,8 +7,8 @@
   swissprot sequence databases.
 }
 \usage{
-blast.pdb(seq, database = "pdb", time.out = NULL)
-get.blast(urlget, time.out = NULL)
+blast.pdb(seq, database = "pdb", time.out = NULL, chain.single=TRUE)
+get.blast(urlget, time.out = NULL, chain.single=TRUE)
 }
 \arguments{
   \item{seq}{ a single element or multi-element character vector
@@ -21,6 +21,9 @@ get.blast(urlget, time.out = NULL)
     the blast reply before a time out occurs. }
   \item{urlget}{ the URL to retrieve BLAST results; Usually it is returned
     by blast.pdb if time.out is set and met. }
+  \item{chain.single}{ logical, if TRUE double NCBI character PDB database  
+    chain identifiers are simplified to lowercase '1WF4_GG' > '1WF4_g'. If 
+    FALSE no conversion to match RCSB PDB files is performed. }   
 }
 \details{
   This function employs direct HTTP-encoded requests to the NCBI web
@@ -49,7 +52,7 @@ get.blast(urlget, time.out = NULL)
 
 }
 \value{
-  A list with seven components:
+  A list with eight components:
   \item{bitscore }{ a numeric vector containing the raw score for each
     alignment. }
   \item{evalue }{ a numeric vector containing the E-value of the raw
@@ -63,7 +66,9 @@ get.blast(urlget, time.out = NULL)
   \item{hit.tbl }{ a character matrix summarizing BLAST results for each
     reported hit, see below. }
   \item{raw }{ a data frame summarizing BLAST results, note multiple
-    hits may appear in the same row. }  
+    hits may appear in the same row. }
+  \item{url }{ a single element character vector with the NCBI result URL and 
+    RID code. This can be passed to the get.blast function. }  
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
@@ -79,7 +84,7 @@ get.blast(urlget, time.out = NULL)
 \note{
   Online access is required to query NCBI blast services.
 }
-\seealso{ \code{\link{seqaln}} }
+\seealso{ \code{\link{plot.blast}}, \code{\link{hmmer}}, \code{\link{seqaln}} }
 \examples{
 pdb <- read.pdb("1bg2")
 blast <- blast.pdb( pdbseq(pdb) )
