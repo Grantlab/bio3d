@@ -143,6 +143,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
             chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id,
             call = cl)
   class(out)=c("3dalign","fasta")
+  class(out$xyz)="xyz"
   return(out)
 }
 
