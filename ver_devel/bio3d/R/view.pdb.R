@@ -196,10 +196,11 @@ view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
 
   ## Compute the connectivity only once if all the xyz.models have the same number of atoms (no NA)
   model.with.na <- sapply(are.na.list, any)
-  if(any(model.with.na))
+  if(any(model.with.na)) {
     con.list <- lapply(xyz.list, calpha.connectivity)
-  else
-    con.list <- replicate(calpha.connectivity(xyz.list[[1]]), nstru, simplify = FALSE)
+  } else {
+    con.list <- replicate(nstru, calpha.connectivity(xyz.list[[1]]), simplify = FALSE)
+  }
   
   ## -- The 'type' argument is for trying to sort out 'col' color specification 
   ##     for different purposes.  Note. 'col' input could be: 
@@ -244,7 +245,7 @@ view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
         ## We have an input 'col' vector we want to apply to all structures
         if(length(col) == npos) {
           #           cat("IN HERE\n\n")
-          col    <- replicate(nstru, col, simplify = FALSE)          
+          col    <- replicate(nstru, col, simplify = FALSE)
           col.list <- mapply(function(col, M) return(col[!M]), col, are.na.list)
           #           cat(dim(col))
         }
