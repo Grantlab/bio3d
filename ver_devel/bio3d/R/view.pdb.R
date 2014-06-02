@@ -157,30 +157,49 @@ view.pdb <- function(pdb, mode="default", atom.sel=NULL, col=NULL, cna=NULL,
 
 view.character <- function(file, mode="default", atom.sel=NULL, col=NULL, cna=NULL, ...) {
   ## This function is probably not needed
+  ## Useful to visualize quickly a pdb file using a filename
   x <- read.pdb(file)
   view.pdb(pdb=x, mode=mode, atom.sel=atom.sel, col=col, cna=cna, ...)
 }
 
-
-
-view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
+view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
   ##-- Wrapper to visualize() for multiple structures
   ##
-  ## ToDo.   Combine/merge with view.xyz() below and then simply 
-  ##          call view,xyz() within view.3dalign() view.nma() 
-  ##          view.pca(), view.cna() etc.
-
+  ## ToDo. - Incorporate best bits of view.3dalign()
+  ##       - Ask user if more than 300 frames are to be drawn
+  ##       - Generally speed up - no need to re-calculate connectivity 
+  ##          for xyz input (but required for 3dalign input)
+  if(!inherits(x, "xyz"))
+    stop("'x' must be an object of class 'xyz'")
+  
   as.xyz <- function(x, ...) {
-    x <- matrix(x,nrow=3)
+    #     x <- matrix(x,nrow=3)
     x <- matrix(x[,!is.na(x[1,])], nrow=1)
     class(x) <- "xyz"
     return(x)
   }
   
-  ## 3dalign object should contains an 'xyz' object, not a old style vector!!
-  xyz.list <- split(x$xyz, 1:nrow(x$xyz))
+  nstru <- nrow(x)
+  npos  <- ncol(x)/3
+  
+  if(nstru > 300) {
+    warning( paste("Input 'x' has",nstru, "frames. Only drawing first 300") )
+    x <- x[1:300,]
+    nstru <- 300
+  }
+  
+  xyz.list <- split(x, 1:nrow(x))
+  xyz.list <- lapply(xyz.list, matrix, nrow = 3)
+  are.na.list <- lapply(xyz.list, function(x) return(is.na(x[1,])))
   xyz.list <- lapply(xyz.list, as.xyz)
-  con.list <- lapply(xyz.list, calpha.connectivity)
+  xyz.lengths <- sapply(xyz.list, length)/3
+
+  ## Compute the connectivity only once if all the xyz.models have the same number of atoms (no NA)
+  model.with.na <- sapply(are.na.list, any)
+  if(any(model.with.na))
+    con.list <- lapply(xyz.list, calpha.connectivity)
+  else
+    con.list <- replicate(calpha.connectivity(xyz.list[[1]]), nstru, simplify = FALSE)
   
   ## -- The 'type' argument is for trying to sort out 'col' color specification 
   ##     for different purposes.  Note. 'col' input could be: 
@@ -192,9 +211,7 @@ view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
   ##     This is specified by 'type=1' or 'type=2' 
   ##     Eventually we want to be a bit smarter and remove the need for the 'type' argument 
   
-  nstru <- length(xyz.list)
-  xyz.lengths <- sapply(xyz.list, length)/3
-  npos  <- ncol(x$resno)
+
   ## Sort out color options with the aid of type argument
   if(type==1) {
     ## Option No. #1 above
@@ -219,27 +236,26 @@ view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
       if(is.list(col)) {
         col.lengths <- lapply(col, length)
         if(any(col.length != xyz.lengths)) {
-          stop("When 'col' is a list, each component length must match the number of atoms in each model")
+          stop("When 'col' is a list, each component length must match the number of atoms/residue in each model")
         }
         col.list <- col
       }
       if( is.null(nrow(col)) ) {
         ## We have an input 'col' vector we want to apply to all structures
         if(length(col) == npos) {
-#           cat("IN HERE\n\n")
+          #           cat("IN HERE\n\n")
           col    <- replicate(nstru, col, simplify = FALSE)          
-          are.na <- lapply(split(x$resno, 1:nstru), is.na)
           col.list <- mapply(function(col, M) return(col[!M]), col, are.na)
-#           cat(dim(col))
+          #           cat(dim(col))
         }
         else {
-          stop("For type=2: Color vector should be same length as ncol pdbs$ali")
+          stop("For type=2: Color vector should be same length as ncol of your 'xyz' object")
           ## unclear what the user might want here...
         }
       } else {
         ## we have a color matrix
         if(dim(col) != dim(x)) {
-          stop("For type=2: Color matrix should be same dim as pdbs$ali")
+          stop("For type=2: Color matrix should be same dim as your 'xyz' object")
           ## again unclear what the user might want here...
         } else {
           col.list <- split(col, 1:nstru)
@@ -249,114 +265,25 @@ view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
       }
     }
   }
-
+  
   elesy <- rep("C", length(xyz.list[[1]])/3)
   visualize(xyz.list[[1]], elesy = elesy, con = con.list[[1]],
-            col = col.list[[1]], add = FALSE, centre=FALSE, ...)
+            col = col.list[[1]], add = add, centre=FALSE, ...)
   if(length(xyz.list) > 1) {
     useless <- mapply(function(x, con, col){
-            elesy <- rep("C", length(x)/3)
-            visualize(x, elesy = elesy, con = con, col = col, add = TRUE, centre=FALSE, ...)
-           }, xyz.list, con.list, col.list)
+      elesy <- rep("C", length(x)/3)
+      visualize(x, elesy = elesy, con = con, col = col, add = TRUE, centre=FALSE, ...)
+    }, xyz.list, con.list, col.list)
   }
 }
 
-
-
-
-view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
+view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
   ##-- Wrapper to visualize() for multiple structures
   ##
-  ## ToDo. - Incorporate best bits of view.3dalign()
-  ##       - Ask user if more than 300 frames are to be drawn
-  ##       - Generally speed up - no need to re-calculate connectivity 
-  ##          for xyz input (but required for 3dalign input)
-
-  as.xyz <- function(x, nrow=1, ncol=length(x), byrow=TRUE) {
-    y <- matrix(as.numeric(x), nrow=nrow, ncol=ncol, byrow=byrow)
-    class(y)="xyz"
-    return(y)
-  }
-
-  if( inherits(x, "3dalign") ){
-    gap.ind <- is.gap(x$ali)
-    x <- x$xyz
-  } else {
-    gap.ind <- is.gap( x[,seq(1, to=ncol(x), by=3)] )
-  }
-  nstru <- nrow(x)
-  npos  <- (ncol(x)/3)
-
-###  if(nstru > 300) {
-###    warning( paste("Input 'x' has",nstru, "frames. Only drawing first 300") )
-###    x <- x[1:300,]
-###    nstru <- 300
-###  }
-
-
-  ## -- The 'type' argument is for trying to sort out 'col' color specification 
-  ##     for different purposes.  Note. 'col' input could be: 
-  ##      1. a) single element vector to be applied to all structures, 
-  ##         b) a multiple element vector with a color per structure, 
-  ##      2. a) a vector with a color per atom, or
-  ##         b) a matrix with a column per atom position and row per structure
-  ## 
-  ##     This is specified by 'type=1' or 'type=2' 
-  ##     Eventually we want to be a bit smarter and remove the need for the 'type' argument 
-
-
-  ##-- Sort out color options with the aid of type argument
-  if(type==1) {
-    ## Option No. #1 above
-    if( is.null(col) ) {
-      col <- as.matrix( vmd.colors(nstru) )
-    } else {
-      if(length(col)==1) {
-        col <- as.matrix( rep(col, nstru) )
-      }
-      if(length(col) != nstru) {
-        stop("For type=1: Color vector should be the same length as the number of structures")
-      } else {
-        col <- as.matrix( col )
-      }
-    }
-  }
-  if(type==2) {
-    ## Option No. #2 above
-    if( is.null(col) ) {
-      col <- vec2color(1:npos)
-      col <- matrix(rep(col, nstru),ncol=npos,nrow=nstru, byrow=TRUE)
-    } else {
-      if( is.null(nrow(col)) ) {
-        ## We have an input 'col' vector we want to apply to all structures
-        if(length(col) == npos) {
-          col <- matrix(rep(col, nstru),ncol=npos,nrow=nstru, byrow=TRUE)
-        }
-        else {
-          stop("For type=2: Color vector should be same length as ncol pdbs$ali")
-          ## unclear what the user might want here...
-        }
-      } else {
-        ## we have a color matrix
-        if(dim(col) != dim(x)) {
-          stop("For type=2: Color matrix should be same dim as pdbs$ali")
-          ## again unclear what the user might want here...
-        }
-      }
-    }
-    ## Mark gap/missing positions in color matrix for later exclusion
-    if( !is.null(gap.ind) )
-      col[gap.ind]=NA  
-  }
-
-  ##- Visualize each structure
-  for(i in 1:nstru) {
-    xt = as.xyz( na.omit(x[i,]) )
-    xcol = na.omit(col[i,])
-    if(i==1) {
-      visualize(xt, con=calpha.connectivity(xt), add=add, col=xcol, centre=FALSE, elesy=rep("C", length(xt)/3), ...)
-    } else {
-      visualize(xt, con=calpha.connectivity(xt), add=TRUE, col=xcol, centre=FALSE, elesy=rep("C", length(xt)/3), ...)   
-    }
-  }
+  ## ToDo.   Combine/merge with view.xyz() below and then simply 
+  ##          call view,xyz() within view.3dalign() view.nma() 
+  ##          view.pca(), view.cna() etc.
+  if(!inherits(x, "3dalign"))
+    stop("'x', must be an object of class '3dalign'")
+  view.xyz(x$xyz, type = type, col = col, add = add, ...)
 }
