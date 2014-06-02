@@ -245,7 +245,7 @@ view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
         if(length(col) == npos) {
           #           cat("IN HERE\n\n")
           col    <- replicate(nstru, col, simplify = FALSE)          
-          col.list <- mapply(function(col, M) return(col[!M]), col, are.na)
+          col.list <- mapply(function(col, M) return(col[!M]), col, are.na.list)
           #           cat(dim(col))
         }
         else {
@@ -259,8 +259,7 @@ view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
           ## again unclear what the user might want here...
         } else {
           col.list <- split(col, 1:nstru)
-          are.na <- lapply(split(x$resno, 1:nstru), is.na)
-          col.list <- mapply(function(col, M) return(col[!M]), col.list, are.na)
+          col.list <- mapply(function(col, M) return(col[!M]), col.list, are.na.list)
         }
       }
     }
