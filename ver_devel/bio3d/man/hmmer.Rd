@@ -51,7 +51,18 @@ hmmer(seq, type="phmmer", db = NULL, verbose = TRUE, timeout = 90)
 }
 \seealso{ \code{\link{seqaln}} }
 \examples{
+##- PHMMER
 seq <- get.seq("2abl_A")
 res <- hmmer(seq, db="pdb")
+
+##- HMMSCAN
+fam <- hmmer(seq, type="hmmscan", db="pfam")
+pfam.aln <- pfam(fam$acc[1])
+
+##- HMMSEARCH
+hmm <- hmmer(pfam.aln, type="hmmsearch", db="pdb")
+unique(hmm$species)
+hmm$acc
+
 }
 \keyword{ utilities }
