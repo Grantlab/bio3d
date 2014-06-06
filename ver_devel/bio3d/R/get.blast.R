@@ -1,22 +1,17 @@
-get.blast <- function(urlget, time.out = NULL) {
+get.blast <- function(urlget, time.out = NULL, chain.single=TRUE) {
+
   if(substr(urlget, 1, 4) == "http" && grep("Blast.cgi", urlget)
       && grep("RID[[:space:]]*=", urlget)) {
-     rid <- sub("^.*RID[[:space:]]*=[[:space:]]*", "", urlget) 
+     rid <- sub("^.*RID[[:space:]]*=[[:space:]]*", "", urlget)
+     names(urlget)=rid 
   } else {
      stop("Illegal link for retrieving BLAST results")
   }
 
   cat(paste(" Searching ... please wait (updates every 5 seconds) RID =",rid,"\n "))
 
-  ##- Retrive results via RID code (note 'Sys.sleep()')
-
-
-  raw  <- read.csv(urlget,
-                   header = FALSE, sep = ",", quote="\"", dec=".",
-                   fill = TRUE, comment.char="")
-
-  
-  ## Check for job completion (retrive html or cvs?)
+  ##- Retrieve results via RID code and check for job completion
+  ##   (completion is based on retrieving HTML or CSV output)
   html <- 1
   t.count <- 0
   repeat {
@@ -44,7 +39,7 @@ get.blast <- function(urlget, time.out = NULL) {
                      "q.start", "q.end", "s.start", "s.end",
                      "evalue", "bitscore")
   
-  ## expand 'raw' for each hit in 'subjectids' (i.e. split on ";")
+  ##- Expand 'raw' for each hit in 'subjectids' (i.e. split on ";")
   rawm <- as.matrix(raw)
   
   eachsubject <- strsplit(rawm[,"subjectids"],";")
@@ -54,12 +49,25 @@ get.blast <- function(urlget, time.out = NULL) {
   rawm <- apply(rawm, 2, rep, times=n.subjects)
   rawm[,"subjectids"] <- subjectids
   
-  ## parse ids
+
+  ##- Parse ids
   all.ids <- strsplit(subjectids, "\\|")
   gi.id  <- sapply(all.ids, '[', 2)
-  pdb.id <- paste(sapply(all.ids, '[', 4),"_",sapply(all.ids, '[', 5),sep="")
+  
+  pdb.4char <- sapply(all.ids, '[', 4)
+  pdb.chain <- sapply(all.ids, '[', 5)
 
-  ## N.B. hack: zero evalues to arbirtrly high value!!
+  ## Catch long chain IDs as in hits from "P12612" (e.g "1WF4_GG" => "1WF4_g")
+  if(chain.single) {
+    chain.ind <- nchar(pdb.chain) > 1
+    if(any(chain.ind)) {
+      pdb.chain[ chain.ind ] <- tolower( substr(pdb.chain[ chain.ind ],1,1 ) )
+    }
+  }
+  pdb.id <- paste(pdb.4char,"_",pdb.chain,sep="")
+
+
+  ##- Map zero evalues to arbitrarily high value for -log(evalue)
   mlog.evalue <- -log(as.numeric(rawm[,"evalue"]))
   mlog.evalue[is.infinite(mlog.evalue)] <- -log(1e-308)
 
@@ -72,7 +80,9 @@ get.blast <- function(urlget, time.out = NULL) {
                 gi.id = gi.id,
                 pdb.id = pdb.id,
                 hit.tbl = rawm,
-                raw = raw)
+                raw = raw,
+                url = urlget)
+
   class(output) <- "blast"
   return(output)
 }
