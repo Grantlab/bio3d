@@ -59,7 +59,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
    ref <- matrix(NA, nrow=2, ncol=ncol(naln$ali))
    rownames(ref) <- c("ali.pos", "ca.inds")
    ref[1, !is.gap(naln$ali[1,])] <- 1:ncol(aln$ali)
-   ref[2, !is.gap(naln$ali[id,])] <- atom.select(pdb, "//////CA/", verbose=FALSE)$atom
+   ref[2, !is.gap(naln$ali[id,])] <- atom.select(pdb, "calpha", verbose=FALSE)$atom
    
    # remove X
    naln$ali[1, naln$ali[1,]=="X"] <- "-"

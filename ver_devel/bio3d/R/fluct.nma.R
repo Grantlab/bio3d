@@ -23,7 +23,7 @@
     if(mass)
       freq <- nma$frequencies**2
     else
-      freq <- nma$force.constants**2
+      freq <- nma$force.constants
 
 
     for ( i in mode.inds )  {
