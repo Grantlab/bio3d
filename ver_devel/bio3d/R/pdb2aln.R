@@ -67,6 +67,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
    if(!is.null(file)) 
       write.fasta(naln, file=file)
    out <- list(id=naln$id, ali=naln$ali, ref=ref)
-   
+   class(out) <- "fasta"
+ 
    return (out)
 }
