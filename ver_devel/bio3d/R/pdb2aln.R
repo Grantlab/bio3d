@@ -19,7 +19,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
       naln <- seq2aln(seq2add=aa1, aln=aln, id=id, 
             exefile = exefile, file=tempfile())
       # check if the old alignment doesn't change
-      if(!identical(aln$ali, naln$ali[1:(nrow(naln$ali)-1), !is.gap(naln$ali[1,])])) 
+      if(!identical(aln$ali, naln$ali[1:(nrow(naln$ali)-1), !is.gap(naln$ali[1,]), drop = FALSE])) 
          warning("Alignment changed! Try aln.id with the closest sequence ID in the alignment")
    } else {
       # do pairwise sequence alignment     
