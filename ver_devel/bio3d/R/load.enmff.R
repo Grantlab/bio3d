@@ -5,6 +5,11 @@
   return(k)
 }
 
+"ff.aaanm" <- function(r, cutoff=7, gamma=1, ...) {
+  ifelse( r>cutoff, 0, gamma )
+}
+
+
 "ff.anm" <- function(r, cutoff=15, gamma=1, ...) {
   ifelse( r>cutoff, 0, gamma )
 }
