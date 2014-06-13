@@ -16,7 +16,7 @@
   if(!is.null(outpath))
     dir.create(outpath, FALSE)
 
-  ## Parallelized by multicore package
+  ## Parallelized by package 'parallel'
   ncore <- setup.ncore(ncore, bigmem = TRUE)
   prev.warn <- getOption("warn")
   
