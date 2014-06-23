@@ -15,30 +15,10 @@ function(x, reference=NULL, grpby=NULL, ncore=1, nseg.scale=1, ... ) {
      mxyz <- colMeans(dxyz)
      covmat <- covmat + outer(mxyz, mxyz)
   }
-  n <- nrow(covmat)
-  np <- pairwise(n/3)
 
-  if(ncore > 1) 
-     mylapply <- mclapply
-  else
-     mylapply <- lapply
-
-  ltv <- mylapply(1:nrow(np), function(x) {
-     i1 <- (np[x, 2] - 1) * 3 + 1
-     i2 <- (np[x, 1] - 1) * 3 + 1
-     sum(diag(covmat[i1:(i1+2), i2:(i2+2)]))
-  } )
-#ltv=list(rep(1, nrow(np)))
-  ccmat <- matrix(0, n/3, n/3)
-  ccmat[lower.tri(ccmat)] <- unlist(ltv)
-  ccmat <- ccmat + t(ccmat)
-  diag(ccmat) <- colSums(matrix(diag(covmat), nrow=3))
-  d <- sqrt(diag(ccmat))
-  d <- outer(d, d)
-  ccmat <- ccmat / d
-
+  ccmat <- cov2dccm(covmat, ncore = ncore)
+ 
   if(is.null(grpby)) {
-    class(ccmat)=c("dccm","matrix")
     return(ccmat)
   } else {
     ##- Group by concetive numbers in 'grpby'
