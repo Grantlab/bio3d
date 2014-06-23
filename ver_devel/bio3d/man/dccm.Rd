@@ -14,7 +14,7 @@ dccm(x, ...)
     function \code{nma} that will be passed to the \code{dccm.nma()}
     function, see below for examples. } 
   \item{\dots}{ additional arguments passed to the methods
-    \code{dccm.xyz}, \code{dccm.nma}, and \code{dccm.enma}. }
+    \code{dccm.xyz}, \code{dccm.pca}, \code{dccm.nma}, and \code{dccm.enma}. }
 }
 \details{
   \code{dccm} is a generic function calling the corresponding function
@@ -25,6 +25,9 @@ dccm(x, ...)
   \code{\link{dccm.xyz}} will be used when \code{x} is a numeric matrix
   containing Cartesian coordinates (e.g. trajectory data).
   
+  \code{\link{dccm.pca}} will calculate the cross-correlations based on
+  an \code{pca} object.
+
   \code{\link{dccm.nma}} will calculate the cross-correlations based on
   an \code{nma} object. Similarly, \code{\link{dccm.enma}} will
   calculate the correlation matrices based on an ensemble of \code{nma}
@@ -41,6 +44,6 @@ dccm(x, ...)
 }
 \author{ Barry Grant, Lars Skjaerven }
 \seealso{ \code{\link{dccm.xyz}}, \code{\link{dccm.nma}},
-  \code{\link{dccm.enma}}, \code{\link{plot.dccm}},
+  \code{\link{dccm.enma}}, \code{\link{dccm.pca}}, \code{\link{plot.dccm}},
     \code{\link{view.dccm}}. }
 \keyword{ utilities }
