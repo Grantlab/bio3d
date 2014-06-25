@@ -3,6 +3,9 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE) {
   ## Performs principal components analysis on the given "xyz" numeric data
   ## matrix and return the results as an object of class "pca.xyz"
 
+  ## Log the call
+  cl <- match.call()
+
   xyz <- as.matrix(xyz)
   if (any(!is.finite(xyz)))
     stop("infinite or missing values in x")
@@ -58,7 +61,7 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE) {
   class(U)="pca.loadings"
 
   out <- list(L=L, U=U, z=z, au=au,
-              sdev=sdev, mean=mean)
+              sdev=sdev, mean=mean, call=cl)
 
   class(out)="pca"; out
 }
