@@ -17,10 +17,10 @@ plot3d.cna <- function(x,
     stop("Input 'x' object must be a 'cna' class object")
   }
 
-##  oops <- require(igraph)
-##  if (!oops) {
-##    warning("igraph package missing: Please install, see: ?install.packages")
-##  }
+  oops <- require(igraph)
+  if (!oops) {
+    warning("igraph package missing: Please install, see: ?install.packages")
+  }
 
   if(is.null(weights)){
     weights <- E(x$community.network)$weight

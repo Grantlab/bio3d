@@ -29,6 +29,11 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
   ##     see ?igraph.plotting)
   ##   
 
+  ## Check for presence of igraph package (now in Depends.)
+ oops <- require(igraph)
+ if (!oops) {
+    stop("igraph package missing: Please install, see: ?install.packages")
+ }
 
   ##- Determine which network to plot along with node size
   if(full) {
