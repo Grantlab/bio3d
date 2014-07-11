@@ -13,20 +13,19 @@ test_that("NMA", {
   ## Check first eigenvector
   U7 <- c(-0.054713238, -0.054334443,  0.001053040,
           -0.041171764, -0.049233238, -0.001587705)
-              
   nowU7 <- head(modes$U[,7])
   expect_that(nowU7, equals(U7, tolerance=1e-6))
   
   ## Check second eigenvector
   U8 <- c(-0.06418497, -0.02734926,  0.02436005,
           -0.01149358, -0.02942601,  0.01439773)
-  nowU8 <- head(modes$U[,8])
+  nowU8 <- head(modes$U[,8]) * (-1) ## changed with R version 3.1.0
   expect_that(nowU8, equals(U8, tolerance=1e-6))
 
   ## Check Mode vector
   mode7 <- c(-0.092583306, -0.091942327,  0.001781907,
              -0.079840815, -0.095473729, -0.003078899)
-  nowMode7 <- head(modes$modes[,7])
+  nowMode7 <- head(modes$modes[,7]) 
   expect_that(nowMode7, equals(mode7, tolerance=1e-6))
 
   ## Check eigenvalues
@@ -86,17 +85,14 @@ test_that("NMA", {
              0.003911230038334056, 0.0031036402193391484, 0.00011224732577516142,
              5.015756380626851e-05, 0.00122307913030356, 0.0005064454471294721,
              0.0014876013838084666, -0.003968053761191632, 0.00020389385408319644)
-  
-  mmtk7 <- mmtk7 * (-1)
-  nowMmtk7 <- head(modes$modes[,7], n=18)
+  nowMmtk7 <- head(modes$modes[,7], n=18) * (-1)
   expect_that(nowMmtk7, equals(mmtk7, tolerance=1e-6))
 
   ## Raw mode vector 7 (mmtk: modes.rawMode(6))
   mmtk7 <- c(0.05535176862194779, 0.053954464078107375, -0.0011153538121951093,
              0.04133856415826275, 0.049117637874840574, 0.0015497023155839553,
              0.04227251082807122, 0.03853532867244931, 0.00450537391343214)
-  mmtk7 <- mmtk7 * (-1)
-  nowMmtk7 <- head(modes$U[,7], n=9)
+  nowMmtk7 <- head(modes$U[,7], n=9)* (-1)
   expect_that(nowMmtk7, equals(mmtk7, tolerance=1e-6)) 
  
   ## Frequencies
@@ -106,8 +102,10 @@ test_that("NMA", {
   expect_that(nowMmtkFreqs, equals(mmtkFreqs, tolerance=1e-6))
 
   ## Fluctuations
-  mmtk.flucts <- c(0.00195060853392, 0.00113764918589, 0.00167187530508, 0.00175346604072, 0.00151209078542,
-                   0.00130098648001, 0.00133495588156, 0.00107978100112, 0.000924829566202, 0.00109689698409)
+  mmtk.flucts <- c(0.00195060853392, 0.00113764918589, 0.00167187530508,
+                   0.00175346604072, 0.00151209078542, 0.00130098648001,
+                   0.00133495588156, 0.00107978100112, 0.000924829566202,
+                   0.00109689698409)
   nowFlucts <- modes$fluctuations[1:10]
   expect_that(nowFlucts, equals(mmtk.flucts, tolerance=1e-6))
   
@@ -119,8 +117,48 @@ test_that("NMA", {
   mmtk7 <- c(0.010350805923938345, 0.009267077807430083, -3.701643999426641e-05,
              0.008268033266170226, 0.009606710315232818, 0.0003705525203545053,
              0.006767227535558591, 0.005694101052352917, 0.001077079483122824)
-  nowMmtk7 <- head(modes$modes[,7], n=9)
+  nowMmtk7 <- head(modes$modes[,7], n=9) * (-1) ## changed with R 3.1.0
   expect_that(nowMmtk7, equals(mmtk7, tolerance=1e-6))
+
+  mmtk7 <- c(0.05478481030376396, 0.04904884735365174, -0.00019592084498809212,
+             0.04376109816000157, 0.05084645641420892, 0.001961262696318724,
+             0.03581762420652206, 0.030137773647408828, 0.005700773021792685)
+  nowMmtk7 <- head(modes$U[,7], n=9) * (-1) ## changed with R 3.1.0
+  expect_that(nowMmtk7, equals(mmtk7, tolerance=1e-6))
+
+   ## Fluctuations
+  mmtk.flucts <- c(0.00195600136572, 0.00114595965451, 0.00168855332538,
+                   0.00175330685712, 0.00152428233485, 0.00130978174806,
+                   0.00134381308059, 0.00108408194319, 0.000924316154921,
+                   0.0010985505357)
+  nowFlucts <- modes$fluctuations[1:10]
+  expect_that(nowFlucts, equals(mmtk.flucts, tolerance=1e-6))
+
+
+  
+  ## Energetic Modes (mass=FALSE, temp=NULL)
+  invisible(capture.output(modes <- nma(pdb, pfc.fun=calpha.mmtk, mass=FALSE, temp=NULL)))
+ 
+  mmtk7 <- c(0.05478481030376396, 0.04904884735365174, -0.00019592084498809212,
+             0.04376109816000157, 0.05084645641420892, 0.001961262696318724,
+             0.03581762420652206, 0.030137773647408828, 0.005700773021792685)
+  nowMmtk7 <- head(modes$modes[,7], n=9)  * (-1) ## changed with R 3.1.0
+  expect_that(nowMmtk7, equals(mmtk7, tolerance=1e-6))
+
+  mmtk7 <- c(0.05478481030376396, 0.04904884735365174, -0.00019592084498809212,
+             0.04376109816000157, 0.05084645641420892, 0.001961262696318724,
+             0.03581762420652206, 0.030137773647408828, 0.005700773021792685)
+  nowMmtk7 <- head(modes$U[,7], n=9) * (-1) ## changed with R 3.1.0
+  expect_that(nowMmtk7, equals(mmtk7, tolerance=1e-6))
+  
+  ## Fluctuations
+  mmtk.flucts <- c(0.000784175524735, 0.000459423765829, 0.000676953612192,
+                   0.000702913785645, 0.000611096147848, 0.000525101264027,
+                   0.00053874467886, 0.000434616530213, 0.00037056523503,
+                   0.000440417096776)
+  nowFlucts <- modes$fluctuations[1:10]
+  expect_that(nowFlucts, equals(mmtk.flucts, tolerance=1e-6))
+
   
   
   ## ANM eigenvectors
@@ -129,7 +167,7 @@ test_that("NMA", {
   anm7 <- c(0.041345308400364066, 0.03345000499525146, 0.008604839963113613,
             0.03755854024944313, 0.036973377719312125, 0.008638534251932818,
             0.033187347539802, 0.022779436981185324, 0.004702511702428035)
-  nowAnm7 <- head(modes$modes[,7], n=9)
+  nowAnm7 <- head(modes$modes[,7], n=9) * (-1) ## changed with R 3.1.0
   expect_that(nowAnm7, equals(anm7, tolerance=1e-6))
 
 
