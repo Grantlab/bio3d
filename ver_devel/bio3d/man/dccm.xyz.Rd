@@ -1,5 +1,6 @@
 \name{dccm.xyz}
 \alias{dccm.xyz}
+\alias{cov2dccm}
 \title{ DCCM: Dynamical Cross-Correlation Matrix }
 \description{
   Determine the cross-correlations of atomic displacements.
@@ -7,6 +8,7 @@
 \usage{
 \method{dccm}{xyz}(x, reference = NULL, grpby=NULL,
 ncore=1, nseg.scale=1, \dots)
+cov2dccm(vcov, method = c("pearson", "lmi"), ncore = NULL)
 }
 \arguments{
   \item{x}{ a numeric matrix of Cartesian coordinates with a row per
@@ -22,6 +24,8 @@ ncore=1, nseg.scale=1, \dots)
     prior to running multiple core calculation. See
     \code{\link{fit.xyz}}. }
   \item{\dots}{ hmm. }
+  \item{vcov}{ numeric variance-covariance matrix. }
+  \item{method}{ method to calculate the cross-correlation. }
 }
 \details{
   The extent to which the atomic fluctuations/displacements of a system are
@@ -49,6 +53,18 @@ ncore=1, nseg.scale=1, \dots)
   helices and a plume for strands.  Off-diagonal positive and negative
   correlations may indicate potentially interesting correlations between
   domains of non-contiguous residues.
+
+  \code{cov2dccm} function calculates the N-by-N cross-correlation matrix 
+  directly from a 3N-by-3N variance-covariance matrix. 
+  If \code{method = "pearson"}, the conventional Pearson's inner-product 
+  correlaiton calculation will be invoked, in which only the diagnol of 
+  each residue-residue covariance sub-matrix is considered. 
+
+  If \code{method = "lmi"}, then the linear mutual information
+  cross-correlation will be calculated. \sQuote{LMI} considers both
+  diagnol and off-diagnol entries in sub-matrices, and so even grabs the
+  correlation of residues moving on orthognal directions. (See more details
+  in \code{\link{lmi}}.)
 }
 \value{
   Returns a cross-correlation matrix.
@@ -58,13 +74,14 @@ ncore=1, nseg.scale=1, \dots)
   
   McCammon, A. J. and Harvey, S. C. (1986) \emph{Dynamics of
   Proteins and Nucleic Acids}, Cambridge University Press, Cambridge.
+
+  Lange, O.F. and Grubmuller, H. (2006) \emph{PROTEINS: Structure, Function, and Bioinformatics} \bold{62}:1053--1061.
 }
-\author{ Gisle Saelensminde }
-\note{
-  This function is currently very basic i.e. inefficient and \bold{SLOW}. 
-}
+\author{ Xin-Qiu Yao and Gisle Saelensminde }
+
 \seealso{ \code{\link{cor}} for examining xyz cross-correlations,
-  \code{\link{pca.xyz}}. }
+  \code{\link{dccm}}, \code{\link{dccm.nma}},
+  \code{\link{dccm.pca}}, \code{\link{lmi}}, \code{\link{dccm.enma}}. }
 \examples{
 
 \dontrun{

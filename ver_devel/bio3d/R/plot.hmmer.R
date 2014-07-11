@@ -164,7 +164,7 @@ function(x, cutoff=NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.1
   if(!is.null(x$kg) & !is.null(x$species)) {
     unq.kg <- unique(x$kg)
     tbl <- table(x$kg, cut(x$score, 30))
-    tbl=tbl[, seq(ncol(tbl), 1)]
+    tbl=tbl[, seq(ncol(tbl), 1), drop=FALSE]
     cols <- seq(1,nrow(tbl))
     barplot(tbl, col=cols, ylab="Frequency")
     
