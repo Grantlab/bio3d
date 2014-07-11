@@ -1,5 +1,6 @@
 \name{pca.xyz}
 \alias{pca.xyz}
+\alias{print.pca}
 \title{ Principal Component Analysis }
 \description{
    Performs principal components analysis (PCA) on a \code{xyz}
@@ -7,6 +8,8 @@
  }
 \usage{
 pca.xyz(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE)
+
+\method{print}{pca}(x, nmodes=6, \dots)
 }
 \arguments{
   \item{xyz}{ numeric matrix of Cartesian coordinates with a row per
@@ -17,6 +20,8 @@ pca.xyz(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE)
     full \code{xyz} is projected onto this subspace.}
   \item{use.svd}{ logical, if TRUE singular value decomposition (SVD) is 
     called instead of eigenvalue decomposition. }
+  \item{nmodes}{ numeric, number of modes to be printed. }
+  \item{\dots}{ additional arguments to \code{print}. }
 }
 \value{
   Returns a list with the following components:
