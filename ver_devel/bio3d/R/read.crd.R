@@ -10,6 +10,6 @@
     class(file)=c("character", "amber")
   }
 
-  UseMethod("read.crd")
+  UseMethod("read.crd", file)
 }
 
