@@ -5,5 +5,5 @@
   else if(inherits(x, "array"))
     class(x) <- c("matrix", "mean")
   
-  UseMethod("dccm")
+  UseMethod("dccm", x)
 }
