@@ -5,10 +5,10 @@
   Make a trajectory of atomic displacments along a given principal component.
 }
 \usage{
-\method{mktrj}{pca}(x = NULL, pc = 1, mag = 1, step = 0.125, file = NULL,  ...)
+\method{mktrj}{pca}(pca = NULL, pc = 1, mag = 1, step = 0.125, file = NULL,  ...)
 }
 \arguments{
-  \item{x}{ a list object of class \code{"pca"} (obtained with
+  \item{pca}{ a list object of class \code{"pca"} (obtained with
     \code{\link{pca.xyz}}).}
   \item{pc}{ the PC number along which displacements should be made.}
   \item{mag}{ a magnification factor for scaling the displacements. }

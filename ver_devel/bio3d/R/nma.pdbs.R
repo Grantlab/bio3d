@@ -331,7 +331,7 @@
   tmp.pdb$atom[,"resno"]          = resno
   tmp.pdb$atom[,"chain"]          = chain
   tmp.pdb$atom[,c("x", "y", "z")] = matrix(xyz, ncol=3, byrow=T)
-
+  
   tmp.pdb$xyz    = xyz
   tmp.pdb$calpha = elety %in% "CA"
 

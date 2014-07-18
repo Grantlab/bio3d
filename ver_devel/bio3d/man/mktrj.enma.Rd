@@ -6,11 +6,11 @@
   vector.
 }
 \usage{
-\method{mktrj}{enma}(x = NULL, pdbs = NULL, ind = 1, mode = 1, mag = 10,
+\method{mktrj}{enma}(enma = NULL, pdbs = NULL, ind = 1, mode = 1, mag = 10,
                      step = 1.25, file = NULL,  ...) 
 }
 \arguments{
-  \item{x}{ a list object of class \code{"enma"} (obtained with
+  \item{enma}{ a list object of class \code{"enma"} (obtained with
     \code{\link{nma.pdbs}}).}
   \item{pdbs}{ a list object of class \code{"3dalign"} (obtained with
     \code{\link{pdbaln}} or \code{\link{read.fasta.pdb}}) which

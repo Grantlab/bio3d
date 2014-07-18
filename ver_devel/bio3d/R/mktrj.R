@@ -1,5 +1,5 @@
 `mktrj` <-
-function(x, ...) {
+function(...) {
   UseMethod("mktrj")
 }
 

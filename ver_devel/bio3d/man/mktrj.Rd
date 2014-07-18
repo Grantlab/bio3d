@@ -6,14 +6,11 @@
   component / normal mode.
 }
 \usage{
-mktrj(x, ...)
+mktrj(...)
 }
 \arguments{
-  \item{x}{ a list object of class \code{"pca"} or \code{"nma"} as
-    obtained  with \code{\link{pca.xyz}} or \code{\link{nma}},
-    respectively. } 
-  \item{\dots}{ additional arguments passed to the methods
-    \code{mktrj.pca} or \code{mktrj.nma}. }
+  \item{\dots}{ arguments passed to the methods
+    \code{mktrj.pca}, \code{mktrj.nma}, or \code{mktrj.enma}. }
 }
 \details{
   \code{mktrj} is a generic function calling the corresponding function

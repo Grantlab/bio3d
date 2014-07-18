@@ -1,58 +1,31 @@
 \name{atom.select}
 \alias{atom.select}
-\title{ Atom Selection From PDB Structure }
+\title{ Atom Selection }
 \description{
-  Return the atom and xyz coordinates indices of a \sQuote{pdb} structure
-  object corresponding to the intersection of a hierarchical selection.
+  Return the atom and xyz coordinates indices of a \sQuote{pdb} or Amber
+  \sQuote{prmtop} structure object corresponding to the intersection of
+  a hierarchical selection. 
 }
 \usage{
-atom.select(pdb, string=NULL, chain=NULL, resno=NULL, resid=NULL,
-eleno=NULL, elety=NULL, verbose=TRUE, rm.insert=FALSE)
+atom.select(...)
 }
 \arguments{
-  \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
-    \code{\link{read.pdb}}. }
-  \item{string}{ a character selection string with the following syntax:\cr
-    \code{/segid/chain/resno/resid/eleno/elety/}. Or a single selection keyword from 
-    \code{calpha} \code{cbeta} \code{backbone} \code{protein} \code{notprotein} \code{ligand} \code{water} \code{notwater} \code{h} \code{noh} }
-  \item{chain}{ a character vector of chain identifiers. }
-  \item{resno}{ a numeric or character vector of residue numbers. }
-  \item{resid}{ a character vector of residue name identifiers. }
-  \item{eleno}{ a numeric or character vector of element numbers. }
-  \item{elety}{ a character vector of atom names. }
-  \item{verbose}{ logical, if TRUE details of the selection are printed. }
-  \item{rm.insert}{ logical, if TRUE insert ATOM records from the
-    \code{pdb} object are ignored. }
+  \item{\dots}{ arguments passed to methods
+    \code{\link{atom.select.pdb}} or \code{\link{atom.select.prmtop}}. } 
 }
 \details{
-  This function allows for the selection of atom and coordinate data
-  corresponding to the intersection of input criteria (such as a
-  \sQuote{chain}, \sQuote{resno}, \sQuote{elety} etc.  Or a hierarchical
-  \sQuote{selection string} \code{string} with a strict format.
+  \code{atom.select} is a generic function calling the corresponding function
+  determined by the class of the input argument \code{x}. Use
+  \code{methods("atom.select")} to get all the methods for \code{atom.select}
+  generic:
   
-  The selection \code{string} should be a single element character
-  vector containing a string composed of six sections separated by a
-  \sQuote{/} character.
+  \code{\link{atom.select.pdb}} will be used when \code{x} is an object of 
+  \code{"pdb"}.
   
-  Each section of this \sQuote{selection string} corresponds to a
-  different level in the PDB structure hierarchy, namely:
-  (1) segment identifier,
-  (2) chain identifier,
-  (3) residue number,
-  (4) residue name,
-  (5) element number, and
-  (6) element name.
-
-  For example, the string \code{//A/65:143///CA/} selects all C-alpha
-  atoms from residue numbers 65 to 143, of chain A.
-
-  A simpler alternative would be \code{chain="A", resno=65:143,
-    elety="CA"}. In addition, the character \code{string} shortcuts
-  \code{"calpha"}, \code{"back"}, \code{"backbone"}, \code{"cbeta"},
-  \code{"h"} and \code{"noh"} may also be used. See below for examples.
-
-  When called without a selection string, \code{atom.select} will print a
-  summary of \code{pdb} makeup.
+  \code{\link{atom.select.prmtop}} will be used when \code{x} is an object of 
+  \code{"prmtop"}.
+  
+  See examples for each corresponding function for more details.
 }
 \value{
   Returns a list of class \code{"select"} with components:
