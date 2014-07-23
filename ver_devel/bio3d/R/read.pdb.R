@@ -184,6 +184,7 @@ function (file, maxlines=-1, multi=FALSE,
       }
       else {
         xyz.models <- rbind(xyz.models, tmp.xyz)
+        rownames(xyz.models) = NULL
       }
     }
     rm(raw.lines.multi)
