@@ -2,7 +2,8 @@
 ######## and identifies potentially key residues based on 
 ######## sub-optimal paths analysis of dynamical networks
 
-subopt.path <- function(path, state = 1:length(path), pdb = NULL, rm.gaps = TRUE, cutoff.npath = 50, normalize = TRUE) {
+subopt.path <- function(path, state = 1:length(path), col=1:length(path), pdb = NULL, outprefix="", 
+   rm.gaps = TRUE, cutoff.npath = 50, normalize = TRUE) {
    require(bio3d)
    require(ggplot2)
 
@@ -14,12 +15,13 @@ subopt.path <- function(path, state = 1:length(path), pdb = NULL, rm.gaps = TRUE
   
    factor <- rep(state, unlist(lapply(y, length)))
    # plot path length distribution
-   bw=0.1
+   gcol = col; names(gcol) = state
+   bw=0.05
    wd=bw/1.5
-   df <- data.frame(cond=as.factor(factor), Length=unlist(y))
+   df <- data.frame(State=as.factor(factor), Length=unlist(y))
    df <- cbind(df, bw=bw)
-   pdf(file="length_distrib.pdf", width=3.5, height=3, pointsize=8)
-   print(ggplot(df, aes(x=Length, group=cond, color=NULL, fill=cond, bw=bw)) + geom_histogram(aes(y=(..density..)*bw), alpha=0.8, position=position_dodge(width=wd), binwidth=bw)+theme_bw() )
+   pdf(file=paste(outprefix, "length_distrib.pdf", sep=""), width=3.5, height=3, pointsize=8)
+   print(ggplot(df, aes(x=Length, group=State, color=NULL, fill=State, bw=bw)) + geom_histogram(aes(y=(..density..)*bw), alpha=0.8, position=position_dodge(width=wd), binwidth=bw)+scale_fill_manual(values=gcol)+ylab("Probability")+theme_bw() )
    dev.off()
    out$length <- y
    names(out$length) <- state 
@@ -29,6 +31,7 @@ subopt.path <- function(path, state = 1:length(path), pdb = NULL, rm.gaps = TRUE
    
    # correct node # (WISP return 0-based #)
    y <- lapply(y, "+", 1)
+#   y[state != "GTP"] <- lapply(y[state != "GTP"], "+", 1)
    if(!is.null(pdb)) {
       resno <- as.numeric(pdb$atom[pdb$calpha, "resno"])
       y <- lapply(y, function(x) resno[x])
@@ -45,10 +48,10 @@ subopt.path <- function(path, state = 1:length(path), pdb = NULL, rm.gaps = TRUE
    # plot node degeneracy
    bw=0.9
    wd=bw/1.5
-   df <- data.frame(cond=as.factor(factor), Node=unlist(y))
+   df <- data.frame(State=as.factor(factor), Node=unlist(y))
    df <- cbind(df, bw=bw)
-   pdf(file="degeneracy_distrib.pdf", width=5, height=3, pointsize=8)
-   print(ggplot(df, aes(x=Node, group=cond, color=NULL, fill=cond, bw=bw)) + geom_histogram(aes(y=..count..), alpha=0.8, position=position_dodge(width=wd), binwidth=bw)+theme_bw() )
+   pdf(file=paste(outprefix, "degeneracy_distrib.pdf", sep=""), width=5, height=3, pointsize=8)
+   print(ggplot(df, aes(x=Node, group=State, color=NULL, fill=State, bw=bw)) + geom_histogram(aes(y=..count..), alpha=0.8, position=position_dodge(width=wd), binwidth=bw)+scale_fill_manual(values=gcol)+ylab("Degeneracy")+theme_bw() )
    dev.off()
 #   out$path <- y0
 #   names(out$path) <- state 
@@ -74,7 +77,21 @@ subopt.path <- function(path, state = 1:length(path), pdb = NULL, rm.gaps = TRUE
    }
    names(o) <- state 
    out$degeneracy <- do.call(rbind, o)
-   if(normalize) out$degeneracy <- out$degeneracy / max(out$degeneracy) 
-   write.csv(out$degeneracy, file = "degeneracy.csv")
+   if(normalize) {
+      out$degeneracy <- out$degeneracy / max(out$degeneracy) 
+      out$degeneracy <- round(out$degeneracy, digits=2)
+   }
+   write.csv(out$degeneracy, file = paste(outprefix, "degeneracy.csv", sep=""))
+   out$call <- match.call()
+   class(out) <- "subopt"
+
    return(out)
+}
+
+print.subopt <- function(x) {
+   if(!inherits(x, "subopt")) stop("Not subopt class")
+   if(is.null(x$call$normalize) || is.true(x$call$normalize)) 
+      print(format(x$degeneracy, nsmall=2), quote=FALSE)
+   else 
+      print(x$degeneracy)
 }
