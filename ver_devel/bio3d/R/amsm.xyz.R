@@ -57,21 +57,10 @@
 
   if(!is.matrix(xyz))
     stop("'xyz' must be a trajectory matrix as obtained e.g. by\n")
-  
-  ## Check for multiple cores
-  if(is.null(ncore) || ncore>1) {
-    oops <- require(multicore)
-    if (oops) {
-      if(is.null(ncore))
-        ncore <- multicore:::detectCores()
-      options(cores = ncore)
-    }
-    else {
-      warning("multicore package missing")
-      ncore <- 1
-    }
-  }
 
+  ## Parallelized by package 'parallel'
+  ncore <- setup.ncore(ncore, bigmem = FALSE)
+    
   ## used for vectProdSum
   vectPS <- function(xyz.ab) {
     a <- xyz.ab[1:3]; b <- xyz.ab[4:6];

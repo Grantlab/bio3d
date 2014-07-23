@@ -3,10 +3,6 @@ lmi <- function (trj, grpby = NULL, ncore=1) {
 
 # rm:r-value matrix
     cm <- var(trj)
-    l <- dim(cm)[1]/3
-    rm <- matrix(nrow=l, ncol=l)
-    d <- 3
-    ij <- pairwise(l)
 
 # mclapply or lapply
     if (ncore > 1) {
@@ -14,25 +10,8 @@ lmi <- function (trj, grpby = NULL, ncore=1) {
     } else {
         lmiapply = lapply
     }  
-
-# list1: marginal-covariance 
-    list1 <- lmiapply(1:l, function(i) det(cm[(3*i-2):(3*i), (3*i-2):(3*i)]) )
-    dm <- unlist(list1)
-
-# list2: pair-covariance
-    list2 <- lmiapply(1:nrow(ij), function(i) {
-        x <- det(cm[c((3*ij[i,1]-2):(3*ij[i,1]),(3*ij[i,2]-2):(3*ij[i,2])), c((3*ij[i,1]-2):(3*ij[i,1]),(3*ij[i,2]-2):(3*ij[i,2]))])
-        y <- 1/2 * (log(dm[ij[i,1]]) + log(dm[ij[i,2]]) - log(x))
-        (1 - exp(-2 * y / d))^(1/2)
-        }
-    )
-    list2 <- unlist(list2)
-
-    for (k in 1:nrow(ij)) {
-        rm[ij[k, 1], ij[k, 2]] <- list2[k]
-    }
-    rm[lower.tri(rm)] = t(rm)[lower.tri(rm)]
-    diag(rm) <- 1
+    
+    rm <- cov2dccm(cm, method = "lmi", ncore = ncore)
 
 # group by or not
     if (!is.null(grpby)) {
