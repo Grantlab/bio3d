@@ -56,7 +56,10 @@
     if(length(pdb$sheet$start)>0) {
       ##- SHEET chain, type and resno
       chain.e <- rep(pdb$sheet$chain, (pdb$sheet$end-pdb$sheet$start+1))
-      type.e <- rep(pdb$sheet$sense, (pdb$sheet$end-pdb$sheet$start+1))
+      if(is.null(pdb$sheet$sense))
+         type.e <- rep("", sum(pdb$sheet$end-pdb$sheet$start+1))
+      else 
+         type.e <- rep(pdb$sheet$sense, (pdb$sheet$end-pdb$sheet$start+1))
       resno.e <- unbound(pdb$sheet$start, pdb$sheet$end)
 
       ##- Use reference vector for filling 'ss'
