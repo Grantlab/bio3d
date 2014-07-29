@@ -13,7 +13,7 @@ function(aln,
   ##  Itterative core deffination for lsq fit optimisation  
   ##  (core positions are those with low ellipsoid volume)
 
-  # Parallelized by multicore package (Fri Apr 26 16:49:38 EDT 2013)
+  # Parallelized by parallel package (Fri Apr 26 16:49:38 EDT 2013)
   ncore <- setup.ncore(ncore)
   if(ncore > 1) {
      # Issue of serialization problem

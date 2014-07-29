@@ -12,7 +12,7 @@
   \item{x}{ an object of class \code{enma} as obtained from
     function \code{nma.pdbs}. }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{na.rm }{ logical, if FALSE the DCCM might containt NA values
     (applies only when the \code{enma} object is calculated with
     argument \sQuote{rm.gaps=FALSE}). }

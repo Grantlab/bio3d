@@ -12,7 +12,7 @@
     function \code{nma}. }
   \item{nmodes}{ numerical, number of modes to consider. }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{\dots}{ additional arguments ? }
 }
 \details{

@@ -144,7 +144,7 @@
   ## Coordiantes - fit or not
   if(fit) {
     xyz <- fit.xyz(fixed = pdbs$xyz[1, ], mobile = pdbs,
-                   fixed.inds = gaps.pos$f.inds, mobile.inds = gaps.pos$f.inds)
+                   fixed.inds = gaps.pos$f.inds, mobile.inds = gaps.pos$f.inds, ncore=ncore)
   }
   else
     xyz <- pdbs$xyz

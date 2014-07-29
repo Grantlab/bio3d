@@ -4,7 +4,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
   ## Log the call
   cl <- match.call()
   
-  # Parallelized by multicore package (Fri Apr 26 17:58:26 EDT 2013)
+  # Parallelized by parallel package (Fri Apr 26 17:58:26 EDT 2013)
   ncore <- setup.ncore(ncore)
   if(ncore > 1) {
      # Issue of serialization problem

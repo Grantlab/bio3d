@@ -2,7 +2,7 @@
 function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
          ncore=1, nseg.scale=1) {
 
-  # Parallelized by multicore package (Mon Apr 22 16:32:19 EDT 2013)
+  # Parallelized by parallel package (Mon Apr 22 16:32:19 EDT 2013)
   ncore <- setup.ncore(ncore)
   if(ncore > 1) {
      # Issue of serialization problem
