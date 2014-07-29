@@ -16,7 +16,8 @@ subopt.path <- function(path, state = 1:length(path), col=1:length(path), pdb = 
    factor <- rep(state, unlist(lapply(y, length)))
    # plot path length distribution
    gcol = col; names(gcol) = state
-   bw=0.05
+   vy = unlist(y)
+   bw=(max(vy) - min(vy)) * 0.04
    wd=bw/1.5
    df <- data.frame(State=as.factor(factor), Length=unlist(y))
    df <- cbind(df, bw=bw)
