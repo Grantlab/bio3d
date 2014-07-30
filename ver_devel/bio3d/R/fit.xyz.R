@@ -13,7 +13,7 @@ function(fixed,
          nseg.scale=1, # to resolve the memory problem in using multicore
          ...) {
 
-  # Parallelized by multicore package (Tue Dec 11 17:41:08 EST 2012)
+  # Parallelized by parallel package (Tue Dec 11 17:41:08 EST 2012)
   ncore <- setup.ncore(ncore)
   if(ncore > 1) {
      # Issue of serialization problem

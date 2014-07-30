@@ -15,7 +15,7 @@ pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...)
   \item{pqr}{ logical, if TRUE the input structures are assumed to be in
   PQR format. }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{nseg.scale }{ split input data into specified number of segments
     prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
   \item{\dots}{ extra arguments passed to \code{seqaln} function. }

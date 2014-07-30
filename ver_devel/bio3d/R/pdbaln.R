@@ -17,7 +17,7 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
   ##
   ## pdb.list[[1]]$atom[1:3,]
 
-  # Parallelized by multicore package (Fri Apr 26 19:24:18 EDT 2013)
+  # Parallelized by parallel package (Fri Apr 26 19:24:18 EDT 2013)
   ncore <- setup.ncore(ncore)
   if(ncore > 1) {
      # Issue of serialization problem

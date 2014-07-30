@@ -10,7 +10,7 @@ function(a, b=NULL,
   # the single structure 'a' and the one or more structures
   # contained in 'b'
    
-  # Parallelized by multicore package -Wed Dec 12 11:15:20 EST 2012
+  # Parallelized by parallel package -Wed Dec 12 11:15:20 EST 2012
   # nseg.scale - to resolve the memory problem of using multicore
   ncore <- setup.ncore(ncore)
   if(ncore > 1) {

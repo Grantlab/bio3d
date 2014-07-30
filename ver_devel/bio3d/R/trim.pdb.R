@@ -29,7 +29,10 @@
         tmp <- sse$start[i]:sse$end[i]
         ex <- c(ex, tmp)
         ch <- c(ch, rep(sse$chain[i], length(tmp)))
-        ty <- c(ty, rep(sse[[4]][i], length(tmp)))
+        if(!is.null(sse$type))
+           ty <- c(ty, rep(sse$type[i], length(tmp)))
+        else
+           ty <- c(ty, rep("", length(tmp)))
       }
       ub <- cbind(ex, ch, ty) ## Matrix of unbound nums chains types
       ub <- cbind(ub, apply(ub, 1, function(x) paste(x[1:2], collapse="_")))
@@ -50,8 +53,7 @@
           bounds.inds <- c(bounds.inds, i)
           nums.start <- nums[i]
           diff.i <- 1
-        }
-        else {
+        } else {
           diff.i <- diff.i + 1
         }
       }

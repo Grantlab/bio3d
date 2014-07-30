@@ -4,7 +4,7 @@
     if(.Platform$OS.type=="windows")
       gzip <- FALSE
     
-    # Parallelized by multicore package (Tue Oct 15 15:23:36 EDT 2013)
+    # Parallelized by parallel package (Tue Oct 15 15:23:36 EDT 2013)
     ncore <- setup.ncore(ncore)
     if(ncore > 4) {
        # To avoid too frequent access to PDB server
