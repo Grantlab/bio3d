@@ -1,6 +1,12 @@
-amb2pdb <- function(prmtop, crd, inds=NULL, inds.crd=inds) {
+amb2pdb <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds) {
   if(!inherits(prmtop, "prmtop"))
     stop("provide a prmtop object as obtained from function read.prmtop")
+
+  natoms.prmtop <- prmtop$POINTERS[1]
+
+  if(is.null(crd)) {
+    crd=rep(NA, natoms.prmtop*3)
+  }
   
   if(!inherits(crd, "amber")) {
     ## update to make multi-model PDBs when matrix is provided
@@ -20,7 +26,6 @@ amb2pdb <- function(prmtop, crd, inds=NULL, inds.crd=inds) {
     }
   }
   
-  natoms.prmtop <- prmtop$POINTERS[1]
   natoms.crd <- crd$natoms
   
   if( any(c(!is.null(inds), !is.null(inds.crd))) ) {
