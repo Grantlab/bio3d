@@ -7,18 +7,14 @@ lmi <- function (trj, grpby = NULL, ncore=1) {
 # mclapply or lapply
     if (ncore > 1) {
         lmiapply = mclapply
-    }
-    else {
+    } else {
         lmiapply = lapply
     }  
     
     rm <- cov2dccm(cm, method = "lmi", ncore = ncore)
 
 # group by or not
-    if (is.null(grpby)) {
-        return(rm)
-    }
-    else {
+    if (!is.null(grpby)) {
         if (ncol(trj) != (length(grpby) * 3)) 
             stop("dimension miss-match in 'trj' and 'grpby', check lengths")
         inds <- bounds(grpby, dup.inds = TRUE)
@@ -33,11 +29,10 @@ lmi <- function (trj, grpby = NULL, ncore=1) {
             m[ij[k, 1], ij[k, 2]] <- list3[k]
         }
         m[lower.tri(m)] = t(m)[lower.tri(m)]
-        diag(m) <- 1
-
-        class(m)=c("dccm","matrix")
-        return(m)
+        diag(m) <- 1; rm=m
     }
+    class(rm) = c("dccm", "matrix")
+    return(rm)
 }
 
 
