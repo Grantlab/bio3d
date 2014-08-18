@@ -181,6 +181,7 @@ function (file, maxlines=-1, multi=FALSE, rm.insert=FALSE, rm.alt=TRUE,
       ## Extract coords to nrow/frame * ncol/xyz matrix
       xyz.models <- matrix( as.numeric(tmp.xyz), ncol=nrow(atom)*3, 
                             nrow=length(raw.end), byrow=TRUE)
+      rownames(xyz.models) = NULL
 
     } else {
       warning(paste("Unequal number of atoms in multi-model records:", file))
