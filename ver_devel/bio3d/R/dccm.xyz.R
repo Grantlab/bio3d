@@ -1,7 +1,7 @@
 `dccm.xyz` <-
 function(x, reference=NULL, grpby=NULL, ncore=1, nseg.scale=1, ... ) {
   xyz <- x
-  # Parallelized by multicore package (Wed Dec 12 18:36:39 EST 2012)
+  # Parallelized by parallel package (Wed Dec 12 18:36:39 EST 2012)
   ncore <- setup.ncore(ncore)
 
   if(is.null(reference)) ref = colMeans(xyz)

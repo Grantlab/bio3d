@@ -6,7 +6,7 @@
 #      "B-factor" column
 rgyr <- function(xyz, mass=NULL, ncore=1, nseg.scale=1)
 {
-   # Parallelized by multicore packaga
+   # Parallelized by parallel package
    ncore <- setup.ncore(ncore)
    if(ncore > 1) {
      # Issue of serialization problem

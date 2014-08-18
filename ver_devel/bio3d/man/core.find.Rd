@@ -31,7 +31,7 @@ core.find(aln, shortcut = FALSE, rm.island = FALSE,
   \item{outpath}{ character string specifying the output directory when
     \code{write.pdbs} is TRUE. }  
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{nseg.scale }{ split input data into specified number of segments
     prior to running multiple core calculation. See \code{\link{fit.xyz}}.
   }

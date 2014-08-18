@@ -25,7 +25,7 @@ amsm.xyz(xyz, ncore = NULL)
     core atoms is performed prior to the calculation of the AMS
     matrix. } 
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{...}{ additional arguments to \code{\link{amsm.xyz}}. }
 }
 \details{
