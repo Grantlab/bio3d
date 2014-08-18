@@ -7,19 +7,7 @@
       stop("dccm.nma: must supply 'nma' object, i.e. from 'nma'")
 
     ## Check for multiple cores
-    if(is.null(ncore) || ncore>1) {
-      oops <- require(multicore)
-      if (oops) {
-        if(is.null(ncore))
-          ncore <- multicore:::detectCores()
-
-        options(cores = ncore)
-      }
-      else {
-        warning("multicore package missing")
-        ncore <- 1
-      }
-    }
+    ncore <- setup.ncore(ncore, bigmem = FALSE)
     
     ## Inner product between all pairs of residues
     cross.inner.prod <- function(a, b) {
@@ -74,7 +62,7 @@
       rinds <- mode.inds[ which(core.ids==i) ]
 
       if(ncore>1) {
-        q <- multicore::parallel(corrmats(rinds, i, nma, corr.mat, freqs))
+        q <- mcparallel(corrmats(rinds, i, nma, corr.mat, freqs))
         jobs[[i]] <- q
       }
       else
@@ -83,12 +71,11 @@
 
     ## Collect all jobs, and sum matrices
     if(ncore>1) {
-      res <- collect(jobs, wait=TRUE)
+      res <- mccollect(jobs, wait=TRUE)
       for ( job in res ) {
         corr.mat <- corr.mat + job
       }
     }
-    
   
     ## Basis for normalization
     a <- vector('numeric', length=nrow(corr.mat))

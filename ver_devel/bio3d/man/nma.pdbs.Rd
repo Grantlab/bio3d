@@ -32,7 +32,7 @@ nma.pdbs(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
   \item{outpath}{ character string specifing the output directory to
     which the PDB structures should be written. }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{x}{ an \code{enma} object obtained from \code{\link{nma.pdbs}}. }
   \item{...}{ additional arguments to \code{nma}, \code{aa2mass}, and
     \code{print}. }

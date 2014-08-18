@@ -12,7 +12,7 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
     pdb.files <- pdb.files[toread]
   }
 
-  ## Parallelized by multicore package
+  ## Parallelized by parallel package
   ncore <- setup.ncore(ncore, bigmem = FALSE)
 
   if(ncore>1) {

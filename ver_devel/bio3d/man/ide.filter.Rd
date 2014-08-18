@@ -16,7 +16,7 @@ ide.filter(aln = NULL, ide = NULL, cutoff = 0.6, verbose = TRUE, ncore=1, nseg.s
   \item{cutoff}{ a numeric identity cutoff value ranging between 0 and 1. }
   \item{verbose}{ logical, if TRUE print details of the clustering process. }
   \item{ncore}{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. } 
+    \code{ncore>1} requires package \sQuote{parallel} installed. } 
   \item{nseg.scale }{ split input data into specified number of segments
     prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
 }

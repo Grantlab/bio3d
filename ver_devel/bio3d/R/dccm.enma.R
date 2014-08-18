@@ -4,7 +4,7 @@
   if(!inherits(enma, "enma"))
     stop("input should be an 'enma' object as obtained from 'nma.pdbs'")
 
-  ## Parallelized by multicore package
+  ## Parallelized by parallel package
   ncore <- setup.ncore(ncore, bigmem = FALSE)
 
   if(ncore>1)

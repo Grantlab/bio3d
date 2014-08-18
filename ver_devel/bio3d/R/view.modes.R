@@ -1,18 +1,30 @@
 "view.modes" <-
   function(modes, mode=NULL, outprefix="mode_vecs",
-           scale=5, dual=FALSE, launch=FALSE) {
+           scale=5, dual=FALSE, launch=FALSE, exefile = "pymol") {
 
-    if(missing(modes))
-      stop("modes object missing")
+    if(! (inherits(modes, "nma") || inherits(modes,"pca")) )
+      stop("must supply a 'nma' or 'pca' object, i.e. from 'nma()' or 'pca.xyz()'")
+
+    ## Check if the program is executable
+    if(launch) {
+      ver <- "-cq"
+      os1 <- .Platform$OS.type
+      status <- system(paste(exefile, ver),
+                       ignore.stderr = TRUE, ignore.stdout = TRUE)
+      
+      if(!(status %in% c(0,1)))
+        stop(paste("Launching external program failed\n",
+                   "  make sure '", exefile, "' is in your search path", sep=""))
+    }
     
-    if("nma" %in% class(modes)) {
+    if(inherits(modes, "nma")) {
       if(is.null(mode))
         mode <- 7
       xyz <- modes$xyz
       mode.vecs <- matrix(modes$modes[,mode], ncol=3, byrow=T)
     }
 
-    else if (class(modes)=="pca") {
+    else if (inherits(modes,"pca")) {
       if(is.null(mode))
         mode <- 1
       xyz <- modes$mean
@@ -104,16 +116,23 @@
     
     if(launch) {
       ## Open pymol
-      cmd <- paste('pymol', outfile)
+      cmd <- paste(exefile, outfile)
       
       os1 <- .Platform$OS.type
       if (os1 == "windows") {
-        shell(shQuote(cmd))
+        success <- shell(shQuote(cmd))
       }
       else {
         if(Sys.info()["sysname"]=="Darwin") {
-          system(paste("open -a MacPyMOL", outfile))
-        } else { system(cmd) }
+          success <- system(paste("open -a MacPyMOL", outfile))
+        }
+        else {
+          success <- system(cmd)
+        }
       }
+
+      if(success!=0)
+        stop(paste("An error occurred while running command\n '",
+                   exefile, "'", sep=""))
     }
   }
