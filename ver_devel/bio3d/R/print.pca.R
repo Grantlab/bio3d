@@ -1,4 +1,4 @@
-"print.pca" <-
+"print.pca2" <-
   function(x, nmodes=6, ...) {
 
     cn <- class(x)
@@ -11,8 +11,9 @@
     cat("Number of eigenvalues:\n  ", length(x$L), 
         "\n\n", sep="")
 
-    e <- round(x$L[1:nmodes], 3)
-    p <- (x$L[1:nmodes]/sum(x$L)) * 100
+    inds <- 1:nmodes
+    e <- round(x$L[inds], 3)
+    p <- (x$L[inds]/sum(x$L)) * 100
     d <- data.frame( "Eigenvalue"=e, 
                      "Variance"=round(p,3), 
                      "Cumulative"=round(cumsum(p),3), 
