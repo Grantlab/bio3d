@@ -1,4 +1,4 @@
-"print.pca2" <-
+"print.pca" <-
   function(x, nmodes=6, ...) {
 
     cn <- class(x)
