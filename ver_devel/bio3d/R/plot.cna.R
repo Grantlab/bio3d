@@ -1,5 +1,5 @@
 plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
-                     layout=NULL, col=NULL, full=FALSE, scale = TRUE, ...) {
+                     layout=NULL, col=NULL, full=FALSE, scale = TRUE, color.edge = FALSE, ...) {
 
   ##- Function for plotting cna networks the way we like them.
   ##   Returns the plot layout coordinates silently. These can 
@@ -87,8 +87,22 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
     stop("Input 'layout' must be an Nx2 matrix, where N is the number of communities")
   }
   
-  plot.igraph(y, edge.width=weights, layout=layout, vertex.color=col, vertex.size=vertex.size, ...)
-    
+  if(color.edge) {
+
+     vec2color <- function(vec, pal=c("blue", "green", "red"), n=10) {
+        ##-- Define a color scale from a numeric vector
+        require(classInt)
+        return( findColours(classIntervals(vec, n=n, style="equal"), pal) )
+     }
+     colors <- vec2color(weights)
+     plot.igraph(y, edge.width=weights, edge.color = colors, layout=layout, vertex.color=col, vertex.size=vertex.size, ...)
+
+  } else { 
+
+     plot.igraph(y, edge.width=weights, layout=layout, vertex.color=col, vertex.size=vertex.size, ...)
+
+  }
+  
   ## Silently return plot coordinates
   #class(layout) = "cna"
   layout <- layout
