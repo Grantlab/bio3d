@@ -1,5 +1,6 @@
 "pca.xyz" <-
-function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE) {
+function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE,
+  rm.gaps=FALSE) {
   ## Performs principal components analysis on the given "xyz" numeric data
   ## matrix and return the results as an object of class "pca.xyz"
 
@@ -7,8 +8,25 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE) {
   cl <- match.call()
 
   xyz <- as.matrix(xyz)
-  if (any(!is.finite(xyz)))
-    stop("infinite or missing values in x")
+
+  if (any(!is.finite(xyz))) {
+    ## Check for GAP positions in input
+    if(rm.gaps) {
+       gapC <- colSums(is.na(xyz)) == 0
+      if (sum(gapC) > 3) {
+        xyz <- xyz[,gapC]
+        cat(paste("NOTE: Removing", sum(!gapC)/3, "gap positions with missing coordinate data\n",
+            "     retaining", sum(gapC)/3, "non-gap positions for analysis.\n"))
+      } else {
+        stop("No non-gap containing positions (cols) available for analysis.")
+      }
+    } else {
+       stop( paste("  Infinite or missing values in 'xyz' input.",
+      "\t Likely solution is to remove gap positions (cols)",
+      "\t or gap containing structures (rows) from input.", sep="\n") )
+    }
+  }
+
   dx <- dim(xyz)
   n <- dx[1]; p <- dx[2]
   if (!n || !p)
@@ -22,7 +40,7 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE) {
   if(p > 3000 && n <= 0.4*p && !use.svd) {
      cat("NOTE: In input xyz (MxN),  N > 3000 and M < N\n",
          "     Singular Value Decomposition (SVD) approach is faster\n",
-         "     and is recommended (set use.svd = TRUE)\n\n", sep=" ")
+         "     and is recommended (set 'use.svd = TRUE')\n\n", sep=" ")
      flush(stdout())
   }
      
