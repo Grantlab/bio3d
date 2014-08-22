@@ -10,7 +10,7 @@ function(pdbs, inds=NULL, outpath=NULL, ...) {
   full <- ifelse(is.null(outpath), FALSE, TRUE)
   if(is.null(inds)) {    inds <-gap.inspect(pdbs$xyz)$f.inds  }
   if(is.list(inds)){ inds=inds$xyz }
-  return( fit.xyz( fixed=pdbs$xyz[1,], mobile=pdbs, fixed.inds=inds,
+  invisible( fit.xyz( fixed=pdbs$xyz[1,], mobile=pdbs, fixed.inds=inds,
                   mobile.inds=inds, outpath=outpath,
                   full.pdbs=full, ... ))
 }
