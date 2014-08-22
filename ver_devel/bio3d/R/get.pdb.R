@@ -12,6 +12,8 @@
        ncore <- setup.ncore(ncore = 4)
     }
 
+    if(inherits(ids, "blast")) ids = ids$pdb.id
+
     if (any(nchar(ids) < 4)) stop("ids should be standard 4 character PDB-IDs")
     if (any(nchar(ids) > 4)) {
         warning("ids should be standard 4 character PDB-IDs: trying first 4 characters...")
