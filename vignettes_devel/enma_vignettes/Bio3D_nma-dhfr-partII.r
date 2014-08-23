@@ -1,5 +1,6 @@
-#' # Supporting Material: Integrated structural and evolutionary ensemble analysis with Bio3D
-#' ## Lars Skjaerven, Xin-Qiu Yao & Barry J. Grant
+#' # Supporting Material S4
+#' # Integrated structural and evolutionary ensemble analysis with Bio3D
+#' **Lars Skj\ae rven, Xin-Qiu Yao & Barry J. Grant**
 
 #+ setup, include=FALSE
 opts_chunk$set(dev='pdf')
@@ -10,8 +11,16 @@ spin('Bio3D_nma-dhfr-partII.r')
 system("pandoc -o Bio3D_nma-dhfr-partII.pdf Bio3D_nma-dhfr-partII.md")
 
 #' ## Background:
-#' Bio3D is an R package that provides interactive tools for structural bioinformatics. 
-#' The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data.
+#' Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data.
+
+#'
+#' Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities (see also the [**NMA Vignette**](http://thegrantlab.org/bio3d/tutorials)). These include a unique collection of multiple elastic network model force-fields, automated ensemble analysis methods, and variance weighted NMA. Here we provide an in-depth demonstration of ensemble NMA with working code that comprise complete executable examples[^2].
+
+#'
+#' [^1]: The latest version of the package, full documentation and further vignettes (including detailed installation instructions) can be obtained from the main Bio3D website: [http://thegrantlab.org/bio3d/](http://thegrantlab.org/bio3d/)
+#'
+#' [^2]: This document contains executable code that generates all figures contained within this document. See help(vignette) within R for full details. 
+
 
 #'
 #' #### Requirements:
@@ -21,49 +30,49 @@ system("pandoc -o Bio3D_nma-dhfr-partII.pdf Bio3D_nma-dhfr-partII.md")
 #'
 #' ## Part II:  Ensemble NMA across multiple species of DHFR
 #' In this vignette we extend the analysis from Part I by including 
-#' a more extensive search of distant homologues within the 
-#' DHFR family. Based on a HMMER search we identify and collect 
-#' protein species down to a pairwise sequence identity of 21\%. 
-#' Normal modes analysis (NMA) across these species reveals  
-#' a remarkable similarity of the fluctuation profiles, but also 
+#' a more extensive search of distant homologues within the
+#' DHFR family. Based on a HMMER search we identify and collect
+#' protein species down to a pairwise sequence identity of 21\%.
+#' Normal modes analysis (NMA) across these species reveals
+#' a remarkable similarity of the fluctuation profiles, but also
 #' features which are characteristic to specific species.
 
 
-
-#+ load, results="hide", cache=TRUE,
-library(bio3d)
-
-
-#' ### HMMER search
+#'
+#' ### HMMER search distantly related DHFR species
 #' Below we use the sequence of *E.coli* DHFR to perform an initial search against
 #' the Pfam HMM database with function **hmmer()**. The arguments `type` and `db`
 #' specifies the type of hmmer search and the database to search, respectively. In this particular
 #' example, our query sequence is searched against the Pfam profile HMM library
 #' (arguments `type=hmmscan` and `db=pfam`) to identify its respecitve protein family. 
-#' The to **hmmer()** will return a data frame object containing the Pfam accession ID (`$acc`), description of the 
-#' identified family (`$desc`), family name (`$name`), etc. 
+#' The to **hmmer()** will return a data frame object containing the Pfam accession ID (`$acc`),
+#' description of the identified family (`$desc`), family name (`$name`), etc. 
 
-#+ getseq, results="hide", cache=TRUE, warning=FALSE, 
+#+ getseq, results="hide", cache=TRUE, warning=FALSE,
+# load the bio3d package
+library(bio3d)
+
 # get sequence of Ecoli DHFR
 seq <- get.seq("1rx2_A")
 
 #+ pfam, cache=TRUE,
-# search the Pfam database
+# scan the Pfam database for our sequence
 pfam <- hmmer(seq, type="hmmscan", db="pfam")
 pfam$name
 pfam$desc
 
 #' 
-#' **Sidenote:** The **hmmer()** function facilitates four different types of searches at a multitude of databases. 
-#' Use function `help(hmmer)` for a complete overview of the different options. 
+#' **Sidenote:** The **hmmer()** function facilitates four different types of searches at a
+#' multitude of databases. Use function `help(hmmer)` for a complete overview of the different options. 
 
 #' 
-#' Having identified the Pfam entry of our query protein we can use function **pfam()** to fetch the curated sequence alignment of
-#' the DHFR family. Use function **print.fasta()** to print a short summary of the downloaded sequence alignment to the screen.
-#' Note that if argument `alignment=TRUE` the sequence alignmenment itself will be written to screen. 
+#' Having identified the Pfam entry of our query protein we can use function **pfam()** to fetch the
+#' curated sequence alignment of the DHFR family. Use function **print.fasta()** to print a short summary
+#' of the downloaded sequence alignment to the screen. Note that if argument `alignment=TRUE`
+#' the sequence alignmenment itself will be written to screen. 
 
 #+ pfam2, cache=TRUE,
-# download pfam alignment for family
+# download pfam alignment for the DHFR family
 pfam.aln <- pfam(pfam$acc[1])
 print(pfam.aln, alignment=FALSE)
 
@@ -81,22 +90,24 @@ hmm <- hmmer(pfam.aln, type="hmmsearch", db="pdb")
 #'
 #' Function **plot.hmmer()** (the equivalent to **plot.blast()**) provides a quick overview of the
 #' search results, and can aid in the identification of a sensible hit similarity threshold.
-#' The normalized scores (-log(E-Value)) are shown in the upper panel, and the lower panel provides an overview of
+#' The normalized scores (-log(E-Value)) are shown in the upper panel, and the lower panel provides an
+#' overview of
 #' the kingdom and specie each hit are associated with. Here we specify a cutoff of 55 yielding 104 hits:
 
 
 #+ fig3-2, fig.cap="Overview  of hits obtained from the HMMER search. Upper panel shows the normalized scores. Lower panel the scores and hits are colored according to their respective kingdom (background colors) and specie (foreground barplot).", fig.height=5,
-hits <- plot.hmmer(hmm, cutoff=90) ##55
+hits <- plot.hmmer(hmm, cutoff=90)
 
 ids <- hits$acc
 species <- hmm$species[hits$inds]
 
 #+ species, cache=TRUE, warning=FALSE, 
-# check out what species we got
+# collected species
 print(unique(species))
 
 
 #'
+#' ### Retrieve and process structures from the PDB
 #' Having identified relevant PDB structures through the hmmer search
 #' we proceed by fetching and pre-processing
 #' the PDB files with functions **get.pdb()** and **pdbsplit()**.
@@ -109,11 +120,11 @@ print(unique(species))
 #+ pdbs, results="hide", cache=TRUE, warning=FALSE,
 # fetch and split PDBs
 raw.files <- get.pdb(ids, path = "raw_pdbs", gzip=TRUE)
-files <- pdbsplit(raw.files, ids = ids, path = "raw_pdbs/split_chain",
-                  het2atom=FALSE, ncore=4)
+files <- pdbsplit(raw.files, ids = ids,
+                  path = "raw_pdbs/split_chain", ncore=4)
 pdbs.all <- pdbaln(files)
 
-# exclude a DHFR-TS fusion protein 1sej
+# exclude DHFR-TS fusion protein
 excl.inds <- unlist(lapply(c("1qzf", "1sej"), grep, pdbs.all$id))
 pdbs <- pdbs.filter(pdbs.all, row.inds=-excl.inds)
 
@@ -122,12 +133,12 @@ conn <- inspect.connectivity(pdbs, cut=4.05)
 pdbs <- pdbs.filter(pdbs, row.inds=which(conn))
           
 # exclude conformational redundant structures
-rd <- rmsd.filter(pdbs$xyz, cutoff=0.25, fit=TRUE, ncore=6)
+rd <- rmsd.filter(pdbs$xyz, cutoff=0.25, fit=TRUE, ncore=4)
 pdbs <- pdbs.filter(pdbs, row.inds=rd$ind)
 
 #' 
-#' In this particular case
-#' a standard sequence alignment (e.g. through function **pdbaln()** or **seqaln()**) is not sufficient for a proper alignment.
+#' In this particular case a standard sequence alignment (e.g. through function **pdbaln()**
+#' or **seqaln()**) is not sufficient for a correct alignment.
 #' We will therefore make use of the Pfam profile alignment, and align our selected PDBs to this
 #' using argument `profile` to function **seqaln()**. Subsequently, we re-read the fasta file, and use function
 #' **read.fasta.pdb()** to obtain aligned C-alpha atom data (including coordinates etc.) for the PDB ensemble:
@@ -144,10 +155,10 @@ aln$id=aln$id[1:length(pdbs$id)]
 pdbs <- read.fasta.pdb(aln)
 
 # exclude gap-only columns
-pdbs=pdbs.filter(pdbs)
+pdbs = pdbs.filter(pdbs)
 
 # refit coordinates
-pdbs$xyz <- pdbfit(pdbs)
+pdbs$xyz = pdbfit(pdbs)
 
 #+ pdbfit2, eval=FALSE
 # refit coordinates, and write PDBs to disk
@@ -163,7 +174,7 @@ species = hmm$species[hmm$acc %in% ids]
 # labels for annotating plots
 mynames <- paste(substr(species, 1,1), ". ", 
                  lapply(strsplit(species, " "), function(x) x[2]), sep="")
-mynames
+print(mynames)
 
 #'
 #' The *pdbs* object now contains *aligned* C-alpha atom data, including Cartesian coordinates,
@@ -235,12 +246,10 @@ mktrj.enma(modes, pdbs, mode=1, ind=inds[4], file="calbicans-mode1.pdb")
 mktrj.enma(modes, pdbs, mode=1, ind=inds[4], file="mtubercol-mode1.pdb")
 
 
-
 #' ![Mode comparison of (A) *E.coli*, (B) *Mycobacterium tuberculosis*, (C) *C.albicans*, and (D) *H.sapiens*. The trajectories are made with function **mktrj.enma** and visualized in PyMol.](figure/visualize-4hfrs.png)
 
 
-
-
+#'
 #' ## Document Details
 #' This document is shipped with the Bio3D package in both R and PDF formats. All code can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
 

@@ -1,5 +1,6 @@
-#' # Supporting Material: Integrated structural and evolutionary ensemble analysis with Bio3D
-#' ## Lars Skjaerven, Xin-Qiu Yao & Barry J. Grant
+#' # Supporting Material S2
+#' # Integrated structural and evolutionary ensemble analysis with Bio3D
+#' **Lars Skj\ae rven, Xin-Qiu Yao & Barry J. Grant**
 
 
 #+ preamble, include=FALSE, eval=FALSE
@@ -20,7 +21,7 @@ system("pandoc -o Bio3D_nma.pdf Bio3D_nma.md")
 
 #'
 #' #### Requirements:
-#' Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/download/download.html) available both on-line and from within the Bio3D package. In addition to Bio3D the _MUSCLE_ multiple sequence alignment program (available from the [muscle home page](http://www.drive5.com/muscle/)) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
+#' Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. In addition to Bio3D the _MUSCLE_ multiple sequence alignment program (available from the [muscle home page](http://www.drive5.com/muscle/)) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
 
 #'
 #' ## Example 1: Basic Normal Mode Analysis
@@ -70,7 +71,7 @@ modes.e <- nma(pdb, ff="sdenm")
 # Root mean square inner product (RMSIP)
 r <- rmsip(modes.a, modes.b)
 
-#+ plot_ff-rmsip, fig.width=5, fig.height=5, fig.cap="Analysis of mode similarity between modes obtained from the *ANM* and *calpha* force fields by calculating mode overlap and root mean square inner product (RMSIP) with function **rmsip()**. An RMSIP value of *1* depicts identical directionality of the two mode subspaces. "
+#+ plot_ff-rmsip, fig.width=5, fig.height=5, fig.cap="Analysis of mode similarity between modes obtained from the *ANM* and *calpha* force fields by calculating mode overlap and root mean square inner product (RMSIP) with function **rmsip()**. An RMSIP value of *1* depicts identical directionality of the two mode subspaces. ", fig.width=4, fig.height=4
 # Plot the RMSIP
 plot(r, xlab="ANM", ylab="C-alpha FF")
 
@@ -218,7 +219,6 @@ summary( c(seqidentity(pdbs)) )
 
 #+ example2_A-modes, cache=TRUE, results="hide", warning=FALSE
 # NMA on all structures
-#modes <- nma.pdbs(pdbs)
 modes <- nma(pdbs)
 
 #'
@@ -229,7 +229,7 @@ modes <- nma(pdbs)
 #+ example2_A-print,
 print(modes)
 
-#+ plot_enma1, fig.width=10, fig.height=5, fig.cap="Results of ensemble NMA on four distinc bacterial species of the DHFR enzyme. "
+#+ plot_enma1, fig.width=10, fig.height=5, fig.cap="Results of ensemble NMA on four distinct bacterial species of the DHFR enzyme. "
 # Plot fluctuation data
 col <- c(1,1,1, 2,2, 3,3, 4,4)
 plot(modes, pdbs=pdbs, col=col)
@@ -455,9 +455,12 @@ plot(rb, ylab="NMA(open)", xlab="NMA(closed)")
 #' Finally, we compare the calculated normal modes with principal components obtained from the ensemble of X-ray
 #' structures using function **pca.xyz()**:
 
-#+ example3_A-pca, cache=TRUE
+#+ example3_A-pca.xyz, eval=FALSE
 # Calculate the PCs
-#pc.xray <- pca.xyz(pdbs$xyz[,gaps.pos$f.inds])
+pc.xray <- pca.xyz(pdbs$xyz[,gaps.pos$f.inds])
+
+#+ example3_A-pca, cache=TRUE
+# or alternatively... 
 pc.xray <- pca(pdbs)
 
 # Calculate RMSIP values
