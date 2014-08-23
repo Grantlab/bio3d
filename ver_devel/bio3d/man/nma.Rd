@@ -40,4 +40,4 @@ nma(x, ...)
   \code{\link{nma.pdb}}, \code{\link{nma.pdbs}},
   \code{\link{pca}}.
 }
-\keyword{ utilities }
+\keyword{ analysis }

@@ -86,9 +86,7 @@ pdbs <- pdbaln(files)
 all.modes <- nma.pdbs(pdbs, rm.gaps=FALSE)
 
 ## Plot fluctuation data
-plot.bio3d(all.modes$fluctuations[1,], type="o", xlab="Residue Position")
-lines(all.modes$fluctuations[2,], type='o', col=2)
-lines(all.modes$fluctuations[3,], type='o', col=3)
+plot(all.modes)
 
 ## Remove gaps from output
 all.modes <- nma.pdbs(pdbs, rm.gaps=TRUE)
@@ -97,4 +95,4 @@ all.modes <- nma.pdbs(pdbs, rm.gaps=TRUE)
 rmsip(all.modes$U.subs[,,1], all.modes$U.subs[,,2])
 
 }
-\keyword{ utilities }
+\keyword{ analysis }

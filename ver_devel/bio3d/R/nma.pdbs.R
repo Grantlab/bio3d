@@ -372,7 +372,7 @@
   ## avoid using aa123() here (translates TPO to THR)
   resid <- pdbs$resid[i,f.inds$res]
 
-  ## Build a dummy PDB to use with function nma()
+  ## Build a dummy PDB to use with function nma.pdb()
   tmp.pdb <- .buildDummyPdb(pdb=NULL, xyz=tmp.xyz, elety=rep("CA", length(resno)),
                             resno=resno, chain=chain,  resid=resid)
   if(!is.null(outpath)) {
@@ -425,11 +425,11 @@
         masses <- NULL
 
       ## Calculate the modes
-      invisible(capture.output( modes <- nma(tmp2.pdb, ff=ff, mass=mass, temp=temp, keep=nm.keep, hessian=k, aa.mass=masses)))
+      invisible(capture.output( modes <- nma.pdb(tmp2.pdb, ff=ff, mass=mass, temp=temp, keep=nm.keep, hessian=k, aa.mass=masses)))
     }
     else {
       ## Calculate the modes
-      invisible(capture.output( modes <- nma(pdb=tmp.pdb, ff=ff, mass=mass, temp=temp, keep=nm.keep, aa.mass=masses)))
+      invisible(capture.output( modes <- nma.pdb(pdb=tmp.pdb, ff=ff, mass=mass, temp=temp, keep=nm.keep, aa.mass=masses)))
     }
 
     ## deformation analysis
