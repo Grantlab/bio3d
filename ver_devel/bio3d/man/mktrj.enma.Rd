@@ -12,7 +12,7 @@
 \arguments{
   \item{x}{ a list object of class \code{"enma"} (obtained with
     \code{\link{nma.pdbs}}).}
-  \item{pdbs}{ a list object of class \code{"3dalign"} (obtained with
+  \item{pdbs}{ a list object of class \code{"pdbs"} (obtained with
     \code{\link{pdbaln}} or \code{\link{read.fasta.pdb}}) which
     corresponds to the \code{"enma"} object.}
   \item{ind}{ structure id poiting to which structure in the \code{enma}

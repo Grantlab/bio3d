@@ -218,7 +218,8 @@ summary( c(seqidentity(pdbs)) )
 
 #+ example2_A-modes, cache=TRUE, results="hide", warning=FALSE
 # NMA on all structures
-modes <- nma.pdbs(pdbs)
+#modes <- nma.pdbs(pdbs)
+modes <- nma(pdbs)
 
 #'
 #' The *modes* object of class *enma* contains aligned normal mode data including fluctuations, RMSIP data, and aligned
@@ -314,8 +315,8 @@ heatmap(rmsd.map, labRow=annotation[, "state"], labCol=ids, symm=TRUE)
 ids <- c("1sx4_[A,B,H,I]", "1xck_[A-B]", "1sx3_[A-B]", "4ab3_[A-B]")
 
 # Download and split PDBs by chain ID
-raw.files <- get.pdb(ids, path = "raw_pdbs", gzip=TRUE)
-files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain/")
+raw.files <- get.pdb(ids, "groel_pdbs", gzip=TRUE)
+files <- pdbsplit(raw.files, ids, path = "groel_pdbs")
 
 # Align and superimpose coordinates
 pdbs <- pdbaln(files, fit=TRUE)
@@ -456,7 +457,8 @@ plot(rb, ylab="NMA(open)", xlab="NMA(closed)")
 
 #+ example3_A-pca, cache=TRUE
 # Calculate the PCs
-pc.xray <- pca.xyz(pdbs$xyz[,gaps.pos$f.inds])
+#pc.xray <- pca.xyz(pdbs$xyz[,gaps.pos$f.inds])
+pc.xray <- pca(pdbs)
 
 # Calculate RMSIP values
 rmsip(pc.xray, modes.open)$rmsip

@@ -131,6 +131,7 @@ print(unique(anno$source))
 #' we first superimpose all structures on the *invariant core* (function **core.find()**).
 
 #+ example1h, warning=FALSE, cache=TRUE, results='hide'
+#pc.xray <- pca(pdbs, core.find=TRUE)
 core <- core.find(pdbs)
 pdbs$xyz = pdbfit(pdbs, core$c0.5A.xyz)
 

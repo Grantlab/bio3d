@@ -23,7 +23,7 @@ pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...)
 \details{
   This wrapper function calls the underlying functions \code{read.pdb},
   \code{pdbseq}, \code{seqaln} and \code{read.fasta.pdb} returning a
-  list of class \code{"3dalign"} similar to that returned by
+  list of class \code{"pdbs"} similar to that returned by
   \code{read.fasta.pdb}.
 
   As these steps are often error prone it is recomended for most cases that
@@ -32,7 +32,7 @@ pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...)
   results.
 }
 \value{
-  Returns a list of class \code{"3dalign"} with the following five
+  Returns a list of class \code{"pdbs"} with the following five
   components:
   \item{xyz}{numeric matrix of aligned C-alpha coordinates.}
   \item{resno}{character matrix of aligned residue numbers.}

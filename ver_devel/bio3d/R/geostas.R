@@ -1,13 +1,13 @@
 geostas <- function(xyz, amsm=NULL, k=3, method="pairwise", fit=TRUE, ...) {
 
-  if(! (is.matrix(xyz) || inherits(xyz, "3dalign") || is.pdb(xyz)) )
+  if(! (is.matrix(xyz) || inherits(xyz, "pdbs") || is.pdb(xyz)) )
     stop(paste("'xyz' should be a trajectory matrix, a 'pdb' object, or\n\t",
                "a list object as obtained from 'read.fasta.pdb'"))
   
   if(!method %in% c("pairwise", "columnwise"))
     stop("'method' should be 'pairwise' or 'columnwise'")
   
-  if(inherits(xyz, "3dalign")) {
+  if(inherits(xyz, "pdbs")) {
     pdbs <- xyz
     gaps.pos <- gap.inspect(pdbs$xyz)
     xyz <- pdbs$xyz[, gaps.pos$f.inds]

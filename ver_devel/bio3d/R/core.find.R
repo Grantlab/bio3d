@@ -47,7 +47,7 @@ function(aln,
     pdbnum = c(1:(length(xyz.inds)/3))
     
   } else {
-    if( (is.list(aln)) && (class(aln)=="3dalign") ) {
+    if( (is.list(aln)) && (class(aln)=="pdbs") ) {
       xyz=aln$xyz
     
       xyz.inds <- which(apply(is.na( xyz ), 2, sum)==0)

@@ -27,7 +27,7 @@ data(transducin)
   Three objects from analysis of the \code{kinesin} and \code{transducin} sequence and structure
   data:
   \enumerate{
-    \item{pdbs}{ is a list of class \code{"3dalign"} containing aligned PDB
+    \item{pdbs}{ is a list of class \code{"pdbs"} containing aligned PDB
       structure data.  In the case of transducin this is the output of running
       \code{\link{pdbaln}} on a set of 47 kinesin structures from the SCOP database (again see \code{pdbs$id} for details). In both cases the coordinates
       are fitted onto the first structure based on \code{"core"} positions obtained from \code{\link{core.find}} and superposed using the function 

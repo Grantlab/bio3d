@@ -19,7 +19,7 @@
     \code{\link{nma.pdbs}}. }
   \item{y}{ plot either \sQuote{fluctuations} (atom fluctuations) or
     \sQuote{deformations} (average deformation energies). }
-  \item{pdbs}{ an object of class \sQuote{3dalign} in which the
+  \item{pdbs}{ an object of class \sQuote{pdbs} in which the
     \sQuote{enma} object \code{x} was obtained from. If provided SSE
     data of the first structure of \code{pdbs} will drawn. }
   \item{conservation}{ logical, if TRUE sequence conservation is

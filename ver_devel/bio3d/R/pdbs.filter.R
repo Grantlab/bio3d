@@ -1,8 +1,8 @@
-## Use for trimming a 3dalign object, either by removing structures,
+## Use for trimming a pdbs object, either by removing structures,
 ## or by removing columns 
 
 pdbs.filter <- function(pdbs, row.inds=NULL, col.inds=NULL) {
-  if(!inherits(pdbs, "3dalign"))
+  if(!inherits(pdbs, "pdbs"))
     stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
   
   ## Log the call
@@ -30,6 +30,6 @@ pdbs.filter <- function(pdbs, row.inds=NULL, col.inds=NULL) {
   new$resid =pdbs$resid[row.inds, col.inds, drop=FALSE]
   new$call  =cl
  
-  class(new) <- c("3dalign", "fasta")
+  class(new) <- c("pdbs", "fasta")
   return(new)
 }

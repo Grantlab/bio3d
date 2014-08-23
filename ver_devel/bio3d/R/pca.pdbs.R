@@ -1,6 +1,11 @@
 "pca.pdbs" <- function(x, core.find=FALSE, fit=FALSE, ...) {
   ## Log the call
   cl <- match.call()
+
+  if(core.find & fit) {
+    warning("incompatible arguments- neglecting 'fit=TRUE'")
+    fit=FALSE
+  }
   
   if(core.find) {
     core <- core.find(x)

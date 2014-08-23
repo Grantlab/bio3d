@@ -1,8 +1,8 @@
 \name{pdbs.filter}
 \alias{pdbs.filter}
-\title{ Filter or Trim a 3dalign PDBs Object }
+\title{ Filter or Trim a pdbs PDBs Object }
 \description{
-  Trim residues and/or filter out structures from a 3dalign
+  Trim residues and/or filter out structures from a pdbs
   PDBs object. 
 }
 \usage{
@@ -19,10 +19,10 @@ pdbs.filter(pdbs, row.inds=NULL, col.inds=NULL)
 }
 \details{
   Utility function to remove structures, or trim off columns, in a   
-  \sQuote{3dalign} PDBs object. 
+  \sQuote{pdbs} PDBs object. 
 }
 \value{
-  Returns an updated \sQuote{3dalign} PDBs object with the following
+  Returns an updated \sQuote{pdbs} PDBs object with the following
   components:
   \item{xyz}{numeric matrix of aligned C-alpha coordinates.}
   \item{resno}{character matrix of aligned residue numbers.}

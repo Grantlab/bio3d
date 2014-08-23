@@ -9,7 +9,7 @@
 dssp.pdbs(pdbs)
 }
 \arguments{
-  \item{pdbs}{ a list object of class \code{"3dalign"} (obtained with
+  \item{pdbs}{ a list object of class \code{"pdbs"} (obtained with
     \code{\link{pdbaln}} or \code{\link{read.fasta.pdb}}). }
 }
 \details{

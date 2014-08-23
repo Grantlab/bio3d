@@ -142,7 +142,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
   out<-list(xyz=coords, resno=res.nu, b=res.bf,
             chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id,
             call = cl)
-  class(out)=c("3dalign","fasta")
+  class(out)=c("pdbs","fasta")
   return(out)
 }
 

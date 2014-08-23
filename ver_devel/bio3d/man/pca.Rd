@@ -10,11 +10,11 @@ pca(x, ...)
 \arguments{
   \item{x}{ a numeric matrix of Cartesian coordinates with a row per
     structure/frame which will br passed to \code{pca.xyz()}.
-    Alternatively, an object  of class \code{3dalign} as obtained from
+    Alternatively, an object  of class \code{pdbs} as obtained from
     function \code{pdbaln} or \code{read.fasta.pdb} that will be passed
-    to the \code{pca.3dalign()} function, see below for examples. } 
+    to the \code{pca.pdbs()} function, see below for examples. } 
   \item{\dots}{ additional arguments passed to the methods
-    \code{pca.xyz}, or \code{pca.3dalign}. }
+    \code{pca.xyz}, or \code{pca.pdbs}. }
 }
 \details{
   \code{pca} is a generic function calling the corresponding function
@@ -26,7 +26,7 @@ pca(x, ...)
   containing Cartesian coordinates (e.g. trajectory data).
   
   \code{\link{pca.pdbs}} will calculate the principal components of the
-  Cartesian coordinates of the an \code{3dalign} object.
+  Cartesian coordinates of the an \code{pdbs} object.
   
   See examples for each corresponding function for more details.
 }
@@ -35,6 +35,6 @@ pca(x, ...)
 }
 \author{ Barry Grant, Lars Skjaerven }
 \seealso{
-  \code{\link{pca.xyz}}, \code{\link{pca.3dalign}},
+  \code{\link{pca.xyz}}, \code{\link{pca.pdbs}},
   \code{\link{pdbaln}}. }
 \keyword{ utilities }

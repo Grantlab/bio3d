@@ -1,8 +1,8 @@
-## Useful for checking the connectivity in a 3dalign pdbs object
+## Useful for checking the connectivity in a pdbs pdbs object
 
 "inspect.connectivity" <- function(pdbs, cut=4.) {
   xyz <- NULL; ids <- NULL;
-  if(inherits(pdbs, "3dalign")) {
+  if(inherits(pdbs, "pdbs")) {
     xyz <- pdbs$xyz
     n <- length(pdbs$id)
     ids <- pdbs$id
@@ -21,7 +21,7 @@
     n <- nrow(xyz)
   }
   else {
-    stop("Please provide coordinates as a \n '3dalign', 'pdb', or xyz matrix format")
+    stop("Please provide coordinates as a \n 'pdbs', 'pdb', or xyz matrix format")
   }
 
   is.connected <- function(xyz) {

@@ -7,7 +7,7 @@
 pdbfit(pdbs, inds = NULL, outpath = NULL, ...)
 }
 \arguments{
-  \item{pdbs}{ a list of class \code{"3dalign"} containing PDB file
+  \item{pdbs}{ a list of class \code{"pdbs"} containing PDB file
     data, as obtained from \code{read.fasta.pdb} or
     \code{pdbaln}. }
   \item{inds}{ a vector of indices that selects the coordinate

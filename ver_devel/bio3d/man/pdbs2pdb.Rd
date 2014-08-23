@@ -2,14 +2,14 @@
 \alias{pdbs2pdb}
 \title{ PDBs to PDB Converter }
 \description{
-  Convert a list of PDBs from an \code{"3dalign"} object to a list of
+  Convert a list of PDBs from an \code{"pdbs"} object to a list of
   \code{pdb} objects. 
 }
 \usage{
 pdbs2pdb(pdbs, inds = NULL, rm.gaps = FALSE)
 }
 \arguments{
-  \item{pdbs}{ a list of class \code{"3dalign"} containing PDB file
+  \item{pdbs}{ a list of class \code{"pdbs"} containing PDB file
     data, as obtained from \code{read.fasta.pdb} or
     \code{pdbaln}. }
   \item{inds}{ a vector of indices that selects the PDB structures to
@@ -19,7 +19,7 @@ pdbs2pdb(pdbs, inds = NULL, rm.gaps = FALSE)
 }
 \details{
   This function will generate a list of \code{pdb} objects from a
-  \code{"3dalign"} class.
+  \code{"pdbs"} class.
 
   See examples for more details/
 }
