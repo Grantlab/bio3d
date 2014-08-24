@@ -2,6 +2,8 @@
 #' # Integrated structural and evolutionary ensemble analysis with Bio3D
 #' **Lars Skj\ae rven, Xin-Qiu Yao & Barry J. Grant**
 
+#+ setup, include=FALSE
+opts_chunk$set(dev='pdf')
 
 #+ preamble, include=FALSE, eval=FALSE
 library(knitr)
@@ -10,9 +12,9 @@ system("pandoc -o Bio3D_nma.pdf Bio3D_nma.md")
 
 
 #' ## Background:
-#' Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data.
+#' Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of biomolecular structure, sequence and simulation data.
 #'
-#' Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities. These include a unique collection of multiple elastic network model force-fields (see **Example 1** below), automated ensemble analysis methods (**Example 2**) and variance weighted NMA (**Example 3**). Here we demonstrate the use of these new features with working code that comprise complete executable examples[^2].
+#' Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities. These include a unique collection of multiple elastic network model (ENM) force-fields (see **Example 1** below), automated ensemble analysis methods (**Example 2**), variance weighted NMA (**Example 3**), and NMA with user-defined force fields (**Example 4**). Here we demonstrate the use of these new features with working code that comprise complete executable examples[^2].
 #'
 #' [^1]: The latest version of the package, full documentation and further vignettes (including detailed installation instructions) can be obtained from the main Bio3D website: [http://thegrantlab.org/bio3d/](http://thegrantlab.org/bio3d/)
 #'
@@ -41,7 +43,7 @@ print(modes)
 #' 
 #' Note that the returned *nma* object consists of a number of attributes listed on the _+attr:_ line. These attributes contain the detailed results of the calculation and their complete description can be found on the **nma()** functions help page accessible with the command: `help(nma)`. To get a quick overview of the results one can simply call the **plot()** function on the returned *nma* object. This will produce a summary plot of (1) the eigenvalues, (2) the mode frequencies, and (3) the atomic fluctuations (See Figure 1).
 
-#+ fig1_a_1, fig.cap="Summary plot of NMA results for hen egg white lysozyme (PDB id *1hel*). The optional *sse=pdb* argument provided to **plot.nma()** results in a secondary structure schematic being added to the top and bottom margins of the fluctuation plot (helices black and strands gray). Note the larger fluctuations predicted for loop regions." 
+#+ fig1_a_1, fig.cap="Summary plot of NMA results for hen egg white lysozyme (PDB id *1hel*). The optional `sse=pdb` argument provided to **plot.nma()** results in a secondary structure schematic being added to the top and bottom margins of the fluctuation plot (helices black and strands gray). Note the larger fluctuations predicted for loop regions." 
 plot(modes, sse=pdb)
 
 
@@ -277,7 +279,7 @@ gaps.pos <- gap.inspect(pdbs$xyz)
 
 #+ example2_B-modes, cache=TRUE, results="hide", warning=FALSE
 # Calculate normal modes of the 53 structures
-modes <- nma.pdbs(pdbs)
+modes <- nma.pdbs(pdbs, ncore=4)
 
 #+ example2_B-plot, fig.width=9, fig.height=5, fig.cap="Structural dynamics of transducin. The calculation is based on NMA of 53 structures: 28 GTP-bound (red), and 25 GDP-bound (green)."
 # Make fluctuation plot
