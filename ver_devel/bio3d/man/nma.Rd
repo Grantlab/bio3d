@@ -10,7 +10,7 @@ nma(...)
 }
 \arguments{
   \item{\dots}{ arguments passed to the methods
-    \code{nma.pdb}, or \code{nma.pdbs}. This will minally include an
+    \code{nma.pdb}, or \code{nma.pdbs}. This will minimally include an
     object of class \code{pdb} as obtained from function
     \code{read.pdb}. Alternatively, an object of class \code{pdbs} as
     obtained from function \code{pdbaln} or \code{read.fasta.pdb}. } 

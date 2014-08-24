@@ -304,7 +304,7 @@ r <- rmsip(pc.md, pc.xray)
 
 #+ close, include=TRUE, eval=FALSE
 library(knitr)
-spin('Bio3D_nma-dhfr-part0.r')
+spin('Bio3D_nma-dhfr-partI.r')
 system("pandoc -o Bio3D_nma-dhfr-partI.pdf Bio3D_nma-dhfr-partI.md")
 
 #'

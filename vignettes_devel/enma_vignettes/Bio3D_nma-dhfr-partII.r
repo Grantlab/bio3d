@@ -170,11 +170,11 @@ ids = unlist(strsplit(basename(pdbs$id), split="\\.pdb"))
 species = hmm$species[hmm$acc %in% ids]
 
 
-#+ mynames, cache=TRUE, warning=FALSE,
+#+ labels, cache=TRUE, warning=FALSE,
 # labels for annotating plots
-mynames <- paste(substr(species, 1,1), ". ", 
+labs <- paste(substr(species, 1,1), ". ", 
                  lapply(strsplit(species, " "), function(x) x[2]), sep="")
-print(mynames)
+print(unique(labs))
 
 #'
 #' The *pdbs* object now contains *aligned* C-alpha atom data, including Cartesian coordinates,
@@ -193,8 +193,10 @@ print(mynames)
 seqide <- seqidentity(pdbs)
 summary(c(seqide))
 hc <- hclust(as.dist(1-seqide))
-grps.seq <- cutree(hc, k=19) ## or h=0.6
-plot(hc, hang=-1, labels=ids)
+grps.seq <- cutree(hc, h=0.6)
+
+#+ fig3-3, fig.cap="Clustering of collected structures based on sequence identity.", fig.height=5,
+plot(hc, hang=-1, labels=labs, cex=0.25)
 
 
 #'
@@ -214,10 +216,22 @@ modes <- nma.pdbs(pdbs, rm.gaps=FALSE, ncore=4)
 #' **plot.enma()**:
 print(modes)
 
-#+ fig3-4, fig.cap="Flexibility profiles and sequence conservation. The figure shows the modes fluctuations colored according their sequence identity. The lower panel shows the sequence conservation for the PDBs."
+#+ fig3-4, fig.cap="Flexibility profiles and sequence conservation. The figure shows the modes fluctuations colored according their sequence identity. The lower panel shows the sequence conservation for the PDBs. The plot is generated with function **plot.enma()** with argument `conservation=TRUE`."
 plot(modes, pdbs=pdbs, ylim=c(0,2), col=grps.seq, conservation=TRUE)
 
-        
+#'
+#' In some cases it can be difficult to interpret the fluctuation plot when all lines are plotted on top of each other. Argument `spread=TRUE` adds a small gap between grouped fluctuation profiles. Use this argument in combination with a new groups (`grps`) variable to function **plot.enma()**:
+
+#+ fig3-5, fig.cap="Flexibility profiles for three selected species (*E.coli* (black), *H.sapiens* (red), and *C.albicans* (green)). The plot is generated with function **plot.enma()** with argument `spread=TRUE`.", fig.height=4.5,
+
+grps <- rep(NA, length(grps.seq))
+grps[grep("coli", labs)]=1
+grps[grep("sapiens", labs)]=2
+grps[grep("albicans", labs)]=3
+
+plot(modes, pdbs=pdbs, col=grps, spread=TRUE)
+
+
 #'
 #' ### Visualize modes
 #' A function call to **mktrj.enma()** will generate a trajectory PDB file for the visualization of
@@ -230,7 +244,6 @@ plot(modes, pdbs=pdbs, ylim=c(0,2), col=grps.seq, conservation=TRUE)
 
 inds <- c(grep("coli", species)[1], 
           grep("sapiens", species)[1],
-          grep("tuberc", species)[1],
           grep("albicans", species)[1])
 
 # E.coli
@@ -242,11 +255,8 @@ mktrj.enma(modes, pdbs, mode=1, ind=inds[3], file="hsapiens-mode1.pdb")
 # C. albicans
 mktrj.enma(modes, pdbs, mode=1, ind=inds[4], file="calbicans-mode1.pdb")
 
-# M. tubercolosis
-mktrj.enma(modes, pdbs, mode=1, ind=inds[4], file="mtubercol-mode1.pdb")
 
-
-#' ![Mode comparison of (A) *E.coli*, (B) *Mycobacterium tuberculosis*, (C) *C.albicans*, and (D) *H.sapiens*. The trajectories are made with function **mktrj.enma** and visualized in PyMol.](figure/visualize-4hfrs.png)
+#' ![Mode comparison of *E.coli*, *H.sapiens*, and *C.albicans*. The trajectories are made with function **mktrj.enma** and visualized in PyMol.](figure/visualize-4hfrs.png)
 
 
 #'
