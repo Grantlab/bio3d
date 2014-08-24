@@ -1,37 +1,88 @@
 "plot.enma" <-
-  function(x, y="fluctuations",
+  function(x, 
            pdbs=NULL, conservation=NULL, variance=FALSE,
+           spread = FALSE, offset = 1, 
            col=NULL, signif=FALSE,
            pcut=0.005, qcut=0.04,
-           xlab="Residue Position",
+           xlab="Alignment Position",
            ylab=c("Fluctuations", "Fluct.variance", "Seq.conservation"),
            xlim=NULL, ylim=NULL,
            mar = c(4, 5, 2, 2),
            ...) {
-
-    if(!inherits(x, "enma"))
+    
+    if(!inherits(x, "enma") && !inherits(x, "matrix"))
       stop("provide a enma object as obtained from 'nma.pdbs'")
-
-    y.allowed <- c("fluctuations", "deformations")
-    if(!all(y%in%y.allowed)) {
-      warning("allowed option for 'y' is 'fluctuations' or 'deformations'")
-      y="fluctuations"
+    
+    if(spread & (variance | !is.null(conservation))) {
+      warning(paste("incompatible arguments:", "\n",
+                    " when 'spread=TRUE' conservation and variance will not be plotted"))
+      variance <- FALSE
+      conservation <- FALSE
     }
     
-    if(is.null(x$call$rm.gaps))
-      rm.gaps <- TRUE
-    else if(x$call$rm.gaps=="T" || x$call$rm.gaps=="TRUE")
-      rm.gaps <- TRUE
+    ## configure what to plot
+    if(inherits(x, "enma"))
+      yval <- x$fluctuations
     else
-      rm.gaps <- FALSE
+      yval <- x
 
-    if(!is.null(pdbs))
-      gaps.res <- gap.inspect(pdbs$ali)
+    ## indices to plot
+    if(!is.null(col) && any(is.na(col)))
+      row.inds <- which(!is.na(col))
     else
-      gaps.res <- NULL
+      row.inds <- 1:nrow(yval)
+
+    ## indices for none-"all NA" columns
+    gaps.tmp <- gap.inspect(yval[row.inds,,drop=FALSE])
+    col.inds <- which(gaps.tmp$col < length(row.inds))
     
-    dims <- dim(x$fluctuations)
+    ## colors
+    if(is.null(col))
+      col <- seq(1, nrow(yval))
 
+    ## full dimensions of yval
+    dims.full <- dim(yval)
+    
+    ## check for gaps
+    gaps <- gap.inspect(yval)
+    if(any(gaps$col>0))
+      rm.gaps <- FALSE
+    else
+      rm.gaps <- TRUE
+
+    
+    ## check if pdbs match enma object
+    gaps.pdbs <- NULL
+    if(!is.null(pdbs)) {
+      if(!inherits(pdbs, "pdbs")) {
+        warning("argument 'pdbs' is not a 'pdbs' object (as obtained from pdbaln())")
+        pdbs <- NULL
+      }
+      else {
+        gaps.pdbs <- gap.inspect(pdbs$ali)
+        
+        if(rm.gaps)
+          dims.pdbs <- dim(pdbs$ali[, gaps.pdbs$f.inds, drop=FALSE])
+        else
+          dims.pdbs <- dim(pdbs$ali)
+        
+        if(!identical(dims.full, dims.pdbs)) {
+          warning("dimenension mismatch between modes and pdbs object")
+          pdbs <- NULL
+        }
+      }
+    }
+
+    ## reduce all objects to match what we plot
+    yval <- yval[row.inds, col.inds, drop=FALSE]
+    if(!is.null(pdbs)) {
+      if(rm.gaps)
+        pdbs=pdbs.filter(pdbs, row.inds=row.inds, col.inds=gaps.pdbs$f.inds)
+      else
+        pdbs=pdbs.filter(pdbs, row.inds=row.inds, col.inds=col.inds)
+    }
+    col=col[!is.na(col)]
+    
     ## Sequence conservation
     h <- NULL
     cons.options <- c("similarity", "identity", "entropy22", "entropy10")
@@ -71,90 +122,36 @@
     }
     
     if(conservation && is.null(h)) {
-      if(rm.gaps)
-        h <- conserv(pdbs$ali[,gaps.res$f.inds], method=conserv.method)
-      else
-        h <- conserv(pdbs, method=conserv.method)
+      h <- conserv(pdbs, method=conserv.method)
     }
         
-    ## Configure plot
-    if(y=="deformations")
-      yval <- x$deform
-    else
-      yval <- x$fluctuations
+    ## x- and ylim
+    if(is.null(ylim)) {
+      if(spread)
+        ylim=c(0, length(unique(col))*offset)
+      else
+        ylim <- c(0,max(yval, na.rm=TRUE))
+    }
 
-    if(!is.null(col) && any(is.na(col)))
-      inds.plot <- which(!is.na(col))
-    else
-      inds.plot <- 1:nrow(yval)
+    if(is.null(xlim)) {
+      xlim <- c(0, ncol(yval))
+    }
 
-    if(is.null(col))
-      col <- seq(1, nrow(yval))
-
-    if(is.null(ylim))
-      ylim <- c(0,max(yval, na.rm=TRUE))
-    
-    if(is.null(xlim))
-      xlim <- c(0,ncol(yval))
-
+    ## SSE information
     dots <- list(...)
     sse.aln <- NULL
     if(!is.null(pdbs)) {
       if( "sse" %in% names(dots) )
-        warning(paste("Incompatible arguments: SSE information from 'pdbs'\n",
-                      "  will not be generated when 'sse' is provided"))
-
-      pdb.ref <- try(read.pdb(pdbs$id[1]), silent=TRUE)
-      if(inherits(pdb.ref, "try-error"))
-        pdb.ref <- try(read.pdb(substr(basename(pdbs$id[1]), 1, 4)), silent=TRUE)
-
-      sse.ref <- NULL
-      if(!inherits(pdb.ref, "try-error"))
-        sse.ref <- try(dssp(pdb.ref), silent=TRUE)
-
-      if(!inherits(sse.ref, "try-error") && !inherits(pdb.ref, "try-error")) {
-        if(rm.gaps) {
-          resnos <- pdbs$resno[1, gaps.res$f.inds]
-        }
-        else {
-          resnos <- pdbs$resno[1, ]
-        }
-
-        ## Helices
-        resno.helix <- unbound(sse.ref$helix$start, sse.ref$helix$end)
-        inds <- which(resnos %in% as.character(resno.helix))
-
-        ## inds points now to the position in the alignment where the helices are
-        new.sse <- bounds( seq(1, length(resnos))[inds] )
-        if(length(new.sse) > 0) {
-           sse.aln$helix$start <- new.sse[,"start"]
-           sse.aln$helix$end <- new.sse[,"end"]
-        }
-
-        ## Sheets
-        resno.sheet <- unbound(sse.ref$sheet$start, sse.ref$sheet$end)
-        inds <- which(resnos %in% as.character(resno.sheet))
-
-        new.sse <- bounds( seq(1, length(resnos))[inds] )
-        if(length(new.sse) > 0) {
-           sse.aln$sheet$start <- new.sse[,"start"]
-           sse.aln$sheet$end <- new.sse[,"end"]
-        }
-      }
-      else {
-          msg <- NULL
-          if(inherits(pdb.ref, "try-error"))
-              msg = c(msg, paste("File not found:", pdbs$id[1]))
-          if(inherits(sse.ref, "try-error"))
-              msg = c(msg, "Launching external program 'DSSP' failed")
-
-          warning(paste("SSE cannot be drawn", msg, sep="\n  "))
-      }
+        warning("SSE information from 'pdbs' will not be generated when 'sse' is provided")
+      else
+        sse.aln <- .pdbs2sse(pdbs, ind=1, rm.gaps=rm.gaps)
+    }
+    
+    if( "sse" %in% names(dots) ) {
+      sse.aln <- dots$sse
+      dots$sse <- NULL
     }
 
-    if( !"sse" %in% names(dots) ) {
-      dots$sse <- sse.aln
-    }
 
     ## Perform test of significance
     ns <- levels(as.factor(col))
@@ -224,13 +221,26 @@
 
     ## Plot fluctuations / deformations
     par(new=TRUE)
-    do.call('plot.bio3d', c(list(x=yval[inds.plot[1],], xlab=xlab, ylab=ylab[1],
-                                 ylim=ylim, xlim=xlim, type='h', col=1), ##col=col[inds.plot[1]]),
-                            dots))
-    
-    ## Plot all lines (col==NA will not be plotted)
-    for(i in 1:nrow(yval)) {
-      lines( yval[i,], col=col[i], lwd=2, ... )
+    if(!spread) {
+      do.call('plot.bio3d', c(list(x=yval[1,], xlab=xlab, ylab=ylab[1],
+                                   ylim=ylim, xlim=xlim, type='h', col=1, sse=sse.aln),
+                              dots))
+      
+      ## Plot all lines (col==NA will not be plotted)
+      for(i in 1:nrow(yval)) {
+        lines( yval[i,], col=col[i], lwd=2, ... )
+      }
+    }
+    else {
+      ##np <- pdbs.filter(pdbs, row.inds=row.inds, col.inds=1:ncol(pdbs$ali))
+      ##do.call('.plot.enma.spread', c(list(x=yval[row.inds,, drop=FALSE],
+      
+      do.call('.plot.enma.spread', c(list(x=yval,
+                                           pdbs=pdbs, col=col,
+                                           offset=offset,
+                                           xlab=xlab, ylab=ylab[1],
+                                           ylim=ylim, xlim=xlim),
+                                      dots))
     }
 
     ## Fluctuation / deformations variance
@@ -243,7 +253,7 @@
                                    xlim=xlim,
                                    col=1), dots))
     }
-
+    
     ## Plot sequence conservation / entropy
     if (conservation) {
       do.call('plot.bio3d', c(list(x=h,
@@ -253,5 +263,136 @@
     }
 
     out <- list(signif=sig, sse=sse.aln)
-    invisible(out)                
+    invisible(out)
   }
+
+
+".plot.enma.spread" <- function(x, pdbs=NULL, col=NULL,
+                                 xlab="Alignment Position",
+                                 ylab="Fluctuations",
+                                 xlim=NULL, ylim=NULL, offset=1, ...) {
+  
+  if(!inherits(x, "enma") & !inherits(x, "matrix"))
+    stop("provide a enma object as obtained from 'nma.pdbs'")
+
+  if(inherits(x, "enma"))
+    fluct <- x$fluctuations
+  else
+    fluct <- x
+  
+  if(is.null(col))
+    stop("group argument missing")
+
+  if(length(col) != nrow(fluct))
+    stop("dimension mismatch: col argument should be of same length as x")
+
+  if(length(unique(col)) < 2)
+    stop("provide > 2 unique groups")
+
+  row.inds <- which(!is.na(col))
+  newfluct <- fluct[row.inds,, drop=FALSE ]
+  gaps <- gap.inspect(newfluct)
+  
+  col.inds <- which(gaps$col < length(row.inds))
+  newfluct=newfluct[, col.inds, drop=FALSE]
+  
+  ## check for gaps
+  gaps <- gap.inspect(newfluct)
+  if(any(gaps$col>0))
+    rm.gaps <- FALSE
+  else
+    rm.gaps <- TRUE
+  
+  sse <- NULL
+  dots <- list(...)
+  if( "sse" %in% names(dots) ) {
+    sse <- dots$sse
+  }
+  else {
+    if(!is.null(pdbs)) {
+      if(rm.gaps) {
+        gs <- gap.inspect(pdbs$ali)
+        pdbs <- pdbs.filter(pdbs, col.inds=gs$f.inds)
+      }
+      
+      pdbs <- pdbs.filter(pdbs, row.inds=row.inds, col.inds=col.inds)
+      sse <- .pdbs2sse(pdbs, ind=1, rm.gaps=rm.gaps)
+    }
+  }
+  
+  dims <- dim(newfluct)
+  if(is.null(xlim))
+    xlim=c(0, dims[2])
+
+  if(is.null(ylim))
+    ylim=c(0, (length(unique(col))*offset)-offset)
+
+  plot.bio3d(newfluct[1, ], col=1, type='l',
+             ylab=ylab, xlab=xlab, 
+             ylim=ylim, xlim=xlim, sse=sse, ...)
+  
+  col=col[!is.na(col)]
+  for(i in 1:length(unique(col))) {
+    tmpinds=which(col==i)
+    off <- ((i-1)* offset )
+    for(j in 1:length(tmpinds))
+      lines(newfluct[tmpinds[j], ] + off, col=i)
+  }
+  
+}
+
+
+".pdbs2sse" <- function(pdbs, ind=1, rm.gaps=FALSE) {
+  sse.aln <- NULL
+  pdb.ref <- try(read.pdb(pdbs$id[ind]), silent=TRUE)
+  
+  if(inherits(pdb.ref, "try-error"))
+    pdb.ref <- try(read.pdb(substr(basename(pdbs$id[1]), 1, 4)), silent=TRUE)
+
+  gaps.res <- gap.inspect(pdbs$ali)
+  
+  sse.ref <- NULL
+  if(!inherits(pdb.ref, "try-error"))
+    sse.ref <- try(dssp(pdb.ref), silent=TRUE)
+  
+  if(!inherits(sse.ref, "try-error") && !inherits(pdb.ref, "try-error")) {
+    if(rm.gaps) {
+      resnos <- pdbs$resno[ind, gaps.res$f.inds]
+    }
+    else {
+      resnos <- pdbs$resno[ind, ]
+    }
+    
+    ## Helices
+    resno.helix <- unbound(sse.ref$helix$start, sse.ref$helix$end)
+    inds <- which(resnos %in% as.character(resno.helix))
+    
+    ## inds points now to the position in the alignment where the helices are
+    new.sse <- bounds( seq(1, length(resnos))[inds] )
+    if(length(new.sse) > 0) {
+      sse.aln$helix$start <- new.sse[,"start"]
+      sse.aln$helix$end <- new.sse[,"end"]
+    }
+    
+    ## Sheets
+    resno.sheet <- unbound(sse.ref$sheet$start, sse.ref$sheet$end)
+    inds <- which(resnos %in% as.character(resno.sheet))
+    
+    new.sse <- bounds( seq(1, length(resnos))[inds] )
+    if(length(new.sse) > 0) {
+      sse.aln$sheet$start <- new.sse[,"start"]
+      sse.aln$sheet$end <- new.sse[,"end"]
+    }
+  }
+  else {
+    msg <- NULL
+    if(inherits(pdb.ref, "try-error"))
+      msg = c(msg, paste("File not found:", pdbs$id[1]))
+    if(inherits(sse.ref, "try-error"))
+      msg = c(msg, "Launching external program 'DSSP' failed")
+    
+    warning(paste("SSE cannot be drawn", msg, sep="\n  "))
+  }
+  
+  return(sse.aln)
+}

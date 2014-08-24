@@ -1,4 +1,4 @@
-"pca.pdbs" <- function(x, core.find=FALSE, fit=FALSE, ...) {
+"pca.pdbs" <- function(pdbs, core.find=FALSE, fit=FALSE, ...) {
   ## Log the call
   cl <- match.call()
 
@@ -8,14 +8,14 @@
   }
   
   if(core.find) {
-    core <- core.find(x)
-    x$xyz = pdbfit(x, core$c0.5A.xyz)
+    core <- core.find(pdbs)
+    pdbs$xyz = pdbfit(pdbs, core$c0.5A.xyz)
   } else if(fit) {
-     x$xyz = pdbfit(x)
+     pdbs$xyz = pdbfit(pdbs)
   }
   
-  gaps.pos <- gap.inspect(x$xyz)
-  pc <- pca.xyz(x$xyz[,gaps.pos$f.inds], ...)
+  gaps.pos <- gap.inspect(pdbs$xyz)
+  pc <- pca.xyz(pdbs$xyz[,gaps.pos$f.inds], ...)
 
   pc$call=cl
   return(pc)

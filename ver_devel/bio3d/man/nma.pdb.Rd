@@ -8,8 +8,9 @@
   of a protein structure.
 }
 \usage{
-nma.pdb(pdb, inds = NULL, ff = 'calpha', pfc.fun = NULL, mass = TRUE,
-    temp = 300.0, keep = NULL, hessian = NULL, \dots )
+\method{nma}{pdb}(pdb, inds = NULL, ff = 'calpha', pfc.fun = NULL,
+                  mass = TRUE, temp = 300.0, keep = NULL, hessian = NULL,
+                  \dots )
 
 build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
     sequ = NULL, ss.bonds = NULL, \dots)

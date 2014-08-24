@@ -5,7 +5,7 @@
   Performs principal components analysis (PCA) on an ensemble of PDB structures.
 }
 \usage{
-pca.pdbs(pdbs, core.find = FALSE, fit = FALSE, ...)
+\method{pca}{pdbs}(pdbs, core.find = FALSE, fit = FALSE, \dots)
 }
 \arguments{
   \item{pdbs}{ an object of class \code{pdbs} as obtained from

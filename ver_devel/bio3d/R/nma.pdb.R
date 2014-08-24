@@ -1,7 +1,7 @@
 "nma.pdb" <-
   function(pdb, inds=NULL, ff='calpha', pfc.fun=NULL, mass=TRUE,
            temp=300.0, keep=NULL, hessian=NULL,  ... ) {
-
+    
     if(missing(pdb))
       stop("nma: must supply 'pdb' object, i.e. from 'read.pdb'")
     if(class(pdb)!="pdb")

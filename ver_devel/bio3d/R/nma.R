@@ -1,3 +1,4 @@
-"nma" <- function(x, ...)
-    UseMethod("nma", x)
+"nma" <- function(...) {
+  UseMethod("nma")
+}
 

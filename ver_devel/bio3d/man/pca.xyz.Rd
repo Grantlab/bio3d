@@ -7,7 +7,8 @@
    numeric data matrix.
  }
 \usage{
-pca.xyz(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE, rm.gaps=FALSE)
+\method{pca}{xyz}(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))),
+                 use.svd = FALSE, rm.gaps=FALSE, \dots)
 
 \method{print}{pca}(x, nmodes=6, \dots)
 }

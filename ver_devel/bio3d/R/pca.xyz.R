@@ -1,6 +1,6 @@
 "pca.xyz" <-
 function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE,
-  rm.gaps=FALSE) {
+         rm.gaps=FALSE, ...) {
   ## Performs principal components analysis on the given "xyz" numeric data
   ## matrix and return the results as an object of class "pca.xyz"
 

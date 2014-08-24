@@ -6,16 +6,14 @@
   of protein structures
 }
 \usage{
-nma(x, ...)
+nma(...)
 }
 \arguments{
-  \item{x}{ an object of class \code{pdb} as obtained from
-    function \code{read.pdb}. Alternatively, an object of class
-    \code{pdbs} as obtained from function \code{pdbaln} or
-    \code{read.fasta.pdb} that will be passed to the
-    \code{nma.pdbs()} function, see below for examples. }
-  \item{\dots}{ additional arguments passed to the methods
-    \code{nma.pdb}, or \code{nma.pdbs}. }
+  \item{\dots}{ arguments passed to the methods
+    \code{nma.pdb}, or \code{nma.pdbs}. This will minally include an
+    object of class \code{pdb} as obtained from function
+    \code{read.pdb}. Alternatively, an object of class \code{pdbs} as
+    obtained from function \code{pdbaln} or \code{read.fasta.pdb}. } 
 }
 \details{
   \code{nma} is a generic function calling the corresponding function
