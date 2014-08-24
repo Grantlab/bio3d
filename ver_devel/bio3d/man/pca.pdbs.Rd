@@ -33,7 +33,7 @@
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
-\author{  Barry Grant and Karim ElSawy }
+\author{  Barry Grant, Lars Skjaerven and Xin-Qiu Yao}
 \seealso{
   \code{\link{pca}}, \code{\link{pca.xyz}},
   \code{\link{pdbaln}}, \code{\link{nma}}. 
