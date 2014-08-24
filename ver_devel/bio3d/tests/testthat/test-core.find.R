@@ -9,10 +9,10 @@ test_that("core.find() works properly", {
   ##-- Very rough 'core' finding: Just for test
   invisible(capture.output(core <- core.find(pdbs, stop.vol=100, ncore=1)))
 
-  expect_equal(length(core$resno), 294)
-  expect_equal(core$resno[1], "7")
-  expect_equal(core$resno[2], "195")
-  expect_equal(core$resno[3], "45")
+  expect_equal(length(core$all.resno), 294)
+  expect_equal(core$all.resno[1], "7")
+  expect_equal(core$all.resno[2], "195")
+  expect_equal(core$all.resno[3], "45")
 
   ## Check multicore 
   invisible(capture.output(core.mc <- core.find(pdbs, stop.vol=100, ncore=NULL)))
