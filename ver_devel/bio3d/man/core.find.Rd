@@ -60,11 +60,12 @@ core.find(aln, shortcut = FALSE, rm.island = FALSE,
   Returns a list of class \code{"core"} with the following components:
   \item{volume }{total core volume at each fitting iteration/round.}
   \item{length }{core length at each round.}
-  \item{all.resno }{residue number of core residues at each round (taken
+  \item{resno }{residue number of core residues at each round (taken
     from the first aligned structure) or, alternatively, the numeric
     index of core residues at each round.}
-  \item{all.atom }{atom indices of core atoms at each round.}
-  \item{all.xyz }{xyz indices of core atoms at each round.}
+  \item{step.inds}{atom indices of core atoms at each round.}
+  \item{atom }{atom indices of core positions in the last round.}
+  \item{xyz }{xyz indices of core positions in the last round.}
   \item{c1A.atom }{atom indices of core positions with a total volume
     under 1 Angstrom\^3.}
   \item{c1A.xyz }{xyz indices of core positions with a total volume
