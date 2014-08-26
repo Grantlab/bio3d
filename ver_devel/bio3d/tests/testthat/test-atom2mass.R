@@ -19,10 +19,19 @@ test_that("atom to mass tests", {
 
   ## Try with a PDB object
   invisible(capture.output(pdb.small <- read.pdb("1etl")))
-  expect_that(sum(atom2mass(pdb.small)), equals(1165.396))
+  invisible(capture.output(prot.inds <- atom.select(pdb.small, "protein")))
+  invisible(capture.output(pdb.small.prot <- trim.pdb(pdb.small, prot.inds)))
 
+  eletys <- pdb.small$atom$elety[ pdb.small$atom$type=="ATOM" ]
+  expect_that(sum(atom2mass( eletys )), equals(1165.396))
+  expect_that(sum(atom2mass( eletys )), equals(sum(atom2mass(pdb.small.prot))))
+  expect_that(sum(atom2mass( pdb.small )), equals(1461.528))
+  
   ## Try center of mass at the same go
   coma <- c(16.3714058,  5.0264399,  0.1739735)
+  expect_that(com(pdb.small.prot), equals(coma, tolerance=1e-6))
+  
+  coma <- c(16.2706625,  4.8153027,  0.3936553)
   expect_that(com(pdb.small), equals(coma, tolerance=1e-6))
   
   

@@ -6,7 +6,7 @@
   Perform NMA on an ensemble of aligned protein structures.
 }
 \usage{
-nma.pdbs(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
+\method{nma}{pdbs}(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
          rm.gaps = TRUE, sse = FALSE, defa = FALSE, 
          outpath = NULL, ncore = 1, \dots)
 
@@ -33,6 +33,7 @@ nma.pdbs(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
     which the PDB structures should be written. }
   \item{ncore }{ number of CPU cores used to do the calculation.
     \code{ncore>1} requires package \sQuote{parallel} installed. }
+  
   \item{x}{ an \code{enma} object obtained from \code{\link{nma.pdbs}}. }
   \item{...}{ additional arguments to \code{nma}, \code{aa2mass}, and
     \code{print}. }
@@ -86,9 +87,7 @@ pdbs <- pdbaln(files)
 all.modes <- nma.pdbs(pdbs, rm.gaps=FALSE)
 
 ## Plot fluctuation data
-plot.bio3d(all.modes$fluctuations[1,], type="o", xlab="Residue Position")
-lines(all.modes$fluctuations[2,], type='o', col=2)
-lines(all.modes$fluctuations[3,], type='o', col=3)
+plot(all.modes)
 
 ## Remove gaps from output
 all.modes <- nma.pdbs(pdbs, rm.gaps=TRUE)
@@ -97,4 +96,4 @@ all.modes <- nma.pdbs(pdbs, rm.gaps=TRUE)
 rmsip(all.modes$U.subs[,,1], all.modes$U.subs[,,2])
 
 }
-\keyword{ utilities }
+\keyword{ analysis }

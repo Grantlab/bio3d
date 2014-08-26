@@ -137,13 +137,18 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
   } )
 
   if(headonly) {
-     retval <- do.call("c", retval)
-  } else {
-     retval <- do.call(rbind, retval)
-
-     # take every "stride" frame
-     retval <- subset(retval, (1:nrow(retval)) %in% seq(1, nrow(retval), stride))
+    retval <- do.call("c", retval)
   }
-  class(retval)="xyz"
-  return(retval)
+  else if(cell) {
+    retval <- do.call(rbind, retval)
+    as.data.frame(retval, stringsAsFactors=FALSE)
+  }
+  else {
+    retval <- do.call(rbind, retval)
+
+    ## take every "stride" frame
+    retval <- as.xyz(subset(retval, (1:nrow(retval)) %in% seq(1, nrow(retval), stride)))
+  }
+
+  return( retval )
 }

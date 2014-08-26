@@ -303,10 +303,11 @@ function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
     }
   }
 #  if(verbose) { cat("done",sep="\n") }
-  if(verbose) { cat("\n") }
+  if(verbose)
+    cat("\n")
   close(trj)
 
-  class(to.return) = "xyz"
-  return(to.return) 
+  ##class(to.return) = "xyz"
+  return( as.xyz(to.return) ) 
 }
 

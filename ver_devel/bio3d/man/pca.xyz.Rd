@@ -7,7 +7,8 @@
    numeric data matrix.
  }
 \usage{
-pca.xyz(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE, rm.gaps=FALSE)
+\method{pca}{xyz}(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))),
+                 use.svd = FALSE, rm.gaps=FALSE, \dots)
 
 \method{print}{pca}(x, nmodes=6, \dots)
 }
@@ -20,8 +21,11 @@ pca.xyz(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE, rm.gaps=
     full \code{xyz} is projected onto this subspace.}
   \item{use.svd}{ logical, if TRUE singular value decomposition (SVD) is 
     called instead of eigenvalue decomposition. }
-  \item{rm.gaps}{ logical, if TRUE gap positions (with missing coordinate data in any input structure) are removed before calculation. This is equivalent to removing NA cols from xyz. }   
-  \item{x}{ an object of class \code{pca}, as obtained from function \code{pca.xyz}. }
+  \item{rm.gaps}{ logical, if TRUE gap positions (with missing
+    coordinate data in any input structure) are removed before
+    calculation. This is equivalent to removing NA cols from xyz. }
+  \item{x}{ an object of class \code{pca}, as obtained from function
+    \code{pca.xyz}. }
   \item{nmodes}{ numeric, number of modes to be printed. }
   \item{\dots}{ additional arguments to \code{print}. }
 }
@@ -38,7 +42,9 @@ pca.xyz(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE, rm.gaps=
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Barry Grant }
-\seealso{ \code{\link{plot.pca}}, \code{\link{mktrj.pca}},
+\seealso{
+  \code{\link{pca}}, \code{\link{pca.pdbs}},
+  \code{\link{plot.pca}}, \code{\link{mktrj.pca}},
   \code{\link{pca.tor}}, \code{\link{pca.project}} }
 \examples{
 

@@ -200,7 +200,7 @@
     b.inds.full$logical <- NULL
     
     out <- list("a.inds"=a.inds.full, "b.inds"=b.inds.full,
-                xyz=fit, rmsd=rmsd.all)
+                xyz=as.xyz(fit), rmsd=rmsd.all)
     
     return(out)     
   }

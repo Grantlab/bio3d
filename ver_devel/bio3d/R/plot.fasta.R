@@ -11,7 +11,7 @@
                          aln.col="grey50",
                          cex.text=1, add=FALSE, ... ) {
 
-  if(class(x)!="fasta" && class(x)!="3dalign" )
+  if(!inherits(x, "fasta") | !inherits(x, "pdbs"))
     stop("input 'x' should be a list object as obtained from 'read.fasta'")
 
   row.height <- 1

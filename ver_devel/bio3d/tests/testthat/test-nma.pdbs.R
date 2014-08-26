@@ -5,8 +5,7 @@ test_that("eNMA works", {
   
   ids <- c("1CDK_A", "1CMK_E", "3DND_A")
   invisible(capture.output(raw.files <- get.pdb(ids, path = tmp, gzip=TRUE)))
-  invisible(capture.output(files <- pdbsplit(raw.files, ids = ids, path = tmp, 
-                    het2atom=TRUE)))
+  invisible(capture.output(files <- pdbsplit(raw.files, ids = ids, path = tmp)))
   invisible(capture.output(pdbs <- pdbaln(files, fit=TRUE)))
 
   ## Calc modes

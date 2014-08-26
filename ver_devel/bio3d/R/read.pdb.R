@@ -213,20 +213,18 @@ function (file, maxlines=-1, multi=FALSE,
     }
   }
   
-  ##- Vector of Calpha positions 
-  ##  check for calcium resid and restrict to ATOM records only
-  calpha = (atom[,"elety"]=="CA") & (atom[,"resid"]!="CA") & (atom[,"type"]=="ATOM")
-
   output<-list(atom=atom,
                #het=atom[atom$type=="HETATM",],
                helix=helix,
                sheet=sheet,
                seqres=seqres,
-               xyz=xyz.models,
-               calpha = calpha, call=cl)
-
+               xyz=as.xyz(xyz.models),
+               calpha = NULL, call=cl)
+  
+  output$calpha <- seq(1, nrow(atom)) %in% atom.select(output, "calpha")$atom
+  
   class(output) <- c("pdb", "sse")
-  class(output$xyz) <- c("numeric","xyz")
+  ##class(output$xyz) <- c("numeric","xyz")
   return(output)
 
 }

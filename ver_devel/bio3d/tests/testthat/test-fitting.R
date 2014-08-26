@@ -25,13 +25,27 @@ test_that("Fitting still works", {
                  mobile = pdbs$xyz,
                  fixed.inds  = gaps$f.inds,
                  mobile.inds = gaps$f.inds )
-  
+
+  x1.expected <- c(2.388, 10.533,  9.168,  2.524, 13.840,  7.282)
+  x2.expected <- c(2.391083, 10.534633,  9.104952, 2.479335, 13.829487, 7.259277)
+  x3.expected <- c(2.422049, 10.516869,  9.364834, 2.420416, 13.827526, 7.506205)
+  expect_that(head(xyz[1,]), equals(x1.expected, tolerance  = 1e-6))
+  expect_that(head(xyz[2,]), equals(x2.expected, tolerance  = 1e-6))
+  expect_that(head(xyz[3,]), equals(x3.expected, tolerance  = 1e-6))
+
   rmsd.mat <- matrix(c(0.000, 0.293, 0.286,
                        0.293, 0.000, 0.270,
                        0.286, 0.270, 0.000),
                      ncol=3, byrow=TRUE)
   expect_that(rmsd( xyz[, gaps$f.inds] ),
               equals(rmsd.mat, tolerance  = 1e-6))
+
+  xyz2 <- fit.xyz( fixed  = pdbs$xyz[1,],
+                  mobile = pdbs,
+                  fixed.inds  = gaps$f.inds,
+                  mobile.inds = gaps$f.inds )
+  expect_that(xyz2, equals(xyz))
+
 }
 )
 

@@ -98,9 +98,7 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
           new.pdb <- trim.pdb(pdb, sel, sse=FALSE)
 
           ## Multi-model records
-          ##if (nrow(pdb$xyz)>1) {
-          if (is.matrix(pdb$xyz)) {
-
+          if (nrow(pdb$xyz)>1) {
             for ( k in 1:nrow(pdb$xyz) ) {
               
               str.len <- nchar(nrow(pdb$xyz))

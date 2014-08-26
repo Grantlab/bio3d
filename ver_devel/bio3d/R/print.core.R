@@ -8,8 +8,8 @@ print.core <- function(x, vol=NULL, ...) {
     vol <- 1
 
   ind <- (cv<=vol)
-  ca <- sort(x$atom[ind])
-  cx <- sort(as.vector(t(x$xyz[ind,])))
+  ca <- sort(x$step.inds[ind])
+  cx <- atom2xyz(ca)
   cr <- sort(x$resno[ind])
   nc <- length(ca)
   

@@ -10,7 +10,8 @@ get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, gzip = FALSE,
 }
 \arguments{
   \item{ids}{ A character vector of one or more 4-letter PDB
-    codes/identifiers of the files to be downloaded. }
+    codes/identifiers of the files to be downloaded, or a \sQuote{blast}
+    object containing \sQuote{pdb.id}. }
   \item{path}{ The destination path/directory where files are to be
     written. }
   \item{URLonly}{ logical, if TRUE a character vector containing the URL

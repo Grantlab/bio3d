@@ -27,7 +27,7 @@ test_that("read.ncdf() works properly", {
    inds <- atom.select(pdb, chain="A", verbose=FALSE)
    trj <- read.ncdf(trjfile, verbose = FALSE, first=10, last=20, stride=2,
       at.sel = inds)
-   expect_equivalent(trj, trj0[seq(10, 20, 2), inds$xyz])
+   expect_equivalent(trj, as.xyz(trj0[seq(10, 20, 2), inds$xyz]))
 
    # multiple files
    files <- rep(trjfile, 4)
