@@ -220,11 +220,11 @@ function (file, maxlines=-1, multi=FALSE,
                seqres=seqres,
                xyz=as.xyz(xyz.models),
                calpha = NULL, call=cl)
-  
-  output$calpha <- seq(1, nrow(atom)) %in% atom.select(output, "calpha")$atom
+
+  ca.inds <-  atom.select(output, string="calpha", verbose=FALSE)
+  output$calpha <- seq(1, nrow(atom)) %in% ca.inds$atom
   
   class(output) <- c("pdb", "sse")
-  ##class(output$xyz) <- c("numeric","xyz")
   return(output)
 
 }

@@ -1,10 +1,10 @@
 `pdbseq` <-
-function(pdb, inds=NULL, aa1=TRUE) {
+function(pdb, inds=NULL, aa1=TRUE, verbose=FALSE) {
   ## b.inds <- atom.select(pdb, "//B////CA/")
   ## seq.pdb(pdb, b.inds)
 
   if(is.null(inds))
-    inds <- atom.select(pdb, "calpha")
+    inds <- atom.select(pdb, "calpha", verbose=verbose)
 #    inds <- which(pdb$calpha)
 #    inds <- atom.select(pdb, "//////CA/", verbose=FALSE)$atom
 

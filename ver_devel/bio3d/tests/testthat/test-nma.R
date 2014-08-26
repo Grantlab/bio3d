@@ -7,7 +7,7 @@ test_that("NMA", {
   invisible(capture.output(pdb <- read.pdb("1hel")))
 
   ## Calculate modes with default arguments
-  invisible(capture.output(modes <- nma(pdb, inds=NULL, ff='calpha',
+  invisible(capture.output(modes <- nma(pdb, ff='calpha',
                                         mass=TRUE, temp=300.0)))
 
   ## Check first eigenvector
