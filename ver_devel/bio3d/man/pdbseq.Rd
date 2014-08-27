@@ -15,7 +15,8 @@ pdbseq(pdb, inds = NULL, aa1 = TRUE)
   \item{inds}{ a list object of ATOM and XYZ indices as obtained from
     \code{\link{atom.select}}. }
   \item{aa1}{ logical, if TRUE then the one-letter IUPAC sequence is
-    returned. IF FALSE then the three-letter PDB style sequence is returned.}
+    returned. IF FALSE then the three-letter PDB style sequence is
+    returned.}
 }
 \details{
   See the functions \code{\link{atom.select}} and \code{\link{aa321}}

@@ -10,7 +10,7 @@
            mar = c(4, 5, 2, 2),
            ...) {
     
-    if(!inherits(x, "enma") && !inherits(x, "matrix"))
+    if(!(inherits(x, "enma") | inherits(x, "matrix")))
       stop("provide a enma object as obtained from 'nma.pdbs'")
     
     if(spread & (variance | !is.null(conservation))) {

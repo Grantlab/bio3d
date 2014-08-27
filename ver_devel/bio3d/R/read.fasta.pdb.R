@@ -62,7 +62,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
       
     } else {
       pdb <- read.pdb( files[i], verbose=FALSE, ... )
-      ca.inds <- atom.select(pdb, "calpha")
+      ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
       ##pdbseq  <- aa321(pdb$atom[pdb$calpha,"resid"])
       pdbseq  <- aa321(pdb$atom$resid[ca.inds$atom])
       aliseq  <- toupper(aln$ali[i,])

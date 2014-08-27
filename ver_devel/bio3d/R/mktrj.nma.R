@@ -6,15 +6,16 @@
                         ... ) {      # args for write.pdb
 
   ## make a trjactory of atomic displacments along a given mode
-  if(!"nma" %in% class(x))
+  if(!inherits(x, "nma"))
     stop("mktrj.nma: must supply 'nma' object, i.e. from 'nma'")
-
+  
   if(is.null(file))
     file <- paste("mode_", mode, ".pdb", sep="")
 
-  if(x$L[mode]<=0)
-    stop("Mode with eigenvalue <=0 detected. Check 'mode' index.")
+  #if(x$L[mode]<=0)
+  #  stop("Mode with eigenvalue <=0 detected. Check 'mode' index.")
 
+  x$xyz=as.vector(x$xyz)
   nstep <- c(seq(step, to=mag, by=step))
   zcoor <- cbind(1) %*% nstep
 

@@ -1,4 +1,4 @@
-"nma.pdb" <- function(pdb, ff='calpha', pfc.fun=NULL, mass=TRUE,
+"nma.pdb" <- function(pdb, inds=NULL, ff='calpha', pfc.fun=NULL, mass=TRUE,
                       temp=300.0, keep=NULL, hessian=NULL, outmodes=NULL, ... ) {
   
   ## Log the call
@@ -10,16 +10,29 @@
   if(!is.null(outmodes) & !is.select(outmodes))
     stop("provide 'outmodes' as obtained from function atom.select()")
   
-  ## Initialize
-  init <- .nma.init(ff=ff, pfc.fun=pfc.fun, ...)
-  
+  ## Prepare PDB
+  ## Take only first frame of multi model PDB files
+  if(nrow(pdb$xyz)>1) {
+    warning("multimodel PDB file detected - using only first frame")
+    pdb$xyz=pdb$xyz[1,, drop=FALSE]
+  }
+
   ## Trim to only CA atoms
-  ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
-  pdb.in <- trim.pdb(pdb, ca.inds)
+  if(is.null(inds)) {
+    ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
+    pdb.in <- trim.pdb(pdb, ca.inds)
+  }
+
+  ## or to user selection
+  else {
+    pdb.in <- trim.pdb(pdb, inds)
+    if(!all(pdb.in$atom$elety=="CA"))
+      stop("non-CA atoms detected")
+  }
 
   ## Indices for effective hessian
   if(is.select(outmodes)) {
-    ## since pdb.in is 'noh' (from trim.pdb above), we need to re-select
+    ## re-select since outmodes indices are based on input PDB
     inc.inds <- .match.sel(pdb, pdb.in, outmodes)
     pdb.out <- trim.pdb(pdb.in, inc.inds)
   }
@@ -27,13 +40,24 @@
     pdb.out <- pdb.in
     inc.inds <- atom.select(pdb.in, "all", verbose=FALSE)
   }
-  
-  sequ    <- pdbseq(pdb.in)
-  natoms.in <- length(pdb.in$xyz)/3
-  natoms.out <- length(pdb.out$xyz)/3
 
+  ## fetch number of atoms and sequence
+  natoms.in  <- ncol(pdb.in$xyz)/3
+  natoms.out <- ncol(pdb.out$xyz)/3
+  sequ <- pdb.in$atom$resid
+  
   if (natoms.in<3)
     stop("nma: insufficient number of atoms")
+
+  ## check structure connectivity
+  conn <- inspect.connectivity(pdb.in$xyz)
+  if(!conn) {
+    warning("Possible missing in-structure residue(s)\n", 
+            "  Fluctuations at neighboring positions may be affected.")
+  }
+  
+  ## Process input arguments
+  init <- .nma.init(ff=ff, pfc.fun=pfc.fun, sequ=sequ, ...)
   
   ## Use aa2mass to fetch residue mass
   if (mass) {
@@ -45,9 +69,9 @@
   else {
     masses.out <- NULL;
   }
-  
+
   ## NMA hessian
-  hessian <- .nma.hess(pdb.in$xyz, init=init, sequ=sequ, 
+  hessian <- .nma.hess(pdb.in$xyz, init=init,
                        hessian=hessian, inc.inds=inc.inds)
 
   ## mass weight hessian
@@ -65,7 +89,7 @@
 
 
 ".nma.init" <- function(ff=NULL, pfc.fun=NULL, ...) {
-  
+
     ## Arguments to functions build.hessian and aa2mass
     bh.names <- names(formals( build.hessian ))
     am.names <- names(formals( aa2mass ))
@@ -89,7 +113,7 @@
     ## Check for optional arguments to pfc.fun
     ff.names <- names(formals( ff ))
     ff.args  <- dots[names(dots) %in% ff.names]
-
+    
     ## Redirect them to build.hessian
     bh.args  <- c(bh.args, ff.args)
     
@@ -104,10 +128,10 @@
       bh.args=NULL
     if(length(am.args)==0)
       am.args=NULL
-    if(length(ff.args)==0)
-      ff.args=NULL
+    #if(length(ff.args)==0)
+    #  ff.args=NULL
         
-    out <- list(pfcfun=ff, bh.args=bh.args, ff.args=ff.args, am.args=am.args)
+    out <- list(pfcfun=ff, bh.args=bh.args, am.args=am.args)
     return(out)
   }
 
@@ -161,18 +185,19 @@
 }
 
 ## wrapper for generating the hessian matrix
-".nma.hess" <- function(xyz, init=NULL, sequ=NULL, 
+".nma.hess" <- function(xyz, init=NULL,
                         hessian=NULL, inc.inds=NULL) {
   
   natoms <- ncol(as.xyz(xyz))/3
   if(nrow(xyz)>1)
     xyz=xyz[1,,drop=FALSE]
-  
+
   ## Build the Hessian Matrix
   if(is.null(hessian)) {
     cat(" Building Hessian...")
     ptm <- proc.time()
-    H <- do.call('build.hessian', list(xyz=xyz, pfc.fun=init$pfcfun, sequ=sequ))
+    H <- do.call('build.hessian',
+                 c(list(xyz=xyz, pfc.fun=init$pfcfun), init$bh.args))
     t <- proc.time() - ptm
     cat("\t\tDone in", t[[3]], "seconds.\n")
   }
@@ -212,31 +237,36 @@
   else
     mass <- FALSE
 
+  xyz=as.xyz(xyz)
   dims <- dim(ei$vectors)
-  dimchecks <- c(length(xyz)/3==natoms,
-              ifelse(mass, length(masses)==natoms, TRUE),
-              dims[1]/3==natoms,
-              dims[2]/3==natoms)
+  dimchecks <- c(ncol(xyz)/3==natoms,
+                 ifelse(mass, length(masses)==natoms, TRUE),
+                 dims[1]/3==natoms,
+                 dims[2]/3==natoms)
   
   if(!all(dimchecks))
     stop(paste("dimension mismatch when generating nma object\n",
                paste(dimchecks, collapse=", ")))
   
-  if(!is.null(keep)) {
+  ## Raw eigenvalues
+  ei$values <- round(ei$values, 6)
+
+  ## Trivial modes first - sort on abs(ei$values)
+  sort.inds  <- order(abs(ei$values))
+  ei$values  <- ei$values[sort.inds]
+  ei$vectors <- ei$vectors[, sort.inds]
+  
+  ## hard code 6 trivial modes
+  triv.modes <- seq(1, 6)
+
+  ## keep only a subset of modes - including trivial modes
+   if(!is.null(keep)) {
     if(keep>ncol(ei$vectors))
       keep <- ncol(ei$vectors)
-    keep <- keep-1
-    keep.inds <- seq(ncol(ei$vectors)-keep, ncol(ei$vectors))
+    keep.inds <- seq(1, keep)
     ei$vectors <- ei$vectors[,keep.inds]
     ei$values <- ei$values[keep.inds]
   }
-  
-  ## Raw eigenvalues
-  ei$values <- round(ei$values, 6)
-  ##triv.modes <- which(ei$values<=0) ## indicies !!
-
-  ## hard code 6 trivial modes instead
-  triv.modes <- seq(length(ei$values), length(ei$values)-5)
 
     ## Frequencies are given by
     if (mass)  {
@@ -266,24 +296,16 @@
     if ( !is.null(temp) ) {
       if (!is.null(freq)) {
         amplitudes <- sqrt(2* temp * kb) / (2* pi * freq[ -triv.modes ])
-        amplitudes <- c(amplitudes, rep(1,length(triv.modes)))
+        amplitudes <- c(rep(1,length(triv.modes)), amplitudes)
       }
       else if(!is.null(force.constants)) {
         amplitudes <- sqrt((2* temp * kb) /
                            force.constants[ -triv.modes ])
-        amplitudes <- c(amplitudes, rep(1,length(triv.modes)))
+        amplitudes <- c(rep(1,length(triv.modes)), amplitudes)
       }
     } else {
       amplitudes <- rep(1, times=3*natoms)
     }
-
-    ## Trivial modes first (reverse matrix!)
-    ei$vectors <- ei$vectors[, seq(ncol(ei$vectors),1)]
-    V <- V[, seq(ncol(ei$vectors),1)]
-    ei$values <- rev( ei$values )
-    freq <- rev(freq)
-    force.constants <- rev(force.constants)
-    amplitudes <- rev(amplitudes)
 
     ## Temperature scaling of eigenvectors
     for ( i in (length(triv.modes)+1):ncol(V) ) {
@@ -291,7 +313,7 @@
     }
 
     ## Check if first modes are zero-modes
-    if(ei$values[1]<0) {
+    if(any(ei$values<0)) {
       warning("Negative eigenvalue(s) detected! \
               This can be an indication of an unphysical input structure.")
     }

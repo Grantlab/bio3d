@@ -208,6 +208,9 @@ test_that("NMA", {
               equals(hessian2[atom2xyz(j), atom2xyz(i)], tolerance=1e-6))
   
   
+ 
+  
+  
   
 }
           )

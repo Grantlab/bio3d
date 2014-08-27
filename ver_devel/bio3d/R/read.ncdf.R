@@ -141,7 +141,7 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
   }
   else if(cell) {
     retval <- do.call(rbind, retval)
-    retval <- as.data.frame(retval, stringsAsFactors=FALSE)
+    ##retval <- as.data.frame(retval, stringsAsFactors=FALSE)
   }
   else {
     retval <- do.call(rbind, retval)
