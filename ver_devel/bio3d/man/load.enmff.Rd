@@ -12,7 +12,7 @@
 }
 \usage{
 load.enmff(ff = 'calpha')
-ff.calpha(r, ...)
+ff.calpha(r, rmin=2.9, ...)
 ff.anm(r, cutoff=15, gamma=1, ...)
 ff.pfanm(r, cutoff=NULL, ...)
 ff.calphax(r, atom.id, ssdat=NULL, verbose=FALSE, ...)
@@ -24,6 +24,9 @@ ff.reach(r, atom.id, ssdat=NULL, ...)
     \sQuote{calpha}, \sQuote{anm}, \sQuote{pfanm}, \sQuote{calphax},
     \sQuote{reach}, or  \sQuote{sdenm}. }
   \item{r}{ a numeric vector of c-alpha distances. }
+  \item{rmin}{ lowest allowed atom-atom distance for the force constant
+    calculation. The default of 2.9A is based on an evaluation of 24
+    high-resolution X-ray structures (< 1A). }
   \item{cutoff}{ numerical, cutoff for pair-wise interactions. }
   \item{gamma}{ numerical, global scaling factor. }
   \item{atom.id}{ atomic index. }

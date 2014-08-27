@@ -31,7 +31,7 @@ lmi <- function (trj, grpby = NULL, ncore=1) {
         m[lower.tri(m)] = t(m)[lower.tri(m)]
         diag(m) <- 1; rm=m
     }
-    class(rm) = c("dccm","matrix")
+    class(rm) = c("dccm", "matrix")
     return(rm)
 }
 

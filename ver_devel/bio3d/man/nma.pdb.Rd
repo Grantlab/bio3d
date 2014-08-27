@@ -10,10 +10,10 @@
 \usage{
 \method{nma}{pdb}(pdb, inds = NULL, ff = 'calpha', pfc.fun = NULL,
                   mass = TRUE, temp = 300.0, keep = NULL, hessian = NULL,
-                  \dots )
+                  outmodes = NULL, \dots )
 
-build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
-    sequ = NULL, ss.bonds = NULL, \dots)
+build.hessian(xyz, pfc.fun, fc.weights = NULL, sequ = NULL, sse = NULL,
+    ss.bonds = NULL, \dots)
 
 \method{print}{nma}(x, nmodes=6, \dots)
 }
@@ -22,7 +22,9 @@ build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
     function \code{read.pdb}. }
   \item{inds}{ atom and xyz coordinate indices obtained from \code{atom.select}
     that selects the elements of \code{pdb} upon which the calculation
-    should be based.}
+    should be based. If not provided the function will attempt to select
+    the calpha atoms automatically (based on function
+    \code{atom.select}). }
   \item{ff}{ character string specifying the force field to use:
     \sQuote{calpha}, \sQuote{anm}, \sQuote{pfanm}, \sQuote{calphax},
    \sQuote{reach}, or \sQuote{sdenm}. }
@@ -41,9 +43,11 @@ build.hessian(xyz, pfc.fun, aa.mass = NULL, fc.weights = NULL, sse = NULL,
   \item{hessian}{ hessian matrix as obtained from
     \code{build.hessian}. For internal purposes and generally not
     intended for public use. }
+  \item{outmodes}{ atom indices as obtained from \code{\link{atom.select}}) 
+    specifying the atoms to include in the resulting mode object. For
+    \code{aanma}, also character strings \sQuote{calpha} (which is the default) 
+    or \sQuote{noh} can be used. }
   \item{xyz}{ a numeric vector of Cartesian coordinates. }
-  \item{aa.mass}{ a numeric vector of amino acid residue masses as
-    obtained from function \code{aa2mass}. }
   \item{fc.weights}{ a numeric matrix of size NxN (where N is the number
     of calpha atoms) containg scaling factors for the pariwise force
     constants. See examples below. }
@@ -178,7 +182,7 @@ hessian <- build.hessian(xyz, my.ff)
 modes <- eigen(hessian)
 
 ## Dealing with unconventional residues
-pdb <- read.pdb("1xj0", het2atom=TRUE)
+pdb <- read.pdb("1xj0")
 ## nma(pdb)
 modes <- nma(pdb, mass.custom=list(CSX=121.166))
 }

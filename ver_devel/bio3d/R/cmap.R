@@ -15,9 +15,11 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
         warning("nseg.scale should be 1 or a larger integer\n")
         nseg.scale=1
      }
-  }
+   }
 
-  if(is.matrix(xyz)) {
+  xyz=as.xyz(xyz)
+  
+  if(nrow(xyz)>1) {
      if(is.null(grpby)) {
         nres <- ncol(xyz)/3
      } else {

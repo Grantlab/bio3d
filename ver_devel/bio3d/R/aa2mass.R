@@ -4,7 +4,7 @@
     if (missing(pdb))
       stop("must supply 'pdb' object or vector of amino acid residue names")
 
-    if(class(pdb)=="pdb") {
+    if(is.pdb(pdb)) {
       if(!is.null(inds)) {
         pdb <- trim.pdb(pdb, inds)
       }

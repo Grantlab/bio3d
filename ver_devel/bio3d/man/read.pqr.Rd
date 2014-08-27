@@ -6,7 +6,7 @@
 }
 \usage{
 read.pqr(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
-         rm.alt = TRUE, het2atom=FALSE, verbose = TRUE)
+         rm.alt = TRUE, verbose = TRUE)
 }
 \arguments{
   \item{file}{ the name of the PQR file to be read. }
@@ -17,9 +17,6 @@ read.pqr(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
     models in multi-model files. }
   \item{rm.insert}{ logical, if TRUE PDB insert records are ignored. }
   \item{rm.alt}{ logical, if TRUE PDB alternate records are ignored. }
-  \item{het2atom}{ logical, if TRUE HETATM PDB records are stored as
-    ATOM records and returned in the output as such, this should be used
-    with caution. }
   \item{verbose}{ print details of the reading process. }
 }
 \details{

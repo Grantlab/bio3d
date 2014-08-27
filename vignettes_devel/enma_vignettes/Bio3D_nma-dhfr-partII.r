@@ -91,8 +91,8 @@ hmm <- hmmer(pfam.aln, type="hmmsearch", db="pdb")
 #' Function **plot.hmmer()** (the equivalent to **plot.blast()**) provides a quick overview of the
 #' search results, and can aid in the identification of a sensible hit similarity threshold.
 #' The normalized scores (-log(E-Value)) are shown in the upper panel, and the lower panel provides an
-#' overview of
-#' the kingdom and specie each hit are associated with. Here we specify a cutoff of 55 yielding 104 hits:
+#' overview of the kingdom and specie each hit are associated with. Here we specify a cutoff
+#' of 90 yielding 517 hits:
 
 
 #+ fig3-2, fig.cap="Overview  of hits obtained from the HMMER search. Upper panel shows the normalized scores. Lower panel the scores and hits are colored according to their respective kingdom (background colors) and specie (foreground barplot).", fig.height=5,
@@ -250,10 +250,10 @@ inds <- c(grep("coli", species)[1],
 mktrj.enma(modes, pdbs, mode=1, ind=inds[1], file="ecoli-mode1.pdb")
 
 # H. sapiens
-mktrj.enma(modes, pdbs, mode=1, ind=inds[3], file="hsapiens-mode1.pdb")
+mktrj.enma(modes, pdbs, mode=1, ind=inds[2], file="hsapiens-mode1.pdb")
 
 # C. albicans
-mktrj.enma(modes, pdbs, mode=1, ind=inds[4], file="calbicans-mode1.pdb")
+mktrj.enma(modes, pdbs, mode=1, ind=inds[3], file="calbicans-mode1.pdb")
 
 
 #' ![Mode comparison of *E.coli*, *H.sapiens*, and *C.albicans*. The trajectories are made with function **mktrj.enma** and visualized in PyMol.](figure/visualize-4hfrs.png)
