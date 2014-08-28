@@ -1,6 +1,14 @@
 context("Testing nma.pdbs()")
 
 test_that("eNMA works", {
+
+  "mysign" <- function(a,b) {
+    if(all(sign(a)==sign(b)))
+      return(1)
+    else
+      return(-1)
+  }
+
   tmp <- tempdir()
   
   ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
@@ -21,19 +29,19 @@ test_that("eNMA works", {
   ## structure 1- mode1:
   U1 <- c(-0.06121500,  0.10505209, -0.05435506, -0.04783683, 0.06649716, -0.03675693)
   nowU1 <- head(modes$U.subspace[,1,1], n=6)
-  expect_that(nowU1, equals(U1, tolerance=1e-6))
+  expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
 
   ## structure 1- mode2:
   ##- previous to fixing mass calculation in nma.pdbs
   U2 <- c(0.038119084, -0.024193962, -0.025397837, 0.032008760, -0.005760642, -0.026255866)
   nowU2 <- head(modes$U.subspace[,2,1], n=6)
-  expect_that(nowU2, equals(U2, tolerance=1e-6))
+  expect_that(nowU2 * mysign(U2, nowU2), equals(U2, tolerance=1e-6))
 
   ## structure 4- mode3:
   ##- previous to fixing mass calculation in nma.pdbs
   U3 <- c(0.029950724, -0.004793673, -0.075769300, 0.039328324, 0.003828264, -0.059507805)
   nowU3 <- head(modes$U.subspace[,3,4], n=6)
-  expect_that(nowU3, equals(U3, tolerance=1e-6))
+  expect_that(nowU3 * mysign(U3, nowU3), equals(U3, tolerance=1e-6))
 
   ## Fluctuations:
   ##- previous to fixing mass calculation in nma.pdbs
