@@ -96,8 +96,9 @@ These attributes describe the list components that comprise the `pdb`
 object, and each individual component can be accessed using the `$`
 symbol (e.g. `pdb$atom`). Their complete description can be found on the
 `read.pdb()` functions help page accessible with the command:
-`help(read.pdb)`. Note that the `atom` component is a matrix consisting
-of all atomic coordinate ATOM data, with a row per ATOM and a column per
+`help(read.pdb)`. Note that the `atom` component is a data frame 
+(matrix like object) consisting
+of all atomic coordinate ATOM/HETATM data, with a row per ATOM and a column per
 record type. The column names can be used as a convenient means of data
 access, for example to access coordinate data for the first three atoms
 in our newly created `pdb` object:
@@ -119,7 +120,7 @@ ca.inds <- atom.select(pdb, "calpha")
 The returned `ca.inds` object is a list containing atom and xyz numeric
 indices corresponding to the selection (all C-alpha atoms in this
 particular case). The indices can be used to access e.g. the Cartesian
-coordinates of the selected atoms (`pdb$xyz[ca.inds$xyz]`), or residue
+coordinates of the selected atoms (`pdb$xyz[, ca.inds$xyz]`), or residue
 numbers and B-factor data for the selected atoms. For example:
 
 ```{r, fig.cap="Residue B-factor data for PDB id 1TAG. Grey boxes depict secondary structure elements in the structur (dark grey: alpha helices; light grey: beta sheets)."}
@@ -144,6 +145,11 @@ In the above example the residue numbers in the `sheet` and `helix`
 components of `pdb` are accessed and used in a subsequent atom
 selection, the output of which is used as indices to extract residue
 names.
+
+Since Bio3D version 2.1 the \texttt{xyz} component in the PDB object is in a 
+matrix format (as compared to a vector format in previous versions). Thus, notice 
+the extra comma in the square bracket operator when accessing Cartesian 
+coordinates from the \texttt{xyz} object (\texttt{pdb\$xyz[, ca.inds\$xyz]}).
 
 #### Question:
 
