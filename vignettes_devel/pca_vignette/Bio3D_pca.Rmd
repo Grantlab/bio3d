@@ -337,7 +337,7 @@ raw.files <- get.pdb(unq.ids, path="raw_pdbs")
 files <- pdbsplit(raw.files, ids=hits$pdb.id, path="raw_pdbs/split_chain")
 
 ##- Extract and align sequences 
-pdbs <- pdbaln(files) 
+pdbs <- pdbaln(files)
 ```
 
 You can now inspect the alignment (the automatically generated “aln.fa”
@@ -463,7 +463,8 @@ hc.rd <- hclust(as.dist(rd))
 
 The result can be illustrated as a simple dendrogram with the command:
 ```{r, eval=FALSE}
-plot(hc.rd, labels=pdbs$id, ylab="RMSD (Å)", main="RMSD Cluster Dendrogram")
+pdbs$id <- substr(basename(pdbs$id), 1, 6)
+plot(hc.rd, labels=pdbs$id, hang=-1, cex=0.5, ylab="RMSD (Å)", main="RMSD Cluster Dendrogram")
 ```
 
 Or as a nicer plot:
@@ -531,12 +532,15 @@ plot(tor$phi, tor$psi, xlab="phi", ylab="psi")
 Lets compare the Calpha atom based pseudo-torsion angles between two structures:
 
 ```{r, fig.cap="Torsion angle difference between structures in GDP (1tag) and GTP (1tnd) nucleotide states"}
-a.xyz <- pdbs$xyz["1TAG_A",]
-b.xyz <- pdbs$xyz["1TND_B",]
+ind.a <- grep("1TAG_A", pdbs$id)
+ind.b <- grep("1TND_B", pdbs$id)
 
-gaps2.xyz <- is.gap(pdbs$xyz["1TAG_A",])
-gaps2.res <- is.gap(pdbs$ali["1TAG_A",]) 
-resno <- pdbs$resno["1TAG_A", !gaps2.res]
+a.xyz <- pdbs$xyz[ind.a,]
+b.xyz <- pdbs$xyz[ind.b,]
+
+gaps2.xyz <- is.gap(pdbs$xyz[ind.a,])
+gaps2.res <- is.gap(pdbs$ali[ind.a,]) 
+resno <- pdbs$resno[ind.a, !gaps2.res]
 
 a <- torsion.xyz(a.xyz[!gaps2.xyz],atm.inc=1)
 b <- torsion.xyz(b.xyz[!gaps2.xyz],atm.inc=1)
