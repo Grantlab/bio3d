@@ -1,6 +1,14 @@
 context("Testing nma.pdbs()")
 
 test_that("eNMA works", {
+
+  "mysign" <- function(a,b) {
+    if(all(sign(a)==sign(b)))
+      return(1)
+    else
+      return(-1)
+  }
+
   tmp <- tempdir()
   
   ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
@@ -21,19 +29,19 @@ test_that("eNMA works", {
   ## structure 1- mode1:
   U1 <- c(-0.06121500,  0.10505209, -0.05435506, -0.04783683, 0.06649716, -0.03675693)
   nowU1 <- head(modes$U.subspace[,1,1], n=6)
-  expect_that(nowU1, equals(U1, tolerance=1e-6))
+  expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
 
   ## structure 1- mode2:
   ##- previous to fixing mass calculation in nma.pdbs
   U2 <- c(0.038119084, -0.024193962, -0.025397837, 0.032008760, -0.005760642, -0.026255866)
   nowU2 <- head(modes$U.subspace[,2,1], n=6)
-  expect_that(nowU2, equals(U2, tolerance=1e-6))
+  expect_that(nowU2 * mysign(U2, nowU2), equals(U2, tolerance=1e-6))
 
   ## structure 4- mode3:
   ##- previous to fixing mass calculation in nma.pdbs
   U3 <- c(0.029950724, -0.004793673, -0.075769300, 0.039328324, 0.003828264, -0.059507805)
   nowU3 <- head(modes$U.subspace[,3,4], n=6)
-  expect_that(nowU3, equals(U3, tolerance=1e-6))
+  expect_that(nowU3 * mysign(U3, nowU3), equals(U3, tolerance=1e-6))
 
   ## Fluctuations:
   ##- previous to fixing mass calculation in nma.pdbs
@@ -81,8 +89,46 @@ test_that("eNMA works", {
   expect_that(modes$fluctuations[1,1:10], equals(f1, tolerance=1e-6))
   expect_that(modes$fluctuations[2,1:10], equals(f2, tolerance=1e-6))
   expect_that(modes$fluctuations[6,90:100], equals(f6, tolerance=1e-6))
- 
+
+
+   ## Calc modes with mass=FALSE and temp=NULL
+  invisible(capture.output(modes <- nma.pdbs(pdbs, mass=FALSE, temp=NULL, ncore=3)))
+
+  ## structure 1- mode1:
+  U1 <- c(0.07455881, -0.13169394, 0.06945276, 0.05591645, -0.07713849, 0.04531054)
+  nowU1 <- head(modes$U.subspace[,1,1], n=6)
+  expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
   
+  ## structure 1- mode2:
+  U2 <- c(0.05002850, -0.03921177, -0.02849105, 0.04127052, -0.01193604, -0.03000556)
+  nowU2 <- head(modes$U.subspace[,2,1], n=6)
+  expect_that(nowU2 * mysign(U2, nowU2), equals(U2, tolerance=1e-6))
+
+  ## structure 5- mode3:
+  U3 <- c(0.05002850, -0.03921177, -0.02849105, 0.04127052, -0.01193604, -0.03000556)
+  nowU3 <- head(modes$U.subspace[,3,5], n=6)
+  expect_that(nowU2 * mysign(U2, nowU2), equals(U2, tolerance=1e-6))
+
+
+  
+  ## Calc modes with mass=FALSE and temp=NULL and ff="anm"
+  invisible(capture.output(modes <- nma.pdbs(pdbs, mass=FALSE, temp=NULL, ff="anm", ncore=3)))
+
+  ## structure 3- mode10:
+  U1 <- c(0.01290994, -0.05381632, 0.24462806,  0.01859081,  0.04309034, -0.10241403)
+  nowU1 <- head(modes$U.subspace[,10,3], n=6)
+  expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
+  
+  ## structure 4- mode1:
+  U1 <- c(0.026860265, -0.063611179, 0.169276132, 0.006947062, -0.046694005, 0.096358693)
+  nowU1 <- head(modes$U.subspace[,1,4], n=6)
+  expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
+
+  f1 <- c(0.5991659, 0.3130850, 0.2478991, 0.2216199)
+  f2 <- c(0.5593485, 0.3212328, 0.2489800, 0.2074847)
+  expect_that(modes$fluctuations[1,1:4], equals(f1, tolerance=1e-6))
+  expect_that(modes$fluctuations[2,1:4], equals(f2, tolerance=1e-6))
+
 })
           
 
