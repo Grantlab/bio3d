@@ -187,6 +187,29 @@ test_that("NMA", {
   
   ###################################################################
   #
+  # Test mass custom stuff
+  #
+  ###################################################################
+
+  mc <- list(ALA=500, SER=1000)
+  invisible(capture.output(modes <- nma(pdb, mass.custom=mc)))
+
+  mass.expected <- c(500.000, 500.000, 500.000, 131.202, 129.184, 157.204)
+  expect_that(modes$mass[9:14], equals(mass.expected, tolerance=1e-6))
+
+  sum.expected <- 28564.73
+  expect_that(sum(modes$mass), equals(sum.expected, tolerance=1e-6))
+  
+  modes.expected <- c(0.128550353, 0.069409696, -0.011821954,
+                      0.056729141, 0.076231821, -0.004736402)
+  expect_that(modes$modes[1:6, 7], equals(modes.expected, tolerance=1e-6))
+  
+  L.expected <- c(0.007375, 0.009036, 0.013006, 0.015084, 0.020110, 0.022607)
+  expect_that(modes$L[7:12], equals(L.expected, tolerance=1e-6))
+  
+
+  ###################################################################
+  #
   # Test build.hessian
   #
   ###################################################################

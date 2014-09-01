@@ -29,7 +29,7 @@
 
   ## Passing arguments to functions aa2mass and nma
   am.names <- names(formals( aa2mass ))
-  nm.names <- names(formals( nma ))
+  nm.names <- names(formals( nma.pdb ))
   
   dots <- list(...)
   am.args <- dots[names(dots) %in% am.names]
