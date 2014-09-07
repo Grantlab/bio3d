@@ -13,7 +13,7 @@ lmi(trj, grpby=NULL, ncore=1)
     indicate the elements of \code{trj} that should be considered as a group
     (e.g. atoms from a particular residue). }
   \item{ncore}{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
 }
 \details{
   The correlation of the atomic fluctuations of a system can be assessed by the Linear 
@@ -51,7 +51,10 @@ xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
 cij <- lmi(xyz)
 
 ## Plot LMI matrix
-plot(cij)
+#plot(cij)
+col.scale <- colorRampPalette(c("gray95", "cyan"))(5)
+plot(cij, at=seq(0.4,1, length=5), col.regions=col.scale)
+
 }
 
 

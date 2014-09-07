@@ -19,7 +19,7 @@ pdbsplit(pdb.files, ids = NULL, path = "split_chain", overwrite=TRUE,
   \item{verbose}{ logical, if TRUE details of the PDB header and
     chain selections are printed. }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{...}{ additional arguments to \code{read.pdb}. Useful e.g. for
     parsing multi model PDB files, or include HETATM records in the
     split files. }
@@ -48,7 +48,7 @@ pdbsplit(pdb.files, ids = NULL, path = "split_chain", overwrite=TRUE,
   \code{\link{write.pdb}}, \code{\link{get.pdb}}. }
 \examples{
   ## Fetch PDBs
-  pdb.ids <- c("1YX5", "3NOB", "1P3Q", "2D3G", "1F9J")
+  pdb.ids <- c("1YX5", "3NOB")
   outdir <- paste(tempdir(), "/raw_pdbs", sep="")
   raw.files <- get.pdb(pdb.ids, path = outdir)
 

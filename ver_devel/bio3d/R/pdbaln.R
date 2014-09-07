@@ -13,11 +13,11 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
   ##
   ## Improvements to include 'atom.select' arguments (chain
   ## spliting etc), formalisation of 'pdb.list' into a specific
-  ## bio3d object of multiple structures like '3dalign'.
+  ## bio3d object of multiple structures like 'pdbs'.
   ##
   ## pdb.list[[1]]$atom[1:3,]
 
-  # Parallelized by multicore package (Fri Apr 26 19:24:18 EDT 2013)
+  # Parallelized by parallel package (Fri Apr 26 19:24:18 EDT 2013)
   ncore <- setup.ncore(ncore)
   if(ncore > 1) {
      # Issue of serialization problem

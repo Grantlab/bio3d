@@ -4,7 +4,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
   ## Log the call
   cl <- match.call()
   
-  # Parallelized by multicore package (Fri Apr 26 17:58:26 EDT 2013)
+  # Parallelized by parallel package (Fri Apr 26 17:58:26 EDT 2013)
   ncore <- setup.ncore(ncore)
   if(ncore > 1) {
      # Issue of serialization problem
@@ -62,7 +62,9 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
       
     } else {
       pdb <- read.pdb( files[i], verbose=FALSE, ... )
-      pdbseq  <- aa321(pdb$atom[pdb$calpha,"resid"])
+      ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
+      ##pdbseq  <- aa321(pdb$atom[pdb$calpha,"resid"])
+      pdbseq  <- aa321(pdb$atom$resid[ca.inds$atom])
       aliseq  <- toupper(aln$ali[i,])
       tomatch <- gsub("X","[A-Z]",aliseq[!is.gap(aliseq)])
       
@@ -94,7 +96,8 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
         if(sum(mismatch=="X") != n.miss) { ## ignore masked X res        
           details <- rbind(aliseq, !match,
                            pdbseq[nseq],
-                           pdb$atom[pdb$calpha,"resno"][nseq])
+                           pdb$atom$resno[ca.inds$atom][nseq])
+                           ##pdb$atom[pdb$calpha,"resno"][nseq])
           rownames(details) = c("aliseq","match","pdbseq","pdbnum")
           msg <- paste("ERROR:", aln$id[i],
                        "alignment and pdb sequences do not match")
@@ -105,7 +108,8 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
       }
       
       ##-- Store nseq justified PDB data
-      ca.ali <- pdb$atom[pdb$calpha,][nseq,]
+      ##ca.ali <- pdb$atom[pdb$calpha,][nseq,]
+      ca.ali <- pdb$atom[ca.inds$atom,][nseq,]
       coords <- rbind(coords, as.numeric( t(ca.ali[,c("x","y","z")]) ))
       res.nu <- rbind(res.nu, ca.ali[, "resno"])
       res.bf <- rbind(res.bf, as.numeric( ca.ali[,"b"] ))
@@ -142,7 +146,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
   out<-list(xyz=coords, resno=res.nu, b=res.bf,
             chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id,
             call = cl)
-  class(out)=c("3dalign","fasta")
+  class(out)=c("pdbs","fasta")
   return(out)
 }
 

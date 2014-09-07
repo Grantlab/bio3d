@@ -11,7 +11,7 @@ fit.xyz(fixed, mobile,
         mobile.inds = NULL,
         verbose=FALSE,
         prefix= "", pdbext = "",
-        outpath = "fitlsq", het=FALSE, full.pdbs=FALSE, 
+        outpath = "fitlsq", full.pdbs=FALSE, 
         ncore = 1, nseg.scale = 1, ...)
 
 rot.lsq(xx, yy,
@@ -29,9 +29,6 @@ rot.lsq(xx, yy,
   \item{full.pdbs}{ logical, if TRUE \dQuote{full} coordinate files
     (i.e. all atoms) are written to the location specified by
     \code{outpath}. }
-  \item{het}{ logical, if TRUE \sQuote{HETATM} records from full PDB
-    files are written to output superposed PDB files.  Only required if
-    \code{full.pdbs} is TRUE. } 
   \item{prefix}{ prefix to mobile$id to locate \dQuote{full} input PDB files.  Only
         required if \code{full.pdbs} is TRUE. }
   \item{pdbext}{ the file name extension of the input PDB files. }
@@ -50,7 +47,7 @@ rot.lsq(xx, yy,
   \item{verbose}{ logical, if TRUE more details are printed. }
    \item{\dots}{ other parameters for \code{\link{read.pdb}}. }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. } 
+    \code{ncore>1} requires package \sQuote{parallel} installed. } 
   \item{nseg.scale }{ split input data into specified number of segments
     prior to running multiple core calculation. }
   

@@ -1,131 +1,112 @@
-"trim.pdb" <-
-  function(pdb, inds=NULL, sse=TRUE) {
-    if(class(pdb)!="pdb")
-      stop("input 'pdb' must be a list object as returned from 'read.pdb'")
+"trim.pdb" <-function(pdb, inds=NULL, sse=TRUE) {
+  if(!is.pdb(pdb))
+    stop("input 'pdb' must be a PDB list object as returned from 'read.pdb'")
 
-    if(is.null(inds))
-      stop("no selection indices provided")
+  if(is.null(inds))
+    stop("no selection indices provided")
 
-    if(!is.list(inds))
-      stop("selection indices must be provided i.e. from 'atom.select'")
+  if(!is.list(inds))
+    stop("selection indices must be provided i.e. from 'atom.select'")
 
-    if(is.null(inds$atom) || is.null(inds$xyz))
-      stop("selection indices must be provided i.e. from 'atom.select'")
+  if(is.null(inds$atom) || is.null(inds$xyz))
+    stop("selection indices must be provided i.e. from 'atom.select'")
 
-    ## Trim main components
-    atom <- pdb$atom[inds$atom,]
-    xyz <-  pdb$xyz[inds$xyz]
-    calpha <- as.logical(atom[,"elety"]=="CA")
-
-    ## Multi-model records
-    if(!is.null(pdb$xyz.models))
-      xyz.models <- pdb$xyz.models[,inds$xyz]
-    else
-      xyz.models <- NULL
-    
-    sse.unbound <- function(sse) {
-      ex <- NULL; ch <- NULL; ty <- NULL;
-      for(i in 1:length(sse$start)) {
-        tmp <- sse$start[i]:sse$end[i]
-        ex <- c(ex, tmp)
-        ch <- c(ch, rep(sse$chain[i], length(tmp)))
-        ty <- c(ty, rep(sse[[4]][i], length(tmp)))
-      }
-      ub <- cbind(ex, ch, ty) ## Matrix of unbound nums chains types
-      ub <- cbind(ub, apply(ub, 1, function(x) paste(x[1:2], collapse="_")))
-      colnames(ub) <- c("nums", "chains", "type", "strid")
-      return(ub)
-    }
-
-    bounds.inds <- function(nums) {
-      if (length(nums) == 1) {
-        return(1)
-      }
-      
-      bounds.inds <- 1
-      nums.start <- nums[1]
-      diff.i <- 1
-      for (i in 2:length(nums)) {
-        if ((nums[i] - diff.i) != nums.start) {
-          bounds.inds <- c(bounds.inds, i)
-          nums.start <- nums[i]
-          diff.i <- 1
-        }
-        else {
-          diff.i <- diff.i + 1
-        }
-      }
-      return(bounds.inds)
-    }
-
-    helix <- NULL; sheet <- NULL;
-
-    if(sse) {
-      ## What's left after trimming
-      trimmed <- atom[calpha,c("resno", "chain")]
-      if(!is.matrix(trimmed)) trimmed <- t(as.matrix(trimmed))
-
-      ## Build a string identifier for easy comparison
-      strid <- apply(trimmed, 1, function(x) paste(x, collapse="_"))
-      trimmed <- cbind(trimmed, strid)
-      colnames(trimmed) <- c("nums", "chains", "strid")
-      
-      ## Helices
-      if(length(pdb$helix$start)>0) {
-        tmp <- sse.unbound(pdb$helix)
-        ht <- tmp[tmp[,"strid"] %in% trimmed[,"strid"], 1:3]
-        new.helix <- matrix(ht, ncol=3, byrow=FALSE)
-        colnames(new.helix) <- c("nums", "chains", "type")
-        
-        if(nrow(new.helix)>0) {
-          nums <- as.numeric(new.helix[,"nums"])
-          bnds <- bounds(nums, dup.inds=FALSE, pre.sort=FALSE)
-          
-          tmp.inds <-  bounds.inds(nums)
-          chain <- new.helix[tmp.inds,"chains"]
-          type <- new.helix[tmp.inds,"type"]
-          bnds <- cbind(bnds, chain, type)
-          
-          helix$start = as.numeric(bnds[,"start"])
-          helix$end = as.numeric(bnds[,"end"])
-          helix$chain = as.vector(bnds[,"chain"])
-          helix$type = as.vector(bnds[,"type"])
-        }
-      }
-      
-      ## Sheets
-      if(length(pdb$sheet$start)>0) {
-        tmp <- sse.unbound(pdb$sheet)
-        ht <- tmp[tmp[,"strid"] %in% trimmed[,"strid"], 1:3]
-        new.sheet <- matrix(ht, ncol=3, byrow=FALSE)
-        colnames(new.sheet) <- c("nums", "chains", "type")
-        
-        if(nrow(new.sheet)>0) {
-          nums <- as.numeric(new.sheet[,"nums"])
-          bnds <- bounds(nums, dup.inds=FALSE, pre.sort=FALSE)
-          
-          tmp.inds <-  bounds.inds(nums)
-          chain <- new.sheet[tmp.inds,"chains"]
-          type <- new.sheet[tmp.inds,"type"]
-          bnds <- cbind(bnds, chain, type)
-          
-          sheet$start = as.numeric(bnds[,"start"])
-          sheet$end = as.numeric(bnds[,"end"])
-          sheet$chain = as.vector(bnds[,"chain"])
-          sheet$sense = as.vector(bnds[,"type"])
-        }
-      }
-    }
-
-    output<-list(atom=atom,
-                 het=pdb$het, ## return unmodified
-                 helix=helix, 
-                 sheet=sheet, 
-                 seqres=pdb$seqres, ## return unmodified
-                 xyz=xyz,
-                 xyz.models=xyz.models,
-                 calpha = calpha)
-    
-    class(output) <- "pdb"
-    return(output)
+  ## Trim main components
+  atom <- pdb$atom[inds$atom,]
+  ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
+  calpha <- inds$atom %in% ca.inds$atom
+#  calpha = (atom[,"elety"]=="CA") & (atom[,"resid"]!="CA") & (atom[,"type"]=="ATOM")
+  
+  
+  if(is.null(nrow(pdb$xyz))) {
+    xyz <-  pdb$xyz[inds$xyz, drop=FALSE]
+  } else {
+    xyz <-  pdb$xyz[,inds$xyz, drop=FALSE]
   }
+  
+  helix <- NULL; sheet <- NULL;
+  
+  if(sse) {
+    ##-- Build reference SSE sequence matrix 'ss'
+    ref <- paste(pdb$atom[ca.inds$atom, "resno"], 
+                 pdb$atom[ca.inds$atom, "chain"], sep="_")
+    ss <- matrix(NA, ncol=length(ref), nrow=4) ## sse reference matrix
+    ss[4,] <- pdb$atom[ca.inds$atom, "resno"]    ## resno
+    colnames(ss) <- ref
+
+    ##- Trimed positions
+    ref.trim <- paste(atom[calpha, "resno"], 
+                      atom[calpha, "chain"], sep="_")
+
+    if(length(pdb$helix$start)>0) {
+      ##- HELIX chain, type and resno
+      chain.h <- rep(pdb$helix$chain, (pdb$helix$end-pdb$helix$start+1))
+      type.h <- rep(pdb$helix$type, (pdb$helix$end-pdb$helix$start+1))
+      resno.h <- unbound(pdb$helix$start, pdb$helix$end)
+
+      ##- Use reference vector for filling 'ss'
+      ref.h <- paste(resno.h, chain.h, sep="_")
+      i <- ref.h %in% ref ## Fix for HETATOM in SSE (1P3Q)
+      ss[1, ref.h[i]]="H"
+      ss[2, ref.h[i]]=chain.h[i]
+      ss[3, ref.h[i]]=type.h[i]
+    }
+
+
+    if(length(pdb$sheet$start)>0) {
+      ##- SHEET chain, type and resno
+      chain.e <- rep(pdb$sheet$chain, (pdb$sheet$end-pdb$sheet$start+1))
+      if(is.null(pdb$sheet$sense))
+         type.e <- rep("", sum(pdb$sheet$end-pdb$sheet$start+1))
+      else 
+         type.e <- rep(pdb$sheet$sense, (pdb$sheet$end-pdb$sheet$start+1))
+      resno.e <- unbound(pdb$sheet$start, pdb$sheet$end)
+
+      ##- Use reference vector for filling 'ss'
+      ref.e <- paste(resno.e, chain.e, sep="_")
+      i <- ref.e %in% ref
+      ss[1, ref.e[i]]="E"
+      ss[2, ref.e[i]]=chain.e[i]
+      ss[3, ref.e[i]]=type.e[i]
+    }
+
+    ##- Lookup trimed positions 'ref.trim' in 'ss'
+    s <- ss[, ref.trim, drop=FALSE]
+
+    if( any(s[1,] =="H",na.rm=TRUE) ) {
+      sh <- (s[, s[1,] %in% "H"])
+      h.bounds <- bounds( as.numeric(sh[4,]), pre.sort=FALSE)
+      h.inds <- rle2(rep(1:nrow(h.bounds), h.bounds[,"length"]))$inds
+
+      helix$start = h.bounds[,"start"]
+      helix$end = h.bounds[,"end"]
+
+      helix$chain = sh[2, h.inds]
+      helix$type = sh[3, h.inds]
+    }
+
+    if( any(s[1,] =="E",na.rm=TRUE) ) {
+      se <- (s[, s[1,] %in% "E"])
+      e.bounds <- bounds( as.numeric(se[4,]), pre.sort=FALSE)
+      e.inds <- rle2(rep(1:nrow(e.bounds), e.bounds[,"length"]))$inds
+
+      sheet$start = e.bounds[,"start"]
+      sheet$end = e.bounds[,"end"]
+
+      sheet$chain = se[2, e.inds]
+      sheet$sense = se[3, e.inds]
+    } 
+  }
+
+  calpha = (atom[,"elety"]=="CA") & (atom[,"resid"]!="CA") & (atom[,"type"]=="ATOM")
+  output<-list(atom=atom,
+               helix=helix, 
+               sheet=sheet, 
+               seqres=pdb$seqres, ## return unmodified
+               xyz=xyz,
+               calpha = calpha)
+  
+  class(output) <- c("pdb", "sse")
+  class(output$xyz) <- c("numeric","xyz")
+  return(output)
+}

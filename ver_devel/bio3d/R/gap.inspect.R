@@ -14,7 +14,7 @@ function(x) {
     gap.row <- sum(gaps)
   } else {
     if(is.list(x)) {
-      if(inherits(x, "3dalign")) {
+      if(inherits(x, "pdbs")) {
         x <- x$xyz; warning("Taking $xyz component (NOT $ali for which you should use 'gap.inspect(x$ali)')")
       } else {
         x <- x$ali

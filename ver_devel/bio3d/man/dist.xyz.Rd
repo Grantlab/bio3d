@@ -15,7 +15,7 @@ dist.xyz(a, b = NULL, all.pairs=TRUE, ncore=1, nseg.scale=1)
     only the distances between coresponding rows of \sQuote{a} and
     \sQuote{b} are computed. }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. } 
+    \code{ncore>1} requires package \sQuote{parallel} installed. } 
   \item{nseg.scale }{ split input data into specified number of segments
     prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
 }

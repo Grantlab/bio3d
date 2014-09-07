@@ -1,5 +1,5 @@
 "mktrj.enma" <- function(x=NULL,      # enma data structure
-                         pdbs=NULL,   # 3dalign object 
+                         pdbs=NULL,   # pdbs object 
                          ind=1,       # structure id
                          mode=1,      # which mode to move along
                          mag=10,      # magnification factor
@@ -11,7 +11,7 @@
   if(!inherits(x, "enma"))
     stop("mktrj.enma: must supply 'enma' object, i.e. from 'nma.pdbs'")
 
-  if(!inherits(pdbs, "3dalign"))
+  if(!inherits(pdbs, "pdbs"))
     stop("mktrj.enma: must supply 'pdbs' object, i.e. from 'pdbaln'")
   
   if(is.null(file))

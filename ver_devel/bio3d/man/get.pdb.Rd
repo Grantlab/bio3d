@@ -10,7 +10,8 @@ get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, gzip = FALSE,
 }
 \arguments{
   \item{ids}{ A character vector of one or more 4-letter PDB
-    codes/identifiers of the files to be downloaded. }
+    codes/identifiers of the files to be downloaded, or a \sQuote{blast}
+    object containing \sQuote{pdb.id}. }
   \item{path}{ The destination path/directory where files are to be
     written. }
   \item{URLonly}{ logical, if TRUE a character vector containing the URL
@@ -22,7 +23,7 @@ get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, gzip = FALSE,
     extracted locally. }
   \item{verbose}{ print details of the reading process. }
   \item{ncore}{ number of CPU cores used to do the calculation.
-     \code{ncore>1} requires multicore package installed. }
+     \code{ncore>1} requires package \sQuote{parallel} installed. }
 }
 \details{
   This is a basic function to automate file download from the PDB.

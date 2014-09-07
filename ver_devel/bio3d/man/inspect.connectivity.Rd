@@ -17,7 +17,7 @@ inspect.connectivity(pdbs, cut=4.)
 }
 \details{
   Utility function for checking if the PDB structures in a
-  \sQuote{3dalign} object contains missing residues inside the
+  \sQuote{pdbs} object contains missing residues inside the
   structure. 
 
 }

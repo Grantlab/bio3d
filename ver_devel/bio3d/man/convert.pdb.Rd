@@ -83,7 +83,7 @@ convert.pdb(pdb, type="original",
   \code{\link{read.fasta}} }
 \examples{
 # Read a PDB file
-pdb <- read.pdb( "4q21", het2atom=TRUE )
+pdb <- read.pdb("4q21")
 pdb
 head( pdb$atom[pdb$calpha,"resno"] )
 

@@ -4,14 +4,14 @@
            prefix = c("fixed", "mobile"),
            max.cycles = 10, cutoff = 0.5, ... ) {
     
-    if (missing(fixed)) 
+    if(missing(fixed)) 
       stop("align: must supply 'pdb' object, i.e. from 'read.pdb'")
-    if (missing(mobile)) 
+    if(missing(mobile)) 
       stop("align: must supply 'pdb' object, i.e. from 'read.pdb'")
     
-    if(class(fixed)!="pdb")
+    if(!is.pdb(fixed))
       stop("align: 'fixed' must be of type 'pdb'")
-    if(class(mobile)!="pdb")
+    if(!is.pdb(mobile))
       stop("align: 'mobile' must be of type 'pdb'")
     
     ## if indices are provided, make new PDB entities
@@ -19,10 +19,11 @@
       if(length(fixed.inds$atom)<2)
         stop("align: insufficent atom indices for fitting")
       
-      a <- NULL
-      a$atom <- fixed$atom[fixed.inds$atom, ]
-      a$xyz <- fixed$xyz[fixed.inds$xyz]
-      a$calpha <- as.logical(a$atom[,"elety"] == "CA")
+      #a <- NULL
+      #a$atom <- fixed$atom[fixed.inds$atom, ]
+      #a$xyz <- fixed$xyz[fixed.inds$xyz]
+      #a$calpha <- as.logical(a$atom[,"elety"] == "CA")
+      a <- trim.pdb(fixed, fixed.inds)
     }
     else {
       a <- fixed
@@ -33,10 +34,11 @@
       if(length(mobile.inds$atom)<2)
         stop("align: insufficent atom indices for fitting")
       
-      b <- NULL
-      b$atom <- mobile$atom[mobile.inds$atom, ]
-      b$xyz <- mobile$xyz[mobile.inds$xyz]
-      b$calpha <- as.logical(b$atom[,"elety"] == "CA")
+      #b <- NULL
+      #b$atom <- mobile$atom[mobile.inds$atom, ]
+      #b$xyz <- mobile$xyz[mobile.inds$xyz]
+      #b$calpha <- as.logical(b$atom[,"elety"] == "CA")
+      b <- trim.pdb(mobile, mobile.inds)
     }
     else {
       b <- mobile
@@ -126,7 +128,7 @@
     ## Perform the initial fitting
     fit <- rot.lsq(mobile$xyz, fixed$xyz,
                    xfit=b.inds.full$logical, yfit=a.inds.full$logical)
-    rmsd.init <- rmsd(fixed$xyz, fit,
+    rmsd.init <- rmsd(as.vector(fixed$xyz), fit,
                       a.inds=a.inds.full$xyz, b.inds=b.inds.full$xyz)
     cat("\n")
     cat(" Initial RMSD (", length(gaps$f.inds), " atoms): ", rmsd.init,
@@ -180,7 +182,7 @@
         }
         
         ## Calculate RMSD 
-        tmp.rmsd <- rmsd(fixed$xyz, fit, a.inds=a.inds.full$xyz, b.inds.full$xyz)
+        tmp.rmsd <- rmsd(as.vector(fixed$xyz), fit, a.inds=a.inds.full$xyz, b.inds.full$xyz)
         rmsd.all <- c(rmsd.all, tmp.rmsd)
         num.resi <- length(which(a.inds.full$logical))/3
         
@@ -198,7 +200,7 @@
     b.inds.full$logical <- NULL
     
     out <- list("a.inds"=a.inds.full, "b.inds"=b.inds.full,
-                xyz=fit, rmsd=rmsd.all)
+                xyz=as.xyz(fit), rmsd=rmsd.all)
     
     return(out)     
   }

@@ -4,13 +4,15 @@
     if(.Platform$OS.type=="windows")
       gzip <- FALSE
     
-    # Parallelized by multicore package (Tue Oct 15 15:23:36 EDT 2013)
+    # Parallelized by parallel package (Tue Oct 15 15:23:36 EDT 2013)
     ncore <- setup.ncore(ncore)
     if(ncore > 4) {
        # To avoid too frequent access to PDB server
        warning("Exceed maximum ncore (=4) to access PDB server. Use ncore=4")
        ncore <- setup.ncore(ncore = 4)
     }
+
+    if(inherits(ids, "blast")) ids = ids$pdb.id
 
     if (any(nchar(ids) < 4)) stop("ids should be standard 4 character PDB-IDs")
     if (any(nchar(ids) > 4)) {

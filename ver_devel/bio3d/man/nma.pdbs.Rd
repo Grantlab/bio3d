@@ -6,7 +6,7 @@
   Perform NMA on an ensemble of aligned protein structures.
 }
 \usage{
-nma.pdbs(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
+\method{nma}{pdbs}(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
          rm.gaps = TRUE, sse = FALSE, defa = FALSE, 
          outpath = NULL, ncore = 1, \dots)
 
@@ -32,7 +32,8 @@ nma.pdbs(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
   \item{outpath}{ character string specifing the output directory to
     which the PDB structures should be written. }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
+  
   \item{x}{ an \code{enma} object obtained from \code{\link{nma.pdbs}}. }
   \item{...}{ additional arguments to \code{nma}, \code{aa2mass}, and
     \code{print}. }
@@ -71,33 +72,28 @@ nma.pdbs(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Lars Skjaerven }
-\seealso{ \code{\link{nma}}, \code{\link{mktrj.enma}},
-  \code{\link{dccm.enma}}, \code{\link{plot.enma.R}}, 
-  \code{\link{rmsip}},
-  \code{\link{pdbaln}}, \code{\link{read.fasta.pdb}},  }
+\seealso{ \code{\link{nma}}, \code{\link{pdbaln}},
+  \code{\link{read.fasta.pdb}}, \code{\link{rmsip}}  }
 \examples{
 ## Fetch PDB files and split to chain A only PDB files
 ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
-raw.files <- get.pdb(ids, path = tempdir())
-files <- pdbsplit(raw.files, ids, path = tempdir())
+raw.files <- get.pdb(ids, path = "raw_pdbs")
+files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain")
 
 ## Sequence Alignement
 pdbs <- pdbaln(files)
 
 ## Normal mode analysis on aligned data
-modes <- nma.pdbs(pdbs, rm.gaps=FALSE)
+all.modes <- nma.pdbs(pdbs, rm.gaps=FALSE)
 
 ## Plot fluctuation data
-plot(modes)
-
-## Plot fluctuation data
-plot(modes, pdbs=pdbs, conservation=TRUE)
+plot(all.modes)
 
 ## Remove gaps from output
-modes <- nma.pdbs(pdbs, rm.gaps=TRUE)
+all.modes <- nma.pdbs(pdbs, rm.gaps=TRUE)
 
 ## Compare modes between two structures 
-rmsip(modes$U.subspace[,,1], modes$U.subspace[,,2])
+rmsip(all.modes$U.subs[,,1], all.modes$U.subs[,,2])
 
 }
-\keyword{ utilities }
+\keyword{ analysis }

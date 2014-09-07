@@ -25,7 +25,7 @@ amsm.xyz(xyz, ncore = NULL)
     core atoms is performed prior to the calculation of the AMS
     matrix. } 
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{...}{ additional arguments to \code{\link{amsm.xyz}}. }
 }
 \details{
@@ -128,8 +128,8 @@ gs  <- geostas(pdb)
 ## Fit all frames to the 'first' domain
 domain.inds <- atom2xyz(which(gs$grps==1))
 
-xyz <- fit.xyz(pdb$xyz.models[1, ca.inds$xyz],
-               pdb$xyz.models[, ca.inds$xyz],
+xyz <- fit.xyz(pdb$xyz[1, ca.inds$xyz],
+               pdb$xyz[, ca.inds$xyz],
                fixed.inds = domain.inds,
                mobile.inds = domain.inds)
 

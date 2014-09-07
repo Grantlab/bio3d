@@ -1,10 +1,10 @@
-"dccm.enma" <- function(x, ncore=NULL, ...) {
+"dccm.enma" <- function(x, ncore=NULL, na.rm=FALSE, ...) {
  
   enma <- x
   if(!inherits(enma, "enma"))
     stop("input should be an 'enma' object as obtained from 'nma.pdbs'")
 
-  ## Parallelized by multicore package
+  ## Parallelized by parallel package
   ncore <- setup.ncore(ncore, bigmem = FALSE)
 
   if(ncore>1)
@@ -20,11 +20,10 @@
   dims <- dim(enma$U.subspace)
   if(is.null(enma$full.nma)) {
     if((dims[1]-6)>dims[2])
-      warning(paste("Incomplete mode object:\n", dims[2], "/", dims[1],
-                    "modes used in the calculation of the DCCMs"))
+      warning(paste(dims[2], "modes used in the calculation of the DCCMs"))
   }
   
-  myCalcDCCM <- function(i, enma) {
+  myCalcDCCM <- function(i, enma, na.rm=FALSE) {
     if(is.null(enma$full.nma)) {
       if(mass) {
         freqs <- sqrt(abs(enma$L[i,])) / (2 * pi)
@@ -34,13 +33,21 @@
         freqs <- NULL
         fcs <- enma$L[i,]
       }
-      dummy.nma <- list(U=enma$U.subspace[,,i],
+
+      if(na.rm) {
+        inds <- which( !is.na(enma$U.subspace[,1,i]) )
+        U <- enma$U.subspace[inds,,i]
+      }
+      else
+        U <- enma$U.subspace[,,i]
+      dummy.nma <- list(U=U,
                         L=enma$L[i,],
                         modes=NULL,
                         frequencies=freqs,
                         force.constants=fcs,
                         triv.modes=0,
-                        natoms=nrow(enma$U.subspace[,,i])/3)
+                        natoms=nrow(U)/3)
+                        ##natoms=nrow(enma$U.subspace[,,i])/3)
       class(dummy.nma) <- "nma"
 
       invisible(capture.output(
@@ -57,7 +64,7 @@
 
   ## do the calc
   pb <- txtProgressBar(min=1, max=dims[3L], style=3)
-  all.dccm <- mylapply(1:dims[3L], myCalcDCCM, enma)
+  all.dccm <- mylapply(1:dims[3L], myCalcDCCM, enma, na.rm=na.rm)
   close(pb)
 
   if(any(is.na(enma$U.subspace)))

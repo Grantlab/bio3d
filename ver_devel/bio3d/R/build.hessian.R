@@ -1,7 +1,7 @@
 "build.hessian" <-
   function(xyz, pfc.fun, fc.weights=NULL,
-           sse=NULL, sequ=NULL, ss.bonds=NULL, ... )  {
-
+           sequ=NULL, sse=NULL, ss.bonds=NULL, ... )  {
+    
     if(missing(xyz))
       stop("build.hessian: 'xyz' coordinates must be provided")
     
@@ -9,6 +9,11 @@
       stop("build.hessian: 'pfc.fun' must be a function")
 
     ## Coordinates
+    xyz = as.xyz(xyz)
+    if(nrow(xyz)>1)
+      xyz=xyz[1,,drop=FALSE]
+    xyz=as.vector(xyz)
+    
     xyz    <- matrix(xyz, ncol=3, byrow=TRUE)
     natoms <- nrow(xyz)
 
@@ -122,15 +127,20 @@
 
     ## SSE
     if(!is.null(sse)) {
-      if((sse$call$resno=="F" || sse$call$resno=="FALSE") &&
-         (sse$call$full=="T"  || sse$call$full=="TRUE"  ))
-        use.sse <- TRUE
-      else
+      if(is.null(sse$call$resno) | is.null(sse$call$full)) {
         use.sse <- FALSE
-
+      }
+      else {
+        if((sse$call$resno=="F" | sse$call$resno=="FALSE") &
+           (sse$call$full=="T"  | sse$call$full=="TRUE"  ))
+          use.sse <- TRUE
+        else
+          use.sse <- FALSE
+      }
+      
       ssdat$sse <- sse
       if(!use.sse)
-        warning("use 'dssp' with 'resno=FALSE and full=TRUE'")
+        warning("sse argument ignored: use 'dssp' with 'resno=FALSE' and 'full=TRUE'")
     }
     else {
       use.sse <- FALSE

@@ -7,7 +7,7 @@
                        defa = FALSE, outpath = NULL, ncore=1, ...) {
  
   
-  if(!inherits(pdbs, "3dalign"))
+  if(!inherits(pdbs, "pdbs"))
     stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
 
   ## Log the call
@@ -16,7 +16,7 @@
   if(!is.null(outpath))
     dir.create(outpath, FALSE)
 
-  ## Parallelized by multicore package
+  ## Parallelized by parallel package
   ncore <- setup.ncore(ncore, bigmem = TRUE)
   prev.warn <- getOption("warn")
   
@@ -29,7 +29,7 @@
 
   ## Passing arguments to functions aa2mass and nma
   am.names <- names(formals( aa2mass ))
-  nm.names <- names(formals( nma ))
+  nm.names <- names(formals( nma.pdb ))
   
   dots <- list(...)
   am.args <- dots[names(dots) %in% am.names]
@@ -52,12 +52,19 @@
     nm.keep <- nm.args$keep
   else
     nm.keep <- NULL
-
+  
   if(!all((names(nm.args) %in% c("mass", "ff", "temp", "keep")))) {
     war <- paste(names(nm.args)[! names(nm.args) %in% c("mass", "ff", "temp", "keep") ], collapse=", ")
     warning(paste("ignoring arguments:", war))
   }
-
+  
+  ## Force field
+  pfc.fun <- load.enmff(ff)
+  
+  ## Check for optional arguments to pfc.fun
+  ff.names <- names(formals( pfc.fun ))
+  ff.args  <- dots[names(dots) %in% ff.names]
+  
   ## SSE analysis
   if(sse) {
     sse <- dssp.pdbs(pdbs)
@@ -93,7 +100,7 @@
   }
 
   ## check for missing masses before we start calculating
-  if(any(pdbs$ali=="X") && mass==TRUE) {
+  if(any(pdbs$ali=="X") & mass==TRUE) {
     mat.file <- system.file(paste("matrices/aa_mass.mat",sep=""), package="bio3d")
     mat <- read.table(mat.file)
     resnames <- c(row.names(mat), names(am.args$mass.custom))
@@ -127,10 +134,7 @@
             
   ## Use for later indexing
   pdbs$inds <- matrix(NA, ncol=ncol(pdbs$resno), nrow=nrow(pdbs$resno))
-
-  ## Force field
-  pfc.fun <- load.enmff(ff)
-  
+ 
   ## Number of modes to store in U.subspace
   if(is.null(subspace)) {
     keep <- length(gaps.pos$f.inds)-6
@@ -144,7 +148,8 @@
   ## Coordiantes - fit or not
   if(fit) {
     xyz <- fit.xyz(fixed = pdbs$xyz[1, ], mobile = pdbs,
-                   fixed.inds = gaps.pos$f.inds, mobile.inds = gaps.pos$f.inds)
+                   fixed.inds = gaps.pos$f.inds, mobile.inds = gaps.pos$f.inds,
+                   ncore = ncore)
   }
   else
     xyz <- pdbs$xyz
@@ -240,7 +245,7 @@
                        pdbs, xyz, gaps.res,
                        mass, am.args, nm.keep, temp, keep, 
                        rm.gaps, defa, full, 
-                       pfc.fun, ff, outpath, pb, ncore)
+                       pfc.fun, ff, ff.args, outpath, pb, ncore)
   close(pb)
   
   ##### Collect data #####
@@ -317,25 +322,31 @@
   return(round(mat, 4))
 }
 
-.buildDummyPdb <- function(pdb=NULL, xyz=NULL, resno=NULL, chain=NULL, resid=NULL) {
+.buildDummyPdb <- function(pdb=NULL, xyz=NULL,  elety=NULL, resno=NULL, chain=NULL, resid=NULL) {
 
+  natoms <- length(resno)
   tmp.pdb <- NULL
-  tmp.pdb$atom           = matrix(NA, nrow=length(resno), ncol=15)
-  colnames(tmp.pdb$atom) = c("eleno", "elety", "alt", "resid", "chain", "resno", "insert",
-                             "x", "y", "z", "o", "b", "segid", "elesy", "charge")
-  
-  tmp.pdb$atom[,"eleno"]          = 1:nrow(tmp.pdb$atom)
-  tmp.pdb$atom[,"elety"]          = "CA"
+  tmp.pdb$atom           = matrix(NA, nrow=natoms, ncol=16)
+  colnames(tmp.pdb$atom) = c("type", "eleno", "elety", "alt", "resid",
+            "chain", "resno", "insert",
+            "x", "y", "z", "o", "b", "segid", "elesy", "charge")
+
+  tmp.pdb$atom[,"type"]           = rep("ATOM", natoms)
+  tmp.pdb$atom[,"eleno"]          = seq(1, natoms)
+  tmp.pdb$atom[,"elety"]          = elety
   tmp.pdb$atom[,"alt"]            = NA
   tmp.pdb$atom[,"resid"]          = resid
   tmp.pdb$atom[,"resno"]          = resno
   tmp.pdb$atom[,"chain"]          = chain
   tmp.pdb$atom[,c("x", "y", "z")] = matrix(xyz, ncol=3, byrow=T)
   
-  tmp.pdb$xyz    = xyz
-  tmp.pdb$calpha = rep(TRUE, nrow(tmp.pdb$atom))
-  
+  tmp.pdb$xyz    = as.xyz(xyz)
   class(tmp.pdb) = "pdb"
+    
+  ca.inds <- atom.select(tmp.pdb, "calpha", verbose=FALSE)
+  tmp.pdb$calpha <- seq(1, natoms) %in% ca.inds$atom
+
+  tmp.pdb$atom=as.data.frame(tmp.pdb$atom, stringAsFactors=FALSE)
   return(tmp.pdb)
 }
 
@@ -343,7 +354,7 @@
 .calcAlnModes <- function(i, pdbs, xyz, gaps.res,
                           mass, am.args, nm.keep, temp, keep,
                           rm.gaps, defa, full, 
-                          pfc.fun, ff, outpath, pb, ncore) {
+                          pfc.fun, ff, ff.args, outpath, pb, ncore) {
 
   ## Set indices for this structure only
   f.inds <- NULL
@@ -371,9 +382,12 @@
   ## 3-letter AA code is provided in the pdbs object
   ## avoid using aa123() here (translates TPO to THR)
   resid <- pdbs$resid[i,f.inds$res]
+  sequ  <- resid
   
-  ## Build a dummy PDB to use with function nma()
-  pdb.in <- .buildDummyPdb(pdb=NULL, xyz=tmp.xyz, resno=resno, chain=chain,  resid=resid)
+  ## Build a dummy PDB to use with function nma.pdb()
+  pdb.in <- .buildDummyPdb(pdb=NULL, xyz=tmp.xyz, elety=rep("CA", length(resno)),
+                           resno=resno, chain=chain, resid=resid)
+
   if(!is.null(outpath)) {
     fname <- file.path(outpath, basename(pdbs$id[i]))
     write.pdb(pdb.in, file=fname)
@@ -381,7 +395,7 @@
   
   if(mass) {
     masses <- try(
-      do.call('aa2mass', c(list(pdb=pdb.in, inds=NULL), am.args)),
+      do.call('aa2mass', c(list(pdb=sequ, inds=NULL), am.args)),
       silent=TRUE
       )
     
@@ -398,8 +412,7 @@
     masses.out <- NULL
   }
 
-  sequ    <- pdbseq(pdb.in)
-  natoms.in <- length(pdb.in$xyz)/3
+  natoms.in <- nrow(pdb.in$atom)
   natoms.out <- natoms.in
   
   if(rm.gaps) {
@@ -408,7 +421,7 @@
     class(sele) <- "select"
     
     pdb.out <- trim.pdb(pdb.in, sele)
-    natoms.out <- length(pdb.out$xyz)/3
+    natoms.out <- nrow(pdb.out$atom)
 
     if(mass)
       masses.out <- masses.in[ inds.inc ]
@@ -420,11 +433,14 @@
     inc.inds <- NULL
   }
   
-  ## Build effective hessian 
+  ## Build effective hessian
+  bh.args <- c(list(sequ=sequ), ff.args)
+  init <- list(pfcfun=pfc.fun, bh.args=bh.args)
+
   invisible(capture.output( hessian <-
-                           .nma.hess(pdb.in$xyz, init=list(pfcfun=pfc.fun), 
-                                     sequ=sequ, inc.inds=inc.inds) ))
-  
+                           .nma.hess(pdb.in$xyz, init=init,
+                                     hessian=NULL, inc.inds=inc.inds) ))
+
   ## Mass-weight hessian
   if(!is.null(masses.out))
     invisible(capture.output( hessian <- .nma.mwhessian(hessian, masses=masses.out)))
@@ -437,7 +453,7 @@
                            .nma.finalize(ei, xyz=pdb.out$xyz, temp=temp,
                                          masses=masses.out,
                                          natoms=natoms.out, keep=nm.keep, call=NULL) ))
-  
+
   ## deformation analysis
   if(defa)
     defo <- rowMeans(deformation.nma(modes, ncore=1, mode.inds=seq(7,11))$ei)

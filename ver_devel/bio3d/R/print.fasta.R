@@ -1,6 +1,6 @@
 print.fasta <- function(x, alignment=TRUE, ...) {
   
-  if ( (inherits(x, "fasta") | inherits(x, "3dalign")) ){ 
+  if ( (inherits(x, "fasta") | inherits(x, "pdbs")) ){ 
     id <- x$id
     ali <- as.matrix(x$ali)
     call <- paste(deparse(x$call), sep = "\n", collapse = "\n")
@@ -10,7 +10,7 @@ print.fasta <- function(x, alignment=TRUE, ...) {
     call <- NA
   }
 
-  if(inherits(x, "3dalign"))
+  if(inherits(x, "pdbs"))
     row.desc <- "structures"
   else
     row.desc <- "sequences"
@@ -73,7 +73,7 @@ print.fasta <- function(x, alignment=TRUE, ...) {
   ##   Does not work if alignment contains only one position (one seq?)
   ##     y=x; y$ali=x$ali[,1]
 
-  if ( (inherits(x, "fasta") | inherits(x, "3dalign")) ){ 
+  if ( (inherits(x, "fasta") | inherits(x, "pdbs")) ){ 
     id <- x$id
     ali <- as.matrix(x$ali)
   } else {

@@ -3,9 +3,11 @@ context("Testing cmap function")
 
 test_that("cmap() works properly", {
 
-  ## Calculate correl mat on a small protein
+  ## Calculate contact map on a small protein
   invisible(capture.output(pdb <- read.pdb("1tag")))
-  invisible(capture.output(cm <- cmap(pdb$xyz, grpby=pdb$atom[, "resno"], ncore=1)))
+  invisible(capture.output(inds <- atom.select(pdb, "protein")))
+  invisible(capture.output(cm <- cmap(pdb$xyz[, inds$xyz],
+                                      grpby=pdb$atom[inds$atom, "resno"], ncore=1)))
   
   expect_equal(length(which(cm==1)), 750)
   expect_true(all(is.na(cm[1,1:3])))

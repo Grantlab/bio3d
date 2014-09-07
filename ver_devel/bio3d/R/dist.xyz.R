@@ -11,7 +11,7 @@ function(a, b=NULL, all.pairs=TRUE, ncore=1, nseg.scale=1){
   ## if 'a' is a vector and 'b' is NULL
   ## make 'a' a 3 col matrix and call 'dist' 
 
-  # Parallelized by multicore package (Fri Jul  5 19:58:32 EDT 2013)
+  # Parallelized by parallel package (Fri Jul  5 19:58:32 EDT 2013)
   ncore <- setup.ncore(ncore)
   if(ncore > 1) {
      # Issue of serialization problem
