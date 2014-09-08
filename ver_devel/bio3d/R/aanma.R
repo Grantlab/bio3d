@@ -46,23 +46,36 @@
     pdb.out <- trim.pdb(pdb.in, inc.inds)
   }
 
-  ##sequ    <- pdbseq(pdb.in)
   natoms.in <- length(pdb.in$xyz)/3
   natoms.out <- length(pdb.out$xyz)/3
+  sequ <- pdb.in$atom$resid
   
   if (natoms.in<3 | natoms.out<3)
     stop("aanma: insufficient number of atoms")
+
   
   ## Use atom2mass to fetch atom mass
   if (mass) {
+    if(outmodes=="calpha")
+      masses.out <-  atom2mass(pdb.in, grpby=pdb.in$atom$resno)
     if(outmodes=="noh") {
-      ##masses.in <-  atom2mass(pdb.in)
-      ##masses.out <- masses.in[ inc.inds$atom ]
-      masses.out <-  atom2mass(pdb.out)
+      masses.in <-  atom2mass(pdb.in)
+      masses.out <- masses.in[ inc.inds$atom ]
     }
+    
 
-    if(outmodes=="calpha") {
-      masses.out <- do.call('aa2mass', c(list(pdb=pdb.out, inds=NULL), init$am.args))
+    if(FALSE) {
+      if(outmodes=="noh") {
+        ##masses.in <-  atom2mass(pdb.in)
+        ##masses.out <- masses.in[ inc.inds$atom ]
+        masses.out <-  atom2mass(pdb.out)
+      }
+      
+      if(outmodes=="calpha") {
+        ##masses.in <- do.call('aa2mass', c(list(pdb=sequ, inds=NULL), init$am.args))
+        ##masses.out <- masses.in[ inc.inds$atom ]
+        masses.out <- do.call('aa2mass', c(list(pdb=pdb.out, inds=NULL), init$am.args))
+      }
     }
   }
 
@@ -72,7 +85,7 @@
   }
   
   ## NMA hessian
-  hessian <- .nma.hess(pdb.in$xyz, init=init, sequ=NULL, 
+  hessian <- .nma.hess(pdb.in$xyz, init=init,
                        hessian=hessian, inc.inds=inc.inds)
 
   ## mass weight hessian
