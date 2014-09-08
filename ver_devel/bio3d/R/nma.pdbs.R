@@ -3,7 +3,7 @@
 ## 2 - return the full objects
 
 "nma.pdbs" <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL,
-                       rm.gaps=TRUE, sse=FALSE,
+                       rm.gaps=TRUE, sse=FALSE, fcw=FALSE, 
                        defa = FALSE, outpath = NULL, ncore=1, ...) {
  
   
@@ -222,8 +222,12 @@
   if(fit)
     cat(paste("  ...", "coordinate superposition prior to NM calculation", "\n"))
 
+  if(fcw & rm.gaps)
+    cat(paste("  ...", "weighting force constants based on structural variance", "\n"))
+
   if(full)
     cat(paste("  ... individual complete 'nma' objects will be stored", "\n"))
+  
   if(rm.gaps)
     cat(paste("  ... aligned eigenvectors (gap containing positions removed) ", "\n"))
 
@@ -231,7 +235,19 @@
     cat(paste("  ...", "estimated memory usage of final 'eNMA' object:", mem.usage, "Mb \n"))
   
   cat("\n")
-  
+
+
+  ##### Start calculation of variance weighting  #####
+  wts <- NULL
+  if(fcw) {
+    if(!rm.gaps) {
+      warning("fcw only possible when rm.gaps=TRUE")
+      wts <- NULL
+    }
+    else
+      wts <- .make.weights(xyz) ** 5
+  }
+
   ##### Start modes calculation #####
   pb <- txtProgressBar(min=0, max=length(pdbs$id), style=3)
   
@@ -243,7 +259,7 @@
   ## call .calcAlnModes for each structure in 'pdbs'
   alnModes <- mylapply(1:length(pdbs$id), .calcAlnModes,
                        pdbs, xyz, gaps.res,
-                       mass, am.args, nm.keep, temp, keep, 
+                       mass, am.args, nm.keep, temp, keep, wts,
                        rm.gaps, defa, full, 
                        pfc.fun, ff, ff.args, outpath, pb, ncore)
   close(pb)
@@ -322,6 +338,25 @@
   return(round(mat, 4))
 }
 
+".make.weights" <- function(xyz) {
+  # Calculate pairwise distances
+  natoms <- ncol(xyz) / 3
+  all <- array(0, dim=c(natoms,natoms,nrow(xyz)))
+  for( i in 1:nrow(xyz) ) {
+    dists <- dist.xyz(xyz[i,])
+    all[,,i] <- dists
+  }
+  
+  # Calculate variance of pairwise distances
+  all.vars <- apply(all, 1:2, var)
+  
+  # Make the final weights
+  weights <- 1 - (all.vars / max(all.vars, na.rm=TRUE))
+  weights[is.na(weights)] <- 1
+  return(weights)
+}
+
+
 .buildDummyPdb <- function(pdb=NULL, xyz=NULL,  elety=NULL, resno=NULL, chain=NULL, resid=NULL) {
 
   natoms <- length(resno)
@@ -352,7 +387,7 @@
 
 ## Calculate 'aligned' normal modes of structure i in pdbs
 .calcAlnModes <- function(i, pdbs, xyz, gaps.res,
-                          mass, am.args, nm.keep, temp, keep,
+                          mass, am.args, nm.keep, temp, keep, wts,
                           rm.gaps, defa, full, 
                           pfc.fun, ff, ff.args, outpath, pb, ncore) {
 
@@ -360,7 +395,7 @@
   f.inds <- NULL
   f.inds$res <- which(gaps.res$bin[i,]==0)
   f.inds$pos <- atom2xyz(f.inds$res)
-  
+
   ## similar to $resno but sequential indices
   pdbs$inds[i, f.inds$res] <- seq(1, length(f.inds$res))
   
@@ -434,8 +469,9 @@
   }
   
   ## Build effective hessian
-  bh.args <- c(list(sequ=sequ), ff.args)
+  bh.args <- c(list(sequ=sequ, fc.weights=wts[f.inds$res, f.inds$res]), ff.args)
   init <- list(pfcfun=pfc.fun, bh.args=bh.args)
+  ##print(init$bh.args$fc.weights)
 
   invisible(capture.output( hessian <-
                            .nma.hess(pdb.in$xyz, init=init,

@@ -9,6 +9,9 @@
            xlim=NULL, ylim=NULL,
            mar = c(4, 5, 2, 2),
            ...) {
+
+    ##if(is.null(col))
+    ##  col <- cutree(hclust(as.dist(1-sip(x)), method="ward.D2"), k=3)
     
     if(!(inherits(x, "enma") | inherits(x, "matrix")))
       stop("provide a enma object as obtained from 'nma.pdbs'")

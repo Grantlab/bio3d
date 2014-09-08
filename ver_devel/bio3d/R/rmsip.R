@@ -1,56 +1,75 @@
-"rmsip" <-
-  function(modes.a, modes.b, subset = 10, row.name="a", col.name="b") {
+rmsip <- function(...)
+  UseMethod("rmsip")
+
+rmsip.enma <- function(modes, ncore=NULL) {
+  if(!inherits(modes, "enma"))
+    stop("provide a 'enma' object as obtain from function 'nma.pdbs()'")
+  
+  ncore <- setup.ncore(ncore, bigmem = FALSE)
+  
+  if(ncore>1)
+    mylapply <- mclapply
+  else
+    mylapply <- lapply
+  
+  dims <- dim(modes$fluctuations)
+  m <- dims[1]
+
+  mat <- matrix(NA, m, m)
+  ##inds <- pairwise(m)
+  inds <- rbind(pairwise(m),
+                matrix(rep(1:m,each=2), ncol=2, byrow=T))
+  
+  mylist <- mylapply(1:nrow(inds), function(row) {
+    i <- inds[row,1]; j <- inds[row,2];
+    r <- rmsip.matrix(modes$U.subspace[,,i], modes$U.subspace[,,j])
+    out <- list(val=r$rmsip, i=i, j=j)
+    cat(".")
+    return(out)
+  })
+
+  for ( i in 1:length(mylist)) {
+    tmp <- mylist[[i]]
+    mat[tmp$i, tmp$j] <- tmp$val
+  }
+  
+  mat[ inds[,c(2,1)] ] = mat[ inds ]
+  ##diag(mat) <- rep(1, n)
+  colnames(mat) <- basename(rownames(modes$fluctuations))
+  rownames(mat) <- basename(rownames(modes$fluctuations))
+
+  cat("\n")
+  return(round(mat, 6))
+}
+
+rmsip.nma <- function(...)
+  rmsip.matrix(...)
+
+rmsip.pca <- function(...)
+  rmsip.matrix(...)
+
+rmsip.matrix <- function(modes.a, modes.b, subset = 10, row.name="a", col.name="b") {
     
     if(missing(modes.a))
       stop("rmsip: 'modes.a' must be prodivded")
     if(missing(modes.b))
       stop("rmsip: 'modes.b' must be prodivded")
     
-    if ("pca" %in% class(modes.a)) {
-      ev.a <- modes.a$U
-      first.mode <- 1
-      inds.a <- seq(first.mode, subset)
-    }
-    else if("nma" %in% class(modes.a)) {
-      ev.a <- modes.a$U ## Use orthogonal raw vectors
-      #ev.a <- modes.a$modes ## Otherwise modes needs to be mass-w re-normed
-      mass.a <- modes.a$mass
-      first.mode <- modes.a$triv.modes+1
-      nmodes <- modes.a$triv.modes + subset
-      inds.a <- seq(first.mode, nmodes)
-    }
-    else {
-      if(class(modes.a)!="matrix" && class(modes.a)!="pca.loadings")
-        stop("overlap: 'modes.a' must be an object of type 'pca', 'nma', or 'matrix'")
-      ev.a <- modes.a
-      first.mode <- 1
-      inds.a <- seq(first.mode, subset)
-    }
+    m1 <- .fetchmodes(modes.a, subset=subset)
+    m2 <- .fetchmodes(modes.b, subset=subset)
 
-    if ("pca" %in% class(modes.b)) {
-      ev.b <- modes.b$U
-      first.mode <- 1
-      inds.b <- seq(first.mode, subset)
-    }
-    else if("nma" %in% class(modes.b)) {
-      ev.b <- modes.b$U
-      #ev.b <- modes.b$modes
-      mass.b <- modes.b$mass
-      first.mode <- modes.b$triv.modes+1
-      nmodes <- modes.b$triv.modes + subset
-      inds.b <- seq(first.mode, nmodes)
-    }
-    else {
-      if(class(modes.b)!="matrix" && class(modes.b)!="pca.loadings")
-        stop("overlap: 'modes.b' must be an object of type 'pca', 'nma', or 'matrix'")
-      ev.b <- modes.b
-      first.mode <- 1
-      inds.b <- seq(first.mode, subset)
-    }
+    dims.a <- dim(m1$U)
+    dims.b <- dim(m2$U)
+    subset <- dims.a[2]
+    
+    if( dims.a[1] != dims.b[1] )
+      stop("dimension mismatch")
+    if( dims.a[2] != dims.b[2] )
+      stop("dimension mismatch")
 
     mass.a <- NULL; mass.b <- NULL;
-    x <- normalize.vector(ev.a[,inds.a], mass.a)
-    y <- normalize.vector(ev.b[,inds.b], mass.b)
+    x <- normalize.vector(m1$U, mass.b)
+    y <- normalize.vector(m2$U, mass.b)
 
     if(is.null(mass.a))
       o <- ( t(x) %*% y ) **2
@@ -71,3 +90,38 @@
     class(out) <- "rmsip"
     return( out )
   }
+
+
+.fetchmodes <- function(x, subset=NULL) {
+  if (inherits(x, "pca")) {
+    U <- x$U; L <- x$L;
+    first.mode <- 1
+  }
+  else if (inherits(x, "nma")) {
+    U <- x$U; L <- x$L;
+    mass <- x$mass
+    first.mode <- x$triv.modes+1
+  }
+  else {
+    if( !(inherits(x, "matrix") | inherits(x, "pca.loadings")) )
+      stop("provide an object of type 'pca', 'nma', or 'matrix'")
+    U <- x; L <- NULL;
+    first.mode <- 1
+  }
+
+  dims <- dim(U)
+  if(is.null(subset)) {
+    n <- dims[2]
+  }
+  else {
+    n <- subset + first.mode - 1
+    if(n>dims[2])
+      n <- dims[2]
+  }
+
+  U <- U[, first.mode:n, drop=FALSE]
+  L <- L[first.mode:n]
+  
+  out <- list(U=U, L=L, mass=NULL)
+  return(out)
+}
