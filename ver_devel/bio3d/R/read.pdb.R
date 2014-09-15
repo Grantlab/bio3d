@@ -55,7 +55,7 @@ function (file, maxlines=-1, multi=FALSE,
     ##- Remove leading and trailing spaces from character strings
     s <- sub("^ +", "", s)
     s <- sub(" +$", "", s)
-    s[(s=="")]<-NA
+    s[(s=="")]<-""
     s
   }
 
@@ -158,7 +158,7 @@ function (file, maxlines=-1, multi=FALSE,
                     stringsAsFactors=FALSE, sep=",", quote='',
                     colClasses=atom.format[!drop.ind,"what"],
                     col.names=atom.format[!drop.ind,"name"],
-                    comment.char="")
+                    comment.char="", na.strings="")
 
   ##-- End data.frame update
 
