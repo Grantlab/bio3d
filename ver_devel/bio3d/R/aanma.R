@@ -1,6 +1,7 @@
 ## all-atom NMA
 "aanma" <- function(pdb, ff='aaenm', pfc.fun=NULL, mass=TRUE,
-                    temp=300.0, keep=NULL, hessian=NULL, outmodes='calpha', ... ) {
+                    temp=300.0, keep=NULL, hessian=NULL, outmodes='calpha',
+                    rm.wat=TRUE, ... ) {
   
   ## Log the call
   cl <- match.call()
@@ -21,17 +22,26 @@
       stop("dimension mismatch")
   }
   else {
-    tmp.inds <- atom.select(pdb, "noh", verbose=FALSE)
+    if(rm.wat)
+      nowat.inds <- atom.select(pdb, "notwater", verbose=FALSE)
+    noh.inds <- atom.select(pdb, "noh", verbose=FALSE)
+    tmp.inds <- combine.sel(noh.inds, nowat.inds, verbose=FALSE)
     pdb.in <- trim.pdb(pdb, tmp.inds)
+
+    lig.inds <- atom.select(pdb.in, "ligand")
+    if(lig.inds$atom>0) {
+      ligs <- paste(unique(pdb.in$atom$resid[ lig.inds$atom ]), sep=", ")
+      warning(paste("ligands", ligs, "included in calculation of normal modes"))
+    }
   }
-  
+    
   ## Indices for effective hessian
   if(is.select(outmodes)) {
     ## since pdb.in is 'noh' (from trim.pdb above), we need to re-select
     inc.inds <- .match.sel(pdb, pdb.in, outmodes)
     pdb.out <- trim.pdb(pdb.in, inc.inds)
     
-    unq.elety <- unique(pdb.out$atom[,"elety"])
+    unq.elety <- unique(pdb.out$atom$elety)
     outmodes="noh"
     if(length(unq.elety)==1)
       if(unq.elety=="CA")
@@ -46,9 +56,9 @@
     pdb.out <- trim.pdb(pdb.in, inc.inds)
   }
 
-  natoms.in <- length(pdb.in$xyz)/3
-  natoms.out <- length(pdb.out$xyz)/3
-  sequ <- pdb.in$atom$resid
+  natoms.in <- nrow(pdb.in$atom)
+  natoms.out <- nrow(pdb.out$atom)
+  sequ <- pdb.in$atom$resid[ !duplicated(pdb.in$atom$resno) ]
   
   if (natoms.in<3 | natoms.out<3)
     stop("aanma: insufficient number of atoms")
@@ -56,26 +66,14 @@
   
   ## Use atom2mass to fetch atom mass
   if (mass) {
-    if(outmodes=="calpha")
-      masses.out <-  atom2mass(pdb.in, grpby=pdb.in$atom$resno)
     if(outmodes=="noh") {
       masses.in <-  atom2mass(pdb.in)
       masses.out <- masses.in[ inc.inds$atom ]
     }
     
-
-    if(FALSE) {
-      if(outmodes=="noh") {
-        ##masses.in <-  atom2mass(pdb.in)
-        ##masses.out <- masses.in[ inc.inds$atom ]
-        masses.out <-  atom2mass(pdb.out)
-      }
-      
-      if(outmodes=="calpha") {
-        ##masses.in <- do.call('aa2mass', c(list(pdb=sequ, inds=NULL), init$am.args))
-        ##masses.out <- masses.in[ inc.inds$atom ]
-        masses.out <- do.call('aa2mass', c(list(pdb=pdb.out, inds=NULL), init$am.args))
-      }
+    if(outmodes=="calpha") {
+      masses.in <-  atom2mass(pdb.in)
+      masses.out <- do.call('aa2mass', c(list(pdb=pdb.out, inds=NULL), init$am.args))
     }
   }
 
@@ -83,8 +81,9 @@
   else {
     masses.out <- NULL;
   }
-  
+
   ## NMA hessian
+  ##hessian <- NULL
   hessian <- .nma.hess(pdb.in$xyz, init=init,
                        hessian=hessian, inc.inds=inc.inds)
 
