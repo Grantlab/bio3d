@@ -29,11 +29,11 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
   ##     see ?igraph.plotting)
   ##   
 
-  ## Check for presence of igraph package (now in Depends.)
- oops <- require(igraph)
- if (!oops) {
-    stop("igraph package missing: Please install, see: ?install.packages")
- }
+  ## Check for presence of igraph package
+  oops <- require(igraph)
+  if (!oops) {
+     stop("igraph package missing: Please install, see: ?install.packages")
+  }
 
   ##- Determine which network to plot along with node size
   if(full) {
@@ -76,11 +76,11 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
   
   ##- Obtain the plot layout coords
   if(!is.null(pdb) && is.null(layout)) {
-    cat("Obtaning layout from PDB structure\n")
+    cat("Obtaining layout from PDB structure\n")
     layout = layout.cna(x, pdb, full=full)
   }
   if(is.null(pdb) && is.null(layout)) {
-    cat("Obtaning guestimated layout with fruchterman.reingold\n")
+    cat("Obtaining estimated layout with fruchterman.reingold\n")
     layout <- layout.fruchterman.reingold(y, weights=weights)
   }
   if(dim(layout)[2] != 2){

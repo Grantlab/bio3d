@@ -19,7 +19,7 @@ cij.filter <- function(cij, inds = 1:dim(cij)[3L], xyz = NULL,
          cutoff.loading = 0.02, cutoff.dm = 15, cutoff.pcon = 1, extra.filter = NULL) {
 
    model <- match.arg(model)
-   if(inherits(xyz, "3dalign")) {
+   if(inherits(xyz, "pdbs")) {
       gaps.pos <- gap.inspect(xyz$xyz)
       xyz <- xyz$xyz[inds, gaps.pos$f.inds]
    }
