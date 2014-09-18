@@ -47,27 +47,31 @@ covsoverlap.enma <- function(enma, ncore=4, subset=NULL, ...) {
   
   cat("\n")
   return(round(mat, 6))
-   
+  
 }
 
 
 
-covsoverlap.matrix <- function(a, b, subset=NULL) {
-  m1 <- .fetchmodes(a, subset=subset)
-  m2 <- .fetchmodes(b, subset=subset)
-
-  Ua <- m1$U
-  Ub <- m2$U
-  La <- m1$L
-  Lb <- m2$L
+covsoverlap.matrix <- function(Ua, Ub, La, Lb, subset=NULL) {
+  if(any(missing(Ua), missing(Ub), missing(La), missing(Lb)))
+    stop("provide eigenvectors and eigenvalues")
   
+  if(!is.null(subset)) {
+    if(subset>ncol(Ua))
+      subset <- ncol(Ua)
+    
+    Ua <- Ua[,1:subset]
+    Ub <- Ub[,1:subset]
+    La <- La[1:subset]
+    Lb <- Lb[1:subset]
+  }
+
   sumb <- 0
   for( k in 1:ncol(Ua) ) {
     
     tmp <- sqrt(La[k] * Lb)
     overlap <- c((t(Ua[,k]) %*% Ub)**2)
     sumb <- sumb + sum( tmp * overlap )
-    
   }
   
   return(1 - ( sum(La + Lb) - 2 *sumb ) / sum(La + Lb))

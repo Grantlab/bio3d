@@ -48,6 +48,9 @@ rmsip.nma <- function(...)
 rmsip.pca <- function(...)
   rmsip.matrix(...)
 
+rmsip.pca.loadings <- function(...)
+  rmsip.matrix(...)
+
 rmsip.matrix <- function(modes.a, modes.b, subset = 10, row.name="a", col.name="b") {
     
     if(missing(modes.a))
