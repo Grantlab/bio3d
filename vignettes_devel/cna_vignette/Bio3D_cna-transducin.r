@@ -16,9 +16,9 @@ system("pandoc -o Bio3D_cna-transducin.pdf Bio3D_cna-transducin.md")
 #'
 #' Correlation network analysis can be employed to identify protein segments with correlated motions.
 #' In this approach, a weighted graph is constructed where each residue represents a node and the 
-#' weight of the connection between nodes, i and j, represents their respective cross-correlation 
+#' weight of the connection between nodes, *i* and *j*, represents their respective cross-correlation 
 #' value, cij, expressed by either the Pearson-like form or the linear mutual information. In this 
-#' illustration, Normal mode analysis (NMA) approach is employed for the calculation of cross-correlations.
+#' example, Normal mode analysis (NMA) is employed for the calculation of cross-correlations[^2].
 
 #'
 #' [^1]: The latest version of the package, full documentation and further vignettes (including detailed installation instructions) can be obtained from the main Bio3D website: [http://thegrantlab.org/bio3d/](http://thegrantlab.org/bio3d/)
@@ -27,25 +27,26 @@ system("pandoc -o Bio3D_cna-transducin.pdf Bio3D_cna-transducin.md")
 
 #'
 #' #### Requirements:
-#' Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. In addition to Bio3D the _MUSCLE_ multiple sequence alignment program (available from the [muscle home page](http://www.drive5.com/muscle/) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
+#' Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. Note that this vignette makes use of the [IGRAPH](http://igraph.org/) R package. 
 
 
 #'
-#' ## Part I: Correlaiton network analysis based on with single-structure NMA
-#' In this example we perform *NMA* on two crystallographic structures of G protein alpha subunits, the active
-#' GTP-analog-bound structure (PDB ID 1tnd) and the inactive GDP- and 
-#' GDI (GDP dissociation inhibitor)-bound structure (PDB ID 1kjy), by calling the function **nma()**.
+#' ## Part I: Correlaton network analysis based on single-structure NMA
+#' In this example we perform *NMA* on two crystallographic structures of transducin G protein alpha subunits, the active
+#' GTP-analog-bound structure (PDB id *1tnd*) and the inactive GDP- and 
+#' GDI (GDP dissociation inhibitor)-bound structure (PDB id *1kjy*), by calling the function **nma()**.
 #' Cross-correlation matrices are calculated with the function **dccm()**. Correlation networks are
 #' then constructed with the function **cna()**. Plotting of networks for comparison is performed
-#' with the function **plot.cna()**.
+#' with the function **plot.cna()**. See also `help(cna)` for more details.
 
 #+ start, results="hide"
 library(bio3d)
 
-#' First, load previously prepared data for G-alpha, including pre-aligned PDB
-#' coordinates (**pdbs**), positions for cores (**core**) and annotations for PDB structures (**annotation**).
-#' From pdbs, two PDB objects are then extracted, corresponding to "GTP" and "GDI" bound states, respectively.
-#+ prep_data
+#'
+#' First, load the previously prepared data for G-alpha, including pre-aligned PDB
+#' coordinates (`pdbs`), positions for cores (`core`) and annotations for PDB structures (`annotation`).
+#' From the `pdbs` object, two `pdb` objects are extracted, corresponding to *GTP* and *GDI* bound states, respectively.
+#+ prep_data, warning=FALSE, results="hide",
 attach(transducin)
 
 ids = c("1TND_A", "1KJY_A")
@@ -53,21 +54,24 @@ tpdbs = pdbs2pdb(pdbs, match(ids, pdbs$id), rm.gaps=TRUE)
 pdb.gtp = tpdbs[[1]]
 pdb.gdi = tpdbs[[2]]
 
-#' NMA is then applied to the two prepared pdb structures to get state-specific modes of motions. 
-#' Following that, residue cross-correlations are obtained based on the modes.
-#+ nma_cij, cache=TRUE, results="hide"
+#'
+#' NMA is then applied to the two PDB structures to obrain state-specific modes of motions. 
+#' Following that, residue cross-correlations are calculated based on the normal modes.
+#+ nma_cij, cache=TRUE, results="hide", warning=FALSE, 
 modes.gtp = nma(pdb.gtp)
 modes.gdi = nma(pdb.gdi)
 cij.gtp = dccm(modes.gtp)
 cij.gdi = dccm(modes.gdi)
 
-#' Correlation networks for both states are constructed with applying the funciton **cna()** to 
-#' correlation matrices. Here, a cutoff=0.35 for correlation values is applied. 
-#' By this,  all CA atom pairs (nodes) with coupling strength larger than the cutoff are 
-#' connected by edges, with the weight of each edge represented by -log(|cij|), where cij is the 
-#' correlation value between two nodes. For each correlation network, hierarchical clustering 
+#'
+#' Correlation networks for both conformational states are constructed by applying
+#' function **cna()** to the correspoding correlation matrices. Here, the C-alpha atoms
+#' represents nodes which are interconnected by edges with weights corresponding to the pairwise correlation coefficient. 
+#' Edges are only constructed for pairs of nodes which obtain a coupling strength larger than a specified cutoff value
+#' (0.35 in this example). The weight of each edge is calculated as -log(|cij|), where cij is the 
+#' correlation value between two nodes *i* and *j*. For each correlation network, hierarchical clustering 
 #' is performed to generate aggregate nodal clusters, or communities, that are highly 
-#' intra-connected but loosely inter-connected. By default, **cna()** returns communities 
+#' intra-connected, but loosely inter-connected. By default, **cna()** returns communities 
 #' associated with the maximal modularity value. 
 
 #+ cna
@@ -121,16 +125,17 @@ plot.cna(nnet.gdi, layout=cent.gdi)
 
 #'
 #' ## Part II: Correlation network analysis based on ensemble NMA
-#' In this vignette we perform *NMA* on 53 crystallographic structures of G-alpha, which can be 
+#' In this example we perform NMA on the 53 crystallographic transducin G-alpha structures, which can be 
 #' categorized into active GTP-analog-bound, inactive GDP-bound, and inhibitory GDI-bound types.
-#' Cross-correlation matrices are calculated with the function **dccm()**. 
+#' Cross-correlation matrices for all structures in the ensemble are calculated with function **dccm()**. 
 #' State-specific ensemble average correlation matrices are then obtained with the funciton **cij.filter()**.
-#' Correlation networks are then constructed with the function **cna()**. 
-#' Plotting of networks for comparison is performed with the function **plot.cna()**.
+#' Correlation networks are finally constructed with the function **cna()**, and visualization of the networks
+#' is performed with the function **plot.cna()**:
 
-source("~/bio3d/new_funs/cij.filter.R")
+#+ source-filter, warning=FALSE, 
+source("~/workspace/bio3d/new_funs/cij.filter.R")
 
-#+ nma.pdbs, cache=TRUE 
+#+ nma.pdbs, cache=TRUE, warning=FALSE, results="hide",
 modes <- nma(pdbs, ncore=8)
 
 #+ dccms, cache=TRUE
