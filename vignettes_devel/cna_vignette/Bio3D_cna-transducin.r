@@ -27,49 +27,47 @@ system("pandoc -o Bio3D_cna-transducin.pdf Bio3D_cna-transducin.md")
 
 #'
 #' #### Requirements:
-#' Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. Note that this vignette makes use of the [IGRAPH](http://igraph.org/) R package. 
+#' Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. Note that this vignette also makes use of the [IGRAPH](http://igraph.org/) R package, which can be installed with the command
+#+ install, include=TRUE, eval=FALSE
+install.packages("igraph")
 
 
 #'
 #' ## Part I: Correlaton network analysis based on single-structure NMA
-#' In this example we perform *NMA* on two crystallographic structures of transducin G protein alpha subunits, the active
-#' GTP-analog-bound structure (PDB id *1tnd*) and the inactive GDP- and 
+#' In this first example we perform *NMA* on two crystallographic structures of transducin G protein alpha subunits, an active
+#' GTP-analog-bound structure (PDB id *1tnd*) and an inactive GDP- and 
 #' GDI (GDP dissociation inhibitor)-bound structure (PDB id *1kjy*), by calling the function **nma()**.
 #' Cross-correlation matrices are calculated with the function **dccm()**. Correlation networks are
-#' then constructed with the function **cna()**. Plotting of networks for comparison is performed
-#' with the function **plot.cna()**. See also `help(cna)` for more details.
+#' then constructed with the function **cna()**. Network visulization is finally performed
+#' with the function **plot.cna()**. See also `help(cna)` for more details and example analysis.
 
 #+ start, results="hide"
 library(bio3d)
 
 #'
-#' First, load the previously prepared data for G-alpha, including pre-aligned PDB
-#' coordinates (`pdbs`), positions for cores (`core`) and annotations for PDB structures (`annotation`).
-#' From the `pdbs` object, two `pdb` objects are extracted, corresponding to *GTP* and *GDI* bound states, respectively.
-#+ prep_data, warning=FALSE, results="hide",
-attach(transducin)
+#' First we read our selected GTP and GDI bound structures, select chain A, and perform NMA on each individually.
+pdb.gtp = read.pdb("1TND")
+pdb.gdi = read.pdb("1KJY")
 
-ids = c("1TND_A", "1KJY_A")
-tpdbs = pdbs2pdb(pdbs, match(ids, pdbs$id), rm.gaps=TRUE)
-pdb.gtp = tpdbs[[1]]
-pdb.gdi = tpdbs[[2]]
+pdb.gtp = trim.pdb(pdb.gtp, inds=atom.select(pdb.gtp, chain="A"))
+pdb.gdi = trim.pdb(pdb.gdi, inds=atom.select(pdb.gdi, chain="A"))
 
-#'
-#' NMA is then applied to the two PDB structures to obrain state-specific modes of motions. 
-#' Following that, residue cross-correlations are calculated based on the normal modes.
-#+ nma_cij, cache=TRUE, results="hide", warning=FALSE, 
 modes.gtp = nma(pdb.gtp)
 modes.gdi = nma(pdb.gdi)
+
+#' 
+#' Residue cross-correlations can then be calculated based on these normal mode results.
+#+ nma_cij, cache=TRUE, results="hide", warning=FALSE, 
 cij.gtp = dccm(modes.gtp)
 cij.gdi = dccm(modes.gdi)
 
 #'
-#' Correlation networks for both conformational states are constructed by applying
+#' Correlation networks for both conformational states are constructed by applying the
 #' function **cna()** to the correspoding correlation matrices. Here, the C-alpha atoms
 #' represents nodes which are interconnected by edges with weights corresponding to the pairwise correlation coefficient. 
 #' Edges are only constructed for pairs of nodes which obtain a coupling strength larger than a specified cutoff value
 #' (0.35 in this example). The weight of each edge is calculated as -log(|cij|), where cij is the 
-#' correlation value between two nodes *i* and *j*. For each correlation network, hierarchical clustering 
+#' correlation value between two nodes *i* and *j*. For each correlation network, betweenness clustering 
 #' is performed to generate aggregate nodal clusters, or communities, that are highly 
 #' intra-connected, but loosely inter-connected. By default, **cna()** returns communities 
 #' associated with the maximal modularity value. 
@@ -80,6 +78,9 @@ net.gtp
 net.gdi = cna(cij.gdi, cutoff.cij=0.35)
 net.gdi
 
+#' Maximization of modularity sometimes creates unexpected community partitions splitting 
+#' natural structure motifs, such as secondary structure elements, into many small community 'islands'. To avoid this situation, we look into partitions with modularity close to the maximal value 
+#' but with an overall smaller number of communities. 
 #+ new-fun 
 mod.select <- function(x, thres=0.005) {
    remodel <- community.tree(x, rescale = TRUE)
@@ -94,24 +95,22 @@ mod.select <- function(x, thres=0.005) {
    network.amendment(x, remodel$tree[ind, ])
 }
 
-#' Maximization of modularity sometimes creates unexpected community partitions splitting 
-#' natural structure motifs, such as secondary structure elements, into many small community islands. To avoid this situation, we look into partitions with modularity close to the maximal value 
-#' but the number of communities is smaller. 
- 
 #+ modularity_selection, cache=TRUE
 nnet.gtp = mod.select(net.gtp)
 nnet.gtp
 nnet.gdi = mod.select(net.gdi)
 nnet.gdi
 
-#' Networks can be visulized with Bio3D functions **plot.cna()**, which can generate 2D representations
+#' The resultive networks can be visulized with the Bio3D function **plot.cna()**, which can generate 2D representations
 #' for both full residue-level and coarse-grained community-level networks.
 
 #+ layout
 cent.gtp.full = layout.cna(nnet.gtp, pdb=pdb.gtp, full=TRUE, k=3)[,1:2]
 cent.gtp = layout.cna(nnet.gtp, pdb=pdb.gtp, k=3)[,1:2]
-cent.gdi.full = layout.cna(nnet.gdi, pdb=pdb.gdi, full=TRUE, k=3)[,1:2]
-cent.gdi = layout.cna(nnet.gdi, pdb=pdb.gdi, k=3)[,1:2]
+cent.gdi.full = layout.cna(nnet.gdi, pdb=pdb.gtp, full=TRUE, k=3)[,1:2]
+cent.gdi = layout.cna(nnet.gdi, pdb=pdb.gtp, k=3)[,1:2]
+
+#' Following code plots the four networks as a single multi-panel figure. 
 
 #+ figure1, fig.cap="Comparison of correlation networks between active and inhibitory G protein alpha subunits. Networks are derived from NMA applied to single PDB structures."
 layout(matrix(c(1:4), 2, 2))
@@ -126,11 +125,15 @@ plot.cna(nnet.gdi, layout=cent.gdi)
 #'
 #' ## Part II: Correlation network analysis based on ensemble NMA
 #' In this example we perform NMA on the 53 crystallographic transducin G-alpha structures, which can be 
-#' categorized into active GTP-analog-bound, inactive GDP-bound, and inhibitory GDI-bound types.
+#' categorized into active GTP-analog-bound, inactive GDP-bound, and inhibitory GDI-bound states. 
+#' The example transducin structure dataset (see `help(transducin)` and "Comparative Protein Structure Analysis with Bio3D" vignette available online) will be loaded for the analysis. Briefly, this dataset includes aligned PDB coordinates (`pdbs`), structural invariant core positions (`core`) and annotations for each PDB structure (`annotation`).
 #' Cross-correlation matrices for all structures in the ensemble are calculated with function **dccm()**. 
-#' State-specific ensemble average correlation matrices are then obtained with the funciton **cij.filter()**.
+#' State-specific ensemble average correlation matrices are then obtained with the funciton **filter.dccm()**.
 #' Correlation networks are finally constructed with the function **cna()**, and visualization of the networks
 #' is performed with the function **plot.cna()**:
+
+#+ prep_data, warning=FALSE, results="hide",
+attach(transducin)
 
 #+ nma.pdbs, cache=TRUE, warning=FALSE, results="hide",
 modes <- nma(pdbs, ncore=8)
@@ -138,7 +141,9 @@ modes <- nma(pdbs, ncore=8)
 #+ dccms, cache=TRUE
 cijs0 <- dccm(modes)
 
-#+ cij_filter, cache=TRUE
+#' Below we perform optional filtering and averaging per state of the individual structure cross-correlation matrices.
+#' In this case, we also utilize a cutoff for correlation (0.35 in this example) and a cutoff for C-alpha distance (10 angstrom) (See `help(filter.dccm)` and main text for details).
+#+ filter_dccm, cache=TRUE
 cij <- filter.dccm(cijs0, pdbs, fac=annotation[, "state3"], 
    cutoff.cij=0.35, dcut=10, scut=0, pcut=0.75, ncore=8)
 
@@ -148,10 +153,11 @@ net1 = mod.select(nets$GTP)
 net2 = mod.select(nets$GDI)
 
 #+ layout2
-cent.gtp.full = layout.cna(net1, pdb=pdb.gtp, full=TRUE, k=3)[,1:2]
-cent.gtp = layout.cna(net1, pdb=pdb.gtp, k=3)[,1:2]
-cent.gdi.full = layout.cna(net2, pdb=pdb.gdi, full=TRUE, k=3)[,1:2]
-cent.gdi = layout.cna(net2, pdb=pdb.gdi, k=3)[,1:2]
+ref.pdb <- pdbs2pdb(pdbs, inds=1, rm.gaps=TRUE)[[1]]
+cent.gtp.full = layout.cna(net1, pdb=ref.pdb, full=TRUE, k=3)[,1:2]
+cent.gtp = layout.cna(net1, pdb=ref.pdb, k=3)[,1:2]
+cent.gdi.full = layout.cna(net2, pdb=ref.pdb, full=TRUE, k=3)[,1:2]
+cent.gdi = layout.cna(net2, pdb=ref.pdb, k=3)[,1:2]
 
 #+ figure2, fig.cap="Comparison of correlation networks between active and inhibitory G protein alpha subunit. Networks are derived from NMA based on structure ensemble."
 layout(matrix(c(1:4), 2, 2))
@@ -176,4 +182,5 @@ system("pandoc -o Bio3D_cna-transducin.pdf Bio3D_cna-transducin.md")
 #' ## Information About the Current Bio3D Session
 #'
 print(sessionInfo(), FALSE)
+
 
