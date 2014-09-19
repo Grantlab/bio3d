@@ -1,26 +1,33 @@
 "get.pdb" <-
-  function (ids, path = ".", URLonly = FALSE, overwrite = FALSE, gzip = FALSE, verbose = TRUE, ncore = 1 ) 
+  function (ids, path = ".", URLonly = FALSE, overwrite = FALSE, gzip = FALSE, split = FALSE, 
+      verbose = TRUE, ncore = 1, ... ) 
 {
     if(.Platform$OS.type=="windows")
       gzip <- FALSE
-    
+
     # Parallelized by parallel package (Tue Oct 15 15:23:36 EDT 2013)
     ncore <- setup.ncore(ncore)
     if(ncore > 4) {
        # To avoid too frequent access to PDB server
-       warning("Exceed maximum ncore (=4) to access PDB server. Use ncore=4")
-       ncore <- setup.ncore(ncore = 4)
+       if(!split) {
+          warning("Exceed maximum ncore (=4) to access PDB server. Use ncore=4")
+          ncore <- setup.ncore(ncore = 4)
+       } else {
+          setup.ncore(ncore = 4)
+       }
     }
 
     if(inherits(ids, "blast")) ids = ids$pdb.id
 
-    if (any(nchar(ids) < 4)) stop("ids should be standard 4 character PDB-IDs")
+    if (any(nchar(ids) < 4)) stop("ids should be standard 4 character PDB-IDs or 6 character PDB-ID_Chain-IDs")
+
+    ids4 = ids
     if (any(nchar(ids) > 4)) {
-        warning("ids should be standard 4 character PDB-IDs: trying first 4 characters...")
-        ids <- substr(basename(ids), 1, 4)
+#        warning("ids should be standard 4 character PDB-IDs: trying first 4 characters...")
+        ids4 <- substr(basename(ids), 1, 4)
     }
-    ids <- unique(ids)
-    pdb.files <- paste(ids, ".pdb", ifelse(gzip, ".gz", ""), sep = "")
+    ids4 <- unique(ids4)
+    pdb.files <- paste(ids4, ".pdb", ifelse(gzip, ".gz", ""), sep = "")
     get.files <- file.path("http://www.rcsb.org/pdb/files", pdb.files)
     if (URLonly) 
         return(get.files)
@@ -68,12 +75,16 @@
        }
     }
     
-    names(rtn) <- file.path(path, paste(ids, ".pdb", sep = ""))
+    names(rtn) <- file.path(path, paste(ids4, ".pdb", sep = ""))
     if (any(rtn == 1)) {
         warning("Some files could not be downloaded, check returned value")
         return(rtn)
-    }
-    else {
-        return(names(rtn))
+    } else {
+        if(split) {
+           rtn = pdbsplit(pdb.files = names(rtn), ids = ids, ncore = ncore, ...)
+           return(rtn)
+        } else { 
+           return(names(rtn))
+        }
     }
 }
