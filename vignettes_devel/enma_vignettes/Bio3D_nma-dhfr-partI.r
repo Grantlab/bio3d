@@ -1,5 +1,5 @@
-#' # Supporting Material S3
-#' # Integrated structural and evolutionary ensemble analysis with Bio3D
+#' # Supporting Information S2
+#' # Integrating protein structural dynamics and evolutionary analysis with Bio3D
 #' **Lars Skj\ae rven, Xin-Qiu Yao & Barry J. Grant**
 
 #+ setup, include=FALSE
@@ -54,7 +54,7 @@ blast <- blast.pdb(aa)
 #' to set a seed position to the point of largest drop-off in normalized scores (i.e. the biggest jump in  E-values).
 #' In this particular case we specify a cutoff of 225 to include only the relevant *E.coli* structures:
 
-#+ fig1-1, fig.cap="Blast results. Visualize and filter blast results through function **plot.blast()**. Here we proceed with 90 of the top scoring hits."
+#+ fig1-1, fig.cap="Blast results. Visualize and filter blast results through function **plot.blast()**. Here we proceed with 101 of the top scoring hits."
 hits <- plot(blast, cutoff=225)
 
 #'
@@ -276,7 +276,7 @@ trj=fit.xyz(fixed=pdbs$xyz[1, ],  mobile=trj,
 proj <- pca.project(trj, pc.xray)
 cols <- densCols(proj[,1:2])
 
-#+ fig1o-1, fig.cap="Projection of MD conformers onto the X-ray PC space.", fig.height=4.5, fig.width=4.5,
+#+ fig1o-1, fig.cap="Projection of MD conformers onto the X-ray PC space provides a two dimensional representation of the conformational sampling along the MD simulation (blue dots).", fig.height=4.5, fig.width=4.5,
 plot(proj[,1:2], col=cols, pch=16,
      ylab="Prinipcal Component 2", xlab="Principal Component 1",
      xlim=range(pc.xray$z[,1]), ylim=range(pc.xray$z[,2]))
@@ -292,11 +292,98 @@ r <- rmsip(pc.md$U, modes$U.subspace[,,1])
 
 print(r)
 
-#+ fig1p-1, fig.cap="RMSIP map betwen normal modes and principal components of a 5 ns long MD simulation.", fig.height=4.5, fig.width=4.5,
+#+ fig1p-1, fig.cap="Overlap map betwen normal modes and principal components of a 5 ns long MD simulation. The two subsets yields an RMSIP value of 0.64, where a value of 1 would idicate identical directionality.", fig.height=4.5, fig.width=4.5,
 plot(r, xlab="MD PCA", ylab="NMA")
 
 # compare MD-PCA and X-rayPCA
 r <- rmsip(pc.md, pc.xray)
+
+
+#'
+#' ### Measures for modes comparison
+#' Bio3D now includes multiple measures for the assessment of similarity between two normal mode
+#' objects. This enables clustering of related proteins based on the predicted modes of motion.
+#' Below we demonstrate the use of root mean squared inner product (RMSIP), squared inner product (SIP), covariance overlap, bhattacharyya coefficient, and PCA of the corresponding covariance matrices. 
+
+#+ example1q-sip, eval=TRUE, results='hide', cache=TRUE
+# Similarity of atomic fluctuations
+sip <- sip(modes)
+hc.sip <- hclust(as.dist(1-sip), method="ward.D2")
+grps.sip <- cutree(hc.sip, k=3)
+
+#+ fig1q-sip, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on the similarity of atomic fluctuations calculated from NMA. Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows the conformerplot (see Figure 2), with colors according to clustering based on pairwise SIP values.", 
+hclustplot(hc.sip, k=3, colors=grps.rd, labels=ids, cex=0.7, main="SIP")
+
+par(fig=c(.55, 1, .55, 1), new = TRUE)
+plot(pc.xray$z[,1:2], col="grey50", pch=16, cex=1.3, 
+     ylab="", xlab="", axes=FALSE, bg="red")
+points(pc.xray$z[,1:2], col=grps.sip, pch=16, cex=0.9)
+box()
+
+
+#+ example1q-rmsip, eval=TRUE, results='hide', cache=TRUE
+# RMSIP
+rmsip <- rmsip(modes)
+hc.rmsip <- hclust(dist(1-rmsip), method="ward.D2")
+grps.rmsip <- cutree(hc.rmsip, k=3)
+
+#+ fig1q-rmsip, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on their pairwise RMSIP values (calculated from NMA). Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows the conformerplot (see Figure 2), with colors according to clustering based on the pairwise RMSIP values.", 
+hclustplot(hc.rmsip, k=3, colors=grps.rd, labels=ids, cex=0.7, main="RMSIP")
+
+par(fig=c(.55, 1, .55, 1), new = TRUE)
+plot(pc.xray$z[,1:2], col="grey50", pch=16, cex=1.3, 
+     ylab="", xlab="", axes=FALSE)
+points(pc.xray$z[,1:2], col=grps.rmsip, pch=16, cex=0.9)
+box()
+
+
+#+ example1q-co, eval=TRUE, results='hide', cache=TRUE
+# Covariance overlap
+co <- covsoverlap(modes, subset=200)
+hc.co <- hclust(as.dist(1-co), method="ward.D2")
+grps.co <- cutree(hc.co, k=3)
+
+#+ fig1q-co, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on their pairwise covariance overlap (calculated from NMA). Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows the conformerplot (see Figure 2), with colors according to clustering of the Covariance overlap measure.", 
+hclustplot(hc.co, k=3, colors=grps.rd, labels=ids, cex=0.7, main="Covariance overlap")
+
+par(fig=c(.55, 1, .55, 1), new = TRUE)
+plot(pc.xray$z[,1:2], col="grey50", pch=16, cex=1.3, 
+     ylab="", xlab="", axes=FALSE)
+points(pc.xray$z[,1:2], col=grps.co, pch=16, cex=0.9)
+box()
+
+
+#+ example1q-bc, eval=TRUE, results='hide', cache=TRUE
+# Bhattacharyya coefficient
+covs <- enma2covs(modes)
+bc <- bhattacharyya(modes, covs=covs)
+hc.bc <- hclust(dist(1-bc), method="ward.D2")
+grps.bc <- cutree(hc.bc, k=3)
+
+#+ fig1q-bc, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on their pairwise Bhattacharyya coefficient (calculated from NMA). Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows the conformerplot (see Figure 2), with colors according to clustering of the pairwise Bhattacharyya coefficients.", 
+hclustplot(hc.bc, k=3, colors=grps.rd, labels=ids, cex=0.7, main="Bhattacharyya coefficient")
+
+par(fig=c(.55, 1, .55, 1), new = TRUE)
+plot(pc.xray$z[,1:2], col="grey50", pch=16, cex=1.3, 
+     ylab="", xlab="", axes=FALSE)
+points(pc.xray$z[,1:2], col=grps.bc, pch=16, cex=0.9)
+box()
+
+
+#+ example1q-pcaco, eval=TRUE, results='hide', cache=TRUE
+# PCA of covariance matrices
+pc.covs <- pca.array(covs)
+hc.covs <- hclust(dist(pc.covs$z[,1:2]), method="ward.D2")
+grps.covs <- cutree(hc.covs, k=3)
+
+#+ fig1q-pcaco, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on the PCA of covariance matrices (calculated from NMA). Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows the conformerplot (see Figure 2), with colors according to clustering based on PCA of covariance matrices.", 
+hclustplot(hc.covs, k=3, colors=grps.rd, labels=ids, cex=0.7, main="PCA of covariance matrices")
+
+par(fig=c(.55, 1, .55, 1), new = TRUE)
+plot(pc.xray$z[,1:2], col="grey50", pch=16, cex=1.3, 
+     ylab="", xlab="", axes=FALSE)
+points(pc.xray$z[,1:2], col=grps.covs, pch=16, cex=0.9)
+box()
 
 
 #' ## Document Details

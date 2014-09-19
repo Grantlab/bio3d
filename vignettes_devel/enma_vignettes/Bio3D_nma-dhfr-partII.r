@@ -1,5 +1,5 @@
-#' # Supporting Material S4
-#' # Integrated structural and evolutionary ensemble analysis with Bio3D
+#' # Supporting Information S3
+#' # Integrating protein structural dynamics and evolutionary analysis with Bio3D
 #' **Lars Skj\ae rven, Xin-Qiu Yao & Barry J. Grant**
 
 #+ setup, include=FALSE
@@ -195,8 +195,8 @@ summary(c(seqide))
 hc <- hclust(as.dist(1-seqide))
 grps.seq <- cutree(hc, h=0.6)
 
-#+ fig3-3, fig.cap="Clustering of collected structures based on sequence identity.", fig.height=5,
-plot(hc, hang=-1, labels=labs, cex=0.25)
+#+ fig3-3, fig.cap="Clustering of collected structures based on sequence identity.", fig.height=4,
+hclustplot(hc, k=3, labels=labs, cex=0.25, fillbox=FALSE)
 
 
 #'
@@ -226,8 +226,13 @@ plot(modes, pdbs=pdbs, ylim=c(0,2), col=grps.seq, conservation=TRUE)
 
 grps <- rep(NA, length(grps.seq))
 grps[grep("coli", labs)]=1
-grps[grep("sapiens", labs)]=2
-grps[grep("albicans", labs)]=3
+grps[grep("aureus", labs)]=2
+grps[grep("anthracis", labs)]=3
+grps[grep("tubercu", labs)]=4
+grps[grep("casei", labs)]=5
+grps[grep("sapiens", labs)]=6
+grps[grep("albicans", labs)]=7
+grps[grep("glabrata", labs)]=8
 
 plot(modes, pdbs=pdbs, col=grps, spread=TRUE)
 
