@@ -132,20 +132,15 @@ plot.cna(nnet.gdi, layout=cent.gdi)
 #' Correlation networks are finally constructed with the function **cna()**, and visualization of the networks
 #' is performed with the function **plot.cna()**:
 
-#+ source-filter, warning=FALSE, 
-source("~/workspace/bio3d/new_funs/cij.filter.R")
-
 #+ nma.pdbs, cache=TRUE, warning=FALSE, results="hide",
 modes <- nma(pdbs, ncore=8)
 
 #+ dccms, cache=TRUE
-cijs0 <- dccm(modes)$all.dccm
+cijs0 <- dccm(modes)
 
 #+ cij_filter, cache=TRUE
-cijs <- tapply(1:length(pdbs$id), annotation[, "state3"], function(i)
-     cij.filter(cijs0, inds=i, xyz=pdbs, model="full",
-        cutoff.cij=0.35, cutoff.dm=10, cutoff.pcon=0.75) )
-cij <- lapply(cijs, rowMeans, dims=2)
+cij <- filter.dccm(cijs0, pdbs, fac=annotation[, "state3"], 
+   cutoff.cij=0.35, dcut=10, scut=0, pcut=0.75, ncore=8)
 
 #+ nets, cache=TRUE
 nets <- cna(cij, cutoff.cij = 0)
