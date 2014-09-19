@@ -209,7 +209,7 @@ trj <- rbind(mktrj(modes, mode=7)[10:24,],
 gs <- geostas(trj, k=4)
 
 # Write NMA trajectory with domain assignment
-mktrj(modes.open, mode=7, chain=gs$grps)
+mktrj(modes, mode=7, chain=gs$grps)
 
 
 #'
