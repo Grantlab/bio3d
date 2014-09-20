@@ -1,6 +1,6 @@
 #' # Supporting Information S3
 #' # Integrating protein structural dynamics and evolutionary analysis with Bio3D
-#' **Lars Skj\ae rven, Xin-Qiu Yao & Barry J. Grant**
+#' **Lars Skj\ae rven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant**
 
 #+ setup, include=FALSE
 opts_chunk$set(dev='pdf')
@@ -241,8 +241,9 @@ plot(modes, pdbs=pdbs, col=grps, spread=TRUE)
 #' ### Visualize modes
 #' A function call to **mktrj.enma()** will generate a trajectory PDB file for the visualization of
 #' a specific normal mode for one of the structures in the *pdbs* object. This allows for a visual
-#' comparison of the calculated normal modes. Below we make a PDB trajectory of the first mode (argument `mode=1`)
-#' of 4 relevant species (e.g. argument `ind=1`). Note that we use **grep()** to fetch the
+#' comparison of the calculated normal modes. Below we make a PDB trajectory of the first mode
+#' (argument `m.inds=1`) of 3 relevant species (e.g. argument `s.inds=1`).
+#' Note that we use **grep()** to fetch the
 #' indices (in the *modes* and *pdbs* objects) of the relevant species:
 
 #+ example2h, cache=TRUE, results='hide', eval=FALSE,
@@ -252,17 +253,16 @@ inds <- c(grep("coli", species)[1],
           grep("albicans", species)[1])
 
 # E.coli
-mktrj.enma(modes, pdbs, mode=1, ind=inds[1], file="ecoli-mode1.pdb")
+mktrj.enma(modes, pdbs, m.inds=1, s.inds=inds[1], file="ecoli-mode1.pdb")
 
 # H. sapiens
-mktrj.enma(modes, pdbs, mode=1, ind=inds[2], file="hsapiens-mode1.pdb")
+mktrj.enma(modes, pdbs, m.inds=1, s.inds=inds[2], file="hsapiens-mode1.pdb")
 
 # C. albicans
-mktrj.enma(modes, pdbs, mode=1, ind=inds[3], file="calbicans-mode1.pdb")
+mktrj.enma(modes, pdbs, m.inds=1, s.inds=inds[3], file="calbicans-mode1.pdb")
 
 
-#' ![Mode comparison of *E.coli*, *H.sapiens*, and *C.albicans*. The trajectories are made with function **mktrj.enma** and visualized in PyMol.](figure/visualize-4hfrs.png)
-
+#' ![Mode comparison of *E.coli*, *H.sapiens*, and *C.albicans*. The trajectories are made with function **mktrj.enma()** and visualized in PyMol.](figure/visualize-4hfrs.png)
 
 #'
 #' ## Document Details

@@ -1,6 +1,6 @@
 #' # Supporting Information S2
 #' # Integrating protein structural dynamics and evolutionary analysis with Bio3D
-#' **Lars Skj\ae rven, Xin-Qiu Yao & Barry J. Grant**
+#' **Lars Skj\ae rven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant**
 
 #+ setup, include=FALSE
 opts_chunk$set(dev='pdf')
@@ -257,9 +257,6 @@ cols[which(grps.rd!=2 & grps.rd!=3)]=NA
 plot(modes, pdbs=pdbs, col=cols, signif=TRUE)
 
 
-
-
-
 #'
 #' ### Compare with MD simulation
 #' The above analysis can also nicely be integrated with molecular dynamics (MD) simulations. Below we read in a 5 ns long MD trajectory (of PDB ID 1RX2). We visualize the conformational sampling by projecting the MD conformers onto the principal components (PCs) of the X-ray ensemble, and finally compare the PCs of the MD simulation to the normal modes:
@@ -269,9 +266,9 @@ pdb <- read.pdb("md-traj/1rx2-CA.pdb")
 trj <- read.ncdf("md-traj/1rx2_5ns.nc")
 
 md.inds <- pdb2aln.ind(aln=pdbs, pdb=pdb, id="md", inds=gaps.res$f.inds)
-trj=trj[, atom2xyz(md.inds)]
-trj=fit.xyz(fixed=pdbs$xyz[1, ],  mobile=trj,
-  fixed.inds=core$c0.5A.xyz, mobile.inds=core$c0.5A.xyz)
+trj <- trj[, atom2xyz(md.inds)]
+trj <- fit.xyz(fixed=pdbs$xyz[1, ],  mobile=trj,
+               fixed.inds=core$c0.5A.xyz, mobile.inds=core$c0.5A.xyz)
 
 proj <- pca.project(trj, pc.xray)
 cols <- densCols(proj[,1:2])
@@ -297,6 +294,75 @@ plot(r, xlab="MD PCA", ylab="NMA")
 
 # compare MD-PCA and X-rayPCA
 r <- rmsip(pc.md, pc.xray)
+
+
+#'
+#' ### Domain analysis with GeoStaS
+#' Identification of regions in the protein that move as rigid bodies is facilitated
+#' with the implementation of the GeoStaS algorithm [^3]. Below we demonstrate the use of function
+#' **geostas()** on data obtained from ensemble NMA, an ensemble of PDB structures, and a 5 ns long
+#' MD simulation. See `help(geostas)` for more details and further examples.
+
+#'
+#' **GeoStaS on a PDB ensemble**: Below we input the `pdbs` object to function
+#' **geostas()** to identify dynamic domains. Here, we attempt to divide the structure into
+#' 2 sub-domains using argument `k=2`. Function **geostas()** will return a `grps` attribute
+#' which corresponds to the domain assignment for each C-alpha atom in the structure.
+#' Note that we use argument `fit=FALSE` to avoid re-fitting the coordinates since. Recall that
+#' the coordinates of the `pdbs` object has already been superimposed to the identified
+#' invariant core (see above). To visualize the domain assignment we write a PDB trajectory
+#' of the first principal component (of the Cartesian coordinates of the `pdbs` object),
+#' and add argument `chain=gs.xray$grps` to replace the chain identifiers with the domain
+#' assignment:
+
+
+#+ example1_gs-pdbs, cache=TRUE, results="hide",
+# Identify dynamic domains
+gs.xray <- geostas(pdbs, k=2, fit=FALSE)
+
+# Visualize PCs with colored domains (chain ID)
+mktrj(pc.xray, pc=1, chain=gs.xray$grps)
+
+#'
+#' **GoeStaS on ensemble NMA**: We can also identify dynamic domains from the normal modes of the ensemble
+#' of 82 protein structures stored in the `modes` object. By using function **mktrj.enma()**
+#' we generate a trajectory from the first five modes for all 82 structures. We then input this
+#' trajectory to function **geostas()**. 
+
+#+ example1_gs-nma, cache=TRUE,
+# Build conformational ensemble
+trj.nma <- mktrj.enma(modes, pdbs, m.inds=1:5, s.inds=NULL, mag=10, step=2, rock=FALSE)
+
+trj.nma
+
+# Fit to invariant core
+trj.nma <- fit.xyz(trj.nma[1,], trj.nma,
+                   fixed.inds=core$c0.5A.xyz,
+                   mobile.inds=core$c0.5A.xyz)
+
+# Run geostas to find domains
+gs.nma <- geostas(trj.nma, k=2, fit=FALSE)
+
+#+ example1_gs-nma2, eval=FALSE,
+# Write NMA generated trajectory with domain assignment
+write.pdb(xyz=trj.nma, chain=gs.nma$grps)
+
+
+#'
+#' **GeoStaS on a MD trajectory**: The domain analysis can also be performed on the trajectory data obtained
+#' from the MD simulation (see above). Recall that the MD trajectory has already been superimposed
+#' to the invariant core. We therefore use argument `fit=FALSE` below. We then perform a
+#' new PCA of the MD trajectory, and visualize the domain assingments with function **mktrj()**:
+
+#+ example1_gs-md, cache=TRUE, results="hide",
+gs.md <- geostas(trj, k=2, fit=FALSE)
+pc.md <- pca(trj, fit=FALSE)
+mktrj(pc.md, pc=1, chain=gs.md$grps)
+
+
+
+#' ![Visualization of domain assignments using function **geostas()** for x-ray ensemble (left), ensemble NMA (middle), and MD trajectory (right).](figure/geostas-domains.png)
+
 
 
 #'
@@ -386,6 +452,11 @@ points(pc.xray$z[,1:2], col=grps.covs, pch=16, cex=0.9)
 box()
 
 
+#'
+#' [^3]: Romanowska, J., Nowinski, KS., Trylska, J., (2012). Determining geometrically stable domains in molecular conformation sets. *J Chem Theory Comput*, 8(8), 2588–99.
+
+
+#'
 #' ## Document Details
 #' This document is shipped with the Bio3D package in both R and PDF formats. All code can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
 
