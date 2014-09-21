@@ -7,23 +7,23 @@ bhattacharyya.nma <- function(...)
 bhattacharyya.pca <- function(...)
   bhattacharyya.matrix(...)
 
-bhattacharyya.enma <- function(x, covs=NULL, ncore=4, ...) {
-  if(!inherits(x, "enma"))
+bhattacharyya.enma <- function(enma, covs=NULL, ncore=NULL, ...) {
+  if(!inherits(enma, "enma"))
     stop("provide a 'enma' object as obtain from function 'nma.pdbs()'")
 
   if(is.null(covs)) {
     cat("Calculating covariance matrices")
-    covs <- enma2covs(x, ncore=ncore)
+    covs <- cov.enma(enma, ncore=ncore)
   }
   cat("Calculating pairwise bhattacharyya coefs")
   sim.mat <- bhattacharyya.array(covs, ncore=ncore)
   
-  rownames(sim.mat) <- basename(rownames(x$fluctuations))
-  colnames(sim.mat) <- basename(rownames(x$fluctuations))
+  rownames(sim.mat) <- basename(rownames(enma$fluctuations))
+  colnames(sim.mat) <- basename(rownames(enma$fluctuations))
   return(sim.mat)
 }
 
-bhattacharyya.matrix <- function(a, b, q=90, n=NULL) {
+bhattacharyya.matrix <- function(a, b, q=90, n=NULL, ...) {
 
   if(!is.matrix(a) & is.matrix(b))
     stop("provide covariance matrices")
@@ -66,7 +66,7 @@ bhattacharyya.array <- function(covs, ncore=NULL, ...) {
                 
   mylist <- mylapply(1:nrow(inds), function(row) {
     i <- inds[row,1]; j <- inds[row,2];
-    val <- bhattacharyya(covs[,,i], covs[,,j], ...)
+    val <- bhattacharyya.matrix(covs[,,i], covs[,,j], ...)
     out <- list(val=val, i=i, j=j)
     cat(".")
     return(out)

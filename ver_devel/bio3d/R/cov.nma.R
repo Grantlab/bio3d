@@ -1,8 +1,8 @@
-nma2cov <- function(modes) {
-  dims <- dim(modes$U)
+cov.nma <- function(nma) {
+  dims <- dim(nma$U)
   cov <- matrix(0, ncol=dims[1], nrow=dims[1])
-  tmpU <- modes$U[,,i]
-  tmpL <- modes$L[i,]
+  tmpU <- nma$U[,,i]
+  tmpL <- nma$L[i,]
   
   for(j in 1:ncol(tmpU) ) {
     cov <- cov + ( (tmpU[,j] %*% t(tmpU[,j])) / tmpL[j])
@@ -11,8 +11,8 @@ nma2cov <- function(modes) {
   return(cov)
 }
 
-enma2covs <- function(modes, ncore=4, ...) {
-  if(!inherits(modes, "enma"))
+cov.enma <- function(enma, ncore=NULL, ...) {
+  if(!inherits(enma, "enma"))
     stop("provide a 'enma' object as obtain from function 'nma.pdbs()'")
     
   ncore <- setup.ncore(ncore, bigmem = FALSE)
@@ -22,15 +22,15 @@ enma2covs <- function(modes, ncore=4, ...) {
   else
     mylapply <- lapply
   
-  if(!inherits(modes, "enma"))
+  if(!inherits(enma, "enma"))
     stop("provide 'enma' object as obtained from nma.pdbs")
   
-  dims <- dim(modes$U.subspace)
+  dims <- dim(enma$U.subspace)
   
-  mycalc <- function(i, modes) {
+  mycalc <- function(i, enma) {
     cov <- matrix(0, ncol=dims[1], nrow=dims[1])
-    tmpU <- modes$U.subspace[,,i]
-    tmpL <- modes$L[i,]
+    tmpU <- enma$U.subspace[,,i]
+    tmpL <- enma$L[i,]
 
     for(j in 1:ncol(tmpU) ) {
       cov = cov + ( (tmpU[,j] %*% t(tmpU[,j])) / tmpL[j])
@@ -39,7 +39,7 @@ enma2covs <- function(modes, ncore=4, ...) {
     return(cov)
   }
 
-  covs.list <- mylapply(1:dims[3L], mycalc, modes)
+  covs.list <- mylapply(1:dims[3L], mycalc, enma)
   cat("\n")
   
   covs <- array(0, dim=c(dims[1], dims[1], dims[3]))
@@ -47,7 +47,7 @@ enma2covs <- function(modes, ncore=4, ...) {
   for ( i in 1:dims[3L] )
     covs[,,i]=covs.list[[i]]
 
-  ##modes$covs <- covs
+  ##enma$covs <- covs
   return(covs)
 }
 

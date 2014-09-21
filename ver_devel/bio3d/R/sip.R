@@ -1,7 +1,12 @@
 sip <- function(...)
   UseMethod("sip")
 
-sip.enma <- function(modes, ncore=NULL) {
+sip.nma <- function(a, b, ...) {
+  return(sip.vector(a$fluctuations, b$fluctuations))
+}
+  
+
+sip.enma <- function(modes, ncore=NULL, ...) {
   if(!inherits(modes, "enma"))
     stop("provide a 'enma' object as obtain from function 'nma.pdbs()'")
   
@@ -39,7 +44,10 @@ sip.enma <- function(modes, ncore=NULL) {
   return(round(mat, 6))
 }
 
-sip.vector <- function(a, b) {
-  return(((t(a) %*% b)**2) / ((t(a) %*% a)*(t(b) %*% b)))
+sip.numeric <- function(...)
+  sip.vector(...)
+
+sip.vector <- function(v, w, ...) {
+  return(as.numeric(((t(v) %*% w)**2) / ((t(v) %*% v)*(t(w) %*% w))))
 }
 

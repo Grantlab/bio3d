@@ -3,7 +3,7 @@
 ## 2 - return the full objects
 
 "nma.pdbs" <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL,
-                       rm.gaps=TRUE, sse=FALSE, fcw=FALSE, 
+                       rm.gaps=TRUE, sse=FALSE, varweight=FALSE, 
                        defa = FALSE, outpath = NULL, ncore=1, ...) {
  
   
@@ -74,7 +74,6 @@
     sse <- NULL
   
   ## Set indicies
-  #gaps.res <- gap.inspect(pdbs$ali)
   gaps.res <- gap.inspect(pdbs$resno)
   gaps.pos <- gap.inspect(pdbs$xyz)
 
@@ -187,6 +186,33 @@
   if(is.null(outpath))
     fname <- tempfile(fileext = "pdb")
 
+  
+  ##### Start calculation of variance weighting  #####
+  wts <- NULL
+  if(is.logical(varweight)) {
+    if(varweight) {
+      #if(!rm.gaps) {
+      #  warning("varweight only possible when rm.gaps=TRUE")
+      #  wts <- NULL
+      #}
+      #else
+      wts <- var.xyz(xyz, weight=TRUE, gamma=1)
+    }
+  }
+  else {
+    dims.vw <- dim(varweight)
+    if(all(dims==ncol(xyz)/3)) {
+      wts <- varweight
+      varweight <- TRUE
+    }
+    else
+      stop("incompatible length of varweight vector")
+  }
+
+  print(varweight)
+  print(dim(wts))
+  
+
   ### Memory usage ###
   dims <- dim(modes.array)
   mem.usage <- sum(c(as.numeric(object.size(modes.array)),
@@ -222,7 +248,7 @@
   if(fit)
     cat(paste("  ...", "coordinate superposition prior to NM calculation", "\n"))
 
-  if(fcw & rm.gaps)
+  if(varweight)
     cat(paste("  ...", "weighting force constants based on structural variance", "\n"))
 
   if(full)
@@ -236,17 +262,6 @@
   
   cat("\n")
 
-
-  ##### Start calculation of variance weighting  #####
-  wts <- NULL
-  if(fcw) {
-    if(!rm.gaps) {
-      warning("fcw only possible when rm.gaps=TRUE")
-      wts <- NULL
-    }
-    else
-      wts <- .make.weights(xyz) ** 5
-  }
 
   ##### Start modes calculation #####
   pb <- txtProgressBar(min=0, max=length(pdbs$id), style=3)
@@ -337,25 +352,6 @@
   mat[ inds[,c(2,1)] ] = mat[ inds ]
   return(round(mat, 4))
 }
-
-".make.weights" <- function(xyz) {
-  # Calculate pairwise distances
-  natoms <- ncol(xyz) / 3
-  all <- array(0, dim=c(natoms,natoms,nrow(xyz)))
-  for( i in 1:nrow(xyz) ) {
-    dists <- dist.xyz(xyz[i,])
-    all[,,i] <- dists
-  }
-  
-  # Calculate variance of pairwise distances
-  all.vars <- apply(all, 1:2, var)
-  
-  # Make the final weights
-  weights <- 1 - (all.vars / max(all.vars, na.rm=TRUE))
-  weights[is.na(weights)] <- 1
-  return(weights)
-}
-
 
 .buildDummyPdb <- function(pdb=NULL, xyz=NULL,  elety=NULL, resno=NULL, chain=NULL, resid=NULL) {
 

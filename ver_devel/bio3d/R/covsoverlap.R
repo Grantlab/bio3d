@@ -1,12 +1,11 @@
-
 covsoverlap <- function(...)
   UseMethod("covsoverlap")
 
-covsoverlap.enma <- function(enma, ncore=4, subset=NULL, ...) {
+covsoverlap.enma <- function(enma, ncore=NULL, ...) {
   if(!inherits(enma, "enma"))
     stop("provide a 'enma' object as obtain from function 'nma.pdbs()'")
 
-    ncore <- setup.ncore(ncore, bigmem = FALSE)
+  ncore <- setup.ncore(ncore, bigmem = FALSE)
 
   if(ncore>1)
     mylapply <- mclapply
@@ -23,12 +22,9 @@ covsoverlap.enma <- function(enma, ncore=4, subset=NULL, ...) {
   
   mylist <- mylapply(1:nrow(inds), function(row) {
     i <- inds[row,1]; j <- inds[row,2];
-    val <- covsoverlap.matrix(enma$U.subspace[,,i],
-                              enma$U.subspace[,,j],
-                              enma$L[i, ],
-                              enma$L[j, ],
-                              subset=subset)
-               
+    a <- list(U=enma$U.subspace[,,i], L=enma$L[i, ])
+    b <- list(U=enma$U.subspace[,,j], L=enma$L[j, ])
+    val <- covsoverlap.nma(a, b, ...)
     out <- list(val=val, i=i, j=j)
     cat(".")
     return(out)
@@ -47,33 +43,36 @@ covsoverlap.enma <- function(enma, ncore=4, subset=NULL, ...) {
   
   cat("\n")
   return(round(mat, 6))
-  
 }
 
 
-
-covsoverlap.matrix <- function(Ua, Ub, La, Lb, subset=NULL) {
-  if(any(missing(Ua), missing(Ub), missing(La), missing(Lb)))
+covsoverlap.nma <- function(a, b, subset=NULL, ...) {
+  if(any(missing(a), missing(b)))
     stop("provide eigenvectors and eigenvalues")
+
+  dims.a <- dim(a$U)
+  dims.b <- dim(b$U)
   
+  if(dims.a[1]!=dims.b[1])
+    stop("dimension mismatch")
+
   if(!is.null(subset)) {
-    if(subset>ncol(Ua))
-      subset <- ncol(Ua)
+    if(subset>ncol(a$U))
+      subset <- ncol(a$U)
     
-    Ua <- Ua[,1:subset]
-    Ub <- Ub[,1:subset]
-    La <- La[1:subset]
-    Lb <- Lb[1:subset]
+    a$U <- a$U[,1:subset]
+    b$U <- b$U[,1:subset]
+    a$L <- a$L[1:subset]
+    b$L <- b$L[1:subset]
   }
 
   sumb <- 0
-  for( k in 1:ncol(Ua) ) {
-    
-    tmp <- sqrt(La[k] * Lb)
-    overlap <- c((t(Ua[,k]) %*% Ub)**2)
+  for( k in 1:ncol(a$U) ) {
+    tmp <- sqrt(a$L[k] * b$L)
+    overlap <- c((t(a$U[,k]) %*% b$U)**2)
     sumb <- sumb + sum( tmp * overlap )
   }
   
-  return(1 - ( sum(La + Lb) - 2 *sumb ) / sum(La + Lb))
+  return(1 - ( sum(a$L + b$L) - 2 *sumb ) / sum(a$L + b$L))
 }
 

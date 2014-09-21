@@ -1,7 +1,7 @@
 rmsip <- function(...)
   UseMethod("rmsip")
 
-rmsip.enma <- function(modes, ncore=NULL) {
+rmsip.enma <- function(modes, ncore=NULL, subset=10, ...) {
   if(!inherits(modes, "enma"))
     stop("provide a 'enma' object as obtain from function 'nma.pdbs()'")
   
@@ -22,7 +22,9 @@ rmsip.enma <- function(modes, ncore=NULL) {
   
   mylist <- mylapply(1:nrow(inds), function(row) {
     i <- inds[row,1]; j <- inds[row,2];
-    r <- rmsip.matrix(modes$U.subspace[,,i], modes$U.subspace[,,j])
+    r <- rmsip.matrix(modes$U.subspace[,,i],
+                      modes$U.subspace[,,j],
+                      subset=subset)
     out <- list(val=r$rmsip, i=i, j=j)
     cat(".")
     return(out)
@@ -46,12 +48,13 @@ rmsip.nma <- function(...)
   rmsip.matrix(...)
 
 rmsip.pca <- function(...)
-  rmsip.matrix(...)
+  rmsip.nma(...)
 
 rmsip.pca.loadings <- function(...)
-  rmsip.matrix(...)
+  rmsip.nma(...)
 
-rmsip.matrix <- function(modes.a, modes.b, subset = 10, row.name="a", col.name="b") {
+rmsip.matrix <- function(modes.a, modes.b, subset = 10,
+                         row.name="a", col.name="b", ...) {
     
     if(missing(modes.a))
       stop("rmsip: 'modes.a' must be prodivded")

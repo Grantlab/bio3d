@@ -421,7 +421,7 @@ box()
 
 #+ example1q-bc, eval=TRUE, results='hide', cache=TRUE
 # Bhattacharyya coefficient
-covs <- enma2covs(modes)
+covs <- cov.enma(modes)
 bc <- bhattacharyya(modes, covs=covs)
 hc.bc <- hclust(dist(1-bc), method="ward.D2")
 grps.bc <- cutree(hc.bc, k=3)
