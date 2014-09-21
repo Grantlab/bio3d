@@ -12,7 +12,7 @@
 }
 \usage{
 bhattacharyya(...)
-\method{bhattacharyya}{enma}(enma, ncore=NULL, ...)
+\method{bhattacharyya}{enma}(enma, covs=NULL, ncore=NULL, ...)
 \method{bhattacharyya}{array}(covs, ncore=NULL, ...)
 \method{bhattacharyya}{matrix}(a, b, q=90, n=NULL, ...)
 \method{bhattacharyya}{nma}(...)

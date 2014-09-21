@@ -7,7 +7,7 @@
 }
 \usage{
 \method{nma}{pdbs}(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
-         rm.gaps = TRUE, sse = FALSE, defa = FALSE, 
+         rm.gaps = TRUE, sse = FALSE, varweight=FALSE, defa = FALSE, 
          outpath = NULL, ncore = 1, \dots)
 
 \method{print}{enma}(x, \dots)
@@ -27,6 +27,9 @@
     structures). Thus, gap positions are removed from output. }
   \item{sse}{ logical, if TRUE strip loop atoms from the aligned core in
     which the comparison should be made. }
+  \item{varweight}{ logical, if TRUE perform weighing of the pair force
+    constants. Alternatively, provide a NxN matrix containing the
+    weights. See function \code{var.pdbs}. }
   \item{defa}{ logical, if TRUE perform deformation analysis on the
     first 5 modes. }
   \item{outpath}{ character string specifing the output directory to

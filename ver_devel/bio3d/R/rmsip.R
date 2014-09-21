@@ -1,8 +1,8 @@
 rmsip <- function(...)
   UseMethod("rmsip")
 
-rmsip.enma <- function(modes, ncore=NULL, subset=10, ...) {
-  if(!inherits(modes, "enma"))
+rmsip.enma <- function(enma, ncore=NULL, subset=10, ...) {
+  if(!inherits(enma, "enma"))
     stop("provide a 'enma' object as obtain from function 'nma.pdbs()'")
   
   ncore <- setup.ncore(ncore, bigmem = FALSE)
@@ -12,7 +12,7 @@ rmsip.enma <- function(modes, ncore=NULL, subset=10, ...) {
   else
     mylapply <- lapply
   
-  dims <- dim(modes$fluctuations)
+  dims <- dim(enma$fluctuations)
   m <- dims[1]
 
   mat <- matrix(NA, m, m)
@@ -22,8 +22,8 @@ rmsip.enma <- function(modes, ncore=NULL, subset=10, ...) {
   
   mylist <- mylapply(1:nrow(inds), function(row) {
     i <- inds[row,1]; j <- inds[row,2];
-    r <- rmsip.matrix(modes$U.subspace[,,i],
-                      modes$U.subspace[,,j],
+    r <- rmsip.matrix(enma$U.subspace[,,i],
+                      enma$U.subspace[,,j],
                       subset=subset)
     out <- list(val=r$rmsip, i=i, j=j)
     cat(".")
@@ -37,8 +37,8 @@ rmsip.enma <- function(modes, ncore=NULL, subset=10, ...) {
   
   mat[ inds[,c(2,1)] ] = mat[ inds ]
   ##diag(mat) <- rep(1, n)
-  colnames(mat) <- basename(rownames(modes$fluctuations))
-  rownames(mat) <- basename(rownames(modes$fluctuations))
+  colnames(mat) <- basename(rownames(enma$fluctuations))
+  rownames(mat) <- basename(rownames(enma$fluctuations))
 
   cat("\n")
   return(round(mat, 6))

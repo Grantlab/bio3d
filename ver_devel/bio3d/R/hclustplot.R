@@ -1,5 +1,5 @@
 "hclustplot" <- function(hc, k=NULL, h=NULL, colors=NULL,
-                           labels=NULL, fillbox=TRUE, sub=NULL, 
+                           labels=NULL, fillbox=TRUE, 
                            heights = c(1, .3), mar = c(1, 1, 0, 1), ...) {
 
   if(!inherits(hc, "hclust"))
@@ -144,8 +144,8 @@
                        mtext.args))
   }
 
-  if(!is.null(sub)) {
-    mtext(sub, side=3, line=-0.5)
-  }
+  ##if(!is.null(sub)) {
+  ##  mtext(sub, side=3, line=-0.5)
+  ##}
   
 }

@@ -190,14 +190,8 @@
   ##### Start calculation of variance weighting  #####
   wts <- NULL
   if(is.logical(varweight)) {
-    if(varweight) {
-      #if(!rm.gaps) {
-      #  warning("varweight only possible when rm.gaps=TRUE")
-      #  wts <- NULL
-      #}
-      #else
-      wts <- var.xyz(xyz, weight=TRUE, gamma=1)
-    }
+    if(varweight)
+      wts <- var.xyz(xyz, weights=TRUE)
   }
   else {
     dims.vw <- dim(varweight)
