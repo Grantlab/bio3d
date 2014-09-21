@@ -17,7 +17,7 @@ system("pandoc -o Bio3D_cna-transducin.pdf Bio3D_cna-transducin.md")
 #' Correlation network analysis can be employed to identify protein segments with correlated motions.
 #' In this approach, a weighted graph is constructed where each residue represents a node and the 
 #' weight of the connection between nodes, *i* and *j*, represents their respective cross-correlation 
-#' value, cij, expressed by either the Pearson-like form or the linear mutual information. In this 
+#' value, cij, expressed for example by the Pearson-like form or the linear mutual information. In this 
 #' example, Normal mode analysis (NMA) is employed for the calculation of cross-correlations[^2].
 
 #'
@@ -78,6 +78,13 @@ net.gtp
 net.gdi = cna(cij.gdi, cutoff.cij=0.35)
 net.gdi
 
+#'
+#' A 3-D visulization of networks can also be performed with the Bio3D funciton **view.dccm()** (See `help(view.dccm)` and the vignette "Enhanced Methods for Normal Mode Analysis with Bio3D" available online):
+#+ 3dview, eval=FALSE
+view.dccm(net.gtp$cij, launch=TRUE)
+
+
+#' 
 #' Maximization of modularity sometimes creates unexpected community partitions splitting 
 #' natural structure motifs, such as secondary structure elements, into many small community 'islands'. To avoid this situation, we look into partitions with modularity close to the maximal value 
 #' but with an overall smaller number of communities. 
