@@ -1,5 +1,5 @@
 "view.dccm" <-
-  function(dccm, pdb, step=0.2, omit=0.2, type="pymol",
+  function(dccm, pdb, step=0.2, omit=0.2, radius = 0.15, type="pymol",
            outprefix="corr", launch=FALSE, exefile = "pymol") {
 
     ## Check if the program is executable
@@ -73,7 +73,7 @@
       ## define color range 
       blues <- colorRamp(c("white", "blue"))
       reds  <- colorRamp(c("white", "red"))
-      w <- 0.15
+      w <- radius 
     }
     else {
       m <- 0

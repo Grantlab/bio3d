@@ -75,8 +75,34 @@ amsm.xyz(xyz, ncore = NULL)
   \code{\link{read.pdb}}, \code{\link{mktrj}}.
 }
 \examples{
+
+#### NMR-ensemble example
+## Read a multi-model PDB file 
+pdb <- read.pdb("1d1d", multi=TRUE)
+ca.inds <- atom.select(pdb, 'calpha')
+
+## Find domains and write PDB
+gs  <- geostas(pdb)
+
+## Plot a atomic movement similarity matrix
+plot.dccm(gs$amsm, at=seq(0, 1, 0.1), main="AMSM with Domain Assignment",
+          col.regions=rev(heat.colors(200)), margin.segments=gs$grps, contour=FALSE)
+
+## Fit all frames to the 'first' domain
+domain.inds <- atom2xyz(which(gs$grps==1))
+
+xyz <- fit.xyz(pdb$xyz[1, ca.inds$xyz],
+               pdb$xyz[, ca.inds$xyz],
+               fixed.inds = domain.inds,
+               mobile.inds = domain.inds)
+
+write.pdb(xyz=xyz, chain=gs$grps)
+
+
+\dontrun{
+#### NMA example
 ## Fetch stucture
-pdb <- read.pdb("1hel")
+pdb <- read.pdb("1crn")
 
 ## Calculate (vibrational) normal modes
 modes <- nma(pdb)
@@ -84,21 +110,21 @@ modes <- nma(pdb)
 ## Mode trajectories
 trj <- rbind(mktrj(modes, mode=7),
              mktrj(modes, mode=8),
-             mktrj(modes, mode=9))
+             mktrj(modes, mode=9),
+             mktrj(modes, mode=10),
+             mktrj(modes, mode=11))
 
 ## Find domains
-gs <- geostas(trj)
+gs <- geostas(trj, k=2)
 
-plot.dccm(gs$amsm, at=seq(0, 1, 0.1), main="AMSM with Domain Assignment ",
-          margin.segments=gs$grps)
+## Write NMA trajectory with domain assignment
+mktrj(modes, mode=7, chain=gs$grps)
+
+## Redo geostas domain clustering 
+gs <- geostas(trj, amsm=gs$amsm, k=5)
 
 
-## Make a new PDB file with chain ID corresponding to domains
-## write.pdb(pdb=NULL, xyz=modes$xyz, chain=gs$grps)
 
-## gs <- geostas(trj, amsm=gs$amsm, k=5)
-
-\dontrun{
 
 #### Trajectory example
 ## Read inn DCD trajectory file, fit coordinates
@@ -113,27 +139,8 @@ gs <- geostas(xyz, k=3, fit=FALSE)
 pc.md <- pca.xyz(xyz)
 
 ## Visualize PCs with colored domains (chain ID)
-a <- mktrj(pc.md, pc=1, chain=gs$grps)
+mktrj(pc.md, pc=1, chain=gs$grps)
 
-
-
-#### NMR-ensemble example
-## Read a multi-model PDB file 
-pdb <- read.pdb("1d1d", multi=TRUE)
-ca.inds <- atom.select(pdb, 'calpha')
-
-## Find domains and write PDB
-gs  <- geostas(pdb)
-
-## Fit all frames to the 'first' domain
-domain.inds <- atom2xyz(which(gs$grps==1))
-
-xyz <- fit.xyz(pdb$xyz[1, ca.inds$xyz],
-               pdb$xyz[, ca.inds$xyz],
-               fixed.inds = domain.inds,
-               mobile.inds = domain.inds)
-
-write.pdb(xyz=xyz, chain=gs$grps)
 
 
 
@@ -158,7 +165,7 @@ xyz <- fit.xyz(pdbs$xyz[1, gaps.pos$f.inds],
 pc.xray <- pca.xyz(xyz)
 
 ## Visualize PCs with colored domains (chain ID)
-a <- mktrj(pc.xray, pc=1, chain=gs$grps)
+mktrj(pc.xray, pc=1, chain=gs$grps)
 
 }
 }
