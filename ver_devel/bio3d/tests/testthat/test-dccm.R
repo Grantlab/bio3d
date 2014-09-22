@@ -9,8 +9,10 @@ test_that("Correlation matrix from NMA", {
   invisible(capture.output(cm <- dccm.nma(modes, ncore=1)))
   
   expect_that(cm[1,1], equals(1,           tolerance=1e-6))
-  expect_that(cm[1,2], equals(0.06514794,  tolerance=1e-6))
-  expect_that(cm[1,3], equals(-0.31563254, tolerance=1e-6))
+  ##- previous to juliens atom mass lookup
+  ##expect_that(cm[1,2], equals(0.06514794,  tolerance=1e-6))
+  expect_that(cm[1,2], equals(0.06514545,  tolerance=1e-6))
+  expect_that(cm[1,3], equals(-0.3156342, tolerance=1e-6))
   expect_that(cm[1,3], equals(cm[3,1]))
 
   ## Check multicore DCCM

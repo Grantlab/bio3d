@@ -5,12 +5,14 @@ test_that("atom to mass tests", {
 
   ## Simple test
   atom.names <- c("CA", "O", "N", "OXT")
-  masses <- c(12.01, 16.00, 14.01, 16.00)
-  expect_that(atom2mass(atom.names), equals(masses))
+  ##masses <- c(12.01, 16.00, 14.01, 16.00)
+  masses <- c(12.0107, 15.9994, 14.0067, 15.9994)
+  expect_that(atom2mass(atom.names), equals(masses, tolerance=1e-6))
 
-  masses <- c(42.02, 16.00)
-  expect_that(atom2mass(atom.names, grpby=c(1,1,1,2)), 
-              equals(masses))
+  ##masses <- c(42.02, 16.00)
+  masses <- c(42.0168, 15.9994)
+  expect_that(as.numeric(atom2mass(atom.names, grpby=c(1,1,1,2))), 
+              equals(masses, tolerance=1e-6))
   
   ## Should end with error  
   atom.names <- c("CA", "O", "N", "OXT", "CL2", "PT1")
@@ -23,32 +25,36 @@ test_that("atom to mass tests", {
   invisible(capture.output(pdb.small.prot <- trim.pdb(pdb.small, prot.inds)))
 
   eletys <- pdb.small$atom$elety[ pdb.small$atom$type=="ATOM" ]
-  expect_that(sum(atom2mass( eletys )), equals(1165.396))
-  expect_that(sum(atom2mass( eletys )), equals(sum(atom2mass(pdb.small.prot))))
-  expect_that(sum(atom2mass( pdb.small )), equals(1461.528))
+  expect_that(sum(atom2mass( eletys )), equals(1165.344, tolerance=1e-6))
+  expect_that(sum(atom2mass( eletys )), equals(sum(atom2mass(pdb.small.prot), tolerance=1e-6)))
+  expect_that(sum(atom2mass( pdb.small )), equals(1461.465, tolerance=1e-6))
   
   ## Try center of mass at the same go
-  coma <- c(16.3714058,  5.0264399,  0.1739735)
+  ##coma <- c(16.3714058,  5.0264399,  0.1739735)
+  coma <- c(16.3714174,  5.0264663,  0.1739975)
   expect_that(com(pdb.small.prot), equals(coma, tolerance=1e-6))
   
-  coma <- c(16.2706625,  4.8153027,  0.3936553)
+  ##coma <- c(16.2706625,  4.8153027,  0.3936553)
+  coma <- c(16.2706660,  4.8153275,  0.3936753)
   expect_that(com(pdb.small), equals(coma, tolerance=1e-6))
   
   
   ## Add custom masses
-  elety.cust <- list("CL2"="Cl", "PT1"="Pt")
-  mass.cust <- list("Cl"=35.45, "Pt"=195.08)
   atom.names <- c("CA", "O", "N", "OXT", "CL2", "PT1")
-  masses <- c(12.01, 16.00, 14.01, 16.00, 35.45, 195.08)
+  ##masses <- c(12.01, 16.00, 14.01, 16.00, 35.45, 195.08)
+  masses <- c(12.0107, 15.9994, 14.0067, 15.9994, 35.4530, 195.0780)
+
+  elety.cust <- data.frame(name = c("CL2","PT1"), symb = c("Cl","Pt"))
+  ##mass.cust  <- data.frame(symb = c("Cl","Pt"), mass = c(35.45, 195.08))
   
-  expect_that(atom2mass(atom.names, mass.custom=mass.cust, elety.custom=elety.cust),
-              equals(masses))
+  expect_that(atom2mass(atom.names, elety.custom=elety.cust),  equals(masses, tolerance=1e-6))
   
   ## mass from formula
   form <- "C5 H6 N O3"
   masses <- c(60.050,  6.048, 14.010, 48.000)
+  masses <- c(60.05350, 6.04764, 14.00670, 47.99820)
   expect_that(formula2mass(form, sum.mass=FALSE),
-              equals(masses))
+              equals(masses, tolerance=1e-6))
 
   form <- "C5H6"
   expect_that(formula2mass(form), throws_error())
