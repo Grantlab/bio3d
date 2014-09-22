@@ -287,7 +287,7 @@ summary( c(seqidentity(pdbs)) )
 #' are omitted from output in accordance with common practice [^5]. 
 #' 
 
-#+ example2_A-modes, cache=TRUE, results="hide", warning=FALSE
+#+ example2_A-modes, cache=TRUE, warning=FALSE, message=FALSE,
 # NMA on all structures
 modes <- nma(pdbs)
 
@@ -345,7 +345,7 @@ annotation <- transducin$annotation
 gaps.res <- gap.inspect(pdbs$ali)
 gaps.pos <- gap.inspect(pdbs$xyz)
 
-#+ example2_B-modes, cache=TRUE, results="hide", warning=FALSE
+#+ example2_B-modes, cache=TRUE, warning=FALSE, message=FALSE,
 # Calculate normal modes of the 53 structures
 modes <- nma.pdbs(pdbs, ncore=4)
 
@@ -563,7 +563,7 @@ gaps.pos <- gap.inspect(pdbs$xyz)
 xyz <- pdbfit(pdbs)
 pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
 
-#+ example3_B-modes, cache=TRUE, results="hide"
+#+ example3_B-modes, cache=TRUE, results="hide", message=FALSE, warning=FALSE,
 # Fetch PDB objects
 npdbs <- pdbs
 npdbs$xyz <- xyz
