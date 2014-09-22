@@ -72,9 +72,14 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE,
   z <- sweep(xyz,2,mean) %*% (U)
 
   ## atom-wise loadings (norm of xyz eigenvectors)
-  au <- apply(U, 2, function(x) {
-    sqrt(colSums(matrix(x^2, nrow=3))) })
-
+  ## Skip the calculation if the input is not xyz coordinates,
+  ## e.g. for PCA over correlaiton matrices (see pca.array()).
+  if(ncol(U) %% 3 == 0) { 
+     au <- apply(U, 2, function(x) {
+       sqrt(colSums(matrix(x^2, nrow=3))) })
+  } else {
+     au <- NULL
+  }
   
   class(U)="pca.loadings"
 
