@@ -69,7 +69,7 @@ pfam$desc
 #' Having identified the Pfam entry of our query protein we can use function **pfam()** to fetch the
 #' curated sequence alignment of the DHFR family. Use function **print.fasta()** to print a short summary
 #' of the downloaded sequence alignment to the screen. Note that if argument `alignment=TRUE`
-#' the sequence alignmenment itself will be written to screen. 
+#' the sequence alignment itself will be written to screen. 
 
 #+ pfam2, cache=TRUE,
 # download pfam alignment for the DHFR family
@@ -115,7 +115,7 @@ print(unique(species))
 #' 
 #' As in the previous vignette,
 #' we are interested in protein structures without missing in-structure residues,
-#' and we also want to limit the number of identifical conformers:
+#' and we also want to limit the number of identical conformers:
 
 #+ pdbs, results="hide", cache=TRUE, warning=FALSE,
 # fetch and split PDBs
@@ -211,7 +211,7 @@ modes <- nma.pdbs(pdbs, rm.gaps=FALSE, ncore=4)
 
 #'
 #' The *modes* object of class *enma* contains aligned normal mode data including fluctuations,
-#' RMSIP data (only when`rm.gaps=FALSE`), and aligned eigenvectors. A short summary of the *modes* object can be obtain by
+#' RMSIP data (only when `rm.gaps=FALSE`), and aligned eigenvectors. A short summary of the *modes* object can be obtain by
 #' calling the function **print()**, and the aligned fluctuations can be plotted with function
 #' **plot.enma()**:
 print(modes)
