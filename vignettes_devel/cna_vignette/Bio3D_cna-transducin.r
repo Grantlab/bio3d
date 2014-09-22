@@ -1,6 +1,6 @@
 #' # Supporting Material S4
 #' # Integrated structural and evolutionary ensemble analysis with Bio3D
-#' **Lars Skj\ae rven, Xin-Qiu Yao & Barry J. Grant**
+#' **Lars Skj\ae rven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant**
 
 #+ setup, include=FALSE
 opts_chunk$set(dev='pdf')
@@ -46,18 +46,20 @@ library(bio3d)
 
 #'
 #' First we read our selected GTP and GDI bound structures, select chain A, and perform NMA on each individually.
+#+ single-pdb, results="hide"
 pdb.gtp = read.pdb("1TND")
 pdb.gdi = read.pdb("1KJY")
 
 pdb.gtp = trim.pdb(pdb.gtp, inds=atom.select(pdb.gtp, chain="A"))
 pdb.gdi = trim.pdb(pdb.gdi, inds=atom.select(pdb.gdi, chain="A"))
 
+#+ nma
 modes.gtp = nma(pdb.gtp)
 modes.gdi = nma(pdb.gdi)
 
 #' 
 #' Residue cross-correlations can then be calculated based on these normal mode results.
-#+ nma_cij, cache=TRUE, results="hide", warning=FALSE, 
+#+ nma_cij, cache=TRUE, results="hide", warning=FALSE, message=FALSE
 cij.gtp = dccm(modes.gtp)
 cij.gdi = dccm(modes.gdi)
 
@@ -72,17 +74,18 @@ cij.gdi = dccm(modes.gdi)
 #' intra-connected, but loosely inter-connected. By default, **cna()** returns communities 
 #' associated with the maximal modularity value. 
 
-#+ cna
+#+ cna, results="hide", message=FALSE
 net.gtp = cna(cij.gtp, cutoff.cij=0.35)
-net.gtp
 net.gdi = cna(cij.gdi, cutoff.cij=0.35)
+
+#+ display-cna
+net.gtp
 net.gdi
 
 #'
 #' A 3-D visulization of networks can also be performed with the Bio3D funciton **view.dccm()** (See `help(view.dccm)` and the vignette "Enhanced Methods for Normal Mode Analysis with Bio3D" available online):
 #+ 3dview, eval=FALSE
 view.dccm(net.gtp$cij, launch=TRUE)
-
 
 #' 
 #' Maximization of modularity sometimes creates unexpected community partitions splitting 
@@ -108,7 +111,7 @@ nnet.gtp
 nnet.gdi = mod.select(net.gdi)
 nnet.gdi
 
-#' The resultive networks can be visulized with the Bio3D function **plot.cna()**, which can generate 2D representations
+#' The resulting networks can be visulized with the Bio3D function **plot.cna()**, which can generate 2D representations
 #' for both full residue-level and coarse-grained community-level networks.
 
 #+ layout
@@ -117,9 +120,9 @@ cent.gtp = layout.cna(nnet.gtp, pdb=pdb.gtp, k=3)[,1:2]
 cent.gdi.full = layout.cna(nnet.gdi, pdb=pdb.gtp, full=TRUE, k=3)[,1:2]
 cent.gdi = layout.cna(nnet.gdi, pdb=pdb.gtp, k=3)[,1:2]
 
-#' Following code plots the four networks as a single multi-panel figure. 
+#' The following code plots the four networks as a single multi-panel figure. 
 
-#+ figure1, fig.cap="Comparison of correlation networks between active and inhibitory G protein alpha subunits. Networks are derived from NMA applied to single PDB structures."
+#+ figure1, fig.cap="Comparison of correlation networks between active and inhibitory G protein alpha subunits. Networks are derived from NMA applied to single PDB structures.", echo=FALSE
 layout(matrix(c(1:4), 2, 2))
 par(mar=c(0.1, 0.1, 3, 0.1))
 plot.cna(nnet.gtp, layout=cent.gtp.full, full=TRUE, vertex.label=NA, vertex.size=5)
@@ -129,27 +132,33 @@ plot.cna(nnet.gdi, layout=cent.gdi.full, full=TRUE, vertex.label=NA, vertex.size
 title(main="GDI")
 plot.cna(nnet.gdi, layout=cent.gdi)
 
+#+ dummy-code, eval=FALSE
+plot.cna(nnet.gtp, layout=cent.gtp.full, full=TRUE, vertex.label=NA, vertex.size=5)
+plot.cna(nnet.gtp, layout=cent.gtp)
+plot.cna(nnet.gdi, layout=cent.gdi.full, full=TRUE, vertex.label=NA, vertex.size=5)
+plot.cna(nnet.gdi, layout=cent.gdi)
+
 #'
 #' ## Part II: Correlation network analysis based on ensemble NMA
-#' In this example we perform NMA on the 53 crystallographic transducin G-alpha structures, which can be 
-#' categorized into active GTP-analog-bound, inactive GDP-bound, and inhibitory GDI-bound states. 
-#' The example transducin structure dataset (see `help(transducin)` and "Comparative Protein Structure Analysis with Bio3D" vignette available online) will be loaded for the analysis. Briefly, this dataset includes aligned PDB coordinates (`pdbs`), structural invariant core positions (`core`) and annotations for each PDB structure (`annotation`).
-#' Cross-correlation matrices for all structures in the ensemble are calculated with function **dccm()**. 
+#' In this example we perform ensemble NMA on 53 crystallographic transducin G-alpha structures, which can be 
+#' categorized into active GTP-analog-bound, inactive GDP-bound, and inhibitory GDI-bound states. For this analysis
+#' we utilize the example transducin structure dataset (further details of which can be obtained via `help(transducin)` along with the "Comparative Protein Structure Analysis with Bio3D" vignette available online). Briefly, this dataset includes aligned PDB coordinates (`pdbs`), structural invariant core positions (`core`) and annotations for each PDB structure (`annotation`).
+#' Cross-correlation matrices for all structures in the ensemble are calculated with the function **dccm()**. 
 #' State-specific ensemble average correlation matrices are then obtained with the funciton **filter.dccm()**.
 #' Correlation networks are finally constructed with the function **cna()**, and visualization of the networks
-#' is performed with the function **plot.cna()**:
+#' performed with the function **plot.cna()**:
 
 #+ prep_data, warning=FALSE, results="hide",
 attach(transducin)
 
-#+ nma.pdbs, cache=TRUE, warning=FALSE, results="hide",
+#+ nma.pdbs, cache=TRUE, warning=FALSE, results="hide", message=FALSE
 modes <- nma(pdbs, ncore=8)
 
 #+ dccms, cache=TRUE
 cijs0 <- dccm(modes)
 
 #' Below we perform optional filtering and averaging per state of the individual structure cross-correlation matrices.
-#' In this case, we also utilize a cutoff for correlation (0.35 in this example) and a cutoff for C-alpha distance (10 angstrom) (See `help(filter.dccm)` and main text for details).
+#' In this example, we also utilize a cutoff for correlation (0.35 in this example) and a cutoff for C-alpha distance (10 angstrom) (See `help(filter.dccm)` and main text for details).
 #+ filter_dccm, cache=TRUE
 cij <- filter.dccm(cijs0, pdbs, fac=annotation[, "state3"], 
    cutoff.cij=0.35, dcut=10, scut=0, pcut=0.75, ncore=8)
@@ -166,7 +175,7 @@ cent.gtp = layout.cna(net1, pdb=ref.pdb, k=3)[,1:2]
 cent.gdi.full = layout.cna(net2, pdb=ref.pdb, full=TRUE, k=3)[,1:2]
 cent.gdi = layout.cna(net2, pdb=ref.pdb, k=3)[,1:2]
 
-#+ figure2, fig.cap="Comparison of correlation networks between active and inhibitory G protein alpha subunit. Networks are derived from NMA based on structure ensemble."
+#+ figure2, fig.cap="Correlation networks for GTP \"active\" and GDI \"inhibitory\" conformational states of transducin. Networks are derived from ensemble NMA of available GTP and GDI crystallographic structures.", echo=FALSE
 layout(matrix(c(1:4), 2, 2))
 par(mar=c(0.1, 0.1, 3, 0.1))
 plot.cna(net1, layout=cent.gtp.full, full=TRUE, vertex.label=NA, vertex.size=5)
@@ -176,6 +185,11 @@ plot.cna(net2, layout=cent.gdi.full, full=TRUE, vertex.label=NA, vertex.size=5)
 title(main="GDI")
 plot.cna(net2, layout=cent.gdi)
 
+#+ dummy-code2, eval=FALSE
+plot.cna(net1, layout=cent.gtp.full, full=TRUE, vertex.label=NA, vertex.size=5)
+plot.cna(net1, layout=cent.gtp)
+plot.cna(net2, layout=cent.gdi.full, full=TRUE, vertex.label=NA, vertex.size=5)
+plot.cna(net2, layout=cent.gdi)
 
 #' ## Document Details
 #' This document is shipped with the Bio3D package in both R and PDF formats. All code can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
