@@ -44,7 +44,7 @@ system("pandoc -o Bio3D_nma-dhfr-partII.pdf Bio3D_nma-dhfr-partII.md")
 #' the Pfam HMM database with function **hmmer()**. The arguments `type` and `db`
 #' specifies the type of hmmer search and the database to search, respectively. In this particular
 #' example, our query sequence is searched against the Pfam profile HMM library
-#' (arguments `type=hmmscan` and `db=pfam`) to identify its respecitve protein family. 
+#' (arguments `type=hmmscan` and `db=pfam`) to identify its respective protein family. 
 #' The to **hmmer()** will return a data frame object containing the Pfam accession ID (`$acc`),
 #' description of the identified family (`$desc`), family name (`$name`), etc. 
 
