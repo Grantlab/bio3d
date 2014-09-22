@@ -7,7 +7,7 @@
 }
 \usage{
 \method{nma}{pdbs}(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
-         rm.gaps = TRUE, sse = FALSE, varweight=FALSE, defa = FALSE, 
+         rm.gaps = TRUE, varweight=FALSE, 
          outpath = NULL, ncore = 1, \dots)
 
 \method{print}{enma}(x, \dots)
@@ -25,13 +25,9 @@
   \item{rm.gaps}{ logical, if TRUE obtain the hessian matrices for only
     atoms in the aligned positions (non-gap positions in all aligned
     structures). Thus, gap positions are removed from output. }
-  \item{sse}{ logical, if TRUE strip loop atoms from the aligned core in
-    which the comparison should be made. }
   \item{varweight}{ logical, if TRUE perform weighing of the pair force
     constants. Alternatively, provide a NxN matrix containing the
     weights. See function \code{var.pdbs}. }
-  \item{defa}{ logical, if TRUE perform deformation analysis on the
-    first 5 modes. }
   \item{outpath}{ character string specifing the output directory to
     which the PDB structures should be written. }
   \item{ncore }{ number of CPU cores used to do the calculation.
@@ -63,8 +59,6 @@
     fluctuations. }
   \item{rmsip}{ a numeric matrix of RMSIP values between all pairs
     of mode subsets. }
-  \item{deformations }{ a numeric matrix with aligned atomic
-    deformation energies. }
   \item{U.subspace }{ a three-dimensional array with aligned
     eigenvectors  (corresponding to the subspace defined by the first N
     non-trivial eigenvectors (\sQuote{U}) of the \sQuote{nma} object). }
