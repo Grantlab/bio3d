@@ -1,6 +1,6 @@
 #' # Supporting Material S3
 #' # Integrated structural and evolutionary ensemble analysis with Bio3D
-#' **Lars Skj\ae rven, Xin-Qiu Yao & Barry J. Grant**
+#' **Lars Skj\ae rven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant**
 
 #+ setup, include=FALSE
 opts_chunk$set(dev='pdf')
@@ -29,17 +29,17 @@ system("pandoc -o Bio3D_nma-dhfr-partI.pdf Bio3D_nma-dhfr-partI.md")
 #'
 #' ## Part I: Ensemble NMA of *E.coli* DHFR structures
 #' In this vignette we perform *ensemble NMA* on the complete
-#' collection of *E.coli* Dihydrofolate reductase (DHFR) structures in the protein databank (PDB).
+#' collection of *E.coli* Dihydrofolate reductase (DHFR) structures in the protein data-bank (PDB).
 #' Starting from only one PDB identifier (PDB ID 1rx2) we show how to search the PDB for related structures using BLAST, fetch and align
-#' the structures, and finally calculate the normal modes of each individual structre in order
+#' the structures, and finally calculate the normal modes of each individual structure in order
 #' to probe for potential differences in structural flexibility.
 
 #'
 #' ### Search and retrieve DHFR structures
 #' Below we perform a blast search of the PDB database to identify related structures 
 #' to our query *E.coli* DHFR sequence. In this particular example we use function 
-#' **get.seq(PDBID)** to fetch the query sequence as input to **blast.pdb()**. Note that 
-#' **get.seq()** would also allow the UniProt identifier. 
+#' **get.seq()** to fetch the query sequence for chain A of the PDB ID 1RX2 and use this as input to **blast.pdb()**. Note that 
+#' **get.seq()** would also allow the corresponding UniProt identifier. 
 
 #+ example1a, results="hide"
 library(bio3d)
@@ -52,13 +52,13 @@ blast <- blast.pdb(aa)
 #'
 #' Function **plot.blast()** facilitates the visualization and filtering of the Blast results. It will attempt
 #' to set a seed position to the point of largest drop-off in normalized scores (i.e. the biggest jump in  E-values).
-#' In this particular case we specify a cutoff of 225 to include only the relevant *E.coli* structures:
+#' In this particular case we specify a cutoff (after initial plotting) of 225 to include only the relevant *E.coli* structures:
 
-#+ fig1-1, fig.cap="Blast results. Visualize and filter blast results through function **plot.blast()**. Here we proceed with 90 of the top scoring hits."
+#+ fig1-1, fig.cap="Blast results. Visualize and filter blast results through function **plot.blast()**. Here we proceed with only the top scoring hits (black)."
 hits <- plot(blast, cutoff=225)
 
 #'
-#' The Blast search and subsequent filtering idientified a total of 101 related PDB structures to our query sequence. 
+#' The Blast search and subsequent filtering identified a total of 101 related PDB structures to our query sequence. 
 #' The PDB identifiers of this collection are accessible through the `pdb.id` attribute to the `hits` object (`hits$pdb.id`). 
 #' Note that adjusting the cutoff argument (to **plot.blast()**) will result in a decrease or
 #' increase of hits. 
@@ -72,7 +72,7 @@ hits <- plot(blast, cutoff=225)
 # fetch PDBs
 raw.files <- get.pdb(hits$pdb.id, path = "raw_pdbs", gzip=TRUE)
 
-#+ example1d2, cache=TRUE, warning=FALSE, results='hide'
+#+ example1d2, cache=TRUE, warning=FALSE, results='hide', message=FALSE
 # split by chain ID
 files <- pdbsplit(raw.files, ids = hits$pdb.id, path = "raw_pdbs/split_chain", ncore=4)
 
@@ -98,7 +98,7 @@ pdbs.all <- read.fasta.pdb(aln)
 #' can be useful to omit to reduce the computational load. Below we inspect the connectivity of the
 #' PDB structures with a function call to **inspect.connectivity()**, and **pdbs.filter()** to
 #' filter out those structures from our *pdbs.all* object. Similarly, we omit structures that are
-#' conformationally redundant to reduce the computational load with funtion **rmsd.filter()**:
+#' conformationally redundant to reduce the computational load with function **rmsd.filter()**:
 
 #+ example1e, cache=TRUE, warning=FALSE, results='hide'
 # remove structures with missing residues
@@ -131,7 +131,7 @@ print(pdbs, alignment=FALSE)
 #' files we have collected. Below we use the function to annotate each structure to its
 #' source species. This will come in handy when annotating plots later on:
 
-#+ example1g, warning=FALSE, cache=TRUE, results='hide'
+#+ example1g, warning=FALSE, cache=TRUE, message=FALSE
 anno <- pdb.annotate(ids)
 print(unique(anno$source))
 
@@ -193,7 +193,7 @@ mktrj(pc.xray, pc=1,
 
 
 #'
-#' Function **pdbfit()** can be used to write the PDB files to seperate directories according to their cluster membership:
+#' Function **pdbfit()** can be used to write the PDB files to separate directories according to their cluster membership:
 
 #+ example1j, eval=FALSE
 pdbfit(pdbs.filter(pdbs, row.inds=which(grps.rd==1)), outpath="grps1") ## closed
@@ -208,7 +208,7 @@ pdbfit(pdbs.filter(pdbs, row.inds=which(grps.rd==3)), outpath="grps3") ## occlud
 #' by object *pdbs*. With the default argument `rm.gaps=TRUE` unaligned atoms 
 #' are omitted from output:
 
-#+ example1k, cache=TRUE, warning=FALSE,
+#+ example1k, cache=TRUE, warning=FALSE, results="hide", message=FALSE
 modes <- nma.pdbs(pdbs, rm.gaps=TRUE, ncore=4)
 
 #'
@@ -236,7 +236,7 @@ heatmap(1-modes$rmsip, distfun = as.dist, labRow = ids, labCol = ids,
 #'
 #' ### Fluctuation analysis
 #' Comparing the mode fluctuations of two groups of structures 
-#' can reveal specific regions of distinc flexibility patterns. Below we focus on the
+#' can reveal specific regions of distinct flexibility patterns. Below we focus on the
 #' differences between the open (black), closed (red) and occluded (green) conformations
 #' of the *E.coli* structures: 
 
@@ -292,7 +292,7 @@ r <- rmsip(pc.md$U, modes$U.subspace[,,1])
 
 print(r)
 
-#+ fig1p-1, fig.cap="RMSIP map betwen normal modes and principal components of a 5 ns long MD simulation.", fig.height=4.5, fig.width=4.5,
+#+ fig1p-1, fig.cap="RMSIP map between normal modes and principal components of a 5 ns long MD simulation.", fig.height=4.5, fig.width=4.5,
 plot(r, xlab="MD PCA", ylab="NMA")
 
 # compare MD-PCA and X-rayPCA

@@ -33,12 +33,12 @@ install.packages("igraph")
 
 
 #'
-#' ## Part I: Correlaton network analysis based on single-structure NMA
+#' ## Part I: Correlation network analysis based on single-structure NMA
 #' In this first example we perform *NMA* on two crystallographic structures of transducin G protein alpha subunits, an active
 #' GTP-analog-bound structure (PDB id *1tnd*) and an inactive GDP- and 
 #' GDI (GDP dissociation inhibitor)-bound structure (PDB id *1kjy*), by calling the function **nma()**.
 #' Cross-correlation matrices are calculated with the function **dccm()**. Correlation networks are
-#' then constructed with the function **cna()**. Network visulization is finally performed
+#' then constructed with the function **cna()**. Network visualization is finally performed
 #' with the function **plot.cna()**. See also `help(cna)` for more details and example analysis.
 
 #+ start, results="hide"
@@ -65,7 +65,7 @@ cij.gdi = dccm(modes.gdi)
 
 #'
 #' Correlation networks for both conformational states are constructed by applying the
-#' function **cna()** to the correspoding correlation matrices. Here, the C-alpha atoms
+#' function **cna()** to the corresponding correlation matrices. Here, the C-alpha atoms
 #' represents nodes which are interconnected by edges with weights corresponding to the pairwise correlation coefficient. 
 #' Edges are only constructed for pairs of nodes which obtain a coupling strength larger than a specified cutoff value
 #' (0.35 in this example). The weight of each edge is calculated as -log(|cij|), where cij is the 
@@ -83,7 +83,7 @@ net.gtp
 net.gdi
 
 #'
-#' A 3-D visulization of networks can also be performed with the Bio3D funciton **view.dccm()** (See `help(view.dccm)` and the vignette "Enhanced Methods for Normal Mode Analysis with Bio3D" available online):
+#' A 3-D visualization of networks can also be performed with the Bio3D function **view.dccm()** (See `help(view.dccm)` and the vignette "Enhanced Methods for Normal Mode Analysis with Bio3D" available on-line):
 #+ 3dview, eval=FALSE
 view.dccm(net.gtp$cij, launch=TRUE)
 
@@ -111,7 +111,7 @@ nnet.gtp
 nnet.gdi = mod.select(net.gdi)
 nnet.gdi
 
-#' The resulting networks can be visulized with the Bio3D function **plot.cna()**, which can generate 2D representations
+#' The resulting networks can be visualized with the Bio3D function **plot.cna()**, which can generate 2D representations
 #' for both full residue-level and coarse-grained community-level networks.
 
 #+ layout
@@ -120,7 +120,7 @@ cent.gtp = layout.cna(nnet.gtp, pdb=pdb.gtp, k=3)[,1:2]
 cent.gdi.full = layout.cna(nnet.gdi, pdb=pdb.gtp, full=TRUE, k=3)[,1:2]
 cent.gdi = layout.cna(nnet.gdi, pdb=pdb.gtp, k=3)[,1:2]
 
-#' The following code plots the four networks as a single multi-panel figure. 
+#' The following code plots the four networks. 
 
 #+ figure1, fig.cap="Comparison of correlation networks between active and inhibitory G protein alpha subunits. Networks are derived from NMA applied to single PDB structures.", echo=FALSE
 layout(matrix(c(1:4), 2, 2))
@@ -142,9 +142,9 @@ plot.cna(nnet.gdi, layout=cent.gdi)
 #' ## Part II: Correlation network analysis based on ensemble NMA
 #' In this example we perform ensemble NMA on 53 crystallographic transducin G-alpha structures, which can be 
 #' categorized into active GTP-analog-bound, inactive GDP-bound, and inhibitory GDI-bound states. For this analysis
-#' we utilize the example transducin structure dataset (further details of which can be obtained via `help(transducin)` along with the "Comparative Protein Structure Analysis with Bio3D" vignette available online). Briefly, this dataset includes aligned PDB coordinates (`pdbs`), structural invariant core positions (`core`) and annotations for each PDB structure (`annotation`).
+#' we utilize the example transducin structure dataset (further details of which can be obtained via `help(transducin)` along with the "Comparative Protein Structure Analysis with Bio3D" vignette available on-line). Briefly, this dataset includes aligned PDB coordinates (`pdbs`), structural invariant core positions (`core`) and annotations for each PDB structure (`annotation`).
 #' Cross-correlation matrices for all structures in the ensemble are calculated with the function **dccm()**. 
-#' State-specific ensemble average correlation matrices are then obtained with the funciton **filter.dccm()**.
+#' State-specific ensemble average correlation matrices are then obtained with the function **filter.dccm()**.
 #' Correlation networks are finally constructed with the function **cna()**, and visualization of the networks
 #' performed with the function **plot.cna()**:
 
