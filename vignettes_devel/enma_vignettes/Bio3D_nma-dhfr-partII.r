@@ -55,7 +55,7 @@ library(bio3d)
 # get sequence of Ecoli DHFR
 seq <- get.seq("1rx2_A")
 
-#+ pfam, cache=TRUE,
+#+ pfam, cache=TRUE, message=FALSE,
 # scan the Pfam database for our sequence
 pfam <- hmmer(seq, type="hmmscan", db="pfam")
 pfam$name
@@ -117,7 +117,7 @@ print(unique(species))
 #' we are interested in protein structures without missing in-structure residues,
 #' and we also want to limit the number of identifical conformers:
 
-#+ pdbs, results="hide", cache=TRUE, warning=FALSE,
+#+ pdbs, results="hide", cache=TRUE, warning=FALSE, message=FALSE,
 # fetch and split PDBs
 raw.files <- get.pdb(ids, path = "raw_pdbs", gzip=TRUE)
 files <- pdbsplit(raw.files, ids = ids,
@@ -206,7 +206,7 @@ plot(hc, hang=-1, labels=labs, cex=0.25)
 #' by object *pdbs*. Use argument `rm.gaps=FALSE` to visualize fluctuations also of un-aligned
 #' residues:
 
-#+ modes1, cache=TRUE, 
+#+ modes1, cache=TRUE, message=FALSE
 modes <- nma.pdbs(pdbs, rm.gaps=FALSE, ncore=4)
 
 #'
