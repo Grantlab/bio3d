@@ -1,6 +1,6 @@
 #' # Supporting Information S1
 #' # Integrated structural and evolutionary ensemble analysis with Bio3D
-#' **Lars Skj\ae rven, Xin-Qiu Yao & Barry J. Grant**
+#' **Lars Skj\ae rven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant**
 
 #+ setup, include=FALSE
 opts_chunk$set(dev='pdf')
@@ -306,7 +306,7 @@ plot(modes, pdbs=pdbs, col=col)
 legend("topleft", col=unique(col), lty=1,
        legend=c("E.Coli", "B.Anthracis", "M.Tubercolosis", "S.Aureus"))
                     
-#+ example2_A-modes2, cache=TRUE, eval=FALSE, results="hide",
+#+ example2_A-modes2, cache=TRUE, eval=FALSE, results="hide", warning=FALSE, 
 # Alternatively, one can use 'rm.gaps=FALSE' to keep the gap containing columns
 modes <- nma.pdbs(pdbs, rm.gaps=FALSE)
 
@@ -563,7 +563,7 @@ gaps.pos <- gap.inspect(pdbs$xyz)
 xyz <- pdbfit(pdbs)
 pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
 
-#+ example3_B-modes, cache=TRUE, results="hide", 
+#+ example3_B-modes, cache=TRUE, results="hide"
 # Fetch PDB objects
 npdbs <- pdbs
 npdbs$xyz <- xyz
@@ -577,7 +577,7 @@ modes.gtp <- nma(pdb.gtp)
 
 #' Now, we calculate the pairwise distance variance based on the structural ensemble with the function 
 #' **make.weights()** defined above. This will be used to weight the force constants in the elastic network model. 
-#+ example3_B-weights, cache=TRUE, results='hide'
+#+ example3_B-weights, cache=TRUE, results='hide', warning=FALSE,
 # Calculate weights 
 weights <- make.weights(xyz[, gaps.pos$f.inds])
 
