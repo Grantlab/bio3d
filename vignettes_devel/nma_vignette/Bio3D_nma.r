@@ -287,7 +287,7 @@ summary( c(seqidentity(pdbs)) )
 #' are omitted from output in accordance with common practice [^5]. 
 #' 
 
-#+ example2_A-modes, cache=TRUE, warning=FALSE, message=FALSE,
+#+ example2_A-modes, cache=TRUE, warning=FALSE, message=FALSE, results="hide",
 # NMA on all structures
 modes <- nma(pdbs)
 
