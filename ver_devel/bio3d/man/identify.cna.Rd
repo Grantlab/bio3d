@@ -38,7 +38,7 @@
 }
 \author{ Guido Scarabelli and Barry Grant }
 
-\seealso{ \code{\link{plot.cna}}, \code{\link{identify}}, \code{\link{plot.igraph}}, \code{\link{plot.communities}}, \code{\link{igraph.plotting}} }
+\seealso{ \code{\link{plot.cna}}, \code{\link{identify}}, \code{\link[igraph:plot.igraph]{plot.igraph}}, \code{\link[igraph:plot.communities]{plot.communities}}, \code{\link[igraph:igraph.plotting]{igraph.plotting}} }
 \examples{
 \dontrun{
 # Read example trajectory file
