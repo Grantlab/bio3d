@@ -86,11 +86,17 @@ get.blast(urlget, time.out = NULL, chain.single=TRUE)
 }
 \seealso{ \code{\link{plot.blast}}, \code{\link{hmmer}}, \code{\link{seqaln}} }
 \examples{
+\dontrun{
 pdb <- read.pdb("1bg2")
 blast <- blast.pdb( pdbseq(pdb) )
 
 head(blast$hit.tbl)
 top.hits <- plot(blast)
 head(top.hits$hits)
+
+## Use 'get.blast()' to retrieve results at a later time.
+x <- get.blast(blast$url)
+head(x$hit.tbl)
+}
 }
 \keyword{ utilities }
