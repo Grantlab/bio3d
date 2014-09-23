@@ -88,7 +88,7 @@ cij <- dccm(xyz)
 net <- cna(cij)
 
 # View cna
-view.cna(net, pdb), launch=FALSE)
+view.cna(net, pdb, launch=FALSE)
 }
 }
 
