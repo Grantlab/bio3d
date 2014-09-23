@@ -35,6 +35,15 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
      stop("igraph package missing: Please install, see: ?install.packages")
   }
 
+  if(color.edge) {
+     oops <- require(classInt)
+     if (!oops) {
+        warning("package classInt missing: color.edge is set to FALSE.
+            To make color.edge work, please install the missing package. See: ?install.packages")
+        color.edge = FALSE
+     }    
+  }
+
   ##- Determine which network to plot along with node size
   if(full) {
     ## Plot the 'full' all-atom network
@@ -91,7 +100,6 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
 
      vec2color <- function(vec, pal=c("blue", "green", "red"), n=10) {
         ##-- Define a color scale from a numeric vector
-        require(classInt)
         return( findColours(classIntervals(vec, n=n, style="equal"), pal) )
      }
      colors <- vec2color(weights)

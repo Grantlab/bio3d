@@ -38,8 +38,9 @@
 }
 \author{ Guido Scarabelli and Barry Grant }
 
-\seealso{ \code{\link{plot.cna}}, \code{\link{plot.communities}},
-  \code{\link{igraph.plotting}} \code{\link{plot.igraph}}}
+\seealso{ \code{\link{plot.cna}}, \code{\link[igraph:plot.communities]{plot.communities}},
+  \code{\link[igraph:igraph.plotting]{igraph.plotting}}, 
+  \code{\link[igraph:plot.igraph]{plot.igraph}}}
 \examples{
 
 # Read example trajectory file
@@ -65,7 +66,7 @@ net <- cna(cij)
 
 # Plot will be slow
 xy <- plot.cna(net)
-plot3d.cna(net, pdb)
+#plot3d.cna(net, pdb)
 
 layout.cna(net, pdb, k=3)
 layout.cna(net, pdb)

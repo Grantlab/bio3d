@@ -40,8 +40,9 @@
     Guido Scarabelli and Barry Grant
 }
 \seealso{
-  \code{\link{cna}}, \code{\link{print.igraph}},
-  \code{\link{str.igraph}}, \code{\link{igraph.plotting}}.
+  \code{\link{cna}}, \code{\link[igraph:print.igraph]{print.igraph}},
+  \code{\link[igraph:str.igraph]{str.igraph}}, 
+  \code{\link[igraph:igraph.plotting]{igraph.plotting}}
 }
 \examples{
 ## Read example trajectory file

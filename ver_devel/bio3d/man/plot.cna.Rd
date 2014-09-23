@@ -1,6 +1,5 @@
 \name{plot.cna}
 \alias{plot.cna}
-\alias{plot3d.cna}
 \title{
  Protein Structure Network Plots in 2D and 3D.
 }
@@ -10,9 +9,6 @@
 \usage{
   \method{plot}{cna}(x, pdb = NULL, weights=NULL, vertex.size=NULL,
             layout=NULL, col=NULL, full=FALSE, scale=TRUE, color.edge = FALSE, ...)
-
-  plot3d.cna(x, pdb = NULL, weights=NULL, vertex.size = NULL,
-            layout = layout.cna(x, pdb, k=3), col = NULL, ...)
 }
 \arguments{
   \item{x}{ A protein network graph object as obtained from the
@@ -72,8 +68,9 @@
   network object \sQuote{x}, as few internal checks are currently performed by the 
   \sQuote{layout.cna} function.
 }
-\seealso{ \code{\link{plot.igraph}}, \code{\link{plot.communities}},
-  \code{\link{igraph.plotting}} }
+\seealso{ \code{\link[igraph:plot.igraph]{plot.igraph}}, 
+  \code{\link[igraph:plot.communities]{plot.communities}},
+  \code{\link[igraph:igraph.plotting]{igraph.plotting}} }
 \examples{
 
 # Read example trajectory file
@@ -118,9 +115,6 @@ plot.cna(net, pdb, full=TRUE, vertex.size=3, weights=1, vertex.label=NA)
 plot.cna(net, layout=layout.mds(net$community.network), col=c("blue","green") ) 
 
 
-##- 3D plot with RGL
-plot3d.cna(net, pdb)
-# rglplot(net$community.network)
 }
 
 }

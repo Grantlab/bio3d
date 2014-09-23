@@ -59,7 +59,7 @@ hclustplot(hc, k = NULL, h = NULL, colors = NULL, labels = NULL,
 attach(transducin)
 
 ##- perform clustering
-rd <- rmsd(pdbs, fit=T)
+rd <- rmsd(pdbs, fit=TRUE)
 hc <- hclust(as.dist(rd))
 
 ##- draw dendrogram 

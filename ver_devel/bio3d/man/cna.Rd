@@ -14,11 +14,11 @@
   of the community based network.
 }
 \usage{
-  cna(cij, ...)
+  cna(cij, \dots)
   \method{cna}{dccm}(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
       cluster.method="btwn", collapse.method="max", 
-      cols=vmd.colors(), minus.log=TRUE)
-  \method{cna}{ensmb}(cij, ..., ncore = NULL)
+      cols=vmd.colors(), minus.log=TRUE, \dots)
+  \method{cna}{ensmb}(cij, \dots, ncore = NULL)
 }
 \arguments{
   \item{cij}{ A numeric array with 2 dimensions (nXn) containing atomic
@@ -101,9 +101,10 @@
 }  
 \seealso{
    \code{\link{plot.cna}},  \code{\link{summary.cna}},
-   \code{\link{view.cna}}, \code{\link{graph.adjacency}},
-   \code{\link{edge.betweenness.community}},
-  \code{\link{walktrap.community}}, \code{\link{fastgreedy.community}},
+   \code{\link{view.cna}}, \code{\link[igraph:graph.adjacency]{graph.adjacency}},
+   \code{\link[igraph:edge.betweenness.community]{edge.betweenness.community}},
+   \code{\link[igraph:walktrap.community]{walktrap.community}}, 
+   \code{\link[igraph:fastgreedy.community]{fastgreedy.community}}
 }
 \examples{
 
