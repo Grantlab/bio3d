@@ -1,5 +1,5 @@
 #' # Supporting Material S4
-#' # Integrated structural and evolutionary ensemble analysis with Bio3D
+#' # Integrating protein structural dynamics and evolutionary analysis with Bio3D
 #' **Lars Skj\ae rven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant**
 
 #+ setup, include=FALSE
