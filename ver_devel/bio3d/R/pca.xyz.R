@@ -6,8 +6,7 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE,
 
   ## Log the call
   cl <- match.call()
-
-  xyz <- as.matrix(xyz)
+  xyz <- as.xyz(xyz)
 
   if (any(!is.finite(xyz))) {
     ## Check for GAP positions in input

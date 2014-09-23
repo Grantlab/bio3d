@@ -7,7 +7,7 @@
   This function builds various cij matrix for dynamical network analysis
 }
 \usage{
-  filtr.dccm(x, xyz, fac = NULL, cutoff.cij = 0.4, collapse = TRUE,  
+  filter.dccm(x, xyz, fac = NULL, cutoff.cij = 0.4, collapse = TRUE,  
       extra.filter = NULL, ...)
 }
 \arguments{

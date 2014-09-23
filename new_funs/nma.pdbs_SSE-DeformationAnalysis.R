@@ -2,9 +2,13 @@
 ## 1 -  use k <- kaa - ((kaq %*% kqq.inv) %*% kqa) to derive hessian for core atoms
 ## 2 - return the full objects
 
+## This version contains functionality to
+## - compare modes for non-loop regions (sse=TRUE)
+## - calculate deformation energies (defa=TRUE)
+
 "nma.pdbs" <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL,
-                       rm.gaps=TRUE, varweight=FALSE, 
-                       outpath = NULL, ncore=1, ...) {
+                       rm.gaps=TRUE, sse=FALSE, varweight=FALSE, 
+                       defa = FALSE, outpath = NULL, ncore=1, ...) {
  
   
   if(!inherits(pdbs, "pdbs"))
@@ -65,9 +69,38 @@
   ff.names <- names(formals( pfc.fun ))
   ff.args  <- dots[names(dots) %in% ff.names]
   
+  ## SSE analysis
+  if(sse) {
+    sse <- dssp.pdbs(pdbs)
+    sse[ which(sse=="T") ] = "-"
+  }
+  else
+    sse <- NULL
+  
   ## Set indicies
   gaps.res <- gap.inspect(pdbs$resno)
   gaps.pos <- gap.inspect(pdbs$xyz)
+
+  gaps.sse <- NULL
+  if(!is.null(sse)) {
+    gaps.sse <- gap.inspect(sse)
+    
+    gtmp <- NULL
+    gtmp$bin <- gaps.res$bin
+    gtmp$bin[ which(gaps.sse$bin==1) ] = 1
+
+    gtmp$f.inds <- which( apply(gtmp$bin, 2, function(x) all(x==0)) )
+    gtmp$t.inds <- which( apply(gtmp$bin, 2, function(x) any(x==1)) )
+    
+    gtmp$row <- unlist(apply(gtmp$bin, 1, function(x) length(which(x==1))))
+    gtmp$col <- unlist(apply(gtmp$bin, 2, function(x) length(which(x==1))))
+    gaps.res = gtmp
+    
+    gtmp <- NULL
+    gtmp$f.inds <- atom2xyz(gaps.res$f.inds)
+    gtmp$t.inds <- atom2xyz(gaps.res$t.inds)
+    gaps.pos <- gtmp
+  }
 
   ## check for missing masses before we start calculating
   if(any(pdbs$ali=="X") & mass==TRUE) {
@@ -130,6 +163,12 @@
   else
     flucts <- matrix(NA, nrow=nrow(gaps.res$bin), ncol=ncol(gaps.res$bin))
 
+  ## Deformation analysis
+  if(defa)
+    deform <- flucts
+  else
+    deform <- NULL
+
   ## store residue numbers (same as pdbs$inds[,gaps$f.inds])
   ##resnos <- flucts
 
@@ -172,6 +211,7 @@
   dims <- dim(modes.array)
   mem.usage <- sum(c(as.numeric(object.size(modes.array)),
                      as.numeric(object.size(L.mat)),
+                     as.numeric(object.size(deform)),
                      as.numeric(object.size(flucts)),
                      as.numeric(object.size(matrix(NA, ncol=dims[3], nrow=dims[3]))) ))*2
                    
@@ -229,7 +269,7 @@
   alnModes <- mylapply(1:length(pdbs$id), .calcAlnModes,
                        pdbs, xyz, gaps.res,
                        mass, am.args, nm.keep, temp, keep, wts,
-                       rm.gaps, full, 
+                       rm.gaps, defa, full, 
                        pfc.fun, ff, ff.args, outpath, pb, ncore)
   close(pb)
   
@@ -243,6 +283,11 @@
 
     if(full)
       all.modes[[i]] = tmp.modes$modes
+
+    if(defa)
+      deform[i, ]    = tmp.modes$defa
+    else
+      deform <- NULL
   }
 
   remove(alnModes)
@@ -267,8 +312,10 @@
 
   rownames(flucts) <- basename(rownames(pdbs$xyz))
   out <- list(fluctuations=flucts, rmsip=rmsip.map,
+              deformations=deform, 
               U.subspace=modes.array, L=L.mat, full.nma=all.modes,
-              xyz=xyz, call=cl)
+              ##gaps.res=gaps.res,
+              call=cl)
   class(out) = "enma"
   return(out)
 }
@@ -304,34 +351,34 @@
 
   natoms <- length(resno)
   tmp.pdb <- NULL
+  tmp.pdb$atom           = matrix(NA, nrow=natoms, ncol=16)
+  colnames(tmp.pdb$atom) = c("type", "eleno", "elety", "alt", "resid",
+            "chain", "resno", "insert",
+            "x", "y", "z", "o", "b", "segid", "elesy", "charge")
 
-  tmp.pdb$atom <- data.frame(cbind(rep("ATOM", natoms),
-                                   seq(1, natoms),
-                                   elety,
-                                   NA,
-                                   resid,
-                                   chain,
-                                   resno,
-                                   NA,
-                                   round(matrix(xyz, ncol=3, byrow=T), 3),
-                                   NA, NA, NA, NA, NA),
-                             stringsAsFactors=FALSE)
+  tmp.pdb$atom[,"type"]           = rep("ATOM", natoms)
+  tmp.pdb$atom[,"eleno"]          = seq(1, natoms)
+  tmp.pdb$atom[,"elety"]          = elety
+  tmp.pdb$atom[,"alt"]            = NA
+  tmp.pdb$atom[,"resid"]          = resid
+  tmp.pdb$atom[,"resno"]          = resno
+  tmp.pdb$atom[,"chain"]          = chain
+  tmp.pdb$atom[,c("x", "y", "z")] = matrix(xyz, ncol=3, byrow=T)
   
-  colnames(tmp.pdb$atom) <- c("type", "eleno", "elety", "alt", "resid",
-                              "chain", "resno", "insert",
-                              "x", "y", "z", "o", "b", "segid", "elesy", "charge")
-  
-  tmp.pdb$xyz    <- as.xyz(xyz)
-  ca.inds        <- atom.select(tmp.pdb, "calpha", verbose=FALSE)
+  tmp.pdb$xyz    = as.xyz(xyz)
+  class(tmp.pdb) = "pdb"
+    
+  ca.inds <- atom.select(tmp.pdb, "calpha", verbose=FALSE)
   tmp.pdb$calpha <- seq(1, natoms) %in% ca.inds$atom
-  class(tmp.pdb) <- "pdb"
+
+  tmp.pdb$atom=as.data.frame(tmp.pdb$atom, stringAsFactors=FALSE)
   return(tmp.pdb)
 }
 
 ## Calculate 'aligned' normal modes of structure i in pdbs
 .calcAlnModes <- function(i, pdbs, xyz, gaps.res,
                           mass, am.args, nm.keep, temp, keep, wts,
-                          rm.gaps, full, 
+                          rm.gaps, defa, full, 
                           pfc.fun, ff, ff.args, outpath, pb, ncore) {
 
   ## Set indices for this structure only
@@ -433,6 +480,10 @@
                                          masses=masses.out,
                                          natoms=natoms.out, keep=nm.keep, call=NULL) ))
 
+  ## deformation analysis
+  if(defa)
+    defo <- rowMeans(deformation.nma(modes, ncore=1, mode.inds=seq(7,11))$ei)
+  
   if(rm.gaps)
     modes.mat <- matrix(NA, ncol=keep, nrow=nrow(modes$U))
   else
@@ -447,12 +498,21 @@
     j <- j+1
   }
   
+  deform <- NULL
   if(rm.gaps) {
     flucts <- modes$fluctuations
+    
+    if(defa)
+      deform <- defo
   }
   else {
     flucts <- rep(NA, length=ncol(pdbs$resno))
+    deform <- rep(NA, length=ncol(pdbs$resno))
+    
     flucts[f.inds$res] <- modes$fluctuations
+    
+    if(defa)
+      deform[f.inds$res] <- defo
   }
 
   ## Progress bar
@@ -473,7 +533,8 @@
   out <- list(modes=modes,
               U=modes.mat,
               L=L,
-              flucts=flucts)
+              flucts=flucts,
+              defa=deform)
               ##f.inds=f.inds)
   
   invisible(gc())

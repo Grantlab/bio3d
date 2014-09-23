@@ -4,7 +4,7 @@
   
   dims <- dim(x)
   if(!(dims[2L]%%3==0))
-    stop("number of cartesian coordinates must be a multiple of 3")
+    warning("number of cartesian coordinates not a multiple of 3")
   
   class(x) <- "xyz"
   return(x)

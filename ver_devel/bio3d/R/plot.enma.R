@@ -9,7 +9,7 @@
            xlim=NULL, ylim=NULL,
            mar = c(4, 5, 2, 2),
            ...) {
-    
+
     if(!(inherits(x, "enma") | inherits(x, "matrix")))
       stop("provide a enma object as obtained from 'nma.pdbs'")
     
@@ -94,7 +94,7 @@
       if(length(conservation)>1) {
         h <- conservation
         conservation=TRUE
-        if(length(h)!=dims[2L]) {
+        if(length(h)!=dims.full[2L]) {
           warning("dimension mismatch of supplied 'conservation' vector")
           h <- NULL
           conservation=FALSE

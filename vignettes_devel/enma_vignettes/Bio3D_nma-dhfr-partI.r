@@ -1,5 +1,5 @@
-#' # Supporting Material S3
-#' # Integrated structural and evolutionary ensemble analysis with Bio3D
+#' # Supporting Information S2
+#' # Integrating protein structural dynamics and evolutionary analysis with Bio3D
 #' **Lars Skj\ae rven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant**
 
 #+ setup, include=FALSE
@@ -240,24 +240,20 @@ heatmap(1-modes$rmsip, distfun = as.dist, labRow = ids, labCol = ids,
 #' differences between the open (black), closed (red) and occluded (green) conformations
 #' of the *E.coli* structures: 
 
-          
-#+ fig1n-1, fig.cap="Comparison of mode fluctuations between open (black) and closed (red) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4.5,
+#+ fig1n-1, fig.cap="Comparison of mode fluctuations between open (black) and closed (red) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4.5
 cols <- grps.rd
 cols[which(cols!=1 & cols!=2)]=NA
 plot(modes, pdbs=pdbs, col=cols, signif=TRUE)
 
-#+ fig1n-2, fig.cap="Comparison of mode fluctuations between open (black) and occluded (green) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4.5,
+#+ fig1n-2, fig.cap="Comparison of mode fluctuations between open (black) and occluded (green) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4.5
 cols <- grps.rd
 cols[which(cols!=1 & cols!=3)]=NA
 plot(modes, pdbs=pdbs, col=cols, signif=TRUE)
 
-#+ fig1n-3, fig.cap="Comparison of mode fluctuations between closed (red) and occluded (green) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4.5,
+#+ fig1n-3, fig.cap="Comparison of mode fluctuations between closed (red) and occluded (green) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4.5
 cols <- grps.rd
 cols[which(grps.rd!=2 & grps.rd!=3)]=NA
 plot(modes, pdbs=pdbs, col=cols, signif=TRUE)
-
-
-
 
 
 #'
@@ -269,14 +265,14 @@ pdb <- read.pdb("md-traj/1rx2-CA.pdb")
 trj <- read.ncdf("md-traj/1rx2_5ns.nc")
 
 md.inds <- pdb2aln.ind(aln=pdbs, pdb=pdb, id="md", inds=gaps.res$f.inds)
-trj=trj[, atom2xyz(md.inds)]
-trj=fit.xyz(fixed=pdbs$xyz[1, ],  mobile=trj,
-  fixed.inds=core$c0.5A.xyz, mobile.inds=core$c0.5A.xyz)
+trj <- trj[, atom2xyz(md.inds)]
+trj <- fit.xyz(fixed=pdbs$xyz[1, ],  mobile=trj,
+               fixed.inds=core$c0.5A.xyz, mobile.inds=core$c0.5A.xyz)
 
 proj <- pca.project(trj, pc.xray)
 cols <- densCols(proj[,1:2])
 
-#+ fig1o-1, fig.cap="Projection of MD conformers onto the X-ray PC space.", fig.height=4.5, fig.width=4.5,
+#+ fig1o-1, fig.cap="Projection of MD conformers onto the X-ray PC space provides a two dimensional representation of the conformational sampling along the MD simulation (blue dots).", fig.height=4.5, fig.width=4.5,
 plot(proj[,1:2], col=cols, pch=16,
      ylab="Prinipcal Component 2", xlab="Principal Component 1",
      xlim=range(pc.xray$z[,1]), ylim=range(pc.xray$z[,2]))
@@ -292,13 +288,175 @@ r <- rmsip(pc.md$U, modes$U.subspace[,,1])
 
 print(r)
 
-#+ fig1p-1, fig.cap="RMSIP map between normal modes and principal components of a 5 ns long MD simulation.", fig.height=4.5, fig.width=4.5,
+#+ fig1p-1, fig.cap="Overlap map between normal modes and principal components of a 5 ns long MD simulation. The two subsets yields an RMSIP value of 0.64, where a value of 1 would idicate identical directionality.", fig.height=4.5, fig.width=4.5,
 plot(r, xlab="MD PCA", ylab="NMA")
 
 # compare MD-PCA and X-rayPCA
 r <- rmsip(pc.md, pc.xray)
 
 
+#'
+#' ### Domain analysis with GeoStaS
+#' Identification of regions in the protein that move as rigid bodies is facilitated
+#' with the implementation of the GeoStaS algorithm [^3]. Below we demonstrate the use of function
+#' **geostas()** on data obtained from ensemble NMA, an ensemble of PDB structures, and a 5 ns long
+#' MD simulation. See `help(geostas)` for more details and further examples.
+
+#'
+#' **GeoStaS on a PDB ensemble**: Below we input the `pdbs` object to function
+#' **geostas()** to identify dynamic domains. Here, we attempt to divide the structure into
+#' 2 sub-domains using argument `k=2`. Function **geostas()** will return a `grps` attribute
+#' which corresponds to the domain assignment for each C-alpha atom in the structure.
+#' Note that we use argument `fit=FALSE` to avoid re-fitting the coordinates since. Recall that
+#' the coordinates of the `pdbs` object has already been superimposed to the identified
+#' invariant core (see above). To visualize the domain assignment we write a PDB trajectory
+#' of the first principal component (of the Cartesian coordinates of the `pdbs` object),
+#' and add argument `chain=gs.xray$grps` to replace the chain identifiers with the domain
+#' assignment:
+
+
+#+ example1_gs-pdbs, cache=TRUE, results="hide",
+# Identify dynamic domains
+gs.xray <- geostas(pdbs, k=2, fit=FALSE)
+
+# Visualize PCs with colored domains (chain ID)
+mktrj(pc.xray, pc=1, chain=gs.xray$grps)
+
+#'
+#' **GoeStaS on ensemble NMA**: We can also identify dynamic domains from the normal modes of the ensemble
+#' of 82 protein structures stored in the `modes` object. By using function **mktrj.enma()**
+#' we generate a trajectory from the first five modes for all 82 structures. We then input this
+#' trajectory to function **geostas()**. 
+
+#+ example1_gs-nma, cache=TRUE,
+# Build conformational ensemble
+trj.nma <- mktrj.enma(modes, m.inds=1:5, s.inds=NULL, mag=10, step=2, rock=FALSE)
+
+trj.nma
+
+# Fit to invariant core
+trj.nma <- fit.xyz(trj.nma[1,], trj.nma,
+                   fixed.inds=core$c0.5A.xyz,
+                   mobile.inds=core$c0.5A.xyz)
+
+# Reduce conformational redundancy
+rd <- rmsd.filter(trj.nma, cutoff=0.5, fit=FALSE, ncore=4)
+trj.nma <- trj.nma[rd$ind,]
+
+# Run geostas to find domains
+gs.nma <- geostas(trj.nma, k=2, fit=FALSE)
+
+#+ example1_gs-nma2, eval=FALSE,
+# Write NMA generated trajectory with domain assignment
+write.pdb(xyz=trj.nma, chain=gs.nma$grps)
+
+#' ![Conformational ensemble obtained from interpolating along the first five modes of all collected E.coli DHFR structures. Domain analysis on the generated ensemble reaveals that the structure can be divided in to two dynamic sub-domains.](figure/geostas-domains.png)
+
+
+#'
+#' **GeoStaS on a MD trajectory**: The domain analysis can also be performed on the trajectory data obtained
+#' from the MD simulation (see above). Recall that the MD trajectory has already been superimposed
+#' to the invariant core. We therefore use argument `fit=FALSE` below. We then perform a
+#' new PCA of the MD trajectory, and visualize the domain assingments with function **mktrj()**:
+
+#+ example1_gs-md, cache=TRUE, results="hide",
+gs.md <- geostas(trj, k=2, fit=FALSE)
+pc.md <- pca(trj, fit=FALSE)
+mktrj(pc.md, pc=1, chain=gs.md$grps)
+
+
+#'
+#' ### Measures for modes comparison
+#' Bio3D now includes multiple measures for the assessment of similarity between two normal mode
+#' objects. This enables clustering of related proteins based on the predicted modes of motion.
+#' Below we demonstrate the use of root mean squared inner product (RMSIP), squared inner product (SIP), covariance overlap, bhattacharyya coefficient, and PCA of the corresponding covariance matrices. 
+
+#+ example1q-sip, eval=TRUE, results='hide', cache=TRUE
+# Similarity of atomic fluctuations
+sip <- sip(modes)
+hc.sip <- hclust(as.dist(1-sip), method="ward.D2")
+grps.sip <- cutree(hc.sip, k=3)
+
+#+ fig1q-sip, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on the similarity of atomic fluctuations calculated from NMA. Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows the conformerplot (see Figure 2), with colors according to clustering based on pairwise SIP values.", 
+hclustplot(hc.sip, k=3, colors=grps.rd, labels=ids, cex=0.7, main="SIP")
+
+par(fig=c(.55, 1, .55, 1), new = TRUE)
+plot(pc.xray$z[,1:2], col="grey50", pch=16, cex=1.3, 
+     ylab="", xlab="", axes=FALSE, bg="red")
+points(pc.xray$z[,1:2], col=grps.sip, pch=16, cex=0.9)
+box()
+
+
+#+ example1q-rmsip, eval=TRUE, results='hide', cache=TRUE
+# RMSIP
+rmsip <- rmsip(modes)
+hc.rmsip <- hclust(dist(1-rmsip), method="ward.D2")
+grps.rmsip <- cutree(hc.rmsip, k=3)
+
+#+ fig1q-rmsip, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on their pairwise RMSIP values (calculated from NMA). Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows the conformerplot (see Figure 2), with colors according to clustering based on the pairwise RMSIP values.", 
+hclustplot(hc.rmsip, k=3, colors=grps.rd, labels=ids, cex=0.7, main="RMSIP")
+
+par(fig=c(.55, 1, .55, 1), new = TRUE)
+plot(pc.xray$z[,1:2], col="grey50", pch=16, cex=1.3, 
+     ylab="", xlab="", axes=FALSE)
+points(pc.xray$z[,1:2], col=grps.rmsip, pch=16, cex=0.9)
+box()
+
+
+#+ example1q-co, eval=TRUE, results='hide', cache=TRUE
+# Covariance overlap
+co <- covsoverlap(modes, subset=200)
+hc.co <- hclust(as.dist(1-co), method="ward.D2")
+grps.co <- cutree(hc.co, k=3)
+
+#+ fig1q-co, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on their pairwise covariance overlap (calculated from NMA). Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows the conformerplot (see Figure 2), with colors according to clustering of the Covariance overlap measure.", 
+hclustplot(hc.co, k=3, colors=grps.rd, labels=ids, cex=0.7, main="Covariance overlap")
+
+par(fig=c(.55, 1, .55, 1), new = TRUE)
+plot(pc.xray$z[,1:2], col="grey50", pch=16, cex=1.3, 
+     ylab="", xlab="", axes=FALSE)
+points(pc.xray$z[,1:2], col=grps.co, pch=16, cex=0.9)
+box()
+
+
+#+ example1q-bc, eval=TRUE, results='hide', cache=TRUE
+# Bhattacharyya coefficient
+covs <- cov.enma(modes)
+bc <- bhattacharyya(modes, covs=covs)
+hc.bc <- hclust(dist(1-bc), method="ward.D2")
+grps.bc <- cutree(hc.bc, k=3)
+
+#+ fig1q-bc, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on their pairwise Bhattacharyya coefficient (calculated from NMA). Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows the conformerplot (see Figure 2), with colors according to clustering of the pairwise Bhattacharyya coefficients.", 
+hclustplot(hc.bc, k=3, colors=grps.rd, labels=ids, cex=0.7, main="Bhattacharyya coefficient")
+
+par(fig=c(.55, 1, .55, 1), new = TRUE)
+plot(pc.xray$z[,1:2], col="grey50", pch=16, cex=1.3, 
+     ylab="", xlab="", axes=FALSE)
+points(pc.xray$z[,1:2], col=grps.bc, pch=16, cex=0.9)
+box()
+
+
+#+ example1q-pcaco, eval=TRUE, results='hide', cache=TRUE
+# PCA of covariance matrices
+pc.covs <- pca.array(covs)
+hc.covs <- hclust(dist(pc.covs$z[,1:2]), method="ward.D2")
+grps.covs <- cutree(hc.covs, k=3)
+
+#+ fig1q-pcaco, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on the PCA of covariance matrices (calculated from NMA). Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows the conformerplot (see Figure 2), with colors according to clustering based on PCA of covariance matrices.", 
+hclustplot(hc.covs, k=3, colors=grps.rd, labels=ids, cex=0.7, main="PCA of covariance matrices")
+
+par(fig=c(.55, 1, .55, 1), new = TRUE)
+plot(pc.xray$z[,1:2], col="grey50", pch=16, cex=1.3, 
+     ylab="", xlab="", axes=FALSE)
+points(pc.xray$z[,1:2], col=grps.covs, pch=16, cex=0.9)
+box()
+
+
+#'
+#' [^3]: Romanowska, J., Nowinski, KS., Trylska, J., (2012). Determining geometrically stable domains in molecular conformation sets. *J Chem Theory Comput*, 8(8), 2588–99.
+
+
+#'
 #' ## Document Details
 #' This document is shipped with the Bio3D package in both R and PDF formats. All code can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
 
