@@ -85,7 +85,7 @@ xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
 cij <- dccm(xyz)
 #plot(cij)
 
-# Build, and betweeness cluster, a network graph
+# Build, and betweenness cluster, a network graph
 net <- cna(cij)
 
 # View cna 
