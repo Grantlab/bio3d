@@ -39,5 +39,7 @@ covsoverlap(...)
   Romo, T.D. et al. (2011) \emph{Proteins} \bold{79}, 23--34.
 }
 \author{ Lars Skjaerven }
-\seealso{ \code{\link{rmsip}} }
+\seealso{ Other similarity measures:
+  \code{\link{sip}}, \code{\link{covsoverlap}}, \code{\link{bhattacharyya}}.
+}
 \keyword{ utilities }

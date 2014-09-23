@@ -10,7 +10,9 @@ bhattacharyya.pca <- function(...)
 bhattacharyya.enma <- function(enma, covs=NULL, ncore=NULL, ...) {
   if(!inherits(enma, "enma"))
     stop("provide a 'enma' object as obtain from function 'nma.pdbs()'")
-
+  if(any(is.na(enma$fluctuations)))
+    stop("provide 'enma' object calculated with argument 'rm.gaps=TRUE'")
+  
   if(is.null(covs)) {
     cat("Calculating covariance matrices")
     covs <- cov.enma(enma, ncore=ncore)

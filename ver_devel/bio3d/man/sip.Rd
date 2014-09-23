@@ -1,7 +1,6 @@
 \name{sip}
 \alias{sip}
-\alias{sip.numeric}
-\alias{sip.vector}
+\alias{sip.default}
 \alias{sip.nma}
 \alias{sip.enma}
 \title{ Square Inner Product }
@@ -10,13 +9,12 @@
 }
 \usage{
 sip(...)
-\method{sip}{numeric}(...)
 \method{sip}{nma}(a, b, ...)
-\method{sip}{enma}(modes, ncore=NULL, ...)
-\method{sip}{vector}(v, w, ...)
+\method{sip}{enma}(enma, ncore=NULL, ...)
+\method{sip}{default}(v, w, ...)
 }
 \arguments{
-  \item{modes}{ an object of class \code{"enma"} obtained from function
+  \item{enma}{ an object of class \code{"enma"} obtained from function
     \code{nma.pdbs}. }
   \item{ncore }{ number of CPU cores used to do the calculation.
     \code{ncore>1} requires package \sQuote{parallel} installed. }
@@ -41,7 +39,10 @@ sip(...)
   Fuglebakk, E. et al. (2013) \emph{JCTC} \bold{9}, 5618--5628.
 }
 \author{ Lars Skjaerven }
-\seealso{ \code{\link{rmsip}} }
+\seealso{Other similarity measures:
+  \code{\link{covsoverlap}}, \code{\link{bhattacharyya}},
+  \code{\link{rmsip}}.
+}
 \examples{
 
 pdb <- read.pdb("1hel")

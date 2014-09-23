@@ -268,7 +268,7 @@
   rownames(flucts) <- basename(rownames(pdbs$xyz))
   out <- list(fluctuations=flucts, rmsip=rmsip.map,
               U.subspace=modes.array, L=L.mat, full.nma=all.modes,
-              call=cl)
+              xyz=xyz, call=cl)
   class(out) = "enma"
   return(out)
 }

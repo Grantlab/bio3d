@@ -4,7 +4,9 @@ covsoverlap <- function(...)
 covsoverlap.enma <- function(enma, ncore=NULL, ...) {
   if(!inherits(enma, "enma"))
     stop("provide a 'enma' object as obtain from function 'nma.pdbs()'")
-
+  if(any(is.na(enma$fluctuations)))
+    stop("provide 'enma' object calculated with argument 'rm.gaps=TRUE'")
+  
   ncore <- setup.ncore(ncore, bigmem = FALSE)
 
   if(ncore>1)

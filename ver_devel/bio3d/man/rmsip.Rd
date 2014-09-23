@@ -1,22 +1,16 @@
 \name{rmsip}
 \alias{rmsip}
+\alias{rmsip.default}
 \alias{rmsip.enma}
-\alias{rmsip.nma}
-\alias{rmsip.pca}
-\alias{rmsip.pca.loadings}
-\alias{rmsip.matrix}
 \title{ Root Mean Square Inner Product }
 \description{
   Calculate the RMSIP between two mode subspaces. 
 }
 \usage{
 rmsip(...)
-\method{rmsip}{nma}(...)
-\method{rmsip}{pca}(...)
-\method{rmsip}{pca.loadings}(...)
 \method{rmsip}{enma}(enma, ncore=NULL, subset=10, ...)
-\method{rmsip}{matrix}(modes.a, modes.b, subset=10,
-                       row.name="a", col.name="b", ...)
+\method{rmsip}{default}(modes.a, modes.b, subset=10,
+                        row.name="a", col.name="b", ...)
 }
 \arguments{
   \item{enma}{ an object of class \code{"enma"} obtained from function
@@ -50,7 +44,13 @@ rmsip(...)
    Amadei, A. et al. (1999) \emph{Proteins} \bold{36}, 19--424.   
 }
 \author{ Lars Skjaerven }
-\seealso{ \code{\link{pca.xyz}}, \code{\link{nma}}, \code{\link{overlap}} }
+\seealso{ \code{\link{pca}}, \code{\link{nma}},
+  \code{\link{overlap}}.
+
+  Other similarity measures:
+  \code{\link{sip}}, \code{\link{covsoverlap}},
+  \code{\link{bhattacharyya}}.
+}
 \examples{
 \dontrun{
 # Load data for HIV example

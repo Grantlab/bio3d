@@ -44,5 +44,7 @@ bhattacharyya(...)
   Fuglebakk, E. et al. (2013) \emph{JCTC} \bold{9}, 5618--5628.
 }
 \author{ Lars Skjaerven }
-\seealso{ \code{\link{rmsip}} }
+\seealso{Other similarity measures:
+  \code{\link{sip}}, \code{\link{covsoverlap}}, \code{\link{rmsip}}.
+}
 \keyword{ utilities }

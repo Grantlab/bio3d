@@ -16,7 +16,9 @@ cov.nma <- function(nma) {
 cov.enma <- function(enma, ncore=NULL) {
   if(!inherits(enma, "enma"))
     stop("provide a 'enma' object as obtain from function 'nma.pdbs()'")
-    
+  if(any(is.na(enma$fluctuations)))
+    stop("provide 'enma' object calculated with argument 'rm.gaps=TRUE'")
+  
   ncore <- setup.ncore(ncore, bigmem = FALSE)
   
   if(ncore>1)
@@ -49,7 +51,6 @@ cov.enma <- function(enma, ncore=NULL) {
   for ( i in 1:dims[3L] )
     covs[,,i]=covs.list[[i]]
 
-  ##enma$covs <- covs
   return(covs)
 }
 

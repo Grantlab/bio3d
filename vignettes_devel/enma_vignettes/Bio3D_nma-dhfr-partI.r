@@ -52,7 +52,7 @@ blast <- blast.pdb(aa)
 #'
 #' Function **plot.blast()** facilitates the visualization and filtering of the Blast results. It will attempt
 #' to set a seed position to the point of largest drop-off in normalized scores (i.e. the biggest jump in  E-values).
-#' In this particular case we specify a cutoff  (after initial plotting) of 225 to include only the relevant *E.coli* structures:
+#' In this particular case we specify a cutoff (after initial plotting) of 225 to include only the relevant *E.coli* structures:
 
 #+ fig1-1, fig.cap="Blast results. Visualize and filter blast results through function **plot.blast()**. Here we proceed with only the top scoring hits (black)."
 hits <- plot(blast, cutoff=225)
@@ -131,7 +131,7 @@ print(pdbs, alignment=FALSE)
 #' files we have collected. Below we use the function to annotate each structure to its
 #' source species. This will come in handy when annotating plots later on:
 
-#+ example1g, warning=FALSE, cache=TRUE, message=FALSE,
+#+ example1g, warning=FALSE, cache=TRUE, message=FALSE
 anno <- pdb.annotate(ids)
 print(unique(anno$source))
 
@@ -240,18 +240,17 @@ heatmap(1-modes$rmsip, distfun = as.dist, labRow = ids, labCol = ids,
 #' differences between the open (black), closed (red) and occluded (green) conformations
 #' of the *E.coli* structures: 
 
-          
-#+ fig1n-1, fig.cap="Comparison of mode fluctuations between open (black) and closed (red) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4.5,
+#+ fig1n-1, fig.cap="Comparison of mode fluctuations between open (black) and closed (red) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4.5
 cols <- grps.rd
 cols[which(cols!=1 & cols!=2)]=NA
 plot(modes, pdbs=pdbs, col=cols, signif=TRUE)
 
-#+ fig1n-2, fig.cap="Comparison of mode fluctuations between open (black) and occluded (green) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4.5,
+#+ fig1n-2, fig.cap="Comparison of mode fluctuations between open (black) and occluded (green) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4.5
 cols <- grps.rd
 cols[which(cols!=1 & cols!=3)]=NA
 plot(modes, pdbs=pdbs, col=cols, signif=TRUE)
 
-#+ fig1n-3, fig.cap="Comparison of mode fluctuations between closed (red) and occluded (green) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4.5,
+#+ fig1n-3, fig.cap="Comparison of mode fluctuations between closed (red) and occluded (green) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4.5
 cols <- grps.rd
 cols[which(grps.rd!=2 & grps.rd!=3)]=NA
 plot(modes, pdbs=pdbs, col=cols, signif=TRUE)
@@ -331,7 +330,7 @@ mktrj(pc.xray, pc=1, chain=gs.xray$grps)
 
 #+ example1_gs-nma, cache=TRUE,
 # Build conformational ensemble
-trj.nma <- mktrj.enma(modes, pdbs, m.inds=1:5, s.inds=NULL, mag=10, step=2, rock=FALSE)
+trj.nma <- mktrj.enma(modes, m.inds=1:5, s.inds=NULL, mag=10, step=2, rock=FALSE)
 
 trj.nma
 
@@ -340,12 +339,18 @@ trj.nma <- fit.xyz(trj.nma[1,], trj.nma,
                    fixed.inds=core$c0.5A.xyz,
                    mobile.inds=core$c0.5A.xyz)
 
+# Reduce conformational redundancy
+rd <- rmsd.filter(trj.nma, cutoff=0.5, fit=FALSE, ncore=4)
+trj.nma <- trj.nma[rd$ind,]
+
 # Run geostas to find domains
 gs.nma <- geostas(trj.nma, k=2, fit=FALSE)
 
 #+ example1_gs-nma2, eval=FALSE,
 # Write NMA generated trajectory with domain assignment
 write.pdb(xyz=trj.nma, chain=gs.nma$grps)
+
+#' ![Conformational ensemble obtained from interpolating along the first five modes of all collected E.coli DHFR structures. Domain analysis on the generated ensemble reaveals that the structure can be divided in to two dynamic sub-domains.](figure/geostas-domains.png)
 
 
 #'
@@ -358,11 +363,6 @@ write.pdb(xyz=trj.nma, chain=gs.nma$grps)
 gs.md <- geostas(trj, k=2, fit=FALSE)
 pc.md <- pca(trj, fit=FALSE)
 mktrj(pc.md, pc=1, chain=gs.md$grps)
-
-
-
-#' ![Visualization of domain assignments using function **geostas()** for x-ray ensemble (left), ensemble NMA (middle), and MD trajectory (right).](figure/geostas-domains.png)
-
 
 
 #'

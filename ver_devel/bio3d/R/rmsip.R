@@ -4,6 +4,8 @@ rmsip <- function(...)
 rmsip.enma <- function(enma, ncore=NULL, subset=10, ...) {
   if(!inherits(enma, "enma"))
     stop("provide a 'enma' object as obtain from function 'nma.pdbs()'")
+  if(any(is.na(enma$fluctuations)))
+    stop("provide 'enma' object calculated with argument 'rm.gaps=TRUE'")
   
   ncore <- setup.ncore(ncore, bigmem = FALSE)
   
@@ -22,7 +24,7 @@ rmsip.enma <- function(enma, ncore=NULL, subset=10, ...) {
   
   mylist <- mylapply(1:nrow(inds), function(row) {
     i <- inds[row,1]; j <- inds[row,2];
-    r <- rmsip.matrix(enma$U.subspace[,,i],
+    r <- rmsip.default(enma$U.subspace[,,i],
                       enma$U.subspace[,,j],
                       subset=subset)
     out <- list(val=r$rmsip, i=i, j=j)
@@ -44,16 +46,7 @@ rmsip.enma <- function(enma, ncore=NULL, subset=10, ...) {
   return(round(mat, 6))
 }
 
-rmsip.nma <- function(...)
-  rmsip.matrix(...)
-
-rmsip.pca <- function(...)
-  rmsip.nma(...)
-
-rmsip.pca.loadings <- function(...)
-  rmsip.nma(...)
-
-rmsip.matrix <- function(modes.a, modes.b, subset = 10,
+rmsip.default <- function(modes.a, modes.b, subset = 10,
                          row.name="a", col.name="b", ...) {
     
     if(missing(modes.a))

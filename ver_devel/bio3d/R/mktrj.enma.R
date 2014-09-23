@@ -12,9 +12,6 @@
   if(!inherits(x, "enma"))
     stop("mktrj.enma: must supply 'enma' object, i.e. from 'nma.pdbs'")
 
-  if(!inherits(pdbs, "pdbs"))
-    stop("mktrj.enma: must supply 'pdbs' object, i.e. from 'pdbaln'")
-
   ## Parallelized by parallel package
   ncore <- setup.ncore(ncore, bigmem = FALSE)
   
@@ -24,11 +21,11 @@
     mylapply <- lapply
   
   if(is.null(s.inds))
-    s.inds <- 1:length(pdbs$id)
-  
+    s.inds <- 1:nrow(x$fluctuations)
+
   if(is.null(m.inds))
     m.inds <- 1:5
-
+  
   if(is.null(file) & length(s.inds)==1 & length(m.inds)==1)
     file <- paste("mode_", m.inds+6, "-s", s.inds, ".pdb", sep="")
   
@@ -42,7 +39,7 @@
   if(!rm.gaps & length(s.inds)>1 & length(m.inds)>1)
     stop(paste("enma object must be calculated with argument rm.gaps=TRUE", "\n",
                "for trajectory generation of multiple structures and modes"))
-  
+
   if(any(x$L[s.inds, m.inds]<=0))
     warning("Mode with eigenvalue <=0 detected. Check 'mode' index.")
 
@@ -59,19 +56,25 @@
       
       u.inds <- which(!is.na(x$U.subspace[,mode,ind]))
       if(rm.gaps)
-        xyz.inds <- gap.inspect(pdbs$xyz)$f.inds
+        xyz.inds <- gap.inspect(x$xyz)$f.inds
       else
         xyz.inds <- u.inds
       
-      plus  <- sapply(c(zcoor), scor, u=x$U.subspace[u.inds,mode,ind], m=pdbs$xyz[ind,xyz.inds])
-      tmp  <- cbind(pdbs$xyz[ind,xyz.inds], plus)
+      plus  <- sapply(c(zcoor), scor, u=x$U.subspace[u.inds,mode,ind], m=x$xyz[ind,xyz.inds])
+      minus <- sapply(c(-zcoor), scor, u=x$U.subspace[u.inds,mode,ind], m=x$xyz[ind,xyz.inds])
       
       if(rock) {
-        minus <- sapply(c(-zcoor), scor, u=x$U.subspace[u.inds,mode,ind], m=pdbs$xyz[ind,xyz.inds])
-        tmp2 <- cbind(plus[,rev(1:ncol(plus))], pdbs$xyz[ind,xyz.inds],
+        tmp  <- cbind(pdbs$xyz[ind,xyz.inds],
+                      plus,  plus[,rev(1:ncol(plus))],
+                      x$xyz[ind,xyz.inds],
                       minus, minus[,rev(1:ncol(minus))])
-        tmp <- cbind(tmp, tmp2)
       }
+      else {
+        tmp  <- cbind(plus[,rev(1:ncol(plus))],
+                      x$xyz[ind,xyz.inds],
+                      minus)
+      }
+      
       coor <- rbind(coor, t(tmp))
     }
     return(coor)
@@ -84,17 +87,20 @@
   
   if(!is.null(file)) {
     if(rm.gaps)
-      xyz.inds <- gap.inspect(pdbs$xyz)$f.inds
+      xyz.inds <- gap.inspect(x$xyz)$f.inds
     else
       xyz.inds <- which(!is.na(x$U.subspace[,m.inds[1],s.inds[1]]))
-    
-    write.pdb(xyz=coor, file=file,
-              chain=pdbs$chain[s.inds[1], xyz2atom(xyz.inds)],
-              resno=pdbs$resno[s.inds[1], xyz2atom(xyz.inds)],
-              resid=pdbs$resid[s.inds[1], xyz2atom(xyz.inds)],
-              b=x$fluctuations[s.inds[1], !is.gap(x$fluctuations[s.inds[1],])],
-              ...)
-    
+
+    if(is.null(pdbs)) 
+      write.pdb(xyz=coor, file=file, ...)
+    else {
+      write.pdb(xyz=coor, file=file, 
+                chain=pdbs$chain[s.inds[1], xyz2atom(xyz.inds)],
+                resno=pdbs$resno[s.inds[1], xyz2atom(xyz.inds)],
+                resid=pdbs$resid[s.inds[1], xyz2atom(xyz.inds)],
+                b=x$fluctuations[s.inds[1], !is.gap(x$fluctuations[s.inds[1],])],
+                ...)
+    }
     invisible(coor)
   }
   else {

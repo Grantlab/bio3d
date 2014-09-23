@@ -6,11 +6,14 @@
   covariance matrices.
 }
 \usage{
-\method{pca}{array}(x)
+\method{pca}{array}(x, use.svd = TRUE, ...)
 }
 \arguments{
   \item{x}{ an array of matrices, e.g. correlation or covariance
     matrices as obtained from functions \code{dccm} or \code{enma2covs}. }
+  \item{use.svd}{ logical, if TRUE singular value decomposition (SVD) is 
+    called instead of eigenvalue decomposition. }
+  \item{\dots}{ . }
 }
 \details{
   This function performs an PCA of residue-residue cross-correlations or
