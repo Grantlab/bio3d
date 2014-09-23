@@ -122,7 +122,7 @@ cent.gdi = layout.cna(nnet.gdi, pdb=pdb.gtp, k=3)[,1:2]
 
 #' The following code plots the four networks. 
 
-#+ figure1, fig.cap="Comparison of correlation networks between active and inhibitory G protein alpha subunits. Networks are derived from NMA applied to single PDB structures.", echo=FALSE
+#+ figure1, fig.cap="Correlation networks for GTP \"active\" and GDI \"inhibitory\" conformational states of transducin. Networks are derived from NMA applied to single GTP and GDI crystallographic structures.", echo=c(3,5,6,8)
 layout(matrix(c(1:4), 2, 2))
 par(mar=c(0.1, 0.1, 3, 0.1))
 plot.cna(nnet.gtp, layout=cent.gtp.full, full=TRUE, vertex.label=NA, vertex.size=5)
@@ -132,11 +132,6 @@ plot.cna(nnet.gdi, layout=cent.gdi.full, full=TRUE, vertex.label=NA, vertex.size
 title(main="GDI")
 plot.cna(nnet.gdi, layout=cent.gdi)
 
-#+ dummy-code, eval=FALSE
-plot.cna(nnet.gtp, layout=cent.gtp.full, full=TRUE, vertex.label=NA, vertex.size=5)
-plot.cna(nnet.gtp, layout=cent.gtp)
-plot.cna(nnet.gdi, layout=cent.gdi.full, full=TRUE, vertex.label=NA, vertex.size=5)
-plot.cna(nnet.gdi, layout=cent.gdi)
 
 #'
 #' ## Part II: Correlation network analysis based on ensemble NMA
@@ -175,7 +170,7 @@ cent.gtp = layout.cna(net1, pdb=ref.pdb, k=3)[,1:2]
 cent.gdi.full = layout.cna(net2, pdb=ref.pdb, full=TRUE, k=3)[,1:2]
 cent.gdi = layout.cna(net2, pdb=ref.pdb, k=3)[,1:2]
 
-#+ figure2, fig.cap="Correlation networks for GTP \"active\" and GDI \"inhibitory\" conformational states of transducin. Networks are derived from ensemble NMA of available GTP and GDI crystallographic structures.", echo=FALSE
+#+ figure2, fig.cap="Correlation networks for GTP \"active\" and GDI \"inhibitory\" conformational states of transducin. Networks are derived from ensemble NMA of available GTP and GDI crystallographic structures.", echo=c(3,5,6,8)
 layout(matrix(c(1:4), 2, 2))
 par(mar=c(0.1, 0.1, 3, 0.1))
 plot.cna(net1, layout=cent.gtp.full, full=TRUE, vertex.label=NA, vertex.size=5)
@@ -185,11 +180,6 @@ plot.cna(net2, layout=cent.gdi.full, full=TRUE, vertex.label=NA, vertex.size=5)
 title(main="GDI")
 plot.cna(net2, layout=cent.gdi)
 
-#+ dummy-code2, eval=FALSE
-plot.cna(net1, layout=cent.gtp.full, full=TRUE, vertex.label=NA, vertex.size=5)
-plot.cna(net1, layout=cent.gtp)
-plot.cna(net2, layout=cent.gdi.full, full=TRUE, vertex.label=NA, vertex.size=5)
-plot.cna(net2, layout=cent.gdi)
 
 #' ## Document Details
 #' This document is shipped with the Bio3D package in both R and PDF formats. All code can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
