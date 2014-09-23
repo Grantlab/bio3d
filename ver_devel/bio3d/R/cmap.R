@@ -17,6 +17,10 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
      }
    }
 
+  if (!(is.numeric(pcut) && pcut >= 0 && pcut <= 1)) {
+    stop("Input 'pcut' should a number between 0 and 1")
+  }
+
   xyz=as.xyz(xyz)
   
   if(nrow(xyz)>1) {
@@ -53,13 +57,16 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
      cont.map[!lower.tri(cont.map)] <- cmap.t
      if(!mask.lower) 
          cont.map[lower.tri(cont.map)] <- t(cont.map)[lower.tri(cont.map)]
+
   } else {
+
      ## Distance matrix (all-atom)
      dmat <- dm.xyz( xyz, grpby, scut, mask.lower = mask.lower)
      ## Contact map
      return(matrix(as.numeric(dmat < dcut),
                 ncol = ncol(dmat),
                 nrow = nrow(dmat)))
+
   }
   return (cont.map)
 }

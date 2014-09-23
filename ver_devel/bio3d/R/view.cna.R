@@ -102,13 +102,16 @@ view.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
   scr <- c(scr, .vmd.sphere( layout, radius=radius, col=col.sphere))
 
   ## Edges
-  edge.list <- unlist2(get.adjlist(x$community.network))
-  start.no <- as.numeric(names(edge.list))
-  end.no <- as.numeric((edge.list))
-  inds <- which(end.no > start.no)
+###edge.list <- unlist2(get.adjlist(x$community.network))
+###start.no <- as.numeric(names(edge.list))
+###end.no <- as.numeric((edge.list))
+###inds <- which(end.no > start.no)
+###start <- layout[start.no[inds],]
+###end <- layout[end.no[inds],]
+  edges.list <- get.edges(x$community.network, 1:length(E(x$community.network)))
+  start <- layout[edge.list[,1],]
+  end <- layout[edge.list[,2],]
   
-  start <- layout[start.no[inds],]
-  end <- layout[end.no[inds],]
   ###weights=E(x$community.network)$weight ##/0.2
   scr <- c(scr, .vmd.lines( start=start, end=end,
                            radius=weights, col=col.lines))
