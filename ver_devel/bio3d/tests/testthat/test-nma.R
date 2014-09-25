@@ -218,9 +218,10 @@ test_that("NMA", {
   ## previous to juliens atom mass lookup
   #modes.expected <- c(0.128550353, 0.069409696, -0.011821954,
   #                    0.056729141, 0.076231821, -0.004736402)
-  modes.expected <- c(0.128550854, 0.069409382,  -0.011821391,
-                      0.056729257, 0.076231424, -0.004736013)
-  expect_that(modes$modes[1:6, 7], equals(modes.expected, tolerance=1e-6))
+  modes.expected <- c(-0.128550854, -0.069409382,  0.011821391,
+                      -0.056729257, -0.076231424, 0.004736013)
+  nowMode7 <- modes$modes[1:6, 7]
+  expect_that(nowMode7 * mysign(nowMode7, modes.expected), equals(modes.expected, tolerance=1e-6))
   
   #L.expected <- c(0.007375, 0.009036, 0.013006, 0.015084, 0.020110, 0.022607)
   L.expected <- c(0.007375, 0.009036, 0.013007, 0.015084, 0.020111, 0.022608)
