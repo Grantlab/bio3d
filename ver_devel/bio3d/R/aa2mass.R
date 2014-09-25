@@ -4,7 +4,7 @@
     if (missing(pdb))
       stop("must supply 'pdb' object or vector of amino acid residue names")
 
-    if(class(pdb)=="pdb") {
+    if(is.pdb(pdb)) {
       if(!is.null(inds)) {
         pdb <- trim.pdb(pdb, inds)
       }
@@ -38,8 +38,9 @@
     }
     else  {
       ## Read data matrix
-      mat.file <- system.file(paste("matrices/aa_mass.mat",sep=""), package="bio3d")
-      mat <- read.table(mat.file)
+      #mat.file <- system.file(paste("matrices/aa_mass.mat",sep=""), package="bio3d")
+      #mat <- read.table(mat.file)
+      mat <- aa.mass
       ##return(mat)
     }
     

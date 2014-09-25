@@ -17,7 +17,7 @@ deformation.nma(nma, mode.inds = NULL, pfc.fun = NULL, ncore = NULL)
     an argument to return a vector of force constants. See \code{nma}
     for examples. }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
 }
 \details{
   Deformation analysis provides a measure for the amount of local

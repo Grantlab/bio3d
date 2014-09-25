@@ -17,7 +17,7 @@ read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
   \item{fix.ali}{ logical, if TRUE check consistence between \code{$ali} 
     and \code{$resno}, and correct \code{$ali} if they don't match. }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{nseg.scale }{ split input data into specified number of segments
     prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
   \item{\dots}{ other parameters for \code{\link{read.pdb}}. }  
@@ -34,7 +34,7 @@ read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
   their associated PDB files.
 }
 \value{
-  Returns a list of class \code{"3dalign"} with the following five
+  Returns a list of class \code{"pdbs"} with the following five
   components:
   \item{xyz}{numeric matrix of aligned C-alpha coordinates.}
   \item{resno}{character matrix of aligned residue numbers.}

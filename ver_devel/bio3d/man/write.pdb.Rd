@@ -6,9 +6,9 @@
   Cartesian coordinate vector or matrix.
 }
 \usage{
-write.pdb(pdb = NULL, file = "R.pdb", xyz = pdb$xyz, resno = NULL, resid = 
-NULL, eleno = NULL, elety = NULL, chain = NULL, insert = NULL, alt = NULL, 
-o = NULL, b = NULL, segid = NULL, elesy = NULL, charge = NULL, het = FALSE, 
+write.pdb(pdb = NULL, file = "R.pdb", xyz = pdb$xyz, type = NULL, resno = NULL,
+ resid = NULL, eleno = NULL, elety = NULL, chain = NULL, insert = NULL, 
+ alt = NULL, o = NULL, b = NULL, segid = NULL, elesy = NULL, charge = NULL, 
 append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE, print.segid = FALSE)
 }
 \arguments{
@@ -16,6 +16,8 @@ append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE, print.segid = FAL
     \code{\link{read.pdb}}. }
   \item{file}{ the output file name. }
   \item{xyz}{ Cartesian coordinates as a vector or 3xN matrix. }
+  \item{type}{ vector of record types, i.e. "ATOM" or "HETATM", 
+    with length equal to length(xyz)/3. }
   \item{resno}{ vector of residue numbers of length equal to
     length(xyz)/3. }
   \item{resid}{ vector of residue types/ids of length equal to
@@ -36,8 +38,6 @@ append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE, print.segid = FAL
   \item{segid}{ vector of segment id of length equal to length(xyz)/3. }
   \item{elesy}{ vector of element symbol of length equal to length(xyz)/3. }
   \item{charge}{ vector of atomic charge of length equal to length(xyz)/3. }
-  \item{het}{ logical, if TRUE \sQuote{HETATM} records from \code{pdb}
-    object are written to the output PDB file. } 
   \item{append}{ logical, if TRUE output is appended to the bottom of an
     existing file (used primarly for writing multi-model files). }
   \item{verbose}{ logical, if TRUE progress details are printed. }

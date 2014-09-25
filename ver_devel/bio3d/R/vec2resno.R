@@ -3,7 +3,7 @@ function(vec, resno) {
   ## replicate vec based on concetive
   ## similar resno entries
 
-  if(class(resno)=="pdb")
+  if(is.pdb(resno))
     resno <- resno$atom[,"resno"]
 
   res.len <- rle(resno)$lengths

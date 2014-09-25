@@ -2,9 +2,9 @@
   function(pdb, inds=NULL, use.mass=TRUE, ... ) {
     
     if (missing(pdb))
-      stop("com: must supply 'pdb' object, i.e. from 'read.pdb'")
-    if(class(pdb)!="pdb")
-      stop("com: 'pdb' must be of type 'pdb'")
+      stop("Please supply an input 'pdb' object, i.e. from 'read.pdb()'")
+    if(!is.pdb(pdb))
+      stop("Input 'pdb' must be of type 'pdb'")
     
     if(is.null(inds)) {
       xyz <- pdb$xyz

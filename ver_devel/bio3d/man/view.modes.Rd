@@ -6,7 +6,7 @@
 }
 \usage{
 view.modes(modes, mode=NULL, outprefix="mode_vecs",
-          scale=5, dual=FALSE, launch=FALSE)
+          scale=5, dual=FALSE, launch=FALSE, exefile="pymol")
 }
 \arguments{
   \item{modes}{ an object of class \code{nma} or \code{pca} as obtained
@@ -19,10 +19,15 @@ view.modes(modes, mode=NULL, outprefix="mode_vecs",
   \item{dual}{ logical, if TRUE mode vectors are also drawn in both
     direction. }
   \item{launch}{ logical, if TRUE PyMol will be launched. }
+  \item{exefile}{ file path to the \sQuote{PYMOL} program on your system
+    (i.e. how is \sQuote{PYMOL} invoked). }
 }
 \details{
   This function generates a PyMOL (python) script for drawing
-  mode vectors on a PDB structure.
+  mode vectors on a PDB structure. The PyMOL script file is stored in
+  the working directory with filename \dQuote{mode_vecs.py}, with
+  coordinates in PDB format \dQuote{mode_vecs.inpcrd.pdb}. PyMOL will
+  only be launched when using argument \sQuote{launch=TRUE}.
 }
 \value{
   Called for its action.

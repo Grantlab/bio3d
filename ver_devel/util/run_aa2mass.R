@@ -1,4 +1,4 @@
-library(bio3d)
+##library(bio3d)
 
 if(FALSE) {
 w <- c( 71.080, 157.204, 114.108, 114.082, 103.150,
@@ -88,10 +88,19 @@ mat.spec <- mat.spec[inds.o,]
 
 ## column names
 new.mat <- rbind(mat.st, mat.spec)
-colnames(new.mat) <- c("aa3", "aa1", "aaMass", "name", "formula")
+colnames(new.mat) <- c("aa3", "aa1", "aaMass", "formula", "name")
 rownames(new.mat) <- new.mat[,"aa3"]
 
+new.mat <- data.frame(new.mat, stringsAsFactors=FALSE)
+new.mat$aaMass <- round(as.numeric(new.mat$aaMass), 3)
+
 ## write matrix to file
-write.table(new.mat, quote=T, file="../bio3d/inst/matrices/aa_mass.mat.new", row.names=TRUE)
+##write.table(new.mat, quote=T, file="../bio3d/inst/matrices/aa_mass.mat.new", row.names=TRUE)
+write.table(new.mat, quote=T, file="aa_mass.mat.new", row.names=TRUE)
+
+## convert to .rda
+aa.mass <- new.mat
+save(aa.mass, file="aa.mass.rda")
+
 
 

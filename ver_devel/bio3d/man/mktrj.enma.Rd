@@ -6,21 +6,26 @@
   vector.
 }
 \usage{
-\method{mktrj}{enma}(enma = NULL, pdbs = NULL, ind = 1, mode = 1, mag = 10,
-                     step = 1.25, file = NULL,  ...) 
+\method{mktrj}{enma}(x = NULL, pdbs = NULL, s.inds = NULL, m.inds = NULL,
+                     mag = 10, step = 1.25, file = NULL,
+                     rock = TRUE, ncore = NULL, ...) 
 }
 \arguments{
   \item{enma}{ a list object of class \code{"enma"} (obtained with
     \code{\link{nma.pdbs}}).}
-  \item{pdbs}{ a list object of class \code{"3dalign"} (obtained with
+  \item{pdbs}{ a list object of class \code{"pdbs"} (obtained with
     \code{\link{pdbaln}} or \code{\link{read.fasta.pdb}}) which
     corresponds to the \code{"enma"} object.}
-  \item{ind}{ structure id poiting to which structure in the \code{enma}
-    object to make the trajectory of. }
-  \item{mode}{ the mode number along which displacements should be made.}
+  \item{s.inds}{ index or indices pointing to the structure(s) in the
+    \code{enma} object for which the trajectory shall be generated. }
+  \item{m.inds}{ the mode number(s) along which displacements should be
+    made. }
   \item{mag}{ a magnification factor for scaling the displacements. }
   \item{step}{ the step size by which to increment along the mode. }
   \item{file}{ a character vector giving the output PDB file name. }
+  \item{rock}{ logical, if TRUE the trajectory rocks. }
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires package \sQuote{parallel} installed. } 
   \item{...}{ extra arguments to be passed to the function write.pdb. }
 }
 \details{
@@ -42,6 +47,7 @@
 \note{ Molecular graphics software such as VMD or PyMOL is useful
   for viewing trajectories see e.g: \cr
   \url{http://www.ks.uiuc.edu/Research/vmd/}. }
-\seealso{ \code{\link{nma}}, \code{\link{view.modes}}, \code{\link{mktrj.nma}},
+\seealso{ \code{\link{nma}}, \code{\link{view.modes}},
+  \code{\link{mktrj.nma}}, 
   \code{\link{nma.pdbs}}, \code{\link{pdbaln}} }
 \keyword{ utilities }

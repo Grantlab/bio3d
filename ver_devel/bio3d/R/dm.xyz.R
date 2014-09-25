@@ -2,10 +2,14 @@
 function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE) {
   ##-- New distance matrix function with 'grpby' option
   ##  ndm(pdb$xyz, grpby=pdb$atom[,"resno"], scut=3)
-
-  if( !is.vector(xyz) )
-    stop(" Input 'xyz' should be a numeric vector" )
-    
+  
+  xyz=as.xyz(xyz)
+  if(dim(xyz)[1L]>1) {
+    warning("multiple frames detected - using only the first row in xyz matrix")
+    xyz = xyz[1,, drop=FALSE]
+  }
+  xyz=as.vector(xyz)
+  
   ##- Full Distance matrix (could use 'dm' or 'dist.xyz')
   d <- as.matrix(dist(matrix(xyz, ncol = 3, byrow = TRUE)))
   

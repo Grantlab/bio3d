@@ -1,7 +1,7 @@
 "seqidentity" <-
 function( alignment , normalize=TRUE, similarity=FALSE, ncore=1, nseg.scale=1) {
 
-  # Parallelized by multicore package (Sun Jul  7 17:35:38 EDT 2013)
+  # Parallelized by parallel package (Sun Jul  7 17:35:38 EDT 2013)
   ncore <- setup.ncore(ncore)
   if(ncore > 1) {
      # Issue of serialization problem
@@ -18,7 +18,7 @@ function( alignment , normalize=TRUE, similarity=FALSE, ncore=1, nseg.scale=1) {
 
   ids <- NULL
   if(is.list(alignment)) {
-    if(inherits(alignment, c("fasta", "3dalign")))
+    if(inherits(alignment, c("fasta", "pdbs")))
       ids <- alignment$id
     alignment <- alignment$ali
   }

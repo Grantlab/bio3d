@@ -5,12 +5,13 @@
   Downloads PDB coordinate files from the RCSB Protein Data Bank.
 }
 \usage{
-get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, gzip = FALSE,
-     verbose = TRUE, ncore = 1)
+get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, gzip = FALSE, 
+     split = FALSE, verbose = TRUE, ncore = 1, ...)
 }
 \arguments{
   \item{ids}{ A character vector of one or more 4-letter PDB
-    codes/identifiers of the files to be downloaded. }
+    codes/identifiers or 6-letter PDB-ID_Chain-ID of the files to be downloaded, or a \sQuote{blast}
+    object containing \sQuote{pdb.id}. }
   \item{path}{ The destination path/directory where files are to be
     written. }
   \item{URLonly}{ logical, if TRUE a character vector containing the URL
@@ -20,9 +21,12 @@ get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, gzip = FALSE,
     it alread exist. }
   \item{gzip}{ logical, if TRUE the gzipped PDB will be downloaded and
     extracted locally. }
+  \item{split}{ logical, if TRUE \code{\link{pdbsplit}} funciton will be called to split pdb files
+    into separated chains. } 
   \item{verbose}{ print details of the reading process. }
   \item{ncore}{ number of CPU cores used to do the calculation.
-     \code{ncore>1} requires multicore package installed. }
+     \code{ncore>1} requires package \sQuote{parallel} installed. }
+  \item{\dots}{ extra arguments passed to \code{\link{pdbsplit}} function. }
 }
 \details{
   This is a basic function to automate file download from the PDB.
@@ -40,7 +44,7 @@ get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, gzip = FALSE,
 \author{ Barry Grant }
 \seealso{ \code{\link{read.pdb}}, \code{\link{write.pdb}},
   \code{\link{atom.select}}, \code{\link{read.fasta.pdb}},
-  \code{\link{read.fasta}} }
+  \code{\link{read.fasta}}, \code{\link{pdbsplit}} }
 \examples{
 ## PDB file paths
 get.pdb( c("1poo", "1moo"), URLonly=TRUE )

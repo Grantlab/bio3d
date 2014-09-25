@@ -1,8 +1,20 @@
 "view.dccm" <-
-  function(dccm, pdb, step=0.2, omit=0.2, type="pymol",
-           outprefix="corr", launch=FALSE) {
+  function(dccm, pdb, step=0.2, omit=0.2, radius = 0.15, type="pymol",
+           outprefix="corr", launch=FALSE, exefile = "pymol") {
 
-    if(class(pdb)=="pdb") {
+    ## Check if the program is executable
+    if(launch) {
+      ver <- "-cq"
+      os1 <- .Platform$OS.type
+      status <- system(paste(exefile, ver),
+                       ignore.stderr = TRUE, ignore.stdout = TRUE)
+      
+      if(!(status %in% c(0,1)))
+        stop(paste("Launching external program failed\n",
+                   "  make sure '", exefile, "' is in your search path", sep=""))
+    }
+    
+    if(is.pdb(pdb)) {
       ca.inds <- atom.select(pdb, 'calpha', verbose=FALSE)
       bb.inds <- atom.select(pdb, 'backbone', verbose=FALSE)
       xyz <- pdb$xyz[ca.inds$xyz]
@@ -55,13 +67,13 @@
       scr <- c(scr, paste("cmd.load('", pdbfile, "', 'prot')", sep=""))
       scr <- c(scr, "cmd.show('cartoon')")
 
-      if(class(pdb)!="pdb" || ca.pdb)
+      if(!is.pdb(pdb) || ca.pdb)
         scr <- c(scr, "cmd.set('cartoon_trace_atoms', 1)")
       
       ## define color range 
       blues <- colorRamp(c("white", "blue"))
       reds  <- colorRamp(c("white", "red"))
-      w <- 0.15
+      w <- radius 
     }
     else {
       m <- 0
@@ -163,7 +175,7 @@
     }
     
     ## Write PDB structure file
-    if(class(pdb)=="pdb")
+    if(is.pdb(pdb))
       write.pdb(pdb, file=pdbfile)
     else
       write.pdb(xyz=xyz, file=pdbfile)
@@ -177,12 +189,19 @@
       
       os1 <- .Platform$OS.type
       if (os1 == "windows") {
-        shell(shQuote(cmd))
+        success <- shell(shQuote(cmd))
       }
       else {
         if(Sys.info()["sysname"]=="Darwin") {
-          system(paste("open -a MacPyMOL", outfile))
-        } else { system(cmd) }
+          success <- system(paste("open -a MacPyMOL", outfile))
+        }
+        else {
+          success <- system(cmd)
+        }
       }
+
+      if(success!=0)
+        stop(paste("An error occurred while running command\n '",
+                   exefile, "'", sep=""))
     }
   }

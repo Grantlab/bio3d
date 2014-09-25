@@ -96,12 +96,12 @@ processes the input files and returns their output to the new objects
 the following commands:
 
 ```{r}
-print(pdb) 
-length(pdb$xyz)
-dim(dcd)
+print(pdb)
+print(pdb$xyz)
+print(dcd)
 ```
 
-Note that the output of the `dim()` function is telling us that we have 351 trajectory frames (or rows in our dcd matrix) and 594 coordinates (or x, y and z columns).
+The output of the above function is telling us that we have 351 trajectory frames and 594 coordinates. The trajectory information is stored in a  `xyz` matrix object with one row per frame and columns for the Cartesian coordinates (x, y and z columns).
 
 #### Question:
 

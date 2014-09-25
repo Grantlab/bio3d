@@ -12,7 +12,7 @@
   \item{x}{ an object of class \code{enma} as obtained from
     function \code{nma.pdbs}. }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{na.rm }{ logical, if FALSE the DCCM might containt NA values
     (applies only when the \code{enma} object is calculated with
     argument \sQuote{rm.gaps=FALSE}). }
@@ -43,17 +43,20 @@
 \examples{
 ## Fetch PDB files and split to chain A only PDB files
 ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
-raw.files <- get.pdb(ids, path = "raw_pdbs")
-files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain")
+raw.files <- get.pdb(ids, path = tempdir())
+files <- pdbsplit(raw.files, ids, path = tempdir())
 
-## Sequence Alignement
+## Sequence/Structure Alignement
 pdbs <- pdbaln(files)
 
 ## Normal mode analysis on aligned data
-all.modes <- nma.pdbs(pdbs, full=TRUE, fit=TRUE, rm.gaps=TRUE)
+modes <- nma(pdbs)
 
-## Calculate correlation matrices
-all.dccm <- dccm(all.modes)
+## Calculate all 6 correlation matrices
+cij <- dccm(modes)
+
+## Plot correlations for first structure
+plot.dccm(cij$all.dccm[,,1])
 
 }
 \keyword{ analysis }

@@ -3,7 +3,7 @@
 \alias{.print.fasta.ali}
 \title{ Printing Sequence Alignments }
 \description{
-    Print method for fasta and 3dalign sequence alignment objects.
+    Print method for fasta and pdbs sequence alignment objects.
 }
 \usage{
 \method{print}{fasta}(x, alignment=TRUE, ...)
