@@ -22,8 +22,15 @@ The output matrix is a nXn binary matrix (n = residue number). Elements equal to
 cmap (require bio3d package)
 }
 \examples{
+
+\dontrun{
+  ## need abind package
+  if(!require(abind)) {
+     install.packages("abind")
+     require(abind)
+  }
+
   ## load example data
-  require(abind)
   pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
   pdb <- read.pdb(pdbfile)
 
@@ -54,5 +61,6 @@ cmap (require bio3d package)
   image(cm.1, col=c(NA,"black"))
   image(cm.2, col=c(NA,"black"))
   image(cm.filter, col=c(NA,"black"))
+}
 }
 \keyword{analysis}

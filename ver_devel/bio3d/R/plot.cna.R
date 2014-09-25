@@ -35,14 +35,14 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
      stop("igraph package missing: Please install, see: ?install.packages")
   }
 
-  if(color.edge) {
-     oops <- require(classInt)
-     if (!oops) {
-        warning("package classInt missing: color.edge is set to FALSE.
-            To make color.edge work, please install the missing package. See: ?install.packages")
-        color.edge = FALSE
-     }    
-  }
+#  if(color.edge) {
+#     oops <- require(classInt)
+#     if (!oops) {
+#        warning("package classInt missing: color.edge is set to FALSE.
+#            To make color.edge work, please install the missing package. See: ?install.packages")
+#        color.edge = FALSE
+#     }    
+#  }
 
   ##- Determine which network to plot along with node size
   if(full) {
@@ -98,10 +98,17 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
   
   if(color.edge) {
 
-     vec2color <- function(vec, pal=c("blue", "green", "red"), n=10) {
-        ##-- Define a color scale from a numeric vector
-        return( findColours(classIntervals(vec, n=n, style="equal"), pal) )
+#     vec2color <- function(vec, pal=c("blue", "green", "red"), n=10) {
+#        ##-- Define a color scale from a numeric vector
+#        return( findColours(classIntervals(vec, n=n, style="equal"), pal) )
+#     }
+     vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
+        col <- colorRampPalette(pal)(n)
+        vec.cut <- cut(vec, seq(min(vec), max(vec), length.out=n), include.lowest = TRUE)
+        levels(vec.cut) <- 1:length(col)
+        return( col[vec.cut] )
      }
+
      colors <- vec2color(weights)
      plot.igraph(y, edge.width=weights, edge.color = colors, layout=layout, vertex.color=col, vertex.size=vertex.size, ...)
 
