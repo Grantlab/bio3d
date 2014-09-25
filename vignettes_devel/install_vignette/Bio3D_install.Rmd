@@ -1,15 +1,40 @@
-# Installing Bio3D
-## Lars Skjaerven, Xin-Qiu Yao and Barry J. Grant
-## University of Michigan, Ann Arbor
+---
+title: "Installing Bio3D"
+author: "Lars Skjaerven, Xin-Qiu Yao and Barry J. Grant"
+date: "Sepertember 25, 2014"
+affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
+output:
+  pdf_document:
+    highlight: default
+    keep_tex: yes
+    number_sections: yes
+    toc: no
+    fig_width: 5
+    fig_height: 5
+    fig_caption: yes
+  html_document:
+    highlight: default
+    keep_md: yes
+    toc: no
+    fig_width: 5
+    fig_height: 5
+    fig_caption: yes
+    number_sections: yes
+documentclass: article
+fontsize: 11pt
+geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
+linkcolor: black
+---
+
 <br><br>
 
-## Background
+# Background
 
 Bio3D is an R package that provides interactive tools for structural
 bioinformatics. The primary focus of Bio3D is the analysis of
 biomolecular structure, sequence and trajectory data [^1].
 
-### What can I do with Bio3D?
+### What can I do with Bio3D? {.unnumbered}
 
 Features include the ability to read and write biomolecular structure,
 sequence and dynamic trajectory data, query and search online sequence
@@ -19,24 +44,24 @@ analysis, alignment, conservation analysis, normal mode analysis,
 principal component analysis, and many other common sequence and
 structural analysis tasks.
 
-### Why an R package?
+### Why an R package? {.unnumbered}
 
 Bio3D aims to leverage the extensive graphical and statistical
 capabilities of the R environment (<http://www.r-project.org>) and thus
 provide a useful integrated framework for the exploratory interactive
 analysis of biomolecular sequence and structure data.
 
-### What is the purpose of this document?
+### What is the purpose of this document? {.unnumbered}
 
 The aim of this vignette[^2] is to provide Bio3D package installation instructions.
 
-### Where can I find more information?
+### Where can I find more information? {.unnumbered}
 
 The latest version of the package, full documentation and furhter
 vignettes can be obtained from the main Bio3D website:
 <http://thegrantlab.org/bio3d/>.
 
-### What other vignettes are available?
+### What other vignettes are available? {.unnumbered}
 
 Available Bio3D package vignettes can be found online
 <http://thegrantlab.org/bio3d/html/> and within R once the Bio3D package
@@ -63,7 +88,7 @@ At the time of writing these include:
 
 -   `Normal mode analysis with Bio3D`
 
-#### Side-note:
+#### Side-note: {.unnumbered}
 
 We are always interested in adding additional functionality and
 documentation to the Bio3D package. If you have ideas or suggestions for
@@ -71,7 +96,7 @@ improvements, or indeed code that you would like to distribute as part
 of this package, please contact us – we would like to hear from you!
 <br><br>
 
-## Quick Installation for Linux/Ubuntu Users
+# Quick Installation for Linux/Ubuntu Users
 
 Most required packages and programs are available from the official
 Ubuntu repository:
@@ -100,7 +125,7 @@ experienced errors you should continue to read section 3 and the
 installation instructions in section 4.1.
 <br><br>
 
-## Installation Prerequisites
+# Installation Prerequisites
 
 Before you attempt to install Bio3D you should have a relatively recent
 version of R installed and working on your system (we recommend at least
@@ -108,7 +133,7 @@ R version 3.0.1). Detailed instructions for obtaining and installing R
 on various platforms can be found on the R home page
 <http://www.r-project.org>.
 
-### Do I need to know R?
+### Do I need to know R? {.unnumbered} 
 
 To get the most out of Bio3D you should be quite familiar with basic R
 usage. Some newcomers to R find this a steep learning curve. However,
@@ -116,7 +141,7 @@ once you have mastered basic operations with vectors and matrices in R
 you should feel confident about getting stuck into using the Bio3D
 package.
 
-#### Sidenote:
+#### Sidenote: {.unnumbered}
 
 There are now numerous on–line resources that can help you get started
 using R. Again they can be found from the [main R
@@ -124,7 +149,7 @@ website](http://www.r-project.org) at <http://www.r-project.org>. We
 also maintain a list of R resources at
 <http://bio3d.pbworks.com/w/page/68764093/Use_R>. However, google may be your best friend in this regard.
 
-### Additional R Packages
+### Additional R Packages {.unnumbered}
 
 Bio3D makes use of a number of additional R packages including *ncdf*,
 *lattice*, *grid*, *bigmemory*, *multicore*, and *XML*. These can be
@@ -133,9 +158,10 @@ most easily installed from within R with the command:
 ```{r, eval=FALSE}
 install.packages(c("ncdf", "lattice", "grid", "bigmemory", "multicore", "XML"), dependencies=TRUE) 
 ```
+
 <br>
 
-## Obtaining and Installing Bio3D
+# Obtaining and Installing Bio3D
 
 The Bio3D package is available in two forms from
 <http://thegrantlab.org/bio3d/>
@@ -153,7 +179,7 @@ source installation please refer to section 6.1 of the [R Installation
 and Administration
 Manual](http://cran.r-project.org/doc/manuals/R-admin.html).
 
-### Linux/Unix Installation
+## Linux/Unix Installation
 
 If you are unable to use the quick installation instructions described
 in section 2 in a Unix environment then you should download the latest
@@ -167,7 +193,7 @@ Or from the command line:
 
     R CMD INSTALL bio3d_2.0-1.tar.gz
 
-#### Sidenote:
+#### Sidenote: {.unnumbered}
 
 This will only work if you have permission to write files to the
 standard package installation location. If you would rather install to a
@@ -184,7 +210,7 @@ line similar to the following to your .tcshrc/.bashrc file:
 Obviously you will want to change the path above to a directory of your
 choice.
 
-### MacOS X Installation
+## MacOS X Installation
 
 R on Mac OS X can be used either on the command-line, like on other Unix
 systems, or via the R.app GUI. If you prefer to use the command line
@@ -197,7 +223,7 @@ file from above. In the R GUI select `Packages and Data` $\rightarrow$
 `Package Installer` $\rightarrow$ `Local Source Package`, and press the
 `Install` button. Select the Bio3D tar file and press `Open`.
 
-### Windows Installation
+## Windows Installation
 
 To install the Bio3D package on Windows download the compiled binary
 .zip file from above.
@@ -206,7 +232,7 @@ Start R and from GUI click `Packages` $\rightarrow$
 `Install Package(s) from local zip file` then simply select your
 downloaded Bio3D zip file and click `Open` to finish the installation.
 
-### Installing the development version of Bio3D
+## Installing the development version of Bio3D
 
 For the majority of users we recommend the use of the last stable
 release available from the [main Bio3D
@@ -232,7 +258,7 @@ to the wiki section of our [bitbucket
 repository](https://bitbucket.org/Grantlab/bio3d/).
 <br><br>
 
-## Additional utilities
+# Additional utilities
 
 There are a number of additional packages and programs that will either
 interface directly with Bio3D (MUSCLE, DSSP and STRIDE), or that we
@@ -240,9 +266,9 @@ consider generally invaluable for working with biomolecular structure
 and sequence data (e.g. VMD, PyMOL, and SEAVIEW). A brief description of
 how to obtain these additional packages is given below.
 
-### Required for full Bio3D functionality
+## Required for full Bio3D functionality
 
-#### MUSCLE:
+#### MUSCLE: {.unnumbered} 
 
 Muscle is a fast multiple sequence alignment program available from the
 muscle home page <http://www.drive5.com/muscle>. The Bio3D functions
@@ -250,12 +276,12 @@ muscle home page <http://www.drive5.com/muscle>. The Bio3D functions
 MUSCLE must be installed on your system and in the search path for
 executables if you wish to use this function.
 
-#### A note for Mac and Unix users:
+#### A note for Mac and Unix users: {.unnumbered} 
 
 After downloading MUSCLE, it should be unzipped and renamed to just
 “muscle” and placed in a directory such as “/usr/local/bin/”.
 
-#### DSSP:
+#### DSSP: {.unnumbered} 
 
 DSSP is another secondary structure analysis which should be installed
 on your system as an executable called “dssp” and be in the search path
@@ -265,9 +291,9 @@ for executables. DSSP is available from a number of sources including:
 
 -   <http://swift.cmbi.ru.nl/gv/dssp/DSSP_5.html>.
 
-### Optional
+## Optional
 
-#### STRIDE:
+#### STRIDE: {.unnumbered} 
 
 STRIDE is a secondary structure analysis program available from the
 [EMBL-Heidelberg](http://webclu.bio.wzw.tum.de/stride/). Stride is
@@ -276,7 +302,7 @@ However, stride is often much easer to setup on different computer
 systems as you may be able to simply copy or link to the stride
 executable distributed within every version of VMD (see above).
 
-#### SEAVIEW:
+#### SEAVIEW: {.unnumbered} 
 
 SEAVIEW is a graphical multiple sequence alignment editor. Download
 information and documentation are available from PBIL
@@ -286,7 +312,7 @@ detailed analysis. I believe this should be done with every alignment
 regardless of how accurate the various automatic tools are supposed to
 be.
 
-#### VMD:
+#### VMD: {.unnumbered} 
 
 VMD is a molecular visualization program for displaying, animating, and
 analyzing large biomolecular systems using 3-D graphics. Visit the VMD
@@ -299,7 +325,7 @@ of timesaving customizations (see the [cheat
 sheet](http://bio3d.pbworks.com/w/page/7824484/vmd_cmds) for full
 details).
 
-#### PyMOL:
+#### PyMOL: {.unnumbered} 
 
 PyMOL is another visualization program with overlapping functionality
 with VMD. Bio3D functions `view.dccm()` and `view.modes()` require PyMOL
@@ -307,7 +333,7 @@ in the search path. PyMOL is open-source software and available from
 <http://www.pymol.org>.
 <br><br>
 
-## Testing your installation
+# Testing your installation
 
 You should now be able to load the Bio3D library into your current R
 session by typing the usual `library(bio3d)` command at the R Console.
@@ -330,7 +356,7 @@ demo("md")
 ```
 <br>
 
-## Where to next
+# Where to next
 
 If you have read this far, congratulations! We are ready to have some
 fun and move to other package vignettes that describe various analysis
@@ -344,7 +370,7 @@ simulation results to map the conformational dynamics and coupled
 motions of proteins).
 <br><br>
 
-## Session Information
+# Session Information
 
 The version number of R and packages loaded for generating the vignette
 were: 
