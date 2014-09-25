@@ -27,6 +27,14 @@ setup.ncore <- function(ncore, bigmem = FALSE) {
        }
        if(is.null(ncore))
          ncore = parallel::detectCores()
+
+       # Following lines check R internal varible for potential limit on multicore usage
+       # Normally it does nothing, but will be helpful in running `R CMD check --as-cran`
+       if(ncore > 1) {
+          chk <- tolower(Sys.getenv("_R_CHECK_LIMIT_CORES_", ""))
+          if (nzchar(chk) && (chk != "false")) ncore = 1
+       }
+
     }
   }
   options(mc.cores = ncore)
