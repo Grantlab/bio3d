@@ -1,38 +1,35 @@
-"atom2ele" <-
-  function(pdb, inds=NULL, elety.custom=NULL, rescue=TRUE) {
+atom2ele <- function(...)
+  UseMethod("atom2ele")
 
-    if(is.pdb(pdb)) {
-      if(!is.null(inds)) {
-        pdb <- trim.pdb(pdb, inds)
-      }
-      atom.names <- pdb$atom[,"elety"]
+atom2ele.default <- function(x, elety.custom=NULL, rescue=TRUE, ...){
+  if(!is.null(elety.custom)) {
+    if(!all(c("name","symb") %in% names(elety.custom)))
+      stop("'elety.custom' must contains 'name' and 'symb' components")
+    inds <- unlist(lapply(elety.custom, is.factor))
+    elety.custom[inds] <- lapply(elety.custom[inds], as.character)
+  }
+  atom.index <- rbind(elety.custom[,c("name","symb")], atom.index[,c("name","symb")])
+  # Why atom names starting by "H" are directly converted to "H" as follow?
+  # x[substr(x,1,1) == "H"] <- "H"
+  symb <- atom.index[match(x, atom.index[,"name"]), "symb"]
+  is.unknown <- is.na(symb)
+  if(any(is.unknown)) {
+    if(rescue) {
+      symb[is.unknown] <- substr(x[is.unknown],1,1)
+      warning(paste("\n\tunknown element: mapped ", x[is.unknown], " to ", symb[is.unknown], sep=""))
     }
     else {
-      if(!is.null(inds))
-        warning("'inds' not in use when 'pdb' is vector")
-      atom.names <- pdb
+      stop(paste("\n\tatom2symb: element of '", x[is.unknown], "' unknown", sep=""))
     }
-    
-    if(!is.null(elety.custom)) {
-      if(class(elety.custom)!="list")
-        stop("elety.custom must be of class 'list'")
-      atom.index$elety <- c(elety.custom, atom.index$elety)
-    }
-
-    atom.names[substr(atom.names,1,1) == "H"] <- "H"
-    eles <- atom.index$elety[atom.names]
-    is.unknown <- is.na(names(eles))
-
-    if(any(is.unknown)) {
-      if(rescue) {
-        eles[is.unknown] <- substr(atom.names[is.unknown],1,1)
-        warning(paste("\n\tunknown element: mapped ", atom.names[is.unknown], " to ", eles[is.unknown], sep=""))
-      }
-      else {
-        stop(paste("\n\tatom2ele: element of '", atom.names[is.unknown], "' unknown", sep=""))
-      }
-    }
-    eles <- unlist(eles)
-    names(eles) <- NULL
-    return( eles )
   }
+  symb <- unlist(symb)
+  return(symb)
+}
+
+atom2ele.pdb <- function(pdb, inds, elety.custom=NULL, rescue=TRUE, ...){
+  if(!is.null(inds))
+    pdb <- trim.pdb(pdb, inds)
+  atom.names <- pdb$atom[,"elety"]
+  symb <- atom2ele.default(atom.names, elety.custom, rescue, ...)
+  return(symb)
+}

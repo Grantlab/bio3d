@@ -1,6 +1,6 @@
-#' # Supporting Material S4
-#' # Integrated structural and evolutionary ensemble analysis with Bio3D
-#' **Lars Skj\ae rven, Xin-Qiu Yao & Barry J. Grant**
+#' # Supporting Information S3
+#' # Integrating protein structural dynamics and evolutionary analysis with Bio3D
+#' **Lars Skj\ae rven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant**
 
 #+ setup, include=FALSE
 opts_chunk$set(dev='pdf')
@@ -44,7 +44,7 @@ system("pandoc -o Bio3D_nma-dhfr-partII.pdf Bio3D_nma-dhfr-partII.md")
 #' the Pfam HMM database with function **hmmer()**. The arguments `type` and `db`
 #' specifies the type of hmmer search and the database to search, respectively. In this particular
 #' example, our query sequence is searched against the Pfam profile HMM library
-#' (arguments `type=hmmscan` and `db=pfam`) to identify its respecitve protein family. 
+#' (arguments `type=hmmscan` and `db=pfam`) to identify its respective protein family. 
 #' The to **hmmer()** will return a data frame object containing the Pfam accession ID (`$acc`),
 #' description of the identified family (`$desc`), family name (`$name`), etc. 
 
@@ -55,7 +55,7 @@ library(bio3d)
 # get sequence of Ecoli DHFR
 seq <- get.seq("1rx2_A")
 
-#+ pfam, cache=TRUE,
+#+ pfam, cache=TRUE, message=FALSE,
 # scan the Pfam database for our sequence
 pfam <- hmmer(seq, type="hmmscan", db="pfam")
 pfam$name
@@ -69,7 +69,7 @@ pfam$desc
 #' Having identified the Pfam entry of our query protein we can use function **pfam()** to fetch the
 #' curated sequence alignment of the DHFR family. Use function **print.fasta()** to print a short summary
 #' of the downloaded sequence alignment to the screen. Note that if argument `alignment=TRUE`
-#' the sequence alignmenment itself will be written to screen. 
+#' the sequence alignment itself will be written to screen. 
 
 #+ pfam2, cache=TRUE,
 # download pfam alignment for the DHFR family
@@ -115,9 +115,9 @@ print(unique(species))
 #' 
 #' As in the previous vignette,
 #' we are interested in protein structures without missing in-structure residues,
-#' and we also want to limit the number of identifical conformers:
+#' and we also want to limit the number of identical conformers:
 
-#+ pdbs, results="hide", cache=TRUE, warning=FALSE,
+#+ pdbs, results="hide", cache=TRUE, warning=FALSE, message=FALSE,
 # fetch and split PDBs
 raw.files <- get.pdb(ids, path = "raw_pdbs", gzip=TRUE)
 files <- pdbsplit(raw.files, ids = ids,
@@ -195,8 +195,8 @@ summary(c(seqide))
 hc <- hclust(as.dist(1-seqide))
 grps.seq <- cutree(hc, h=0.6)
 
-#+ fig3-3, fig.cap="Clustering of collected structures based on sequence identity.", fig.height=5,
-plot(hc, hang=-1, labels=labs, cex=0.25)
+#+ fig3-3, fig.cap="Clustering of collected structures based on sequence identity.", fig.height=4,
+hclustplot(hc, k=3, labels=labs, cex=0.25, fillbox=FALSE)
 
 
 #'
@@ -206,12 +206,12 @@ plot(hc, hang=-1, labels=labs, cex=0.25)
 #' by object *pdbs*. Use argument `rm.gaps=FALSE` to visualize fluctuations also of un-aligned
 #' residues:
 
-#+ modes1, cache=TRUE, 
+#+ modes1, cache=TRUE, message=FALSE
 modes <- nma.pdbs(pdbs, rm.gaps=FALSE, ncore=4)
 
 #'
 #' The *modes* object of class *enma* contains aligned normal mode data including fluctuations,
-#' RMSIP data (only when`rm.gaps=FALSE`), and aligned eigenvectors. A short summary of the *modes* object can be obtain by
+#' RMSIP data (only when `rm.gaps=FALSE`), and aligned eigenvectors. A short summary of the *modes* object can be obtain by
 #' calling the function **print()**, and the aligned fluctuations can be plotted with function
 #' **plot.enma()**:
 print(modes)
@@ -226,8 +226,13 @@ plot(modes, pdbs=pdbs, ylim=c(0,2), col=grps.seq, conservation=TRUE)
 
 grps <- rep(NA, length(grps.seq))
 grps[grep("coli", labs)]=1
-grps[grep("sapiens", labs)]=2
-grps[grep("albicans", labs)]=3
+grps[grep("aureus", labs)]=2
+grps[grep("anthracis", labs)]=3
+grps[grep("tubercu", labs)]=4
+grps[grep("casei", labs)]=5
+grps[grep("sapiens", labs)]=6
+grps[grep("albicans", labs)]=7
+grps[grep("glabrata", labs)]=8
 
 plot(modes, pdbs=pdbs, col=grps, spread=TRUE)
 
@@ -236,8 +241,9 @@ plot(modes, pdbs=pdbs, col=grps, spread=TRUE)
 #' ### Visualize modes
 #' A function call to **mktrj.enma()** will generate a trajectory PDB file for the visualization of
 #' a specific normal mode for one of the structures in the *pdbs* object. This allows for a visual
-#' comparison of the calculated normal modes. Below we make a PDB trajectory of the first mode (argument `mode=1`)
-#' of 4 relevant species (e.g. argument `ind=1`). Note that we use **grep()** to fetch the
+#' comparison of the calculated normal modes. Below we make a PDB trajectory of the first mode
+#' (argument `m.inds=1`) of 3 relevant species (e.g. argument `s.inds=1`).
+#' Note that we use **grep()** to fetch the
 #' indices (in the *modes* and *pdbs* objects) of the relevant species:
 
 #+ example2h, cache=TRUE, results='hide', eval=FALSE,
@@ -247,17 +253,16 @@ inds <- c(grep("coli", species)[1],
           grep("albicans", species)[1])
 
 # E.coli
-mktrj.enma(modes, pdbs, mode=1, ind=inds[1], file="ecoli-mode1.pdb")
+mktrj.enma(modes, pdbs, m.inds=1, s.inds=inds[1], file="ecoli-mode1.pdb")
 
 # H. sapiens
-mktrj.enma(modes, pdbs, mode=1, ind=inds[2], file="hsapiens-mode1.pdb")
+mktrj.enma(modes, pdbs, m.inds=1, s.inds=inds[2], file="hsapiens-mode1.pdb")
 
 # C. albicans
-mktrj.enma(modes, pdbs, mode=1, ind=inds[3], file="calbicans-mode1.pdb")
+mktrj.enma(modes, pdbs, m.inds=1, s.inds=inds[3], file="calbicans-mode1.pdb")
 
 
-#' ![Mode comparison of *E.coli*, *H.sapiens*, and *C.albicans*. The trajectories are made with function **mktrj.enma** and visualized in PyMol.](figure/visualize-4hfrs.png)
-
+#' ![Mode comparison of *E.coli*, *H.sapiens*, and *C.albicans*. The trajectories are made with function **mktrj.enma()** and visualized in PyMol.](figure/visualize-4hfrs.png)
 
 #'
 #' ## Document Details
