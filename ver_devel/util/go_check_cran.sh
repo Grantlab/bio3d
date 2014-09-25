@@ -1,5 +1,6 @@
 #!/bin/bash
 
 R CMD build ../bio3d
-R CMD check --as-cran bio3d_2.0-1.tar.gz
+file=(`ls -t ../bio3d_*.tar.gz`)
+R CMD check --as-cran $file
 
