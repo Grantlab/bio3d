@@ -19,12 +19,17 @@
 
     if(inherits(ids, "blast")) ids = ids$pdb.id
 
-    if (any(nchar(ids) < 4)) stop("ids should be standard 4 character PDB-IDs or 6 character PDB-ID_Chain-IDs")
+    if (any(nchar(ids) < 4))
+      stop("ids should be standard 4 character PDB-IDs or 6 character PDB-ID_Chain-IDs")
 
     ids4 = ids
     if (any(nchar(ids) > 4)) {
-#        warning("ids should be standard 4 character PDB-IDs: trying first 4 characters...")
-        ids4 <- substr(basename(ids), 1, 4)
+      ids4 <- unlist(lapply(strsplit(ids, "_"), function(x) x[1]))
+      
+      if (any(nchar(ids4) > 4))
+        warning("ids should be standard 4 character PDB-IDs: trying first 4 characters...")
+
+      ids4 <- substr(basename(ids), 1, 4)
     }
     ids4 <- unique(ids4)
     pdb.files <- paste(ids4, ".pdb", ifelse(gzip, ".gz", ""), sep = "")
