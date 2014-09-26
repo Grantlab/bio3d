@@ -43,7 +43,7 @@ net <- cna(cij, cutoff.cij=0.2)
 tree <- community.tree(net, rescale=TRUE)
 
 ## Produce a new k=7 membership vector and CNA network
-memb.k7 <- tree$tree[ tree.net$num.of.comms == 7, ]
+memb.k7 <- tree$tree[ tree$num.of.comms == 7, ]
 net.7 <- network.amendment(net, memb.k7)
 
 plot(net.7, pdb)
