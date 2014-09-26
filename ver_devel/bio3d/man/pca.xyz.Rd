@@ -45,7 +45,7 @@
 \seealso{
   \code{\link{pca}}, \code{\link{pca.pdbs}},
   \code{\link{plot.pca}}, \code{\link{mktrj.pca}},
-  \code{\link{pca.tor}}, \code{\link{pca.project}} }
+  \code{\link{pca.tor}}, \code{\link{project.pca}} }
 \examples{
 
 \dontrun{

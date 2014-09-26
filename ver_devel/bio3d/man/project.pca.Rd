@@ -1,15 +1,15 @@
-\name{pca.project}
-\alias{pca.project}
-\alias{pca.z2xyz}
-\alias{pca.xyz2z}
+\name{project.pca}
+\alias{project.pca}
+\alias{z2xyz.pca}
+\alias{xyz2z.pca}
 \title{ Project Data onto Principal Components }
 \description{
   Projects data onto principal components.
 }
 \usage{
-pca.project(data, pca, angular = FALSE, fit = FALSE, ...)
-pca.z2xyz(z.coord, pca)
-pca.xyz2z(xyz.coord, pca)
+project.pca(data, pca, angular = FALSE, fit = FALSE, ...)
+z2xyz.pca(z.coord, pca)
+xyz2z.pca(xyz.coord, pca)
 }
 \arguments{
   \item{data}{ a numeric vector or row-wise matrix of data to be projected. }
@@ -43,7 +43,7 @@ gaps.pos <- gap.inspect(pdbs$xyz)
 pc.xray <- pca.xyz(pdbs$xyz[-c(2,7), gaps.pos$f.inds])
 
 #-- Project structures 2 and 7 onto the PC space
-d <- pca.project(pdbs$xyz[c(2,7), gaps.pos$f.inds], pc.xray)
+d <- project.pca(pdbs$xyz[c(2,7), gaps.pos$f.inds], pc.xray)
 
 plot(pc.xray$z[,1], pc.xray$z[,2],col="gray")
 points(d[,1],d[,2], col="red")
