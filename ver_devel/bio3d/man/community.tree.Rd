@@ -63,13 +63,13 @@ max.mod.ind <- which.max(tree$modularity)
 tree$num.of.comms[ max.mod.ind ]
 
 ## Membership vector at this partition point 
-tree.net$tree[max.mod.ind,]
+tree$tree[max.mod.ind,]
 
 # Should be the same as that contained in the original CNA network object
 net$communities$membership == tree$tree[max.mod.ind,]
 
 # Inspect a new membership partitioning (at k=7)
-memb.k7 <- tree$tree[ tree.net$num.of.comms == 7, ]
+memb.k7 <- tree$tree[ tree$num.of.comms == 7, ]
 
 ## Produce a new k=7 community network  
 net.7 <- network.amendment(net, memb.k7)
