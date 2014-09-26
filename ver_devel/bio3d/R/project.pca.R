@@ -1,4 +1,4 @@
-"pca.project" <-
+"project.pca" <-
 function(data, pca, angular=FALSE, fit=FALSE, ...) {
   
   if(angular)
@@ -17,7 +17,7 @@ function(data, pca, angular=FALSE, fit=FALSE, ...) {
   return(z)
 }
 
-pca.z2xyz <- function(z.coord, pca) {
+z2xyz.pca <- function(z.coord, pca) {
 
   
   if(is.null(nrow(z.coord))) {
@@ -41,7 +41,7 @@ pca.z2xyz <- function(z.coord, pca) {
 }
 
 
-pca.xyz2z <- function(xyz.coord, pca) {
-  return(pca.project(xyz.coord, pca))
+xyz2z.pca <- function(xyz.coord, pca) {
+  return(project.pca(xyz.coord, pca))
 }
 
