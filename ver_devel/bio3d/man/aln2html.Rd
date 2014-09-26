@@ -48,6 +48,6 @@ aln <- read.fasta(system.file("examples/hivp_xray.fa",package="bio3d"))
 aln2html(aln, append=FALSE, file="eg.html")
 aln2html(aln, colorscheme="ent", file="eg.html")
 ## View/open the file in your web browser
-browseURL("eg.html")
+#browseURL("eg.html")
 }
 \keyword{ IO }
