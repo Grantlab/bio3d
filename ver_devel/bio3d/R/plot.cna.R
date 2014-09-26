@@ -79,7 +79,7 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
     }
     ## Lets scale the weights to lie between 1 and 5
 #    weights <- (weights - min(weights)) / max(weights - min(weights)) * (1 - 5) + 5
-    if(scale) weights <- (weights - min(weights)) / max(weights - min(weights)) * 4 + 1
+    if(scale && (length(weights)>1)) weights <- (weights - min(weights)) / max(weights - min(weights)) * 4 + 1
     else weights <- 10 * weights
   }
   
