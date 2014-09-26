@@ -66,7 +66,13 @@ layout.cna <- function(x, pdb, renumber=TRUE, k=2, full=FALSE){
   if(k != 3) {
     ##-- Multidimensional scaling for 2D or 1D projection
     ##   note. dist(centers) and dist.xyz(centers) give same answer
-    cent <- cmdscale(dist(cent),k=k)
+    if(nrow(cent) - 1 < k) {
+       # e.g. only two communities 
+       cent <- cmdscale(dist(cent), k = nrow(cent) - 1)
+       cent <- cbind(cent, matrix(0, nrow=nrow(cent), ncol=k-nrow(cent)+1))
+    } else { 
+       cent <- cmdscale(dist(cent),k=k)
+    }
   }
   return(cent)
 }
