@@ -3,7 +3,7 @@
 \alias{cna.dccm}
 \alias{cna.ensmb}
 \title{
-  Protein Dynamic Correlation Network Construction and Community Analysis
+  Protein Dynamic Correlation Network Construction and Community Analysis.
 }
 \description{
   This function builds both residue-based and community-based undirected weighted
@@ -74,8 +74,9 @@
 \details{
   The input to this function should be a correlation matrix as
   obtained from the  \sQuote{dccm}, \sQuote{dccm.mean} or \sQuote{dccm.nma}
-  functions. Optionaly, a contact map may also given as input to
-  filter the correlation matrix.
+  and related functions. Optionally, a contact map \sQuote{cm} may also given 
+  as input to filter the correlation matrix resulting in the exclusion of  
+  network edges between non-contacting atom pairs (as defined in the contact map).
 
   Internally this function calls the igraph package
   functions \sQuote{graph.adjacency},
@@ -87,7 +88,7 @@
   the current graph partition and the partition of a random graph, see Newman and Girvan,
   Physical Review E (2004), Vol 69, 026113), then recalculating edge betweenness
   of the edges and again removing the one with the highest score, etc. 
-  The best community partition is the one with the highest modularity value.
+  The returned community partition is the one with the highest overall modularity value.
   \sQuote{walktrap.community} implements the Pons and Latapy algorithm based on the idea that
   random walks on a graph tend to get "trapped" into densely connected parts of it,
   i.e. a community. The random walk process is used to determine a distance
@@ -98,7 +99,8 @@
   network edges) in pairs and the modularity is calculated. At each step the join resulting
   in the highest increase of modularity is chosen. This process is repeated until a single
   community is obtained, then the partitioning with the highest modularity score is selected.
-}  
+}
+\author{ Guido Scarabelli and Barry Grant }  
 \seealso{
    \code{\link{plot.cna}},  \code{\link{summary.cna}},
    \code{\link{view.cna}}, \code{\link[igraph:graph.adjacency]{graph.adjacency}},
@@ -108,53 +110,62 @@
 }
 \examples{
 
-# Read example trajectory file
+##-- Build a correlation network from NMA results
+## Read example PDB
+pdb <- read.pdb("4Q21")
+
+## Perform NMA
+modes <- nma(pdb)
+#plot(modes, sse=pdb)
+
+## Calculate correlations 
+cij <- dccm(modes)
+#plot(cij, sse=pdb)
+
+## Build, and betweenness cluster, a network graph
+net <- cna(cij, cutoff.cij=0.35)
+#plot(net, pdb)
+
+\dontrun{
+## within VMD set 'coloring method' to 'Chain' and 'Drawing method' to Tube
+view.cna(net, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
+
+
+
+##-- Build a correlation network from MD results
+## Read example trajectory file
 trtfile <- system.file("examples/hivp.dcd", package="bio3d")
 trj <- read.dcd(trtfile)
 
-# Read the starting PDB file to determine atom correspondence
+## Read the starting PDB file to determine atom correspondence
 pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 pdb <- read.pdb(pdbfile)
 
-# select residues 24 to 27 and 85 to 90 in both chains
+## select residues 24 to 27 and 85 to 90 in both chains
 inds <- atom.select(pdb,"///24:27,85:90///CA/")
 
-# lsq fit of trj on pdb
+## lsq fit of trj on pdb
 xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
 
-# calculate dynamical cross-correlation matrix
+## calculate dynamical cross-correlation matrix
 cij <- dccm(xyz)
-#plot(cij)
 
-# Build, and betweeness cluster, a network graph
+## Build, and betweenness cluster, a network graph
 net <- cna(cij)
 
-# Plot coarse grain network based on dynamicaly coupled communities
+# Plot coarse grained network based on dynamically coupled communities
 xy <- plot.cna(net)
 plot.dccm2(cij, margin.segments=net$communities$membership)
 
-# Play with plot settings
-#plot.cna(net, layout=layout.mds(net$community.network), vertex.size=15,
-#col=c("blue","green") ) ## BUG ignores vertex.color!!
 
-\dontrun{
-## Example adjacency matrix input
-data(node.50)
-range(node.50)
 
-comms <-cna(node.50,method="btwn",cutoff.cij=0.2)
+##-- Begin to examine network structure - see CNA vignette for more details
+net
+summary(net)
+attributes(net)
+table( net$communities$members )
 
-# Plot colored by community membership
-par(mfcol=c(1,2), mar=c(0,0,0,0))
-plot(comms$network)
-plot(comms)
-
-# Examine community structure
-comms
-
-attributes(comms)
-comms$communities$members
-## More examples
 }
+
 }
 \keyword{analysis}

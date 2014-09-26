@@ -63,7 +63,7 @@
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
-\author{ Barry Grant }
+\author{ Barry Grant and Guido Scarabelli }
 \note{ Be sure to check the correspondence of your \sQuote{pdb} object with your
   network object \sQuote{x}, as few internal checks are currently performed by the 
   \sQuote{layout.cna} function.
@@ -73,36 +73,21 @@
   \code{\link[igraph:igraph.plotting]{igraph.plotting}} }
 \examples{
 
-# Read example trajectory file
-trtfile <- system.file("examples/hivp.dcd", package="bio3d")
-trj <- read.dcd(trtfile)
-
-# Read the starting PDB file to determine atom correspondence
-pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
-pdb <- read.pdb(pdbfile)
-
-# select residues 24 to 27 and 85 to 90 in both chains
-inds <- atom.select(pdb,"///24:27,85:90///CA/")
-
-# lsq fit of trj on pdb
-xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
-
-# calculate dynamical cross-correlation matrix
-cij <- dccm(xyz)
-#plot(cij)
-
-# Build, and betweeness cluster, a network graph 
-net <- cna(cij)
+##-- Build a CNA object
+pdb <- read.pdb("4Q21")
+modes <- nma(pdb)
+cij <- dccm(modes)
+net <- cna(cij, cutoff.cij=0.2)
 
 # Plot coarse grain network based on dynamically coupled communities
 xy <- plot.cna(net)
-plot.dccm2(cij, margin.segments=net$communities$membership)
+#plot.dccm2(cij, margin.segments=net$communities$membership)
 
-#- Plot the community network
-plot.cna(net)
-
-# Chose a different PDB informed layout
+# Chose a different PDB informed layout for plot
 plot.cna(net, pdb)
+
+# Play with plot layout and colors...
+plot.cna(net, layout=layout.mds(net$community.network), col=c("blue","green") ) 
 
 \dontrun{
 # Plot full residue network colored by communities - will be slow due to number of edges!!
@@ -110,11 +95,6 @@ plot.cna(net, pdb, full=TRUE)
 
 # Alter plot settings
 plot.cna(net, pdb, full=TRUE, vertex.size=3, weights=1, vertex.label=NA)
-
-# Play with plot layout and colors...
-plot.cna(net, layout=layout.mds(net$community.network), col=c("blue","green") ) 
-
-
 }
 
 }
