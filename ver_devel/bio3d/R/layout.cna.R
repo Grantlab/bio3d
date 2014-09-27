@@ -44,7 +44,7 @@ layout.cna <- function(x, pdb, renumber=TRUE, k=2, full=FALSE){
   notprotein.inds <- atom.select(pdb, "notprotein", verbose=FALSE)
 
   if(length(notprotein.inds$atom)>0){
-    num.res <- length(pdb$atom[pdb$calpha,"resno"]) + length(unique(pdb$atom[notprotein.inds$atom,6]))
+    num.res <- length(pdb$atom[pdb$calpha,"resno"]) + length(unique(pdb$atom[notprotein.inds$atom,7]))
   }
   if(length(notprotein.inds$atom)==0){
     num.res <- length(pdb$atom[pdb$calpha,"resno"])
