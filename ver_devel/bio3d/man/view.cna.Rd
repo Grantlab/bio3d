@@ -99,7 +99,7 @@ pdb.gdi = trim.pdb(pdb.gdi, inds=atom.select(pdb.gdi, chain="A", elety="CA"))
 modes.gdi = nma(pdb.gdi)
 cij.gdi = dccm(modes.gdi)
 net.gdi = cna(cij.gdi, cutoff.cij=0.35)
-view.cna(net.gdi, pdb.gdi, alpha = 0.7, launch=TRUE)
+#view.cna(net.gdi, pdb.gdi, alpha = 0.7, launch=TRUE)
 }
 }
 

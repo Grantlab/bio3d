@@ -128,7 +128,7 @@ net <- cna(cij, cutoff.cij=0.35)
 
 \dontrun{
 ## within VMD set 'coloring method' to 'Chain' and 'Drawing method' to Tube
-view.cna(net, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
+#view.cna(net, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
 
 
 

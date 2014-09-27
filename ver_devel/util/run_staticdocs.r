@@ -1,12 +1,11 @@
 library(staticdocs)
-setwd("sandbox")
-build_package("../bio3d", base_path="../html", examples=TRUE)
+build_site(pkg="bio3d", site_path="html", examples=TRUE)
 
 #save.image("tmp_build_package.RData")
 q("no")
 
 # run explicitly
-package_path="../bio3d"
+package_path="bio3d"
 base_path="html"
 #examples=FALSE
 examples=TRUE
