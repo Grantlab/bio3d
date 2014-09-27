@@ -11,6 +11,7 @@ figure*
 *.tex
 *.log
 *.out
+*.swp
 tmp*
 *.DS_Store
 

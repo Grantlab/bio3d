@@ -20,4 +20,12 @@ for i in ./bio3d/man/*.Rd; do
            bok && n==0 {bok=0}' $i > t.Rd
       mv t.Rd $i
    fi
+   
+   # find help(), demo(), identify or identify.cna() and add \dontrun{}
+   sed -e '/\\examples\s*{/,$s/^\(\s*help\s*(.*).*\)$/\\dontrun{\n\1\n}/' \
+       -e '/\\examples\s*{/,$s/^\(\s*demo\s*(.*).*\)$/\\dontrun{\n\1\n}/' \
+       -e '/\\examples\s*{/,$s/^\([^#]*identify\s*(.*).*\)$/\\dontrun{\n\1\n}/' \
+       -e '/\\examples\s*{/,$s/^\([^#]*identify.cna\s*(.*).*\)$/\\dontrun{\n\1\n}/' \
+   $i > t.Rd
+   mv t.Rd $i
 done
