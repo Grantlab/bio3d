@@ -1,20 +1,26 @@
 #!/bin/bash
 
-##### STEPS TO GENERATE HTML DOCS WITH STATICDOCS #######
-##### MUST BE RUN UNDER VER_DEVEL/UTIL/ !!!
+##### SCRIPT TO GENERATE HTML DOCUMENTATIONS WITH STATICDOCS ##
+##                                                           ##
+## USAGE: ./run_generate_html.sh [yes][no]                   ##
+## OPTIONS:                                                  ##
+##           yes: Default, execute example codes             ##
+##           no:  Don't execute example codes                ##
+###############################################################
 
-if [ $# -lt 1 ]; then
-   echo THIS SCRIPT NEED TO RUN INTERACTIVELY
-   exit 1
+example=TRUE
+if test $# -ge 1; then
+   if echo $1 | grep -iq -e false -e no;  then
+      example=FALSE
+   fi
 fi
-
 utildir=`pwd`
 
 # 0. Create a folder for working
 workdir=sandbox/`date +%m%d%y.%H%M%S`
 mkdir -p $workdir; cd $workdir
 
-# 1. Backup docs
+# 1. Get clean Bio3D folders
 R CMD build $utildir/../bio3d
 tar xvfz bio3d*.tar.gz
 
@@ -24,21 +30,15 @@ ln -s inst/examples ./bio3d/
 ln -s inst/matrices ./bio3d/
 
 # 3. remove dontrun tags to run all example codes
-sh $utildir/run_remove_dontrun.sh
+sh $utildir/remove_dontrun.sh
 
-# 4. run staticdocs and produce html files in html/
-utildir=$utildir R
-#    The script must be run in R interactively
-source(file.path(Sys.getenv("utildir"), "run_staticdocs.r"))
+# 4. start an R session and run the commands to generate html files in ./html/
+Rscript -e "options(device=x11)" \
+        -e "library(staticdocs)" \
+        -e "build_site(pkg='bio3d', site_path='html', examples=$example, launch=TRUE)"
 
 # 5. tidy up html files
-./run_tidy_html.sh
+utildir=$utildir sh $utildir/tidy_html.sh
 
-# 6. Restore docs
-#rm -rf ./bio3d/man
-#mv ./man_bak ./bio3d/man
+# 6. refresh your browser
 
-# 7. Remove the symbol links
-#rm ./bio3d/CITATION
-#rm ./bio3d/examples
-#rm ./bio3d/matrices
