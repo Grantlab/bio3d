@@ -1,4 +1,4 @@
-filter.dccm <- function(x, cutoff.cij = 0.4, cmap = TRUE, xyz = NULL, fac = NULL, 
+filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL, 
           cutoff.sims = NULL, collapse = TRUE, extra.filter = NULL, ...) {
 
    # check cij format
@@ -16,6 +16,12 @@ filter.dccm <- function(x, cutoff.cij = 0.4, cmap = TRUE, xyz = NULL, fac = NULL
    ## Check input is built of simmetric matrices
    if (dim(cij)[1] != dim(cij)[2]) {
      stop("Input 'x' should contain symmetric matrices.")
+   }
+
+   ## Check xyz and set cmap   
+   if(is.null(cmap)) {
+      if(is.null(xyz)) cmap = FALSE
+      else cmap = TRUE
    }
 
    if(cmap) {

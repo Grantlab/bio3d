@@ -7,7 +7,7 @@
   This function builds various cij matrix for correlation network analysis
 }
 \usage{
-  filter.dccm(x, cutoff.cij = 0.4, cmap = TRUE, xyz = NULL, fac = NULL, 
+  filter.dccm(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL, 
       cutoff.sims = NULL, collapse = TRUE, extra.filter = NULL, ...)
 }
 \arguments{
@@ -86,7 +86,7 @@ dimnames(cij$all.dccm) = list(NULL, NULL, ids)
 plot.dccm(cij$all.dccm)
 
 # Filter to display only correlations present in all structures
-cij.all <- filter.dccm(cij, cmap = FALSE, cutoff.sims = 8, cutoff.cij = 0)
+cij.all <- filter.dccm(cij, cutoff.sims = 8, cutoff.cij = 0)
 plot.dccm(cij.all, main = "Consensus Residue Cross Correlation")
 
 }
