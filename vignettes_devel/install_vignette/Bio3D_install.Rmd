@@ -1,7 +1,7 @@
 ---
 title: "Installing Bio3D"
 author: "Xin-Qiu Yao, Lars Skjaerven & Barry J. Grant"
-date: "Sepertember 25, 2014"
+date: "September 28, 2014"
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 output:
   pdf_document:
