@@ -1,8 +1,6 @@
 \name{filter.dccm}
 \alias{filter.dccm}
-\title{
-  Filter for Cross-correlation Matrices (Cij)
-}
+\title{ Filter for Cross-correlation Matrices (Cij) }
 \description{
   This function builds various cij matrix for correlation network analysis
 }

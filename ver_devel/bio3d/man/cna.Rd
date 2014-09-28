@@ -2,9 +2,7 @@
 \alias{cna}
 \alias{cna.dccm}
 \alias{cna.ensmb}
-\title{
-  Protein Dynamic Correlation Network Construction and Community Analysis.
-}
+\title{ Protein Dynamic Correlation Network Construction and Community Analysis.  }
 \description{
   This function builds both residue-based and community-based undirected weighted
   network graphs from an input correlation matrix, as obtained from the

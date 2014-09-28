@@ -1,9 +1,7 @@
 \name{print.cna}
 \alias{print.cna}
 \alias{summary.cna}
-\title{
-  Summarize and Print Features of a cna Network Graph
-}
+\title{ Summarize and Print Features of a cna Network Graph }
 \description{
   These functions attempt to summarize and print a cna network graph to
   the terminal in a human readable form.

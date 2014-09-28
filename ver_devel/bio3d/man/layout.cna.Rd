@@ -1,8 +1,6 @@
 \name{layout.cna}
 \alias{layout.cna}
-\title{
- Protein Structure Network Layout
-}
+\title{ Protein Structure Network Layout }
 \description{
   Determine protein structure network layout in 2D and 3D from the geometric 
   center of each community.
