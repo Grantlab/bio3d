@@ -33,8 +33,8 @@ ln -s inst/matrices ./bio3d/
 sh $utildir/remove_dontrun.sh
 
 # 5. start an R session and run the commands to generate html files in ./html/
-Rscript -e "options(device=x11)" \
-        -e "library(staticdocs)" \
+Rscript -e "library(staticdocs)" \
+        -e "options(device=x11)" \
         -e "build_site(pkg='bio3d', site_path='html', examples=$example, launch=TRUE)"
 
 # 6. tidy up html files

@@ -46,6 +46,12 @@ done
 #done
 cp $utildir/../bio3d/vignettes/*.pdf html/vignettes/
 
+# Remove multiple lines of progress bar
+for i in html/*.html; do
+   sed 's/.*\(\s*|=*|\s*100%\)/\n\1/' $i > t.html
+   mv t.html $i
+done
+
 # remove returns in the index.html
 sed 's/<br \/>/:/' html/index.html > index.html
 mv index.html html/
