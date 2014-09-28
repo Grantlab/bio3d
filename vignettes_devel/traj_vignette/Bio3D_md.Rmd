@@ -1,7 +1,7 @@
 ---
 title: "Beginning Trajectory Analysis with Bio3D"
-author: "Lars Skjaerven, Xin-Qiu Yao and Barry J. Grant"
-date: "Sepertember 25, 2014"
+author: "Xin-Qiu Yao, Lars Skjaerven, and Barry J. Grant"
+date: "September 28, 2014"
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 output:
   pdf_document:
@@ -12,14 +12,10 @@ output:
     fig_width: 5
     fig_height: 5
     fig_caption: yes
-  html_document:
-    highlight: default
-    keep_md: yes
-    toc: no
-    fig_width: 5
+  md_document:
     fig_height: 5
-    fig_caption: yes
-    number_sections: yes
+    fig_width: 5
+    variant: markdown_phpextra
 bibliography: Bio3D_md.bib
 documentclass: article
 fontsize: 11pt
@@ -27,9 +23,9 @@ geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
 linkcolor: black
 ---
 
-<br><br>
+This vignette is generated with **Bio3D version `r packageVersion("bio3d")`**. 
 
-# Background
+# Background {.unnumbered}
 
 Bio3D[^1] is an R package that provides interactive tools for the
 analysis of bimolecular structure, sequence and simulation data. The aim
@@ -37,7 +33,7 @@ of this document, termed a vignette[^2] in R parlance, is to provide a
 brief task-oriented introduction to basic molecular dynamics trajectory
 analysis with the Bio3D R package [@grant06].
 
-#### Requirements: {.unnumbered}
+## Requirements: {.unnumbered}
 
 Detailed instructions for obtaining and installing the Bio3D package on
 various platforms can be found in the [Installing
@@ -341,7 +337,7 @@ example (see figure below).
 write.ncdf(p1, "trj_pc1.nc") 
 ```
 
-![image](figure/hiv_pc1.png)
+![image](figures/hiv_pc1.png)
 
 #### Question: {.unnumbered}
 
@@ -377,7 +373,7 @@ function `view.dccm()`
 view.dccm(cij, pdb, launch=TRUE) 
 ```
 
-![image](figure/dccm_hivpr.png)
+![image](figures/dccm_hivpr.png)
 
 See also the `Enhanced Methods for Normal Mode Analysis` for additional
 visualization examples. Also you might want to checkout the
@@ -400,18 +396,16 @@ experimental data and supplement it with simulation results to map the
 conformational dynamics and coupled motions of proteins).
 <br><br>
 
-# Document Details
 
-This document is shipped with the Bio3D package in both Rnw and PDF
-formats. All code can be extracted and automatically executed to
-generate Figures and/or the PDF with the following commands:
+# Document Details {.unnumbered}
+This document is shipped with the Bio3D package in both R and PDF formats. All code can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
 
-```{r, eval=FALSE}
-knitr::knit("Bio3D_md.Rnw")
-tools::texi2pdf("Bio3D_md.tex") 
+```{r eval=FALSE}
+library(rmarkdown)
+render("Bio3D_md.Rmd", "all")
 ```
 
-### Information About the Current Bio3D Session {.unnumbered}
+# Information About the Current Bio3D Session {.unnumbered}
 
 ```{r}
 sessionInfo() 
