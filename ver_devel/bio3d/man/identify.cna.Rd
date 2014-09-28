@@ -1,8 +1,6 @@
 \name{identify.cna}
 \alias{identify.cna}
-\title{
- Identify Points in a CNA Protein Structure Network Plot
-}
+\title{ Identify Points in a CNA Protein Structure Network Plot }
 \description{
   \sQuote{identify.cna} reads the position of the graphics pointer when the
   (first) mouse button is pressed.  It then searches the coordinates given

@@ -1,9 +1,7 @@
 \name{aa.mass}
 \alias{aa.mass}
 \docType{data}
-\title{
-  Amino Acid Residue Mass
-}
+\title{ Amino Acid Residue Mass }
 \description{
   This data set provides the atomic masses of a selection of amino
   acids regularly occuring in proteins. 

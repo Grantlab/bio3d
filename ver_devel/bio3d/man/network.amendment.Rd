@@ -1,8 +1,6 @@
 \name{network.amendment}
 \alias{network.amendment}
-\title{
-  Amendment of a CNA Network According To A Input Community Membership Vector.
-}
+\title{ Amendment of a CNA Network According To A Input Community Membership Vector.  }
 \description{
   This function changes the \sQuote{communities} attribute of a 
   \sQuote{cna} class object to match a given membership vector.

@@ -2,9 +2,7 @@
 \alias{bio3d-package}
 \alias{bio3d}
 \docType{package}
-\title{
-Biological Structure Analysis
-}
+\title{ Biological Structure Analysis }
 \description{
 Utilities for the analysis of protein structure and sequence data. 
 }

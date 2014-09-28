@@ -1,8 +1,6 @@
 \name{plot.cna}
 \alias{plot.cna}
-\title{
- Protein Structure Network Plots in 2D and 3D.
-}
+\title{ Protein Structure Network Plots in 2D and 3D.  }
 \description{
   Plot a protein dynamic network as obtained from the \emph{cna} function.
 }

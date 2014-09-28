@@ -1,8 +1,6 @@
 \name{community.tree}
 \alias{community.tree}
-\title{
- Reconstruction of the Girvan-Newman Community Tree for a CNA Class Object.
-}
+\title{ Reconstruction of the Girvan-Newman Community Tree for a CNA Class Object.  }
 \description{
   This function reconstructs the community tree of the community
   clustering analysis performed by the \sQuote{cna} function. 

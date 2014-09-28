@@ -1,8 +1,6 @@
 \name{cmap.filter}
 \alias{cmap.filter}
-\title{
-Contact Map Consensus Filtering
-}
+\title{ Contact Map Consensus Filtering }
 \description{
 This function filters a tridimensional contact matrix (nXnXz, where n is the residue number and z is the simulation number) selecting only the contact present in at least p simulations, where p<=z.
 }

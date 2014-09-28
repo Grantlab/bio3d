@@ -1,8 +1,6 @@
 \name{view.cna}
 \alias{view.cna}
-\title{
-  View CNA Protein Structure Network Community Output in VMD
-}
+\title{ View CNA Protein Structure Network Community Output in VMD }
 \description{
   This function generates a VMD scene file and a PDB file that can be 
   read and rendered by the VMD molecular viewer. Chose \sQuote{color by chain} 

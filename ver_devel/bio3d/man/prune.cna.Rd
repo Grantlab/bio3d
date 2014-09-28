@@ -1,8 +1,6 @@
 \name{prune.cna}
 \alias{prune.cna}
-\title{
-  Prune A cna Network Object
-}
+\title{ Prune A cna Network Object }
 \description{
 Remove nodes and their associated edges from a cna network graph.
 }
