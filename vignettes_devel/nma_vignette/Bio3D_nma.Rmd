@@ -1,7 +1,7 @@
 ---
-title: "Integrated structural and evolutionary ensemble analysis with Bio3D"
+title: "Enhanced Normal Modes Analysis with Bio3D"
 author: "Lars Skjaerven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant"
-date: "September 25, 2014"
+date: "September 27, 2014"
 output:
   pdf_document:
     fig_caption: yes
@@ -10,15 +10,11 @@ output:
     highlight: default
     keep_tex: yes
     number_sections: yes
-    toc: no
-  html_document:
-    fig_caption: yes
+    toc: yes
+  md_document:
     fig_height: 5
     fig_width: 5
-    highlight: default
-    keep_md: yes
-    number_sections: yes
-    toc: no
+    variant: markdown_phpextra
 documentclass: article
 fontsize: 11pt
 geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
@@ -27,14 +23,16 @@ bibliography: Bio3D_nma.bib
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 ---
 
-<br><br>
+\newpage
 
-# Background
+This document provides **Supporting Information S1** for *Integrating protein structural dynamics and evolutionary analysis with Bio3D*. The vignette is generated with **Bio3D version `r packageVersion("bio3d")`**. 
+
+# Background  {.unnumbered}
 Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics . The primary focus of Bio3D is the analysis of biomolecular structure, sequence and simulation data [@grant06].
 
 Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities. These include a unique collection of multiple elastic network model (ENM) force-fields (see **Example 1** below), automated ensemble analysis methods (**Example 2**), variance weighted NMA (**Example 3**), and NMA with user-defined force fields (**Example 4**). Here we demonstrate the use of these new features with working code that comprise complete executable examples[^2].
 
-### Requirements: {.unnumbered}
+## Requirements {.unnumbered}
 Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [Installing Bio3D Vignette](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. In addition to Bio3D the _MUSCLE_ multiple sequence alignment program (available from the [muscle home page](http://www.drive5.com/muscle/)) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
 
 
@@ -42,7 +40,7 @@ Detailed instructions for obtaining and installing the Bio3D package on various 
 ## Example 1A: Normal mode calculation
 Normal mode analysis (NMA) of a single protein structure can be carried out by providing a PDB object to the function **nma()**. In the code below we first load the Bio3D package and then download an example structure of hen egg white lysozyme (PDB id *1hel*) with the function **read.pdb()**. Finally the function **nma()** is used perform the normal mode calculation:
 
-```{r, eval=TRUE}
+```{r ex1A-modes, eval=TRUE}
 library(bio3d)
 pdb <- read.pdb("1hel")
 modes <- nma(pdb)
@@ -58,7 +56,7 @@ This reveals the function call resulting in the *nma* object along with the tota
  
 Note that the returned *nma* object consists of a number of attributes listed on the _+attr:_ line. These attributes contain the detailed results of the calculation and their complete description can be found on the **nma()** functions help page accessible with the command: `help(nma)`. To get a quick overview of the results one can simply call the **plot()** function on the returned *nma* object. This will produce a summary plot of (1) the eigenvalues, (2) the mode frequencies, and (3) the atomic fluctuations (See Figure 1).
 
-```{r, fig.cap="Summary plot of NMA results for hen egg white lysozyme (PDB id *1hel*). The optional `sse=pdb` argument provided to **plot.nma()** results in a secondary structure schematic being added to the top and bottom margins of the fluctuation plot (helices black and strands gray). Note the larger fluctuations predicted for loop regions."}
+```{r ex1A-modesplot, fig.cap="Summary plot of NMA results for hen egg white lysozyme (PDB id *1hel*). The optional `sse=pdb` argument provided to **plot.nma()** results in a secondary structure schematic being added to the top and bottom margins of the fluctuation plot (helices black and strands gray). Note the larger fluctuations predicted for loop regions."}
 plot(modes, sse=pdb)
 ```
 
@@ -90,7 +88,7 @@ modes.e <- nma(pdb, ff="sdenm")
 r <- rmsip(modes.a, modes.b)
 ```
 
-```{r, fig.cap="Analysis of mode similarity between modes obtained from the *ANM* and *calpha* force fields by calculating mode overlap and root mean square inner product (RMSIP) with function **rmsip()**. An RMSIP value of *1* depicts identical directionality of the two mode subspaces. "}
+```{r ex1B-modesplot, fig.cap="Analysis of mode similarity between modes obtained from the *ANM* and *calpha* force fields by calculating mode overlap and root mean square inner product (RMSIP) with function **rmsip()**. An RMSIP value of *1* depicts identical directionality of the two mode subspaces. "}
 plot(r, xlab="ANM", ylab="C-alpha FF")
 ```
 
@@ -131,7 +129,7 @@ mktrj(modes, mode=7)
 view.modes(modes, mode=7)
 ```
 
-![Visualization of the first non-trivial mode of the GroEL subunit. Visualization is provided through a trajectory file (left), or vector field representation (right).](figure/groel-traj-vector.png)
+![Visualization of the first non-trivial mode of the GroEL subunit. Visualization is provided through a trajectory file (left), or vector field representation (right).](figures/groel-traj-vector.png)
 
 
 ### Cross-correlation analysis
@@ -143,7 +141,7 @@ and 3D visualization of correlations is provided through function **view.dccm()*
 cm <- dccm(modes)
 ```
 
-```{r message=FALSE, fig.width=5, fig.height=5.5, fig.cap="Correlation map revealing correlated and anti-correlated regions in the protein structure."}
+```{r ex1C-dccmplot, message=FALSE, fig.width=5, fig.height=5.5, fig.cap="Correlation map revealing correlated and anti-correlated regions in the protein structure."}
 # Plot a correlation map with plot.dccm(cm)
 plot(cm, sse=pdb.open, contour=F, col.regions=bwr.colors(20), at=seq(-1,1,0.1) )
 ```
@@ -153,7 +151,7 @@ plot(cm, sse=pdb.open, contour=F, col.regions=bwr.colors(20), at=seq(-1,1,0.1) )
 view.dccm(cm, pdb.open, launch=TRUE)
 ```
 
-![Correlated (left) and anti-correlated (right) residues depicted with red and blue lines, respectively. The figures demonstrate the output of function **view.dccm()**.](figure/groel-correl.png)
+![Correlated (left) and anti-correlated (right) residues depicted with red and blue lines, respectively. The figures demonstrate the output of function **view.dccm()**.](figures/groel-correl.png)
 
 
 ### Fluctuation and Deformation analysis
@@ -177,7 +175,7 @@ write.pdb(pdb=NULL, xyz=modes$xyz, file="R-fluct.pdb", b=flucts)
 ```
 
 
-![Atomic fluctuations (left) and deformation energies (right) visualized in PyMOL.](figure/groel_fluct-deformation.png)
+![Atomic fluctuations (left) and deformation energies (right) visualized in PyMOL.](figures/groel_fluct-deformation.png)
 
               
 ### Overlap analysis
@@ -200,7 +198,7 @@ diff <- difference.vector(xyz)
 oa <- overlap(modes, diff)
 ```
 
-```{r width=7, fig.height=4, fig.cap="Overlap analysis between the modes of the open subunit and the conformational difference vector between the closed-open state."}
+```{r ex1C-overlapplot, fig.height=4, fig.cap="Overlap analysis between the modes of the open subunit and the conformational difference vector between the closed-open state."}
 plot(oa$overlap, type='h', xlab="Mode index", ylab="Squared overlap", ylim=c(0,1))
 points(oa$overlap, col=1)
 lines(oa$overlap.cum, type='b', col=2, cex=0.5)
@@ -277,12 +275,12 @@ pc.xray <- pca.xyz(xyz)
 mktrj(pc.xray, pc=1, chain=gs$grps)
 ```
 
-![Visualization of domain assignment obtained from function **geostas()** using (left) an ensemble of X-ray structures and (right) NMA.](figure/geostas.png)
+![Visualization of domain assignment obtained from function **geostas()** using (left) an ensemble of X-ray structures and (right) NMA.](figures/geostas.png)
 
 
 
 # Example 2: Ensemble normal mode analysis
-The analysis of multiple protein structures (e.g. a protein family) can be accomplished with the **nma.pdbs()** function. This will take aligned input structures, as generated by the **pdbaln()** function for example, and perform NMA on each structure collecting the results in manner that facilitates the interpretation of similarity and dissimilarity trends in the structure set. Here we will analyze a collection of Dihydrofolate reductase (DHFR) structures with low sequence identity (**Example 2A**) and large set of closely related transducin heterotrimeric G protein family members (**Example 2B**). 
+The analysis of multiple protein structures (e.g. a protein family) can be accomplished with the **nma.pdbs()** function [^3]. This will take aligned input structures, as generated by the **pdbaln()** function for example, and perform NMA on each structure collecting the results in manner that facilitates the interpretation of similarity and dissimilarity trends in the structure set. Here we will analyze a collection of Dihydrofolate reductase (DHFR) structures with low sequence identity (**Example 2A**) and large set of closely related transducin heterotrimeric G protein family members (**Example 2B**). 
 
 
 ## Example 2A: Dihydrofolate reductase
@@ -317,7 +315,7 @@ by object *pdbs*. With the default argument `rm.gaps=TRUE` unaligned atoms
 are omitted from output in accordance with common practice [@Fuglebakk2012]. 
  
 
-```{r  ex2A-modes1, cache=TRUE, warning=FALSE, message=FALSE, results="hide"}
+```{r ex2A-modes1, cache=TRUE, warning=FALSE, message=FALSE, results="hide"}
 # NMA on all structures
 modes <- nma(pdbs)
 ```
@@ -331,7 +329,7 @@ fluctuations can be plotted with function **plot()**:
 print(modes)
 ```
 
-```{r plot_enma1, fig.width=10, fig.height=5, fig.cap="Results of ensemble NMA on four distinct bacterial species of the DHFR enzyme."}
+```{r ex2A-plot_enma1, fig.width=10, fig.height=5, fig.cap="Results of ensemble NMA on four distinct bacterial species of the DHFR enzyme.", results="hide",}
 # Plot fluctuation data
 col <- c(1,1,1, 2,2, 3,3, 4,4)
 plot(modes, pdbs=pdbs, col=col)
@@ -353,15 +351,9 @@ Cross-correlation analysis can be easily performed and the results contrasted fo
 cij <- dccm(modes)
 ``` 
     
-```{r  ex2A-plot_enma2, fig.cap="Residue cross-correlations for each DHFR structures analyzed."}
-# Set DCCM plot panel names for combined figure
-dimnames(cij$all.dccm)=list(NULL, NULL, ids)
-plot.dccm(cij$all.dccm)
-```
-
-```{r ex2A-plot_enma3, fig.cap="Residue cross-correlations present in all DHFR structures analyzed."}
+```{r ex2A-plot_enma3, eval=FALSE, fig.cap="Residue cross-correlations present in all DHFR structures analyzed."}
 # Determine correlations present only in all 9 input structures
-cij.all <- dccm.mean(cij$all.dccm, cutoff.sims=9, cutoff.cij = 0)
+cij.all <- filter.dccm(cij$all.dccm, cutoff.sims=9, cutoff.cij = 0)
 plot.dccm(cij.all, main="Consensus Residue Cross Correlation")
 ```
 
@@ -381,12 +373,12 @@ gaps.res <- gap.inspect(pdbs$ali)
 gaps.pos <- gap.inspect(pdbs$xyz)
 ```
 
-```{r ex2B-modes, cache=TRUE, warning=FALSE, message=FALSE}
+```{r ex2B-modes, cache=TRUE, warning=FALSE, message=FALSE, results="hide",}
 # Calculate normal modes of the 53 structures
 modes <- nma.pdbs(pdbs, ncore=4)
 ```
 
-```{r ex2B-plot, fig.width=9, fig.height=5, fig.cap="Structural dynamics of transducin. The calculation is based on NMA of 53 structures: 28 GTP-bound (red), and 25 GDP-bound (green)."}
+```{r ex2B-plot, fig.width=9, fig.height=5, fig.cap="Structural dynamics of transducin. The calculation is based on NMA of 53 structures: 28 GTP-bound (red), and 25 GDP-bound (green).", results="hide", }
 # Make fluctuation plot
 plot(modes, col=annotation[, "color"], pdbs=pdbs)
 legend("left", lty=c(1, 1), lwd=c(2, 2),
@@ -774,11 +766,20 @@ modes <- nma(pdb, ff='calphax', ss.bonds=ss.bonds, sse=sse)
 ```
 
 
+# Document Details {.unnumbered}
+This document is shipped with the Bio3D package in both R and PDF formats. All code can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
+
+```{r eval=FALSE}
+library(rmarkdown)
+render("Bio3D_nma.Rmd", "all")
+```
+
+
 # Information About the Current Bio3D Session {.unnumbered}
 ```{r}
 sessionInfo() 
 ```
-<br><br><br>
+
 
 # References {.unnumbered}
 
@@ -786,7 +787,10 @@ sessionInfo()
 [^1]: The latest version of the package, full documentation and further
     vignettes (including detailed installation instructions) can be
     obtained from the main Bio3D website:
-    [http://thegrantlab.org/bio3d/](http://thegrantlab.org/bio3d/)
+    [http://thegrantlab.org/bio3d/](http://thegrantlab.org/bio3d/).
 
 [^2]: This vignette contains executable examples, see `help(vignette)`
     for further details.
+
+[^3]: See also dedicated vignettes for *ensemble NMA* provided with the Bio3D package.
+

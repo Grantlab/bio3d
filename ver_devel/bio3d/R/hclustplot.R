@@ -1,5 +1,5 @@
 "hclustplot" <- function(hc, k=NULL, h=NULL, colors=NULL,
-                           labels=NULL, fillbox=TRUE, 
+                           labels=NULL, fillbox=FALSE, 
                            heights = c(1, .3), mar = c(1, 1, 0, 1), ...) {
 
   if(!inherits(hc, "hclust"))
