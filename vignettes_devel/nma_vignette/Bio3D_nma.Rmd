@@ -25,7 +25,7 @@ affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbo
 
 \newpage
 
-This document provides **Supporting Information S1** for *Integrating protein structural dynamics and evolutionary analysis with Bio3D*. The vignette is generated with **Bio3D version `r packageVersion("bio3d")`**. 
+This document provides **Supporting Information S1** for *Integrating protein structural dynamics and evolutionary analysis with Bio3D*. 
 
 # Background  {.unnumbered}
 Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics . The primary focus of Bio3D is the analysis of biomolecular structure, sequence and simulation data [@grant06].
@@ -34,6 +34,9 @@ Normal mode analysis (NMA) is one of the major simulation techniques used to pro
 
 ## Requirements {.unnumbered}
 Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [Installing Bio3D Vignette](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. In addition to Bio3D the _MUSCLE_ multiple sequence alignment program (available from the [muscle home page](http://www.drive5.com/muscle/)) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
+
+## About this document {.unnumbered}
+This vignette was generated using **Bio3D version `r packageVersion("bio3d")`**.
 
 
 # Example 1: Basic Normal Mode Analysis

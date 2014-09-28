@@ -1,6 +1,6 @@
 ---
-title: "Integrating NMA with correlation network analysis in Bio3D"
-author: "Lars Skjaerven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant"
+title: "Integrating normal modes and correlation network analysis in Bio3D"
+author: "Xin-Qiu Yao, Guido Scarabelli, Lars Skjaerven & Barry J. Grant"
 date: "September 27, 2014"
 output:
   pdf_document:
@@ -23,7 +23,7 @@ bibliography: Bio3D_cna-transducin.bib
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 ---
 
-This document provides **Supporting Information S4** for *Integrating protein structural dynamics and evolutionary analysis with Bio3D*. The vignette is generated with **Bio3D version `r packageVersion("bio3d")`**. 
+This document provides **Supporting Information S4** for *Integrating protein structural dynamics and evolutionary analysis with Bio3D*. 
 
 # Background  {.unnumbered}
 Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data [@grant06].
@@ -37,10 +37,12 @@ example, Normal mode analysis (NMA) is employed for the calculation of cross-cor
 ## Requirements {.unnumbered}
 Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. Note that this vignette also makes use of the [IGRAPH](http://igraph.org/) R package, which can be installed with the command
 
-
 ```{r eval=FALSE}
 install.packages("igraph")
 ```
+
+## About this document {.unnumbered}
+This vignette was generated using **Bio3D version `r packageVersion("bio3d")`**.
 
 
 # Correlation network analysis based on single-structure NMA

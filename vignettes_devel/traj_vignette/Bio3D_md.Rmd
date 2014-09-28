@@ -1,6 +1,6 @@
 ---
 title: "Beginning Trajectory Analysis with Bio3D"
-author: "Xin-Qiu Yao, Lars Skjaerven, and Barry J. Grant"
+author: "Xin-Qiu Yao, Lars Skjaerven, & Barry J. Grant"
 date: "September 28, 2014"
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 output:
@@ -23,7 +23,6 @@ geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
 linkcolor: black
 ---
 
-This vignette is generated with **Bio3D version `r packageVersion("bio3d")`**. 
 
 # Background {.unnumbered}
 
@@ -33,7 +32,7 @@ of this document, termed a vignette[^2] in R parlance, is to provide a
 brief task-oriented introduction to basic molecular dynamics trajectory
 analysis with the Bio3D R package [@grant06].
 
-## Requirements: {.unnumbered}
+## Requirements {.unnumbered}
 
 Detailed instructions for obtaining and installing the Bio3D package on
 various platforms can be found in the [Installing
@@ -44,6 +43,10 @@ command:
 ```{r, eval=FALSE}
 vignette(package="bio3d") 
 ```
+
+## About this document {.unnumbered}
+This vignette was generated using **Bio3D version `r packageVersion("bio3d")`**.
+
 
 <br>
 

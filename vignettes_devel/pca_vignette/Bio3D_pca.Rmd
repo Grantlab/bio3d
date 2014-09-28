@@ -1,6 +1,6 @@
 ---
 title: "Comparative Protein Structure Analysis with Bio3D"
-author: "Xin-Qiu Yao, Lars Skjaerven and Barry J. Grant"
+author: "Xin-Qiu Yao, Lars Skjaerven & Barry J. Grant"
 date: "September 28, 2014"
 affiliation: University of Michigan, Ann Arbor
 output:
@@ -24,8 +24,6 @@ linkcolor: black
 ---
 
 \newpage 
-
-This vignette is generated with **Bio3D version `r packageVersion("bio3d")`**. 
 
 # Background {.unnumbered}
 
@@ -54,6 +52,9 @@ program](http://swift.cmbi.ru.nl/gv/dssp/) must be installed on your
 system and in the search path for executables. Please see the
 installation vignette for full details.
 
+
+## About this document {.unnumbered}
+This vignette was generated using **Bio3D version `r packageVersion("bio3d")`**.
 
 # Getting Started
 
@@ -741,7 +742,7 @@ This document is shipped with the Bio3D package in both R and PDF formats. All c
 
 ```{r eval=FALSE}
 library(rmarkdown)
-render("Bio3D_nma.Rmd", "all")
+render("Bio3D_pca.Rmd", "all")
 ```
 
 # Information About the Current Bio3D Session {.unnumbered}
