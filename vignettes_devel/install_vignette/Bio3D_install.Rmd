@@ -1,6 +1,6 @@
 ---
 title: "Installing Bio3D"
-author: "Lars Skjaerven, Xin-Qiu Yao and Barry J. Grant"
+author: "Xin-Qiu Yao, Lars Skjaerven & Barry J. Grant"
 date: "Sepertember 25, 2014"
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 output:
@@ -12,14 +12,11 @@ output:
     fig_width: 5
     fig_height: 5
     fig_caption: yes
-  html_document:
-    highlight: default
-    keep_md: yes
-    toc: no
-    fig_width: 5
+  md_document:
     fig_height: 5
-    fig_caption: yes
-    number_sections: yes
+    fig_width: 5
+    variant: markdown_phpextra
+bibliography: Bio3D_install.bib
 documentclass: article
 fontsize: 11pt
 geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
@@ -30,9 +27,9 @@ linkcolor: black
 
 # Background
 
-Bio3D is an R package that provides interactive tools for structural
+Bio3D[^1] is an R package that provides interactive tools for structural
 bioinformatics. The primary focus of Bio3D is the analysis of
-biomolecular structure, sequence and trajectory data [^1].
+biomolecular structure, sequence and trajectory data [@grant06].
 
 ### What can I do with Bio3D? {.unnumbered}
 
@@ -110,14 +107,15 @@ DSSP however is not, but can be installed by:
 
 Download the source code of the latest Bio3D version:
 
-    wget http://thegrantlab.org/bio3d/phocadownload/Bio3D_version2.x/bio3d_2.0-1.tar.gz
+    wget http://thegrantlab.org/bio3d/phocadownload/Bio3D_version2.x/bio3d_2.1-0.tar.gz
 
 Start R by issuing the command `R` and then from the R prompt install
 required packages, and finally the Bio3D package:
 
 ```{r, eval=FALSE}
-install.packages(c("ncdf", "lattice", "grid", "bigmemory", "multicore", "XML"),dependencies=TRUE)
-install.packages("bio3d_2.0-1.tar.gz") 
+install.packages(c("ncdf", "lattice", "grid", "bigmemory", "parallel", "XML",
+		           "RCurl", "igraph", dependencies=TRUE)
+install.packages("bio3d_2.1-0.tar.gz") 
 ```
 
 If everything worked as expected you can skip ahead to section 5. If you
@@ -152,11 +150,12 @@ also maintain a list of R resources at
 ### Additional R Packages {.unnumbered}
 
 Bio3D makes use of a number of additional R packages including *ncdf*,
-*lattice*, *grid*, *bigmemory*, *multicore*, and *XML*. These can be
+*lattice*, *grid*, *bigmemory*, *XML*, *RCurl* and *igraph*. These can be
 most easily installed from within R with the command:
 
 ```{r, eval=FALSE}
-install.packages(c("ncdf", "lattice", "grid", "bigmemory", "multicore", "XML"), dependencies=TRUE) 
+install.packages(c("ncdf", "lattice", "grid", "bigmemory", "parallel", "XML",
+		           "RCurl", "igraph", dependencies=TRUE)
 ```
 
 <br>
@@ -176,8 +175,7 @@ The Bio3D package is available in two forms from
 To install from source requires that your machine has standard compilers
 and tools such as Perl 5.004 or later. If you run into problems with
 source installation please refer to section 6.1 of the [R Installation
-and Administration
-Manual](http://cran.r-project.org/doc/manuals/R-admin.html).
+and Administration Manual](http://cran.r-project.org/doc/manuals/R-admin.html).
 
 ## Linux/Unix Installation
 
@@ -186,12 +184,12 @@ in section 2 in a Unix environment then you should download the latest
 Bio3D source tar.gz file from above. Then within an R session type:
 
 ```{r, eval=FALSE}
-install.packages("bio3d_2.0-1.tar.gz") 
+install.packages("bio3d_2.1-0.tar.gz") 
 ```
 
 Or from the command line:
 
-    R CMD INSTALL bio3d_2.0-1.tar.gz
+    R CMD INSTALL bio3d_2.1-0.tar.gz
 
 #### Sidenote: {.unnumbered}
 
@@ -312,6 +310,12 @@ detailed analysis. I believe this should be done with every alignment
 regardless of how accurate the various automatic tools are supposed to
 be.
 
+#### Clustal Omega: {.unnumbered} 
+
+Clustal Omega is multiple sequence alignment program that can be used as 
+an alternative to MUSCLE (needed e.g. for functions `seqaln()` and `pdbaln()`). 
+Clustal Omega is available from <http://www.clustal.org/omega/>.
+
 #### VMD: {.unnumbered} 
 
 VMD is a molecular visualization program for displaying, animating, and
@@ -378,6 +382,16 @@ were:
 sessionInfo() 
 ```
 
-[^1]: Grant, B.J. et al. (2006) *Bioinformatics*, **22**, 2695-2696
+
+# References {.unnumbered}
+
+
+[^1]: The latest version of the package, full documentation and further
+    vignettes (including detailed installation instructions) can be
+    obtained from the main Bio3D website:
+    [http://thegrantlab.org/bio3d/](http://thegrantlab.org/bio3d/)
 
 [^2]: This vignette contains executable examples, see `help(vignette)` for further details.
+
+
+
