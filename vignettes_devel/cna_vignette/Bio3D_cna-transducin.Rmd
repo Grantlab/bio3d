@@ -175,17 +175,18 @@ cijs0 <- dccm(modes)
 
 Below we perform optional filtering and averaging per state of the individual structure cross-correlation matrices.
 In this example, we also utilize a cutoff for correlation (0.35 in this example) and a cutoff for C-alpha distance (10 angstrom) (See `help(filter.dccm)` and main text for details).
-```{r filter_dccm, cache=TRUE, eval=FALSE}
-cij <- filter.dccm(cijs0, xyz=pdbs, fac=annotation[, "state3"], cutoff.cij=0.35, dcut=10, scut=0, pcut=0.75, ncore=8)
+```{r filter_dccm, cache=TRUE, message=FALSE}
+cij <- filter.dccm(cijs0, xyz=pdbs, fac=annotation[, "state3"], cutoff.cij=0.35, 
+                dcut=10, scut=0, pcut=0.75, ncore=8)
 ```
 
-```{r nets, cache=TRUE, eval=FALSE}
+```{r nets, cache=TRUE}
 nets <- cna(cij, cutoff.cij = 0)
 net1 = mod.select(nets$GTP)
 net2 = mod.select(nets$GDI)
 ```
 
-```{r layout2, eval=FALSE}
+```{r layout2}
 ref.pdb <- pdbs2pdb(pdbs, inds=1, rm.gaps=TRUE)[[1]]
 cent.gtp.full = layout.cna(net1, pdb=ref.pdb, full=TRUE, k=3)[,1:2]
 cent.gtp = layout.cna(net1, pdb=ref.pdb, k=3)[,1:2]
@@ -193,7 +194,7 @@ cent.gdi.full = layout.cna(net2, pdb=ref.pdb, full=TRUE, k=3)[,1:2]
 cent.gdi = layout.cna(net2, pdb=ref.pdb, k=3)[,1:2]
 ```
 
-```{r figure2, fig.cap="Correlation networks for GTP \"active\" and GDI \"inhibitory\" conformational states of transducin. Networks are derived from ensemble NMA of available GTP and GDI crystallographic structures.", echo=c(3,5,6,8), eval=FALSE}
+```{r figure2, fig.cap="Correlation networks for GTP \"active\" and GDI \"inhibitory\" conformational states of transducin. Networks are derived from ensemble NMA of available GTP and GDI crystallographic structures.", echo=c(3,5,6,8)}
 layout(matrix(c(1:4), 2, 2))
 par(mar=c(0.1, 0.1, 3, 0.1))
 plot.cna(net1, layout=cent.gtp.full, full=TRUE, vertex.label=NA, vertex.size=5)

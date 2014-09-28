@@ -1,7 +1,7 @@
 ---
 title: "Comparative Protein Structure Analysis with Bio3D"
 author: "Xin-Qiu Yao, Lars Skjaerven and Barry J. Grant"
-date: "Sepertember 23, 2014"
+date: "September 28, 2014"
 affiliation: University of Michigan, Ann Arbor
 output:
   pdf_document:
