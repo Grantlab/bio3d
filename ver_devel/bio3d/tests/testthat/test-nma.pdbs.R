@@ -100,9 +100,9 @@ test_that("eNMA works", {
   ## structure 1-mode1 - tail:
   U1 <- c(0.14610002, 0.00861672, 0.11448489, rep(NA, 3))
   nowU1 <- tail(modes$U.subspace[,1,1], n=6)
-  U1[is.na(U1)] <- 99
-  nowU1[is.na(nowU1)] <- 99
-  expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
+  U1[is.na(U1)] <- 0
+  nowU1[is.na(nowU1)] <- 0
+  expect_that(nowU1 * mysign(nowU1, U1), equals(U1, tolerance=1e-6))
 
   ## fluctuations
   na.expected <- c(43, 46, 47, 48, 49, 52, 53, 54, 590,
