@@ -44,7 +44,11 @@ done
 #   sed "${lines[0]}"d html/index.html > index.html
 #   mv index.html html/index.html
 #done
-cp $utildir/../bio3d/vignettes/*.pdf html/vignettes/
+
+#cp $utildir/../bio3d/vignettes/*.pdf html/vignettes/
+# copy link to website
+rm -rf html/vignettes
+ln -s ../phocadownload/vignettes html/vignettes
 
 # Remove multiple lines of progress bar
 for i in html/*.html; do
