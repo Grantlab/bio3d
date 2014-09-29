@@ -9,12 +9,11 @@ data(sdENM)
 }
 \format{
   An array of 27 matrices containg the spring force constants for the
-  \sQuoted{sdENM} force field (see Dehouch et al for more
+  \sQuote{sdENM} force field (see Dehouch et al for more
   information). Each matrix in the array holds the force constants for
   all amino acid pairs for a specific distance range.
 
   See examples for more details.
-}
 }
 \source{
   Dehouck Y. & Mikhailov A.S. (2013) \emph{PLoS Comput Biol} \bold{9}:e1003209.
