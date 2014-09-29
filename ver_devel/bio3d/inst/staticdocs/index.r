@@ -50,7 +50,6 @@ sd_section("Sequence Analysis:",
     "seqaln",
     "seqaln.pair",
     "seqbind"
-
     )   
 )
 
@@ -64,7 +63,6 @@ sd_section("Structure Analysis:",
     "combine.sel",
     "cmap",
     "cmap.filter",
-    "cna",
     "core.find",
     "com",
     "dccm",
@@ -75,6 +73,7 @@ sd_section("Structure Analysis:",
     "dm.xyz",
     "dssp",
     "dssp.pdbs",
+    "geostas",
     "mustang",
     "fit.xyz",
     "binding.site",
@@ -129,6 +128,7 @@ sd_section("Structure Analysis:",
     "nma.pdbs",
     "normalize.vector",
     "pdbs2pdb",
+    "pdbs.filter",
     "plot.enma",
     "plot.nma",
     "plot.rmsip",
@@ -136,6 +136,7 @@ sd_section("Structure Analysis:",
     "sse.bridges",
     "view.dccm",
     "view.modes",
+    "var.xyz",
     "inspect.connectivity"
     )
 )
@@ -148,7 +149,6 @@ sd_section("Trajectory Analysis:",
     "angle.xyz",
     "cmap",
     "cmap.filter",
-    "cna",
     "core.find",
     "dccm",
     "dccm.mean",
@@ -159,6 +159,7 @@ sd_section("Trajectory Analysis:",
     "dm",
     "dm.xyz",
     "dssp.trj",
+    "geostas",
     "fit.xyz",
     "mktrj",
     "mktrj.pca",
@@ -191,13 +192,15 @@ sd_section("Normal Mode Analysis:",
     "atom.index",
     "atom2mass",
     "atom2ele",
+    "bhattacharyya",
     "cov.nma",
-    "cna",
+    "covsoverlap",
     "dccm.enma",
     "dccm.mean",
     "dccm.nma",
     "dccm.xyz",
     "deformation.nma",
+    "geostas",
     "fluct.nma",
     "inner.prod",
     "load.enmff",
@@ -214,10 +217,33 @@ sd_section("Normal Mode Analysis:",
     "plot.rmsip",
     "sdENM",
     "sse.bridges",
+    "sip",
+    "var.xyz",
     "view.dccm",
     "view.modes"
     )   
 )
+
+##"cna"
+ sd_section("Correlation Network Analysis:",
+            "Network analysis of dynamic coupling", 
+  c(
+      "cna",
+      "dccm",
+      "lmi",
+      "filter.dccm",
+      "cmap",
+      "community.tree",
+      "network.amendment",
+      "view.cna",
+      "view.dccm",
+      "plot.cna",
+      "print.cna",
+      "identify.cna",
+      "layout.cna",
+      "prune.cna"
+   )
+ )
 
 ##"graphics"
  sd_section("Graphics:",
@@ -287,7 +313,9 @@ sd_section("Utilities:",
     "trim.pdb",
     "unbound",
     "vec2resno",
-    "setup.ncore"
+    "setup.ncore",
+    "elements",
+    "formula2mass"
     )
 )
 

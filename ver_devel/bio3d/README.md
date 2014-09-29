@@ -1,6 +1,6 @@
 # Documentation
 
-The Bio3D package consists of <a href="#Input/Output:">input/output</a> functions, <a href="#Sequence Analysis:">sequence analysis</a> functions, <a href="#Structure Analysis:">structure analysis</a> functions, <a href="#Trajectory Analysis:">simulation analysis</a> functions, <a href="#Normal Mode Analysis:">normal mode analysis</a> functions, <a href="#Utilities:">conversion and manipulation</a> functions, and <a href="#Graphics:">graphics</a> functions. Each of these functions is listed below with links to further documentation that includes example code and results. 
+The Bio3D package consists of <a href="#Input/Output:">input/output</a> functions, <a href="#Sequence Analysis:">sequence analysis</a> functions, <a href="#Structure Analysis:">structure analysis</a> functions, <a href="#Trajectory Analysis:">simulation analysis</a> functions, <a href="#Normal Mode Analysis:">normal mode analysis</a> functions, <a href="#Correlation Network Analysis:"> correlation network analysis</a> functions, <a href="#Utilities:">conversion and manipulation</a> functions, and <a href="#Graphics:">graphics</a> functions. Each of these functions is listed below with links to further documentation that includes example code and results. 
 
 Note that you can also get help on any particular function by using the command `?function` or `help(function)` and directly execute the example code for a given function with the command `example(function)` from within R itself. 
 
