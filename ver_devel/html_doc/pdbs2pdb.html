@@ -1,178 +1,0 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-<title>pdbs2pdb. bio3d 2.0-1</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="author" content=" Lars Skjaerven ">
-
-<link href="css/bootstrap.css" rel="stylesheet">
-<link href="css/bootstrap-responsive.css" rel="stylesheet">
-<link href="css/highlight.css" rel="stylesheet">
-<link href="css/staticdocs.css" rel="stylesheet">
-<link href="css/theme.css" rel="stylesheet">
-
-<!--[if lt IE 9]>
-  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
-  </head>
-
-  <body>
-    <div class="container">
-<div class="navbar navbar-default" role="navigation">
-  <div class="navbar-header">
-      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
-  </div>
-  <div class="navbar-collapse collapse">
-    <ul class="nav navbar-nav">
-        <li class="active"><a href="index.html"> Index</a></li>
-        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
-        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-    </ul>
-  </div>
-</div>
-</div>
-
-    <div class="container">
-      <header>
-        
-      </header>
-      
-      <h1> PDBs to PDB Converter </h1>
-
-<div class="row">
-  <div class="span8">
-    <h2>Usage</h2>
-    <pre>pdbs2pdb(pdbs, inds = NULL, rm.gaps = FALSE)</pre>
-    
-    <h2>Arguments</h2>
-    <dl>
-      <dt>pdbs</dt>
-      <dd> a list of class <code>"3dalign"</code> containing PDB file
-    data, as obtained from <code>read.fasta.pdb</code> or
-    <code>pdbaln</code>. </dd>
-      <dt>inds</dt>
-      <dd> a vector of indices that selects the PDB structures to
-    convert. </dd>
-      <dt>rm.gaps</dt>
-      <dd> logical, if TRUE atoms in gap containing columns are
-    removed in the output <code>pdb</code> objects. </dd>
-    </dl>
-    
-    <div class="Description">
-      <h2>Description</h2>
-      
-      <p>Convert a list of PDBs from an <code>"3dalign"</code> object to a list of
-  <code>pdb</code> objects.</p>
-  
-    </div>
-
-    <div class="Details">
-      <h2>Details</h2>
-      
-      <p>This function will generate a list of <code>pdb</code> objects from a
-  <code>"3dalign"</code> class.</p>
-  
-      <p>See examples for more details/</p>
-  
-    </div>
-
-    <div class="Value">
-      <h2>Value</h2>
-      
-      <p>Returns a list of <code>pdb</code> objects.</p>
-  
-    </div>
-
-    <div class="References">
-      <h2>References</h2>
-      
-      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
-  
-    </div>
-    
-    <h2 id="examples">Examples</h2>
-    <pre class="examples"><div class='input'>## Fetch PDBs
-pdb.ids <- c("1YX5_B", "3NOB", "1P3Q_U")
-#outdir <- paste(tempdir(), "/raw_pdbs", sep="")
-outdir = "raw_pdbs"
-raw.files <- get.pdb(pdb.ids, path = outdir)
-</div>
-<strong class='warning'>Warning message:
-ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
-<div class='input'>
-## Split PDBs by chain ID and multi-model records
-all.files <- pdbsplit(raw.files, pdb.ids, 
-                path =paste(outdir, "/split_chain", sep=""))
-</div>
-<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |=======================                                               |  33%  |                                                                              |==========================                                            |  38%  |                                                                              |=============================                                         |  42%  |                                                                              |================================                                      |  46%  |                                                                              |===================================                                   |  50%  |                                                                              |======================================                                |  54%  |                                                                              |=========================================                             |  58%  |                                                                              |============================================                          |  62%  |                                                                              |===============================================                       |  67%  |                                                                              |======================================================================| 100%
-</div>
-<div class='input'>
-## Align and fit
-pdbs     <- pdbaln(all.files, fit=TRUE)
-</div>
-<div class='output'>Reading PDB files:
-raw_pdbs/split_chain/1YX5_B.pdb
-raw_pdbs/split_chain/3NOB_A.pdb
-raw_pdbs/split_chain/3NOB_B.pdb
-raw_pdbs/split_chain/3NOB_C.pdb
-raw_pdbs/split_chain/3NOB_D.pdb
-raw_pdbs/split_chain/3NOB_E.pdb
-raw_pdbs/split_chain/3NOB_F.pdb
-raw_pdbs/split_chain/3NOB_G.pdb
-raw_pdbs/split_chain/3NOB_H.pdb
-raw_pdbs/split_chain/1P3Q_U.pdb
-..........
-
-Extracting sequences
-
-pdb/seq: 1   name: raw_pdbs/split_chain/1YX5_B.pdb 
-pdb/seq: 2   name: raw_pdbs/split_chain/3NOB_A.pdb 
-pdb/seq: 3   name: raw_pdbs/split_chain/3NOB_B.pdb 
-pdb/seq: 4   name: raw_pdbs/split_chain/3NOB_C.pdb 
-pdb/seq: 5   name: raw_pdbs/split_chain/3NOB_D.pdb 
-pdb/seq: 6   name: raw_pdbs/split_chain/3NOB_E.pdb 
-pdb/seq: 7   name: raw_pdbs/split_chain/3NOB_F.pdb 
-pdb/seq: 8   name: raw_pdbs/split_chain/3NOB_G.pdb 
-pdb/seq: 9   name: raw_pdbs/split_chain/3NOB_H.pdb 
-pdb/seq: 10   name: raw_pdbs/split_chain/1P3Q_U.pdb 
-</div>
-<div class='input'>
-## Convert back to PDB objects
-all.pdbs <- pdbs2pdb(pdbs)
-
-## Access the first PDB object
-## all.pdbs[[1]]
-
-## Return PDB objects consisting of only
-## atoms in non-gap positions
-all.pdbs <- pdbs2pdb(pdbs, rm.gaps=TRUE)
-
-</div></pre>
-  </div>
-  <div class="span3">
-    <!-- <ul>
-      <li>pdbs2pdb</li>
-    </ul>
-    <ul>
-      <li> utilities </li>
-    </ul> -->
-      
-    <h2>See also</h2>
-     <code><a href='read.pdb.html'>read.pdb</a></code>, <code><a href='pdbaln.html'>pdbaln</a></code>,
-  <code><a href='read.fasta.pdb.html'>read.fasta.pdb</a></code>. 
-    
-    <h2>Author</h2>
-     Lars Skjaerven 
-    
-  </div>
-</div>
-      
-      <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=pdbs2pdb'>Please let me know by filling out this short online survey</a>.</p>
-<p class="pull-right"><a href="#">Back to top</a></p>
-<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
-      </footer>
-    </div>
-  </body>
-</html>
