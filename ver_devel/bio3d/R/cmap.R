@@ -2,14 +2,9 @@
 function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
          ncore=1, nseg.scale=1) {
 
-  # Parallelized by multicore package (Mon Apr 22 16:32:19 EDT 2013)
+  # Parallelized by parallel package (Mon Apr 22 16:32:19 EDT 2013)
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) {
-     oops <- require(multicore)
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -20,9 +15,15 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
         warning("nseg.scale should be 1 or a larger integer\n")
         nseg.scale=1
      }
+   }
+
+  if (!(is.numeric(pcut) && pcut >= 0 && pcut <= 1)) {
+    stop("Input 'pcut' should a number between 0 and 1")
   }
 
-  if(is.matrix(xyz)) {
+  xyz=as.xyz(xyz)
+  
+  if(nrow(xyz)>1) {
      if(is.null(grpby)) {
         nres <- ncol(xyz)/3
      } else {
@@ -44,7 +45,6 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
                return(as.numeric(dmat[!lower.tri(dmat)] < dcut))
            }) )
         }
-        readChildren()
      } else {
         cmap.list <- lapply(1:nrow(xyz), function(j) {
             dmat <- dm.xyz(xyz[j,], grpby, scut, mask.lower=TRUE)
@@ -57,13 +57,16 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
      cont.map[!lower.tri(cont.map)] <- cmap.t
      if(!mask.lower) 
          cont.map[lower.tri(cont.map)] <- t(cont.map)[lower.tri(cont.map)]
+
   } else {
+
      ## Distance matrix (all-atom)
      dmat <- dm.xyz( xyz, grpby, scut, mask.lower = mask.lower)
      ## Contact map
      return(matrix(as.numeric(dmat < dcut),
                 ncol = ncol(dmat),
                 nrow = nrow(dmat)))
+
   }
   return (cont.map)
 }

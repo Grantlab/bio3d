@@ -7,20 +7,14 @@ function(fixed,
          prefix = "",
          pdbext = "",
          outpath = "fitlsq",
-         het = FALSE,
          full.pdbs=FALSE,
          ncore=1,
          nseg.scale=1, # to resolve the memory problem in using multicore
          ...) {
 
-  # Parallelized by multicore package (Tue Dec 11 17:41:08 EST 2012)
+  # Parallelized by parallel package (Tue Dec 11 17:41:08 EST 2012)
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) {
-     oops <- require(multicore) 
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -54,8 +48,9 @@ function(fixed,
   if (length(fixed.inds) != length(mobile.inds))
     stop("length of 'fixed.inds' != length of 'mobile.inds'")
 
-  if(!is.vector(fixed) || !is.numeric(fixed))
-    stop("input 'fixed' should be a numeric vector")
+#  if(!is.xyz(fixed) || !is.numeric(fixed))
+  if(!is.numeric(fixed))
+    stop("input 'fixed' should be a numeric 'xyz' vector or matrix")
 
   if(is.vector(mobile)) {   # INPUT is a single vector
     if(!is.numeric(mobile))
@@ -71,7 +66,8 @@ function(fixed,
                    xfit=mobile.inds,
                    yfit=fixed.inds,
                    verbose=verbose)
-    return(fit)
+
+    return(as.xyz(fit))
   } else {
     if(is.list(mobile)) {      # INPUT is a list object
       if(!is.numeric(mobile$xyz))
@@ -96,7 +92,6 @@ function(fixed,
                mc.preschedule=TRUE)
          }
          fit <- matrix(unlist(fit), ncol=ncol(mobile$xyz), byrow=TRUE)
-         readChildren()
       } else {           # Single version
          fit <- t( apply(mobile$xyz, 1, rot.lsq,
                          yy = fixed,
@@ -151,9 +146,9 @@ function(fixed,
             }
           }
           pdb.xyz <- pdb$xyz
-          if (het) 
-            pdb.xyz <- c(pdb.xyz,
-                         as.numeric(t(pdb$het[,c("x","y","z")])))
+          #if (het) 
+          #  pdb.xyz <- c(pdb.xyz,
+          #               as.numeric(t(pdb$het[,c("x","y","z")])))
 
           if(length(inds) > length(fixed.inds)) {
             warning("Looks like we have a multi-chain pdb with no chain id: ignoring extra indices\n\t")
@@ -165,13 +160,13 @@ function(fixed,
                              xfit=inds, # sort!!
                              yfit=fixed.inds)
 
-          write.pdb(xyz = xyz.fit, pdb = pdb, het = het, 
+          write.pdb(xyz = xyz.fit, pdb = pdb, ##het = het, 
                     file = file.path(outpath, paste(basename(mobile$id[i]),
                       "_flsq.pdb",sep = "")) )
           return (NULL)
         } )
       }
-      return(fit)
+      return(as.xyz(fit))
     } else {
       if(full.pdbs)
         warning("Need 'mobile' list object for 'full.pdbs=TRUE'")
@@ -198,7 +193,6 @@ function(fixed,
                  mc.preschedule=TRUE)
            }
            fit <- matrix(unlist(fit), ncol=ncol(mobile), byrow=TRUE)
-           readChildren()
         } else {         # Single version
            fit <- t( apply(mobile, 1, rot.lsq,
                            yy = fixed,
@@ -206,7 +200,7 @@ function(fixed,
                            yfit = fixed.inds,
                            verbose=verbose))
         }
-        return(fit)
+        return(as.xyz(fit))
       }
     }
   }

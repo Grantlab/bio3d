@@ -5,7 +5,9 @@
   Write a CHARMM CARD (CRD) coordinate file.
 }
 \usage{
-write.crd(pdb = NULL, xyz = pdb$xyz, resno = NULL, resid = NULL, eleno = NULL, elety = NULL, segid = NULL, resno2 = NULL, b = NULL, verbose = FALSE, file = "R.crd")
+write.crd(pdb = NULL, xyz = pdb$xyz, resno = NULL, resid = NULL, 
+   eleno = NULL, elety = NULL, segid = NULL, resno2 = NULL, b = NULL, 
+   verbose = FALSE, file = "R.crd")
 }
 \arguments{
   \item{pdb}{ a structure object obtained from \code{\link{read.pdb}} or

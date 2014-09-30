@@ -6,9 +6,12 @@ cache*
 figure*
 *.txt
 *.md
-*.Rmd
 *.Rnw
 *.tex
 *.log
 *.out
+*.swp
 tmp*
+*.DS_Store
+
+*.vmd

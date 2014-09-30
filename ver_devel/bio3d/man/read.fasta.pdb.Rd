@@ -6,7 +6,7 @@
   coordinates, residue numbers, residue type and B-factors.
 }
 \usage{
-read.fasta.pdb(aln, prefix = "", pdbext = "", 
+read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
              ncore = 1, nseg.scale = 1, ...)
 }
 \arguments{
@@ -14,8 +14,10 @@ read.fasta.pdb(aln, prefix = "", pdbext = "",
     \code{\link{read.fasta}}. }
   \item{prefix}{ prefix to aln$id to locate PDB files. }
   \item{pdbext}{ the file name extention of the PDB files. }
+  \item{fix.ali}{ logical, if TRUE check consistence between \code{$ali} 
+    and \code{$resno}, and correct \code{$ali} if they don't match. }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{nseg.scale }{ split input data into specified number of segments
     prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
   \item{\dots}{ other parameters for \code{\link{read.pdb}}. }  
@@ -32,7 +34,7 @@ read.fasta.pdb(aln, prefix = "", pdbext = "",
   their associated PDB files.
 }
 \value{
-  Returns a list of class \code{"3dalign"} with the following five
+  Returns a list of class \code{"pdbs"} with the following five
   components:
   \item{xyz}{numeric matrix of aligned C-alpha coordinates.}
   \item{resno}{character matrix of aligned residue numbers.}
@@ -41,6 +43,7 @@ read.fasta.pdb(aln, prefix = "", pdbext = "",
   \item{id}{character vector of PDB sequence/structure names.}
   \item{ali}{character matrix of aligned sequences.}
   \item{resid}{character matrix of aligned 3-letter residue names.}
+  \item{call}{ the matched call. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.

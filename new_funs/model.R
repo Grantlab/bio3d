@@ -1,21 +1,21 @@
 
-## UNREFINED functions for Bio3D incoperation at some point
+## UNREFINED functions for Bio3D incorporation at some point
 ##  Most of these are useful for protein structure modeling
 ##
-## These include (list to be updaed):
-##  fit.pdbs    - Quick Fit Fitter for PDBs
+## These include (list to be updated):
+##  # fit.pdbs    - Quick Fit Fitter for PDBs
 ##  pdbname     - Extract PDB identifier from filename
 ##  srxn.bd     - Find BD trajectories that complete a give reaction
 ##  srxn2trj.bd - Make XML BD trajectorys given srxn output
-##  motif.find  - Return indices of a motif within a sequence
+##  # motif.find  - Return indices of a motif within a sequence
 ##  getArgs     - Parse command line options when using Rscript
 ##  txt2num     - Convert a character string to numeric
 ##  read.apbs   - Read elec binding energy from APBS log files
-##  chain.pdb   - Find possible chian breaks
-##  pdbaln      - Quick and dirty alignment of PDB sequences
+##  # chain.pdb   - Find possible chain breaks
+##  # pdbaln      - Quick and dirty alignment of PDB sequences
 ##  alitrim     - Trim cols from alignment data structure
-##   ncmap      - *see bio3d 'cmap'
-##   ndm        - *see bio3d 'dm.xyz'
+##  # ncmap      - *see bio3d 'cmap'
+##  # ndm        - *see bio3d 'dm.xyz'
 ##  seq2aln     - Add a sequence to an existing alignment
 ##  write.pir   - write alignment for modeler
 ##  write.sge   - write a series of Sun Grid Engine scripts
@@ -23,19 +23,19 @@
 ##  interp      - interpolate between two vectors, useful for
 ##                PCA z-score interpolation in combination
 ##                with "pca.z2xyz"
-##  fit         - A simple wrapper for fit.xyz when using
+##  # fit         - A simple wrapper for fit.xyz when using
 ##                pdbs style objects
 ##  ide.group   - Return the indices of the largest group of
 ##                sequences that have identity values above
 ##                a particular 'cutoff'
-##  rama.inds   - Return xyz indices for PHI-PSI Ramachendran atoms
-##  plot.rama   - Ramachendron plot (basic)
+##  rama.inds   - Return xyz indices for PHI-PSI Ramachandran atoms
+##  plot.rama   - Ramachandran plot (basic)
 ##  aln2aln     - Add one alignment to another that contains
 ##                at least one similar entry
-##  get.pdb     - download PDB files from a list of ids
+##  # get.pdb     - download PDB files from a list of ids
 ##  get.uniprot - download FASTA sequence files from a list of
 ##                swissprot or uniprot ids
-##  seq.pdb     - Return basic 1-letter calpha ATOM sequence from a
+##  # seq.pdb     - Return basic 1-letter calpha ATOM sequence from a
 ##                pdb object
 ## read.propka  - Read the output of PropKa produced by pdb2pqr
 ## write.crdbox - Write AMBER CRD format trajectory files
@@ -46,17 +46,20 @@
 ## tlsq & ulsq  - Fitting rotation and translation matrices
 ## renumber.pdb - Renumber resno and eleno records
 ## vec2seq      - Match a vector via matching sequence to alignment
-## vec2resno    - Replicate a vector based on concetive resno entries
+## # vec2resno    - Replicate a vector based on consecutive resno entries
 ## bgr.colors   - blue-gray-red color range
 ## lsos         - a better list of current objects sorted by size
 ## read.hmmer.tbl - read HMMER3 hmmsearch log files
-## cons.aln     - score residue conservation in an alignment
+## # cons.aln     - score residue conservation in an alignment
 ## dis.ftmap    - Process FTMAP results (min dist to residue of probes)
 ## bootstrap.rmsf - Bootstrap sampling of frames for RMSF determination.
 ## mustang        -  Structural alignment with mustang
 ## add.dccm.grid  -  Add a grid or colored boxes to a plot.dccm() plot.
-## col.wheel    - useful for picking plot colors (e.g. col.wheel("dark") ) 
-##
+## col.wheel      - useful for picking plot colors (e.g. col.wheel("dark") ) 
+## linMap         - Scale a input vector to lie between min and max values
+## fill.blanks   - Copy previously occurring non-missing values to consecutive missing values in a vector
+## read.protdist - Eead a PHYLIP protdist matrix
+## print.aln     - Print sequence alignment in a nice formated way
 ##
 ## See also:
 ##  ~/work/scop/scop.sf  - Have access to the full SCOP database in R
@@ -133,7 +136,7 @@ srxn.bd <- function(traj.file, reaction, outdir="trjout/") {
                 " > ", log.file, sep="")
 
 
-  srxlog <- function(logfile) {
+srxlog <- function(logfile) {
 
     htrj <- scan(logfile, what="", sep="\n", quiet=TRUE)
     hind <- cbind( grep("<trajectory>", htrj),
@@ -2885,3 +2888,158 @@ col.wheel <- function(str, cex=0.75) {
   pie(rep(1, length(cols)), labels=cols, col=cols, cex=cex)
   cols
 }
+
+linMap <- function(x, from, to) {
+  ## Scale a input vector 'x' to lie between min 'from' and max 'to'
+  ## linMap(c(0.5, 0.7,1), 10,20)
+    (x - min(x)) / max(x - min(x)) * (to - from) + from
+}
+
+
+
+fill.blanks <- function(x, blank="" , boundary.check=FALSE) {
+
+  ## Function to copy previously occurring non-blank (non-missing) 
+  ## values to consecutive blank (missing) values in a vector.
+  ##    x=c(1,"",3,3,4,"", "", 5); fill.blanks(x)
+  ##    x=c(1,"",1,3,3,4,"", "", 5); fill.blanks(x, boundary.check=T)
+
+  ## ToDo: Adapt to work if first element is blank
+
+  ## Details of 'blank' vector element runs 
+  blank.inds <- bounds( which(x == blank) )
+  if (is.null( nrow(blank.inds) )) {
+    warning("No blank elements, returning unaltered input vector")
+    return(x)
+  }
+
+  ## Indices of non-blank vector elements
+  name.inds <- bounds( which(x != blank) )[,"end"]
+
+  ## Check for last element being non-blank
+  name.inds <- name.inds[!name.inds %in% length(x)] 
+  name <- x[ name.inds ]
+
+
+  if(boundary.check) {
+    ## Only fill missing elements if boundary elements match 
+    ## (i.e check if both sides of gap segment are the same)
+    end.match <- x[blank.inds[,"end"]+1]==name
+    blank.inds <- blank.inds[end.match, ,drop=FALSE]
+    name <- name[ end.match ]
+    warning( paste0("Non-matching boundary elements found (",sum(end.match),")") )
+  }
+
+  if(length(name) != nrow(blank.inds)) {
+    stop("Miss-match in number of non-blank elements and consecutive blank runs")
+  }
+  for(i in 1:length(name)) {
+    inds <- blank.inds[i,"start"]:blank.inds[i,"end"]
+    x[inds] = name[i]
+  }
+  return(x) 
+}
+
+
+gap.omit <- function(x) {
+  ## Like na.omit for sequences
+  #x[is.gap(x)] = NA
+  #return(na.omit(x))
+  return(x[!is.gap(x)])
+} 
+
+
+read.protdist <- function(infile) {
+  ##-- Read a PHYLIP protdist matrix
+  raw <- scan(infile, what="raw")
+  n <- as.numeric(raw[1])+1
+  m <- matrix(raw[-1], ncol=n, nrow=n, byrow=TRUE)
+
+  ids <- m[-n,1]
+  mn  <- apply(m[-n,-1], 1, as.numeric)
+  rownames(mn) = ids
+  mnd <- as.dist(mn)
+  return(mnd)
+}
+
+
+print.aln <- function(x, width=60) {
+
+  ##-- Print sequence alignment in a nice formated way
+  ##    x<-read.fasta("poo.fa")
+  ##    print.aln(x)
+  ##
+  ##    file <- system.file("examples/kif1a.fa",package="bio3d")
+  ##    aln  <- read.fasta(file)
+  ##    print.aln(aln, width=40)
+  ##
+  ## Could use this as print.fasta() default 
+  ##
+
+
+  if(class(x) %in% c("fasta", "3dalign")) {
+    id <- x$id
+    ali <- x$ali
+  } else {
+    id <- rownames(x)
+    ali <- x
+  }
+
+
+  ##- Format sequence identifiers
+  ids.nchar <- max(nchar(id))+2 ## with a gap of 2 spaces
+  ids.format <- paste0("%-",ids.nchar,"s")
+  ids <- sprintf(ids.format, id)
+  ## for later use in annotation printing
+  pad.format <- paste0("%+",(ids.nchar+1),"s")
+
+
+  ##- Work out sequence block widths
+  nseq <- length(ids)
+  nres <- ncol(ali)
+
+  block.start <- seq(1, nres, by=width)
+  block.end <- unique(c( seq(width, nres, by=width), nres))
+  nblocks <- length(block.start)
+
+  blank.annot <- rep(" ", width)
+  block.annot <- blank.annot
+  block.annot[ c(1,seq(10, width, by=10)) ] = "."
+
+  blocks <- matrix(NA, ncol=nblocks, nrow=nseq) 
+  for(i in 1:nblocks) {
+    ##- Sequence block
+    positions <- block.start[i]:block.end[i]
+    blocks[,i] <- paste0(ids, apply(ali[, positions, drop=FALSE], 1, paste, collapse=""))
+
+    ##- Annotations for each sequence block
+    number.annot = blank.annot[1:length(positions)]
+    number.annot[1] = sprintf(pad.format, block.start[i])
+    number.annot[length(positions)] = block.end[i]
+
+    block.annot = block.annot[1:length(positions)]
+    block.annot[1] = sprintf(pad.format, "|")
+    block.annot[length(positions)] = "|"
+
+    end.annot = block.annot
+    end.annot[1] = number.annot[1]
+    end.annot[length(end.annot)] = number.annot[length(number.annot)]
+
+    ##-- Formated Printing of annotations and sequence blocks
+    cat("\n")
+    ##- Numbers & ticks
+    cat(paste(number.annot, collapse=""),sep="\n")
+    cat(paste(block.annot, collapse=""),sep="\n")
+    ##- Sequence block
+    cat(blocks[,i], sep="\n")
+    ##- Ticks + numbers again
+    cat(paste(end.annot, collapse=""),"\n")
+  }
+
+  j <- paste(attributes(x)$names, collapse = ", ")
+  cat("\n")
+  cat(strwrap(paste(" + attr:", j, "( dim(x$ali) =", paste(dim(ali),collapse="x"),")\n"), width = 70, exdent = 8), sep = "\n")
+
+}
+
+

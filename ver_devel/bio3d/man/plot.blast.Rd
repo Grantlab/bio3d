@@ -6,7 +6,7 @@
   from the match statistics of a BLAST result.
 }
 \usage{
- \method{plot}{blast}(x, cutoff = NULL, cut.seed=110, mar=c(4, 4, 1, 2), cex.lab=1.5, ...)
+ \method{plot}{blast}(x, cutoff = NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5, ...)
 }
 \arguments{
   \item{x}{ BLAST results as obtained from the function
@@ -16,11 +16,16 @@
   try to find a suitable cutoff near \sQuote{cut.seed} which can be used
   as an initial guide (see below). }
   \item{cut.seed}{ A numeric seed cutoff value, used for initial
-    cutoff estimation. }
+    cutoff estimation. If null then a seed position is set to the point of 
+    largest drop-off in normalized scores (i.e. the biggest jump in 
+    E-values). }
+  \item{cluster}{ Logical, if TRUE (and \sQuote{cutoff} is null) a clustering 
+    of normalized scores is performed to partition hits in groups by 
+    similarity to query. If FALSE the partition point is set to the point of largest drop-off in normalized scores. }
   \item{mar}{ A numerical vector of the form c(bottom, left, top, right)
     which gives the number of lines of margin to be specified on the
     four sides of the plot.}
-  \item{cex.lab}{ a numerical single element vector giving the amount by
+  \item{cex}{ a numerical single element vector giving the amount by
     which plot labels should be magnified relative to the default. }
   \item{\dots}{ extra plotting arguments. }  
 }

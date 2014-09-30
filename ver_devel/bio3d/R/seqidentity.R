@@ -1,14 +1,9 @@
 "seqidentity" <-
-function( alignment , normalize=TRUE, ncore=1, nseg.scale=1) {
+function( alignment , normalize=TRUE, similarity=FALSE, ncore=1, nseg.scale=1) {
 
-  # Parallelized by multicore package (Sun Jul  7 17:35:38 EDT 2013)
+  # Parallelized by parallel package (Sun Jul  7 17:35:38 EDT 2013)
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) {
-     oops <- require(multicore)
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -20,8 +15,40 @@ function( alignment , normalize=TRUE, ncore=1, nseg.scale=1) {
         nseg.scale=1
      }
   }
- 
-  if(is.list(alignment)) alignment <- alignment$ali
+
+  ids <- NULL
+  if(is.list(alignment)) {
+    if(inherits(alignment, c("fasta", "pdbs")))
+      ids <- alignment$id
+    alignment <- alignment$ali
+  }
+  else {
+    ids <- rownames(alignment)
+  }
+
+  ## calculate similarity instead of identity?
+  if(similarity) {
+    alnTo10 <- function(x) {
+      new <- rep(NA, length(x))
+      aa <- c("V","I","L","M",  "F","W","Y",  "S","T",
+              "N","Q",  "H","K","R",  "D","E",
+              "A","G",  "P",  "C",  "-","X")
+      
+      new[ x %in% aa[1:4] ]   = "V"   # Hydrophobic, Aliphatic
+      new[ x %in% aa[5:7] ]   = "F"   # Aromatic
+      new[ x %in% aa[8:9] ]   = "S"   # Ser/Thr
+      new[ x %in% aa[10:11] ] = "N"   # Polar
+      new[ x %in% aa[12:14] ] = "R"   # Positive
+      new[ x %in% aa[15:16] ] = "D"   # Negative
+      new[ x %in% aa[17:18] ] = "A"   # Tiny
+      new[ x %in% aa[19] ]    = "P"   # Proline
+      new[ x %in% aa[20] ]    = "C"   # Cysteine
+      new[ x %in% aa[21:22] ] = "-"   # Gaps
+      
+      return(matrix(new, nrow=1))
+    }
+    alignment <- t(apply(alignment, 1, alnTo10) )
+  }
   alignment[is.gap(alignment)] = NA
 
   ide <- function(x, y) {
@@ -55,7 +82,6 @@ function( alignment , normalize=TRUE, ncore=1, nseg.scale=1) {
           }) )
      }
      s <- unlist(s)
-     readChildren()
   } else {
      s <- rep(NA, ni)
    
@@ -70,6 +96,11 @@ function( alignment , normalize=TRUE, ncore=1, nseg.scale=1) {
     sm[inds[,2], inds[,1]]<-s
   } else {
     sm[inds[,c(2,1)]]<-s 
+  }
+
+  if(!is.null(ids)) {
+    rownames(sm) <- ids
+    colnames(sm) <- ids
   }
   return(sm) # ide matrix
 }

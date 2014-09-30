@@ -19,7 +19,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
       naln <- seq2aln(seq2add=aa1, aln=aln, id=id, 
             exefile = exefile, file=tempfile())
       # check if the old alignment doesn't change
-      if(!identical(aln$ali, naln$ali[1:(nrow(naln$ali)-1), !is.gap(naln$ali[1,])])) 
+      if(!identical(aln$ali, naln$ali[1:(nrow(naln$ali)-1), !is.gap(naln$ali[1,]), drop = FALSE])) 
          warning("Alignment changed! Try aln.id with the closest sequence ID in the alignment")
    } else {
       # do pairwise sequence alignment     
@@ -32,7 +32,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
       ##- Align seq to masked template from alignment
       tmp.msk <- aln$ali[idhit, ]
       tmp.msk[is.gap(tmp.msk)] <- "X"
-      seq2tmp <- seqaln.pair(seqbind(tmp.msk, aa1), file=tempfile(), exefile=exefile)
+      seq2tmp <- seqaln.pair(seqbind(tmp.msk, aa1), outfile=tempfile(), exefile=exefile)
       
       ##- check sequence identity
       ii <- seq2tmp$ali[1,]=='X'
@@ -59,7 +59,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
    ref <- matrix(NA, nrow=2, ncol=ncol(naln$ali))
    rownames(ref) <- c("ali.pos", "ca.inds")
    ref[1, !is.gap(naln$ali[1,])] <- 1:ncol(aln$ali)
-   ref[2, !is.gap(naln$ali[id,])] <- atom.select(pdb, "//////CA/", verbose=FALSE)$atom
+   ref[2, !is.gap(naln$ali[id,])] <- atom.select(pdb, "calpha", verbose=FALSE)$atom
    
    # remove X
    naln$ali[1, naln$ali[1,]=="X"] <- "-"
@@ -67,6 +67,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
    if(!is.null(file)) 
       write.fasta(naln, file=file)
    out <- list(id=naln$id, ali=naln$ali, ref=ref)
-   
+   class(out) <- "fasta"
+ 
    return (out)
 }

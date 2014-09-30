@@ -7,10 +7,11 @@ function(pdb = NULL, xyz = pdb$xyz, resno = NULL, resid = NULL,
         stop("write.crd: please provide a 'pdb' object or numeric 'xyz' coordinates")
     if (any(is.na(xyz)))
         stop("write.crd: 'xyz' coordinates must have no NA's.")
+    if (is.matrix(xyz) && nrow(xyz) == 1) xyz = as.vector(xyz)
     if (is.vector(xyz)) {
         natom <- length(xyz)/3
     } else {
-      stop("write.crd: 'xyz' or 'pdb$xyz' must be a vector")
+      stop("write.crd: 'xyz' or 'pdb$xyz' must contain only one structure")
     }
 
     if (!is.null(pdb)) {

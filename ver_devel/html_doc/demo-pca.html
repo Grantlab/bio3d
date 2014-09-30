@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -80,6 +81,16 @@ raw.files <- get.pdb(ids, path=tmp.dir)
 </div>
 <strong class='warning'>Warning message:
 ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
+<strong class='warning'>Warning message:
+/tmp/RtmpeKwoQP/1cdk.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+/tmp/RtmpeKwoQP/3agm.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+/tmp/RtmpeKwoQP/1cmk.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+/tmp/RtmpeKwoQP/3dnd.pdb  exists. Skipping download</strong>
+<strong class='warning'>Warning message:
+/tmp/RtmpeKwoQP/1q8w.pdb  exists. Skipping download</strong>
 <div class='input'>
 pause()
 </div>
@@ -99,22 +110,22 @@ pause()
 pdbs <- pdbaln(files)
 </div>
 <div class='output'>Reading PDB files:
-/tmp/Rtmpbw2kkP/1cdk_A.pdb
-/tmp/Rtmpbw2kkP/3agm_A.pdb
-/tmp/Rtmpbw2kkP/1cmk_E.pdb
-/tmp/Rtmpbw2kkP/3dnd_A.pdb
-/tmp/Rtmpbw2kkP/1q8w_A.pdb
+/tmp/RtmpeKwoQP/1cdk_A.pdb
+/tmp/RtmpeKwoQP/3agm_A.pdb
+/tmp/RtmpeKwoQP/1cmk_E.pdb
+/tmp/RtmpeKwoQP/3dnd_A.pdb
+/tmp/RtmpeKwoQP/1q8w_A.pdb
 ...   PDB has ALT records, taking A only, rm.alt=TRUE
 ..
 
 Extracting sequences
 
-pdb/seq: 1   name: /tmp/Rtmpbw2kkP/1cdk_A.pdb 
-pdb/seq: 2   name: /tmp/Rtmpbw2kkP/3agm_A.pdb 
-pdb/seq: 3   name: /tmp/Rtmpbw2kkP/1cmk_E.pdb 
-pdb/seq: 4   name: /tmp/Rtmpbw2kkP/3dnd_A.pdb 
+pdb/seq: 1   name: /tmp/RtmpeKwoQP/1cdk_A.pdb 
+pdb/seq: 2   name: /tmp/RtmpeKwoQP/3agm_A.pdb 
+pdb/seq: 3   name: /tmp/RtmpeKwoQP/1cmk_E.pdb 
+pdb/seq: 4   name: /tmp/RtmpeKwoQP/3dnd_A.pdb 
    PDB has ALT records, taking A only, rm.alt=TRUE
-pdb/seq: 5   name: /tmp/Rtmpbw2kkP/1q8w_A.pdb 
+pdb/seq: 5   name: /tmp/RtmpeKwoQP/1q8w_A.pdb 
 </div>
 <div class='input'>
 pause()
@@ -314,7 +325,7 @@ pause()
 ## Plot x-ray results
 plot(pc.xray)
 </div>
-<p><img src='pca-24.png' alt='' width='400' height='400' /></p>
+<p><img src='pca-29.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 pause()
 </div>
@@ -362,12 +373,12 @@ pause()
 ## Plot overview
 plot(pc.xray, col=annotation[, "color"])
 </div>
-<p><img src='pca-32.png' alt='' width='400' height='400' /></p>
+<p><img src='pca-37.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 ## Plot atom wise loadings
 plot.bio3d(pc.xray$au[,1], ylab="PC1 (A)")
 </div>
-<p><img src='pca-34.png' alt='' width='400' height='400' /></p>
+<p><img src='pca-39.png' alt='' width='400' height='400' /></p>
 <div class='input'>
 pause()
 </div>
@@ -384,7 +395,7 @@ unlink(tmp.dir)
 </div></div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1='>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1='>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

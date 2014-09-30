@@ -15,7 +15,7 @@ pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...)
   \item{pqr}{ logical, if TRUE the input structures are assumed to be in
   PQR format. }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires multicore package installed. }
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{nseg.scale }{ split input data into specified number of segments
     prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
   \item{\dots}{ extra arguments passed to \code{seqaln} function. }
@@ -23,7 +23,7 @@ pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...)
 \details{
   This wrapper function calls the underlying functions \code{read.pdb},
   \code{pdbseq}, \code{seqaln} and \code{read.fasta.pdb} returning a
-  list of class \code{"3dalign"} similar to that returned by
+  list of class \code{"pdbs"} similar to that returned by
   \code{read.fasta.pdb}.
 
   As these steps are often error prone it is recomended for most cases that
@@ -32,7 +32,7 @@ pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...)
   results.
 }
 \value{
-  Returns a list of class \code{"3dalign"} with the following five
+  Returns a list of class \code{"pdbs"} with the following five
   components:
   \item{xyz}{numeric matrix of aligned C-alpha coordinates.}
   \item{resno}{character matrix of aligned residue numbers.}
@@ -40,6 +40,7 @@ pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...)
   \item{chain}{character matrix of aligned chain identifiers.}
   \item{id}{character vector of PDB sequence/structure names.}
   \item{ali}{character matrix of aligned sequences.}
+  \item{call}{ the matched call. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.

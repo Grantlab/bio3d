@@ -5,13 +5,14 @@
   Read a PQR coordinate file.
 }
 \usage{
-read.pqr(file, maxlines = 50000, multi = FALSE, rm.insert = FALSE,
+read.pqr(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
          rm.alt = TRUE, verbose = TRUE)
 }
 \arguments{
   \item{file}{ the name of the PQR file to be read. }
   \item{maxlines}{ the maximum number of lines to read before giving up
-    with large files. Default is 50,000 lines. }
+    with large files. By default if will read up to the end of input on
+    the connection. }
   \item{multi}{ logical, if TRUE multiple ATOM records are read for all
     models in multi-model files. }
   \item{rm.insert}{ logical, if TRUE PDB insert records are ignored. }

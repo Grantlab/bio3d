@@ -10,15 +10,10 @@ function(a, b=NULL,
   # the single structure 'a' and the one or more structures
   # contained in 'b'
    
-  # Parallelized by multicore package -Wed Dec 12 11:15:20 EST 2012
+  # Parallelized by parallel package -Wed Dec 12 11:15:20 EST 2012
   # nseg.scale - to resolve the memory problem of using multicore
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) {
-     oops <- require(multicore)
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -31,21 +26,26 @@ function(a, b=NULL,
      }
   }
 
-  if(is.list(a)) a=a$xyz
-  if(is.list(b)) b=b$xyz
+  if(is.pdb(a) | is.pdbs(a)) a=a$xyz
+  if(is.pdb(b) | is.pdbs(b)) b=b$xyz
 
   if( is.null(a.inds) && is.null(b.inds) ) {
     a.inds <- gap.inspect(a)$f.inds
-    if(!is.null(b)) a.inds <- intersect(a.inds, gap.inspect(b)$f.inds)
+
+    if(!is.null(b)) { 
+      a.inds <- intersect(a.inds, gap.inspect(b)$f.inds)
+    }
     b.inds <- a.inds
-    warning(paste("No indices provided, using the",
+    if(length(a.inds) != length(a)) {
+      warning(paste("No indices provided, using the",
                   length(a.inds)/3,  "non NA positions\n"))
+    }
   }
 
   if (is.null(a.inds)) a.inds <- gap.inspect(a)$f.inds
   if (is.null(b.inds) && !is.null(b)) b.inds <- gap.inspect(b)$f.inds
 
-  if(is.vector(a)) {
+  if(is.vector(a) || nrow(a)==1) {
     if(is.null(b)) {
       stop("No comparison can be made, input was only a single vector 'a'")
     }
@@ -79,7 +79,6 @@ function(a, b=NULL,
                mc.preschedule=TRUE)
          }
          s <- unlist(s)
-         readChildren()
       } else {               # Single version
          s <- rep(NA, ni)
          for(i in 1:ni) {
@@ -108,7 +107,7 @@ function(a, b=NULL,
     }
   }
 
-  if(is.vector(b)) {
+  if(is.vector(b) || nrow(b)==1) {
     if (length(a.inds) != length(b.inds)) {
       stop("dimension mismatch:
               a[a.inds] and b[b.inds] should be the same length")
@@ -126,7 +125,7 @@ function(a, b=NULL,
     return(round(irmsd,3))
 
   } else {
-    if(is.matrix(b)) {
+    if(is.matrix(b) && (nrow(b) > 1)) {
       if (length(a.inds) != length(b.inds)) {
           stop("dimension mismatch:
                   a[a.inds] and b[,b.inds] should be the same length")
@@ -156,7 +155,6 @@ function(a, b=NULL,
                mc.preschedule=TRUE)
          }
          irmsd <- unlist(irmsd)
-         readChildren()
       } else {                  # Single version
          irmsd <- sqrt( apply((apply(b[,b.inds],1,"-",a[a.inds])^2),2,sum)/(length(a[a.inds])/3) )
       }

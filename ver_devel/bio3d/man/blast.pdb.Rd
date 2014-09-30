@@ -1,19 +1,29 @@
 \name{blast.pdb}
 \alias{blast.pdb}
+\alias{get.blast}
 \title{ NCBI BLAST Sequence Search }
 \description{
   Run NCBI blastp, on a given sequence, against the PDB, NR and
   swissprot sequence databases.
 }
 \usage{
-blast.pdb(seq, database = "pdb")
+blast.pdb(seq, database = "pdb", time.out = NULL, chain.single=TRUE)
+get.blast(urlget, time.out = NULL, chain.single=TRUE)
 }
 \arguments{
   \item{seq}{ a single element or multi-element character vector
-    containing the query sequence. }
+    containing the query sequence. Alternatively a \sQuote{fasta}
+    object from function \code{get.seq} can be provided. }
   \item{database}{ a single element character vector specifying the
     database against which to search. Current options are \sQuote{pdb},
     \sQuote{nr} and \sQuote{swissprot}. }
+  \item{time.out}{ integer specifying the number of seconds to wait for
+    the blast reply before a time out occurs. }
+  \item{urlget}{ the URL to retrieve BLAST results; Usually it is returned
+    by blast.pdb if time.out is set and met. }
+  \item{chain.single}{ logical, if TRUE double NCBI character PDB database  
+    chain identifiers are simplified to lowercase '1WF4_GG' > '1WF4_g'. If 
+    FALSE no conversion to match RCSB PDB files is performed. }   
 }
 \details{
   This function employs direct HTTP-encoded requests to the NCBI web
@@ -42,7 +52,7 @@ blast.pdb(seq, database = "pdb")
 
 }
 \value{
-  A list with seven components:
+  A list with eight components:
   \item{bitscore }{ a numeric vector containing the raw score for each
     alignment. }
   \item{evalue }{ a numeric vector containing the E-value of the raw
@@ -56,7 +66,9 @@ blast.pdb(seq, database = "pdb")
   \item{hit.tbl }{ a character matrix summarizing BLAST results for each
     reported hit, see below. }
   \item{raw }{ a data frame summarizing BLAST results, note multiple
-    hits may appear in the same row. }  
+    hits may appear in the same row. }
+  \item{url }{ a single element character vector with the NCBI result URL and 
+    RID code. This can be passed to the get.blast function. }  
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
@@ -72,13 +84,19 @@ blast.pdb(seq, database = "pdb")
 \note{
   Online access is required to query NCBI blast services.
 }
-\seealso{ \code{\link{seqaln}} }
+\seealso{ \code{\link{plot.blast}}, \code{\link{hmmer}}, \code{\link{seqaln}} }
 \examples{
+\dontrun{
 pdb <- read.pdb("1bg2")
 blast <- blast.pdb( pdbseq(pdb) )
 
 head(blast$hit.tbl)
 top.hits <- plot(blast)
 head(top.hits$hits)
+
+## Use 'get.blast()' to retrieve results at a later time.
+x <- get.blast(blast$url)
+head(x$hit.tbl)
+}
 }
 \keyword{ utilities }

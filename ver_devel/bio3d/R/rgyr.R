@@ -6,14 +6,9 @@
 #      "B-factor" column
 rgyr <- function(xyz, mass=NULL, ncore=1, nseg.scale=1)
 {
-   # Parallelized by multicore package
+   # Parallelized by parallel package
+   ncore <- setup.ncore(ncore)
    if(ncore > 1) {
-     oops <- require(multicore)
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -66,7 +61,6 @@ rgyr <- function(xyz, mass=NULL, ncore=1, nseg.scale=1)
          iend = if(i<nDataSeg) i*lenSeg else nrow(xyz)
          rog <- c(rog, mclapply(istart:iend, function(j)
                      rg(xyz[j,], mass)))
-         readChildren()
       }
       rog <- unlist(rog)
    } else {

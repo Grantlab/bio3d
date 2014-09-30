@@ -1,9 +1,11 @@
 "read.fasta" <-
 function(file, rm.dup=TRUE, to.upper=FALSE, to.dash=TRUE) {
-
+  ## Log the call
+  cl <- match.call()
+  
   ## Version   0.3 ... Thu Apr 26 19:17:09 PDT 2007
   ##                    uses scan instead of read.table
-    
+  
   raw.fa <- scan(file, what=character(0), sep="\n", quiet = TRUE)
   ind <- grep(">", raw.fa) ## seq id lines
   if(length(ind) == 0) {
@@ -26,7 +28,7 @@ function(file, rm.dup=TRUE, to.upper=FALSE, to.dash=TRUE) {
   }
 
   ##seq.format( cbind(ind.s[1], ind.e[1], seq.dim[1]) )
-  store.fa <- t(apply(cbind(ind.s, ind.e, seq.dim), 1, seq.format))
+  store.fa <- t(matrix(apply(cbind(ind.s, ind.e, seq.dim), 1, seq.format), ncol=length(ind)))
   rownames(store.fa) <- gsub("^>| .*", "",raw.fa[ind], perl=TRUE)
   
 ##  if (to.dash) { store.fa <- gsub("[/.]","-", store.fa ) }
@@ -42,7 +44,7 @@ function(file, rm.dup=TRUE, to.upper=FALSE, to.dash=TRUE) {
     }
   }
   
-  output <- list(id=rownames(store.fa), ali=store.fa)
+  output <- list(id=rownames(store.fa), ali=store.fa, call=cl)
   class(output) <- "fasta"
   return(output)
 }

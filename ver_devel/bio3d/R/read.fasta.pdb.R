@@ -1,14 +1,12 @@
 "read.fasta.pdb" <-
-function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
+function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...) {
 
-  # Parallelized by multicore package (Fri Apr 26 17:58:26 EDT 2013)
+  ## Log the call
+  cl <- match.call()
+  
+  # Parallelized by parallel package (Fri Apr 26 17:58:26 EDT 2013)
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) {
-     oops <- require(multicore)
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -64,7 +62,9 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
       
     } else {
       pdb <- read.pdb( files[i], verbose=FALSE, ... )
-      pdbseq  <- aa321(pdb$atom[pdb$calpha,"resid"])
+      ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
+      ##pdbseq  <- aa321(pdb$atom[pdb$calpha,"resid"])
+      pdbseq  <- aa321(pdb$atom$resid[ca.inds$atom])
       aliseq  <- toupper(aln$ali[i,])
       tomatch <- gsub("X","[A-Z]",aliseq[!is.gap(aliseq)])
       
@@ -78,11 +78,11 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
       ##-- Numeric vec, 'nseq', for mapping aln to pdb
       nseq <- rep(NA,length(aliseq))
       ali.res.ind <- which(!is.gap(aliseq))
-      if( length(ali.res.ind) > length(pdbseq) ) {
+      if( length(ali.res.ind) > (length(pdbseq) - start.num + 1) ) {
         warning(paste(aln$id[i],
          ": sequence has more residues than PDB has Calpha's"))
-        ali.res.ind <- ali.res.ind[1:length(pdbseq)] ## exclude extra
-        tomatch <-  tomatch[1:length(pdbseq)]        ## terminal residues
+        ali.res.ind <- ali.res.ind[1:(length(pdbseq)-start.num+1)] ## exclude extra
+        tomatch <-  tomatch[1:(length(pdbseq)-start.num+1)]        ## terminal residues
       }
       nseq[ali.res.ind] = start.num:((start.num - 1) + length(tomatch))
 
@@ -96,7 +96,8 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
         if(sum(mismatch=="X") != n.miss) { ## ignore masked X res        
           details <- rbind(aliseq, !match,
                            pdbseq[nseq],
-                           pdb$atom[pdb$calpha,"resno"][nseq])
+                           pdb$atom$resno[ca.inds$atom][nseq])
+                           ##pdb$atom[pdb$calpha,"resno"][nseq])
           rownames(details) = c("aliseq","match","pdbseq","pdbnum")
           msg <- paste("ERROR:", aln$id[i],
                        "alignment and pdb sequences do not match")
@@ -107,7 +108,8 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
       }
       
       ##-- Store nseq justified PDB data
-      ca.ali <- pdb$atom[pdb$calpha,][nseq,]
+      ##ca.ali <- pdb$atom[pdb$calpha,][nseq,]
+      ca.ali <- pdb$atom[ca.inds$atom,][nseq,]
       coords <- rbind(coords, as.numeric( t(ca.ali[,c("x","y","z")]) ))
       res.nu <- rbind(res.nu, ca.ali[, "resno"])
       res.bf <- rbind(res.bf, as.numeric( ca.ali[,"b"] ))
@@ -118,7 +120,6 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
     } # end else
     return (list(coords=coords, res.nu=res.nu, res.bf=res.bf, res.ch=res.ch, res.id=res.id))
   } ) # end mylapply
-  if(ncore > 1) readChildren()
   retval <- do.call(rbind, retval)
   coords <- matrix(unlist(retval[, "coords"]), nrow=length(aln$id), byrow=TRUE)
   res.nu <- matrix(unlist(retval[, "res.nu"]), nrow=length(aln$id), byrow=TRUE)
@@ -133,10 +134,19 @@ function(aln, prefix="", pdbext="", ncore=1, nseg.scale=1, ...) {
   rownames(res.bf) <- aln$id
   rownames(res.ch) <- aln$id
   rownames(res.id) <- aln$id
-  
+ 
+  if(fix.ali) {
+     i1 <- which(is.na(res.nu))
+     i2 <- which(is.gap(aln$ali))
+     if(!identical(i1, i2)) {
+        aln$ali[i1] <- aln$ali[i2[1]]
+        warning("$ali component is modified to match $resno")
+     }
+  }
   out<-list(xyz=coords, resno=res.nu, b=res.bf,
-            chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id)
-  class(out)="3dalign"
+            chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id,
+            call = cl)
+  class(out)=c("pdbs","fasta")
   return(out)
 }
 

@@ -13,14 +13,9 @@ function(aln,
   ##  Itterative core deffination for lsq fit optimisation  
   ##  (core positions are those with low ellipsoid volume)
 
-  # Parallelized by multicore package (Fri Apr 26 16:49:38 EDT 2013)
+  # Parallelized by parallel package (Fri Apr 26 16:49:38 EDT 2013)
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) {
-     oops <- require(multicore)
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -52,7 +47,7 @@ function(aln,
     pdbnum = c(1:(length(xyz.inds)/3))
     
   } else {
-    if( (is.list(aln)) && (class(aln)=="3dalign") ) {
+    if( (is.list(aln)) && (class(aln)=="pdbs") ) {
       xyz=aln$xyz
     
       xyz.inds <- which(apply(is.na( xyz ), 2, sum)==0)
@@ -112,7 +107,6 @@ function(aln,
           error.ellipsoid( xyz.moved[, new.xyz.inds[atom2xyz(j)]] )$vol
        })
        volume <- unlist(e)
-       readChildren() 
     } else {
        while(j<=length( new.xyz.inds )) {
          e<-error.ellipsoid(xyz.moved[,new.xyz.inds[i:j]])
@@ -200,7 +194,7 @@ function(aln,
   ordered.vol<-c(rev(blank),NA); blank[na.omit(len)]=na.omit(len)
   ordered.len<-c(rev(blank),NA)
   
-  # sample cores (volume < 1 A^3 & < 0.5 A^3)
+  # sample cores (volume < 1 A^3, < 0.5 A^3, or the final core)
   if( min(ordered.vol,na.rm=TRUE) < 1) {
     a.atom <- sort(ordered.res[which(ordered.vol<1)[1]:length(ordered.vol)])
     a.xyz  <- sort(as.vector(ordered.xyz[which(ordered.vol<1)[1]:
@@ -221,15 +215,20 @@ function(aln,
     b.xyz   <- NULL
     b.resno <- NULL
   }
+  tmp.inds <- which(!is.na(ordered.vol))
+  c.atom <- sort(ordered.res[tmp.inds[length(tmp.inds)]:length(ordered.vol)])
+  c.xyz  <- atom2xyz(c.atom)
+  c.resno <- as.numeric(pdbnum[c.atom])
   
-  output <- list(volume   = ordered.vol,
-                 length   = ordered.len,
-                 resno    = pdbnum[ ordered.res ],
-                 atom     = ordered.res,
-                 xyz      = ordered.xyz,
-                 c1A.atom  = a.atom,
-                 c1A.xyz   = a.xyz,
-                 c1A.resno = a.resno,
+  output <- list(volume      = ordered.vol,
+                 length      = ordered.len,
+                 resno       = pdbnum[ ordered.res ],
+                 step.inds   = ordered.res,
+                 atom        = c.atom,
+                 xyz         = c.xyz,
+                 c1A.atom    = a.atom,
+                 c1A.xyz     = a.xyz,
+                 c1A.resno   = a.resno,
                  c0.5A.atom  = b.atom,
                  c0.5A.xyz   = b.xyz,                 
                  c0.5A.resno = b.resno )

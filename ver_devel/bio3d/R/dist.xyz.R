@@ -11,14 +11,9 @@ function(a, b=NULL, all.pairs=TRUE, ncore=1, nseg.scale=1){
   ## if 'a' is a vector and 'b' is NULL
   ## make 'a' a 3 col matrix and call 'dist' 
 
-  # Parallelized by multicore package (Fri Jul  5 19:58:32 EDT 2013)
+  # Parallelized by parallel package (Fri Jul  5 19:58:32 EDT 2013)
+  ncore <- setup.ncore(ncore)
   if(ncore > 1) {
-     oops <- require(multicore) 
-     if(!oops)
-        stop("Please install the multicore package from CRAN")
-
-     options(cores = ncore)
-
      # Issue of serialization problem
      # Maximal number of cells of a double-precision matrix
      # that each core can serialize: (2^31-1-61)/8
@@ -78,7 +73,6 @@ function(a, b=NULL, all.pairs=TRUE, ncore=1, nseg.scale=1){
           d.l <- c(d.l, mclapply(istart:iend, function(j) {
              sqrt(colSums((a[j,] - t(b))^2)) } ) )
        }   
-       readChildren()
        d <- do.call(rbind, d.l)
     } else {
        d <- matrix(0, nrow=nrow(a), ncol=nrow(b))

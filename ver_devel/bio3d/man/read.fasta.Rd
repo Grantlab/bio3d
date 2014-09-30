@@ -20,6 +20,7 @@ read.fasta(file, rm.dup = TRUE, to.upper = FALSE, to.dash=TRUE)
   \item{ali }{ an alignment character matrix with a row per sequence and
     a column per equivalent aminoacid/nucleotide. }
   \item{ids }{ sequence names as identifers.}
+  \item{call}{ the matched call. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
@@ -34,17 +35,19 @@ read.fasta(file, rm.dup = TRUE, to.upper = FALSE, to.dash=TRUE)
 \seealso{ \code{\link{read.fasta.pdb}} }
 \examples{
 # Read alignment
-aln<-read.fasta(system.file("examples/hivp_xray.fa",package="bio3d"))
+aln <- read.fasta(system.file("examples/hivp_xray.fa",package="bio3d"))
+
+# Print alignment overview
+aln
 
 # Sequence names/ids
-aln$id
+head( aln$id )
 
 # Alignment positions 335 to 339
-aln$ali[,33:39]
+head( aln$ali[,33:39] )
 
-# Sequence d1bg2__
-aln$ali["d2a4f_b",]
-
+# Sequence d2a4f_b
+aa123( aln$ali["d2a4f_b",] )
 
 # Write out positions 33 to 45 only
 #aln$ali=aln$ali[,30:45]

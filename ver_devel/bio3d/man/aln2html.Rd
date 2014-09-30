@@ -47,6 +47,7 @@ aln <- read.fasta(system.file("examples/hivp_xray.fa",package="bio3d"))
 ## Produce a HTML file for this alignment
 aln2html(aln, append=FALSE, file="eg.html")
 aln2html(aln, colorscheme="ent", file="eg.html")
-## View/open the file <a href='eg.html'>"eg.html"</a> in your web browser
+## View/open the file in your web browser
+#browseURL("eg.html")
 }
 \keyword{ IO }

@@ -10,6 +10,7 @@
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/highlight.css" rel="stylesheet">
 <link href="css/staticdocs.css" rel="stylesheet">
+<link href="css/theme.css" rel="stylesheet">
 
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -17,19 +18,19 @@
   </head>
 
   <body>
-    <div class="navbar">
-  <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="http://thegrantlab.org/bio3d/index.html">bio3d 2.0-1</a>
-      <div class="nav">
-        <ul class="nav">
-          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
-          <li><a href="http://thegrantlab.org/bio3d/download/download.html">Download Bio3D</a></li>
-          <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-        </ul>
-      </div>
-    </div>
+<div class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
   </div>
+  <div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li class="active"><a href="index.html"> Index</a></li>
+        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
+        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
+    </ul>
+  </div>
+</div>
 </div>
 
     <div class="container">
@@ -148,16 +149,16 @@ filled.contour(k, nlevels = 10)
 pdbs <- pdbaln( get.pdb( c( "4q21", "521p"), path=tempdir() ))
 </div>
 <div class='output'>Reading PDB files:
-/tmp/Rtmpbw2kkP/4q21.pdb
-/tmp/Rtmpbw2kkP/521p.pdb
+/tmp/RtmpeKwoQP/4q21.pdb
+/tmp/RtmpeKwoQP/521p.pdb
   HEADER    ONCOGENE PROTEIN                        25-SEP-91   4Q21               
 .  HEADER    ONCOGENE PROTEIN                        06-JUN-91   521P               
 .
 
 Extracting sequences
 
-pdb/seq: 1   name: /tmp/Rtmpbw2kkP/4q21.pdb 
-pdb/seq: 2   name: /tmp/Rtmpbw2kkP/521p.pdb 
+pdb/seq: 1   name: /tmp/RtmpeKwoQP/4q21.pdb 
+pdb/seq: 2   name: /tmp/RtmpeKwoQP/521p.pdb 
 </div>
 <div class='input'>
 # Get distance matrix
@@ -191,7 +192,7 @@ plot(c, axis.tick.space=10,
 l <- dm.xyz(pdb$xyz, grpby=pdb$atom[,"resno"], scut=3)
 </div></pre>
   </div>
-  <div class="span4">
+  <div class="span3">
     <!-- <ul>
       <li>dm</li><li>dm.xyz</li>
     </ul>
@@ -209,7 +210,7 @@ l <- dm.xyz(pdb$xyz, grpby=pdb$atom[,"resno"], scut=3)
 </div>
       
       <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://xinqyao.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=dm'>Please let me know by filling out this short online survey</a>.</p>
+      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=dm'>Please let me know by filling out this short online survey</a>.</p>
 <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
       </footer>

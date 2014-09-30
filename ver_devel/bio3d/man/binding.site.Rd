@@ -44,7 +44,7 @@ binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cut=5, hydrogens=TRUE)
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{read.pdb}}, \code{\link{atom.select}}, \code{\link{dm}} }
 \examples{
-     pdb <- read.pdb('3dnd', het2atom=TRUE)
+     pdb <- read.pdb('3dnd')
 
      # Binding site residues
      rec.inds <- atom.select(pdb, string='//A/1:350////')
