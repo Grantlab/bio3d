@@ -19,7 +19,8 @@ opts_chunk$set(dev='pdf')
 #' 
 #+ example1, results="hide", warn="hide"
 library(bio3d)
-pdb <- read.pdb("1rv7")
+pdbfile <- system.file("examples/hivp.pdb", package = "bio3d")
+pdb <- read.pdb( pdbfile )
 modes <- nma(pdb)
 cij <- dccm(modes)
 net <- cna(cij, cutoff.cij=0.3)
@@ -29,11 +30,12 @@ net <- cna(cij, cutoff.cij=0.3)
 #+ print1
 print(net)
 
-# Summary information as a table
-summary(net)$tbl
+# Summary information as a table along with residues in the 5th community
+x <- summary(net)
+attributes(x)
+x$members[5]
 
-
-#+ figure1, results="hide", fig.cap="Full all-residue network and simplified community network"
+#+ figure2, results="hide", fig.cap="Full all-residue network and simplified community network"
 # Plot both the ‘full’ all-residue network and simplified community network
 par(mfcol = c(1, 2), mar = c(0, 0, 0, 0))
 plot(net, pdb, full = TRUE)
@@ -53,8 +55,7 @@ plot(net, pdb)
 ## view.cna(net, pdb, launch = TRUE)
 
 
-#' 
-#' ![Example of **view.cna()** output](figure/output_view_cna.png)
+#' ![Example of **view.cna()** output. TO BE UPDATED](figure/output_view_cna.png)
  
 #' 
 #' One of the main advantages of correlation network analysis is that it often facilitates the interoperation of correlated motions that can be challenging to rationalize from the output of a dynamic correlation map alone (e.g. the output of the dccm() function). For example, the identified communities of highly intra-connected residues can be tied into the visualization of the raw correlation data (**Figure 4**) and cross referenced to the network visualizations presented in **Figures 2** and **3**:
@@ -80,7 +81,7 @@ attributes(net)
 #' 
 #' * **\$network**: The *full* protein structure network typically with a node per residue and connecting edges weighted by their corresponding correlation values (i.e. input cij values optionally filtered by the user defined 'cutoff.cij'). This filtered cij matrix is also returned in the output as **\$cij**, as listed below.
 #' 
-#' * **\$communities**: A community clustering object detailing the results of clustering the full $network. This is itself a list object with a number of attributes (see *attributes(net\$communities)* for details). Notable attributes include **\$communities$membership**, **$communities$modularity** and **\$communities$algorithm**. These components detail the nodes (typically residues) belonging to each community; the modularity (which represents the difference in probability of intra- and intercommunity connections for a given network division); and the clustering algorithm used respectively. 
+#' * **\$communities**: A community clustering object detailing the results of clustering the full **\$network**. This is itself a list object with a number of attributes (see *attributes(net\$communities)* for details). Notable attributes include **\$communities\$membership**, **$communities\$modularity** and **\$communities\$algorithm**. These components detail the nodes (typically residues) belonging to each community; the modularity (which represents the difference in probability of intra- and intercommunity connections for a given network division); and the clustering algorithm used respectively. 
 #' * **\$cij**: The filtered correlation matrix used to build the full $network.
 #' * **\$community.network**: A coarse-grained community network object with the number of nodes equal to the number of communities present in **\$communities** (i.e. the community clustering of the full network) and edges based on the inter-community coupling as determined by the input 'collapse.method' (by default this is the maximum coupling between the original nodes of the respective communities).
 #' * **\$community.cij**: A cij matrix obtained by applying a "collapse.method" on \$cij. The rows and columns match the number of communities in $communities. The values are based on the cij couplings of inter-communities residue. (collapse.method available are: max, mean, trimmed and median).
@@ -113,7 +114,34 @@ max(net$communities$modularity)
  
 #' 
 #' #### To do: Demonstrate the clustering progress and choice of modularity cut-point as well as showing the as.hclust() and dendPlot() functions.
- 
+#' The **community.tree()** function can be used to reconstruct the community membership vector for each clustering step. Here we plot modularity vs number of communities.
+
+#+ modularityPlot
+tree <- community.tree(net, rescale=TRUE)
+plot( tree$num.of.comms, tree$modularity ) 
+
+#'
+#' Inspect the maximum modularity value partitioning and the number of communities (k) at the point of maximum modularity
+
+max.mod.ind <- which.max(tree$modularity)
+tree$num.of.comms[ max.mod.ind ]
+
+# Membership vector at this partition point
+tree$tree[max.mod.ind,]
+
+# Should be the same as that contained in the original CNA network object
+net$communities$membership == tree$tree[max.mod.ind,]
+
+# Inspect a new membership partitioning (at k=3)
+memb.k3 <- tree$tree[ tree$num.of.comms == 3, ]
+
+# Produce a new k=3 community network
+net.3 <- network.amendment(net, memb.k3)
+plot(net.3, pdb)
+
+#view.cna(net.3, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
+
+
 #' 
 #' ### Network Generation From Molecular Dynamics Data
 #' For this example section we apply correlation network analysis to a short molecular dynamics trajectory of Human Immunodeficiency Virus aspartic protease (HIVpr). This trajectory is included with the Bio3D package and stored in CHARMM/NAMD DCD format. To reduce file size and speed up example execution, non C-alpha atoms have been previously removed and the frames superposed. Note that typically an input trajectory would require superposition with the **fit.xyz()** function prior to correlation analysis with the **dccm()** function (see the [Trajectory Analysis vignette](http://thegrantlab.org/bio3d/html/index.html) for full details).
@@ -173,8 +201,6 @@ cm <- cmap(trj, dcut = 5, scut = 0, pcut = 0.75, mask.lower = FALSE)
 net.cut <- cna(cij, cm = cm)
 
 #' 
-#' 
-#' 
 #' One could also simply multiple the correlation matrix by the contact map to zero out these long-range correlations. However, we currently prefer not to use this filtering step as we have found that this approach can remove potentially interesting correlations that might prove to be important for the types of long-range coupling we are most interested in exploring. For example, compare the plot of correlation values below to those in **Figure X**.
 #' 
 #' 
@@ -183,10 +209,6 @@ par(mfcol = c(1, 2), mar = c(0, 0, 0, 0))
 plot.dccm((cij * cm), margin.segments = net.cut$communities$membership)
 plot.dccm(cij, margin.segments = net$communities$membership)
 
-#' 
-### ![DCCM plot with annotated communities](figure/unnamed-chunk-101.png) 
-### ![DCCM plot with annotated communities](figure/unnamed-chunk-102.png) 
-#' 
 #' 
 #' #### NOTE: Need to fix potential error message if mask.lower=TRUE is used in the cmap() call.
 #' 
@@ -227,9 +249,9 @@ layout2D <- layout.cna(net, pdb, k=2)
 #' 
 #' #### Color settings and node/edge labels
 #' The **vmd.colors()** function is used by default to define node color. This can be changed to any input color vector as demonstrated below. Note that the **vmd.colors()** function outputs a vector of colors that is ordered as they are in the VMD molecular graphics program and changing the colors will likely break this correspondence.
-#' 
-#' 
-bwr.colors(20)[net$communities$membership]
+
+ 
+grp.col <- bwr.colors(20)[net$communities$membership]
 
 #' 
 #' 
@@ -242,18 +264,16 @@ colbar.full <- vmd.colors()[net$communities$membership]
 colbar.comms <- vmd.colors(max(net$communities$membership), alpha = 0.5)
 plot(net, pdb, full = TRUE, mark.groups = grp.col, mark.col = colbar.comms)
 
-#' 
-#' 
-#### ![$network colored according to communities grouping](figure/unnamed-chunk-12.png) 
-#' 
+ 
 #' 
 #' #### Network manipulation
 #' The **prune.cna()** function allows one to remove communities under a certain size or with less less than a certain number of edges to other communities prior to visualization or further analysis. For example, to remove communities composed of only 2 residues:
 #' 
-#' 
+
+
 net.pruned <- prune.cna(net, size.min = 3)
 
-#' 
+ 
 #' 
 #+ pruneNET, fig.cap="Original (left) and pruned (right) networks" 
 par(mfcol = c(1, 2), mar = c(0, 0, 0, 0))
