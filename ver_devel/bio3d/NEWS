@@ -2,12 +2,12 @@ NEWS
 ====
 
 v2.1
-Version 2.1 contains new facilities for Correlation Network Analysis (cna) and 
-Geometrically Stable Domain finding (geostas). We have also changed PDB object data 
-storage from a matrix to a data.frame format. Improved methods and functionality 
-for ensemble NMA are now also included along with extensive improvements to existing 
-code and documentation. For a fine-grained list of changes, or to report a 
-bug, please consult: 
+Version 2.1, released in Nov 2014,  contains new facilities for Correlation 
+Network Analysis (cna) and Geometrically Stable Domain finding (geostas). 
+We have also changed 'PDB object data' storage from a matrix to a data.frame 
+format. Improved methods and functionality for ensemble NMA are now also included 
+along with extensive improvements to package vignettes and function documentation. 
+For a fine-grained list of changes, or to report a bug, please consult: 
 
 * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
 * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
@@ -42,17 +42,17 @@ Major new functions include:
 * filter.dccm: Filter for Cross-correlation Matrices (Cij)
 * hclustplot: Dendrogram with Clustering Annotation
 * mustang: Structure-based Sequence Alignment with MUSTANG
-* pca.array: Principal Component Analysis of an arrary of matrices
+* pca.array: Principal Component Analysis of an array of matrices
 * plot.fasta: Plot a Multiple Sequence Alignment
 * write.pir: Write PIR Formated Sequences
 
 
 v2.0
 ----
-Version 2.0 contains over 30 new functions including enhanced Normal Mode 
-Analysis facilities as well extensive improvements to existing code and 
-documentation. For a fine-grained list of changes or to report a bug, please 
-consult: 
+Version 2.0, released in Nov 2013, contains over 30 new functions including  
+enhanced Normal Mode Analysis facilities as well extensive improvements to  
+existing code and documentation. For a fine-grained list of changes or to 
+report a bug, please consult: 
 
 * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
 * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
@@ -118,7 +118,5 @@ For more information on SemVer, please visit http://semver.org/.
 
 -----
 
-For changes pior to v1.1-6 please see the bio3d wki:
+For changes prior to v1.1-6 (Apr 2013) please see the bio3d wki:
 * [Whats new wki page](http://bio3d.pbworks.com/w/page/7824486/WhatsNew)
-
-
