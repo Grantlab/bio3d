@@ -44,7 +44,7 @@ plot(net, pdb)
 
  
 #' 
-#' Note that the above code plots both a *full* all-residue network as well as a more coarse grained community network - see **Figure 2**. In this example, and by default, the Girvan-Newman clustering method was used to map the full network into communities of highly intra-connected but loosely inter-connected nodes that were in turn used to derive the simplified network displayed in **Figure 2**. We will discus community detection in further detail below and simply highlight here that a comparison of the distribution and connectivity of communities between similar biomolecular systems (e.g. in the presence and absence of a binding partner or mutation) has the potential to highlight differences in coupled motions that may be indicative of potential allosteric pathways. This approach has previously been applied to investigate allostery in tRNA–protein complexes, kinesin motor domains, G-proteins, thrombin, and other systems (refs).
+#' Note that the above code plots both a *full* all-residue network as well as a more coarse grained community network - see **Figure 2**. In this example, and by default, the Girvan-Newman clustering method was used to map the full network into communities of highly intra-connected but loosely inter-connected nodes that were in turn used to derive the simplified network displayed in **Figure 2**. We will discuss community detection in further detail below and simply highlight here that a comparison of the distribution and connectivity of communities between similar biomolecular systems (e.g. in the presence and absence of a binding partner or mutation) has the potential to highlight differences in coupled motions that may be indicative of potential allosteric pathways. This approach has previously been applied to investigate allostery in tRNA–protein complexes, kinesin motor domains, G-proteins, thrombin, and other systems [1-4].
 #' 
 #' Another useful function for the inspection of community structure is the **view.cna()** function, which permits interactive network visualization in the VMD molecular graphics program (see **Figure 3**).
 #'   
@@ -87,7 +87,7 @@ attributes(net)
 #' * **\$community.cij**: A cij matrix obtained by applying a "collapse.method" on \$cij. The rows and columns match the number of communities in $communities. The values are based on the cij couplings of inter-communities residue. (collapse.method available are: max, mean, trimmed and median).
 #' 
 #' #### Additional network annotation
-#' Both the **\$network** and **$community.network** attributes are [igraph package network objects](http://igraph.sourceforge.net) and contain additional node (or vertex) and edge annotations that can be accessed with the **V()** and **E()** functions in the following way:
+#' Both the **\$network** and **$community.network** attributes are [igraph package network objects](http://igraph.sourceforge.net) [5] and contain additional node (or vertex) and edge annotations that can be accessed with the **V()** and **E()** functions in the following way:
 #'  
 #' 
 #+ dataLook
@@ -102,7 +102,7 @@ V(net$community.network)$name
 #' In addition to various Bio3D functions, the full set of [igraph package](http://igraph.sourceforge.net) features can be used to further analyze these network objects.
 #' 
 #' #### Additional community annotation:
-#' The **\$communities** attribute returned by the **cna()** function provides details of the community clustering procedure. This procedure aims to split the full network into highly correlated local substructures (referred to as communities) within which the network connections are dense but between which they are sparser.  A number of community detection algorithms can be used to solve the graph-partitioning problem. The default Girvan-Newman edge-betweenness approach is a divisive algorithm that is based on the use of the edge betweenness as a partitioning criterion. "Betweenness" is calculated by finding the shortest path(s) between a pair of vertexes and scoring each of the edges on this/these path(s) with the inverse value of the number of shortest paths. (So if there was only one path of the shortest length, each edge on it would score 1 and if there were 10 paths of that length, each edge would score 1/10.) This is done for every pair of vertexes. In this way each edge accumulates a "betweenness" score for the whole network. The network is separated into clusters by removing the edge with the highest "betweenness", then recalculating betweenness and repeating. The method is fully described in (Girvan and Newman, 2002 PNAS).
+#' The **\$communities** attribute returned by the **cna()** function provides details of the community clustering procedure. This procedure aims to split the full network into highly correlated local substructures (referred to as communities) within which the network connections are dense but between which they are sparser.  A number of community detection algorithms can be used to solve the graph-partitioning problem. The default Girvan-Newman edge-betweenness approach is a divisive algorithm that is based on the use of the edge betweenness as a partitioning criterion. "Betweenness" is calculated by finding the shortest path(s) between a pair of vertexes and scoring each of the edges on this/these path(s) with the inverse value of the number of shortest paths. (So if there was only one path of the shortest length, each edge on it would score 1 and if there were 10 paths of that length, each edge would score 1/10.) This is done for every pair of vertexes. In this way each edge accumulates a "betweenness" score for the whole network. The network is separated into clusters by removing the edge with the highest "betweenness", then recalculating betweenness and repeating. The method is fully described in (Girvan and Newman, 2002 PNAS) [6].
 #' 
 #' A useful quantity used to measure the quality of a given community partition is the **modularity** (detailed in **\$communities\$modularity** component of **cna()** output). The modularity represents the difference in probability of intra- and inter-community connections for a given network division. Modularity values fall in the range from 0 to 1, with higher values indicating higher quality of the community structure. The optimum community structures obtained for typical correlation networks fall in the 0.4 to 0.7 range.
 #' 
@@ -164,7 +164,8 @@ pdb <- read.pdb(pdbfile)
 #' 
 #+ fitTraj
 inds <- atom.select(pdb, resno = c(24:27, 85:90), elety = "CA")
-trj <- fit.xyz(fixed = pdb$xyz, mobile = dcd, fixed.inds = inds$xyz, mobile.inds = inds$xyz)
+trj <- fit.xyz(fixed = pdb$xyz, mobile = dcd,
+               fixed.inds = inds$xyz, mobile.inds = inds$xyz)
 
  
 #' 
@@ -193,7 +194,7 @@ plot(net, pdb)
 #' 
 #' 
 #' #### Using a contact map filter:
-#' In the original Luthy-Shulten and co-workers approach to correlation network analysis [1] edges were only included between “in contact” nodes. Contacting nodes were defined as those having any heavy atom within 5.0 Å for greater than 75% of the simulation. The weight of these contact edges was then taken from the cross-correlation data. This approach effectively ignores long range correlations between residues that are not in physical contact for the majority of the trajectory. To replicate this approach one can simply define a contact map with the **cmap()** function and provide this to the **cna()** function along with the required cross-correlation matrix, e.g.: 
+#' In the original Luthy-Shulten and co-workers approach to correlation network analysis [2] edges were only included between “in contact” nodes. Contacting nodes were defined as those having any heavy atom within 4.5 Å for greater than 75% of the simulation. The weight of these contact edges was then taken from the cross-correlation data. This approach effectively ignores long range correlations between residues that are not in physical contact for the majority of the trajectory. To replicate this approach one can simply define a contact map with the **cmap()** function and provide this to the **cna()** function along with the required cross-correlation matrix, e.g.: 
 #' 
 #' 
 #+ cmfliter
@@ -212,7 +213,7 @@ plot.dccm(cij, margin.segments = net$communities$membership)
 #' 
 #' #### NOTE: Need to fix potential error message if mask.lower=TRUE is used in the cmap() call.
 #' 
-#' It is also possible to use a consensus of contact map and dynamical correlation matrices from replica simulations with the functions **cmap.filter()** and **dccm.mean()** - see their respective help pages for details.
+#' It is also possible to use a consensus of contact map and dynamical correlation matrices from replica simulations with the functions **cmap.filter()** and **filter.dccm()** - see their respective help pages for details.
 #' 
 #' 
 #' ### Network visualization
@@ -234,18 +235,6 @@ layout2D <- layout.cna(net, pdb, k=2)
 ## xy <- plot.cna(net)
 ## identify.cna(xy, cna = net)
 
-
-#' 
-#' You can also make 3D plots using the \underline{rgl} environment with the function **plot3d.cna()**. An example is shown in Figure 8.
-#' 
-#' 
-#+ plotFalse, eval=FALSE
-## plot3d.cna(net, pdb)
-
-#' 
-#' 
-#' ![Interactive 3D community network plot](figure/plot3D.png) 
-#' 
 #' 
 #' #### Color settings and node/edge labels
 #' The **vmd.colors()** function is used by default to define node color. This can be changed to any input color vector as demonstrated below. Note that the **vmd.colors()** function outputs a vector of colors that is ordered as they are in the VMD molecular graphics program and changing the colors will likely break this correspondence.
@@ -257,7 +246,13 @@ grp.col <- bwr.colors(20)[net$communities$membership]
 #' 
 #' 
 #' Useful options in **plot.cna()** to be aware of include the optional flags 'mark.groups' and 'mark.col', which let you to draw and color areas around groups of residues corresponding to the community clustering or any other residue partitioning of interest:
-#' 
+#'
+
+grp.col <- list()
+for (i in 1:max(net$communities$membership)) {
+  grp.tmp <- which(net$communities$membership == i)
+  grp.col[[i]] <- grp.tmp
+}
 
 #+ plotNET, fig.cap="$network colored according to communities grouping" 
 colbar.full <- vmd.colors()[net$communities$membership]
@@ -295,5 +290,16 @@ plot.cna(net.pruned)
 #' ### References
 #' 
 #' [1] Sethi A, Eargle J, Black AA, Luthey-Schulten Z. Proc Natl Acad Sci U S A.2009, 106(16):6620-5.
-#' 
+#'
+#' [2] Scarabelli G and Grant BJ, PLoS Comput Biol 9, e1003329.
+#'
+#' [3] Yao X, Grant BJ, Biophys J 105, L08–L10.
+#'
+#' [4] Gasper PM, Fuglestad B, Komives EA, Markwick PR, McCammon JA. Proc Natl Acad Sci U S A. 2012 Dec 26;109(52):21216-22.
+#'
+#' [5] Gábor Csárdi, Tamás Nepusz. InterJournal Complex Systems, 1695, 2006.
+#'
+#' [6] Girvan M, Newman ME. Proc Natl Acad Sci U S A. 2002 Jun 11;99(12):7821-6.
+#'
 #' #### TO BE FINISHED
+
