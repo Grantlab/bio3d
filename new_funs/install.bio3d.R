@@ -1,8 +1,11 @@
 
 install.bio3d <- function(version="2.1-0", dependencies=TRUE, cran.repos="http://cran.at.r-project.org/") {
   
-  ## ToDo: implement checking for muscle and dssp.
-  ##       implement an update option.
+  ## ToDo:
+  ##      - Test robustness of checking for muscle and dssp on windows.
+  ##      - Add windows specific binary package installation (currently its source only) 
+  ##      - Implement an update option that checks on version installed vs that requested.
+  ##         Currently this function will install the version requested over whatever is already there with no checking.
 
   ##- Check and install missing R package dependences if necessary
   if(dependencies){
@@ -23,7 +26,8 @@ install.bio3d <- function(version="2.1-0", dependencies=TRUE, cran.repos="http:/
     packages.rtn <- sapply(packages, get.package, cran.repos)
   }
 
-  ##- Download and install Bio3D from package website
+
+  ##- Download and install Bio3D from the package website
   online.file <- paste0("http://thegrantlab.org/bio3d/phocadownload/Bio3D_version",
     substr(version,1,1),".x/bio3d_",version,".tar.gz")
   local.file <- basename(online.file)
@@ -31,24 +35,38 @@ install.bio3d <- function(version="2.1-0", dependencies=TRUE, cran.repos="http:/
   install.packages(local.file, repos=NULL, type="source")
   unlink(local.file)
 
-  ##- Check for external working DSSP and muscle
-  if(FALSE){ ##-- Not yet sure of the best way to do this robustly ...
-    os1 <- .Platform$OS.type
-    #if (os1 == "windows") {
-    #  status.muscle <- shell(shQuote("muscle -version"), ignore.stderr=TRUE, ignore.stdout=TRUE)
-    #  status.dssp <- shell(shQuote("dssp --version"), ignore.stderr=TRUE, ignore.stdout=TRUE)
-    #} else {
-    status.muscle <- system("muscle -version", ignore.stderr = TRUE, ignore.stdout = TRUE)
-    status.dssp <- system("dssp --version",ignore.stderr = TRUE, ignore.stdout = TRUE)
-    #}
-    if (!(status.muscle %in% c(0, 1)))
-        warning(paste0("Checking for external program failed\n", 
-          "  make sure 'muscle' is in your search path, see: http://thegrantlab.org/bio3d/tutorials/installing-bio3d") )
 
-    if (!(status.dssp %in% c(0, 1)))
-        warning(paste0("Checking for external program failed\n", 
-          "  make sure 'dssp' is in your search path, see http://thegrantlab.org/bio3d/tutorials/installing-bio3d"))
+  ##- Check on missing utility programs (dssp and muscle)
+  utilities <- c("dssp", "muscle")#, "stride", "mustang", "makeup")
+  missing.util <- nchar(Sys.which(utilities)) == 0
+  if( any(missing.util) ) {
+    warning(paste0("  Checking for external utility programs failed\n",
+      "    Please make sure '", paste(names(missing.util[missing.util]), collapse="', '"),
+      "' is in your search path, see:\n",
+      "    http://thegrantlab.org/bio3d/tutorials/installing-bio3d#utilities"))
+  } else {
+    cat("External utility programs found\n")
   }
+
+  ##- Alternate check approach - not yet sure of the best way to do this robustly
+  #  os1 <- .Platform$OS.type
+  #  if (os1 == "windows") {
+  #    status.muscle <- shell(shQuote("muscle -version"), ignore.stderr=TRUE, ignore.stdout=TRUE)
+  #    status.dssp <- shell(shQuote("dssp --version"), ignore.stderr=TRUE, ignore.stdout=TRUE)
+  #  } else {
+  #    status.muscle <- system("muscle -version", ignore.stderr = TRUE, ignore.stdout = TRUE)
+  #    status.dssp <- system("dssp --version",ignore.stderr = TRUE, ignore.stdout = TRUE)
+  #  }
+  #  if (!(status.muscle %in% c(0, 1)))
+  #      warning(paste0("Checking for external program failed\n", 
+  #        "  make sure 'muscle' is in your search path, see: http://thegrantlab.org/bio3d/tutorials/installing-bio3d#utilities") )
+  #
+  #  if (!(status.dssp %in% c(0, 1)))
+  #      warning(paste0("Checking for external program failed\n", 
+  #        "  make sure 'dssp' is in your search path, see http://thegrantlab.org/bio3d/tutorials/installing-bio3d#utilities"))
+  #}
+
+
 }
 
 
