@@ -45,7 +45,12 @@ else
    range="$start..$end"
 fi
 
-git log --no-merges --grep="$key:" --diff-filter=A --name-only --date-order --pretty=format:"## %ai | %an | %s" $range ../bio3d/R > log
+git log --no-merges --grep="$key:" --diff-filter=A --name-only --date-order \
+   --pretty=format:"## %ai | %an | %s" $range ../bio3d/R > log
 
-awk 'BEGIN{new=0} /^##/{new=1; split($0, a, "|"); msg=a[length(a)]; sub(/\s*NEW:\s*/, "", msg)} NF==0{new=0} new && !/^##/{split($0, f, "/"); printf "* %s%c%s\n", f[length(f)], ":", msg}' log > NEWS
+awk "BEGIN{new=0; print \"$end\\n======\\n\"}
+     /^##/{new=1; split(\$0, a, \"|\"); msg=a[length(a)]; sub(/\s*NEW:\s*/, \"\", msg)}
+     NF==0{new=0}
+     new && !/^##/{split(\$0, f, \"/\"); printf \"* %s%c%s\\n\", f[length(f)], \":\", msg}" \
+ log > NEWS
 
