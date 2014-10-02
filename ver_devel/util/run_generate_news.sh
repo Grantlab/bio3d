@@ -12,7 +12,7 @@
 ##      To make this script work, we have to follow          ## 
 ##      the conventions we made before for commit message,   ## 
 ##      i.e. four type of commits, "NEW", "ENHANCEMENT",     ##
-##      "BUGFIX", and "OTHER", and two empty lines between   ##
+##      "BUGFIX", and "OTHER", and one empty lines between   ##
 ##      message subject and body.                            ##  
 ##      See https://bitbucket.org/Grantlab/bio3d/wiki        ##
 ##      for more details.                                    ##
@@ -20,7 +20,7 @@
 ###############################################################
 
 start=
-end=
+end=HEAD
 key=NEW
 
 if test $# -gt 0; then 
@@ -37,5 +37,15 @@ if test $# -gt 0; then
    shift
 fi
 
-git log --no-merges --grep="$key:" --stat --pretty=format:"%an: %s%n%b" $start..$end > NEWS
+if test -z $start; then
+   range=""
+   echo Available versions:
+   git tag
+else
+   range="$start..$end"
+fi
+
+git log --no-merges --grep="$key:" --diff-filter=A --name-only --date-order --pretty=format:"## %ai | %an | %s" $range ../bio3d/R > log
+
+awk 'BEGIN{new=0} /^##/{new=1; split($0, a, "|"); msg=a[length(a)]; sub(/\s*NEW:\s*/, "", msg)} NF==0{new=0} new && !/^##/{split($0, f, "/"); printf "* %s%c%s\n", f[length(f)], ":", msg}' log > NEWS
 
