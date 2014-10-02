@@ -42,8 +42,11 @@ plot(net, pdb, full = TRUE)
 plot(net, pdb)
 
 
- 
-#' 
+#'
+#' #### Tip:
+#' \textit{The raw correlation matrix obtained from the normal modes analysis very likely has a non-zero value for each element. We need to remove some of those values to avoid building a network with $N^2-N$ edges, which would be intractable for further analysis. As a rule of thumb we suggest to build sparse networks, so networks where the number of edges is roughly of the same order (or one higher order) of the node number. The cutoff.cij argument in the \textbf{cna()} function specifies the lower boundary for the correlation values (default is 0.4), all the values lower than it will not form an edge in the network.}
+#'
+#'
 #' Note that the above code plots both a *full* all-residue network as well as a more coarse grained community network - see **Figure 2**. In this example, and by default, the Girvan-Newman clustering method was used to map the full network into communities of highly intra-connected but loosely inter-connected nodes that were in turn used to derive the simplified network displayed in **Figure 2**. We will discuss community detection in further detail below and simply highlight here that a comparison of the distribution and connectivity of communities between similar biomolecular systems (e.g. in the presence and absence of a binding partner or mutation) has the potential to highlight differences in coupled motions that may be indicative of potential allosteric pathways. This approach has previously been applied to investigate allostery in tRNA–protein complexes, kinesin motor domains, G-proteins, thrombin, and other systems [1-4].
 #' 
 #' Another useful function for the inspection of community structure is the **view.cna()** function, which permits interactive network visualization in the VMD molecular graphics program (see **Figure 3**).
@@ -177,7 +180,10 @@ cij <- dccm(trj)
 net <- cna(cij)
 plot(net, pdb)
 
- 
+
+#' #### Tip:
+#' \textit{ Due to the intrinsic noise of the correlations calculated on atomic fluctuations, we suggest to run multiple replica simulations and then to build the network using a consensus correlation matrix. For examples, please read the following works: Scarabelli G and Grant BJ, Kinesin-5 allosteric inhibitors uncouple the dynamics of nucleotide, microtubule and neck-linker binding sites, Biophys J. in press and Yao X and Grant BJ XXXX submitted.}
+#'
 #' 
 #' Note that the **dccm()** function can be slow to run on very large trajectories. In such cases you may want to use multiple CPU cores for the calculation by setting the 'ncore' option to an appropriate value for your computer - see *help(dccm)* for details.
 #' 
@@ -194,7 +200,7 @@ plot(net, pdb)
 #' 
 #' 
 #' #### Using a contact map filter:
-#' In the original Luthy-Shulten and co-workers approach to correlation network analysis [2] edges were only included between “in contact” nodes. Contacting nodes were defined as those having any heavy atom within 4.5 Å for greater than 75% of the simulation. The weight of these contact edges was then taken from the cross-correlation data. This approach effectively ignores long range correlations between residues that are not in physical contact for the majority of the trajectory. To replicate this approach one can simply define a contact map with the **cmap()** function and provide this to the **cna()** function along with the required cross-correlation matrix, e.g.: 
+#' In the original Luthy-Shulten and co-workers approach to correlation network analysis [1] edges were only included between “in contact” nodes. Contacting nodes were defined as those having any heavy atom within 4.5 Å for greater than 75% of the simulation. The weight of these contact edges was then taken from the cross-correlation data. This approach effectively ignores long range correlations between residues that are not in physical contact for the majority of the trajectory. To replicate this approach one can simply define a contact map with the **cmap()** function and provide this to the **cna()** function along with the required cross-correlation matrix, e.g.: 
 #' 
 #' 
 #+ cmfliter
@@ -278,7 +284,34 @@ plot.cna(net.pruned)
 #' 
 #' Applying this command to our network example, you can see how the communities composed by less than 3 residues are deleted from the graph.
 #' 
+#'
+#' #### Network property: node centrality.
+#' The node centrality describes the distribution of the edges in the network. In protein-networks, identifying the nodes with many edges (hubs) as well as the segments with a high number of connections allows to get insights on the internal coordination of the protein regions. This measure can also be employed to characterize the protein sections showing conformational-dependent differences in the protein dynamics.
+#'
+#' There are different measures of node centrality, from the simplest one that counts the number of edges of each node (node degree) to the more complex such as the betweeneess centrality. The betweenness centrality of a node is defined as the number of unique-shortest paths crossing that node and has the advantage of considering in the calculation the whole network topology and not only the closest neighbors as the node degree.
+#'
+#' The igraph package provides different functions to perform such calculations as **degree**, **betweenness** and **closeness**. Below we report the output of the betweenness centrality on the HIVP example case:
+
+node.betweenness <- betweenness(net$network)
+
+#+ centrality, fig.cap="Betweenness centrality" 
+plot(node.betweenness, xlab="Residue No", ylab="Centrality", type="h")
+
+#' Interestingly, in **FigureXX**, the regions with the highest centrality values are the two flaps of the HIVP strucuture, whose dynamics and interaction is fundamental for the protein enzymatic function.
 #' 
+
+#' #### Network property: suboptimal paths calculation.
+#' The residue-based network is a useful tool to describe the allosteric signaling in the protein structure. Identifying the residues involved in the connection of distal protein regions allows the description of the internal structural dynamics, inferring the biological role of specific residues and suggesting sites for point-mutations.
+#'
+#' To run this analysis, we take advantage of the WISP program [7]. It is easy to interface the protein nertwork built using Bio3d with WISP to perform a search of X shortest paths between two selected nodes. WISP requires in input the adjacency matrix of the network, which can be saved in a file using the following command:
+
+# write.table(net$cij, quote=FALSE, row.names=FALSE,
+#             col.names=FALSE, file="adj.matrix.txt")
+
+#' To view an example of the output obtained and how key residues involved in the allosteric signalling were identified, please read the following work: Scarabelli G and Grant BJ, Kinesin-5 allosteric inhibitors uncouple the dynamics of nucleotide, microtubule and neck-linker binding sites, Biophys J. in press. and Yao X and Grant BJ XXXX submitted.
+
+
+
 #' ### Summary
 #' In this vignette we have confined ourselves to introducing relatively simple correlation network generation protocols. However, the individual Bio3D functions for network analysis permit extensive customization of the network generation procedure. For example, one can chose different node representations (including all heavy atoms, residue center of mass, Calpha atoms for each residue, or collections of user defined atoms), different correlation methods (including Pearson and mutual information), different community detection methods (including Girvan-Newman betweenness, Random walk, and Greedy modularity optimization approaches), as well as customized network layouts and result visualizations. We encourage users to explore these options and provide feedback as appropriate.
 #' 
@@ -300,6 +333,8 @@ plot.cna(net.pruned)
 #' [5] Gábor Csárdi, Tamás Nepusz. InterJournal Complex Systems, 1695, 2006.
 #'
 #' [6] Girvan M, Newman ME. Proc Natl Acad Sci U S A. 2002 Jun 11;99(12):7821-6.
+#'
+#' [7] Van Wart AT, Durrant J, Votapka L, Amaro RE. J. Chem. Theory Comput., 2014, 10 (2), pp 511–517.
 #'
 #' #### TO BE FINISHED
 
