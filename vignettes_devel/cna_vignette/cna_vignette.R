@@ -219,15 +219,16 @@ plot(net, pdb)
 #+ viewDCCM, eval=FALSE
 # View the correlations in pymol
 view.dccm(cij, pdb, launch = TRUE)
-
-#+ viewNetMD, eval=FALSE
-# View the structure mapped network
-view.cna(net)
-#' 
 #' 
 #' 
 #' ![ Example of **view.dccm()** output for an MD trajectory ](figure/dccm_hivpr.png)
-#' ![ The **view.cna()** output for the HIVpr example MD trajectory](figure/HIVP_comms_colors.png)
+#'
+#+ viewNetMD, eval=FALSE
+# View the structure mapped network
+view.cna(net)
+
+#'
+#' ![ The **view.cna()** output for the HIVpr example MD trajectory](figure/output_view_cna.png)
 
 #' 
 #' 
