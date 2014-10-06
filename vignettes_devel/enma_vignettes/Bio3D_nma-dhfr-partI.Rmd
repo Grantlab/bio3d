@@ -1,7 +1,7 @@
 ---
 title: "Ensemble NMA of *E.coli* DHFR structures"
 author: "Lars Skjaerven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant"
-date: "September 27, 2014"
+date: "October 1, 2014"
 output:
   pdf_document:
     fig_caption: yes
@@ -23,8 +23,6 @@ bibliography: Bio3D_nma-dhfr-partI.bib
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 ---
 
-This document provides **Supporting Information S2** for *Integrating protein structural dynamics and evolutionary analysis with Bio3D*. The vignette is generated with **Bio3D version `r packageVersion("bio3d")`**. 
-
 # Background {.unnumbered}
 Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data [@grant06].
 
@@ -32,6 +30,9 @@ Normal mode analysis (NMA) is one of the major simulation techniques used to pro
 
 ## Requirements {.unnumbered}
 Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. In addition to Bio3D the _MUSCLE_ multiple sequence alignment program (available from the [muscle home page](http://www.drive5.com/muscle/) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
+
+## About this document {.unnumbered}
+This vignette was generated using **Bio3D version `r packageVersion("bio3d")`**.
 
 # Part I: Ensemble NMA of *E.coli* DHFR structures
 In this vignette we perform *ensemble NMA* on the complete
@@ -384,7 +385,7 @@ pc.md <- pca(trj, fit=FALSE)
 mktrj(pc.md, pc=1, chain=gs.md$grps)
 ```
 
-![Visualization of domain assignment using function **geostas()** for x-ray ensemble (left), ensemble NMA (middle), and MD trajectory (right).](figures/geostas-domains.png)
+![Visualization of domain assignment using function **geostas()** on the first five normal modes of the entire ensemble of 82 DHFR structures.](figures/geostas-domains.png)
 
 
 ## Measures for modes comparison
