@@ -24,6 +24,6 @@
 \examples{
    setup.ncore(NULL)
    setup.ncore(1)
-   setup.ncore(2)
+#   setup.ncore(2)
 }
 \keyword{ utilities }
