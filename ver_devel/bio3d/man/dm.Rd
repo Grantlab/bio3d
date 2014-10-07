@@ -69,6 +69,8 @@ pdb <- read.pdb( "4q21" )
 k <- dm(pdb,selection="calpha")
 filled.contour(k, nlevels = 10)
 
+## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
+if(check.utility("muscle")) {
 
 ##--- DDM: Difference Distance Matrix
 # Downlaod and align two PDB files
@@ -89,6 +91,7 @@ plot(c, axis.tick.space=10,
      resnum.2=pdbs$resno[2,],
      grid.col="black",
      xlab="Residue No. (4q21)", ylab="Residue No. (521p)")
+}
 
 \dontrun{
 ##-- Residue-wise distance matrix based on the

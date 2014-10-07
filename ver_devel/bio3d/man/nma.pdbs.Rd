@@ -90,6 +90,10 @@
   \code{\link{pdbaln}}, \code{\link{read.fasta.pdb}}.
 }
 \examples{
+
+## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
+if(check.utility("muscle")) {
+
 ## Fetch PDB files and split to chain A only PDB files
 ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
 raw.files <- get.pdb(ids, path = tempdir())
@@ -122,5 +126,6 @@ heatmap(1-modes$rmsip)
 bc <- bhattacharyya(modes)
 heatmap(1-bc)
 
+}
 }
 \keyword{ analysis }

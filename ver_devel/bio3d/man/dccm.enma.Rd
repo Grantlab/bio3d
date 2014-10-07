@@ -41,6 +41,10 @@
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{nma}}, \code{\link{dccm.nma}}, \code{\link{plot.dccm}} }
 \examples{
+
+## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
+if(check.utility("muscle")) {
+
 ## Fetch PDB files and split to chain A only PDB files
 ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
 raw.files <- get.pdb(ids, path = tempdir())
@@ -57,6 +61,8 @@ cij <- dccm(modes)
 
 ## Plot correlations for first structure
 plot.dccm(cij$all.dccm[,,1])
+
+}
 
 }
 \keyword{ analysis }

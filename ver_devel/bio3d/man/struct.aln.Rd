@@ -62,6 +62,9 @@ struct.aln(fixed, mobile, fixed.inds=NULL, mobile.inds=NULL,
   \code{\link{seqaln}}, \code{\link{pdbaln}} }
 \examples{
 
+## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
+if(check.utility("muscle")) {
+
      ## Stucture of PKA:
      a <- read.pdb("1cmk")
 
@@ -74,6 +77,7 @@ struct.aln(fixed, mobile, fixed.inds=NULL, mobile.inds=NULL,
      ## Should be the same as aln$rmsd (when using aln$a.inds and aln$b.inds)
      rmsd(a$xyz, b$xyz, aln$a.inds$xyz, aln$b.inds$xyz, fit=TRUE)
 
+}
 \dontrun{
      ## Align two subunits of GroEL (open and closed states)
      a <- read.pdb("1sx4")
