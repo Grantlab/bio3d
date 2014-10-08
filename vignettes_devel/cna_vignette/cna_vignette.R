@@ -1,19 +1,31 @@
 #'---
 #'title: "Protein Structure Networks with Bio3D"
 #'author: "Xin-Qiu Yao, Guido Scarabelli, Lars Skjaerven & Barry J. Grant"
-#'date: "Fri Oct  3 14:01:51 2014"
-#'toc: true
-#'toc_depth: 3
+#'affiliation: University of Michigan, Ann Arbor, USA
+#'date: "October 8, 2014"
 #'output:
 #'  pdf_document:
-#'    fig_caption: true
-#'###    fig_height: 5
-#'###    fig_width: 5
+#'    fig_caption: yes
+#'    fig_height: 5
+#'    fig_width: 5
+#'##    highlight: default
+#'##    keep_tex: yes
+#'##    number_sections: no
+#'###    toc: true
+#'###    toc_depth: 3
+#'  md_document:
+#'    fig_height: 5
+#'    fig_width: 5
+#'    variant: markdown_phpextra
+#'documentclass: article
+#'fontsize: 11pt
+#'geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
 #'---
 
 
+
 #+ setup, include=FALSE
-#opts_chunk$set(dev='pdf')
+knitr::opts_chunk$set(fig.path='figures/', dev='png', dev.args=list(type="cairo"), dpi=120)
 
 #+ preamble, include=FALSE, eval=FALSE
 library(rmarkdown)
@@ -73,7 +85,7 @@ x$members[5]
 #+ figure2, results="hide", fig.cap="Full all-residue network and simplified community network"
 # Plot both the ‘full’ all-residue network and simplified community network
 par(mfcol = c(1, 2), mar = c(0, 0, 0, 0))
-plot(net, pdb, full = TRUE)
+plot(net, pdb, full = TRUE, vertex.label.cex=0.7)
 plot(net, pdb)
 
 
@@ -100,7 +112,7 @@ view.cna(net, pdb, launch = TRUE)
 #' 
 #+ figNMAcij, results="hide", fig.cap="Example dynamical cross-correlation matrix (DCCM) plot with community annotation. Note that unique colors are assigned to communities (that are not necessary consecutive in sequence) and that these correspond to those annotated communities in all previous network Figures and those used by VMD in Figure 3."
 # Plot the correlation matrix with community annotation, see Figure 4. 
-plot.dccm(cij, margin.segments = net$communities$membership)
+plot.dccm(cij, margin.segments = net$communities$membership, main="")
 
 
 #'
@@ -154,7 +166,7 @@ max(net$communities$modularity)
 #+ modularityPlot, fig.cap="Network modularity upon removing edges during the betweenness clustering procedure for community annotation. Note the peak in modularity at k=8"
 # See Figure 5.
 tree <- community.tree(net, rescale=TRUE)
-plot( tree$num.of.comms, tree$modularity ) 
+plot( tree$num.of.comms, tree$modularity, xlab="Communities", ylab="Modularity") 
 
 #'
 #' Note that there are many points near the maximum modularity value in Figure 5. In such cases a number of alternative community partitions may be equally high scoring and therefore worth inspecting more closely. For example we will often favor a partition point with a smaller number of overall communities but slightly lower modularity score based on some prior knowledge of the system (for example results from a related system).
@@ -226,7 +238,7 @@ trj <- fit.xyz(fixed = pdb$xyz, mobile = dcd,
 #' Once we have the superposed trajectory frames we can asses the extent to which the atomic fluctuations of individual residues (in this very short example simulation) are correlated with one another and build a network from this data:
 #' 
 #' 
-#+ example2MD, fig.cap="Example network analysis of MD data"
+#+ example2MD, results="hide", fig.cap="Example network analysis of MD data"
 # See Figure 9.
 cij <- dccm(trj)
 net <- cna(cij)
@@ -261,7 +273,7 @@ view.cna(net)
 #+ modularityPlot2, fig.cap="Network modularity for example HIVpr MD derived network. Note the two peaks in modularity for this short trajectory."
 # See Figure 12.
 tree <- community.tree(net, rescale=TRUE)
-plot( tree$num.of.comms, tree$modularity ) 
+plot( tree$num.of.comms, tree$modularity, xlab="Communities", ylab="Modularity" ) 
 
 
 #+ new-fun
@@ -279,13 +291,14 @@ mod.select <- function(x, thres=0.1) {
    network.amendment(x, remodel$tree[ind, ])
 }
 
-#+ modularity_selection, fig.cap="Alternate community partition "
+#+ modularity_selection, results="hide", fig.cap="Alternate community partition "
 nnet = mod.select(net)
 nnet
+# See Figure 13.
 plot(nnet, pdb)
 
 #+ viewK3MD, eval=FALSE
-# See Figure 13.
+# See Figure 14.
 view.cna(nnet, pdb, launch=TRUE)
 
 #'
@@ -302,13 +315,14 @@ cm <- cmap(trj, dcut = 4.5, scut = 0, pcut = 0.75, mask.lower = FALSE)
 net.cut <- cna(cij, cm = cm)
 
 #' 
-#' One could also simply multiple the correlation matrix by the contact map to zero out these long-range correlations. However, we currently prefer not to use this filtering step as we have found that this approach can remove potentially interesting correlations that might prove to be important for the types of long-range coupling we are most interested in exploring. For example, compare the plot of correlation values below to those in **Figures 4 & 13**.
+#' One could also simply multiple the correlation matrix by the contact map to zero out these long-range correlations. However, we currently prefer not to use this filtering step as we have found that this approach can remove potentially interesting correlations that might prove to be important for the types of long-range coupling we are most interested in exploring. For example, compare the plot of correlation values below in **Figure 15** to those in **Figure 4**.
 #' 
 #' 
-#+ plotDCCM, results="hide", fig.cap="Contact map filtered DCCM plot with annotated communities"
-par(mfcol = c(1, 2), mar = c(0, 0, 0, 0))
-plot.dccm((cij * cm), margin.segments = net.cut$communities$membership)
-plot.dccm(cij, margin.segments = net$communities$membership)
+#+ plotDCCM, results="hide", fig.cap="Contact map filtered DCCM plot (compare to Figure 4)"
+# See Figure 15.
+plot.dccm((cij * cm), main="")
+## Plot non-filtered DCCM
+##plot.dccm(cij, margin.segments = net$communities$membership)
 
 #'  
 #' It is also possible to use a consensus of contact map and dynamical correlation matrices from replica simulations with the functions **cmap.filter()** and **filter.dccm()** - see their respective help pages for further details.
@@ -329,11 +343,12 @@ layout2D <- layout.cna(net, pdb, k=2)
 #' ### Identifying nodes/communities and their composite residues
 #' The **identify.cna()** function allows one to click on the nodes of a **plot.cna()** network plot to identify the residues within a give set of nodes. This can also be a useful first step to determine the placement of text labels for a plot -see *help(identify.cna)* for details.
 #' 
-#' 
-## plotCNA,  eval=FALSE
-## # Click with the right mouse to label, left button to exit.
-## xy <- plot.cna(net)
-## identify.cna(xy, cna = net)
+
+
+#+ plotCNA,  eval=FALSE
+# Click with the right mouse to label, left button to exit.
+xy <- plot.cna(net)
+identify.cna(xy, cna = net)
 
 #' 
 #' ### Color settings and node/edge labels
@@ -348,16 +363,17 @@ grp.col <- bwr.colors(20)[net$communities$membership]
 #' Useful options in **plot.cna()** to be aware of include the optional flags 'mark.groups' and 'mark.col', which let one draw and color areas around groups of residues corresponding to the community clustering or any other residue partitioning of interest (see **Figure 14**):
 #'
 
-# See Figure 14.
+
 grp.col <- list()
 for (i in 1:max(net$communities$membership)) {
   grp.tmp <- which(net$communities$membership == i)
   grp.col[[i]] <- grp.tmp
 }
 
-#+ plotNET, fig.cap="Example of *mark.groups* and *mark.col* options to the **plot.cna()** function. In this case adding convex hulls that are colored according to communities." 
+#+ plotNET, results="hide", fig.cap="Example of *mark.groups* and *mark.col* options to the **plot.cna()** function. In this case adding convex hulls that are colored according to communities." 
 colbar.full <- vmd.colors()[net$communities$membership]
 colbar.comms <- vmd.colors(max(net$communities$membership), alpha = 0.5)
+# See Figure 16.
 plot(net, pdb, full = TRUE, mark.groups = grp.col, mark.col = colbar.comms)
 
  
@@ -372,7 +388,7 @@ net.pruned <- prune.cna(net, size.min = 3)
  
 #' 
 #+ pruneNET, results="hide", fig.cap="Original (left) and pruned (right) networks" 
-# See Figure 15.
+# See Figure 17.
 par(mfcol = c(1, 2), mar = c(0, 0, 0, 0))
 plot.cna(net)
 plot.cna(net.pruned)
@@ -391,17 +407,17 @@ plot.cna(net.pruned)
 node.betweenness <- betweenness(net$network)
 
 #+ centrality, fig.cap="Betweenness centrality"
-# See Figure 16. 
+# See Figure 18. 
 plot(node.betweenness, xlab="Residue No", ylab="Centrality", type="h")
 
-#' Interestingly, in **Figure 16**, the regions with the highest centrality values are the two flaps of the HIVP structure, whose dynamics and interaction are likely important of substrate processing.
+#' Interestingly, in **Figure 16**, the regions with the highest centrality values are the two flaps of the HIVP structure, whose dynamics and interactions are likely important of substrate processing.
 #' 
 #'
 #' #### Suboptimal paths calculation.
 #' Identifying residues potentially involved in the dynamic coupling of distal protein regions can be facilitated by calculating possible linking paths through the correlation network objects. To run such an analysis, we can use the WISP program [7]. It is easy to interface the protein network built using Bio3D with WISP to perform a search for the shortest paths between two selected network nodes. WISP requires an input adjacency matrix of the network, which can be saved in a file using the following command:
 
 #+ forWISIP, eval=FALSE
-write.table(net$cij, quote=FALSE, row.names=FALSE, col.names=FALSE, file="adj.matrix.txt")
+write.table(net$cij, quote=FALSE, row.names=FALSE, col.names=FALSE, file="adj.txt")
 
 #' To view an example of the output obtained and how key residues involved in the allosteric signaling were identified, please read the following work: Scarabelli and Grant, (2014). Kinesin-5 allosteric inhibitors uncouple the dynamics of nucleotide, microtubule and neck-linker binding sites, Biophys J. in press and Yao and Grant, (2014). Characterizing nucleotide dependent allostery in G-Proteins with molecular dynamics and normal mode analysis. submitted.
 
