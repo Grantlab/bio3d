@@ -7,6 +7,8 @@
 #'output:
 #'  pdf_document:
 #'    fig_caption: true
+#'###    fig_height: 5
+#'###    fig_width: 5
 #'---
 
 
@@ -17,14 +19,31 @@
 library(rmarkdown)
 render("cna_vignette.R", "pdf_document", clean=FALSE)
 
-#' ## Overview
-#' The Bio3D package (version 2.1 and above) contains functionality for the creation and analysis of protein structure networks. This vignette will introduce this functionality by building and analyzing networks obtained from atomic correlation data derived from normal mode analysis (NMA) and molecular dynamics (MD) simulation (**Figure 1**). Note that Bio3D contains extensive functionality for both NMA and MD analysis. An introduction to each of these areas is detailed in separate [NMA](http://thegrantlab.org/bio3d/tutorials/normal-mode-analysis) and [MD](http://thegrantlab.org/bio3d/tutorials/trajectory-analysis) vignettes available online from http://thegrantlab.org/bio3d/. 
+#' ## Background:
+#' Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data.
+#'
+#' The Bio3D package (version 2.1 and above) contains functionality for the creation and analysis of protein structure networks. This vignette will introduce this functionality by building and analyzing networks obtained from atomic correlation data derived from normal mode analysis (NMA) and molecular dynamics (MD) simulation (**Figure 1**)[^2]. Note that Bio3D contains extensive functionality for both NMA and MD analysis. An introduction to each of these areas is detailed in separate [NMA](http://thegrantlab.org/bio3d/tutorials/normal-mode-analysis) and [MD](http://thegrantlab.org/bio3d/tutorials/trajectory-analysis) vignettes. 
+
+#'
+#' [^1]: The latest version of the package, full documentation and further vignettes (including detailed installation instructions) can be obtained from the main Bio3D website: [http://thegrantlab.org/bio3d/](http://thegrantlab.org/bio3d/)
+#'
+#' [^2]: This document contains executable code that generates all figures contained within this document. See help(vignette) within R for full details.
+
 #' 
-#' ![**Overview of a typical Bio3D network analysis protocol with key functions detailed in blue**. Normal mode and/or molecular dynamics input first undergoes **correlation analysis** (with the functions **dccm()** or **lmi()**). The output from these functions is typically a matrix of residue-by-residue cross-correlations. **Correlation network analysis** can then be performed (with the **cna()** function) to generate a correlation network with residues as nodes that are linked by weighted edges that are proportional to their degree of correlated motion. The **cna()** function also performs a **community clustering analysis** to identify _communities_ of highly correlated residues. The full residue network and coarse-grained community network can be visualized and analyzed further. This methodology can provide valuable insight not readily available from the measures of correlation alone.](figure/cna_fig1-v2.png)
+#' ![**Overview of a typical Bio3D network analysis protocol with key functions detailed in blue**. Normal mode and/or molecular dynamics input first undergoes **correlation analysis** (with the functions **dccm()** or **lmi()**). The output from these functions is typically a matrix of residue-by-residue cross-correlations. **Correlation network analysis** can then be performed (with the **cna()** function) to generate a correlation network with residues as nodes that are linked by weighted edges that are proportional to their degree of correlated motion. The **cna()** function also performs a **community clustering analysis** to identify _communities_ of highly correlated residues. The full residue network and coarse-grained community network can be visualized and analyzed further. This methodology can provide valuable insight not readily available from the measures of correlation alone.](figures/cna_fig1.png)
+#' 
+
+#'
+#' #### Requirements:
+#' Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. Note that this vignette also makes use of the [IGRAPH](http://igraph.org/) R package, which can be installed with the command
+
+#+ install, include=TRUE, eval=FALSE
+install.packages("igraph")
+
+
 #' 
 #' 
-#' 
-#' ## Basic network generation and visualization
+#' ## Part I: Basic network generation and visualization
 #' In this section we will first focus on correlation network analysis derived from NMA, and in subsequent sections MD.
 #' 
 #' ### Network generation from normal mode analysis data
@@ -73,7 +92,7 @@ plot(net, pdb)
 # View the network in VMD (see Figure 3)
 view.cna(net, pdb, launch = TRUE)
 
-#' ![Example of **view.cna()** output. For this figure we have set the VMD display style to 'Tube' and color method to 'Color by Chain'. This allows one to see corresponding regions of structure colored by community along with the community protein structure network](figure/fig3-view_cna.png)
+#' ![Example of **view.cna()** output. For this figure we have set the VMD display style to 'Tube' and color method to 'Color by Chain'. This allows one to see corresponding regions of structure colored by community along with the community protein structure network](figures/cna_fig3.png)
  
 #' 
 #' One of the main advantages of correlation network analysis is that it often facilitates the interpretation of correlated motions that can be challenging to rationalize from the output of a dynamic correlation map alone (e.g. the output of the **dccm()** function). For example, the identified communities of highly intra-connected residues can be tied into the visualization of the correlation data (**Figure 4**) and cross referenced to the network visualizations presented in **Figures 2** and **3**. In this example the colored marginal segments of **Figure 4** math the identified communities in **Figures 2** and **3**:
@@ -161,10 +180,11 @@ h <- as.hclust(net$communities)
 memb.k3 <- tree$tree[ tree$num.of.comms == 3, ]
 hclustplot(h, colors=vmd.colors()[memb.k3])
 
+#+ membK3
 # Inspect a new membership partitioning (at k=3)
 memb.k3 <- tree$tree[ tree$num.of.comms == 3, ]
 
-#+ net3, fig.cap="Example of forcing a k=3 community network"
+#+ net3, results="hide", fig.cap="Example of forcing a k=3 community network"
 # Produce a new k=3 community network (Figure 7)
 net.3 <- network.amendment(net, memb.k3)
 plot(net.3, pdb)
@@ -173,7 +193,7 @@ plot(net.3, pdb)
 # View the network in VMD (see Figure 8)
 view.cna(net.3, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
 
-#' ![Example of **view.cna()** output for modified k=3 community network. Within VMD we have set display style to 'Tube' and color to 'Color by Chain' as well as removing community spheres by deleting graphical objects.](figure/fig7-k3_net.png)
+#' ![Example of **view.cna()** output for modified k=3 community network. Within VMD we have set display style to 'Tube' and color to 'Color by Chain' as well as removing community spheres by deleting graphical objects.](figures/cna_fig7.png)
 
 
 #' 
@@ -225,14 +245,51 @@ plot(net, pdb)
 view.dccm(cij, pdb, launch = TRUE)
 #' 
 #' 
-#' ![ Example of **view.dccm()** output for an MD trajectory ](figure/dccm_hivpr.png)
+#' ![ Example of **view.dccm()** output for an MD trajectory ](figures/cna_fig10.png)
 #'
 #+ viewNetMD, eval=FALSE
 # View the structure mapped network (see Figure 11).
 view.cna(net)
 
 #'
-#' ![ The **view.cna()** output for the HIVpr example MD trajectory](figure/output_view_cna.png)
+#' ![ The **view.cna()** output for the HIVpr example MD trajectory](figures/cna_fig11.png)
+
+
+#'
+#' As noted above, maximization of modularity sometimes creates unexpected community partitions splitting visually obvious domains into many small community 'islands'. In such cases we look into partitions with modularity close to the maximal value but with an overall smaller number of communities (see above).
+
+#+ modularityPlot2, fig.cap="Network modularity for example HIVpr MD derived network. Note the two peaks in modularity for this short trajectory."
+# See Figure 12.
+tree <- community.tree(net, rescale=TRUE)
+plot( tree$num.of.comms, tree$modularity ) 
+
+
+#+ new-fun
+# Example function using community.tree() and network.amendment()
+mod.select <- function(x, thres=0.1) {
+   remodel <- community.tree(x, rescale = TRUE)
+   n.max = length(unique(x$communities$membership))
+   ind.max = which(remodel$num.of.comms == n.max)
+   v = remodel$modularity[length(remodel$modularity):ind.max]
+   v = rev(diff(v))
+   fa = which(v>=thres)[1] - 1
+   ncomm = ifelse(is.na(fa), min(remodel$num.of.comms), n.max - fa)
+
+   ind <- which(remodel$num.of.comms == ncomm)
+   network.amendment(x, remodel$tree[ind, ])
+}
+
+#+ modularity_selection, fig.cap="Alternate community partition "
+nnet = mod.select(net)
+nnet
+plot(nnet, pdb)
+
+#+ viewK3MD, eval=FALSE
+# See Figure 13.
+view.cna(nnet, pdb, launch=TRUE)
+
+#'
+#' ![ The **view.cna()** output for the HIVpr example MD trajectory after modularity inspection](figures/cna_fig13.png)
 
 #' 
 #' 
@@ -257,7 +314,7 @@ plot.dccm(cij, margin.segments = net$communities$membership)
 #' It is also possible to use a consensus of contact map and dynamical correlation matrices from replica simulations with the functions **cmap.filter()** and **filter.dccm()** - see their respective help pages for further details.
 #' 
 #' 
-#' ## Customized network visualization
+#' ## Part II: Customized network visualization
 #' We have already introduced the plot.cna() and view.cna() functions in earlier sections. Here we focus on methods for customizing network layouts, colors, labels, nodes and edges for visualization. 
 #'
 #' The **layout.cna()** function can be used to determine the _geometric center_ of protein residues and communities and thus provide 3D and 2D network and community graph layouts that most closely match the protein systems 3D coords. 
