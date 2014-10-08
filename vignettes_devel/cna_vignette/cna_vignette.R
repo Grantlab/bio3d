@@ -410,8 +410,14 @@ node.betweenness <- betweenness(net$network)
 # See Figure 18. 
 plot(node.betweenness, xlab="Residue No", ylab="Centrality", type="h")
 
-#' Interestingly, in **Figure 16**, the regions with the highest centrality values are the two flaps of the HIVP structure, whose dynamics and interactions are likely important of substrate processing.
-#' 
+#' Interestingly, in extended trajectories of this system the regions with the highest centrality values are the two flaps of the HIVpr structure, whose dynamics and interactions are likely important of substrate processing. To examine this for your own system you could map these values (or any other metric of interest) to the B-factor column of a PDB file for viewing in VMD or other molecular graphics software that can color by this column: 
+#'
+
+#+ dummy, eval=FALSE
+# Output a PDB file with normalized betweenness mapped to B-factor 
+write.pdb(pdb, b=normalize.vector(node.betweenness), file="tmp.pdb")
+
+ 
 #'
 #' #### Suboptimal paths calculation.
 #' Identifying residues potentially involved in the dynamic coupling of distal protein regions can be facilitated by calculating possible linking paths through the correlation network objects. To run such an analysis, we can use the WISP program [7]. It is easy to interface the protein network built using Bio3D with WISP to perform a search for the shortest paths between two selected network nodes. WISP requires an input adjacency matrix of the network, which can be saved in a file using the following command:
