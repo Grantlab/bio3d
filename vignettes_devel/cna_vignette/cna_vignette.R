@@ -261,7 +261,7 @@ view.dccm(cij, pdb, launch = TRUE)
 #'
 #+ viewNetMD, eval=FALSE
 # View the structure mapped network (see Figure 11).
-view.cna(net)
+view.cna(net, pdb)
 
 #'
 #' ![ The **view.cna()** output for the HIVpr example MD trajectory](figures/cna_fig11.png)
