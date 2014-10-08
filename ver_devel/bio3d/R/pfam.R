@@ -12,7 +12,7 @@
   if(verbose)
     cat("Fetching accession from", url, "\n")
   
-  if(!url.exists(url)) {
+  if(!RCurl::url.exists(url)) {
     cat(url, "\n")
     stop("Url does not exist")
   }
@@ -25,7 +25,7 @@
   if(verbose)
     cat("Fetching alignment from", url, "\n")
 
-  if(!url.exists(url)) {
+  if(!RCurl::url.exists(url)) {
     cat(url, "\n")
     stop("Url does not exist")
   }

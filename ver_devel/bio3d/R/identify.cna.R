@@ -12,10 +12,10 @@ identify.cna <- function(x, labels=NULL, cna=NULL, ...){
   ## d <- identify.cna(x, labels=summary(net)$members)
  
 
-  oops <- require(igraph)
-  if (!oops) {
-    stop("igraph package missing: Please install, see: ?install.packages")
-  }
+#  oops <- require(igraph)
+#  if (!oops) {
+#    stop("igraph package missing: Please install, see: ?install.packages")
+#  }
 
   if(dim(x)[2] != 2){
     stop("'x' object must be a Nx2 numeric matrix")

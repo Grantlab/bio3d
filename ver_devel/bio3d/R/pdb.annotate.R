@@ -85,15 +85,15 @@
                     followlocation = TRUE
                     )
   
-  curl <- postForm(url, pdbids=ids.string, customReportColumns=query1,
+  curl <- RCurl::postForm(url, pdbids=ids.string, customReportColumns=query1,
                    ssa='n', primaryOnly=1,
                    style = "POST",
                    .opts = curl.opts,
-                   .contentEncodeFun=curlPercentEncode, .checkParams=TRUE )
+                   .contentEncodeFun=RCurl::curlPercentEncode, .checkParams=TRUE )
 
   ## parse XML
-  xml <- xmlParse(curl)
-  data <- xmlToDataFrame(getNodeSet(xml, "/dataset/record"), stringsAsFactors=FALSE)
+  xml <- XML::xmlParse(curl)
+  data <- XML::xmlToDataFrame(XML::getNodeSet(xml, "/dataset/record"), stringsAsFactors=FALSE)
   
   if(nrow(data)==0)
     stop("Retrieving data from the PDB failed")

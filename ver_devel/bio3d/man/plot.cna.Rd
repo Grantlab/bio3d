@@ -71,6 +71,8 @@
   \code{\link[igraph:igraph.plotting]{igraph.plotting}} }
 \examples{
 
+require(igraph)
+
 ##-- Build a CNA object
 pdb <- read.pdb("4Q21")
 modes <- nma(pdb)

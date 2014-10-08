@@ -30,10 +30,10 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
   ##   
 
   ## Check for presence of igraph package
-  oops <- require(igraph)
-  if (!oops) {
-     stop("igraph package missing: Please install, see: ?install.packages")
-  }
+#  oops <- require(igraph)
+#  if (!oops) {
+#     stop("igraph package missing: Please install, see: ?install.packages")
+#  }
 
 #  if(color.edge) {
 #     oops <- require(classInt)

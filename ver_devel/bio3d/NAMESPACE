@@ -1,1 +1,4 @@
-exportPattern("^[[:alpha:]]+")
+#exportPattern("^[[:alpha:]]+")
+exportPattern("^[^\\.]")
+importFrom(parallel, mclapply, mcparallel, mccollect)
+import(igraph, grid)

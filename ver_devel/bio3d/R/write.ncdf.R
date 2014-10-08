@@ -19,21 +19,21 @@ function(x, trjfile="R.ncdf", cell=NULL){
   natom <- ncol(x)/3
 
   ## Define dimensions
-  frame <- dim.def.ncdf(name="frame", units="", vals=c(1:nframe),
+  frame <- ncdf::dim.def.ncdf(name="frame", units="", vals=c(1:nframe),
                         unlim=TRUE, create_dimvar=FALSE)
 
-  spatial <- dim.def.ncdf(name="spatial", units="", vals=1:3, #c(1:3),#"xyz",
+  spatial <- ncdf::dim.def.ncdf(name="spatial", units="", vals=1:3, #c(1:3),#"xyz",
                           unlim=FALSE, create_dimvar=TRUE)
 
-  atom <- dim.def.ncdf(name="atom", units="", vals=c(1:natom),
+  atom <- ncdf::dim.def.ncdf(name="atom", units="", vals=c(1:natom),
                        unlim=FALSE, create_dimvar=FALSE)
 
   if(!is.null(cell)) {
-     label <- dim.def.ncdf(name="label", units="", vals=1:5, 
+     label <- ncdf::dim.def.ncdf(name="label", units="", vals=1:5, 
              unlim=FALSE, create_dimvar=FALSE)
-     cell_spatial <- dim.def.ncdf(name="cell_spatial", units="", 
+     cell_spatial <- ncdf::dim.def.ncdf(name="cell_spatial", units="", 
             vals=1:3, unlim=FALSE, create_dimvar=TRUE)
-     cell_angular <- dim.def.ncdf(name="cell_angular", units="", 
+     cell_angular <- ncdf::dim.def.ncdf(name="cell_angular", units="", 
             vals=1:3, unlim=FALSE, create_dimvar=TRUE)
   }
      
@@ -49,14 +49,14 @@ function(x, trjfile="R.ncdf", cell=NULL){
 ##                        unlim=FALSE, create_dimvar=TRUE)
 
   ## Define variables
-  time <- var.def.ncdf(name="time", units="picosecond", dim=frame,
+  time <- ncdf::var.def.ncdf(name="time", units="picosecond", dim=frame,
                        missval=1e+30, prec="single") #"single" float
-  coor <- var.def.ncdf(name="coordinates", units="angstrom", missval=1e+30,
+  coor <- ncdf::var.def.ncdf(name="coordinates", units="angstrom", missval=1e+30,
                        dim=list(spatial,atom,frame), prec="single")#"single" float
   if(!is.null(cell)) {
-    cell_lengths <- var.def.ncdf(name="cell_lengths", units="angstrom", 
+    cell_lengths <- ncdf::var.def.ncdf(name="cell_lengths", units="angstrom", 
                  missval=1e+30, dim=list(cell_spatial, frame), prec="double")
-    cell_angles <- var.def.ncdf(name="cell_angles", units="degree",
+    cell_angles <- ncdf::var.def.ncdf(name="cell_angles", units="degree",
                  missval=1e+30, dim=list(cell_angular, frame), prec="double")
   }
 ##  cell.len <- var.def.ncdf(name="cell_lengths", units="angstrom", missval=1e+30,
@@ -66,27 +66,27 @@ function(x, trjfile="R.ncdf", cell=NULL){
   
   ## Create the file
   if(!is.null(cell)) {
-     ncw <- create.ncdf( trjfile, list(time, coor, cell_lengths, cell_angles))
+     ncw <- ncdf::create.ncdf( trjfile, list(time, coor, cell_lengths, cell_angles))
   } else {
-     ncw <- create.ncdf( trjfile, list(time, coor))#, cell.len, cell.ang) )
+     ncw <- ncdf::create.ncdf( trjfile, list(time, coor))#, cell.len, cell.ang) )
   }
 
   ## Write data to file
   if(is.null(rownames(x)))
-     put.var.ncdf(ncw, time, c(1:nframe), start=1, count=nframe)
+     ncdf::put.var.ncdf(ncw, time, c(1:nframe), start=1, count=nframe)
   else
-     put.var.ncdf(ncw, time, as.numeric(rownames(x)), start=1, count=nframe)
-  put.var.ncdf( ncw, coor, t(x), start=c(1,1,1), count=c(3,natom,nframe))
+     ncdf::put.var.ncdf(ncw, time, as.numeric(rownames(x)), start=1, count=nframe)
+  ncdf::put.var.ncdf( ncw, coor, t(x), start=c(1,1,1), count=c(3,natom,nframe))
   if(!is.null(cell)) {
-     put.var.ncdf( ncw, cell_lengths, t(cell[,1:3]), start=c(1,1), count=c(3,nframe))
-     put.var.ncdf( ncw, cell_angles, t(cell[,4:6]), start=c(1,1), count=c(3,nframe))
+     ncdf::put.var.ncdf( ncw, cell_lengths, t(cell[,1:3]), start=c(1,1), count=c(3,nframe))
+     ncdf::put.var.ncdf( ncw, cell_angles, t(cell[,4:6]), start=c(1,1), count=c(3,nframe))
   }
 
   ## Define Required Attributes
-  att.put.ncdf(ncw, varid=0, attname="Conventions", attval="AMBER")
-  att.put.ncdf(ncw, varid=0, attname="ConventionVersion", attval="1.0")
-  att.put.ncdf(ncw, varid=0, attname="program",attval="bio3d")
-  att.put.ncdf(ncw, varid=0, attname="programVersion", attval="1.2")
-  null <- close.ncdf(ncw)
+  ncdf::att.put.ncdf(ncw, varid=0, attname="Conventions", attval="AMBER")
+  ncdf::att.put.ncdf(ncw, varid=0, attname="ConventionVersion", attval="1.0")
+  ncdf::att.put.ncdf(ncw, varid=0, attname="program",attval="bio3d")
+  ncdf::att.put.ncdf(ncw, varid=0, attname="programVersion", attval="1.2")
+  null <- ncdf::close.ncdf(ncw)
 }
 

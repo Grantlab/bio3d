@@ -222,7 +222,7 @@
   
   ## shared memory to follow progress bar
   if(ncore>1)
-    iipb <<- big.matrix(1, length(pdbs$id), init=NA)
+    iipb <<- bigmemory::big.matrix(1, length(pdbs$id), init=NA)
 
   
   ## call .calcAlnModes for each structure in 'pdbs'

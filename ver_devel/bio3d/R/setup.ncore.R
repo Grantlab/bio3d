@@ -7,15 +7,6 @@ setup.ncore <- function(ncore, bigmem = FALSE) {
        else
           stop("Multicore is NOT supported in Windows (Set ncore = 1 or NULL)")
     } else {
-       oops <- require(parallel)
-       if(!oops) {
-         if(is.null(ncore)) {
-           ncore <- 1
-           bigmem <- FALSE
-         } else {
-           stop("Please install the parallel package from CRAN\n\tor\n\tset ncore=1 for serial computation")
-         }
-       }
        if(bigmem) {
          oops <- require(bigmemory)
          if(!oops) {

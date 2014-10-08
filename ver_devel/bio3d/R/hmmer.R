@@ -127,15 +127,15 @@
                     followlocation = TRUE
                     )
     
-  hmm <- postForm(url, hmmdb=hmmdb, seqdb=seqdb, seq=seq, 
+  hmm <- RCurl::postForm(url, hmmdb=hmmdb, seqdb=seqdb, seq=seq, 
                   style = "POST",
                   .opts = curl.opts,
-                  .contentEncodeFun=curlPercentEncode, .checkParams=TRUE )
+                  .contentEncodeFun=RCurl::curlPercentEncode, .checkParams=TRUE )
 
   
   add.pdbs <- function(x, ...) {
-    hit <- xpathSApply(x, '@*')
-    pdbs <- unique(xpathSApply(x, 'pdbs', xmlToList))
+    hit <- XML::xpathSApply(x, '@*')
+    pdbs <- unique(XML::xpathSApply(x, 'pdbs', XML::xmlToList))
     new <- as.matrix(hit, ncol=1)
     
     if(length(pdbs) > 1) {
@@ -149,11 +149,11 @@
   }
 
   fetch.pdbs <- function(x) {
-    unique(xpathSApply(x, 'pdbs', xmlToList))
+    unique(XML::xpathSApply(x, 'pdbs', XML::xmlToList))
   }
 
-  xml <- xmlParse(hmm)
-  data <- xpathSApply(xml, '///hits', xpathSApply, '@*')
+  xml <- XML::xmlParse(hmm)
+  data <- XML::xpathSApply(xml, '///hits', XML::xpathSApply, '@*')
 
   pdb.ids <- NULL
   if(db=="pdb") {
@@ -161,7 +161,7 @@
     ##pdb.ids <- xpathSApply(xml, '///hits', fetch.pdbs)
     
     ## or add pdbs into hits matrix
-    tmp <- xpathSApply(xml, '///hits', add.pdbs)
+    tmp <- XML::xpathSApply(xml, '///hits', add.pdbs)
     data <- NULL
     for ( i in 1:length(tmp) ) {
       data <- cbind(data, tmp[[i]])
