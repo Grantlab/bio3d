@@ -2,6 +2,7 @@ context("Testing core.find function")
 
 
 test_that("core.find() works properly", {
+  skip_on_cran()
 
   invisible(capture.output(pdbfiles <- get.pdb(c("1bg2","2ncd","1i6i","1i5s"), URLonly=TRUE)))
   invisible(capture.output(pdbs <- pdbaln(pdbfiles)))

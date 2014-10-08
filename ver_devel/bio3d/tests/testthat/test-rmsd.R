@@ -1,6 +1,8 @@
 context("Testing RMSD function")
 
 test_that("rmsd() gets the same results as VMD", {
+   skip_on_cran()
+
    invisible(capture.output(pdbs <- pdbaln(c("1tag", "1as0"))))
    inds <- gap.inspect(pdbs$xyz)$f.inds
 
@@ -11,6 +13,8 @@ test_that("rmsd() gets the same results as VMD", {
 })
 
 test_that("rmsd() with ncore>1 works properly", {
+   skip_on_cran()
+
    invisible(capture.output(pdbs <- pdbaln(c("1tag", "1as0", "1as2"))))
    inds <- gap.inspect(pdbs$xyz)$f.inds
 
