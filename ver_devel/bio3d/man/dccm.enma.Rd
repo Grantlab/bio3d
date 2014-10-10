@@ -47,11 +47,10 @@ if(check.utility("muscle")) {
 
 ## Fetch PDB files and split to chain A only PDB files
 ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
-raw.files <- get.pdb(ids, path = tempdir())
-files <- pdbsplit(raw.files, ids, path = tempdir())
+files <- get.pdb(ids, split = TRUE, path = tempdir())
 
 ## Sequence/Structure Alignement
-pdbs <- pdbaln(files)
+pdbs <- pdbaln(files, outfile = tempfile())
 
 ## Normal mode analysis on aligned data
 modes <- nma(pdbs)

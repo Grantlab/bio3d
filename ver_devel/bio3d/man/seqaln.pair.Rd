@@ -62,7 +62,7 @@ aln <- list(ali=seqbind(c("X","C","X","X","A","G","K"),
                         c("C","-","A","X","G","X","X","K")),
             id=c("a","b"))
 
-seqaln.pair(aln)
+seqaln.pair(aln, outfile = tempfile())
 
 }
 }

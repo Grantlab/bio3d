@@ -74,7 +74,7 @@ if(check.utility("muscle")) {
 
 ##--- DDM: Difference Distance Matrix
 # Downlaod and align two PDB files
-pdbs <- pdbaln( get.pdb( c( "4q21", "521p"), path=tempdir() ))
+pdbs <- pdbaln( get.pdb( c( "4q21", "521p"), path = tempdir() ), outfile = tempfile() )
 
 # Get distance matrix
 a <- dm(pdbs$xyz[1,])

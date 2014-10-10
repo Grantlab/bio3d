@@ -72,11 +72,13 @@ if(check.utility("muscle")) {
      b <- read.pdb("2jdo")
 
      ## Align and fit b on to a:
-     aln <- struct.aln(a, b)
-
+     path = file.path(tempdir(), "struct.aln")
+     aln <- struct.aln(a, b, outpath = path, outfile = tempfile())
+     
      ## Should be the same as aln$rmsd (when using aln$a.inds and aln$b.inds)
      rmsd(a$xyz, b$xyz, aln$a.inds$xyz, aln$b.inds$xyz, fit=TRUE)
-
+     
+     invisible( cat("\nSee the output files:", list.files(path, full.names = TRUE), sep="\n") )
 }
 \dontrun{
      ## Align two subunits of GroEL (open and closed states)

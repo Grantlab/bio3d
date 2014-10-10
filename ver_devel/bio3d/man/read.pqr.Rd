@@ -93,7 +93,7 @@ nums <- as.numeric(pdb$atom[,"resno"])
 pdb$atom[,"resno"] <- nums - (nums[1] - 1)
 
 # Write out renumbered PDB file
-write.pdb(pdb=pdb,file="eg.pdb")
+#write.pdb(pdb=pdb,file="eg.pdb")
 
 }
 \keyword{ IO }
