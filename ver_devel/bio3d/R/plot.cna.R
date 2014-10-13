@@ -30,11 +30,11 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
   ##   
 
   ## Check for presence of igraph package
-#  oops <- require(igraph)
-#  if (!oops) {
-#     stop("igraph package missing: Please install, see: ?install.packages")
-#  }
-
+  oops <- requireNamespace("igraph", quietly = TRUE)
+  if (!oops) {
+     stop("igraph package missing: Please install, see: ?install.packages")
+  }
+  
 #  if(color.edge) {
 #     oops <- require(classInt)
 #     if (!oops) {
@@ -51,8 +51,8 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
 
     if(is.null(vertex.size)) {
       ## Scale up the node size to something visible
-      if(max(V(y)$size) < 10) {
-        V(y)$size = V(y)$size + 13
+      if(max(igraph::V(y)$size) < 10) {
+        igraph::V(y)$size = igraph::V(y)$size + 13
       }
     }
   } else {
@@ -65,7 +65,7 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
   ##- Determine edge weights and scale values for plotting
   if(is.null(weights)){
     ## Use weights defined in network
-    weights <- E(y)$weight
+    weights <- igraph::E(y)$weight
     
     if(is.null(x$call$minus.log)){  
       ## If '$call$mins.log' is NULL => -log option was used in cna()
@@ -90,7 +90,7 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
   }
   if(is.null(pdb) && is.null(layout)) {
     cat("Obtaining estimated layout with fruchterman.reingold\n")
-    layout <- layout.fruchterman.reingold(y, weights=weights)
+    layout <- igraph::layout.fruchterman.reingold(y, weights=weights)
   }
   if(dim(layout)[2] != 2){
     stop("Input 'layout' must be an Nx2 matrix, where N is the number of communities")
@@ -110,11 +110,11 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
      }
 
      colors <- vec2color(weights)
-     plot.igraph(y, edge.width=weights, edge.color = colors, layout=layout, vertex.color=col, vertex.size=vertex.size, ...)
+     igraph::plot.igraph(y, edge.width=weights, edge.color = colors, layout=layout, vertex.color=col, vertex.size=vertex.size, ...)
 
   } else { 
 
-     plot.igraph(y, edge.width=weights, layout=layout, vertex.color=col, vertex.size=vertex.size, ...)
+     igraph::plot.igraph(y, edge.width=weights, layout=layout, vertex.color=col, vertex.size=vertex.size, ...)
 
   }
   

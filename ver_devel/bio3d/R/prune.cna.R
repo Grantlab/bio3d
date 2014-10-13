@@ -4,6 +4,12 @@ prune.cna <- function(x, edges.min=1, size.min=1) {
   ##     prune.cna(net)
   ##
   
+  ## Check for presence of igraph package
+  oops <- requireNamespace("igraph", quietly = TRUE)
+  if (!oops) {
+     stop("igraph package missing: Please install, see: ?install.packages")
+  }
+  
   if(class(x)=="cna") {
     y <- summary.cna(x)
     network=x$community.network
@@ -18,7 +24,7 @@ prune.cna <- function(x, edges.min=1, size.min=1) {
   }
   
   ## Identify nodes with less than 'edges.min' to other nodes.
-  nodes.inds <- which(degree(network) < edges.min)
+  nodes.inds <- which(igraph::degree(network) < edges.min)
   
   
   ## Identify nodes with size less than 'size.min'
@@ -32,12 +38,12 @@ prune.cna <- function(x, edges.min=1, size.min=1) {
     cat( "No Nodes Will Removed based on edges.min and size.min values" )
     output = x
   } else {
-    rm.vs <- V(network)[nodes.inds]
+    rm.vs <- igraph::V(network)[nodes.inds]
     cat( paste("Removing Nodes:", paste(rm.vs, collapse=", ")),"\n")
     ## Print details of removed with edges
     if(!is.null(y)) {
       w <- cbind(y$tbl[rm.vs,c("id","size")],
-                 "edges"=degree(network)[rm.vs],
+                 "edges"=igraph::degree(network)[rm.vs],
                  "members"=y$tbl[rm.vs,c("members")])
       w <- w[order(w$id),]
       write.table(w, row.names=FALSE, col.names=TRUE, quote=FALSE,sep="\t")
@@ -47,7 +53,7 @@ prune.cna <- function(x, edges.min=1, size.min=1) {
       x$communities$membership[res2rm] = NA
     }
   
-    d <- delete.vertices(network, rm.vs)
+    d <- igraph::delete.vertices(network, rm.vs)
     
     
     ## Will probably want to keep an edited old community object !!!
