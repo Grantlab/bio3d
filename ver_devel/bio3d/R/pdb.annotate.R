@@ -1,7 +1,7 @@
 "pdb.annotate" <- function(ids, anno.terms=NULL, unique=FALSE, verbose=FALSE) {
   
-  oopsa <- require(XML)
-  oopsb <- require(RCurl)
+  oopsa <- requireNamespace("XML", quietly = TRUE)
+  oopsb <- requireNamespace("RCurl", quietly = TRUE)
   if(!all(c(oopsa, oopsb)))
     stop("Please install the XML and RCurl package from CRAN")
   

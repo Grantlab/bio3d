@@ -10,7 +10,7 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
 #  ncore = 1
 
   ##- Load ncdf package
-  oops <- require(ncdf)
+  oops <- requireNamespace("ncdf", quietly = TRUE)
   if(!oops)
     stop("Please install the ncdf package from CRAN")
   

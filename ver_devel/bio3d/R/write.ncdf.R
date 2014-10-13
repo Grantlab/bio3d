@@ -2,7 +2,7 @@
 function(x, trjfile="R.ncdf", cell=NULL){
 
   ##- Load ncdf package
-  oops <- require(ncdf)
+  oops <- requireNamespace("ncdf", quietly = TRUE)
   if(!oops)
     stop("Please install the ncdf package from CRAN")
 

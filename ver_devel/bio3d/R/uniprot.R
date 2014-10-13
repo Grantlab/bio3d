@@ -1,5 +1,5 @@
 uniprot <- function(accid) {
-  oops <- require(XML)
+  oops <- requireNamespace("XML", quietly = TRUE)
   if(!oops)
     stop("Please install the XML package from CRAN")
   

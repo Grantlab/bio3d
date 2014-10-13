@@ -1,7 +1,7 @@
 "pfam" <- function(id, alignment='seed', verbose=FALSE) {
   ##alignment <- 'full' ## seed, ncbi, full, metagenomics
   
-  oops <- require(RCurl)
+  oops <- requireNamespace("RCurl", quietly = TRUE)
   if(!oops)
     stop("Please install the RCurl package from CRAN")
   

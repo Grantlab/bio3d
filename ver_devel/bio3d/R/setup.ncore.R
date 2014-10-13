@@ -8,7 +8,7 @@ setup.ncore <- function(ncore, bigmem = FALSE) {
           stop("Multicore is NOT supported in Windows (Set ncore = 1 or NULL)")
     } else {
        if(bigmem) {
-         oops <- require(bigmemory)
+         oops <- requireNamespace("bigmemory", quietly = TRUE)
          if(!oops) {
            if(is.null(ncore))
              ncore <- 1

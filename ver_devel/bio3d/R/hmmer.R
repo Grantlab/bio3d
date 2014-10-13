@@ -1,8 +1,8 @@
 "hmmer" <- function(seq, type='phmmer', db=NULL, verbose=TRUE, timeout=90) {
   cl <- match.call()
     
-  oopsa <- require(XML)
-  oopsb <- require(RCurl)
+  oopsa <- requireNamespace("XML", quietly = TRUE)
+  oopsb <- requireNamespace("RCurl", quietly = TRUE)
   if(!all(c(oopsa, oopsb)))
      stop("Please install the XML and RCurl package from CRAN")
  

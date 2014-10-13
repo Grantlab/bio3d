@@ -7,7 +7,7 @@ plot.dccm <-function(x, sse=NULL, colorkey=TRUE,
                      margin.segments=NULL, segment.col=vmd.colors(), 
                      segment.min=1, ...) {
 
-  require(lattice)
+  requireNamespace("lattice", quietly = TRUE)
   colnames(x) = NULL; rownames(x)=NULL
 
   draw.segment <- function(start, length, xymin, xymax, fill.col="gray", side=1) {
