@@ -1,0 +1,25 @@
+---
+title: "Vignettes for Bio3D"
+date: "`r Sys.Date()`"
+bibliography:
+output: html_document
+---
+
+<!--
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{Vignettes for Bio3D}
+-->
+
+
+We distribute a number of extended **Bio3D vignettes** that provide worked examples of using Bio3D to perform a particular type of analysis. Currently available vignettes include:
+
+* Installing Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_install.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/installing-bio3d">HTML</a>)
+* Getting started with Bio3D ( PDF | <a href="http://thegrantlab.org/bio3d/user-guide">HTML</a> )
+* Beginning Trajectory Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_md.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/trajectory-analysis">HTML</a>)
+* Enhanced Methods for Normal Mode Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_nma.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/normal-mode-analysis">HTML</a>)
+* Comparative sequence and structure analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_pca.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/principal-component-analysis">HTML</a>)
+* Correlation network analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_cna-transducin.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/correlation-network-analysis">HTML</a> )
+
+There is also a <a href="http://thegrantlab.org/bio3d/bio3d.pdf">package manual</a> (in PDF format) that is a concatenation of each functions documentation. 
+
+Note that for information on Bio3D development status or to report a bug, please refer to: https://bitbucket.org/Grantlab/bio3d 
