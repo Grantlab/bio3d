@@ -114,7 +114,7 @@ required packages, and finally the Bio3D package:
 
 ```{r, eval=FALSE}
 install.packages(c("ncdf", "lattice", "grid", "bigmemory", "parallel", "XML",
-		           "RCurl", "igraph", dependencies=TRUE)
+		           "RCurl", "igraph"), dependencies=TRUE)
 install.packages("bio3d_2.1-0.tar.gz") 
 ```
 
@@ -155,7 +155,7 @@ most easily installed from within R with the command:
 
 ```{r, eval=FALSE}
 install.packages(c("ncdf", "lattice", "grid", "bigmemory", "parallel", "XML",
-		           "RCurl", "igraph", dependencies=TRUE)
+		           "RCurl", "igraph"), dependencies=TRUE)
 ```
 
 <br>
