@@ -1,6 +1,6 @@
 ---
 title: "Installing Bio3D"
-author: "Xin-Qiu Yao, Lars Skjaerven & Barry J. Grant"
+author: "Xin-Qiu Yao, Lars Skjaerven & Barry J. rant"
 date: "September 28, 2014"
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 output:
@@ -98,7 +98,7 @@ of this package, please contact us – we would like to hear from you!
 Most required packages and programs are available from the official
 Ubuntu repository:
 
-    apt-get install r-base r-base-core netcdf-bin libnetcdf-dev libxml2-dev seaview muscle pymol 
+    apt-get install r-base r-base-core netcdf-bin libnetcdf-dev libxml2-dev libcurl3-dev seaview muscle pymol 
 
 DSSP however is not, but can be installed by:
 
