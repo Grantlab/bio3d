@@ -2,16 +2,19 @@
 install.bio3d <- function(version="2.1-0", dependencies=TRUE, cran.repos="http://cran.at.r-project.org/") {
   
   ## ToDo:
+  ##      - Check if we have permissions to install.
+  ##      - Use 'try()' to catch warning messages for loading packages that are not yet installed.
   ##      - Test robustness of checking for muscle and dssp on windows.
   ##      - Add windows specific binary package installation (currently its source only) 
   ##      - Implement an update option that checks on version installed vs that requested.
   ##         Currently this function will install the version requested over whatever is already there with no checking.
 
+  ##- Check if we have permissions to install
+  # To Do!
+
   ##- Check and install missing R package dependences if necessary
   if(dependencies){
-    packages <- c("ncdf", "lattice", "grid", 
-                  "bigmemory", "parallel", "XML",
-                  "RCurl", "igraph")
+    packages <- c("ncdf", "lattice", "bigmemory", "XML", "RCurl", "igraph", "knitr")
 
     get.package <- function(x, cran.repos=cran.repos){
       if (!require(x, character.only = TRUE)){
