@@ -222,7 +222,7 @@
   
   ## shared memory to follow progress bar
   if(ncore>1)
-    iipb <<- big.matrix(1, length(pdbs$id), init=NA)
+    iipb <- bigmemory::big.matrix(1, length(pdbs$id), init=NA)
 
   
   ## call .calcAlnModes for each structure in 'pdbs'
@@ -230,7 +230,7 @@
                        pdbs, xyz, gaps.res,
                        mass, am.args, nm.keep, temp, keep, wts,
                        rm.gaps, full, 
-                       pfc.fun, ff, ff.args, outpath, pb, ncore)
+                       pfc.fun, ff, ff.args, outpath, pb, ncore, env=environment())
   close(pb)
   
   ##### Collect data #####
@@ -261,7 +261,7 @@
   }
 
   if(ncore>1) {
-    rm(iipb, pos = ".GlobalEnv")  ## remove global iipb variable
+#    rm(iipb, pos = ".GlobalEnv")  ## remove global iipb variable
     options(warn=prev.warn)       ## restore warning option
   }
 
@@ -332,7 +332,7 @@
 .calcAlnModes <- function(i, pdbs, xyz, gaps.res,
                           mass, am.args, nm.keep, temp, keep, wts,
                           rm.gaps, full, 
-                          pfc.fun, ff, ff.args, outpath, pb, ncore) {
+                          pfc.fun, ff, ff.args, outpath, pb, ncore, env=NULL) {
 
   ## Set indices for this structure only
   f.inds <- NULL
@@ -457,7 +457,8 @@
 
   ## Progress bar
   if(ncore>1) {
-    iipb[1,i] <<- 1
+    iipb <- get("iipb", envir = env)
+    iipb[1,i] <- 1
     j <- length(which(!is.na(bigmemory::as.matrix(iipb))))
   }
   else

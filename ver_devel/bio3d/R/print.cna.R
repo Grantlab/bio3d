@@ -1,18 +1,18 @@
 print.cna <- function(x, ...) {
 
   ## Check for presence of igraph package
-  oops <- require(igraph)
+  oops <- requireNamespace("igraph", quietly = TRUE)
   if (!oops) {
      stop("igraph package missing: Please install, see: ?install.packages")
   }
-
+  
   ## y <- summary.cna(x, ...)
 
   l1 <- paste( "\n - NETWORK NODES#:  ", x$communities$vcount,
-              "\tEDGES#:", ecount(x$network))
+              "\tEDGES#:", igraph::ecount(x$network))
  
   l2 <- paste( "\n - COMMUNITY NODES#:", max(x$communities$membership),
-              "\tEDGES#:", ecount(x$community.network))
+              "\tEDGES#:", igraph::ecount(x$community.network))
 
   cat("\nCall:\n  ", paste(deparse(x$call), sep = "\n", collapse = "\n"), "\n", sep = "")
   cat("\nStructure:",l1,l2,"\n\n ")

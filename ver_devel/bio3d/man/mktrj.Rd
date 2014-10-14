@@ -49,7 +49,9 @@ gaps.pos <- gap.inspect(pdbs$xyz)
 pc.xray <- pca.xyz(pdbs$xyz[, gaps.pos$f.inds])
 
 # Write PC trajectory of pc=1
-a <- mktrj(pc.xray)
+outfile = tempfile()
+a <- mktrj(pc.xray, file = outfile)
+outfile
 
 detach(transducin)
 }

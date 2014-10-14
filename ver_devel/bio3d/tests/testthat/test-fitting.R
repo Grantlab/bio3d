@@ -2,6 +2,7 @@ context("Testing fitting functions")
 
 
 test_that("Fitting still works", {
+  skip_on_cran()
 
   ## Test fit.xyz / gap.inspect / pdbaln
   ##aln  <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
@@ -51,6 +52,8 @@ test_that("Fitting still works", {
 
 
 test_that("struct.aln still works", {
+  skip_on_cran()
+
   ## Test struct.aln
   invisible(capture.output(pdb.a <- read.pdb("1hel")))
   invisible(capture.output(pdb.b <- read.pdb("1dpx")))
@@ -70,6 +73,8 @@ test_that("struct.aln still works", {
 
 # A little bit more tests...
 test_that("fit.xyz() gets the same results as VMD", {
+   skip_on_cran()
+
    invisible(capture.output(pdbs <- pdbaln(c("1tag", "1as0"))))
    inds <- gap.inspect(pdbs$xyz)$f.inds
 
@@ -86,12 +91,14 @@ test_that("fit.xyz() gets the same results as VMD", {
 })
 
 test_that("fit.xyz() with ncore>1 works properly", {
+   skip_on_cran()
+
    invisible(capture.output(pdbs <- pdbaln(c("1tag", "1as0", "1as2"))))
    inds <- gap.inspect(pdbs$xyz)$f.inds
 
    # check if ncore > 1 is really faster 
    time1 <- system.time(xyz1 <- fit.xyz(pdbs$xyz[1,], pdbs$xyz, inds, inds, ncore=1))
-   time2 <- system.time(xyz2 <- fit.xyz(pdbs$xyz[1,], pdbs$xyz, inds, inds, ncore=2))
+   time2 <- system.time(xyz2 <- fit.xyz(pdbs$xyz[1,], pdbs$xyz, inds, inds, ncore=NULL))
    time1 <- time1["elapsed"]
    time2 <- time2["elapsed"]
 

@@ -96,7 +96,7 @@ xyz <- fit.xyz(pdb$xyz[1, ca.inds$xyz],
                fixed.inds = domain.inds,
                mobile.inds = domain.inds)
 
-write.pdb(xyz=xyz, chain=gs$grps)
+#write.pdb(xyz=xyz, chain=gs$grps)
 
 
 \dontrun{

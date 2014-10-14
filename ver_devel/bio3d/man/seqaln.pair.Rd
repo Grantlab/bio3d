@@ -50,6 +50,10 @@ seqaln.pair(aln, extra.args = "", ...)
   \code{\link{read.fasta.pdb}}, \code{\link{seqbind}}
 }
 \examples{
+
+## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
+if(check.utility("muscle")) {
+
 ##- Aligning a PDB sequence to an existing sequence alignment
 
 
@@ -58,7 +62,8 @@ aln <- list(ali=seqbind(c("X","C","X","X","A","G","K"),
                         c("C","-","A","X","G","X","X","K")),
             id=c("a","b"))
 
-seqaln.pair(aln)
+seqaln.pair(aln, outfile = tempfile())
 
+}
 }
 \keyword{ utilities }

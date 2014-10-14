@@ -1,1 +1,3 @@
-exportPattern("^[[:alpha:]]+")
+#exportPattern("^[[:alpha:]]+")
+exportPattern("^[^\\.]")
+import(parallel, grid)

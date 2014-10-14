@@ -150,7 +150,7 @@ print(modes)
 plot(modes)
 
 ## Visualize modes
-m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
+#m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
 
 \dontrun{
 ## Use Anisotropic Network Model

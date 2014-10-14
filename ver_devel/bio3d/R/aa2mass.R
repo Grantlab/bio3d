@@ -40,7 +40,7 @@
       ## Read data matrix
       #mat.file <- system.file(paste("matrices/aa_mass.mat",sep=""), package="bio3d")
       #mat <- read.table(mat.file)
-      mat <- aa.mass
+      mat <- bio3d::aa.mass
       ##return(mat)
     }
     
