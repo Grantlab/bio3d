@@ -41,13 +41,15 @@ aln2html(aln, file="alignment.html", Entropy=0.5, append=TRUE,
 }
 \seealso{ \code{\link{read.fasta}}, \code{\link{write.fasta}}, \code{\link{seqaln}} }
 \examples{
+\dontrun{
 ## Read an example alignment
 aln <- read.fasta(system.file("examples/hivp_xray.fa",package="bio3d"))
 
 ## Produce a HTML file for this alignment
-aln2html(aln, append=FALSE, file="eg.html")
+aln2html(aln, append=FALSE, file=file.path("eg.html")
 aln2html(aln, colorscheme="ent", file="eg.html")
 ## View/open the file in your web browser
 #browseURL("eg.html")
+}
 }
 \keyword{ IO }

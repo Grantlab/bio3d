@@ -1,5 +1,11 @@
 community.tree <- function(x, rescale=FALSE){
 
+  ## Check for presence of igraph package
+  oops <- requireNamespace("igraph", quietly = TRUE)
+  if (!oops) {
+     stop("igraph package missing: Please install, see: ?install.packages")
+  }
+
   if(class(x) != "cna"){
     stop("Input should be a 'cna' class object as obtained from cna()")
   }
@@ -16,7 +22,7 @@ community.tree <- function(x, rescale=FALSE){
     return(membership)
   }
   
-  num.of.nodes <- length(V(x$network))
+  num.of.nodes <- length(igraph::V(x$network))
   membership <- c(1:num.of.nodes)
 
   merge.table <- x$communities$merges

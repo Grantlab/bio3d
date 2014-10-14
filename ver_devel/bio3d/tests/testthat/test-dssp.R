@@ -1,6 +1,7 @@
 context("Testing dssp()")
 
 test_that("SSE assignment still works", {
+  skip_on_cran()
 
   ## Simple test with PDB ID 1HEL
   invisible(capture.output(pdb <- read.pdb("3ERJ")))

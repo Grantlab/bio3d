@@ -9,6 +9,7 @@ function (aa, index = "KYTJ820101", window = 1) {
      # Use LazyData to import data - changed Jul 23, 2013
 #    if (!exists("aa.index")) 
 #        data(aa.index)
+    aa.index = bio3d::aa.index
     if (is.numeric(index)) {
         if (index > length(names(aa.index))) {
             stop("aa2index: 'index' number does not exist")

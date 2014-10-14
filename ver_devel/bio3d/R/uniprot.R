@@ -1,5 +1,5 @@
 uniprot <- function(accid) {
-  oops <- require(XML)
+  oops <- requireNamespace("XML", quietly = TRUE)
   if(!oops)
     stop("Please install the XML package from CRAN")
   
@@ -7,47 +7,47 @@ uniprot <- function(accid) {
 
   tmpfile <- tempfile()
   download.file(url, tmpfile) ##, method="wget")
-  xml <- xmlRoot(xmlParse(tmpfile))
+  xml <- XML::xmlRoot(XML::xmlParse(tmpfile))
   
-  node.names <- xmlSApply(xml[[1]], xmlName)
+  node.names <- XML::xmlSApply(xml[[1]], XML::xmlName)
   
   ## acession
   inds <- which(node.names=="accession")
   accession <- NULL
   for(i in 1:length(inds))
-    accession <- c(accession, xmlValue(xml[[1]][[inds[i]]]))
+    accession <- c(accession, XML::xmlValue(xml[[1]][[inds[i]]]))
     
   ## and name
   inds <- which(node.names=="name")
   name <- NULL
   for(i in 1:length(inds))
-    name <- c(name, xmlValue(xml[[1]][[inds[i]]]))
+    name <- c(name, XML::xmlValue(xml[[1]][[inds[i]]]))
   
   ## sequence
   inds <- which(node.names=="sequence")
-  sequence <-  gsub("\n", "", xmlValue(xml[[1]][[inds]]))
+  sequence <-  gsub("\n", "", XML::xmlValue(xml[[1]][[inds]]))
   
   ## organism
   inds <- which(node.names=="organism")
   node <- xml[[1]][[inds]]
-  organism <- xmlValue(node[[1]])
+  organism <- XML::xmlValue(node[[1]])
   
   ## taxon
   inds <- which(node.names=="organism")
   node <- xml[[1]][[inds]]
   taxon <- NULL
-  for ( i in 1:xmlSize(node[['lineage']]) ) {
-    taxon <- c(taxon, xmlValue(node[['lineage']][[i]]))
+  for ( i in 1:XML::xmlSize(node[['lineage']]) ) {
+    taxon <- c(taxon, XML::xmlValue(node[['lineage']][[i]]))
   }
   
   ## protein
   node <- xml[[1]][['protein']]
-  fullName <- xmlValue(node[['recommendedName']][['fullName']])
-  shortName <- xmlValue(node[['recommendedName']][['shortName']])
+  fullName <- XML::xmlValue(node[['recommendedName']][['fullName']])
+  shortName <- XML::xmlValue(node[['recommendedName']][['shortName']])
   
   ## gene
   node <- xml[[1]][['gene']]
-  gene <- xmlValue(node[[1]])
+  gene <- XML::xmlValue(node[[1]])
   
   out <- list(accession = accession, name = name,
               fullName = fullName, shortName = shortName,
