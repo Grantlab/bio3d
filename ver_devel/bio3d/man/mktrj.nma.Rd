@@ -45,6 +45,9 @@ pdb <- read.pdb("1hel")
 modes <- nma(pdb)
 
 ## Visualize modes
-m7 <- mktrj(modes, mode=7, file="mode_7.pdb")
+outfile = file.path(tempdir(), "mode_7.pdb")
+m7 <- mktrj(modes, mode=7, file = outfile)
+outfile
+
 }
 \keyword{ utilities }

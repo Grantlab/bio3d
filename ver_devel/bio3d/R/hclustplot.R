@@ -8,7 +8,8 @@
     stop("provide either k or h to function 'cutree', or colors for manual coloring")
   
   mtext.names <- names(formals( mtext ))
-  plot.names <- c(names(formals( stats:::plot.dendrogram )),
+  plot.dendrogram <- get("plot.dendrogram", envir = getNamespace("stats"))
+  plot.names <- c(names(formals( plot.dendrogram )),
                   names(formals( plot.default )))
   
   dots <- list(...)

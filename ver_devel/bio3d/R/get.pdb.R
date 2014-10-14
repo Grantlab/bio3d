@@ -86,7 +86,7 @@
         return(rtn)
     } else {
         if(split) {
-           rtn = pdbsplit(pdb.files = names(rtn), ids = ids, ncore = ncore, ...)
+           rtn = pdbsplit(pdb.files = names(rtn), ids = ids, path = file.path(path, "split_chain"), ncore = ncore, ...)
            return(rtn)
         } else { 
            return(names(rtn))

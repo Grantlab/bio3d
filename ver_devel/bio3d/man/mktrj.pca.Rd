@@ -49,17 +49,21 @@ gaps.pos <- gap.inspect(pdbs$xyz)
 pc.xray <- pca.xyz(pdbs$xyz[, gaps.pos$f.inds])
 
 # Write PC trajectory
-a <- mktrj(pc.xray, pc=1, file="pc1.pdb",
+path = tempdir()
+a <- mktrj(pc.xray, pc=1, file=file.path(path, "pc1.pdb"),
            resno = pdbs$resno[1, gaps.res$f.inds],
            resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
 
-b <- mktrj(pc.xray, pc=2, file="pc2.pdb",
+b <- mktrj(pc.xray, pc=2, file=file.path(path, "pc2.pdb"),
            resno = pdbs$resno[1, gaps.res$f.inds],
            resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
 
-c <- mktrj(pc.xray, pc=3, file="pc3.pdb",
+c <- mktrj(pc.xray, pc=3, file=file.path(path, "pc3.pdb"),
            resno = pdbs$resno[1, gaps.res$f.inds],
            resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
+
+# Output files
+file.path(path, paste("pc", 1:3, ".pdb", sep=""))
 
 detach(transducin)
 }

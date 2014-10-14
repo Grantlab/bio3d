@@ -3,8 +3,8 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
                   cols=vmd.colors(), minus.log=TRUE, ...){
 
     
-  ## Check for presence of igraph package (now in Depends.)
- oops <- require(igraph)
+  ## Check for presence of igraph package
+ oops <- requireNamespace("igraph", quietly = TRUE)
  if (!oops) {
     stop("igraph package missing: Please install, see: ?install.packages")
  }
@@ -44,11 +44,11 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     cluster.options=c("btwn", "walk", "greed")
     cluster.method <- match.arg(tolower(cluster.method), cluster.options)
     comms <- switch( cluster.method,
-              btwn = edge.betweenness.community(network, directed=FALSE),
-              walk = walktrap.community(network),
-              greed = fastgreedy.community(network) )
+              btwn = igraph::edge.betweenness.community(network, directed=FALSE),
+              walk = igraph::walktrap.community(network),
+              greed = igraph::fastgreedy.community(network) )
     
-    names(comms$membership) <- V(network)$name
+    names(comms$membership) <- igraph::V(network)$name
     return(comms)
   }
 
@@ -138,7 +138,7 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
   ##   (the default is minus.log=TRUE)
   
   ##-- Make an igraph network object
-  network <- graph.adjacency(cij.network,
+  network <- igraph::graph.adjacency(cij.network,
                              mode="undirected",
                              weighted=TRUE,
                              diag=FALSE)
@@ -152,7 +152,7 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
 
   ##-- Generate a coarse grained network --##
   if(sum(community.cij)>0){
-    community.network <-  graph.adjacency(community.cij,
+    community.network <-  igraph::graph.adjacency(community.cij,
                                mode="undirected",
                                weighted=TRUE,
                                diag=FALSE)
@@ -168,12 +168,12 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     }
   
     ## Set node colors
-    V(network)$color <- cols[communities$membership]
-    V(community.network)$color <- cols[ 1:max(communities$membership)]
+    igraph::V(network)$color <- cols[communities$membership]
+    igraph::V(community.network)$color <- cols[ 1:max(communities$membership)]
   
     ## Set node sizes
-    V(network)$size <- 1
-    V(community.network)$size <- table(communities$membership)
+    igraph::V(network)$size <- 1
+    igraph::V(community.network)$size <- table(communities$membership)
 
   } else{
     warning("The $communities structure does not allow a second clustering 
@@ -189,10 +189,10 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     }
   
     ## Set node colors
-    V(network)$color <- cols[communities$membership]
+    igraph::V(network)$color <- cols[communities$membership]
 
     ## Set node sizes
-    V(network)$size <- 1
+    igraph::V(network)$size <- 1
   }
   
   ## Output

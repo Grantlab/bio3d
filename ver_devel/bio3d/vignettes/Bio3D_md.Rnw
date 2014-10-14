@@ -1,5 +1,0 @@
-%\VignetteIndexEntry{Beginning Trajectory Analysis with Bio3D}
-\documentclass{article}
-\begin{document}
-dummy...
-\end{document}

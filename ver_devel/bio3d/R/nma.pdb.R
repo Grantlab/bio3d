@@ -52,7 +52,7 @@
   ## check structure connectivity
   conn <- inspect.connectivity(pdb.in$xyz)
   if(!conn) {
-    warning("Possible missing in-structure residue(s)\n", 
+    warning("Possible multi-chain structure or missing in-structure residue(s) present\n", 
             "  Fluctuations at neighboring positions may be affected.")
   }
   

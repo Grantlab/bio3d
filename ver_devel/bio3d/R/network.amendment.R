@@ -1,5 +1,11 @@
 network.amendment <- function(x, membership, minus.log=TRUE){
 
+  ## Check for presence of igraph package
+  oops <- requireNamespace("igraph", quietly = TRUE)
+  if (!oops) {
+     stop("igraph package missing: Please install, see: ?install.packages")
+  }
+
   if(class(x) != "cna"){
     stop("Input x must be a 'cna' class object as obtained from cna()")
   }
@@ -75,7 +81,7 @@ network.amendment <- function(x, membership, minus.log=TRUE){
   cols=vmd.colors()
   
   if(sum(x$community.cij)>0){
-    x$community.network <-  graph.adjacency(x$community.cij,
+    x$community.network <-  igraph::graph.adjacency(x$community.cij,
                                           mode="undirected",
                                           weighted=TRUE,
                                           diag=FALSE)
@@ -88,12 +94,12 @@ network.amendment <- function(x, membership, minus.log=TRUE){
     }
   
     ## Set node colors
-    V(x$network)$color <- cols[x$communities$membership]
-    V(x$community.network)$color <- cols[ 1:max(x$communities$membership)]
+    igraph::V(x$network)$color <- cols[x$communities$membership]
+    igraph::V(x$community.network)$color <- cols[ 1:max(x$communities$membership)]
   
     ## Set node sizes
-    V(x$network)$size <- 1
-    V(x$community.network)$size <- table(x$communities$membership)
+    igraph::V(x$network)$size <- 1
+    igraph::V(x$community.network)$size <- table(x$communities$membership)
 
   }
 

@@ -2,7 +2,7 @@ NEWS
 ====
 
 v2.1
-Version 2.1, released in Nov 2014,  contains new facilities for Correlation 
+Version 2.1, released in Sep 2014,  contains new facilities for Correlation 
 Network Analysis (cna) and Geometrically Stable Domain finding (geostas). 
 We have also changed 'PDB object data' storage from a matrix to a data.frame 
 format. Improved methods and functionality for ensemble NMA are now also included 
@@ -14,38 +14,40 @@ For a fine-grained list of changes, or to report a bug, please consult:
 
 Major new functions include:
 * cna: Protein Dynamic Correlation Network Construction and Community Analysis.
-* lmi: LMI: Linear Mutual Information Matrix
-* filter.dccm: Filter for Cross-correlation Matrices (Cij)
-* cmap: Contact Map
-* community.tree: Reconstruction of the Girvan-Newman Community Tree for a CNA Class Object.
-* network.amendment: Amendment of a CNA Network According To A Input Community Membership Vector.
-* view.cna: View CNA Protein Structure Network Community Output in VMD
-* view.dccm: Visualization of Dynamic Cross-Correlation
 * plot.cna: Protein Structure Network Plots in 2D and 3D.
 * print.cna: Summarize and Print Features of a cna Network Graph
 * identify.cna: Identify Points in a CNA Protein Structure Network Plot
 * layout.cna: Protein Structure Network Layout
-* geostas: GeoStaS Domain Finder
+* view.cna: View CNA Protein Structure Network Community Output in VMD
+* prune.cna: Prune A cna Network Object
+* community.tree: Reconstruction of the Girvan-Newman Community Tree for a CNA Class Object.
+* network.amendment: Amendment of a CNA Network According To A Input Community Membership Vector.
+* lmi: Linear Mutual Information Matrix
+* dccm.pca: Dynamic Cross-Correlation from Principal Component Analysis
+* filter.dccm: Filter for Cross-correlation Matrices (Cij)
+* cmap.filter: Contact Map Consensus Filtering
+* geostas (amsm.xyz): GeoStaS Domain Finder
 * bhattacharyya Bhattacharyya Coefficient
 * covsoverlap: Covariance Overlap
-* sipSquare Inner Product
-* var.xyz: Pairwise Distance Variance in Cartesian Coordinates
-* cov.nmaCalculate Covariance Matrix from Normal Modes
+* sip: Square Inner Product
+* cov.nma: Calculate Covariance Matrix from Normal Modes
 * mktrj.enma: Ensemble NMA Atomic Displacement Trajectory
+* pca.array: Principal Component Analysis of an array of matrices
 * hmmer: HMMER Sequence Search
 * plot.hmmer: Plot a Summary of HMMER Hit Statistics.
 * uniprot: Fetch UniProt Entry Data.
 * pfam: Download Pfam FASTA Sequence Alignment
-* is.xyz(as.xyz): Is an Object of Class
-* cmap.filter: Contact Map Consensus Filtering
-* dccm.pca: Dynamic Cross-Correlation from Principal Component Analysis
-* filter.dccm: Filter for Cross-correlation Matrices (Cij)
 * hclustplot: Dendrogram with Clustering Annotation
-* mustang: Structure-based Sequence Alignment with MUSTANG
-* pca.array: Principal Component Analysis of an array of matrices
-* plot.fasta: Plot a Multiple Sequence Alignment
 * write.pir: Write PIR Formated Sequences
-
+* mustang: Structure-based Sequence Alignment with MUSTANG
+* pdbs.filter: Filter or Trim a pdbs PDBs Object
+* dssp.pdbs: Secondary Structure Analysis of Aligned PDB Structures with DSSP
+* plot.fasta: Plot a Multiple Sequence Alignment
+* print.fasta: Printing Sequence Alignments
+* inspect.connectivity: Check the Connectivity of Protein Structures
+* var.xyz: Pairwise Distance Variance in Cartesian Coordinates
+* is.xyz(as.xyz, print.xyz): Is an Object of Class
+* setup.ncore: Setup for Running Bio3D Functions using Multiple CPU Cores
 
 v2.0
 ----

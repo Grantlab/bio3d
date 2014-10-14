@@ -1,6 +1,8 @@
 context("Testing pca()")
 
 test_that("pca functions works", {
+  skip_on_cran()
+
   tmp <- tempdir()
   
   ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
