@@ -1,312 +1,0 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-<title>Normal Mode Analysis. bio3d 2.0-1</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="author" content="Barry Grant, Xin-Qiu Yao, Lars Skjaerven">
-
-<link href="css/bootstrap.css" rel="stylesheet">
-<link href="css/bootstrap-responsive.css" rel="stylesheet">
-<link href="css/highlight.css" rel="stylesheet">
-<link href="css/staticdocs.css" rel="stylesheet">
-<link href="css/theme.css" rel="stylesheet">
-
-<!--[if lt IE 9]>
-  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
-  </head>
-
-  <body>
-    <div class="container">
-<div class="navbar navbar-default" role="navigation">
-  <div class="navbar-header">
-      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
-  </div>
-  <div class="navbar-collapse collapse">
-    <ul class="nav navbar-nav">
-        <li class="active"><a href="index.html"> Index</a></li>
-        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
-        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-    </ul>
-  </div>
-</div>
-</div>
-
-    <div class="container">
-      <header>
-        
-      </header>
-      
-      <h1>Biological Structure Analysis</h1>
-
-<div class="row"><div class="span8">
-  <pre>
-  <div class='input'>###
-### Examples from NMA Vignette
-###
-### Authors Lars Skjaerven
-###         Xin-Qiu Yao
-###         Barry J Grant
-###
-require(bio3d); require(graphics);
-
-pause <- function() {
-  cat("Press ENTER/RETURN/NEWLINE to continue.")
-  readLines(n=1)
-  invisible()
-}
-
-#############################################
-##                                          #
-## Basic usage                              #
-##                                          #
-#############################################
-
-### Read PDB and Calculate Normal Modes
-pdb <- read.pdb("1hel")
-</div>
-<div class='output'>  Note: Accessing online PDB file
-  HEADER    HYDROLASE(O-GLYCOSYL)                   10-JAN-92   1HEL               
-</div>
-<div class='input'>modes <- nma(pdb)
-</div>
-<div class='output'> Building Hessian...		Done in 0.078 seconds.
- Diagonalizing Hessian...	Done in 0.133 seconds.
-</div>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-### Print a summary
-print(modes)
-</div>
-<div class='output'>
-Call:
-  nma(pdb = pdb)
-
-Class:
-  VibrationalModes (nma)
-
-Number of modes:
-  387 (6 trivial)
-
-Frequencies:
-  Mode 7: 	0.018
-  Mode 8: 	0.019
-  Mode 9: 	0.024
-  Mode 10: 	0.025
-  Mode 11: 	0.028
-  Mode 12: 	0.029
-
-+ attr: modes, frequencies, force.constants, fluctuations,
-        U, L, xyz, mass, temp, triv.modes, natoms, call
-</div>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-### Plot the nma object for a quick overview
-plot(modes)
-</div>
-<p><img src='nma-12.png' alt='' width='400' height='400' /></p>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-### Calculate cross-correlations
-cm <- dccm(modes)
-</div>
-<div class='output'>  |                                                                              |====================================================                  |  74%  |                                                                              |====================================================                  |  75%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  77%  |                                                                              |======================================================                |  78%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  79%  |                                                                              |========================================================              |  80%  |                                                                              |========================================================              |  81%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |=================================================================     |  94%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================|  99%  |                                                                              |======================================================================| 100%
-</div>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-### Plot correlation map
-plot(cm, sse=pdb)
-</div>
-<p><img src='nma-20.png' alt='' width='400' height='400' /></p>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-### Calculate modes with force field ANM
-modes.anm <- nma(pdb, ff="anm")
-</div>
-<div class='output'> Building Hessian...		Done in 0.074 seconds.
- Diagonalizing Hessian...	Done in 0.134 seconds.
-</div>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-### Investigate modes similarity with RMSIP
-r <- rmsip(modes, modes.anm)
-
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-### Plot RMSIP results
-plot(r, xlab="ANM", ylab="C-alpha FF")
-</div>
-<p><img src='nma-30.png' alt='' width='400' height='400' /></p>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-################################################
-##                                             #
-## Ensemble NMA                                #
-## (requires the 'muscle' program installed)   #
-##                                             #
-################################################
-
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-### Set temp dir to store PDB files
-tmp.dir <- tempdir()
-
-### Download a set of Kinase structures
-ids <- c("4b7t_A", "2exm_A", "1opj_A", 
-         "4jaj_A", "1a9u_A", "1tki_A")
-
-
-### Download and split by chain ID
-raw.files <- get.pdb(ids, path=tmp.dir)
-</div>
-<strong class='warning'>Warning message:
-ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
-<strong class='warning'>Warning message:
-/tmp/RtmpeKwoQP/4b7t.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-/tmp/RtmpeKwoQP/2exm.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-/tmp/RtmpeKwoQP/1opj.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-/tmp/RtmpeKwoQP/4jaj.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-/tmp/RtmpeKwoQP/1a9u.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-/tmp/RtmpeKwoQP/1tki.pdb  exists. Skipping download</strong>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-### Split PDB files by chain ID
-files <- pdbsplit( raw.files, ids, path=tmp.dir)
-</div>
-<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
-</div>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-### Align structures
-pdbs <- pdbaln(files)
-</div>
-<div class='output'>Reading PDB files:
-/tmp/RtmpeKwoQP/4b7t_A.pdb
-/tmp/RtmpeKwoQP/2exm_A.pdb
-/tmp/RtmpeKwoQP/1opj_A.pdb
-/tmp/RtmpeKwoQP/4jaj_A.pdb
-/tmp/RtmpeKwoQP/1a9u_A.pdb
-/tmp/RtmpeKwoQP/1tki_A.pdb
-......
-
-Extracting sequences
-
-pdb/seq: 1   name: /tmp/RtmpeKwoQP/4b7t_A.pdb 
-pdb/seq: 2   name: /tmp/RtmpeKwoQP/2exm_A.pdb 
-pdb/seq: 3   name: /tmp/RtmpeKwoQP/1opj_A.pdb 
-pdb/seq: 4   name: /tmp/RtmpeKwoQP/4jaj_A.pdb 
-pdb/seq: 5   name: /tmp/RtmpeKwoQP/1a9u_A.pdb 
-pdb/seq: 6   name: /tmp/RtmpeKwoQP/1tki_A.pdb 
-</div>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-### View sequence identity
-summary( c(seqidentity(pdbs)) )
-</div>
-<div class='output'>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 0.1800  0.2320  0.2785  0.3884  0.3530  1.0000 
-</div>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-### Calculate modes of aligned proteins
-modes <- nma.pdbs(pdbs, fit=TRUE, outpath=NULL)
-</div>
-<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
-</div>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-## Print a summary
-print(modes)
-</div>
-<div class='output'>
-Call:
-  nma.pdbs(pdbs = pdbs, fit = TRUE, outpath = NULL)
-
-Class:
-  enma
-
-Number of structures:
-  6
-
-Attributes stored:
-  - Root mean square inner product (RMSIP)
-  - Aligned atomic fluctuations
-  - Aligned eigenvectors (gaps removed)
-  - Dimensions of x$U.subspace: 723x20x6
-
-Coordinates were aligned prior to NMA calculations
-
-+ attr: fluctuations, rmsip, U.subspace, full.nma, call
-</div>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-### Plot fluctuations
-plot(modes, pdbs, type="h")
-</div>
-<p><img src='nma-66.png' alt='' width='400' height='400' /></p>
-<div class='input'>
-pause()
-</div>
-<div class='output'>Press ENTER/RETURN/NEWLINE to continue.</div>
-<div class='input'>
-unlink(tmp.dir)</div>
-  </pre>
-</div></div>
-      
-      <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1='>Please let me know by filling out this short online survey</a>.</p>
-<p class="pull-right"><a href="#">Back to top</a></p>
-<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
-      </footer>
-    </div>
-  </body>
-</html>

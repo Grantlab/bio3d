@@ -1,188 +1,0 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-<title>plot.enma. bio3d 2.0-1</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="author" content=" Lars Skjaerven, Barry Grant ">
-
-<link href="css/bootstrap.css" rel="stylesheet">
-<link href="css/bootstrap-responsive.css" rel="stylesheet">
-<link href="css/highlight.css" rel="stylesheet">
-<link href="css/staticdocs.css" rel="stylesheet">
-<link href="css/theme.css" rel="stylesheet">
-
-<!--[if lt IE 9]>
-  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
-  </head>
-
-  <body>
-    <div class="container">
-<div class="navbar navbar-default" role="navigation">
-  <div class="navbar-header">
-      <a class="navbar-brand" href="http://thegrantlab.org/bio3d">bio3d 2.0-1</a>
-  </div>
-  <div class="navbar-collapse collapse">
-    <ul class="nav navbar-nav">
-        <li class="active"><a href="index.html"> Index</a></li>
-        <li><a href="http://thegrantlab.org/bio3d/download">Download Bio3D</a></li>
-        <li><a href="http://thegrantlab.org">The Grant Lab</a></li>
-    </ul>
-  </div>
-</div>
-</div>
-
-    <div class="container">
-      <header>
-        
-      </header>
-      
-      <h1> Plot eNMA Results </h1>
-
-<div class="row">
-  <div class="span8">
-    <h2>Usage</h2>
-    <pre>plot(x, pdbs = NULL, entropy = FALSE, col = NULL, xlab = "Residue Position", ylab = "Fluctuations", 
-  mar = c(4, 5, 2, 2), ...)</pre>
-    
-    <h2>Arguments</h2>
-    <dl>
-      <dt>x</dt>
-      <dd> the results of ensemble NMA obtained with
-    <code><a href='nma.pdbs.html'>nma.pdbs</a></code>. </dd>
-      <dt>pdbs</dt>
-      <dd> an object of class &#145;3dalign&#146; in which the
-    &#145;enma&#146; object <code>x</code> was obtained from. If provided SSE
-    data of the first structure of <code>pdbs</code> will drawn. </dd>
-      <dt>entropy</dt>
-      <dd> logical, if TRUE entropy and fluctuation variance is
-    plotted. </dd>
-      <dt>col</dt>
-      <dd> a character vector of plotting colors.  </dd>
-      <dt>xlab</dt>
-      <dd> a label for the x axis. </dd>
-      <dt>ylab</dt>
-      <dd> a label for the y axis. </dd>
-      <dt>mar</dt>
-      <dd> A numerical vector of the form c(bottom, left, top, right)
-    which gives the number of lines of margin to be specified on the
-    four sides of the plot.</dd>
-      <dt>...</dt>
-      <dd> extra plotting arguments passed to <code>plot.bio3d</code>
-    that effect the atomic fluctuations plot only. </dd>
-    </dl>
-    
-    <div class="Description">
-      <h2>Description</h2>
-      
-      <p>Produces a plot of atomic fluctuations of aligned normal modes.</p>
-  
-    </div>
-
-    <div class="Details">
-      <h2>Details</h2>
-      
-      <p><code>plot.enma</code> produces a fluctuation plot of aligned <code>nma</code>
-  objects.</p>
-  
-    </div>
-
-    <div class="Value">
-      <h2>Value</h2>
-      
-      <p>Called for its effect.</p>
-  
-    </div>
-
-    <div class="References">
-      <h2>References</h2>
-      
-      <p>Grant, B.J. et al. (2006) <em>Bioinformatics</em> <b>22</b>, 2695--2696.</p>
-  
-    </div>
-    
-    <h2 id="examples">Examples</h2>
-    <pre class="examples"><div class='input'>ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
-raw.files <- get.pdb(ids, path = "raw_pdbs")
-</div>
-<strong class='warning'>Warning message:
-ids should be standard 4 character PDB-IDs: trying first 4 characters...</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1a70.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1czp.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1frd.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1fxi.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1iue.pdb  exists. Skipping download</strong>
-<strong class='warning'>Warning message:
-raw_pdbs/1pfd.pdb  exists. Skipping download</strong>
-<div class='input'>files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain")
-</div>
-<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
-</div>
-<div class='input'>
-## Sequence Alignement
-pdbs <- pdbaln(files)
-</div>
-<div class='output'>Reading PDB files:
-raw_pdbs/split_chain/1a70_A.pdb
-raw_pdbs/split_chain/1czp_A.pdb
-raw_pdbs/split_chain/1frd_A.pdb
-raw_pdbs/split_chain/1fxi_A.pdb
-raw_pdbs/split_chain/1iue_A.pdb
-raw_pdbs/split_chain/1pfd_A.pdb
-.   PDB has ALT records, taking A only, rm.alt=TRUE
-.....
-
-Extracting sequences
-
-pdb/seq: 1   name: raw_pdbs/split_chain/1a70_A.pdb 
-pdb/seq: 2   name: raw_pdbs/split_chain/1czp_A.pdb 
-   PDB has ALT records, taking A only, rm.alt=TRUE
-pdb/seq: 3   name: raw_pdbs/split_chain/1frd_A.pdb 
-pdb/seq: 4   name: raw_pdbs/split_chain/1fxi_A.pdb 
-pdb/seq: 5   name: raw_pdbs/split_chain/1iue_A.pdb 
-pdb/seq: 6   name: raw_pdbs/split_chain/1pfd_A.pdb 
-</div>
-<div class='input'>
-## Normal mode analysis on aligned data
-all.modes <- nma.pdbs(pdbs, rm.gaps=FALSE)
-</div>
-<div class='output'>  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
-</div>
-<div class='input'>
-## Plot fluctuations
-plot.enma(all.modes, pdbs)
-</div>
-<p><img src='plot.enma-16.png' alt='' width='400' height='400' /></p></pre>
-  </div>
-  <div class="span3">
-    <!-- <ul>
-      <li>plot.enma</li>
-    </ul>
-    <ul>
-      <li> hplot </li>
-    </ul> -->
-      
-    <h2>See also</h2>
-     <code><a href='nma.pdbs.html'>nma.pdbs</a></code>, <code><a href='nma.html'>nma</a></code>,
-  <code><a href='plot.bio3d.html'>plot.bio3d</a></code>, <code><a href='entropy.html'>entropy</a></code>.  
-    
-    <h2>Author</h2>
-     Lars Skjaerven, Barry Grant 
-    
-  </div>
-</div>
-      
-      <footer>
-      <p class='feedback'>What do you think of the documentation?  <a href='http://thegrantlab.wufoo.com/forms/documentation-feedback-for-bio3d/def/field1=plot.enma'>Please let me know by filling out this short online survey</a>.</p>
-<p class="pull-right"><a href="#">Back to top</a></p>
-<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
-      </footer>
-    </div>
-  </body>
-</html>
