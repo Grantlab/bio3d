@@ -64,6 +64,7 @@ install.packages("igraph")
 #' 
 #+ example1, results="hide", warning=FALSE
 library(bio3d)
+library(igraph)
 pdbfile <- system.file("examples/hivp.pdb", package = "bio3d")
 pdb <- read.pdb( pdbfile )
 modes <- nma(pdb)
