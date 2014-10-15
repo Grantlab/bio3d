@@ -8,7 +8,12 @@
 
     ## Check for multiple cores
     ncore <- setup.ncore(ncore, bigmem = FALSE)
-    
+   
+    if(ncore > 1) {
+      mcparallel <- get("mcparallel", envir = getNamespace("parallel")) 
+      mccollect <- get("mccollect", envir = getNamespace("parallel")) 
+    }
+
     ## Inner product between all pairs of residues
     cross.inner.prod <- function(a, b) {
       mat <- apply(a, 1, "%*%", t(b))
