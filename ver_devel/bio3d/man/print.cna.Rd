@@ -43,25 +43,13 @@
   \code{\link[igraph:igraph.plotting]{igraph.plotting}}
 }
 \examples{
-## Read example trajectory file
-trtfile <- system.file("examples/hivp.dcd", package="bio3d")
-trj <- read.dcd(trtfile)
+
+## Load the correlation network
+attach(hivp)
 
 ## Read the starting PDB file to determine atom correspondence
 pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 pdb <- read.pdb(pdbfile)
-
-## select residues 24 to 27 and 85 to 90 in both chains
-inds <- atom.select(pdb,"///24:27,85:90///CA/")
-
-## lsq fit of trj on pdb
-xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
-
-## DCCM can use multicores (see ?dccm for options)  
-cij <- dccm(xyz)
-
-## Network representation
-net <- cna(cij)
 
 ## Examine network composition
 print(net)

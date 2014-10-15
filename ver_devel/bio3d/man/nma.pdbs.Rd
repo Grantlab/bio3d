@@ -90,6 +90,7 @@
   \code{\link{pdbaln}}, \code{\link{read.fasta.pdb}}.
 }
 \examples{
+\donttest{
 
 ## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
 if(check.utility("muscle")) {
@@ -125,6 +126,7 @@ heatmap(1-modes$rmsip)
 bc <- bhattacharyya(modes)
 heatmap(1-bc)
 
+}
 }
 }
 \keyword{ analysis }
