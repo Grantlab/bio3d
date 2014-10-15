@@ -59,11 +59,11 @@ head(tor$tbl)
 ## basic Ramachandran plot
 plot(tor$phi, tor$psi)
 
+\dontrun{
 ## torsion analysis of a single coordinate vector 
 inds <- atom.select(pdb,"calpha")
 tor.ca <- torsion.xyz(pdb$xyz[inds$xyz], atm.inc=1)
 
-\dontrun{
 ##-- Compare two PDBs to highlight interesting residues
 aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
 m <- read.fasta.pdb(aln)

@@ -75,7 +75,7 @@ amsm.xyz(xyz, ncore = NULL)
   \code{\link{read.pdb}}, \code{\link{mktrj}}.
 }
 \examples{
-
+\dontrun{
 #### NMR-ensemble example
 ## Read a multi-model PDB file 
 pdb <- read.pdb("1d1d", multi=TRUE)
@@ -99,7 +99,7 @@ xyz <- fit.xyz(pdb$xyz[1, ca.inds$xyz],
 #write.pdb(xyz=xyz, chain=gs$grps)
 
 
-\dontrun{
+
 #### NMA example
 ## Fetch stucture
 pdb <- read.pdb("1crn")

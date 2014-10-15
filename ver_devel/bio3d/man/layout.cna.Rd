@@ -63,7 +63,7 @@ cij <- dccm(xyz)
 net <- cna(cij)
 
 # Plot will be slow
-xy <- plot.cna(net)
+#xy <- plot.cna(net)
 #plot3d.cna(net, pdb)
 
 layout.cna(net, pdb, k=3)

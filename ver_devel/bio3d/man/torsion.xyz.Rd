@@ -78,7 +78,7 @@ plot(tor$phi, tor$psi)
 ## torsion analysis of a single coordinate vector 
 inds <- atom.select(pdb,"calpha")
 tor.ca <- torsion.xyz(pdb$xyz[inds$xyz], atm.inc=3)
-}
+
 
 ##-- Compare two PDBs to highlight interesting residues
 aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
@@ -88,7 +88,7 @@ b <- torsion.xyz(m$xyz[2,],1)
 ## Note the periodicity of torsion angles
 d <- wrap.tor(a-b)
 plot(m$resno[1,],d, typ="h")
-
+}
 
 }
 \keyword{ utilities }
