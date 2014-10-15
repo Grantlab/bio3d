@@ -26,10 +26,10 @@ Description: Utilities to process, organize and explore protein structure,
     torsion analysis, distance matrix analysis, structure and sequence 
     conservation analysis, normal mode analysis, principal component 
     analysis of heterogeneous structure data, and correlation network   
-    analysis.  In addition, various utility functions are provided to enable  
-    the statistical and graphical power of the R environment to work with 
-    biological sequence and structural data.  Please refer to the URL below 
-    for more information.
+    analysis from normal mode and molecular dynamics data.  In addition, 
+    various utility functions are provided to enable the statistical and 
+    graphical power of the R environment to work with biological sequence 
+    and structural data.  Please refer to the URLs below for more information.
 Maintainer: Barry Grant <bjgrant@umich.edu>
 License: GPL (>= 2)
 URL: http://thegrantlab.org/bio3d/, http://bitbucket.org/Grantlab/bio3d
