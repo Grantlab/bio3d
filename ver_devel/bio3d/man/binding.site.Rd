@@ -44,6 +44,7 @@ binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cut=5, hydrogens=TRUE)
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{read.pdb}}, \code{\link{atom.select}}, \code{\link{dm}} }
 \examples{
+     \donttest{
      pdb <- read.pdb('3dnd')
 
      # Binding site residues
@@ -55,6 +56,7 @@ binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cut=5, hydrogens=TRUE)
      rec.inds <- atom.select(pdb, string='//A/1:350////')
      lig.inds <- atom.select(pdb, string='//I/5:24////')
      bs <- binding.site(pdb, a.inds=rec.inds, b.inds=lig.inds)
+     }
 
      \dontrun{  
      # Interaction between two PDB entities

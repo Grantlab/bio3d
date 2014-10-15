@@ -30,6 +30,7 @@
    \code{\link{cna}}, \code{\link{community.tree}}, \code{\link{summary.cna}} 
 }
 \examples{
+\donttest{
 
 ##-- Build a CNA object
 pdb <- read.pdb("4Q21")
@@ -48,6 +49,7 @@ plot(net.7, pdb)
 
 print(net)
 print(net.7)
+}
 
 }
 \keyword{utility}

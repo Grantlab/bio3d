@@ -5,6 +5,11 @@
 
    ## Check for multiple cores
    ncore = setup.ncore(ncore)
+
+   if(ncore > 1) {
+     mcparallel <- get("mcparallel", envir = getNamespace("parallel"))
+     mccollect <- get("mccollect", envir = getNamespace("parallel"))
+   }
    
    ## Set modes to be included
    if(is.null(nmodes)) {

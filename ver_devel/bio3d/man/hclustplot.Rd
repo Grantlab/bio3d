@@ -55,6 +55,7 @@ hclustplot(hc, k = NULL, h = NULL, colors = NULL, labels = NULL,
   \code{\link{plot.hclust}}, \code{\link{plot.dendrogram}},
   \code{\link{hclust}}, \code{\link{cutree}}.  }
 \examples{
+\donttest{
 
 attach(transducin)
 
@@ -68,5 +69,6 @@ hclustplot(hc, k=3)
 ##- draw dendrogram with manual clustering annotation
 hclustplot(hc, colors=annotation[, "color"], labels=pdbs$id)
 
+}
 }
 \keyword{ hplot }

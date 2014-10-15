@@ -61,6 +61,7 @@ struct.aln(fixed, mobile, fixed.inds=NULL, mobile.inds=NULL,
 \seealso{ \code{\link{rmsd}}, \code{\link{rot.lsq}},
   \code{\link{seqaln}}, \code{\link{pdbaln}} }
 \examples{
+\donttest{
 
 ## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
 if(check.utility("muscle")) {
@@ -80,6 +81,8 @@ if(check.utility("muscle")) {
      
      invisible( cat("\nSee the output files:", list.files(path, full.names = TRUE), sep="\n") )
 }
+}
+
 \dontrun{
      ## Align two subunits of GroEL (open and closed states)
      a <- read.pdb("1sx4")

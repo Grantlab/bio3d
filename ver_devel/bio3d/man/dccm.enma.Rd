@@ -41,6 +41,7 @@
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{nma}}, \code{\link{dccm.nma}}, \code{\link{plot.dccm}} }
 \examples{
+\donttest{
 
 ## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
 if(check.utility("muscle")) {
@@ -61,6 +62,7 @@ cij <- dccm(modes)
 ## Plot correlations for first structure
 plot.dccm(cij$all.dccm[,,1])
 
+}
 }
 
 }
