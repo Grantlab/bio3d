@@ -39,6 +39,7 @@ write.pir(alignment=NULL, ids=NULL, seqs=alignment$ali,
 \seealso{ \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}}, 
    \code{\link{write.fasta}} }
 \examples{
+\donttest{
 
 ## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
 if(check.utility("muscle")) {
@@ -63,6 +64,7 @@ write.pir(aln, pdb.file = c(pdb.file, ""), file = outfile)
 
 invisible( cat("\nSee the output file:", outfile, sep = "\n") )
 
+}
 }
 }
 \keyword{ IO }

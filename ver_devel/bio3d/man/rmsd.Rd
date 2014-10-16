@@ -47,6 +47,8 @@ rmsd(a, b=NULL, a.inds=NULL, b.inds=NULL, fit=FALSE, ncore=1, nseg.scale=1)
 \seealso{ \code{\link{fit.xyz}}, \code{\link{rot.lsq}},
   \code{\link{read.pdb}}, \code{\link{read.fasta.pdb}} }
 \examples{
+\donttest{
+
 # -- Calculate RMSD between two or more structures
 aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
 pdbs <- read.fasta.pdb(aln)
@@ -58,6 +60,7 @@ inds <- c(1:ncol(pdbs$xyz))[-gaps]
 # RMSD between structure 1 and structure 2
 rmsd(a=pdbs$xyz[1,], b=pdbs$xyz[2,], a.inds=inds, b.inds=inds)
 rmsd(a=pdbs$xyz[1,], b=pdbs$xyz[2,], a.inds=inds, b.inds=inds, fit=TRUE)
+}
 
 \dontrun{
 # RMSD between structure 1 and structures 2 and 3

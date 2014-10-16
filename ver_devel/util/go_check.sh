@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Usage: 
-#        ./go_check.sh [-cran] [-win] [-nocheck]
+#        ./go_check.sh [-cran] [-win] [-nocheck] [-devel]
 #
 
 check=yes
@@ -23,12 +23,17 @@ while test $# -ge 1; do
   fi
   if test $1 == "-h" || test $1 == "--help"; then
      echo "Usage:"
-     echo "       ./go_check.sh [-cran] [-win] [-nocheck]"
+     echo "       ./go_check.sh [-cran] [-win] [-nocheck] [-devel]"
      echo 
      exit 0
   fi
   shift
 done
+
+if ! hash Rscript 2>/dev/null; then
+   echo "No Rscript found"
+   exit 1
+fi
 
 if test $check == "yes"; then
    # Use devtools to check as/not as CRAN
