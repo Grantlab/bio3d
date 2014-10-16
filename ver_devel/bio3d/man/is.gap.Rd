@@ -8,13 +8,18 @@
 is.gap(x, gap.char = c("-", "."))
 }
 \arguments{
-  \item{x}{ an R object to be tested. }
+  \item{x}{ an R object to be tested. Typically a sequence vector or 
+  sequence/structure alignment object as returned from \code{seqaln}, 
+  \code{pdbaln} etc. }
   \item{gap.char}{ a character vector containing the gap character types
     to test for. }
 }
 \value{
-  Returns a logical vector with the same length as the input \sQuote{x},
-  with TRUE elements corresponding to \sQuote{gap.char} matches.
+  Returns a logical vector with the same length as the input vector, or 
+  the same length as the number of columns present in an alignment input 
+  object \sQuote{x}. In the later case TRUE elements corresponding to 
+  \sQuote{gap.char} matches in any alignment column (i.e. gap containing 
+  columns).
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
@@ -32,7 +37,7 @@ is.gap(x, gap.char = c("-", "."))
   the \sQuote{gap.char} argument.
 }
 \seealso{ \code{\link{gap.inspect}}, \code{\link{read.fasta}},
-  \code{\link{read.fasta.pdb}}, \code{\link{seqaln}} }
+  \code{\link{read.fasta.pdb}}, \code{\link{seqaln}}, \code{\link{pdbaln}} }
 \examples{
 
 is.gap( c("G",".","X","-","G","K","S","T") )
@@ -41,11 +46,14 @@ is.gap( c("G",".","X","-","G","K","S","T") )
 aln <- read.fasta( system.file("examples/kif1a.fa",
                    package = "bio3d") )
 
-##- Mask existing gaps with an "X"
+##- Print only non-gap positions (i.e. no gaps in any sequence)
+aln$ali[, !is.gap(aln) ]
+
+##- Mask any existing gaps with an "X"
 xaln <- aln
 xaln$ali[ is.gap(xaln$ali) ]="X"
 
-##- Read a new PDB and align its sequence to the existing alignment
+##- Read a new PDB and align its sequence to the existing masked alignment
 pdb <- read.pdb( "1mkj" )
 seq2aln(pdbseq(pdb), xaln, id = "1mkj")
 }
