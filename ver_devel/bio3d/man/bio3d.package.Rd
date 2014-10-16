@@ -30,9 +30,9 @@ rigid core identification (\code{\link{core.find}},  \code{\link{plot.core}},
 \code{\link{fit.xyz}}), dynamic domain analysis (\code{\link{geostas}}), torsion/dihedral analysis
 (\code{\link{torsion.pdb}},  \code{\link{torsion.xyz}}), clustering (via
 \code{\link{hclust}}), principal component analysis
-(\code{\link{pca.xyz}},  \link{pca.pdbs}}, \code{\link{pca.tor}},  \code{\link{plot.pca}},
+(\code{\link{pca.xyz}},  \code{\link{pca.pdbs}}, \code{\link{pca.tor}},  \code{\link{plot.pca}},
 \code{\link{plot.pca.loadings}},  \code{\link{mktrj.pca}}), dynamical
-cross-correlation analysis (\code{\link{dccm}}, \code{\link{lmi}}, \code{\link{plot.dccm}}) and correlation network analysis (\code{\link{cna}},  \link{plot.cna}}) of structure data.
+cross-correlation analysis (\code{\link{dccm}}, \code{\link{lmi}}, \code{\link{plot.dccm}}) and correlation network analysis (\code{\link{cna}},  \code{\link{plot.cna}}) of structure data.
 
 Perform conservation analysis of sequence (\code{\link{seqaln}}, \code{\link{conserv}}, 
 \code{\link{seqidentity}},  \code{\link{entropy}},  \code{\link{consensus}})
@@ -55,8 +55,7 @@ manipulation and analysis of biological sequence and structural data
 \code{\link{orient.pdb}}, \code{\link{pairwise}}, \code{\link{plot.bio3d}}, \code{\link{plot.nma}}, \code{\link{plot.blast}}, etc.).
 }
 \note{
-The latest version, package vignettes and further documentation can be obtained from the
-bio3d website:\cr
+The latest version, package vignettes and documentation with worked example outputs can be obtained from the bio3d website:\cr
 \url{http://thegrantlab.org/bio3d/}.\cr
 \url{http://thegrantlab.org/bio3d/html/}.\cr
 \url{http://bitbucket.org/Grantlab/bio3d}.
