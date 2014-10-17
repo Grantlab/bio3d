@@ -155,7 +155,7 @@ Make sure required programs and libraries are installed on your system prior to 
 the above `install.packages` command. i.e. the R package `ncdf` requires `netcdf` and 
 `libnetcdf-dev`; `XML` requires `libxml2-dev`; and `RCurl` requires `libcurl3-dev`. 
 
-On a **Debian** system (e.g. Ubuntu) these can be easily be installed through the 
+On a **Debian** system (e.g. Ubuntu) these can easily be installed through the 
 package manager with the `apt-get install` command above (see section 2). 
 For Red Hat systems (e.g. **Fedora**), this should correspond to:
 
