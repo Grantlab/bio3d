@@ -63,7 +63,7 @@ test_that("struct.aln still works", {
   file.a <- system.file("examples/1hel.pdb",package="bio3d")
   file.b <- system.file("examples/1dpx.pdb",package="bio3d")
   invisible(capture.output(pdb.a <- read.pdb(file.a)))
-  invisible(capture.output(pdb.a <- read.pdb(file.a)))
+  invisible(capture.output(pdb.b <- read.pdb(file.b)))
   
   invisible(capture.output(aln <- struct.aln(pdb.a, pdb.b, write.pdbs=FALSE,
                                             cutoff=0.1, max.cycles=2, extra.args="-quiet")))
