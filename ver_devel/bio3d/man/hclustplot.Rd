@@ -7,7 +7,7 @@
 }
 \usage{
 hclustplot(hc, k = NULL, h = NULL, colors = NULL, labels = NULL,
-             fillbox = TRUE, heights = c(1, .3), mar = c(1, 1, 0, 1), ...)
+             fillbox = FALSE, heights = c(1, .3), mar = c(1, 1, 0, 1), ...)
 }
 \arguments{
   \item{hc}{ an object of the type produced by \code{hclust}. }
@@ -55,6 +55,7 @@ hclustplot(hc, k = NULL, h = NULL, colors = NULL, labels = NULL,
   \code{\link{plot.hclust}}, \code{\link{plot.dendrogram}},
   \code{\link{hclust}}, \code{\link{cutree}}.  }
 \examples{
+\donttest{
 
 attach(transducin)
 
@@ -65,13 +66,9 @@ hc <- hclust(as.dist(rd))
 ##- draw dendrogram 
 hclustplot(hc, k=3)
 
-##- draw dendrogram with manuall clustering annotation
+##- draw dendrogram with manual clustering annotation
 hclustplot(hc, colors=annotation[, "color"], labels=pdbs$id)
 
-##- draw dendrogram 
-hclustplot(hc, k=3, labels=pdbs$id, fillbox=FALSE)
-
-
-
+}
 }
 \keyword{ hplot }

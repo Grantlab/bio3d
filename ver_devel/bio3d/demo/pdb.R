@@ -1,5 +1,5 @@
 ###
-### Example of PDB file manipulation, serching, alignment etc.
+### Example of PDB file manipulation, searching, alignment etc.
 ###
 ### Authors Xin-Qiu Yao
 ###         Lars Skjaerven

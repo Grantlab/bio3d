@@ -1,0 +1,233 @@
+---
+title: "Integrating normal modes and correlation network analysis in Bio3D"
+author: "Xin-Qiu Yao, Guido Scarabelli, Lars Skjaerven & Barry J. Grant"
+date: "October 1, 2014"
+output:
+  pdf_document:
+    fig_caption: yes
+    fig_height: 5
+    fig_width: 5
+    highlight: default
+    keep_tex: yes
+    number_sections: yes
+    toc: no
+  md_document:
+    fig_height: 5
+    fig_width: 5
+    variant: markdown_phpextra
+documentclass: article
+fontsize: 11pt
+geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
+linkcolor: black
+bibliography: Bio3D_cna-transducin.bib
+affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
+---
+
+# Background  {.unnumbered}
+Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data [@grant06].
+
+Correlation network analysis can be employed to identify protein segments with correlated motions.
+In this approach, a weighted graph is constructed where each residue represents a node and the 
+weight of the connection between nodes, *i* and *j*, represents their respective cross-correlation 
+value, cij, expressed for example by the Pearson-like form or the linear mutual information. In this 
+example, Normal mode analysis (NMA) is employed for the calculation of cross-correlations[^2].
+
+## Requirements {.unnumbered}
+Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. Note that this vignette also makes use of the [IGRAPH](http://igraph.org/) R package, which can be installed with the command
+
+```{r eval=FALSE}
+install.packages("igraph")
+```
+
+## About this document {.unnumbered}
+This vignette was generated using **Bio3D version `r packageVersion("bio3d")`**.
+
+
+# Correlation network analysis based on single-structure NMA
+In this first example we perform *NMA* on two crystallographic structures of transducin G protein alpha subunits, an active
+GTP-analog-bound structure (PDB id *1tnd*) and an inactive GDP- and 
+GDI (GDP dissociation inhibitor)-bound structure (PDB id *1kjy*), by calling the function **nma()**.
+Cross-correlation matrices are calculated with the function **dccm()**. Correlation networks are
+then constructed with the function **cna()**. Network visualization is finally performed
+with the function **plot.cna()**. See also `help(cna)` for more details and example analysis.
+
+
+
+```{r}
+library(bio3d)
+```
+
+First we read our selected GTP and GDI bound structures, select chain A, and perform NMA on each individually.
+```{r single-pdb, results="hide"}
+pdb.gtp = read.pdb("1TND")
+pdb.gdi = read.pdb("1KJY")
+
+pdb.gtp = trim.pdb(pdb.gtp, inds=atom.select(pdb.gtp, chain="A"))
+pdb.gdi = trim.pdb(pdb.gdi, inds=atom.select(pdb.gdi, chain="A"))
+```
+
+```{r nma}
+modes.gtp = nma(pdb.gtp)
+modes.gdi = nma(pdb.gdi)
+```
+
+
+Residue cross-correlations can then be calculated based on these normal mode results.
+```{r nma_cij, cache=TRUE, results="hide", warning=FALSE, message=FALSE}
+cij.gtp = dccm(modes.gtp)
+cij.gdi = dccm(modes.gdi)
+```
+
+Correlation networks for both conformational states are constructed by applying the
+function **cna()** to the corresponding correlation matrices. Here, the C-alpha atoms
+represents nodes which are interconnected by edges with weights corresponding to the pairwise correlation coefficient. 
+Edges are only constructed for pairs of nodes which obtain a coupling strength larger than a specified cutoff value
+(0.35 in this example). The weight of each edge is calculated as -log(|cij|), where cij is the 
+correlation value between two nodes *i* and *j*. For each correlation network, betweenness clustering 
+is performed to generate aggregate nodal clusters, or communities, that are highly 
+intra-connected, but loosely inter-connected. By default, **cna()** returns communities 
+associated with the maximal modularity value. 
+
+```{r cna, results="hide", message=FALSE}
+net.gtp = cna(cij.gtp, cutoff.cij=0.35)
+net.gdi = cna(cij.gdi, cutoff.cij=0.35)
+```
+
+```{r display-cna}
+net.gtp
+net.gdi
+```
+
+A 3-D visualization of networks can also be performed with the Bio3D function **view.dccm()** (See `help(view.dccm)` and the vignette "Enhanced Methods for Normal Mode Analysis with Bio3D" available on-line):
+```{r 3dview, eval=FALSE}
+view.dccm(net.gtp$cij, launch=TRUE)
+```
+
+
+Maximization of modularity sometimes creates unexpected community partitions splitting 
+natural structure motifs, such as secondary structure elements, into many small community 'islands'. To avoid this situation, we look into partitions with modularity close to the maximal value 
+but with an overall smaller number of communities. 
+
+```{r new-fun}
+mod.select <- function(x, thres=0.005) {
+   remodel <- community.tree(x, rescale = TRUE)
+   n.max = length(unique(x$communities$membership))
+   ind.max = which(remodel$num.of.comms == n.max)
+   v = remodel$modularity[length(remodel$modularity):ind.max]
+   v = rev(diff(v))
+   fa = which(v>=thres)[1] - 1
+   ncomm = ifelse(is.na(fa), min(remodel$num.of.comms), n.max - fa)
+
+   ind <- which(remodel$num.of.comms == ncomm)
+   network.amendment(x, remodel$tree[ind, ])
+}
+
+```{r modularity_selection, cache=TRUE}
+nnet.gtp = mod.select(net.gtp)
+nnet.gtp
+nnet.gdi = mod.select(net.gdi)
+nnet.gdi
+```
+
+The resulting networks can be visualized with the Bio3D function **plot.cna()**, which can generate 2D representations for both full residue-level and coarse-grained community-level networks.
+
+```{r layout}
+cent.gtp.full = layout.cna(nnet.gtp, pdb=pdb.gtp, full=TRUE, k=3)[,1:2]
+cent.gtp = layout.cna(nnet.gtp, pdb=pdb.gtp, k=3)[,1:2]
+cent.gdi.full = layout.cna(nnet.gdi, pdb=pdb.gtp, full=TRUE, k=3)[,1:2]
+cent.gdi = layout.cna(nnet.gdi, pdb=pdb.gtp, k=3)[,1:2]
+```
+
+The following code plots the four networks. 
+
+```{r figure1, fig.cap="Correlation networks for GTP \"active\" and GDI \"inhibitory\" conformational states of transducin. Networks are derived from NMA applied to single GTP and GDI crystallographic structures.", echo=c(3,5,6,8)}
+layout(matrix(c(1:4), 2, 2))
+par(mar=c(0.1, 0.1, 3, 0.1))
+plot.cna(nnet.gtp, layout=cent.gtp.full, full=TRUE, vertex.label=NA, vertex.size=5)
+title(main="GTP")
+plot.cna(nnet.gtp, layout=cent.gtp)
+plot.cna(nnet.gdi, layout=cent.gdi.full, full=TRUE, vertex.label=NA, vertex.size=5)
+title(main="GDI")
+plot.cna(nnet.gdi, layout=cent.gdi)
+```
+
+
+# Correlation network analysis based on ensemble NMA
+In this example we perform ensemble NMA on 53 crystallographic transducin G-alpha structures, which can be 
+categorized into active GTP-analog-bound, inactive GDP-bound, and inhibitory GDI-bound states. For this analysis
+we utilize the example transducin structure dataset (further details of which can be obtained via `help(transducin)` along with the "Comparative Protein Structure Analysis with Bio3D" vignette available on-line). Briefly, this dataset includes aligned PDB coordinates (`pdbs`), structural invariant core positions (`core`) and annotations for each PDB structure (`annotation`).
+Cross-correlation matrices for all structures in the ensemble are calculated with the function **dccm()**. 
+State-specific ensemble average correlation matrices are then obtained with the function **filter.dccm()**.
+Correlation networks are finally constructed with the function **cna()**, and visualization of the networks
+performed with the function **plot.cna()**:
+
+```{r prep_data, warning=FALSE, results="hide", message=FALSE,}
+attach(transducin)
+```
+
+```{r nma.pdbs, cache=TRUE, warning=FALSE, results="hide", message=FALSE}
+modes <- nma(pdbs, ncore=8)
+```
+
+```{r dccms, cache=TRUE}
+cijs0 <- dccm(modes)
+```
+
+Below we perform optional filtering and averaging per state of the individual structure cross-correlation matrices.
+In this example, we also utilize a cutoff for correlation (0.35 in this example) and a cutoff for C-alpha distance (10 angstrom) (See `help(filter.dccm)` and main text for details).
+```{r filter_dccm, cache=TRUE, message=FALSE}
+cij <- filter.dccm(cijs0, xyz=pdbs, fac=annotation[, "state3"], cutoff.cij=0.35, 
+                dcut=10, scut=0, pcut=0.75, ncore=8)
+```
+
+```{r nets, cache=TRUE}
+nets <- cna(cij, cutoff.cij = 0)
+net1 = mod.select(nets$GTP)
+net2 = mod.select(nets$GDI)
+```
+
+```{r layout2}
+ref.pdb <- pdbs2pdb(pdbs, inds=1, rm.gaps=TRUE)[[1]]
+cent.gtp.full = layout.cna(net1, pdb=ref.pdb, full=TRUE, k=3)[,1:2]
+cent.gtp = layout.cna(net1, pdb=ref.pdb, k=3)[,1:2]
+cent.gdi.full = layout.cna(net2, pdb=ref.pdb, full=TRUE, k=3)[,1:2]
+cent.gdi = layout.cna(net2, pdb=ref.pdb, k=3)[,1:2]
+```
+
+```{r figure2, fig.cap="Correlation networks for GTP \"active\" and GDI \"inhibitory\" conformational states of transducin. Networks are derived from ensemble NMA of available GTP and GDI crystallographic structures.", echo=c(3,5,6,8)}
+layout(matrix(c(1:4), 2, 2))
+par(mar=c(0.1, 0.1, 3, 0.1))
+plot.cna(net1, layout=cent.gtp.full, full=TRUE, vertex.label=NA, vertex.size=5)
+title(main="GTP")
+plot.cna(net1, layout=cent.gtp)
+plot.cna(net2, layout=cent.gdi.full, full=TRUE, vertex.label=NA, vertex.size=5)
+title(main="GDI")
+plot.cna(net2, layout=cent.gdi)
+```
+
+
+# Document Details {.unnumbered}
+This document is shipped with the Bio3D package in both R and PDF formats. All code can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
+
+```{r eval=FALSE}
+library(rmarkdown)
+render("Bio3D_cna-transducin.Rmd", "all")
+```
+
+
+# Information About the Current Bio3D Session {.unnumbered}
+```{r}
+sessionInfo() 
+```
+
+
+# References {.unnumbered}
+
+
+[^1]: The latest version of the package, full documentation and further
+    vignettes (including detailed installation instructions) can be
+    obtained from the main Bio3D website:
+    [http://thegrantlab.org/bio3d/](http://thegrantlab.org/bio3d/).
+
+[^2]: This vignette contains executable examples, see `help(vignette)`
+    for further details.

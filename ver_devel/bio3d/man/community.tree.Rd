@@ -1,12 +1,10 @@
 \name{community.tree}
 \alias{community.tree}
-\title{
- Reconstruction of the Girvan-Newman community tree for a cna class object.
-}
+\title{ Reconstruction of the Girvan-Newman Community Tree for a CNA Class Object.  }
 \description{
   This function reconstructs the community tree of the community
-  analysis performed by \sQuote{cna} function. It allows the user to
-  explore different community partitionigs for the network.
+  clustering analysis performed by the \sQuote{cna} function. 
+  It allows the user to explore different network community partitions.
 }
 \usage{
   community.tree(x, rescale=FALSE)
@@ -25,55 +23,57 @@
     community residue memberships corresponding to a modularity
     value. The rows are ordered according to the \sQuote{modularity} object. }
   \item{num.of.comms}{ A numeric vector containing the number of
-    communities per modularity value. The vector elements are ordered accoring
+    communities per modularity value. The vector elements are ordered according
     to the \sQuote{modularity} object. }
 }
 \details{
   The input of this function should be a \sQuote{cna} class object
-  containing a $network, a $communities$merges and a $modularity
-  attributes. 
-  The function reconstructs the community residue memberships for each
-  modularity value. The purpose is to identify the most significant
-  community partitioning, which it might be obtained with a value close
-  to the maximum of the modularity, but not with the maximum itself.
-}  
+  containing \sQuote{network} and \sQuote{communities} attributes.
+
+  This function reconstructs the community residue memberships for each
+  modularity value. The purpose is to facilitate inspection of alternate 
+  community partitioning points, which in practice often corresponds to a value 
+  close to the maximum of the modularity, but not the maximum value itself.
+}
+\author{ Guido Scarabelli }  
 \seealso{
-   \code{\link{cna}}, \code{\link{summary.cna}}
+   \code{\link{cna}}, \code{\link{network.amendment}}, \code{\link{summary.cna}}
 }
 \examples{
 
-# Read example trajectory file
-trtfile <- system.file("examples/hivp.dcd", package="bio3d")
-trj <- read.dcd(trtfile)
+###-- Build a CNA object
+pdb <- read.pdb("4Q21")
+modes <- nma(pdb)
+cij <- dccm(modes)
+net <- cna(cij, cutoff.cij=0.2)
 
-# Read the starting PDB file to determine atom correspondence
-pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
-pdb <- read.pdb(pdbfile)
 
-# select residues 24 to 27 and 85 to 90 in both chains
-inds <- atom.select(pdb,"///24:27,85:90///CA/")
+##-- Reconstruct the community membership vector for each clustering step.
+tree <- community.tree(net, rescale=TRUE)
 
-# lsq fit of trj on pdb
-xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
+## Plot modularity vs number of communities
+plot( tree$num.of.comms, tree$modularity )
 
-# calculate dynamical cross-correlation matrix
-cij <- dccm(xyz)
-#plot(cij)
+## Inspect the maximum modularity value partitioning
+max.mod.ind <- which.max(tree$modularity)
 
-# Build, and betweeness cluster, a network graph
-net <- cna(cij)
+## Number of communities (k) at max modularity
+tree$num.of.comms[ max.mod.ind ]
 
-tree.net <- community.tree(net, rescale=TRUE)
+## Membership vector at this partition point 
+tree$tree[max.mod.ind,]
 
-# Get the maximum modularity
-max.modularity <- which(tree.net$modularity ==
-max(tree.net$modularity))
+# Should be the same as that contained in the original CNA network object
+net$communities$membership == tree$tree[max.mod.ind,]
 
-# Same as the communities in net object
-tree.net$tree[max.modularity,]
+# Inspect a new membership partitioning (at k=7)
+memb.k7 <- tree$tree[ tree$num.of.comms == 7, ]
 
-# New membership partitioning
-tree.net$tree[max.modularity+2,]
+## Produce a new k=7 community network  
+net.7 <- network.amendment(net, memb.k7)
+plot(net.7, pdb)
+#view.cna(net.7, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
+
 
 }
 \keyword{analysis}

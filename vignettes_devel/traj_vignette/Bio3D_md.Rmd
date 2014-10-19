@@ -1,9 +1,30 @@
-# Beginning Trajectory Analysis with Bio3D
-## Lars Skjaerven, Xin-Qiu Yao and Barry J. Grant 
-## University of Michigan, Ann Arbor
-<br><br>
+---
+title: "Beginning Trajectory Analysis with Bio3D"
+author: "Xin-Qiu Yao, Lars Skjaerven, & Barry J. Grant"
+date: "September 28, 2014"
+affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
+output:
+  pdf_document:
+    highlight: default
+    keep_tex: yes
+    number_sections: yes
+    toc: no
+    fig_width: 5
+    fig_height: 5
+    fig_caption: yes
+  md_document:
+    fig_height: 5
+    fig_width: 5
+    variant: markdown_phpextra
+bibliography: Bio3D_md.bib
+documentclass: article
+fontsize: 11pt
+geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
+linkcolor: black
+---
 
-## Background
+
+# Background {.unnumbered}
 
 Bio3D[^1] is an R package that provides interactive tools for the
 analysis of bimolecular structure, sequence and simulation data. The aim
@@ -11,7 +32,7 @@ of this document, termed a vignette[^2] in R parlance, is to provide a
 brief task-oriented introduction to basic molecular dynamics trajectory
 analysis with the Bio3D R package [@grant06].
 
-#### Requirements:
+## Requirements {.unnumbered}
 
 Detailed instructions for obtaining and installing the Bio3D package on
 various platforms can be found in the [Installing
@@ -22,9 +43,14 @@ command:
 ```{r, eval=FALSE}
 vignette(package="bio3d") 
 ```
+
+## About this document {.unnumbered}
+This vignette was generated using **Bio3D version `r packageVersion("bio3d")`**.
+
+
 <br>
 
-## Getting Started
+# Getting Started
 
 Start R, load the Bio3D package and use the command `demo("md")` to get
 a quick feel for some of the tasks that we will be introducing in the
@@ -39,7 +65,7 @@ demo("md")
 library(bio3d) 
 ```
 
-#### Side-note:
+#### Side-note: {.unnumbered}
 
 Note that you will be prompted to hit the `RETURN` key at each step of
 the demo as this will allow you to see the particular functions being
@@ -52,7 +78,7 @@ also find this [documentation
 online](http://thegrantlab.org/bio3d/html/index.html).
 <br><br>
 
-### Reading Example Trajectory Data
+## Reading Example Trajectory Data
 
 A number of example data sets are shipped with the Bio3D package. The
 main purpose of including this data is to allow users to more quickly
@@ -72,7 +98,7 @@ dcdfile <- system.file("examples/hivp.dcd", package="bio3d")
 pdbfile <- system.file("examples/hivp.pdb", package="bio3d") 
 ```
 
-#### Side-note:
+#### Side-note: {.unnumbered}
 
 Note that in the above example the `system.file()` command returns a
 character string corresponding to the file name of a PDB structure
@@ -83,6 +109,7 @@ the package in different locations. When using your own input files the
 ```{r, eval=FALSE}
 mydcdfile <- "/path/to/my/data/myfile.dcd" 
 ```
+
 <br>
 
 ```{r readtrj, results="hide", cache=TRUE}
@@ -103,16 +130,16 @@ print(dcd)
 
 The output of the above function is telling us that we have 351 trajectory frames and 594 coordinates. The trajectory information is stored in a  `xyz` matrix object with one row per frame and columns for the Cartesian coordinates (x, y and z columns).
 
-#### Question:
+#### Question: {.unnumbered}
 
 How many atoms are in the trajectory and PDB files?
 
-#### Question:
+#### Question: {.unnumbered}
 
 How would you extract the amino acid sequence of the HIVpr system in
 1-letter and 3-letter forms? HINT: try `help.search("PDB sequence")` for a Bio3D function that might help you.
 
-#### Side-note:
+#### Side-note: {.unnumbered}
 
 Note that typically one works with trajectory files that contain all
 protein atoms, or at the very least all backbone atoms. Solvent however
@@ -122,17 +149,20 @@ Hydrogen bonding patterns or details of water occupancy with the
 currently inputed data.
 <br><br>
 
-## Trajectory Frame Superposition
+# Trajectory Frame Superposition
 
 In this simple example we select all C-alpha atoms for trajectory frame
 superposition. 
+
 ```{r}
 ca.inds <- atom.select(pdb, elety="CA") 
 ``` 
+
 The returned `ca.inds` object is a list containing atom and xyz numeric
 indices that we can now use to superpose all frames of the trajectory on
 the selected indices (in this case corresponding to all alpha Carbon
 atoms). For this we will with the `fit.xyz()` function. 
+
 ```{r}
 xyz <- fit.xyz(fixed=pdb$xyz, mobile=dcd,
                fixed.inds=ca.inds$xyz,
@@ -149,25 +179,25 @@ of the input trajectory:
 dim(xyz) == dim(dcd) 
 ```
 
-#### Question:
+#### Question: {.unnumbered}
 
 How would you fit trajectory frames on the Calpha atoms of residues 24
 to 27 and 85 to 90 in both chains? HINT: See the example section of
 `help(atom.select)`.
 
-#### Question:
+#### Question: {.unnumbered}
 
 Would you expect the alternate fitting suggested above to alter your
 later results? HINT: You can come back to this question later after
 going through the other sections.
 
-#### Side-note:
+#### Side-note: {.unnumbered}
 
 A simple way to obtain the average structure from your fitted trajectory
 is to use the following command `apply(xyz,2,mean)`.
 <br><br>
 
-## Root Mean Square Deviation (RMSD)
+# Root Mean Square Deviation (RMSD)
 
 RMSD is a standard measure of structural distance between coordinate
 sets and is implemented in the Bio3D function `rmsd()`.
@@ -181,6 +211,7 @@ points(lowess(rd), typ="l", col="red", lty=2, lwd=2)
 
 A quick histogram can be useful for examining the distribution of RMSD
 values. 
+
 ```{r, echo=TRUE, fig.cap="Note the spread of RMSD values and that the majority of sampled conformations are around 2 Angstroms from the starting structure"}
 hist(rd, breaks=40, freq=FALSE, main="RMSD Histogram", xlab="RMSD")
 lines(density(rd), col="gray", lwd=3)
@@ -190,33 +221,34 @@ lines(density(rd), col="gray", lwd=3)
 summary(rd) 
 ```
 
-#### Question:
+#### Question: {.unnumbered}
 
 How would you calculate the pairwise RMSD between all frames?
 
-#### Question:
+#### Question: {.unnumbered}
 
 What would be a good way to visualize and further analyze such a
 pairwise RMSD matrix? HINT: Have a look at the NMA vignette for some,
 hopefully, inspiring plots?
 <br><br>
 
-## Root Mean Squared Fluctuations (RMSF)
+# Root Mean Squared Fluctuations (RMSF)
 
 RMSF is an often used measure of conformational variance and is
 implemented in the Bio3D function `rmsf()`. This analysis will highlight
 the portions of structure that are fluctuating from their mean structure
 the most (and least). 
+
 ```{r, echo=TRUE, fig.cap="Residue-wise RMSF indicates regions of high mobility"}
 rf <- rmsf(xyz[,ca.inds$xyz])
 plot(rf, ylab="RMSF", xlab="Residue Position", typ="l")
 ```
 
-#### Question:
+#### Question: {.unnumbered}
 
 If you had multiple simulations (which by the way we greatly encourage), how would you plot these on the same graph? HINT: See `help(points)`.
 
-#### Question:
+#### Question: {.unnumbered}
 
 If you noticed differences at particular sites (e.g. in the presence or
 absence of a ligand) how would you go about addressing the significance
@@ -225,7 +257,7 @@ simulation approach and implement Bio3D in one of the most advanced
 statistical analysis packages available.
 <br><br>
 
-## Principal Component Analysis
+# Principal Component Analysis
 
 PCA can be employed to examine the relationship between different
 conformations sampled during the trajectory and is implemented in the
@@ -257,13 +289,14 @@ plot(pc, col=bwr.colors(nrow(xyz)) )
 ```
 
 Note that there are distinct groupings of conformations along the PC1 plane (one centered around -30 and a second, larger grouping, at +5). The continuous color scale (from blue to whit to red) indicates that there are periodic jumps between these conformers throughout the trajectory. Below we perform a quick clustering in PC-space to further highlight these distinct conformers.
+
 ```{r, echo=TRUE, fig.cap="Simple clustering in PC subspace"}
 hc <- hclust(dist(pc$z[,1:2])) 
 grps <- cutree(hc, k=2) 
 plot(pc, col=grps) 
 ```
 
-#### Question:
+#### Question: {.unnumbered}
 
 How can we find out which frames correspond to the distinct groups along PC1? HINT: Which variable/object created above tells us about cluster membership?
 <br><br>
@@ -276,7 +309,7 @@ plot.bio3d(pc$au[,1], ylab="PC1 (A)", xlab="Residue Position", typ="l")
 points(pc$au[,2], typ="l", col="blue") 
 ```
 
-#### Question:
+#### Question: {.unnumbered}
 
 Why do you think there might be two major peaks in our RMSF plot?
 <br><br>
@@ -292,6 +325,7 @@ the interpolated structures can be analyzed for possible domain and
 shear movements with other Bio3D functions, or used as initial seed
 structures for reaction path refinement methods (note you will likely
 want to perform all heavy atom PCA for such applications).
+
 ```{r, eval=FALSE}
 p1 <- mktrj.pca(pc, pc=1, b=pc$au[,1], file="pc1.pdb")
 p2 <- mktrj.pca(pc, pc=2,b=pc$au[,2], file="pc2.pdb") 
@@ -306,14 +340,14 @@ example (see figure below).
 write.ncdf(p1, "trj_pc1.nc") 
 ```
 
-![image](figure/hiv_pc1.png)
+![image](figures/hiv_pc1.png)
 
-#### Question:
+#### Question: {.unnumbered}
 
 Which regions are the most dynamic and why?
 <br><br>
 
-## Cross-Correlation Analysis
+# Cross-Correlation Analysis
 
 The extent to which the atomic fluctuations/displacements of a system
 are correlated with one another can be assessed by examining the
@@ -327,7 +361,7 @@ cij<-dccm(xyz[,ca.inds$xyz])
 plot(cij) 
 ```
 
-#### Question:
+#### Question: {.unnumbered}
 
 What do the off-diagonal regions of negative correlation correspond to
 in this plot and which regions are involved? HINT: Negative values
@@ -342,7 +376,7 @@ function `view.dccm()`
 view.dccm(cij, pdb, launch=TRUE) 
 ```
 
-![image](figure/dccm_hivpr.png)
+![image](figures/dccm_hivpr.png)
 
 See also the `Enhanced Methods for Normal Mode Analysis` for additional
 visualization examples. Also you might want to checkout the
@@ -352,7 +386,7 @@ of this analysis is described in the `Correlation Network Analysis`
 vignette.
 <br><br>
 
-## Where to Next
+# Where to Next
 
 If you have read this far, congratulations! We are ready to have some
 fun and move to other package vignettes that describe more interesting
@@ -365,32 +399,25 @@ experimental data and supplement it with simulation results to map the
 conformational dynamics and coupled motions of proteins).
 <br><br>
 
-## Document Details
 
-This document is shipped with the Bio3D package in both Rnw and PDF
-formats. All code can be extracted and automatically executed to
-generate Figures and/or the PDF with the following commands:
+# Document Details {.unnumbered}
+This document is shipped with the Bio3D package in both R and PDF formats. All code can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
 
-```{r, eval=FALSE}
-knitr::knit("Bio3D_md.Rnw")
-tools::texi2pdf("Bio3D_md.tex") 
+```{r eval=FALSE}
+library(rmarkdown)
+render("Bio3D_md.Rmd", "all")
 ```
 
-### Information About the Current Bio3D Session
+# Information About the Current Bio3D Session {.unnumbered}
 
 ```{r}
 sessionInfo() 
 ```
+
 <br>
 
-## References
+# References {.unnumbered}
 
-Grant, B.J. and Rodrigues, A.P.D.C and Elsawy, K.M. and Mccammon, A.J.
-and Caves, L.S.D. (2006) **Bio3d: an R package for the comparative
-analysis of protein structures.** *Bioinformatics*, **22**, 2695–2696.
-
-Humphrey, W., et al. (1996) **VMD: visual molecular dynamics.** *J. Mol.
-Graph*, **14**, 33–38
 
 [^1]: The latest version of the package, full documentation and further
     vignettes (including detailed installation instructions) can be

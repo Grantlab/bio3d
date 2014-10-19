@@ -2,9 +2,7 @@
 \alias{atom2ele}
 \alias{atom2ele.default}
 \alias{atom2ele.pdb}
-\title{
-  Atom Names/Types to Atomic Symbols Converter
-}
+\title{ Atom Names/Types to Atomic Symbols Converter }
 \description{
   Convert atom names/types into atomic symbols
 }

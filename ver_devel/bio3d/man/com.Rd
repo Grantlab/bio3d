@@ -58,14 +58,14 @@ com(pdb, inds)
 
 \dontrun{
 ## Unknown atom names
-pdb <- read.pdb("3dnd", het2atom=TRUE)
+pdb <- read.pdb("3dnd")
 inds <- atom.select(pdb, resid="LL2")
 mycom <- com(pdb, inds, rescue=TRUE)
-warnings()
+#warnings()
 
 
 ## Map atom names manually
-pdb <- read.pdb("3RE0", het2atom=TRUE)
+pdb <- read.pdb("3RE0")
 inds <- atom.select(pdb, resno=201)
 
 elety.cust <- list("CL2"="Cl", "PT1"="Pt")

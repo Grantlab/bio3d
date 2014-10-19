@@ -64,10 +64,12 @@
 }
 \seealso{ \code{\link{blast.pdb}} }
 \examples{
+\donttest{
 b2 <-  blast.pdb( pdbseq(read.pdb( get.pdb("4q21", URLonly=TRUE) )) )
 raw.hits <- plot.blast(b2)
 top.hits <- plot.blast(b2, 188)
 head(top.hits$hits)
+}
 
 \dontrun{
 blast <- blast.pdb( pdbseq(read.pdb( get.pdb("2BN3", URLonly=TRUE) )))

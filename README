@@ -12,7 +12,14 @@ In addition, various utility functions are provided to enable the statistical an
 
 ## Installing Bio3D ##
 
-For the majority of users we recommend the use of the last stable release available from the main [Bio3D website](http://thegrantlab.org/bio3d/). The development version is available from our bitbucket repository and typically contains new functions and bug fixes that have not yet been incorporated into the latest stable release. The simplest method for development version installation is to use the R function install_bitbucket() from the devtools package:
+For the majority of users we recommend the use of the last stable release available from [CRAN](http://cran.r-project.org/web/packages/bio3d/) and the main [Bio3D website](http://thegrantlab.org/bio3d/). To install from within R issue the command:
+
+```
+#!r
+install.packages("bio3d", dependencies=TRUE)
+```
+
+The development version is available from our bitbucket repository and typically contains new functions and bug fixes that have not yet been incorporated into the latest stable release. The simplest method for development version installation is to use the R function install_bitbucket() from the devtools package:
 
 
 ```
@@ -37,3 +44,4 @@ You are welcome to:
 * Submit suggestions and bug-reports at: https://bitbucket.org/Grantlab/bio3d/issues
 * Send a pull request on: https://bitbucket.org/Grantlab/bio3d/pull-requests
 * Compose a friendly e-mail to: bjgrant@umich.edu
+

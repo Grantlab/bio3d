@@ -275,8 +275,8 @@ function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
     else to.return <- matrix(NA, nrow=nframes,ncol=natoms*3)
   } else {
     library(bigmemory)  ##-! Insert to read big dcd files (Sep 29th 08)
-    if(cell) to.return <- big.matrix(nrow=nframes,ncol=6, init = NA, type = "double")
-    else to.return <- big.matrix(nrow=nframes,ncol=natoms*3, init = NA, type = "double")
+    if(cell) to.return <- bigmemory::big.matrix(nrow=nframes,ncol=6, init = NA, type = "double")
+    else to.return <- bigmemory::big.matrix(nrow=nframes,ncol=natoms*3, init = NA, type = "double")
   }
 ### ==> !!! end big.matrix insert
   

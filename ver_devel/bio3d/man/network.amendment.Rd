@@ -1,15 +1,12 @@
 \name{network.amendment}
 \alias{network.amendment}
-\title{
-  Amendment of cna Class Object After Provinding a New Community Membership Vector.
-}
+\title{ Amendment of a CNA Network According To A Input Community Membership Vector.  }
 \description{
-  This function changes the attributes $communities$membership,
-  $community.network and $community.cij for a \sQuote{cna} class object.
+  This function changes the \sQuote{communities} attribute of a 
+  \sQuote{cna} class object to match a given membership vector.
 }
 \usage{
   network.amendment(x, membership, minus.log=TRUE)
-
 }
 \arguments{
   \item{x}{  A protein network graph object as obtained from the
@@ -24,55 +21,35 @@
   according to the membership vector provided.
 }
 \details{
-  This function is useful to change the community partitioning of a
-  \sQuote{cna} object, according to the community membership vector
-  provided (i.e. it should be used with the output of the \sQuote{community.tree} function).
-}  
+  This function is useful, in combination with \sQuote{community.tree}, 
+  for inspecting different community partitioning options of a input 
+  \sQuote{cna} object. See examples.
+} 
+\author{ Guido Scarabelli }  
 \seealso{
-   \code{\link{cna}}, \code{\link{summary.cna}}, \code{\link{community.tree}}
+   \code{\link{cna}}, \code{\link{community.tree}}, \code{\link{summary.cna}} 
 }
 \examples{
+\donttest{
 
-# Read example trajectory file
-trtfile <- system.file("examples/hivp.dcd", package="bio3d")
-trj <- read.dcd(trtfile)
+##-- Build a CNA object
+pdb <- read.pdb("4Q21")
+modes <- nma(pdb)
+cij <- dccm(modes)
+net <- cna(cij, cutoff.cij=0.2)
 
-# Read the starting PDB file to determine atom correspondence
-pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
-pdb <- read.pdb(pdbfile)
+##-- Community membership vector for each clustering step
+tree <- community.tree(net, rescale=TRUE)
 
-# select residues 24 to 27 and 85 to 90 in both chains
-inds <- atom.select(pdb,"///24:27,85:90///CA/")
+## Produce a new k=7 membership vector and CNA network
+memb.k7 <- tree$tree[ tree$num.of.comms == 7, ]
+net.7 <- network.amendment(net, memb.k7)
 
-# lsq fit of trj on pdb
-xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
+plot(net.7, pdb)
 
-# calculate dynamical cross-correlation matrix
-cij <- dccm(xyz)
-#plot(cij)
+print(net)
+print(net.7)
+}
 
-# Build, and betweeness cluster, a network graph
-net <- cna(cij)
-
-tree.net <- community.tree(net, rescale=TRUE)
-
-# Get the maximum modularity
-max.modularity <- which(tree.net$modularity ==
-max(tree.net$modularity))
-
-# Same as the communities in net object
-tree.net$tree[max.modularity,]
-
-# New membership partitioning
-tree.net$tree[max.modularity+3,]
-
-# New cna object
-net.optimized <- network.amendment(net, tree.net$tree[max.modularity+3,], minus.log=TRUE)
-
-par(mfcol=c(1,2))
-plot.cna(net)
-plot.cna(net.optimized)
-
-#view.cna(net.optimized, pdb, launch=TRUE)
 }
 \keyword{utility}
