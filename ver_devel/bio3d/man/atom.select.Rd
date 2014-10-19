@@ -89,13 +89,13 @@ eleno=NULL, elety=NULL, type=NULL, verbose=TRUE, rm.insert=FALSE)
 \examples{
 
 # Read a PDB file
-pdb <- read.pdb( "http://www.rcsb.org/pdb/files/1BG2.pdb" )
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 # Print structure summary
 atom.select(pdb)
 
-# Select all C-alpha atoms with residues numbers between 65 and 143
-ca.inds <- atom.select(pdb, resno=65:143, elety="CA")
+# Select all C-alpha atoms with residues numbers between 43 and 54
+ca.inds <- atom.select(pdb, "calpha", resno=43:54)
 print( pdb$atom[ ca.inds$atom, "resid" ] )
 print( pdb$xyz[ ca.inds$xyz ] )
 
@@ -104,8 +104,8 @@ print( pdb$xyz[ ca.inds$xyz ] )
 ca.inds <- atom.select(pdb, "calpha")
 
 # String examples (see above).
-ca.inds <- atom.select(pdb, "///65:143///CA/")
-inds <- atom.select(pdb, "///130:142///N,CA,C,O/")
+ca.inds <- atom.select(pdb, "///43:54///CA/")
+inds <- atom.select(pdb, "///107:118///N,CA,C,O/")
 }
 }
 \keyword{utilities}

@@ -85,10 +85,10 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
   \code{\link{read.fasta}} }
 \examples{
 ## Read a PDB file from the RCSB online database
-pdb <- read.pdb("4q21")
+#pdb <- read.pdb("4q21")
 
 ## Read a PDB file from those included with the package
-###pdb <- read.pdb( system.file("examples/1bg2.pdb", package="bio3d") )
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 ## Print a brief composition summary
 pdb

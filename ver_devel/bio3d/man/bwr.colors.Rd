@@ -39,6 +39,7 @@ mono.colors(n)
   \code{\link{rgb}}, \code{\link{gray}}, \code{\link{col2rgb}}
 }
 \examples{
+\donttest{
 
 # Color a distance matrix
 pdb <- read.pdb( "1bg2" )
@@ -51,6 +52,7 @@ plot(d,
      color.palette = mono.colors,
      xlab="Residue Number", ylab="Residue Number")
 
+}
 }
 \keyword{ utilities }
 

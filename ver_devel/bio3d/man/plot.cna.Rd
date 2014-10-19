@@ -70,7 +70,7 @@
   \code{\link[igraph:plot.communities]{plot.communities}},
   \code{\link[igraph:igraph.plotting]{igraph.plotting}} }
 \examples{
-
+\donttest{
 require(igraph)
 
 ##-- Build a CNA object
@@ -88,6 +88,7 @@ plot.cna(net, pdb)
 
 # Play with plot layout and colors...
 plot.cna(net, layout=layout.mds(net$community.network), col=c("blue","green") ) 
+}
 
 \dontrun{
 # Plot full residue network colored by communities - will be slow due to number of edges!!
