@@ -1,5 +1,5 @@
 "hclustplot" <- function(hc, k=NULL, h=NULL, colors=NULL,
-                           labels=NULL, fillbox=TRUE, 
+                           labels=NULL, fillbox=FALSE, 
                            heights = c(1, .3), mar = c(1, 1, 0, 1), ...) {
 
   if(!inherits(hc, "hclust"))
@@ -8,7 +8,8 @@
     stop("provide either k or h to function 'cutree', or colors for manual coloring")
   
   mtext.names <- names(formals( mtext ))
-  plot.names <- c(names(formals( stats:::plot.dendrogram )),
+  plot.dendrogram <- get("plot.dendrogram", envir = getNamespace("stats"))
+  plot.names <- c(names(formals( plot.dendrogram )),
                   names(formals( plot.default )))
   
   dots <- list(...)

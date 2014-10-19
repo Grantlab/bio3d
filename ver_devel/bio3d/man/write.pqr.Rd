@@ -78,7 +78,10 @@ nums <- as.numeric(pdb$atom[,"resno"])
 nums <- nums - (nums[1] - 1)
 
 # Write out renumbered PDB file
-write.pdb(pdb=pdb, resno = nums, file="eg.pdb")
+outfile = file.path(tempdir(), "eg.pdb")
+write.pdb(pdb=pdb, resno = nums, file = outfile)
+
+invisible( cat("\nSee the output file:", outfile, sep = "\n") )
 
 }
 \keyword{ IO }

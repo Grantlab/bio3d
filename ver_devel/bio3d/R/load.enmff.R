@@ -170,7 +170,8 @@
   ## sdENM by lazyload. contains an array with dimensions
   ## 20  x 20  x 27
   ## aa1 x aa2 x distance.category
-  
+  sdENM = bio3d::sdENM
+ 
   ## set sequence data to 1-letter aa code
   if(any(nchar(ssdat$seq)==3))
     sequ <- suppressWarnings( aa321(ssdat$seq) )  

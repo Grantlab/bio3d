@@ -2,9 +2,7 @@
 \alias{bio3d-package}
 \alias{bio3d}
 \docType{package}
-\title{
-Biological Structure Analysis
-}
+\title{ Biological Structure Analysis }
 \description{
 Utilities for the analysis of protein structure and sequence data. 
 }
@@ -12,8 +10,8 @@ Utilities for the analysis of protein structure and sequence data.
 \tabular{ll}{
 Package: \tab bio3d\cr
 Type: \tab Package\cr
-Version: \tab 2.1-0\cr
-Date: \tab 2014-08-28\cr
+Version: \tab 2.1-1\cr
+Date: \tab 2014-10-14\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab \url{http://thegrantlab.org/bio3d/}\cr
 }
@@ -24,7 +22,7 @@ Features include the ability to read and write structure
 \code{\link{write.fasta}}) and dynamics trajectory data
 (\code{\link{read.dcd}}, \code{\link{read.ncdf}}, \code{\link{write.ncdf}}).
 
-Perform sequence database searches (\code{\link{blast.pdb}}), atom
+Perform sequence database searches (\code{\link{blast.pdb}}, \code{\link{hmmer}}), atom
 summaries (\code{\link{summary.pdb}}),  atom selection
 (\code{\link{atom.select}}),  re-orientation (\code{\link{orient.pdb}}),
 alignment ((\code{\link{pdbaln}},  \code{\link{seqaln}})) superposition (\code{\link{rot.lsq}},  \code{\link{fit.xyz}}), rigid core identification (\code{\link{core.find}},  \code{\link{plot.core}}, 
@@ -58,7 +56,7 @@ manipulation and analysis of biological sequence and structural data
 \code{\link{orient.pdb}} and \code{\link{pairwise}}).
 }
 \note{
-The latest version and further documentation can be obtained from the
+The latest version, package vignettes and further documentation can be obtained from the
 bio3d website:\cr
 \url{http://thegrantlab.org/bio3d/}.\cr
 \url{http://thegrantlab.org/bio3d/html/}.\cr

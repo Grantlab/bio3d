@@ -1,7 +1,7 @@
 "pfam" <- function(id, alignment='seed', verbose=FALSE) {
   ##alignment <- 'full' ## seed, ncbi, full, metagenomics
   
-  oops <- require(RCurl)
+  oops <- requireNamespace("RCurl", quietly = TRUE)
   if(!oops)
     stop("Please install the RCurl package from CRAN")
   
@@ -12,7 +12,7 @@
   if(verbose)
     cat("Fetching accession from", url, "\n")
   
-  if(!url.exists(url)) {
+  if(!RCurl::url.exists(url)) {
     cat(url, "\n")
     stop("Url does not exist")
   }
@@ -25,7 +25,7 @@
   if(verbose)
     cat("Fetching alignment from", url, "\n")
 
-  if(!url.exists(url)) {
+  if(!RCurl::url.exists(url)) {
     cat(url, "\n")
     stop("Url does not exist")
   }

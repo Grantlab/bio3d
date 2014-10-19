@@ -3,9 +3,7 @@
 \alias{atom2mass}
 \alias{atom2mass.default}
 \alias{atom2mass.pdb}
-\title{
-  Atom Names/Types to Mass Converter
-}
+\title{ Atom Names/Types to Mass Converter }
 \description{
   Convert atom names/types into atomic masses.
 }

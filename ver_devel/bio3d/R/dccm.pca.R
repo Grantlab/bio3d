@@ -5,6 +5,11 @@
 
    ## Check for multiple cores
    ncore = setup.ncore(ncore)
+
+   if(ncore > 1) {
+     mcparallel <- get("mcparallel", envir = getNamespace("parallel"))
+     mccollect <- get("mccollect", envir = getNamespace("parallel"))
+   }
    
    ## Set modes to be included
    if(is.null(nmodes)) {
@@ -40,15 +45,16 @@
 
          # For progress bar
          fpb <- fifo(tempfile(), open = "w+b", blocking = T)
-         if(inherits(parallel:::mcfork(), "masterProcess")) {
+
+         # spawn a child process for message printing
+         child <- mcparallel({ 
             progress <- 0.0
             while(progress < nmodes && !isIncomplete(fpb)) {
                msg <- readBin(fpb, "double")
                progress <- progress + as.numeric(msg)
                setTxtProgressBar(pb, progress)
             }
-            parallel:::mcexit()
-         }
+         } )
          ###################
  
          jobid <- rep(1:ncore, ceiling(nmodes/ncore))
@@ -72,7 +78,7 @@
          diag(vcov) <- diag(vcov) / 2
 
          close(fpb)
-         parallel:::readChildren()  # cleanup child process
+         mccollect(child) # End the child for message printing
 
       } else {       # Serial
 

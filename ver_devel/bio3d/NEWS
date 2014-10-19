@@ -1,10 +1,60 @@
 NEWS 
 ====
 
-Version 2.0 contains over 30 new functions including enhanced Normal Mode 
-Analysis facilities as well extensive improvements to existing code and 
-documentation. For a fine-grained list of changes or to report a bug, please 
-consult: 
+v2.1
+Version 2.1, released in Sep 2014,  contains new facilities for Correlation 
+Network Analysis (cna) and Geometrically Stable Domain finding (geostas). 
+We have also changed 'PDB object data' storage from a matrix to a data.frame 
+format. Improved methods and functionality for ensemble NMA are now also included 
+along with extensive improvements to package vignettes and function documentation. 
+For a fine-grained list of changes, or to report a bug, please consult: 
+
+* [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
+* [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+
+Major new functions include:
+* cna: Protein Dynamic Correlation Network Construction and Community Analysis.
+* plot.cna: Protein Structure Network Plots in 2D and 3D.
+* print.cna: Summarize and Print Features of a cna Network Graph
+* identify.cna: Identify Points in a CNA Protein Structure Network Plot
+* layout.cna: Protein Structure Network Layout
+* view.cna: View CNA Protein Structure Network Community Output in VMD
+* prune.cna: Prune A cna Network Object
+* community.tree: Reconstruction of the Girvan-Newman Community Tree for a CNA Class Object.
+* network.amendment: Amendment of a CNA Network According To A Input Community Membership Vector.
+* lmi: Linear Mutual Information Matrix
+* dccm.pca: Dynamic Cross-Correlation from Principal Component Analysis
+* filter.dccm: Filter for Cross-correlation Matrices (Cij)
+* cmap.filter: Contact Map Consensus Filtering
+* geostas (amsm.xyz): GeoStaS Domain Finder
+* bhattacharyya Bhattacharyya Coefficient
+* covsoverlap: Covariance Overlap
+* sip: Square Inner Product
+* cov.nma: Calculate Covariance Matrix from Normal Modes
+* mktrj.enma: Ensemble NMA Atomic Displacement Trajectory
+* pca.array: Principal Component Analysis of an array of matrices
+* hmmer: HMMER Sequence Search
+* plot.hmmer: Plot a Summary of HMMER Hit Statistics.
+* uniprot: Fetch UniProt Entry Data.
+* pfam: Download Pfam FASTA Sequence Alignment
+* hclustplot: Dendrogram with Clustering Annotation
+* write.pir: Write PIR Formated Sequences
+* mustang: Structure-based Sequence Alignment with MUSTANG
+* pdbs.filter: Filter or Trim a pdbs PDBs Object
+* dssp.pdbs: Secondary Structure Analysis of Aligned PDB Structures with DSSP
+* plot.fasta: Plot a Multiple Sequence Alignment
+* print.fasta: Printing Sequence Alignments
+* inspect.connectivity: Check the Connectivity of Protein Structures
+* var.xyz: Pairwise Distance Variance in Cartesian Coordinates
+* is.xyz(as.xyz, print.xyz): Is an Object of Class
+* setup.ncore: Setup for Running Bio3D Functions using Multiple CPU Cores
+
+v2.0
+----
+Version 2.0, released in Nov 2013, contains over 30 new functions including  
+enhanced Normal Mode Analysis facilities as well extensive improvements to  
+existing code and documentation. For a fine-grained list of changes or to 
+report a bug, please consult: 
 
 * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
 * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
@@ -70,7 +120,5 @@ For more information on SemVer, please visit http://semver.org/.
 
 -----
 
-For changes pior to v1.1-6 please see the bio3d wki:
+For changes prior to v1.1-6 (Apr 2013) please see the bio3d wki:
 * [Whats new wki page](http://bio3d.pbworks.com/w/page/7824486/WhatsNew)
-
-

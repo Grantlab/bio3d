@@ -15,8 +15,8 @@ test_that("Correlation matrix from NMA", {
   expect_that(cm[1,3], equals(-0.3156342, tolerance=1e-6))
   expect_that(cm[1,3], equals(cm[3,1]))
 
-  ## Check multicore DCCM
-  invisible(capture.output(cm.mc <- dccm.nma(modes, ncore=2)))
+  ## Check multicore DCCM  
+  invisible(capture.output(cm.mc <- dccm.nma(modes, ncore=NULL)))
   expect_that(cm, equals(cm.mc, tolerance=1e-6))
   
 }

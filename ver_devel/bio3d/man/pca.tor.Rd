@@ -5,14 +5,11 @@
    Performs principal components analysis (PCA) on torsion angle \code{data}.
  }
 \usage{
-pca.tor(data, subset = rep(TRUE, nrow(as.matrix(data))))
+\method{pca}{tor}(data, \dots)
 }
 \arguments{
   \item{data}{ numeric matrix of torsion angles with a row per structure. }
-  \item{subset}{ an optional vector of numeric indices that selects a
-    subset of rows (e.g. experimental structures vs molecular dynamics
-    trajectory structures) from the full \code{data} matrix. Note: the
-    full \code{data} is projected onto this subspace.}
+  \item{\dots}{ additional arguments passed to the method \code{pca.xyz}. }
 }
 \value{
   Returns a list with the following components:

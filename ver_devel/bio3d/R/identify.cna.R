@@ -12,7 +12,7 @@ identify.cna <- function(x, labels=NULL, cna=NULL, ...){
   ## d <- identify.cna(x, labels=summary(net)$members)
  
 
-  oops <- require(igraph)
+  oops <- requireNamespace("igraph", quietly = TRUE)
   if (!oops) {
     stop("igraph package missing: Please install, see: ?install.packages")
   }
@@ -21,7 +21,7 @@ identify.cna <- function(x, labels=NULL, cna=NULL, ...){
     stop("'x' object must be a Nx2 numeric matrix")
   }
   
-  x.norm <- layout.norm(x, -1, 1, -1, 1)
+  x.norm <- igraph::layout.norm(x, -1, 1, -1, 1)
 
   if( !is.null(labels) ) {
     ## Use input labels

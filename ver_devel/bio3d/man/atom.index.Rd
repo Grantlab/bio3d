@@ -1,9 +1,7 @@
 \name{atom.index}
 \alias{atom.index}
 \docType{data}
-\title{
-  Atom Names/Types
-}
+\title{ Atom Names/Types }
 \description{
   This data set gives for various atom names/types the corresponding
   atomic symbols.

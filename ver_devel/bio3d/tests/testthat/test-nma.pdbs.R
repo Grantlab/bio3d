@@ -2,6 +2,8 @@ context("Testing nma.pdbs()")
 
 test_that("eNMA works", {
 
+  skip_on_cran()
+
   "mysign" <- function(a,b) {
     if(all(sign(a)==sign(b)))
       return(1)
@@ -83,14 +85,14 @@ test_that("eNMA works", {
 
   
   ## Multicore (same arguments as above!)
-  invisible(capture.output(mmc <- nma.pdbs(pdbs, fit=TRUE, rm.gaps=TRUE, ncore=3)))
+  invisible(capture.output(mmc <- nma.pdbs(pdbs, fit=TRUE, rm.gaps=TRUE, ncore=NULL)))
   expect_that(mmc$fluctuations, equals(modes$fluctuations))
   expect_that(mmc$U.subspace, equals(modes$U.subspace))
 
 
   
   ## Calc modes with rm.gaps=FALSE
-  invisible(capture.output(modes <- nma.pdbs(pdbs, fit=TRUE, rm.gaps=FALSE, ncore=3)))
+  invisible(capture.output(modes <- nma.pdbs(pdbs, fit=TRUE, rm.gaps=FALSE, ncore=NULL)))
 
   ## structure 5-mode1 - tail:
   U1 <- c(0.161722374, -0.055449167, 0.227525629, 0.177349173, 0.074947786, 0.304876733)
@@ -100,9 +102,9 @@ test_that("eNMA works", {
   ## structure 1-mode1 - tail:
   U1 <- c(0.14610002, 0.00861672, 0.11448489, rep(NA, 3))
   nowU1 <- tail(modes$U.subspace[,1,1], n=6)
-  U1[is.na(U1)] <- 99
-  nowU1[is.na(nowU1)] <- 99
-  expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
+  U1[is.na(U1)] <- 0
+  nowU1[is.na(nowU1)] <- 0
+  expect_that(nowU1 * mysign(nowU1, U1), equals(U1, tolerance=1e-6))
 
   ## fluctuations
   na.expected <- c(43, 46, 47, 48, 49, 52, 53, 54, 590,
@@ -129,7 +131,7 @@ test_that("eNMA works", {
 
 
    ## Calc modes with mass=FALSE and temp=NULL
-  invisible(capture.output(modes <- nma.pdbs(pdbs, mass=FALSE, temp=NULL, ncore=3)))
+  invisible(capture.output(modes <- nma.pdbs(pdbs, mass=FALSE, temp=NULL, ncore=NULL)))
 
   ## structure 1- mode1:
   U1 <- c(0.07455881, -0.13169394, 0.06945276, 0.05591645, -0.07713849, 0.04531054)
@@ -149,7 +151,7 @@ test_that("eNMA works", {
 
   
   ## Calc modes with mass=FALSE and temp=NULL and ff="anm"
-  invisible(capture.output(modes <- nma.pdbs(pdbs, mass=FALSE, temp=NULL, ff="anm", ncore=3)))
+  invisible(capture.output(modes <- nma.pdbs(pdbs, mass=FALSE, temp=NULL, ff="anm", ncore=NULL)))
 
   ## structure 3- mode10:
   U1 <- c(0.01290994, -0.05381632, 0.24462806,  0.01859081,  0.04309034, -0.10241403)

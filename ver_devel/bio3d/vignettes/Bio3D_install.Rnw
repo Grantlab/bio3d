@@ -1,5 +1,0 @@
-%\VignetteIndexEntry{Installing Bio3D}
-\documentclass{article}
-\begin{document}
-dummy...
-\end{document}

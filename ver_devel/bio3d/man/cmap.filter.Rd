@@ -1,8 +1,6 @@
 \name{cmap.filter}
 \alias{cmap.filter}
-\title{
-Contact Map Consensus Filtering
-}
+\title{ Contact Map Consensus Filtering }
 \description{
 This function filters a tridimensional contact matrix (nXnXz, where n is the residue number and z is the simulation number) selecting only the contact present in at least p simulations, where p<=z.
 }
@@ -22,8 +20,15 @@ The output matrix is a nXn binary matrix (n = residue number). Elements equal to
 cmap (require bio3d package)
 }
 \examples{
+
+\dontrun{
+  ## need abind package
+  if(!require(abind)) {
+     install.packages("abind")
+     require(abind)
+  }
+
   ## load example data
-  require(abind)
   pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
   pdb <- read.pdb(pdbfile)
 
@@ -54,5 +59,6 @@ cmap (require bio3d package)
   image(cm.1, col=c(NA,"black"))
   image(cm.2, col=c(NA,"black"))
   image(cm.filter, col=c(NA,"black"))
+}
 }
 \keyword{analysis}

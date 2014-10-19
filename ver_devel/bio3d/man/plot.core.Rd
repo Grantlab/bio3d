@@ -6,7 +6,10 @@
   each iteration of the core finding process.
 }
 \usage{
-\method{plot}{core}(x, y = NULL, type = "h", main = "", sub = "", xlim = NULL, ylim = NULL, xlab = "Core Size (Number of Residues)", ylab = "Total Ellipsoid Volume (Angstrom^3)", axes = TRUE, ann = par("ann"), col = par("col"), ...)
+\method{plot}{core}(x, y = NULL, type = "h", main = "", sub = "", 
+   xlim = NULL, ylim = NULL, xlab = "Core Size (Number of Residues)", 
+   ylab = "Total Ellipsoid Volume (Angstrom^3)", axes = TRUE, 
+   ann = par("ann"), col = par("col"), ...)
 }
 \arguments{
   \item{x}{  a list object obtained with the function

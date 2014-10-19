@@ -8,9 +8,15 @@ view.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
                      launch=FALSE) {
 
   ## Draw a cna network in VMD
-  
+
+  ## Check for presence of igraph package
+  oops <- requireNamespace("igraph", quietly = TRUE)
+  if (!oops) {
+     stop("igraph package missing: Please install, see: ?install.packages")
+  }
+    
   if(is.null(weights)){
-    weights <- E(x$community.network)$weight
+    weights <- igraph::E(x$community.network)$weight
     
     if(is.null(x$call$minus.log)){
       weights <- exp(-weights)
@@ -24,7 +30,7 @@ view.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
   
   if(is.null(col.sphere)) {
     ## Get colors from network and convert to 0:17 VMD color index
-    col.sphere <- match(V(x$community.network)$color, vmd.colors())-1
+    col.sphere <- match(igraph::V(x$community.network)$color, vmd.colors())-1
   } else {
     ## Check supplied color(s) will work in VMD
     if(!all(col.sphere %in% c(0:17))) {
@@ -108,7 +114,7 @@ view.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
 ###inds <- which(end.no > start.no)
 ###start <- layout[start.no[inds],]
 ###end <- layout[end.no[inds],]
-  edge.list <- get.edges(x$community.network, 1:length(E(x$community.network)))
+  edge.list <- igraph::get.edges(x$community.network, 1:length(igraph::E(x$community.network)))
   start <- layout[edge.list[,1],]
   end <- layout[edge.list[,2],]
   
