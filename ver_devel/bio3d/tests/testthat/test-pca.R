@@ -20,7 +20,7 @@ test_that("pca functions works", {
 
   expect_that(head(pc$L, n=10), equals(Lexpected, tolerance=1e-6))
 
-  AUexpected <- c(0.01342227, 0.02528470, 0.03448167, 0.23837239, 0.04723784, 0.13487487)
+  AUexpected <- c(0.01342227, 0.02528470, 0.03448167, 0.23837239, 0.13487428, 0.13964307)
   expect_that(head(pc$au[1,], n=6), equals(AUexpected, tolerance=1e-6))
 
   Z1expected <- c(-3.555218e+00, -3.823427e+00, 1.220469e+01,
