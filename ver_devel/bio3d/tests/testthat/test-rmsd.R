@@ -31,7 +31,7 @@ test_that("rmsd() with ncore>1 works properly", {
      
   ## check if ncore > 1 is really faster 
   time1 <- system.time(rmsd1 <- rmsd(a=pdb.a$xyz, b=pdb.b$xyz, a.inds=inds.a$xyz, b.inds=inds.b$xyz, fit=TRUE, ncore=1))
-  time2 <- system.time(rmsd2 <- rmsd(a=pdb.a$xyz, b=pdb.b$xyz, a.inds=inds.a$xyz, b.inds=inds.b$xyz, fit=TRUE, ncore=2))
+  time2 <- system.time(rmsd2 <- rmsd(a=pdb.a$xyz, b=pdb.b$xyz, a.inds=inds.a$xyz, b.inds=inds.b$xyz, fit=TRUE, ncore=NULL))
   
   ##time1 <- time1["elapsed"]
   ##time2 <- time2["elapsed"]
