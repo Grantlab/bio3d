@@ -82,6 +82,8 @@ convert.pdb(pdb, type="original",
   \code{\link{read.dcd}}, \code{\link{read.fasta.pdb}},
   \code{\link{read.fasta}} }
 \examples{
+\donttest{
+
 # Read a PDB file
 pdb <- read.pdb("4q21")
 pdb
@@ -94,5 +96,6 @@ head( new$atom[new$calpha,"resno"] )
 # Write a PDB file
 #write.pdb(new, file="tmp4amber.pdb")
 
+}
 }
 \keyword{ utilities }

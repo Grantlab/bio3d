@@ -25,7 +25,7 @@
 \examples{
 
 # Read a PDB file
-pdb <- read.pdb("1BG2")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 print(pdb$xyz)
 
 }

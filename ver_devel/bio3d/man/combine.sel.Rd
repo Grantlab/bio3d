@@ -36,16 +36,16 @@ combine.sel(sel1=NULL, sel2=NULL, op="AND", verbose=TRUE)
 \examples{
 
 # Read a PDB file
-pdb <- read.pdb( "http://www.rcsb.org/pdb/files/1BG2.pdb" )
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 # Select all C-alpha atoms
-ca.inds <- atom.select(pdb, elety="CA")
+ca.inds <- atom.select(pdb, "calpha")
 
-# Select all atoms with residues numbers between 65 and 143
-res.inds <- atom.select(pdb, resno=65:143)
+# Select all atoms with residues numbers between 43 and 54
+res.inds <- atom.select(pdb, resno=43:54)
 
-# Select all C-beta atoms with residues numbers between 65 and 143
-cb.inds <- atom.select(pdb, resno=65:143, elety="CB")
+# Select all C-beta atoms with residues numbers between 43 and 54
+cb.inds <- atom.select(pdb, resno=43:54, elety="CB")
 
 # Intersection
 inds <- combine.sel(ca.inds, res.inds, op="AND")

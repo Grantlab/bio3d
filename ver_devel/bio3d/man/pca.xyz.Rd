@@ -62,8 +62,7 @@ rm(list=c("pdbs", "core"))
 }
 
 #-- OR for demo purposes just read previously saved transducin data
-data(transducin)
-attach(transducin, warn.conflicts=FALSE)
+attach(transducin)
 
 # Previously fitted coordinates based on sub 1.0A^3 core. See core.find() function.
 xyz <- pdbs$xyz
@@ -77,6 +76,7 @@ plot(pc.xray, col=annotation[, "color"])
 ## Plot atom wise loadings
 plot.bio3d(pc.xray$au[,1], ylab="PC1 (A)")
 
+\donttest{
 ## Plot loadings in relation to reference structure 1TAG
 gaps.res <- gap.inspect(pdbs$ali)
 pdb <- read.pdb("1tag")
@@ -89,6 +89,7 @@ plot.bio3d(res.ind, pc.xray$au[,1], sse=pdb, ylab="PC1 (A)")
 plot.bio3d(res.ind, pc.xray$au[,2], sse=pdb, ylab="PC2 (A)")
 plot.bio3d(res.ind, pc.xray$au[,3], sse=pdb, ylab="PC3 (A)")
 par(op)
+}
 
 \dontrun{
 # Write PC trajectory

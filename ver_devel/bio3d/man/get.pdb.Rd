@@ -46,6 +46,8 @@ get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, gzip = FALSE,
   \code{\link{atom.select}}, \code{\link{read.fasta.pdb}},
   \code{\link{read.fasta}}, \code{\link{pdbsplit}} }
 \examples{
+\donttest{
+
 ## PDB file paths
 get.pdb( c("1poo", "1moo"), URLonly=TRUE )
 
@@ -55,5 +57,6 @@ summary(pdb)
 
 ## Download PDB file
 ## get.pdb("5p21")
+}
 }
 \keyword{utilities}

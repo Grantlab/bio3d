@@ -2,7 +2,8 @@ context("Testing pdbsplit()")
 
 
 test_that("pdbsplit works", {
-
+  skip_on_cran()
+  
   path <- tempdir()
   invisible(capture.output(rawfiles <- get.pdb("3R1C", path=path)))
   invisible(capture.output(files <- pdbsplit(rawfiles, ids=NULL, path=path)))

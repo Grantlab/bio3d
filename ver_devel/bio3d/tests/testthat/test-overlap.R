@@ -1,11 +1,15 @@
+
 context("Testing overlap functions")
 
 
 test_that("Overlap functions", {
 
   ## Simple test with PDB ID 1HEL
-  invisible(capture.output(pdb.a <- read.pdb("1hel")))
-  invisible(capture.output(pdb.b <- read.pdb("1dpx")))
+  file <- system.file("examples/1hel.pdb",package="bio3d")
+  invisible(capture.output(pdb.a <- read.pdb(file)))
+
+  file <- system.file("examples/1dpx.pdb",package="bio3d")
+  invisible(capture.output(pdb.b <- read.pdb(file)))
   
   ## Calculate modes with default arguments
   invisible(capture.output(modes <- nma(pdb.a, inds=NULL, ff='calpha',

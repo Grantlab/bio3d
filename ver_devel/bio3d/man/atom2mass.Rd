@@ -56,6 +56,8 @@ atom2mass(\dots)
 atom.names <- c("CA", "O", "N", "OXT")
 atom2mass(atom.names)
 
+\donttest{
+
 ## Get atomic symbols from a PDB object with a customized data set
 pdb <- read.pdb("3RE0", verbose=FALSE)
 inds <- atom.select(pdb, resno=201, verbose=FALSE)
@@ -74,5 +76,6 @@ atom2mass(pdb, inds, elety.custom = myelety)
 mymasses <- data.frame(symb = c("Cl","Pt"), mass = c(35.45, 195.08))
 atom2mass(pdb, inds, elety.custom = myelety, mass.custom = mymasses)
 
+}
 }
 \keyword{ utilities }

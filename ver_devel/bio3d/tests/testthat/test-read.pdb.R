@@ -1,18 +1,38 @@
 context("Testing basic PDB structure operation")
 
-datdir <- tempdir()
-invisible(capture.output(get.pdb(c("3DRC", "1P3Q", "1SVK", "1L2Y"), path=datdir,
-   overwrite = FALSE, verbose = FALSE)))
+test_that("read.pdb() reads a normal pdb file", {
+
+  ## Simple test with PDB ID 1HEL
+  file <- system.file("examples/1dpx.pdb",package="bio3d")
+  invisible(capture.output(pdb <- read.pdb(file)))
+  
+  expect_is(pdb$atom, "data.frame")
+  expect_true(inherits(pdb, "pdb"))
+  expect_true(inherits(pdb$xyz, "xyz"))
+
+  expect_equal(nrow(pdb$atom), 1177)
+  expect_equal(sum(pdb$calpha), 129)
+
+  expect_equal(sum(pdb$atom$resid=="HOH"), 177)
+  expect_equal(sum(pdb$atom$resid=="CL"), 2)
+  expect_that(sum(pdb$xyz), equals(44657.12, tolerance=1e-6))
+
+  expect_equal(sum(pdb$atom$type=="ATOM"), 998)
+  expect_equal(sum(pdb$atom$type=="HETATM"), 179)
+})
+
 
 test_that("read.pdb() reads and stores data properly", {
+  skip_on_cran()
+  
+  datdir <- tempdir()
+  invisible(capture.output(get.pdb(c("3DRC", "1P3Q", "1SVK", "1L2Y"), path=datdir,
+                                   overwrite = FALSE, verbose = FALSE)))
+  
    # "3DRC" example PDB has a CA calcium ion and a CA containing ligand. 
    expect_error(read.pdb("nothing"))
    invisible(capture.output(pdb <- read.pdb(file.path(datdir, "3DRC.pdb"))))
 
-   expect_is(pdb$atom, "data.frame")
-   expect_true(inherits(pdb, "pdb"))
-   expect_true(inherits(pdb$xyz, "xyz"))
-    
    expect_equal(nrow(pdb$atom), 2954)
    expect_equal(sum(pdb$calpha), 318)
 #   expect_equivalent(aa321(pdb$seqres), pdbseq(pdb))
@@ -36,8 +56,10 @@ test_that("read.pdb() reads and stores data properly", {
       file=file.path(datdir, "t1a.pdb"))
    pdb <- read.pdb(file.path(datdir, "t1a.pdb"))
    expect_is(pdb$atom, "data.frame") 
-})
-test_that("write.pdb() works properly", {
+
+
+
+  ### write.pdb()
    invisible(capture.output(pdb <- read.pdb(file.path(datdir, "3DRC.pdb"))))
    write.pdb(pdb, file=file.path(datdir, "t1.pdb"))
    invisible(capture.output(pdb1 <- read.pdb(file.path(datdir, "t1.pdb"))))
@@ -54,8 +76,10 @@ test_that("write.pdb() works properly", {
    pdb[c("seqres", "helix", "sheet", "call")] <- NULL
    pdb2[c("seqres", "helix", "sheet", "call")] <- NULL
    expect_identical(pdb, pdb2)
-})
-test_that("trim.pdb() works properly", {
+  
+
+
+  ### trim.pdb() 
    invisible(capture.output(pdb <- read.pdb(file.path(datdir, "1P3Q.pdb"))))
    pdb1 <- trim.pdb(pdb, inds = atom.select(pdb, "calpha", verbose=FALSE))
    expect_is(pdb1, "pdb")

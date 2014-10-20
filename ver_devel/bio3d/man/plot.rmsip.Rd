@@ -33,7 +33,7 @@
   \code{\link{nma}}, \code{\link{image}}.  }
 \examples{
 ## Read PDB structure
-pdb <- read.pdb("1hel")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 ## Perform NMA
 modes.a <- nma(pdb, ff="calpha")

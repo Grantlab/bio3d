@@ -32,6 +32,7 @@ rgyr(xyz, mass=NULL, ncore=1, nseg.scale=1)
 \seealso{ \code{\link{fit.xyz}}, \code{\link{rmsd}},
   \code{\link{read.pdb}}, \code{\link{read.fasta.pdb}} }
 \examples{
+\donttest{
 # -- Calculate Rog of single structure
 pdb <- read.pdb("1bg2")
 mass <- rep(12, length(pdb$xyz)/3)
@@ -41,6 +42,7 @@ mass[substr(pdb$atom[,"elety"], 1, 1) == "O"] <- 16
 mass[substr(pdb$atom[,"elety"], 1, 1) == "S"] <- 32
 
 rgyr(pdb, mass)
+}
 
 \dontrun{
 # -- Calculate Rog of a trajectory
