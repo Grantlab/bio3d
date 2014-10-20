@@ -45,7 +45,7 @@ sip(...)
 }
 \examples{
 
-pdb <- read.pdb("1hel")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 a <- nma(pdb)
 b <- nma(pdb, ff="anm")
 

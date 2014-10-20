@@ -68,12 +68,14 @@
 \seealso{ \code{\link{dm}}, \code{\link{filled.contour}},
   \code{\link{contour}}, \code{\link{image}} }
 \examples{
-
+\donttest{
 # Read PDB file
 pdb <- read.pdb( "1bg2" )
 
 # DM
 d <- dm(pdb,"calpha")
+}
+
 \dontrun{
 # Plot DM
 ##filled.contour(d, nlevels = 4)

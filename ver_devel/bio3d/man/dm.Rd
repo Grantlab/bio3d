@@ -63,6 +63,7 @@ dm.xyz(xyz, grpby = NULL, scut = NULL, mask.lower = TRUE)
 }
 \seealso{ \code{\link{plot.dmat}}, \code{\link{read.pdb}}, \code{\link{atom.select}} }
 \examples{
+\donttest{
 
 ##--- Distance Matrix Plot
 pdb <- read.pdb( "4q21" )
@@ -91,6 +92,7 @@ plot(c, axis.tick.space=10,
      resnum.2=pdbs$resno[2,],
      grid.col="black",
      xlab="Residue No. (4q21)", ylab="Residue No. (521p)")
+}
 }
 
 \dontrun{

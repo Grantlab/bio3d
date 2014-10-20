@@ -67,10 +67,11 @@
 }
 \seealso{ \code{\link{plot.default}}, \code{\link{dssp}}, \code{\link{stride}} }
 \examples{
-
+\donttest{
 ## Plot of B-factor values along with secondary structure from PDB
 pdb <- read.pdb( "1bg2" )
 plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=pdb, ylab="B-factor")
+}
 
 \dontrun{
 ## Calculate secondary structure

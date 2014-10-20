@@ -40,6 +40,7 @@
    \code{\link{cna}}, \code{\link{network.amendment}}, \code{\link{summary.cna}}
 }
 \examples{
+\donttest{
 
 ###-- Build a CNA object
 pdb <- read.pdb("4Q21")
@@ -74,6 +75,6 @@ net.7 <- network.amendment(net, memb.k7)
 plot(net.7, pdb)
 #view.cna(net.7, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
 
-
+}
 }
 \keyword{analysis}

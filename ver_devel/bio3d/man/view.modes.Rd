@@ -40,7 +40,7 @@ view.modes(modes, mode=NULL, outprefix="mode_vecs",
 \examples{
 \dontrun{
 ## Fetch stucture
-pdb <- read.pdb("1hel")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 ## Calculate normal modes
 modes <- nma(pdb)

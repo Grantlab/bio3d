@@ -45,6 +45,7 @@ com.xyz(xyz, mass=NULL)
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{atom2mass}} }
 \examples{
+\donttest{
 
 ## Stucture of PKA:
 pdb <- read.pdb("3dnd")
@@ -55,6 +56,8 @@ com(pdb)
 ## Center of mass of a selection
 inds <- atom.select(pdb, chain="I")
 com(pdb, inds)
+
+}
 
 \dontrun{
 ## Unknown atom names
