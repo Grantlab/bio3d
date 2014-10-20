@@ -3,31 +3,18 @@ amb2pdb <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds) {
     stop("provide a prmtop object as obtained from function read.prmtop")
 
   natoms.prmtop <- prmtop$POINTERS[1]
-
   if(is.null(crd)) {
-    crd=rep(NA, natoms.prmtop*3)
+    crd <- rep(NA, natoms.prmtop*3)
   }
   
   if(!inherits(crd, "amber")) {
-    ## update to make multi-model PDBs when matrix is provided
-    if(is.matrix(crd)) {
-      warning("matrix detected - using only first row")
-      crd=crd[1,]
-    }
-    
-    if(is.vector(crd)) {
-      new <- NULL
-      new$xyz=crd
-      new$natoms=length(crd)/3
-      crd=new
-    }
-    else {
-      stop("provide coordinates in vector format or as a crd object obtained from function read.crd")
-    }
+    new <- list()
+    new$xyz <- as.xyz(crd)
+    new$natoms <- ncol(crd)/3
+    crd <- new
   }
-  
+    
   natoms.crd <- crd$natoms
-  
   if( any(c(!is.null(inds), !is.null(inds.crd))) ) {
     if(is.null(inds)) {
       inds$atom = seq(1, natoms.prmtop)
@@ -53,16 +40,16 @@ amb2pdb <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds) {
   resno <- NULL
   for( i in 1:length(prmtop$RESIDUE_POINTER) ) {
     if(i==length(prmtop$RESIDUE_POINTER))
-      j = prmtop$POINTERS[1] - prmtop$RESIDUE_POINTER[i] + 1
+      j <- prmtop$POINTERS[1] - prmtop$RESIDUE_POINTER[i] + 1
     else
-      j = prmtop$RESIDUE_POINTER[i+1] - prmtop$RESIDUE_POINTER[i]
+      j <- prmtop$RESIDUE_POINTER[i+1] - prmtop$RESIDUE_POINTER[i]
     
-    resno = c(resno, rep(i, j))
-    resid = c(resid, rep(prmtop$RESIDUE_LABEL[i], j))
+    resno <- c(resno, rep(i, j))
+    resid <- c(resid, rep(prmtop$RESIDUE_LABEL[i], j))
   }
 
   if(any(c(!is.null(inds), !is.null(inds.crd)))) {
-    pdb <- .buildDummyPdb(pdb=NULL, xyz=crd$xyz[inds.crd$xyz], elety=prmtop$ATOM_NAME[inds$atom],
+    pdb <- .buildDummyPdb(pdb=NULL, xyz=crd$xyz[,inds.crd$xyz], elety=prmtop$ATOM_NAME[inds$atom],
                           resno=resno[inds$atom], chain=NA, resid=resid[inds$atom])
   }
   else {

@@ -70,8 +70,8 @@
     box <- as.numeric(trim(parse.line(boxline, fmt)))
   else
     box <- NULL
-  
-  out <- list(xyz=crds, velocities=vels, time=simtime, natoms=num.atoms, box=box)
+
+  out <- list(xyz=as.xyz(crds), velocities=vels, time=simtime, natoms=num.atoms, box=box)
   class(out) <- c("amber", "crd")
   return(out)
 }

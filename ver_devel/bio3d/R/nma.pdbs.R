@@ -303,7 +303,12 @@
 .buildDummyPdb <- function(pdb=NULL, xyz=NULL,  elety=NULL, resno=NULL, chain=NULL, resid=NULL) {
 
   natoms <- length(resno)
-  tmp.pdb <- NULL
+  tmp.pdb <- list()
+
+  if(!is.null(xyz))
+    xyz <- as.xyz(xyz)
+  else
+    xyz <- as.xyz(rep(NA, natoms*3))
 
   tmp.pdb$atom <- data.frame(cbind(rep("ATOM", natoms),
                                    seq(1, natoms),
@@ -313,18 +318,19 @@
                                    chain,
                                    resno,
                                    NA,
-                                   round(matrix(xyz, ncol=3, byrow=T), 3),
+                                   matrix(round(xyz[1,, drop=FALSE], 3), ncol=3, byrow=TRUE),
                                    NA, NA, NA, NA, NA),
                              stringsAsFactors=FALSE)
+
   
   colnames(tmp.pdb$atom) <- c("type", "eleno", "elety", "alt", "resid",
                               "chain", "resno", "insert",
                               "x", "y", "z", "o", "b", "segid", "elesy", "charge")
-  
-  tmp.pdb$xyz    <- as.xyz(xyz)
-  ca.inds        <- atom.select(tmp.pdb, "calpha", verbose=FALSE)
-  tmp.pdb$calpha <- seq(1, natoms) %in% ca.inds$atom
+
+  tmp.pdb$xyz <- xyz
   class(tmp.pdb) <- "pdb"
+  ca.inds        <- atom.select.pdb(tmp.pdb, "calpha", verbose=FALSE)
+  tmp.pdb$calpha <- seq(1, natoms) %in% ca.inds$atom
   return(tmp.pdb)
 }
 

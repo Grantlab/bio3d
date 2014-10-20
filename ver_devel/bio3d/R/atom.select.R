@@ -1,2 +1,2 @@
-"atom.select" <- function(...) {
+"atom.select" <- function(...)
   UseMethod("atom.select")

@@ -1,6 +1,7 @@
 "read.crd" <- function(file, ...) {
-  require(tools)
-  ext <- file_ext(file)
+  ## from tools package:
+  pos <- regexpr("\\.([[:alnum:]]+)$", file)
+  ext <- ifelse(pos > -1L, substring(file, pos + 1L), "")
 
   if(ext %in% c("crd")) {
     class(file)=c("character", "charmm")

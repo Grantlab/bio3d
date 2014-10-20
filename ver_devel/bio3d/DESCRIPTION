@@ -15,7 +15,6 @@ Suggests:
     bigmemory,
     knitr,
     testthat, 
-    tools
 Depends:
     R (>= 3.0.0)
 LazyData: yes
