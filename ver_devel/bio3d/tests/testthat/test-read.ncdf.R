@@ -1,17 +1,21 @@
 context("Testing basic operation with NetCDF trajectory")
 
-trjfile <- tempfile()
-file <- system.file("examples/hivp.dcd", package="bio3d")
-invisible(capture.output(trj0 <- read.dcd(file)))
-time0 <- sort(round(runif(nrow(trj0), 0, 1000), digit=3))
-cell0 <- matrix(rep(runif(6, 0, 100), nrow(trj0)), ncol=6, byrow=TRUE)
-rownames(trj0) <- time0
+test_that("read.ncdf() and write.ncdf() works properly", {
+   skip_on_cran()
+   
+   ##- Prepare files
+   trjfile <- tempfile()
+   file <- system.file("examples/hivp.dcd", package="bio3d")
+   invisible(capture.output(trj0 <- read.dcd(file)))
+   time0 <- sort(round(runif(nrow(trj0), 0, 1000), digit=3))
+   cell0 <- matrix(rep(runif(6, 0, 100), nrow(trj0)), ncol=6, byrow=TRUE)
+   rownames(trj0) <- time0
 
-test_that("write.ncdf() works properly", {
+   ##- Write
    out <- try(write.ncdf(trj0, trjfile, cell = cell0))
    expect_false(inherits(out, "try-error"))
-})
-test_that("read.ncdf() works properly", {
+
+   ##- Read
    trj <- read.ncdf(trjfile, headonly = TRUE, verbose = FALSE)
    expect_output(str(trj), "frames: int 351" )
    expect_output(str(trj), "atoms : int 198" )

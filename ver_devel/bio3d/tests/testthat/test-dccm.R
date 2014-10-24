@@ -24,6 +24,7 @@ test_that("Correlation matrix from NMA", {
           )
 
 test_that("Correlation matrix from XYZ (dccm.xyz)", {
+  skip_on_cran()
   ## Calculate correl mat on a short HIV protease simulation
   trjfile <- system.file("examples/hivp.dcd", package="bio3d")
   invisible(capture.output(trj <- read.dcd(trjfile)))
@@ -41,6 +42,7 @@ test_that("Correlation matrix from XYZ (dccm.xyz)", {
 })
 
 test_that("Correlation matrix from PCA (dccm.pca)", {
+  skip_on_cran()
   ## Calculate correl mat on a short HIV protease simulation
   trjfile <- system.file("examples/hivp.dcd", package="bio3d")
   invisible(capture.output(trj <- read.dcd(trjfile)))

@@ -38,6 +38,7 @@
   \url{http://www.ks.uiuc.edu/Research/vmd/}. }
 \seealso{ \code{\link{pca.xyz}}, \code{\link{view.modes}}. }
 \examples{
+\donttest{
 data(transducin)
 attach(transducin, warn.conflicts=FALSE)
 
@@ -66,5 +67,6 @@ c <- mktrj(pc.xray, pc=3, file=file.path(path, "pc3.pdb"),
 file.path(path, paste("pc", 1:3, ".pdb", sep=""))
 
 detach(transducin)
+}
 }
 \keyword{ utilities }
