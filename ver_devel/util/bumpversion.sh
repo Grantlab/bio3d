@@ -8,10 +8,10 @@ fi
 ver=$1
 
 # check branch
-if test `git br | awk '/^*/{print $2}'` != "release"; then
-   echo Warning: You are not on \"release\" branch
+if test `git br | awk '/^*/{print $2}'` != "releases"; then
+   echo Warning: You are not on \"releases\" branch
    echo Switch automatically...
-   if ! git co release; then
+   if ! git co releases; then
       echo Failed to switch...stop
       exit 1
    fi
