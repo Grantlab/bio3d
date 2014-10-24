@@ -17,6 +17,7 @@ test_that("cmap() works properly", {
   expect_equal(cm[13,129], 1)
 
   ## Check multicore cmap 
+  skip_on_cran()
   trjfile <- system.file("examples/hivp.dcd", package="bio3d")
   invisible(capture.output(trj <- read.dcd(trjfile)))
   invisible(capture.output(cm <- cmap(trj, dcut=6, ncore=1)))

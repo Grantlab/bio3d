@@ -58,6 +58,7 @@ read.dcd(trjfile, big=FALSE, verbose = TRUE, cell = FALSE)
 \seealso{ \code{\link{read.pdb}}, \code{\link{write.pdb}},
   \code{\link{atom.select}} }
 \examples{
+\donttest{
 ##-- Read cell parameters from example trajectory file
 trtfile <- system.file("examples/hivp.dcd", package="bio3d")
 trj <- read.dcd(trtfile, cell = TRUE)
@@ -76,6 +77,7 @@ xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
 
 ##-- RMSD of trj frames from PDB
 r1 <- rmsd(a=pdb, b=xyz)
+}
 
 \dontrun{
 # Pairwise RMSD of trj frames for positions 47 to 54
