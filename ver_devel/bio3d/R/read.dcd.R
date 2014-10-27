@@ -50,14 +50,12 @@ function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
     # first thing in file should be an '84' header
     if (check != 84) {
       # if not we have the wrong endianism
-      close(trj)
       if (end == "little") { end="big" } else { end="little" }
-      trj <- file(trjfile, "rb")   
-      check <- readBin(trj,"integer",1,endian=end)
+      check <- readBin(writeBin(check, raw()), "integer", 1, endian = end)
+
       if (check != 84) {
-        print("PROBLEM with endian detection")
         close(trj)
-        stop
+        stop("PROBLEM with endian detection")
       }
     }
 

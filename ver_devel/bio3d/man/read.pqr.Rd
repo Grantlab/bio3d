@@ -68,6 +68,7 @@ read.pqr(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
   \code{\link{read.dcd}}, \code{\link{read.fasta.pdb}},
   \code{\link{read.fasta}} }
 \examples{
+\donttest{
 # Read a PDB file
 pdb <- read.pdb( "4q21" )
   
@@ -94,6 +95,6 @@ pdb$atom[,"resno"] <- nums - (nums[1] - 1)
 
 # Write out renumbered PDB file
 #write.pdb(pdb=pdb,file="eg.pdb")
-
+}
 }
 \keyword{ IO }

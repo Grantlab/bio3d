@@ -40,7 +40,7 @@ pfam(id, alignment = "seed", verbose = FALSE)
   \code{\link{uniprot}}
 }
 \examples{
-\dontrun{
+\donttest{
 aln <- pfam("piwi")
 aln <- pfam("PF02171")
 

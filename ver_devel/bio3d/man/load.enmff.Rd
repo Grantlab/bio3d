@@ -103,7 +103,7 @@ force.constants <- pfc.fun( seq(4,8, by=0.5) )
 
 ## Calculate the complete spring force constant matrix
 ## Fetch PDB
-pdb <- read.pdb("1hel")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 ## Fetch only c-alpha coordinates
 ca.inds <- atom.select(pdb, 'calpha')

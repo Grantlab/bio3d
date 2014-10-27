@@ -64,11 +64,13 @@
 }
 \seealso{ \code{\link{hmmer}}, \code{\link{blast.pdb}} }
 \examples{
-\dontrun{
+\donttest{
+
 ##- PHMMER
 seq <- get.seq("2abl_A", outfile = tempfile())
 res <- hmmer(seq, db="pdb")
 plot.hmmer(res)
+
 }
 }
 \keyword{ hplot }

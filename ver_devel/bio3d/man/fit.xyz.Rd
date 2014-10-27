@@ -90,6 +90,8 @@ rot.lsq(xx, yy,
 \seealso{ \code{\link{rmsd}}, \code{\link{read.pdb}},
   \code{\link{read.fasta.pdb}}, \code{\link{read.dcd}} }
 \examples{
+\donttest{
+
 ##--- Read an alignment & Fit aligned structures
 aln  <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
 pdbs <- read.fasta.pdb(aln)
@@ -104,6 +106,8 @@ xyz <- fit.xyz( fixed  = pdbs$xyz[1,],
 \dontrun{
 rmsd( xyz[, gaps$f.inds] )
 rmsd( pdbs$xyz[, gaps$f.inds] )
+
+}
 
 ##-- Superpose again this time outputing PDBs
 xyz <- fit.xyz( fixed = pdbs$xyz[1,],

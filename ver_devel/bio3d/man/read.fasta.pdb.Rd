@@ -57,6 +57,8 @@ read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
   \code{\link{read.fasta}}, \code{\link{read.pdb}},
   \code{\link{core.find}}, \code{\link{fit.xyz}}, \code{\link{read.all}} }
 \examples{
+\donttest{
+
 # Read sequence alignment
 file <- system.file("examples/kif1a.fa",package="bio3d")
 aln  <- read.fasta(file)
@@ -64,10 +66,6 @@ aln  <- read.fasta(file)
 # Read aligned PDBs
 pdbs <- read.fasta.pdb(aln)
 
-# Residue numbers of first 10 positions
-pdbs$resno[,1:10]
-
-\dontrun{
 # Structure/sequence names/ids
 basename( pdbs$id )
 
@@ -82,8 +80,9 @@ pdbs$xyz[, atom2xyz(335:339)]
 
 # See 'fit.xyz()' function for actual coordinate superposition
 #  e.g. fit to first structure
-xyz <- fit.xyz(pdbs$xyz[1,], pdbs)
-xyz[, atom2xyz(335:339)]
+# xyz <- fit.xyz(pdbs$xyz[1,], pdbs)
+# xyz[, atom2xyz(335:339)]
+
 }
 }
 \keyword{ IO }

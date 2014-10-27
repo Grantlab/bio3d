@@ -48,6 +48,8 @@ torsion.xyz(xyz, atm.inc = 4)
   \code{\link{wrap.tor}}, \code{\link{read.pdb}}, \code{\link{read.dcd}}.
 }
 \examples{
+\donttest{
+
 ## Calculate torsions for cis & trans conformers
 xyz <- rbind(c(0,-0.5,0,1,0,0,1,1,0,0,1.5,0),
              c(0,-0.5,0,1,0,0,1,1,0,2,1.5,0)-3)
@@ -66,19 +68,15 @@ plot(range(xyz), range(xyz), xlab="", ylab="", typ="n", axes=FALSE)
     apply(matrix(x, ncol=3, byrow=TRUE)[c(2,3),], 2, mean) })),
        labels=c(0,180), adj=-0.5, col="red")
 
-
-\dontrun{
 ##-- PDB torsion analysis
 pdb <- read.pdb("1bg2")
 tor <- torsion.pdb(pdb)
 ## basic Ramachandran plot
 plot(tor$phi, tor$psi)
 
-
 ## torsion analysis of a single coordinate vector 
 inds <- atom.select(pdb,"calpha")
 tor.ca <- torsion.xyz(pdb$xyz[inds$xyz], atm.inc=3)
-
 
 ##-- Compare two PDBs to highlight interesting residues
 aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
@@ -88,6 +86,7 @@ b <- torsion.xyz(m$xyz[2,],1)
 ## Note the periodicity of torsion angles
 d <- wrap.tor(a-b)
 plot(m$resno[1,],d, typ="h")
+
 }
 
 }

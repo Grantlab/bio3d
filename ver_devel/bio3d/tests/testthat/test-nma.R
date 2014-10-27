@@ -11,49 +11,37 @@ test_that("NMA", {
   }
 
   ## Simple test with PDB ID 1HEL
-  invisible(capture.output(pdb <- read.pdb("1hel")))
+  file <- system.file("examples/1hel.pdb",package="bio3d")
+  invisible(capture.output(pdb <- read.pdb(file)))
   
   ## Calculate modes with default arguments
   invisible(capture.output(modes <- nma(pdb, ff='calpha',
                                         mass=TRUE, temp=300.0)))
 
   ## Check first eigenvector
-  ## previous to juliens atom mass lookup
-  #U7 <- c(-0.054713238, -0.054334443,  0.001053040,
-  #        -0.041171764, -0.049233238, -0.001587705)
   U7 <- c(-0.05471209, -0.054333625, 0.001052514,
           -0.041171891, -0.049232935, -0.001588035)
   nowU7 <- head(modes$U[,7])
   expect_that(nowU7 * mysign(U7, nowU7), equals(U7, tolerance=1e-6))
   
   ## Check second eigenvector
-  ## previous to juliens atom mass lookup
-  #U8 <- c(-0.06418497, -0.02734926,  0.02436005,
-  #        -0.01149358, -0.02942601,  0.01439773)
   U8 <- c(0.064185522, 0.027349834, -0.024359816,
           0.011493963, 0.029426825, -0.014397686)
   nowU8 <- head(modes$U[,8])
   expect_that(nowU8 * mysign(U8, nowU8), equals(U8, tolerance=1e-6))
 
   ## Check Mode vector
-  ## previous to juliens atom mass lookup
-  #mode7 <- c(-0.092583306, -0.091942327,  0.001781907,
-  #           -0.079840815, -0.095473729, -0.003078899)
   mode7 <- c(-0.092579348, -0.091938941, 0.001780978,
              -0.079838481, -0.095470057, -0.003079439)
   nowMode7 <- head(modes$modes[,7])
   expect_that(nowMode7 * mysign(mode7, nowMode7), equals(mode7, tolerance=1e-6))
 
   ## Check eigenvalues
-  #eival <- c(0.013382, 0.013933, 0.022354, 0.025517, 0.029943, 0.033953)
   eival <- c(0.013383, 0.013933, 0.022355, 0.025518, 0.029944, 0.033954)
   nowEival <- modes$L[7:12]
   expect_that(nowEival, equals(eival, tolerance=1e-6))
 
   ## Check frequencies
-  ## previous to juliens atom mass lookup
-  #freqs <- c(0.01841114, 0.01878635, 0.02379566,
-  #           0.02542348, 0.02754024, 0.02932643)
   freqs <- c(0.018411826, 0.018786352, 0.023796192,
              0.025423975, 0.027540704, 0.029326863)
   nowFreqs <- modes$frequencies[7:12]
@@ -207,23 +195,17 @@ test_that("NMA", {
   mc <- list(ALA=500, SER=1000)
   invisible(capture.output(modes <- nma(pdb, mass.custom=mc)))
 
-  ##mass.expected <- c(500.000, 500.000, 500.000, 131.202, 129.184, 157.204)
   mass.expected <- c(500.000, 500.000, 500.000, 131.196, 129.180, 157.194)
   expect_that(modes$mass[9:14], equals(mass.expected, tolerance=1e-6))
 
-  ##sum.expected <- 28564.73
   sum.expected <- 28564.36
   expect_that(sum(modes$mass), equals(sum.expected, tolerance=1e-6))
 
-  ## previous to juliens atom mass lookup
-  #modes.expected <- c(0.128550353, 0.069409696, -0.011821954,
-  #                    0.056729141, 0.076231821, -0.004736402)
   modes.expected <- c(-0.128550854, -0.069409382,  0.011821391,
                       -0.056729257, -0.076231424, 0.004736013)
   nowMode7 <- modes$modes[1:6, 7]
   expect_that(nowMode7 * mysign(nowMode7, modes.expected), equals(modes.expected, tolerance=1e-6))
   
-  #L.expected <- c(0.007375, 0.009036, 0.013006, 0.015084, 0.020110, 0.022607)
   L.expected <- c(0.007375, 0.009036, 0.013007, 0.015084, 0.020111, 0.022608)
   expect_that(modes$L[7:12], equals(L.expected, tolerance=1e-6))
   

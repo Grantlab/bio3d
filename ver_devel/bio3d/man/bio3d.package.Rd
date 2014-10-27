@@ -10,8 +10,8 @@ Utilities for the analysis of protein structure and sequence data.
 \tabular{ll}{
 Package: \tab bio3d\cr
 Type: \tab Package\cr
-Version: \tab 2.1-1\cr
-Date: \tab 2014-10-14\cr
+Version: \tab 2.1-3\cr
+Date: \tab 2014-10-24\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab \url{http://thegrantlab.org/bio3d/}\cr
 }
@@ -22,25 +22,24 @@ Features include the ability to read and write structure
 \code{\link{write.fasta}}) and dynamics trajectory data
 (\code{\link{read.dcd}}, \code{\link{read.ncdf}}, \code{\link{write.ncdf}}).
 
-Perform sequence database searches (\code{\link{blast.pdb}}, \code{\link{hmmer}}), atom
-summaries (\code{\link{summary.pdb}}),  atom selection
-(\code{\link{atom.select}}),  re-orientation (\code{\link{orient.pdb}}),
-alignment ((\code{\link{pdbaln}},  \code{\link{seqaln}})) superposition (\code{\link{rot.lsq}},  \code{\link{fit.xyz}}), rigid core identification (\code{\link{core.find}},  \code{\link{plot.core}}, 
-\code{\link{fit.xyz}}), torsion/dihedral analysis
+Perform sequence and structure database searches (\code{\link{blast.pdb}}, 
+\code{\link{hmmer}}), atom summaries (\code{\link{summary.pdb}}),  atom selection
+(\code{\link{atom.select}}), alignment (\code{\link{pdbaln}},  \code{\link{seqaln}}, 
+\code{\link{mustang}}) superposition (\code{\link{rot.lsq}},  \code{\link{fit.xyz}}), 
+rigid core identification (\code{\link{core.find}},  \code{\link{plot.core}}, 
+\code{\link{fit.xyz}}), dynamic domain analysis (\code{\link{geostas}}), torsion/dihedral analysis
 (\code{\link{torsion.pdb}},  \code{\link{torsion.xyz}}), clustering (via
 \code{\link{hclust}}), principal component analysis
-(\code{\link{pca.xyz}},  \code{\link{pca.tor}},  \code{\link{plot.pca}},
-\code{\link{plot.pca.loadings}},  \code{\link{mktrj.pca}}) and dynamical
-cross-correlation analysis (\code{\link{dccm}}, \code{\link{plot.dccm}})
-of structure data.
+(\code{\link{pca.xyz}},  \code{\link{pca.pdbs}}, \code{\link{pca.tor}},  \code{\link{plot.pca}},
+\code{\link{plot.pca.loadings}},  \code{\link{mktrj.pca}}), dynamical
+cross-correlation analysis (\code{\link{dccm}}, \code{\link{lmi}}, \code{\link{plot.dccm}}) and correlation network analysis (\code{\link{cna}},  \code{\link{plot.cna}}) of structure data.
 
 Perform conservation analysis of sequence (\code{\link{seqaln}}, \code{\link{conserv}}, 
 \code{\link{seqidentity}},  \code{\link{entropy}},  \code{\link{consensus}})
 and structural (\code{\link{pdbaln}}, \code{\link{rmsd}},
 \code{\link{rmsf}}, \code{\link{core.find}}) data.
 
-Perform normal mode analysis (elastic network model) with
-(\code{\link{nma}}) and (\code{\link{build.hessian}}), ensemble normal
+Perform normal mode analysis (\code{\link{nma}}, \code{\link{build.hessian}}), ensemble normal
 mode analysis (\code{\link{nma.pdbs}}), mode comparison
 (\code{\link{rmsip}}) and (\code{\link{overlap}}), atomic fluctuation
 prediction (\code{\link{fluct.nma}}), cross-correlation analysis
@@ -53,11 +52,10 @@ manipulation and analysis of biological sequence and structural data
 (e.g. \code{\link{get.pdb}}, \code{\link{get.seq}}, \code{\link{aa123}},
 \code{\link{aa321}}, \code{\link{pdbseq}}, \code{\link{aln2html}}, \code{\link{atom.select}},
 \code{\link{rot.lsq}},  \code{\link{fit.xyz}}, \code{\link{is.gap}}, \code{\link{gap.inspect}},
-\code{\link{orient.pdb}} and \code{\link{pairwise}}).
+\code{\link{orient.pdb}}, \code{\link{pairwise}}, \code{\link{plot.bio3d}}, \code{\link{plot.nma}}, \code{\link{plot.blast}}, etc.).
 }
 \note{
-The latest version, package vignettes and further documentation can be obtained from the
-bio3d website:\cr
+The latest version, package vignettes and documentation with worked example outputs can be obtained from the bio3d website:\cr
 \url{http://thegrantlab.org/bio3d/}.\cr
 \url{http://thegrantlab.org/bio3d/html/}.\cr
 \url{http://bitbucket.org/Grantlab/bio3d}.
@@ -80,7 +78,7 @@ help(package="bio3d")     # list the functions within the package
 ##   http://thegrantlab.org/bio3d/html/
 
 ## See the individual functions for further documentation and examples, e.g.
-help(read.pdb)
+#help(read.pdb)
 
 ## Or online:
 ##    http://thegrantlab.org/bio3d/html/read.pdb.html
@@ -90,7 +88,7 @@ help(read.pdb)
 demo(package="bio3d")
 
 ## Try some out, e.g: 
-demo(pdb) # PDB Manipulation, Serching and Alignment
+demo(pdb) # PDB Reading, Manipulation, Searching and Alignment
 demo(pca) # Principal Component Analysis
 demo(md)  # Molecular Dynamics Trajectory Analysis
 demo(nma) # Normal Mode Analysis
@@ -99,6 +97,9 @@ demo(nma) # Normal Mode Analysis
 ##-- Start by reading a PDB file
 pdb <- read.pdb("1BG2")
 
+##-- Print summary information
+pdb
+
 ##
 ##-- Distance matrix
 ##
@@ -106,13 +107,13 @@ k <- dm(pdb, selection="calpha")
 plot(k)
 
 ## Extract SEQRES PDB sequence
-s <- aa321(pdb$seqres)
+s1 <- aa321(pdb$seqres)
 
 ## Extract ATOM PDB sequence
 s2 <- pdbseq(pdb)
 
 ## write a FASTA format sequence file
-write.fasta(seqs=seqbind(s, s2), id=c("seqres","atom"), file="eg.fa")
+write.fasta(seqs=seqbind(s1, s2), id=c("seqres","atom"), file="eg.fa")
 
 ##----------------------------------------##
 
@@ -229,6 +230,8 @@ gaps.pos <- gap.inspect(pdbs$xyz)
 
 ##-- Do PCA
 pc.xray <- pca.xyz(xyz[, gaps.pos$f.inds])
+## Or more simply
+# pc.xray <- pca.xyz(xyz, rm.gaps=TRUE)
 
 ## Plot results
 plot(pc.xray)
@@ -239,9 +242,9 @@ plot.pca.loadings(pc.xray$au)
 rn <- pdbs$resno[1, gaps.res$f.inds]
 rd <- aa123(pdbs$ali[1, gaps.res$f.inds])
 
-#a <- mktrj.pca(pc.xray, pc=1, resno =rn, resid = rd, file="pc1.pdb")
-#b <- mktrj.pca(pc.xray, pc=2, resno =rn, resid = rd, file="pc2.pdb")
-c <- mktrj.pca(pc.xray, pc=3, resno =rn, resid = rd, file="pc3.pdb")
+#p1 <- mktrj.pca(pc.xray, pc=1, resno =rn, resid = rd, file="pc1.pdb")
+#p2 <- mktrj.pca(pc.xray, pc=2, resno =rn, resid = rd, file="pc2.pdb")
+#p3 <- mktrj.pca(pc.xray, pc=3, resno =rn, resid = rd, file="pc3.pdb")
 
 
 ##----------------------------------------##
@@ -257,7 +260,6 @@ pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 pdb <- read.pdb(pdbfile)
 
 ## Fit trj on PDB based on residues 23 to 31 and 84 to 87 in both chains
-##inds <- atom.select(pdb,"///23:31,84:87///CA/")
 inds <- atom.select(pdb, resno=c(23:31,84:87), elety="CA")
 fit.xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
 
@@ -282,7 +284,8 @@ plot(pc.trj, col=cutree(hc, k=2))
 a <- mktrj.pca(pc.trj, pc=1, file="pc1_trj.pdb")
 
 }
-## other examples include: normal mode analysis, alignment, clustering etc...
+## Other examples include: normal mode analysis, alignment, clustering etc...
+## See: http://thegrantlab.org/bio3d/tutorials
 
 }
 

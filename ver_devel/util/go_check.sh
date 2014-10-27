@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Usage: 
-#        ./go_check.sh [-cran] [-win] [-nocheck]
+#        ./go_check.sh [-cran] [-win] [-nocheck] [-devel]
 #
 
 check=yes
@@ -23,12 +23,17 @@ while test $# -ge 1; do
   fi
   if test $1 == "-h" || test $1 == "--help"; then
      echo "Usage:"
-     echo "       ./go_check.sh [-cran] [-win] [-nocheck]"
+     echo "       ./go_check.sh [-cran] [-win] [-nocheck] [-devel]"
      echo 
      exit 0
   fi
   shift
 done
+
+if ! hash $Rscript 2>/dev/null; then
+   echo "No Rscript found"
+   exit 1
+fi
 
 if test $check == "yes"; then
    # Use devtools to check as/not as CRAN
@@ -61,4 +66,20 @@ fi
 #R CMD build ../bio3d
 #file=(`ls -t bio3d_*.tar.gz`)
 #R CMD check --as-cran $file
+
+exit 0
+
+## For check on Windows
+## copy following codes to R console
+
+r_env_vars <- function() {
+    c(R_LIBS = paste(.libPaths(), collapse = .Platform$path.sep), 
+    CYGWIN = "nodosfilewarning", R_TESTS = "", NOT_CRAN = "false", 
+    TAR = devtools:::auto_tar())
+}
+assignInNamespace("r_env_vars", r_env_vars, "devtools")
+Sys.setenv("_R_CHECK_FORCE_SUGGESTS_" = "false")
+devtools::check("../bio3d", cran=TRUE)
+
+
 
