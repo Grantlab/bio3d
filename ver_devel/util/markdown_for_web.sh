@@ -1,5 +1,5 @@
 #!/bin/bash
-
+basedir=`pwd`
 
 ## This script generates a new directory in which should be copied to the 
 ## Joomla! website. It substitutes the path of the figures in the .md file 
@@ -53,6 +53,9 @@ str="s/${fromdir}/${figdir}/g"
 echo "... Running command: \"sed '$str' $file > ${finaldir}/${file} \""
 sed $str $file > ${finaldir}"/"${file}
 
+echo "... Convert ](figures/x.png) to ](./figures/x.png)"
+sed -i 's/](figures/](.\/figures/g' ${finaldir}"/"${file}
+
 if [ ! -s ${finaldir}"/"${file} ]; then
     echo "... Error: A problem occured with sed command"
     exit 0;
@@ -72,6 +75,16 @@ if [ -d ${fromdir2} ]; then
     echo "... Copying figure PNG files from '$fromdir2' to '${finaldir}/${figdir}/'"
     cp -p ${fromdir2}/*.png ${finaldir}/${figdir}/
 fi
+
+echo "... Running figurecaption2HTML.r"
+cd ${finaldir}
+cp ${file} tmp.md
+R --vanilla --silent < ../../../ver_devel/util/figurecaption2HTML.r 
+mv tmp.md ${file}.bak
+mv new.md ${file}
+
+sed -i 's/figureend/\/figure/g' ${file}
+sed -i 's/figcaptionend/\/figcaption/g' ${file}
 
 
 echo " "
