@@ -2,6 +2,7 @@ context("Testing core.find function")
 
 
 test_that("core.find() works properly", {
+  skip_on_cran()
 
   attach(transducin)
   inds <- unlist(lapply(c("1TND_A", "1TAG", "1AS0", "1AS2"), grep, pdbs$id))

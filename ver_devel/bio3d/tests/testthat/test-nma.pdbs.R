@@ -2,7 +2,7 @@ context("Testing nma.pdbs()")
 
 test_that("eNMA works", {
 
-  ##skip_on_cran()
+  skip_on_cran()
 
   "mysign" <- function(a,b) {
     if(all(sign(a)==sign(b)))
