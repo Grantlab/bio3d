@@ -30,7 +30,7 @@ test_that("Overlap functions", {
   
   o1 <- overlap(modes, dv, nmodes=(modes$natoms*3)-6)
   expect_that(o1$overlap.cum[(modes$natoms*3)-6],
-              equals(1))
+              equals(1, tolerance=1e-6))
   
   expect_that(o1$overlap.cum[1], equals(0.2786508, tolerance=1e-6))
 

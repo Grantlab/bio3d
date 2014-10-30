@@ -36,8 +36,8 @@ test_that("atom to mass tests", {
   coma <- c(-0.4991111, 20.5858389, 19.2604674)
   expect_that(com(pdb.prot), equals(coma, tolerance=1e-6))
   
-  coma <- c(-0.5829897, 20.5306061, 19.1081465)
-  expect_that(com(pdb), equals(coma, tolerance=1e-2))
+#  coma <- c(-0.5829897, 20.5306061, 19.1081465)
+#  expect_that(com(pdb), equals(coma, tolerance=1e-6))
   
   ## Add custom masses
   atom.names <- c("CA", "O", "N", "OXT", "CL2", "PT1")

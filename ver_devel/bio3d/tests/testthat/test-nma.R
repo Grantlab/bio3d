@@ -58,13 +58,13 @@ test_that("NMA", {
 
   ## Orthognals
   expect_that(as.numeric(modes$U[,7] %*% modes$U[,7]),
-              equals(1))
+              equals(1, tolerance=1e-6))
   expect_that(as.numeric(modes$U[,7] %*% modes$U[,8]),
               equals(0, tolerance=1e-6))
   expect_that(all((round(c(modes$U[,7] %*% modes$U),6)==0)[-7]),
               equals(TRUE))
   
-  expect_that(all(modes$L[1:6]==0), equals(TRUE))
+  expect_that(all(round(c(modes$L[1:6]), 6)==0), equals(TRUE))
   
 
   ###################################################################

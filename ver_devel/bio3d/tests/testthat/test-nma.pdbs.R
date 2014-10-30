@@ -57,7 +57,7 @@ test_that("eNMA works", {
   
   ## Orthognal
   expect_that(as.numeric(modes$U.subspace[,1,1] %*% modes$U.subspace[,1,1]),
-              equals(1))
+              equals(1, tolerance=1e-6))
   expect_that(as.numeric(modes$U.subspace[,1,1] %*% modes$U.subspace[,2,1]),
               equals(0, tolerance=1e-6))
 
@@ -68,8 +68,8 @@ test_that("eNMA works", {
   
   ## Multicore (same arguments as above!)
   invisible(capture.output(mmc <- nma.pdbs(pdbs, fit=TRUE, rm.gaps=TRUE, ncore=NULL)))
-  expect_that(mmc$fluctuations, equals(modes$fluctuations))
-  expect_that(mmc$U.subspace, equals(modes$U.subspace))
+  expect_that(mmc$fluctuations, equals(modes$fluctuations, tolerance=1e-6))
+  expect_that(mmc$U.subspace, equals(modes$U.subspace, tolerance=1e-6))
 
 
   

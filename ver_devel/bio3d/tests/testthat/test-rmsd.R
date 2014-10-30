@@ -36,7 +36,8 @@ test_that("rmsd() with ncore>1 works properly", {
   ##time1 <- time1["elapsed"]
   ##time2 <- time2["elapsed"]
   
-  expect_equivalent(rmsd1, rmsd2)
+#  expect_equivalent(rmsd1, rmsd2)
+  expect_equal(rmsd1, rmsd2, tolerance=1e-6)
   
 #   cat("Speed up by", round((time1-time2)/time2, 1)*100, "%", sep="")
 #   if(getOption("cores") > 1)
