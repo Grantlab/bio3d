@@ -1,7 +1,7 @@
 ---
 title: "Enhanced Normal Modes Analysis with Bio3D"
 author: "Lars Skjaerven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant"
-date: "October 1, 2014"
+date: "October 30, 2014"
 output:
   pdf_document:
     fig_caption: yes
