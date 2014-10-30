@@ -53,7 +53,14 @@ rmsd(a, b=NULL, a.inds=NULL, b.inds=NULL, fit=FALSE, ncore=1, nseg.scale=1)
 aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
 pdbs <- read.fasta.pdb(aln)
 
-# Indices 
+#  Superposition before pairwise RMSD 
+rmsd(pdbs$xyz, fit=TRUE)
+
+\dontrun{
+# RMSD without superposition
+rmsd(pdbs$xyz)
+
+# Indices (could use 'gap.inspect' function)
 gaps <- unique( which(is.na(pdbs$xyz),arr.ind=TRUE)[,2] )
 inds <- c(1:ncol(pdbs$xyz))[-gaps]
 
@@ -62,7 +69,7 @@ rmsd(a=pdbs$xyz[1,], b=pdbs$xyz[2,], a.inds=inds, b.inds=inds)
 rmsd(a=pdbs$xyz[1,], b=pdbs$xyz[2,], a.inds=inds, b.inds=inds, fit=TRUE)
 }
 
-\dontrun{
+
 # RMSD between structure 1 and structures 2 and 3
 rmsd(a=pdbs$xyz[1,], b=pdbs$xyz[2:3,], a.inds=inds, b.inds=inds)
 

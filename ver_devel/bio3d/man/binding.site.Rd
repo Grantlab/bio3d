@@ -48,17 +48,18 @@ binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cut=5, hydrogens=TRUE)
      pdb <- read.pdb('3dnd')
 
      # Binding site residues
-     rec.inds <- atom.select(pdb, string='//A/1:350////')
-     lig.inds <- atom.select(pdb, string='//A/351////')
+     rec.inds <- atom.select(pdb, chain="A", resno=1:350)
+     lig.inds <- atom.select(pdb, chain="A", resno=351)
      bs <- binding.site(pdb, a.inds=rec.inds, b.inds=lig.inds)
 
+     \dontrun{  
      # Interaction between peptide and protein
      rec.inds <- atom.select(pdb, string='//A/1:350////')
      lig.inds <- atom.select(pdb, string='//I/5:24////')
      bs <- binding.site(pdb, a.inds=rec.inds, b.inds=lig.inds)
      }
 
-     \dontrun{  
+
      # Interaction between two PDB entities
 #     rec <- read.pdb("receptor.pdb")
 #     lig <- read.pdb("ligand.pdb")
