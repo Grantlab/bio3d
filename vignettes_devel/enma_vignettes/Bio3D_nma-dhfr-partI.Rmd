@@ -1,7 +1,7 @@
 ---
 title: "Ensemble NMA of *E.coli* DHFR structures"
 author: "Lars Skjaerven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant"
-date: "October 1, 2014"
+date: "October 30, 2014"
 output:
   pdf_document:
     fig_caption: yes
@@ -190,10 +190,7 @@ grps.rd <- cutree(hc.rd, k=4)
 ```
 
 
-Projection of the X-ray conformers on to their two largest eigenvectors shows that the
-E.coli DHFR structures can be divided into three major groups: closed, open, and occluded conformations: 
-
-```{r figi-1, fig.cap="Projection of MD conformers onto the X-ray PC space reveals that the E.coli DHFR structures can be divided into three major groups along their two first eigenvectors. Each dot is colored according to their cluster membership: occluded conformations (green), open conformations (black), and closed conformations (red). ", fig.height=5, fig.width=5,}
+```{r figi-1, fig.cap="Projection of the X-ray conformers shows that the E.coli DHFR structures can be divided into three major groups along their two first eigenvectors: closed, open, and occluded conformations. Each dot is colored according to their cluster membership: occluded conformations (green), open conformations (black), and closed conformations (red).", fig.height=5, fig.width=5,}
 plot(pc.xray$z[,1:2], col="grey50", pch=16, cex=1.3,
      ylab="Prinipcal Component 2", xlab="Principal Component 1")
 points(pc.xray$z[,1:2], col=grps.rd, pch=16, cex=0.9)
@@ -417,7 +414,7 @@ hc.rmsip <- hclust(dist(1-rmsip), method="ward.D2")
 grps.rmsip <- cutree(hc.rmsip, k=3)
 ```
 
-```{r fig1q-rmsip, fig.width=7, fig.height=4, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on their pairwise RMSIP values (calculated from NMA). Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows theconformerplot (see Figure 2), with colors according to clustering based on the pairwise RMSIP values."}
+```{r fig1q-rmsip, fig.width=7, fig.height=4, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on their pairwise RMSIP values (calculated from NMA). Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows the conformerplot (see Figure 2), with colors according to clustering based on the pairwise RMSIP values."}
 hclustplot(hc.rmsip, k=3, colors=grps.rd, labels=ids, cex=0.7, main="RMSIP", fillbox=FALSE)
 
 par(fig=c(.65, 1, .45, 1), new = TRUE)

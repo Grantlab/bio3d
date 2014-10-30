@@ -1,7 +1,7 @@
 ---
 title: "Beginning Trajectory Analysis with Bio3D"
 author: "Xin-Qiu Yao, Lars Skjaerven, & Barry J. Grant"
-date: "September 28, 2014"
+date: "October 30, 2014"
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 output:
   pdf_document:
@@ -340,7 +340,7 @@ example (see figure below).
 write.ncdf(p1, "trj_pc1.nc") 
 ```
 
-![image](figures/hiv_pc1.png)
+![Visualization of the first principal component of HIV-1 protease. Color scale from blue to red depict low to high atomic displacements.](figures/hiv_pc1.png)
 
 #### Question: {.unnumbered}
 
@@ -356,7 +356,7 @@ magnitude of all pairwise cross-correlation coefficients. The Bio3D
 whose elements may be displayed in a graphical representation frequently
 termed a dynamical cross-correlation map, or DCCM.
 
-```{r, echo=TRUE, results="hide"}
+```{r, echo=TRUE, results="hide", fig.cap="Dynamical cross-correlation map (DCCM) calculated with function **dccm()** using the MD simulation of HIV-1 protease as input."}
 cij<-dccm(xyz[,ca.inds$xyz])
 plot(cij) 
 ```
@@ -376,7 +376,7 @@ function `view.dccm()`
 view.dccm(cij, pdb, launch=TRUE) 
 ```
 
-![image](figures/dccm_hivpr.png)
+![Visualization of residue-residue cross correlations (using function **view.dccm()**). Red and blue lines indicate correlated and anti-correlation motions, respectively.](figures/dccm_hivpr.png)
 
 See also the `Enhanced Methods for Normal Mode Analysis` for additional
 visualization examples. Also you might want to checkout the
