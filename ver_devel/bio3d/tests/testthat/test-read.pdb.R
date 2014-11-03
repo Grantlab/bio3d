@@ -36,7 +36,7 @@ test_that("read.pdb() reads and stores data properly", {
    expect_equal(nrow(pdb$atom), 2954)
    expect_equal(sum(pdb$calpha), 318)
 #   expect_equivalent(aa321(pdb$seqres), pdbseq(pdb))
-   expect_equal(pdb$xyz[1:6], c(24.317, 59.447, 4.079, 25.000, 58.475, 4.908))
+   expect_equal(pdb$xyz[1:6], c(24.317, 59.447, 4.079, 25.000, 58.475, 4.908), tolerance=1e-6)
    expect_equal(length(pdb$helix$start), 8)
    expect_equal(length(pdb$sheet$start), 16)
     
@@ -49,7 +49,7 @@ test_that("read.pdb() reads and stores data properly", {
    # multi-model structure
    invisible(capture.output(pdb <- read.pdb(file.path(datdir, "1L2Y.pdb"), multi=TRUE)))
    expect_equal(dim(pdb$xyz), c(38, 912))
-   expect_equal(pdb$xyz[20, 1:6], c(-8.559, 6.374, -1.226, -7.539, 6.170, -0.168))
+   expect_equal(pdb$xyz[20, 1:6], c(-8.559, 6.374, -1.226, -7.539, 6.170, -0.168), tolerance=1e-6)
 
    # one atom
    cat("ATOM      1  N   SER Q 398      48.435  21.981  -6.393  1.00 56.10           N\n",

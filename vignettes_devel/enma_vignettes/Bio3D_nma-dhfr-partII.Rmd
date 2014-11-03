@@ -1,7 +1,7 @@
 ---
 title: "Ensemble NMA across multiple species of DHFR"
 author: "Lars Skjaerven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant"
-date: "October 1, 2014"
+date: "October 30, 2014"
 output:
   pdf_document:
     fig_caption: yes
@@ -232,7 +232,7 @@ plot(modes, pdbs=pdbs, ylim=c(0,2), col=grps.seq, conservation=TRUE)
 
 In some cases it can be difficult to interpret the fluctuation plot when all lines are plotted on top of each other. Argument `spread=TRUE` adds a small gap between grouped fluctuation profiles. Use this argument in combination with a new groups (`grps`) variable to function **plot.enma()**:
 
-```{r fig3-5, fig.cap="Flexibility profiles for three selected species (*E.coli* (black), *H.sapiens* (red), and *C.albicans* (green)). The plot is generated with function **plot.enma()** with argument `spread=TRUE`.", fig.height=5, fig.width=7, message=FALSE, results="hide",}
+```{r fig3-5, fig.cap="Flexibility profiles for selected species. The plot is generated with function **plot.enma()** with argument `spread=TRUE`.", fig.height=5, fig.width=7, message=FALSE, results="hide",}
 
 grps <- rep(NA, length(grps.seq))
 grps[grep("coli", labs)]=1
