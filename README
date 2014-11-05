@@ -26,7 +26,7 @@ The development version is available from our bitbucket repository and typically
 #!r
 install.packages("devtools")
 library(devtools)
-install_bitbucket("bio3d", username = "Grantlab", subdir = "ver_devel/bio3d/")
+install_bitbucket("Grantlab/bio3d", subdir = "ver_devel/bio3d/")
 ```
 
 Alternative installation methods and additional instructions are posted to the [wiki section](https://bitbucket.org/Grantlab/bio3d/wiki/Home) of our bitbucket repository. 

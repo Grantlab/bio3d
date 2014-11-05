@@ -97,19 +97,19 @@ aln  <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
 pdbs <- read.fasta.pdb(aln)
 
 gaps <- gap.inspect(pdbs$xyz)
-rmsd( pdbs$xyz[, gaps$f.inds] )
 
 xyz <- fit.xyz( fixed  = pdbs$xyz[1,],
                mobile = pdbs$xyz,
                fixed.inds  = gaps$f.inds,
                mobile.inds = gaps$f.inds )
 
+\dontrun{
 rmsd( xyz[, gaps$f.inds] )
+rmsd( pdbs$xyz[, gaps$f.inds] )
 
 }
 
 ##-- Superpose again this time outputing PDBs
-\dontrun{
 xyz <- fit.xyz( fixed = pdbs$xyz[1,],
                mobile = pdbs,
                fixed.inds  = gaps$f.inds,

@@ -19,29 +19,28 @@ test_that("atom to mass tests", {
   expect_that(atom2mass(atom.names, rescue=FALSE), throws_error())
   expect_that(atom2mass(atom.names, rescue=TRUE), gives_warning())
 
-  ## Try with a PDB object
-  invisible(capture.output(pdb.small <- read.pdb("1etl")))
-  invisible(capture.output(prot.inds <- atom.select(pdb.small, "protein")))
-  invisible(capture.output(pdb.small.prot <- trim.pdb(pdb.small, prot.inds)))
 
-  eletys <- pdb.small$atom$elety[ pdb.small$atom$type=="ATOM" ]
-  expect_that(sum(atom2mass( eletys )), equals(1165.344, tolerance=1e-6))
-  expect_that(sum(atom2mass( eletys )), equals(sum(atom2mass(pdb.small.prot), tolerance=1e-6)))
-  expect_that(sum(atom2mass( pdb.small )), equals(1461.465, tolerance=1e-6))
+  ## Simple test with PDB ID 1HEL
+  file <- system.file("examples/1hel.pdb",package="bio3d")
+  invisible(capture.output(pdb <- read.pdb(file)))
+  
+  invisible(capture.output(prot.inds <- atom.select(pdb, "protein")))
+  invisible(capture.output(pdb.prot <- trim.pdb(pdb, prot.inds)))
+
+  eletys <- pdb$atom$elety[ pdb$atom$type=="ATOM" ]
+  expect_that(sum(atom2mass( eletys )), equals(13346.39, tolerance=1e-6))
+  expect_that(sum(atom2mass( eletys )), equals(sum(atom2mass(pdb.prot), tolerance=1e-6)))
+  expect_that(sum(atom2mass( pdb.prot )), equals(13346.39, tolerance=1e-6))
   
   ## Try center of mass at the same go
-  ##coma <- c(16.3714058,  5.0264399,  0.1739735)
-  coma <- c(16.3714174,  5.0264663,  0.1739975)
-  expect_that(com(pdb.small.prot), equals(coma, tolerance=1e-6))
+  coma <- c(-0.4991111, 20.5858389, 19.2604674)
+  expect_that(com(pdb.prot), equals(coma, tolerance=1e-6))
   
-  ##coma <- c(16.2706625,  4.8153027,  0.3936553)
-  coma <- c(16.2706660,  4.8153275,  0.3936753)
-  expect_that(com(pdb.small), equals(coma, tolerance=1e-6))
-  
+#  coma <- c(-0.5829897, 20.5306061, 19.1081465)
+#  expect_that(com(pdb), equals(coma, tolerance=1e-6))
   
   ## Add custom masses
   atom.names <- c("CA", "O", "N", "OXT", "CL2", "PT1")
-  ##masses <- c(12.01, 16.00, 14.01, 16.00, 35.45, 195.08)
   masses <- c(12.0107, 15.9994, 14.0067, 15.9994, 35.4530, 195.0780)
 
   elety.cust <- data.frame(name = c("CL2","PT1"), symb = c("Cl","Pt"))

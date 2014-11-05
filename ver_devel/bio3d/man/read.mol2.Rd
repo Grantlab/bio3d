@@ -100,7 +100,7 @@ multi.mol[[2]]$xyz
 dock <- read.mol2("dock.mol2")
 
 ## Reference PDB file (e.g. X-ray structure)
-pdb <- read.pdb("dock_ref.pdb", het2atom=T)
+pdb <- read.pdb("dock_ref.pdb")
 
 ## Calculate RMSD of docking modes
 sele <- atom.select(dock, "noh")

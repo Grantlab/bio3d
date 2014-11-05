@@ -128,7 +128,7 @@ function(aln, prefix ="", pdbext="", sel=NULL, ...) {
   colnames(out$all.resid) = atm
   colnames(out$all.resno) = atm
   
-  class(out)="pdbs"
+  class(out)=c("pdbs", "fasta")
   return(out)
   
 }

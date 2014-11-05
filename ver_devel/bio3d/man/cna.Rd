@@ -107,6 +107,7 @@
    \code{\link[igraph:fastgreedy.community]{fastgreedy.community}}
 }
 \examples{
+\donttest{
 
 ##-- Build a correlation network from NMA results
 ## Read example PDB
@@ -124,7 +125,6 @@ cij <- dccm(modes)
 net <- cna(cij, cutoff.cij=0.35)
 #plot(net, pdb)
 
-\donttest{
 ## within VMD set 'coloring method' to 'Chain' and 'Drawing method' to Tube
 #view.cna(net, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
 

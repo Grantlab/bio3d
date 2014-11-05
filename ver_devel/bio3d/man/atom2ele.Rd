@@ -48,6 +48,7 @@ atom2ele(\dots)
 atom.names <- c("CA", "O", "N", "OXT")
 atom2ele(atom.names)
 
+\donttest{
 ## Get atomic symbols from a PDB object with a customized data set
 pdb <- read.pdb("3RE0",verbose=FALSE)
 inds <- atom.select(pdb, resno=201, verbose=FALSE)
@@ -59,5 +60,6 @@ atom2ele(pdb, inds, elety.custom = NULL)
 myelety <- data.frame(name = "CL2", symb = "Cl")
 atom2ele(pdb, inds, elety.custom = myelety)
 
+}
 }
 \keyword{ utilities }
