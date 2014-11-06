@@ -16,7 +16,7 @@ function(pdb, string=NULL,
   ##   # read a PDB file
   ##   pdb<-read.pdb("1bg2")
   ##   # print a structure summary
-  ##   atom.select(pdb)
+  ##   print.pdb(pdb)
   ##   # select all C-alpha atoms from resno 65 to 70
   ##   ca.inds   <- atom.select(pdb, "///65:70///CA/")
   ##
@@ -26,6 +26,7 @@ function(pdb, string=NULL,
   ##
   ##   # more examples
   ##   inds<-atom.select(pdb, "//A/130:142///N,CA,C,O/")
+  ##   inds<-atom.select(pdb, chain="A", resno=130:142, elety="N,CA,C,O")
   ##
   ##   # or using string shortcut
   ##   inds <- atom.select(pdb, "back", resno=65:70)
@@ -51,7 +52,13 @@ function(pdb, string=NULL,
   
   sel.txt2type <- function(type.sel.txt) {
     ##- Splitting function for characters - split on coma & remove white space
-    return( gsub(" ","", unlist(strsplit(type.sel.txt, split=",")) ) )
+    if(is.na(type.sel.txt)) {
+      sel <- NA
+    } else {
+      sel <- gsub(" ","", unlist(strsplit(type.sel.txt, split=",")) )
+      sel[sel=="NA"]=NA
+    }
+    return(sel)
   }
   
   ##-- Parse string and return the selection
