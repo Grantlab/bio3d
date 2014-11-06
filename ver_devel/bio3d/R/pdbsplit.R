@@ -1,5 +1,5 @@
 `pdbsplit` <-
-function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE, ncore=1, ...) {
+function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE, mk4=FALSE, ncore=1, ...) {
   
   toread <- file.exists(pdb.files)
   toread[substr(pdb.files, 1, 4) == "http"] <- TRUE
@@ -54,13 +54,15 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
       ids <- unique(ids)
       
       ## Match 'ids' with 'pdbId_chainId' combinations
-      tmp.names <- paste(substr(basename(pdb.files[i]), 
-                                1, 4), "_", chains, sep = "")
+      tmp.names <- paste(substr(basename(pdb.files[i]),           ##<= 1,4
+                                1, 4), "_", chains, sep = "")     ##<= 1,4
 
       tmp.inds <- unique(unlist(lapply(ids, grep, tmp.names)))
       if(length(tmp.inds)==0) {
         ## Skip pdb file if no match were found
-        unused <- substr(basename(pdb.files[i]), 1, 4)
+##        unused <- substr(basename(pdb.files[i]), 1, 4)
+        unused <- basename.pdb(pdb.files[i], mk4=mk4)
+
         chains <- c()
       }
       else {
@@ -69,8 +71,11 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
     }
 
     if(!overwrite && !verbose) {
-      tmp.names <- paste(substr(basename(pdb.files[i]), 
-                                1, 4), "_", chains, ".pdb", sep = "")
+#      tmp.names <- paste(substr(basename(pdb.files[i]),               ##<= 1,4
+#                                1, 4), "_", chains, ".pdb", sep = "") ##<= 1,4
+      tmp.names <- paste(basename.pdb(pdb.files[i], mk4=mk4),               ##<= 1,4
+                         "_", chains, ".pdb", sep = "") 
+
       new.name <- file.path(path, tmp.names)
       if(all(file.exists(new.name))) {
         out <- c(out, new.name)
@@ -102,8 +107,8 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
             for ( k in 1:nrow(pdb$xyz) ) {
               
               str.len <- nchar(nrow(pdb$xyz))
-              new.name <- paste(substr(basename(pdb.files[i]), 
-                                       1, 4), "_", chains[j], ".",
+              new.name <- paste(basename.pdb(pdb.files[i], mk4=mk4), 
+                                "_", chains[j], ".",  ##<= 1,4
                                 formatC(k, width=str.len, format="d", flag="0"),
                                 ".pdb", sep = "")
               new.name <- file.path(path, new.name)
@@ -114,8 +119,8 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
             }
           }
           else {
-            new.name <- paste(substr(basename(pdb.files[i]), 
-                                     1, 4), "_", chains[j], ".pdb", sep = "")
+            new.name <- paste(basename.pdb(pdb.files[i], mk4=mk4),    ##<= 1,4
+                              "_", chains[j], ".pdb", sep = "") 
             new.name <- file.path(path, new.name)
 
             if(!file.exists(new.name) || overwrite)
