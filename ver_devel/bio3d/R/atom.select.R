@@ -258,6 +258,9 @@ function(pdb, string=NULL,
   ##-- Main function  
   ##
 
+  ## Replace missing chain " " with NA values to aid selection
+  pdb$atom$chain[pdb$atom$chain==" "]= NA
+
   sel1 <- NULL
   sel2 <- NULL
   if(got.string) {
