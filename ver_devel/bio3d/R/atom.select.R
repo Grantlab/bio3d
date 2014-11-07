@@ -50,13 +50,15 @@ function(pdb, string=NULL,
     return( sort(unique(c(na.omit(num2)))) )
   }
   
-  sel.txt2type <- function(type.sel.txt) {
-    ##- Splitting function for characters - split on coma & remove white space
-    if(is.na(type.sel.txt)) {
+  sel.txt2type <- function(type.sel.txt, na=FALSE) {
+    ##- Splitting function for characters
+    if(is.na(type.sel.txt) || (type.sel.txt==" ")) {
+      ## Blank or NA selections will return NA
       sel <- NA
     } else {
+      ## Split larger strings on coma & remove white space
       sel <- gsub(" ","", unlist(strsplit(type.sel.txt, split=",")) )
-      sel[sel=="NA"]=NA
+      if(na) { sel[sel=="NA"]=NA }
     }
     return(sel)
   }
@@ -170,7 +172,7 @@ function(pdb, string=NULL,
        if(sel["chain"] != "") {
          sel.inds <- cbind(sel.inds,
                            chain=is.element( pdb$atom[,"chain"],
-                             sel.txt2type( sel["chain"] )) )        
+                             sel.txt2type( sel["chain"], na=TRUE )) )        
        } else { sel.inds <- cbind(sel.inds, chain=blank)  }
      
        ## RESNO
@@ -230,7 +232,7 @@ function(pdb, string=NULL,
                    "intersecting atoms  *"),sep="\n")
        }
          
-       match <- list(atom=which(match.inds), xyz=xyz.inds, call = cl) #######<=====
+       match <- list(atom=which(match.inds), xyz=xyz.inds, call = cl) 
        class(match) <- "select"
        return(match)
      }
@@ -287,10 +289,6 @@ function(pdb, string=NULL,
  
     sel2 <- parse.string(pdb, string, verbose, rm.insert, type=type)
   }
-
-#  if(!is.null(sel1) && !is.null(sel2))
-#     if(verbose)
-#        cat("\n Combine selections from input string and components\n")
 
   ##- Combine selections from input string and components
   match <- combine.sel(sel1, sel2, op="AND", verbose=verbose)
