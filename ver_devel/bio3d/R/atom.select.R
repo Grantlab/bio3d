@@ -72,13 +72,19 @@ function(pdb, string=NULL,
                   "SEP", "TPO", "MLY", "MSE", "IAS", "ABA", "CSO", "CSD", 
                   "CYM", "CME", "CSX", "CMT", "CYX", "HIE", "HIP", "HID", 
                   "HSD", "HSE", "HSP", "DDE", "MHO", "ASX", "CIR", "PFF")
+     nuc.aa <- c("A", "U", "G", "C", "I",
+                 "DA", "DG", "DT", "DC", "DI")
      
      hoh <- c("H2O", "OH2", "HOH", "HHO", "OHH", "SOL", "WAT",
               "TIP", "TIP2", "TIP3", "TIP4")
 
      not.prot.aa <- (aa[!aa %in% prot.aa])
+     nuc.aa <- aa[aa %in% nuc.aa]
+     not.nuc.aa <- (aa[!aa %in% nuc.aa])
      ligand.aa <- not.prot.aa[!not.prot.aa %in% hoh]
      if(length(not.prot.aa) == 0) { not.prot.aa = "xxxxx" }
+     if(length(not.nuc.aa) == 0) { not.nuc.aa = "xxxxx" }
+     if(length(nuc.aa) == 0) { nuc.aa = "xxxxx" }
      if(length(ligand.aa) == 0) { ligand.aa = "xxxxx" }
      
      if (string=="h") {
@@ -108,6 +114,8 @@ function(pdb, string=NULL,
                  all = "///////",
                  protein = paste("////",paste(prot.aa, collapse=","), "///",sep=""),
                  notprotein = paste("////", paste(not.prot.aa, collapse=","), "///",sep=""),
+                 nucleic = paste("////",paste(nuc.aa, collapse=","), "///",sep=""),
+                 notnucleic = paste("////",paste(not.nuc.aa, collapse=","), "///",sep=""),
                  ligand = paste("////", paste(ligand.aa, collapse=","), "///",sep=""),
                  water = paste("////",paste(hoh, collapse=","), "///",sep=""),
                  notwater = paste("////", paste(aa[!aa %in% hoh], collapse=","), "///",sep=""),
