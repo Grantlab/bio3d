@@ -68,27 +68,26 @@ summary.pdb <- function(object, printseq=FALSE, ...) {
   cat(s)
 
   if(printseq) {
-    prot.pdb <- trim.pdb(object, atom.select(object, "protein", verbose=FALSE))
-    na.pdb <- trim.pdb(object, atom.select(object, "nucleic", verbose=FALSE))
-
     ##protein
-    aa <- pdbseq(prot.pdb)
-    if(!is.null(aa)) {
-      if(nres > 225) {
-        ## Trim long sequences before output
-        aa <- c(aa[1:225], "...<cut>...", aa[(nres-3):nres])
+    if(nres>0) {
+      prot.pdb <- trim.pdb(object, atom.select(object, "protein", verbose=FALSE))
+      aa <- pdbseq(prot.pdb)
+      if(!is.null(aa)) {
+        if(nres > 225) {
+          ## Trim long sequences before output
+          aa <- c(aa[1:225], "...<cut>...", aa[(nres-3):nres])
+        }
+        aa <- paste("     ",  gsub(" ","", 
+                                   strwrap( paste(aa,collapse=" "), 
+                                           width=120, exdent=0) ), collapse="\n")
+        cat("   Protein sequence:\n", aa, "\n\n", sep="")
       }
-      la <- nchar(aa)
-      aa <- paste("     ",  gsub(" ","", 
-                                 strwrap( paste(aa,collapse=" "), 
-                                         width=120, exdent=0) ), collapse="\n")
-      cat("   Protein sequence:\n", aa, "\n\n", sep="")
     }
-      
+    
     ## nucleic
-    ##aa <- pdbseq(na.pdb)
-    aa <- na.pdb$atom[atom.select(na.pdb, "nucleic", elety="P", verbose=FALSE)$atom, "resid"]
-    if(!is.null(aa)) {
+    if(nresnuc>0) {
+      na.pdb <- trim.pdb(object, atom.select(object, "nucleic", verbose=FALSE))
+      aa <- na.pdb$atom[atom.select(na.pdb, "nucleic", elety="P", verbose=FALSE)$atom, "resid"]
       if(nres > 225) {
         ## Trim long sequences before output
         aa <- c(aa[1:225], "...<cut>...", aa[(nres-3):nres])
