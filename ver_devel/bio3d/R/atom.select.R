@@ -131,12 +131,13 @@ function(pdb, string=NULL,
        if(!substr(string,1,1)=="/") {
          ## Check if we have a valid selection sting
          stop("Not a valid selection string shortcut.\n\t Please use one of:
-        'calpha' 'cbeta' 'backbone'
-        'protein' 'notprotein' 'ligand'
-        'water' 'notwater'
-        'h' 'noh'\n
+            'calpha' 'cbeta' 'backbone'
+            'protein' 'notprotein' 'ligand'
+            'nucleic' 'notnucleic'
+            'water' 'notwater'
+            'h' 'noh'\n
        Or valid selection string:
-         /segid/chain/resno/resid/eleno/elety/ \n")
+            /segid/chain/resno/resid/eleno/elety/ \n")
        }
 
      } else {
