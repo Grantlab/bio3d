@@ -1,29 +1,40 @@
-cat.pdb <- function(pdb1, pdb2, renumber=TRUE, rechain=TRUE) {
-  if(missing(pdb1) | !is.pdb(pdb1) | missing(pdb2) | !is.pdb(pdb2) )
-    stop("provide 'pdb1' and 'pdb2' as obtained from read.pdb()")
-  
+cat.pdb <- function(..., renumber=TRUE, rechain=TRUE) {
   cl <- match.call()
+    
+  objs <- list(...)
+  are.null <- unlist(lapply(objs, is.null))
+  objs <- objs[!are.null]
+
+  if(length(objs)<2)
+    stop("provide multiple (>1) PDB objects")
+
+  if(any(!unlist(lapply(objs, is.pdb))))
+    stop("provide PDB objects as obtained from read.pdb()")
   
-  if(rechain) {
-    j <- 1
-    chains <- unique(pdb1$atom$chain)
+  rechainfun <- function(x, j) {
+    chains <- unique(x$atom$chain)
     for(i in 1:length(chains)) {
-      inds <- which(pdb1$atom$chain==chains[i])
-      pdb1$atom$chain[inds] <- LETTERS[j]
+      inds <- which(x$atom$chain==chains[i])
+      x$atom$chain[inds] <- LETTERS[j]
       j <- j+1
     }
-    
-    chains <- unique(pdb2$atom$chain)
-    for(i in 1:length(chains)) {
-      inds <- which(pdb2$atom$chain==chains[i])
-      pdb2$atom$chain[inds] <- LETTERS[j]
-      j <- j+1
+    return(list(pdb=x, j=j))
+  }
+
+  if(rechain) {
+    j <- 1
+    for(i in 1:length(objs)) {
+      tmp <- rechainfun(objs[[i]], i)
+      objs[[i]] <- tmp$pdb
+      j <- tmp$j
     }
   }
   
-  new <- pdb1
-  new$atom       <- rbind(pdb1$atom, pdb2$atom)
-  new$xyz        <- cbind(pdb1$xyz, pdb2$xyz)
+  new <- objs[[1]]
+  for(i in 2:length(objs)) {
+    new$atom     <- rbind(new$atom, objs[[i]]$atom)
+    new$xyz      <- cbind(new$xyz, objs[[i]]$xyz)
+  }
   new$atom$eleno <- seq(1, nrow(new$atom))
   
   if(renumber)

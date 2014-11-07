@@ -1,16 +1,14 @@
 \name{cat.pdb}
 \alias{cat.pdb}
-\title{ Concatenate two PDB Objects. }
+\title{ Concatenate multiple PDB Objects. }
 \description{
-  Produce a new concatenated PDB object from two smaller PDB objects.
+  Produce a new concatenated PDB object from two or more smaller PDB objects.
 }
 \usage{
-cat.pdb(pdb1, pdb2, renumber=TRUE, rechain=TRUE)
+cat.pdb(\dots, renumber=TRUE, rechain=TRUE)
 }
 \arguments{
-  \item{pdb1}{ a PDB structure object obtained from
-    \code{\link{read.pdb}}. }
-  \item{pdb2}{ a PDB structure object obtained from
+  \item{\dots}{ two or more PDB structure objects obtained from
     \code{\link{read.pdb}}. }
   \item{renumber}{ logical, if \sQuote{TRUE} residues will be
     renumbered. }
@@ -19,7 +17,7 @@ cat.pdb(pdb1, pdb2, renumber=TRUE, rechain=TRUE)
 }
 \details{
   This is a basic utility function for creating a concatenated PDB
-  object based on two smaller PDB objects. 
+  object based on multipe smaller PDB objects. 
 }
 \value{
   Returns an object of class \code{"pdb"}. See \code{\link{read.pdb}} for
@@ -38,7 +36,7 @@ pdb1 <- read.pdb("1etl")
 pdb2 <- read.pdb("1hel")
 
 ## Concat
-new.pdb <- cat.pdb(pdb1, pdb2)
+new.pdb <- cat.pdb(pdb1, pdb2, pdb1)
 
 ## Write to file
 write.pdb(new.pdb, file="concat.pdb")
