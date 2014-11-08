@@ -64,7 +64,7 @@ view.cnapath(pa, pdb = NULL, out.prefix = "cnapath_", launch = FALSE)
    \code{\link[igraph:get.shortest.paths]{get.shortest.paths}}. }
 \examples{
 \donttest{
-# Load the correlation network from MD data
+
 attach(transducin)
 inds = match(c("1TND_A", "1KJY_A"), pdbs$id)
 
@@ -85,18 +85,19 @@ pa1
 # summarize and compare paths in two networks
 pdb1 <- read.pdb("1tnd")
 pdb1 <- trim.pdb(pdb1, atom.select(pdb1, chain="A", resno=npdbs$resno[1, gaps.res$f.inds]))
-pdb2 <- read.pdb("1kjy")
-pdb2 <- trim.pdb(pdb2, atom.select(pdb2, chain="A", resno=npdbs$resno[2, gaps.res$f.inds]))
 print(pa1, pa2, pdb = pdb1, label=c("GTP", "GDI"))
 
 # plot path length distribution and node degeneracy
-print(pa1, pa2, pdb = pdb1, label=c("GTP", "GDI"), col=c("red", "blue"), plot=TRUE)
+p <- summary(pa1, pa2, pdb = pdb1, label=c("GTP", "GDI"), col=c("red", "blue"), plot=TRUE)
+
+pdb2 <- read.pdb("1kjy")
+pdb2 <- trim.pdb(pdb2, atom.select(pdb2, chain="A", resno=npdbs$resno[2, gaps.res$f.inds]))
 
 # View paths in 3D molecular graphic with VMD
-view.cnapath(pa1, pdb1, launch = FALSE)
-view.cnapath(pa2, pdb2, launch = FALSE)
+#view.cnapath(pa1, pdb1, launch = TRUE)
+#view.cnapath(pa2, pdb2, launch = TRUE)
 
-dettach(transducin)
+detach(transducin)
 }
 }
 \keyword{ utilities }
