@@ -27,7 +27,9 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
   "quickscan" <- function(pdbfile) {
     fi <- readLines(pdbfile)
     fi = fi[ grep("^ATOM", fi) ]
-    return(unique(substr(fi, 22,22)))
+    chains <- unique(substr(fi, 22,22))
+    chains[chains == " "] <- NA
+    return(chains)
   }
 
   if(!verbose)
@@ -54,13 +56,11 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
       ids <- unique(ids)
       
       ## Match 'ids' with 'pdbId_chainId' combinations
-      tmp.names <- paste(substr(basename(pdb.files[i]),           ##<= 1,4
-                                1, 4), "_", chains, sep = "")     ##<= 1,4
+      tmp.names <- paste0(basename.pdb(pdb.files[i], mk4=mk4), "_", chains)
 
       tmp.inds <- unique(unlist(lapply(ids, grep, tmp.names)))
       if(length(tmp.inds)==0) {
         ## Skip pdb file if no match were found
-##        unused <- substr(basename(pdb.files[i]), 1, 4)
         unused <- basename.pdb(pdb.files[i], mk4=mk4)
 
         chains <- c()
@@ -71,10 +71,7 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
     }
 
     if(!overwrite && !verbose) {
-#      tmp.names <- paste(substr(basename(pdb.files[i]),               ##<= 1,4
-#                                1, 4), "_", chains, ".pdb", sep = "") ##<= 1,4
-      tmp.names <- paste(basename.pdb(pdb.files[i], mk4=mk4),               ##<= 1,4
-                         "_", chains, ".pdb", sep = "") 
+      tmp.names <- paste0(basename.pdb(pdb.files[i], mk4=mk4),"_", chains, ".pdb") 
 
       new.name <- file.path(path, tmp.names)
       if(all(file.exists(new.name))) {
@@ -96,10 +93,10 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
         if(!verbose)
           setTxtProgressBar(pb, (i-1)+(j/length(chains)))
         
-        if (!is.na(chains[j])) {
+        ##if (!is.na(chains[j])) {
           new.pdb <- NULL
           
-          sel <- atom.select(pdb, paste("//", chains[j], "/////"), verbose=verbose)
+          sel <- atom.select(pdb, chain=chains[j], verbose=verbose) #====
           new.pdb <- trim.pdb(pdb, sel, sse=FALSE)
 
           ## Multi-model records
@@ -108,7 +105,7 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
               
               str.len <- nchar(nrow(pdb$xyz))
               new.name <- paste(basename.pdb(pdb.files[i], mk4=mk4), 
-                                "_", chains[j], ".",  ##<= 1,4
+                                "_", chains[j], ".", 
                                 formatC(k, width=str.len, format="d", flag="0"),
                                 ".pdb", sep = "")
               new.name <- file.path(path, new.name)
@@ -119,8 +116,7 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
             }
           }
           else {
-            new.name <- paste(basename.pdb(pdb.files[i], mk4=mk4),    ##<= 1,4
-                              "_", chains[j], ".pdb", sep = "") 
+            new.name <- paste0(basename.pdb(pdb.files[i], mk4=mk4), "_", chains[j], ".pdb") 
             new.name <- file.path(path, new.name)
 
             if(!file.exists(new.name) || overwrite)
@@ -128,7 +124,7 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
 
             out <- c(out, new.name)
           }
-        }
+        ##}
       }
     }
     if(!verbose)
