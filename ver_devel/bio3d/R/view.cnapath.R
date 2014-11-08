@@ -103,7 +103,7 @@ mol addrep top
         shell(shQuote(cmd))
       } else{
         if(Sys.info()["sysname"]=="Darwin") {
-          system(paste("/Applications/VMD\\ 1.9.*app/Contents/MacOS/startup.command -e", vmdfile))
+          system(paste("/Applications/VMD\\ 1.9.*app/Contents/MacOS/startup.command -e", file))
         } else {
           system(cmd)
         }
