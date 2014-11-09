@@ -8,7 +8,7 @@
  }
 \usage{
 \method{pca}{xyz}(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))),
-                 use.svd = FALSE, rm.gaps=FALSE, \dots)
+                 use.svd = FALSE, rm.gaps=FALSE, mass = NULL, \dots)
 
 \method{print}{pca}(x, nmodes=6, \dots)
 }
@@ -27,7 +27,12 @@
   \item{x}{ an object of class \code{pca}, as obtained from function
     \code{pca.xyz}. }
   \item{nmodes}{ numeric, number of modes to be printed. }
-  \item{\dots}{ additional arguments to \code{print}. }
+  \item{mass}{ numeric, vector of residue/atom masses. By default (NULL), 
+     mass weights are not considered. If provided with a \sQuote{pdb}
+     object, masses of all amino acids obtained from \code{\link{aa2mass}}
+     are used. }
+  \item{\dots}{ additional arguments to \code{\link{fit.xyz}} (for \code{pca.xyz})
+     or to \code{print} (for \code{print.pca}). }
 }
 \value{
   Returns a list with the following components:

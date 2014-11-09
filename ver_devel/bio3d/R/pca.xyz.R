@@ -1,6 +1,6 @@
 "pca.xyz" <-
 function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE,
-         rm.gaps=FALSE, ...) {
+         rm.gaps=FALSE, mass = NULL, ...) {
   ## Performs principal components analysis on the given "xyz" numeric data
   ## matrix and return the results as an object of class "pca.xyz"
 
@@ -30,7 +30,31 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE,
   n <- dx[1]; p <- dx[2]
   if (!n || !p)
     stop("0 extent dimensions")
-  
+ 
+  # for mass-weighted PCA
+  if(!is.null(mass)) {
+     if(is.pdb(mass)) mass = aa2mass(mass)
+     if(length(mass) != ncol(xyz)/3)
+        stop("Input mass vector does not match xyz")
+     q = t( t(xyz) * rep(sqrt(mass), each=3) )  # mass weighted xyz
+
+     # re-do fitting: iteratively fit to the mean
+     mean <- colMeans(q[subset, ])
+     tolerance = 1.0 # convergence check
+     maxiter = 10    # maximum number of iteration
+     iter = 0
+     repeat {
+        q <- fit.xyz(mean, q, 1:ncol(q), 1:ncol(q), ...)
+        mean.now <- colMeans(q[subset, ])
+        mean.diff <- rmsd(mean, mean.now, 1:ncol(q), 1:ncol(q))
+        mean = mean.now
+        iter = iter + 1
+        if(iter >= maxiter || mean.diff <= tolerance) break
+     }
+     if(mean.diff > tolerance) warning("Iteration stops before convergent")
+     xyz <- q
+  }
+ 
 #  mean <- apply(xyz[subset,],2,mean) ## mean structure
   mean <- colMeans(xyz[subset,]) ## Faster
   n <- sum(subset) 
