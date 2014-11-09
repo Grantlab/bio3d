@@ -1,10 +1,10 @@
-view.cnapath <- function(pa, pdb, out.prefix = "cnapath_", launch = FALSE) {
+view.cnapath <- function(pa, pdb, out.prefix = "view.cnapath", launch = FALSE) {
 
    if(!inherits(pa, "cnapath")) 
       stop("Input pa is not a 'cnapath' object")
 
-   file = paste(out.prefix, "view.vmd", sep="")
-   pdbfile = paste(out.prefix, "view.pdb", sep="")
+   file = paste(out.prefix, ".vmd", sep="")
+   pdbfile = paste(out.prefix, ".pdb", sep="")
 
    res <- unique(unlist(pa$path))
    ind.source <- match(pa$path[[1]][1], res)
@@ -27,7 +27,7 @@ view.cnapath <- function(pa, pdb, out.prefix = "cnapath_", launch = FALSE) {
          i2 = match(x[i+1], res)
          if(conn[i1, i2] == 0) conn[i1, i2] = conn[i2, i1] = 1
          r = rad(pa$dist[j], rmin, rmax)
-         ic = (rmax - pa$dist[j]) / (rmax - rmin) * 255 + 1
+         ic = floor((rmax - pa$dist[j]) / (rmax - rmin) * 255) + 1
          col = cols[ic]
          if(r > rr[i1, i2]) {
             rr[i1, i2] = rr[i2, i1] = r
@@ -44,9 +44,28 @@ view.cnapath <- function(pa, pdb, out.prefix = "cnapath_", launch = FALSE) {
    rownames(rr) <- res
    colnames(rr) <- res
 
-   k = 500
+   # Draw molecular structures
+   cat("mol new ", pdbfile, " type pdb first 0 last -1 step 1 filebonds 1 autobonds 1 waitfor all
+mol delrep 0 top
+mol representation NewCartoon 0.300000 10.000000 4.100000 0
+mol color colorID 8
+mol selection {all}
+mol material Opaque
+mol addrep top
+mol representation Licorice 0.300000 10.000000 10.000000
+mol color name
+mol selection {(resid ", res.pdb[ind.source], " ", res.pdb[ind.sink], ")}
+mol material Opaque
+mol addrep top 
+mol representation VDW 0.4 10
+mol color colorID 2
+mol selection {(resid ", paste(res.pdb, collapse=' '), ") and name CA}
+mol material Opaque
+mol addrep top
+", file=file)
 
-   cat("", file=file)
+   # Draw paths 
+   k = 500
    for(i in 1:(nrow(conn)-1)) {
       for(j in (i+1):ncol(conn)) {
          if(conn[i, j] == 1) {
@@ -60,37 +79,6 @@ view.cnapath <- function(pa, pdb, out.prefix = "cnapath_", launch = FALSE) {
          }
       }
    } 
-#   cat("graphics top color 1\n", file=file, append=TRUE)
-#   opt.path = raw[which.min(raw[1,]), ]
-#   if(is.matrix(opt.path)) {
-#      warning("Multiple optimal paths. Take the first one")
-#      opt.path = opt.path[1,]
-#   }
-#   opt.path = opt.path[!is.na(opt.path)]
-#   for(i in 2:(length(opt.path)-1)) {
-#      j = i + 1
-#      cat("draw cylinder {", pdb$xyz[atom2xyz(opt.path[i]+1)], 
-#         "} {", pdb$xyz[atom2xyz(opt.path[j]+1)], "} radius 0.5", 
-#         " resolution 6 filled 0\n", sep=" ", file=file, append=TRUE)
-#   }
-#mol selection {(resid ", paste(opt.path[2:length(opt.path)]+1, collapse=' '), 
-   cat("mol representation VDW 6 0.1
-mol color colorID 0
-mol selection {(resid ", paste(res.pdb, collapse=' '), ") and name CA}
-mol addrep top
-mol new ", pdbfile, " type pdb first 0 last -1 step 1 filebonds 1 autobonds 1 waitfor all
-mol delrep 0 top
-mol representation NewCartoon 0.300000 10.000000 4.100000 0
-mol color colorID 8
-mol selection {all}
-mol material Opaque
-mol addrep top
-mol representation Licorice 0.300000 10.000000 10.000000
-mol color name
-mol selection {(resid ", res.pdb[ind.source], " ", res.pdb[ind.sink], ")}
-mol material Opaque
-mol addrep top 
-", file=file, append=TRUE)
 
    write.pdb(pdb, file=pdbfile)
    
