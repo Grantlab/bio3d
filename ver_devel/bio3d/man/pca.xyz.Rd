@@ -27,12 +27,24 @@
   \item{x}{ an object of class \code{pca}, as obtained from function
     \code{pca.xyz}. }
   \item{nmodes}{ numeric, number of modes to be printed. }
-  \item{mass}{ numeric, vector of residue/atom masses. By default (NULL), 
-     mass weights are not considered. If provided with a \sQuote{pdb}
-     object, masses of all amino acids obtained from \code{\link{aa2mass}}
-     are used. }
-  \item{\dots}{ additional arguments to \code{\link{fit.xyz}} (for \code{pca.xyz})
-     or to \code{print} (for \code{print.pca}). }
+  \item{mass}{ a \sQuote{pdb} object or numeric vector of residue/atom masses. 
+     By default (\code{mass=NULL}), mass is ignored. If provided 
+     with a \sQuote{pdb} object, masses of all amino acids obtained from 
+     \code{\link{aa2mass}} are used. }
+  \item{\dots}{ additional arguments to \code{\link{fit.xyz}} 
+     (for \code{pca.xyz}) or to \code{print} (for \code{print.pca}). }
+}
+\note{
+     If \code{mass} is provided, mass weighted coordinates will be considered, 
+     and iteration of fitting onto the mean structure is performed internally. 
+     The extra fitting process is to remove external translation and rotation 
+     of the whole system. With this option, a direct comparison can be made 
+     between PCs from \code{\link{pca.xyz}} and vibrational modes from 
+     \code{\link{nma.pdb}}, with the fact that 
+                           \deqn{A=k_BTF^{-1}}{A=k[B]TF^-1}, 
+     where \eqn{A} is the variance-covariance matrix, \eqn{F} the Hessian 
+     matrix, \eqn{k_B}{k[B]} the Boltzmann's constant, and \eqn{T} the 
+     temperature.
 }
 \value{
   Returns a list with the following components:
