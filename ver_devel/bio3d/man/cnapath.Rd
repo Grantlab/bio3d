@@ -79,22 +79,29 @@ net <- cna(cij, cutoff.cij=0.3)
 pa1 <- cnapath(net[[1]], from = 314, to=172, k=50)
 pa2 <- cnapath(net[[2]], from = 314, to=172, k=50)
 
-# print the information of paths
+# print the information of a path
 pa1
 
-# summarize and compare paths in two networks
-pdb1 <- read.pdb("1tnd")
-pdb1 <- trim.pdb(pdb1, atom.select(pdb1, chain="A", resno=npdbs$resno[1, gaps.res$f.inds]))
-print(pa1, pa2, pdb = pdb1, label=c("GTP", "GDI"))
+# print two paths simultaneously
+pas <- list(pa1, pa2)
+names(pas) <- c("GTP", "GDI")
+print.cnapath(pas)
+
+# Or, for the same effect,
+# summary(pa1, pa2, label=c("GTP", "GDI"))
+
+# replace node numbers with residue name and residue number in the PDB file
+pdb <- read.pdb("1tnd")
+pdb <- trim.pdb(pdb, atom.select(pdb, chain="A", resno=npdbs$resno[1, gaps.res$f.inds]))
+print.cnapath(pas, pdb=pdb)
 
 # plot path length distribution and node degeneracy
-p <- summary(pa1, pa2, pdb = pdb1, label=c("GTP", "GDI"), col=c("red", "blue"), plot=TRUE)
-
-pdb2 <- read.pdb("1kjy")
-pdb2 <- trim.pdb(pdb2, atom.select(pdb2, chain="A", resno=npdbs$resno[2, gaps.res$f.inds]))
+print.cnapath(pas, pdb = pdb, col=c("red", "blue"), plot=TRUE)
 
 # View paths in 3D molecular graphic with VMD
-#view.cnapath(pa1, pdb1, launch = TRUE)
+#view.cnapath(pa1, pdb, launch = TRUE)
+#pdb2 <- read.pdb("1kjy")
+#pdb2 <- trim.pdb(pdb2, atom.select(pdb2, chain="A", resno=npdbs$resno[2, gaps.res$f.inds]))
 #view.cnapath(pa2, pdb2, launch = TRUE)
 
 detach(transducin)

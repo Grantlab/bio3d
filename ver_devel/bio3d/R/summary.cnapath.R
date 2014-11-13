@@ -1,8 +1,6 @@
 summary.cnapath <- function(pa, ..., pdb = NULL, label = NULL, col = NULL, 
    plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE) {
-   if(!requireNamespace("ggplot2", quietly = TRUE))
-      stop("Please install the ggplot2 package from CRAN")
-  
+
    pa <- list(pa, ...)
    if(!all(sapply(pa, inherits, "cnapath")))
       stop("Input pa is not a 'cnapath' object")
@@ -42,7 +40,7 @@ summary.cnapath <- function(pa, ..., pdb = NULL, label = NULL, col = NULL,
       resid <- pdb$atom[ca.inds$atom, "resid"]
       lig.inds <- atom.select(pdb, "ligand", verbose = FALSE)
       islig <- resno %in% pdb$atom[lig.inds$atom, "resno"]
-      resid[!islig] <- aa321(resid[!is.lig])
+      resid[!islig] <- aa321(resid[!islig])
       o <- lapply(o, function(x) {
             n <- paste(resid[as.numeric(names(x))], resno[as.numeric(names(x))], sep="")
             names(x) <- n
@@ -54,10 +52,14 @@ summary.cnapath <- function(pa, ..., pdb = NULL, label = NULL, col = NULL,
    out$network <- label
    out$num.paths <- sapply(pa, function(x) length(x$path))
    out$hist <- lapply(pa, function(x) table(cut(x$dist, breaks=5, include.lowest = TRUE)))
+   if(length(out$hist)==1) out$hist = out$hist[[1]]
    out$degeneracy <- do.call(rbind, o)
    if(normalize) out$degeneracy <- round(out$degeneracy, digits=2)
    
-   if(plot) { 
+   if(plot) {
+      if(!requireNamespace("ggplot2", quietly = TRUE))
+         stop("Please install the ggplot2 package from CRAN")
+  
       gcol = col; names(gcol) = label
       
       ##- for path length distribution
@@ -104,26 +106,55 @@ summary.cnapath <- function(pa, ..., pdb = NULL, label = NULL, col = NULL,
    return(out)
 }
 
-print.cnapath <- function(x, ...) {
+print.cnapath <- function(pa, ...) {
    dots = list(...)
-   normalize = TRUE
-   if("normalize" %in% names(dots))
-      normalize = dots$normalize
-   o <- summary(x, ...)
-    
-   cat("Number of networks: ", length(o$network), "(", 
-       paste(o$network, collapse=", "), ")\n")
-   cat("Number of paths in each network:",
-       paste("   ", o$network, ": ", o$num.paths, sep="", collapse="\n"), sep="\n")
-   cat("Path length distribution: \n")
-   for(i in 1:length(o$network)) {
-       cat("   --- ", o$network[i], " ---")
-       print(o$hist[[i]])
-       cat("\n")
+
+   if(is.list(pa) && all(sapply(pa, inherits, "cnapath"))) {
+      if(!"label" %in% names(dots) || is.null(dots$label)) dots$label = names(pa)
+      names(pa) <- NULL
+      args = c(pa, dots)
+      o <- do.call(summary, args)
+   } else {
+      o <- summary(pa, ...)
    }
-   cat("Node degeneracy table: \n\n")
-   if(normalize)
-      print(format(o$degeneracy, nsmall=2), quote=FALSE)
-   else 
-      print(o$degeneracy)
+
+   if("plot" %in% names(dots)) plot = dots$plot
+   else plot = FALSE
+
+   if(!plot) {
+      if("normalize" %in% names(dots)) normalize = dots$normalize
+      else normalize = TRUE
+   
+      if(length(o$network) > 1) {   
+         cat("Number of networks: ", length(o$network), "(", 
+             paste(o$network, collapse=", "), ")\n")
+      }
+   
+      cat("Number of paths in network(s):\n")
+      if(length(o$network) > 1) {
+          cat(paste("   ", o$network, ": ", o$num.paths, sep="", collapse="\n"), sep="\n")
+          cat("\n")
+      } else {
+          cat("    ", o$num.paths, "\n\n")
+      }
+   
+      cat("Path length distribution: \n")
+      if(length(o$network) > 1) {   
+         for(i in 1:length(o$network)) {
+             cat("   --- ", o$network[i], " ---")
+             print(o$hist[[i]])
+             cat("\n")
+         }
+      } else {
+         print(o$hist)
+         cat("\n")
+      }
+   
+      cat("Node degeneracy table: \n\n")
+      if(length(o$network) == 1) rownames(o$degeneracy) = ""
+      if(normalize)
+         print(format(o$degeneracy, nsmall=2), quote=FALSE)
+      else 
+         print(o$degeneracy)
+   }
 }
