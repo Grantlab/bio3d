@@ -37,8 +37,12 @@ summary.cnapath <- function(pa, ..., pdb = NULL, label = NULL, col = NULL,
 
    # replace node id with pdb resid and resno
    if(!is.null(pdb)) {
-      resno <- pdb$atom[pdb$calpha, "resno"]
-      resid <- aa321(pdb$atom[pdb$calpha, "resid"])
+      ca.inds <- atom.select(pdb, elety="CA", verbose = FALSE)
+      resno <- pdb$atom[ca.inds$atom, "resno"]
+      resid <- pdb$atom[ca.inds$atom, "resid"]
+      lig.inds <- atom.select(pdb, "ligand", verbose = FALSE)
+      islig <- resno %in% pdb$atom[lig.inds$atom, "resno"]
+      resid[!islig] <- aa321(resid[!is.lig])
       o <- lapply(o, function(x) {
             n <- paste(resid[as.numeric(names(x))], resno[as.numeric(names(x))], sep="")
             names(x) <- n

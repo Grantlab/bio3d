@@ -36,7 +36,7 @@ view.cnapath <- function(pa, pdb, out.prefix = "view.cnapath", launch = FALSE) {
       }
    }
  
-   ca.inds <- atom.select(pdb, "calpha", verbose = FALSE)
+   ca.inds <- atom.select(pdb, elety="CA", verbose = FALSE)
    res.pdb <- pdb$atom[ca.inds$atom[res], "resno"] 
    
    rownames(conn) <- res
