@@ -29,7 +29,7 @@ amb2pdb <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds) {
     }
     
     natoms.prmtop = length(inds$atom)
-    natoms.crd    = ncol(inds.crd$atom)
+    natoms.crd    = length(inds.crd$atom)
   }
   
   if(natoms.prmtop != natoms.crd)
