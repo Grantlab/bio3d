@@ -1,7 +1,6 @@
 "atom.select.prmtop" <-
   function(prmtop, ...) {
     
-    
-    tmp.pdb <- amb2pdb(prmtop, crds=NULL)
+    tmp.pdb <- amb2pdb(prmtop, crd=NULL)
     return(atom.select.pdb(tmp.pdb, ...))
 }

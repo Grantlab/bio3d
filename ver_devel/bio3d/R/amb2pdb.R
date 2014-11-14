@@ -10,7 +10,7 @@ amb2pdb <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds) {
   if(!inherits(crd, "amber")) {
     new <- list()
     new$xyz <- as.xyz(crd)
-    new$natoms <- ncol(crd)/3
+    new$natoms <- ncol(new$xyz)/3
     crd <- new
   }
     
@@ -19,7 +19,7 @@ amb2pdb <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds) {
     if(is.null(inds)) {
       inds$atom = seq(1, natoms.prmtop)
       inds$xyz = atom2xyz(inds$atom)
-      class(inds)="select"
+      class(inds) = "select"
     }
 
     if(is.null(inds.crd)) {
@@ -29,7 +29,7 @@ amb2pdb <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds) {
     }
     
     natoms.prmtop = length(inds$atom)
-    natoms.crd = length(inds.crd$atom)
+    natoms.crd    = ncol(inds.crd$atom)
   }
   
   if(natoms.prmtop != natoms.crd)
