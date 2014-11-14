@@ -4,7 +4,7 @@ cna.ensmb <- function(cij, ..., ncore = NULL) {
 
    cijs <- cij 
    if("all.dccm" %in% names(cijs)) cijs <- cijs$all.dccm 
-   if(is.array(cijs) && length(dim(cijs)==3))
+   if(is.array(cijs) && length(dim(cijs))==3)
       cijs <- do.call("c", apply(cijs, 3, list))
    if(is.list(cijs)) {
       net <- mclapply(cijs, cna.dccm, ...)
