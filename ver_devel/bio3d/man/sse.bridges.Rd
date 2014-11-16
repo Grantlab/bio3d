@@ -33,7 +33,7 @@ sse.bridges(sse, type="helix", hbond=TRUE, energy.cut=-1.0)
 \examples{
 \dontrun{
 # Read a PDB file
-pdb <- read.pdb("1hel")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 sse <- dssp(pdb, resno=FALSE, full=TRUE)
 
 sse.bridges(sse, type="helix")

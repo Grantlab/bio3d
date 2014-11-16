@@ -2,6 +2,7 @@ context("Testing pdb.annotate()")
 
 
 test_that("PDB annotation works", {
+  skip_on_cran()
 
   expected <- c('3R1C_X', '3R1C_B', '3R1C_C', '3R1C_D',
                 '3R1C_E', '3R1C_F', '3R1C_G', '3R1C_H',

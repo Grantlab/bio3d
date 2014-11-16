@@ -49,7 +49,7 @@ pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 pdb <- read.pdb(pdbfile)
 
 # Plot will be slow
-xy <- plot.cna(net)
+#xy <- plot.cna(net)
 #plot3d.cna(net, pdb)
 
 layout.cna(net, pdb, k=3)

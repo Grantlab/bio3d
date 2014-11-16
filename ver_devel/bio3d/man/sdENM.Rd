@@ -37,7 +37,7 @@ sdENM["A", "P", 1]
 
 \dontrun{
 ## for use in NMA
-pdb <- read.pdb("1hel")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 modes <- nma(pdb, ff="sdenm")
 }
 }

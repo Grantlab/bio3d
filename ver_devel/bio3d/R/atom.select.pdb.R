@@ -16,7 +16,7 @@ function(pdb, string=NULL,
   ##   # read a PDB file
   ##   pdb<-read.pdb("1bg2")
   ##   # print a structure summary
-  ##   atom.select(pdb)
+  ##   print.pdb(pdb)
   ##   # select all C-alpha atoms from resno 65 to 70
   ##   ca.inds   <- atom.select(pdb, "///65:70///CA/")
   ##
@@ -26,6 +26,7 @@ function(pdb, string=NULL,
   ##
   ##   # more examples
   ##   inds<-atom.select(pdb, "//A/130:142///N,CA,C,O/")
+  ##   inds<-atom.select(pdb, chain="A", resno=130:142, elety="N,CA,C,O")
   ##
   ##   # or using string shortcut
   ##   inds <- atom.select(pdb, "back", resno=65:70)
@@ -49,9 +50,17 @@ function(pdb, string=NULL,
     return( sort(unique(c(na.omit(num2)))) )
   }
   
-  sel.txt2type <- function(type.sel.txt) {
-    ##- Splitting function for characters - split on coma & remove white space
-    return( gsub(" ","", unlist(strsplit(type.sel.txt, split=",")) ) )
+  sel.txt2type <- function(type.sel.txt, na=FALSE) {
+    ##- Splitting function for characters
+    if(is.na(type.sel.txt) || (type.sel.txt==" ")) {
+      ## Blank or NA selections will return NA
+      sel <- NA
+    } else {
+      ## Split larger strings on coma & remove white space
+      sel <- gsub(" ","", unlist(strsplit(type.sel.txt, split=",")) )
+      if(na) { sel[sel=="NA"]=NA }
+    }
+    return(sel)
   }
   
   ##-- Parse string and return the selection
@@ -65,13 +74,19 @@ function(pdb, string=NULL,
                   "SEP", "TPO", "MLY", "MSE", "IAS", "ABA", "CSO", "CSD", 
                   "CYM", "CME", "CSX", "CMT", "CYX", "HIE", "HIP", "HID", 
                   "HSD", "HSE", "HSP", "DDE", "MHO", "ASX", "CIR", "PFF")
+     nuc.aa <- c("A", "U", "G", "C", "I",
+                 "DA", "DG", "DT", "DC", "DI")
      
      hoh <- c("H2O", "OH2", "HOH", "HHO", "OHH", "SOL", "WAT",
               "TIP", "TIP2", "TIP3", "TIP4")
 
      not.prot.aa <- (aa[!aa %in% prot.aa])
+     nuc.aa <- aa[aa %in% nuc.aa]
+     not.nuc.aa <- (aa[!aa %in% nuc.aa])
      ligand.aa <- not.prot.aa[!not.prot.aa %in% hoh]
      if(length(not.prot.aa) == 0) { not.prot.aa = "xxxxx" }
+     if(length(not.nuc.aa) == 0) { not.nuc.aa = "xxxxx" }
+     if(length(nuc.aa) == 0) { nuc.aa = "xxxxx" }
      if(length(ligand.aa) == 0) { ligand.aa = "xxxxx" }
      
      if (string=="h") {
@@ -101,6 +116,8 @@ function(pdb, string=NULL,
                  all = "///////",
                  protein = paste("////",paste(prot.aa, collapse=","), "///",sep=""),
                  notprotein = paste("////", paste(not.prot.aa, collapse=","), "///",sep=""),
+                 nucleic = paste("////",paste(nuc.aa, collapse=","), "///",sep=""),
+                 notnucleic = paste("////",paste(not.nuc.aa, collapse=","), "///",sep=""),
                  ligand = paste("////", paste(ligand.aa, collapse=","), "///",sep=""),
                  water = paste("////",paste(hoh, collapse=","), "///",sep=""),
                  notwater = paste("////", paste(aa[!aa %in% hoh], collapse=","), "///",sep=""),
@@ -114,12 +131,13 @@ function(pdb, string=NULL,
        if(!substr(string,1,1)=="/") {
          ## Check if we have a valid selection sting
          stop("Not a valid selection string shortcut.\n\t Please use one of:
-        'calpha' 'cbeta' 'backbone'
-        'protein' 'notprotein' 'ligand'
-        'water' 'notwater'
-        'h' 'noh'\n
+            'calpha' 'cbeta' 'backbone'
+            'protein' 'notprotein' 'ligand'
+            'nucleic' 'notnucleic'
+            'water' 'notwater'
+            'h' 'noh'\n
        Or valid selection string:
-         /segid/chain/resno/resid/eleno/elety/ \n")
+            /segid/chain/resno/resid/eleno/elety/ \n")
        }
 
      } else {
@@ -155,7 +173,7 @@ function(pdb, string=NULL,
        if(sel["chain"] != "") {
          sel.inds <- cbind(sel.inds,
                            chain=is.element( pdb$atom[,"chain"],
-                             sel.txt2type( sel["chain"] )) )        
+                             sel.txt2type( sel["chain"], na=TRUE )) )        
        } else { sel.inds <- cbind(sel.inds, chain=blank)  }
      
        ## RESNO
@@ -215,7 +233,7 @@ function(pdb, string=NULL,
                    "intersecting atoms  *"),sep="\n")
        }
          
-       match <- list(atom=which(match.inds), xyz=xyz.inds, call = cl) #######<=====
+       match <- list(atom=which(match.inds), xyz=xyz.inds, call = cl) 
        class(match) <- "select"
        return(match)
      }
@@ -240,6 +258,9 @@ function(pdb, string=NULL,
   ##
   ##-- Main function  
   ##
+
+  ## Replace missing chain " " with NA values to aid selection
+  pdb$atom$chain[pdb$atom$chain==" "]= NA
 
   sel1 <- NULL
   sel2 <- NULL
@@ -273,13 +294,8 @@ function(pdb, string=NULL,
     sel2 <- parse.string(pdb, string, verbose, rm.insert, type=type)
   }
 
-#  if(!is.null(sel1) && !is.null(sel2))
-#     if(verbose)
-#        cat("\n Combine selections from input string and components\n")
-
   ##- Combine selections from input string and components
   match <- combine.sel(sel1, sel2, op="AND", verbose=verbose)
 
   return(match)
 }
-

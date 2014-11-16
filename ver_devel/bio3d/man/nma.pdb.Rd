@@ -138,7 +138,7 @@ build.hessian(xyz, pfc.fun, fc.weights = NULL, sequ = NULL, sse = NULL,
   \code{\link{dccm.nma}}, \code{\link{overlap}}, \code{\link{rmsip}}  }
 \examples{
 ## Fetch stucture
-pdb <- read.pdb("1hel")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 ## Calculate normal modes
 modes <- nma(pdb)

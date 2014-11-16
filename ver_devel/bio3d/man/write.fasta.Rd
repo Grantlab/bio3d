@@ -30,6 +30,7 @@ write.fasta(alignment=NULL, ids=NULL, seqs=alignment$ali, file, append = FALSE)
 }
 \seealso{ \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}} }
 \examples{
+\donttest{
 ## Read a PDB file
 pdb <- read.pdb("1bg2")
 
@@ -58,6 +59,6 @@ outfile2 = file.path(tempdir(), "eg2.fa")
 write.fasta(aln, file = outfile2)
 
 invisible( cat("\nSee the output files:", outfile1, outfile2, sep="\n") )
-
+}
 }
 \keyword{ IO }

@@ -1,13 +1,16 @@
 \name{atom.select.pdb}
 \alias{atom.select.pdb}
+\alias{print.select}
 \title{ Atom Selection From PDB Structure }
 \description{
   Return the \sQuote{atom} and \sQuote{xyz} coordinate indices of a \sQuote{pdb} structure
   object corresponding to the intersection of a hierarchical selection.
 }
 \usage{
-\method{atom.select}{pdb}(pdb, string=NULL, chain=NULL, resno=NULL, resid=NULL,
+atom.select(pdb, string=NULL, chain=NULL, resno=NULL, resid=NULL,
 eleno=NULL, elety=NULL, type=NULL, verbose=TRUE, rm.insert=FALSE, \dots)
+\method{print}{select}(x, \dots)
+
 }
 \arguments{
   \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
@@ -25,7 +28,8 @@ eleno=NULL, elety=NULL, type=NULL, verbose=TRUE, rm.insert=FALSE, \dots)
   \item{verbose}{ logical, if TRUE details of the selection are printed. }
   \item{rm.insert}{ logical, if TRUE insert ATOM records from the
     \code{pdb} object are ignored. }
-  \item{...}{ additional arguments to \sQuote{print}. Currently ignored. }
+  \item{x}{ a atom.select object as obtained from \code{\link{atom.select}}.  }   
+  \item{\dots}{ additional arguments to \sQuote{print}. Currently ignored. }
 }
 \details{
   This function allows for the selection of atom and coordinate data

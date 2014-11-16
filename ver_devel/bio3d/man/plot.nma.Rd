@@ -35,7 +35,7 @@
 \seealso{ \code{\link{nma}}, \code{\link{plot.bio3d}} }
 \examples{
 ## Fetch structure
-pdb <- read.pdb("1hel")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 ## Calculate modes
 modes <- nma(pdb)

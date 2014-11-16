@@ -1,10 +1,10 @@
 ---
-title: "Bio3D Vignettes"
+title: "bio3d Vignettes"
 date: "Oct 14 2014"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Bio3D Vignettes}
+  %\VignetteIndexEntry{bio3d Vignettes}
   \usepackage[utf8]{inputenc}
 ---
 

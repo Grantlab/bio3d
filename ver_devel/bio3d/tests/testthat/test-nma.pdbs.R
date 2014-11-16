@@ -11,142 +11,114 @@ test_that("eNMA works", {
       return(-1)
   }
 
-  tmp <- tempdir()
-  
-  ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
-  invisible(capture.output(raw.files <- get.pdb(ids, path = tmp, gzip=TRUE)))
+  attach(transducin)
+  inds <- unlist(lapply(c("1TND_A", "1TAG", "1AS0", "1AS2"), grep, pdbs$id))
+  pdbs <- pdbs.filter(pdbs, row.inds=inds)
+  gaps <- gap.inspect(pdbs$xyz)
 
-  ##- previous to dataframe pdb format
-  invisible(capture.output(files <- pdbsplit(raw.files, ids = ids, path = tmp)))
-  invisible(capture.output(pdbs <- pdbaln(files, fit=TRUE)))
 
   ## Calc modes
   invisible(capture.output(modes <- nma.pdbs(pdbs, fit=TRUE, rm.gaps=TRUE, ncore=1)))
 
   ## check dimensions
-  expect_that(dim(modes$U), equals(c(288, 282, 6)))
-  expect_that(dim(modes$L), equals(c(6, 282)))
-  expect_that(dim(modes$fluctuations), equals(c(6, 96)))
+  expect_that(dim(modes$U), equals(c(939, 933, 4)))
+  expect_that(dim(modes$L), equals(c(4, 933)))
+  expect_that(dim(modes$fluctuations), equals(c(4, 313)))
   
   ## structure 1- mode1:
-  #U1 <- c(-0.06121500,  0.10505209, -0.05435506, -0.04783683, 0.06649716, -0.03675693)
-  U1 <- c(-0.061214432, 0.105051492, -0.054354341, -0.047836405, 0.066496938, -0.036756514)
+  U1 <- c(-0.046380187,  0.007816393,  0.078933552, -0.041820111, 0.009819448, 0.047598954)
   nowU1 <- head(modes$U.subspace[,1,1], n=6)
   expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
 
   ## structure 1- mode2:
-  ##- previous to fixing mass calculation in nma.pdbs
-  #U2 <- c(0.038119084, -0.024193962, -0.025397837, 0.032008760, -0.005760642, -0.026255866)
-  U2 <- c(-0.03811936, 0.024194681, 0.025397583, -0.032008981, 0.005761161, 0.026255628)
+  U2 <- c(0.007819148, -0.005717370, -0.051933927, 0.002265788, -0.013386437, -0.039409712)
   nowU2 <- head(modes$U.subspace[,2,1], n=6)
   expect_that(nowU2 * mysign(U2, nowU2), equals(U2, tolerance=1e-6))
 
   ## structure 4- mode3:
-  ##- previous to fixing mass calculation in nma.pdbs
-  ##U3 <- c(0.029950724, -0.004793673, -0.075769300, 0.039328324, 0.003828264, -0.059507805)
-  ##-previous to including juliens atom lookup
-  U3 <- c(0.029950155, -0.004793756, -0.075767999, 0.039327631, 0.003827869, -0.05950616)
+  U3 <- c(-0.13697744, -0.05401178,  0.09615700, -0.11026525, -0.01510157, 0.05796091)
   nowU3 <- head(modes$U.subspace[,3,4], n=6)
   expect_that(nowU3 * mysign(U3, nowU3), equals(U3, tolerance=1e-6))
 
-  ## structure 5-mode1 - tail:
-  U1 <- c(0.088887538, -0.009058788, 0.064116711, 0.12603638, -0.067436276, 0.097796945)
-  nowU1 <- tail(modes$U.subspace[,1,5], n=6)
+  ## structure 4-mode1 - tail:
+  U1 <- c(0.009820174, 0.004566910, -0.055544781, 0.009938013, 0.006707436, -0.068154672)
+  nowU1 <- tail(modes$U.subspace[,1,4], n=6)
   expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
 
-  ## structure 1-mode1 - tail:
-  U1 <- c(-0.087582521, 0.0310947, -0.049303757, -0.157271406, 0.010952756, -0.154509987)
-  nowU1 <- tail(modes$U.subspace[,1,1], n=6)
-  expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
-  
 
   ## Fluctuations:
-  ##- previous to fixing mass calculation in nma.pdbs
-  f1 <- c(0.44800568, 0.13568048, 0.11483728, 0.09895198, 0.10277404, 0.09565510)
-  #f2 <- c(0.38784015, 0.13387508, 0.10242378, 0.09160573, 0.09356470, 0.09255706)
-  f2 <- c(0.38783976, 0.13387492, 0.10242364, 0.09160566, 0.09356460, 0.09255690)
-  #f6 <- c(0.28144615, 0.11132125, 0.09728422, 0.08709358, 0.08404063, 0.08160931)
-  f6 <- c(0.28144562, 0.11132090, 0.09728397, 0.08709358, 0.08404058, 0.08160925)
+  f1 <- c(0.3657288, 0.2196504, 0.1449100, 0.1217517, 0.1130416, 0.1007862)
+  f2 <- c(0.5295304, 0.3004094, 0.2011062, 0.1401276, 0.1205508, 0.1011349)
+  f4 <- c(0.6488982, 0.3079024, 0.2166070, 0.1504672, 0.1282899, 0.1029634)
 
   expect_that(modes$fluctuations[1,1:6], equals(f1, tolerance=1e-6))
   expect_that(modes$fluctuations[2,1:6], equals(f2, tolerance=1e-6))
-  expect_that(modes$fluctuations[6,1:6], equals(f6, tolerance=1e-6))
+  expect_that(modes$fluctuations[4,1:6], equals(f4, tolerance=1e-6))
   
   ## Orthognal
   expect_that(as.numeric(modes$U.subspace[,1,1] %*% modes$U.subspace[,1,1]),
-              equals(1))
+              equals(1, tolerance=1e-6))
   expect_that(as.numeric(modes$U.subspace[,1,1] %*% modes$U.subspace[,2,1]),
               equals(0, tolerance=1e-6))
 
   ## RMSIP
-  rmsips <- c(1.0000, 0.8355, 0.8788, 0.8348, 0.8977, 0.8598)
+  rmsips <- c(1.0000, 0.9174, 0.9441, 0.9251)
   expect_that(as.vector(modes$rmsip[1,]), equals(rmsips, tolerance=1e-6))
-
 
   
   ## Multicore (same arguments as above!)
   invisible(capture.output(mmc <- nma.pdbs(pdbs, fit=TRUE, rm.gaps=TRUE, ncore=NULL)))
-  expect_that(mmc$fluctuations, equals(modes$fluctuations))
-  expect_that(mmc$U.subspace, equals(modes$U.subspace))
+  expect_that(mmc$fluctuations, equals(modes$fluctuations, tolerance=1e-6))
+  expect_that(mmc$U.subspace, equals(modes$U.subspace, tolerance=1e-6))
 
 
   
   ## Calc modes with rm.gaps=FALSE
   invisible(capture.output(modes <- nma.pdbs(pdbs, fit=TRUE, rm.gaps=FALSE, ncore=NULL)))
 
-  ## structure 5-mode1 - tail:
-  U1 <- c(0.161722374, -0.055449167, 0.227525629, 0.177349173, 0.074947786, 0.304876733)
-  nowU1 <- tail(modes$U.subspace[,1,5], n=6)
+  ## structure 1-mode1 - tail:
+  U1 <- c(0.04397369, -0.01400912, -0.02123377, 0.08124317, -0.02660929, -0.02619898)
+  nowU1 <- tail(modes$U.subspace[,1,1], n=6)
   expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
 
   ## structure 1-mode1 - tail:
-  U1 <- c(0.14610002, 0.00861672, 0.11448489, rep(NA, 3))
-  nowU1 <- tail(modes$U.subspace[,1,1], n=6)
+  U1 <- c(0.001300939, -0.053317847,  0.011292943, 0.003307034, -0.071684004, NA)
+  nowU1 <- modes$U.subspace[938:943,1,2]
   U1[is.na(U1)] <- 0
   nowU1[is.na(nowU1)] <- 0
   expect_that(nowU1 * mysign(nowU1, U1), equals(U1, tolerance=1e-6))
 
   ## fluctuations
-  na.expected <- c(43, 46, 47, 48, 49, 52, 53, 54, 590,
-                   591, 592, 594, 595, 596, 597, 598, 600)
+  na.expected <- c(3, 4, 1258, 1259, 1262, 1263, 1266, 1267, 1268, 1270, 1271, 1272, 1274, 1275, 1276,
+                   1278, 1279, 1280, 1282, 1283, 1284, 1286, 1287, 1288, 1290, 1291, 1292)
+                   
   expect_that(which(is.na(modes$fluctuations)), equals(na.expected))
   
  
-  #f1 <- c(0.449953, 0.13691985, 0.11566978, 0.09961, 0.10306614,
-  #        0.09598316, 0.10639936, NA, NA, 0.11016618)
-  f1 <- c(0.44995403, 0.13692025, 0.11566992, 0.09961016, 0.10306618, 0.09598324,
-          0.10639934, NA, NA, 0.11016634)
-  #f2 <- c(0.38827622, 0.13437088, 0.10290902, 0.09219309, 0.0937538,
-  #        0.09217573, 0.09791753, 0.10069342, 0.13709235, 0.31764473)
-  f2 <- c(0.38827542, 0.13437037, 0.10290863, 0.09219288, 0.09375365, 0.09217555,
-          0.09791740, 0.10069332, 0.13709155, 0.31764161)
-  #f6 <- c(0.06942637, 0.08623632, 0.1085492, 0.08020983, 0.10722807,
-  #        0.19175073, 0.1840169, 0.20978268, 0.33441566, NA, NA)
-  f6 <- c(0.06942625, 0.08623631, 0.10854934, 0.08020989, 0.10722796, 0.19175020,
-          0.18401638, 0.20978212, 0.33441503,  NA,  NA)
+  f1 <- c(0.59967448, 0.34438649, 0.20382435, 0.13350449)
+  f4 <- c(0.3335200, 0.4255609, 0.5941589, rep(NA, 7))
           
-  expect_that(modes$fluctuations[1,1:10], equals(f1, tolerance=1e-6))
-  expect_that(modes$fluctuations[2,1:10], equals(f2, tolerance=1e-6))
-  expect_that(modes$fluctuations[6,90:100], equals(f6, tolerance=1e-6))
+  expect_that(modes$fluctuations[1,1:4], equals(f1, tolerance=1e-6))
+  expect_that(tail(modes$fluctuations[4,], n=10), equals(f4, tolerance=1e-6))
 
 
    ## Calc modes with mass=FALSE and temp=NULL
   invisible(capture.output(modes <- nma.pdbs(pdbs, mass=FALSE, temp=NULL, ncore=NULL)))
 
   ## structure 1- mode1:
-  U1 <- c(0.07455881, -0.13169394, 0.06945276, 0.05591645, -0.07713849, 0.04531054)
+  U1 <- c(-0.04043330,  0.00730273,  0.07000757, -0.04520831,  0.01130271,  0.05337233)
   nowU1 <- head(modes$U.subspace[,1,1], n=6)
   expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
   
   ## structure 1- mode2:
-  U2 <- c(0.05002850, -0.03921177, -0.02849105, 0.04127052, -0.01193604, -0.03000556)
+  U2 <- c(-0.002813312,  0.005765808,  0.039807147,  0.001667637,  0.014587327, 0.038682763)
   nowU2 <- head(modes$U.subspace[,2,1], n=6)
   expect_that(nowU2 * mysign(U2, nowU2), equals(U2, tolerance=1e-6))
 
   ## structure 5- mode3:
-  U3 <- c(0.05002850, -0.03921177, -0.02849105, 0.04127052, -0.01193604, -0.03000556)
-  nowU3 <- head(modes$U.subspace[,3,5], n=6)
-  expect_that(nowU2 * mysign(U2, nowU2), equals(U2, tolerance=1e-6))
+  U3 <- c(0.11324262, 0.04220159, -0.07597465,  0.10267147,  0.01483591, -0.05261675)
+  nowU3 <- head(modes$U.subspace[,3,4], n=6)
+  expect_that(nowU3 * mysign(U3, nowU3), equals(U3, tolerance=1e-6))
 
 
   
@@ -154,20 +126,21 @@ test_that("eNMA works", {
   invisible(capture.output(modes <- nma.pdbs(pdbs, mass=FALSE, temp=NULL, ff="anm", ncore=NULL)))
 
   ## structure 3- mode10:
-  U1 <- c(0.01290994, -0.05381632, 0.24462806,  0.01859081,  0.04309034, -0.10241403)
+  U1 <- c(0.03630660,  0.03078575, -0.02376714,  0.01906218,  0.01110582, -0.01361602)
   nowU1 <- head(modes$U.subspace[,10,3], n=6)
   expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
   
   ## structure 4- mode1:
-  U1 <- c(0.026860265, -0.063611179, 0.169276132, 0.006947062, -0.046694005, 0.096358693)
+  U1 <- c(-0.04113844,  0.01096919,  0.07368620, -0.04250786,  0.01320282,  0.05550216)
   nowU1 <- head(modes$U.subspace[,1,4], n=6)
   expect_that(nowU1 * mysign(U1, nowU1), equals(U1, tolerance=1e-6))
 
-  f1 <- c(0.5991659, 0.3130850, 0.2478991, 0.2216199)
-  f2 <- c(0.5593485, 0.3212328, 0.2489800, 0.2074847)
+  f1 <- c(0.3630744, 0.2768045, 0.1996179, 0.1766148)
+  f2 <- c(0.5231570, 0.3519813, 0.2331503, 0.2003372)
   expect_that(modes$fluctuations[1,1:4], equals(f1, tolerance=1e-6))
   expect_that(modes$fluctuations[2,1:4], equals(f2, tolerance=1e-6))
 
+  detach(transducin)
 })
           
 

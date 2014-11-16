@@ -1,11 +1,15 @@
+
 context("Testing overlap functions")
 
 
 test_that("Overlap functions", {
 
   ## Simple test with PDB ID 1HEL
-  invisible(capture.output(pdb.a <- read.pdb("1hel")))
-  invisible(capture.output(pdb.b <- read.pdb("1dpx")))
+  file <- system.file("examples/1hel.pdb",package="bio3d")
+  invisible(capture.output(pdb.a <- read.pdb(file)))
+
+  file <- system.file("examples/1dpx.pdb",package="bio3d")
+  invisible(capture.output(pdb.b <- read.pdb(file)))
   
   ## Calculate modes with default arguments
   invisible(capture.output(modes <- nma(pdb.a, inds=NULL, ff='calpha',
@@ -26,7 +30,7 @@ test_that("Overlap functions", {
   
   o1 <- overlap(modes, dv, nmodes=(modes$natoms*3)-6)
   expect_that(o1$overlap.cum[(modes$natoms*3)-6],
-              equals(1))
+              equals(1, tolerance=1e-6))
   
   expect_that(o1$overlap.cum[1], equals(0.2786508, tolerance=1e-6))
 
