@@ -1,5 +1,6 @@
 \name{atom.select}
 \alias{atom.select}
+\alias{print.select}
 \title{ Atom Selection }
 \description{
   Return the \sQuote{atom} and \sQuote{xyz} coordinate indices of a \sQuote{pdb} structure
@@ -7,10 +8,12 @@
 }
 \usage{
 atom.select(\dots)
+\method{print}{select}(x, \dots)
 }
 \arguments{
-  \item{\dots}{ arguments passed to \code{atom.select.pdb} or
-    \code{atom.select.prmtop}. }
+  \item{\dots}{ arguments passed to \code{atom.select.pdb},
+    \code{atom.select.prmtop}, or \code{print}. }
+  \item{x}{ a atom.select object as obtained from \code{\link{atom.select}}.  }
 }
 \details{
   See \code{atom.select.pdb} or \code{atom.select.prmtop} for more
