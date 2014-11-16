@@ -5,7 +5,7 @@
   Convert Amber parameter/topology and coordinate data to PDB format.
 }
 \usage{
-amb2pdb(prmtop, crd, inds = NULL, inds.crd = inds)
+amb2pdb(prmtop, crd, inds = NULL, inds.crd = inds, ncore=NULL)
 }
 \arguments{
   \item{prmtop}{ a list object of type \code{"prmtop"} (obtained with
@@ -19,6 +19,8 @@ amb2pdb(prmtop, crd, inds = NULL, inds.crd = inds)
     the atoms in CRD object to convert. By default, this argument equals
     to \sQuote{inds}, assuming the same number and sequence of atoms in the
     PRMTOP and CRD objects. }
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
 }
 \details{
   Converts Amber formatted parameter/topology (PRMTOP) and coordinate

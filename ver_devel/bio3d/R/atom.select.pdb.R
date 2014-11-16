@@ -2,7 +2,7 @@
 function(pdb, string=NULL,
          chain=NULL, resno=NULL, resid=NULL,
          eleno=NULL, elety=NULL, type=NULL,
-         verbose=TRUE, rm.insert=FALSE) {
+         verbose=TRUE, rm.insert=FALSE, ...) {
 
   ## Version 0.0 ... Fri Mar 17 14:45:37 PST 2006
   ##

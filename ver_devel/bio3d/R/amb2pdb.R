@@ -1,9 +1,17 @@
-amb2pdb <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds) {
+amb2pdb <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL) {
+  ncore <- setup.ncore(ncore, bigmem=FALSE)
+
+  if(ncore>1)
+    mylapply <- mclapply
+  else
+    mylapply <- lapply
+
   if(!inherits(prmtop, "prmtop"))
     stop("provide a prmtop object as obtained from function read.prmtop")
 
   natoms.prmtop <- prmtop$POINTERS[1]
   if(is.null(crd)) {
+    warning("producing PDB object with no XYZ coordinates")
     crd <- rep(NA, natoms.prmtop*3)
   }
   
@@ -35,19 +43,20 @@ amb2pdb <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds) {
   if(natoms.prmtop != natoms.crd)
     stop(paste("atom number mismatch:", natoms.prmtop, "(prmtop) vs", natoms.crd, "(crds)"))
 
-  
-  resid <- NULL
-  resno <- NULL
-  for( i in 1:length(prmtop$RESIDUE_POINTER) ) {
+  resmap <- function(i, type='resid') {
     if(i==length(prmtop$RESIDUE_POINTER))
       j <- prmtop$POINTERS[1] - prmtop$RESIDUE_POINTER[i] + 1
     else
       j <- prmtop$RESIDUE_POINTER[i+1] - prmtop$RESIDUE_POINTER[i]
-    
-    resno <- c(resno, rep(i, j))
-    resid <- c(resid, rep(prmtop$RESIDUE_LABEL[i], j))
+    if(type=='resno')
+      return(rep(i,j))
+    if(type=='resid')
+      return(rep(prmtop$RESIDUE_LABEL[i], j))
   }
 
+  resno <- unlist(mylapply(1:length(prmtop$RESIDUE_POINTER), resmap, 'resno'))
+  resid <- unlist(mylapply(1:length(prmtop$RESIDUE_POINTER), resmap, 'resid'))
+  
   if(any(c(!is.null(inds), !is.null(inds.crd)))) {
     pdb <- .buildDummyPdb(pdb=NULL, xyz=crd$xyz[,inds.crd$xyz], elety=prmtop$ATOM_NAME[inds$atom],
                           resno=resno[inds$atom], chain=NA, resid=resid[inds$atom])
