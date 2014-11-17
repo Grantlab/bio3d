@@ -35,10 +35,25 @@ read.crd(file, ...)
 }
 \author{ Barry Grant and Lars Skjaerven}
 \seealso{
+  \code{\link{read.crd.amber}}, \code{\link{read.crd.charmm}},
   \code{\link{write.crd}}, \code{\link{read.prmtop}},
   \code{\link{read.pdb}}, \code{\link{write.pdb}},
   \code{\link{atom.select}}, 
   \code{\link{read.dcd}}, \code{\link{read.ncdf}} }
 \examples{
+\dontrun{
+## Read a PRMTOP file
+prmtop <- read.prmtop("prot_solvated.prmtop")
+print(prmtop)
+
+## Read a Amber CRD file
+crds <- read.crd("prot_solvated.inpcrd")
+
+## Atom selection 
+ca.inds <- atom.select(prmtop, "calpha")
+
+## Convert to PDB format
+pdb <- amb2pdb(prmtop, crds, inds=ca.inds)
+}
 }
 \keyword{ IO }

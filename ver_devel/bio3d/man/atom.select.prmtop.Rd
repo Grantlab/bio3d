@@ -16,7 +16,6 @@
 \details{
   See \code{\link{atom.select.pdb}} for details.
 }
-
 \value{
   Returns a list of class \code{"select"} with components:
   \item{atom }{atom indices of selected atoms.}

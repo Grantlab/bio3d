@@ -9,13 +9,21 @@
 }
 \arguments{
   \item{file}{ name of crd file to read. }
-  \item{\dots}{ arguments going nowhere. } 
+  \item{\dots}{ arguments passed to and from functions. } 
 }
 \details{
-  Reads a AMBER Coordinate format file.
+  Read a AMBER Coordinate format file.
 }
 \value{
-  A list of stuff... 
+  A list object of type \sQuote{amber} and \sQuote{crd} with the
+  following components:
+  \item{xyz}{ a numeric matrix of class \sQuote{xyz} containing the
+    Cartesian coordinates. }
+  \item{velocities}{ a numeric vector containg the atom velocities. }
+  \item{time}{ numeric, length of the simulation (applies to Amber
+    restart coordinate files). }
+  \item{natoms}{ total number of atoms in the coordinate file. }
+  \item{box}{ dimensions of the box. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
