@@ -23,8 +23,14 @@
 
   else {
     complex <- a
-    a <- trim.pdb(complex, a.inds)
-    b <- trim.pdb(complex, b.inds)
+
+    a <- NULL
+    a$atom <- complex$atom[a.inds$atom, ]
+    a$xyz <- complex$xyz[a.inds$xyz]
+
+    b <- NULL
+    b$atom <- complex$atom[b.inds$atom, ]
+    b$xyz <- complex$xyz[b.inds$xyz]
 
     if ( hydrogens ) {
       a.inds <- atom.select(a, string='///////')

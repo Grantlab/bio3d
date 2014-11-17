@@ -11,7 +11,7 @@
                      rock = TRUE, ncore = NULL, ...) 
 }
 \arguments{
-  \item{enma}{ a list object of class \code{"enma"} (obtained with
+  \item{x}{ a list object of class \code{"enma"} (obtained with
     \code{\link{nma.pdbs}}).}
   \item{pdbs}{ a list object of class \code{"pdbs"} (obtained with
     \code{\link{pdbaln}} or \code{\link{read.fasta.pdb}}) which

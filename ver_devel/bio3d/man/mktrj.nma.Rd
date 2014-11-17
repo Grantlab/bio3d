@@ -6,10 +6,10 @@
   vector.
 }
 \usage{
-\method{mktrj}{nma}(nma = NULL, mode = 7, mag = 10, step = 1.25, file = NULL,  ...)
+\method{mktrj}{nma}(x = NULL, mode = 7, mag = 10, step = 1.25, file = NULL,  ...)
 }
 \arguments{
-  \item{nma}{ a list object of class \code{"nma"} (obtained with
+  \item{x}{ a list object of class \code{"nma"} (obtained with
     \code{\link{nma}}).}
   \item{mode}{ the mode number along which displacements should be made.}
   \item{mag}{ a magnification factor for scaling the displacements. }

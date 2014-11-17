@@ -9,7 +9,7 @@
                          ... ) {      # args for write.pdb
 
   ## make a trjactory of atomic displacments along a given mode
-  if(!inherits(enma, "enma"))
+  if(!inherits(x, "enma"))
     stop("mktrj.enma: must supply 'enma' object, i.e. from 'nma.pdbs'")
 
   ## Parallelized by parallel package
@@ -29,9 +29,9 @@
   if(is.null(file) & length(s.inds)==1 & length(m.inds)==1)
     file <- paste("mode_", m.inds+6, "-s", s.inds, ".pdb", sep="")
   
-  if(is.null(enma$call$rm.gaps))
+  if(is.null(x$call$rm.gaps))
     rm.gaps <- TRUE
-  else if(enma$call$rm.gaps=="T" || enma$call$rm.gaps=="TRUE")
+  else if(x$call$rm.gaps=="T" || x$call$rm.gaps=="TRUE")
     rm.gaps <- TRUE
   else
     rm.gaps <- FALSE

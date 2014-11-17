@@ -1,4 +1,4 @@
-"mktrj.nma" <- function(nma=NULL,    # nma data structure
+"mktrj.nma" <- function(x=NULL,    # nma data structure
                         mode=7,      # which mode to move along
                         mag=10,      # magnification factor
                         step=1.25,   # step size
@@ -20,12 +20,12 @@
   zcoor <- cbind(1) %*% nstep
 
   scor  <- function(x,u,m) { return(x*u+m) }
-  plus  <- sapply(c(zcoor), scor, u=nma$modes[,mode], m=nma$xyz)
-  minus <- sapply(c(-zcoor), scor, u=nma$modes[,mode], m=nma$xyz)
+  plus  <- sapply(c(zcoor), scor, u=x$modes[,mode], m=x$xyz)
+  minus <- sapply(c(-zcoor), scor, u=x$modes[,mode], m=x$xyz)
 
-  coor  <- t(cbind(nma$xyz,
+  coor  <- t(cbind(x$xyz,
                    plus, plus[,rev(1:ncol(plus))],
-                   nma$xyz,
+                   x$xyz,
                    minus, minus[,rev(1:ncol(minus))]))
 
   write.pdb(xyz=coor, file=file, ...)
