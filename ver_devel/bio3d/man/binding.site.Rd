@@ -60,9 +60,9 @@ binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cut=5, hydrogens=TRUE)
      }
 
 
-     # Interaction between two PDB entities
-#     rec <- read.pdb("receptor.pdb")
-#     lig <- read.pdb("ligand.pdb")
+     # Interaction between two PDB entities   
+     #rec <- read.pdb("receptor.pdb")
+     #lig <- read.pdb("ligand.pdb")
      rec <- trim.pdb(pdb, inds=rec.inds)
      lig <- trim.pdb(pdb, inds=lig.inds)
      bs <- binding.site(rec, lig, hydrogens=FALSE)

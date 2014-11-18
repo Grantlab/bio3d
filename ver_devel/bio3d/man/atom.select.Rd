@@ -1,18 +1,30 @@
 \name{atom.select}
 \alias{atom.select}
+\alias{atom.select.pdb}
+\alias{atom.select.prmtop}
 \alias{print.select}
-\title{ Atom Selection From PDB Structure }
+\title{ Atom Selection from PDB and PRMTOP Structure Objects }
 \description{
-  Return the \sQuote{atom} and \sQuote{xyz} coordinate indices of a \sQuote{pdb} structure
-  object corresponding to the intersection of a hierarchical selection.
+  Return the \sQuote{atom} and \sQuote{xyz} coordinate indices of
+  \sQuote{pdb} or \sQuote{prmtop} structure objects corresponding to the
+  intersection of a hierarchical selection. 
 }
 \usage{
-atom.select(pdb, string=NULL, chain=NULL, resno=NULL, resid=NULL,
-eleno=NULL, elety=NULL, type=NULL, verbose=TRUE, rm.insert=FALSE)
-\method{print}{select}(x, \dots)
+atom.select(\dots)
 
+## S3 method for class \sQuote{pdb}
+\method{atom.select}{pdb}(pdb, string=NULL, chain=NULL, resno=NULL, resid=NULL,
+eleno=NULL, elety=NULL, type=NULL, verbose=TRUE, rm.insert=FALSE, \dots)
+
+## S3 method for class \sQuote{prmtop}
+\method{atom.select}{prmtop}(prmtop, ...)
+
+## S3 method for class \sQuote{select}
+\method{print}{select}(x, \dots)
 }
 \arguments{
+  \item{\dots}{ arguments passed to \code{atom.select.pdb},
+    \code{atom.select.prmtop}, or \code{print}. }
   \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
     \code{\link{read.pdb}}. }
   \item{string}{ a character selection string with the following syntax:\cr
@@ -28,8 +40,10 @@ eleno=NULL, elety=NULL, type=NULL, verbose=TRUE, rm.insert=FALSE)
   \item{verbose}{ logical, if TRUE details of the selection are printed. }
   \item{rm.insert}{ logical, if TRUE insert ATOM records from the
     \code{pdb} object are ignored. }
-  \item{x}{ a atom.select object as obtained from \code{\link{atom.select}}.  }   
-  \item{...}{ additional arguments to \sQuote{print}. Currently ignored. }
+  \item{prmtop}{ a structure object of class \code{"prmtop"}, obtained from
+    \code{\link{read.prmtop}}. }
+  \item{x}{ a atom.select object as obtained from
+    \code{\link{atom.select}}.  }
 }
 \details{
   This function allows for the selection of atom and coordinate data
@@ -38,8 +52,9 @@ eleno=NULL, elety=NULL, type=NULL, verbose=TRUE, rm.insert=FALSE)
   Input selection criteria include selection \code{string} keywords (such as 
   \code{"calpha"}, \code{"backbone"}, \code{"protein"}, \code{"ligand"}, etc.)
   and individual named selection components (including \sQuote{chain}, 
-  \sQuote{resno}, \sQuote{resid}, \sQuote{elety} etc.). For example, \code{atom.select(pdb, "calpha")} or \code{atom.select(pdb, elety="CA")}, which in this 
-  case are equivalent.
+  \sQuote{resno}, \sQuote{resid}, \sQuote{elety} etc.). For example,
+  \code{atom.select(pdb, "calpha")} or \code{atom.select(pdb,
+  elety="CA")}, which in this case are equivalent.
 
   Alternatively, a single element character vector containing a hierarchical
   \sQuote{selection string}, \code{string}, with a strict format composed of 
@@ -66,28 +81,32 @@ eleno=NULL, elety=NULL, type=NULL, verbose=TRUE, rm.insert=FALSE)
   \code{"notwater"}, \code{"h"} and \code{"noh"}. 
 
   Note that keyword \code{string} shortcuts can be combined with individual
-  selection components, e.g. \code{atom.select(pdb, "protein", chain="A")}. See below for further examples. 
+  selection components, e.g. \code{atom.select(pdb, "protein",
+  chain="A")}. See below for further examples.  
 
-  In addition, the \code{combine.sel} function can further combine atom selections using \sQuote{and}, \sQuote{or}, or \sQuote{not} logical operations.  
+  In addition, the \code{combine.sel} function can further combine atom
+  selections using \sQuote{and}, \sQuote{or}, or \sQuote{not} logical
+  operations.   
 
   When called without selection criteria, \code{atom.select} will print a
   summary of \code{pdb} makeup.
-}
-\value{
-  Returns a list of class \code{"select"} with components:
-  \item{atom }{atom indices of selected atoms.}
-  \item{xyz }{xyz indices of selected atoms.}
+
+  See also \code{atom.select.pdb} or \code{atom.select.prmtop} for more
+  information. 
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Barry Grant }
-\seealso{ 
+\seealso{
   \code{\link{combine.sel}}, \code{\link{read.pdb}}, 
-  \code{\link{write.pdb}}, \code{\link{read.dcd}} 
+  \code{\link{write.pdb}}, \code{\link{read.prmtop}},
+  \code{\link{read.crd}}, \code{\link{read.dcd}},
+  \code{\link{read.ncdf}}.
 }
 \examples{
 
+##- PDB example
 # Read a PDB file
 pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
@@ -106,6 +125,14 @@ ca.inds <- atom.select(pdb, "calpha")
 # String examples (see above).
 ca.inds <- atom.select(pdb, "///43:54///CA/")
 inds <- atom.select(pdb, "///107:118///N,CA,C,O/")
+
+
+##- PRMTOP example
+prmtop <- read.prmtop("prot_solvated.prmtop")
+
+## Atom selection 
+ca.inds <- atom.select(prmtop, "calpha")
+
 }
 }
 \keyword{utilities}
