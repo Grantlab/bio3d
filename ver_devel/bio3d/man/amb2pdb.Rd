@@ -31,7 +31,7 @@ amb2pdb(prmtop, crd, inds = NULL, inds.crd = inds, ncore=NULL)
   \item{atom}{ a character matrix containing all atomic coordinate ATOM data, 
     with a row per ATOM and a column per record type.  See below for details
     of the record type naming convention (useful for accessing columns). }
-  \item{xyz }{ a numeric matrx of ATOM coordinate data. }
+  \item{xyz }{ a numeric matrix of ATOM coordinate data. }
   \item{calpha }{ logical vector with length equal to \code{nrow(atom)}
     with TRUE values indicating a C-alpha \dQuote{elety}. }
   \item{call }{ the matched call. }

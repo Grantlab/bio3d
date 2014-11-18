@@ -1,5 +1,7 @@
 \name{atom.select}
 \alias{atom.select}
+\alias{atom.select.pdb}
+\alias{atom.select.prmtop}
 \alias{print.select}
 \title{ Atom Selection from PDB and PRMTOP Structure Objects }
 \description{
@@ -9,12 +11,39 @@
 }
 \usage{
 atom.select(\dots)
+
+## S3 method for class \sQuote{pdb}
+\method{atom.select}{pdb}(pdb, string=NULL, chain=NULL, resno=NULL, resid=NULL,
+eleno=NULL, elety=NULL, type=NULL, verbose=TRUE, rm.insert=FALSE, \dots)
+
+## S3 method for class \sQuote{prmtop}
+\method{atom.select}{prmtop}(prmtop, ...)
+
+## S3 method for class \sQuote{select}
 \method{print}{select}(x, \dots)
 }
 \arguments{
   \item{\dots}{ arguments passed to \code{atom.select.pdb},
     \code{atom.select.prmtop}, or \code{print}. }
-  \item{x}{ a atom.select object as obtained from \code{\link{atom.select}}.  }
+  \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
+    \code{\link{read.pdb}}. }
+  \item{string}{ a character selection string with the following syntax:\cr
+    \code{/segid/chain/resno/resid/eleno/elety/}. Or a single selection keyword from 
+    \code{calpha} \code{cbeta} \code{backbone} \code{protein} \code{notprotein} \code{ligand} \code{water} \code{notwater} \code{h} \code{noh} }
+  \item{chain}{ a character vector of chain identifiers. }
+  \item{resno}{ a numeric or character vector of residue numbers. }
+  \item{resid}{ a character vector of residue name identifiers. }
+  \item{eleno}{ a numeric or character vector of element numbers. }
+  \item{elety}{ a character vector of atom names. }
+  \item{type}{ a single element character vector for selecting \sQuote{ATOM}
+     or \sQuote{HETATM} record types. }
+  \item{verbose}{ logical, if TRUE details of the selection are printed. }
+  \item{rm.insert}{ logical, if TRUE insert ATOM records from the
+    \code{pdb} object are ignored. }
+  \item{prmtop}{ a structure object of class \code{"prmtop"}, obtained from
+    \code{\link{read.prmtop}}. }
+  \item{x}{ a atom.select object as obtained from
+    \code{\link{atom.select}}.  }
 }
 \details{
   This function allows for the selection of atom and coordinate data
@@ -70,9 +99,10 @@ atom.select(\dots)
 }
 \author{ Barry Grant }
 \seealso{
-  \code{\link{atom.select.pdb}}, \code{\link{atom.select.prmtop}},
   \code{\link{combine.sel}}, \code{\link{read.pdb}}, 
-  \code{\link{write.pdb}}, \code{\link{read.dcd}} 
+  \code{\link{write.pdb}}, \code{\link{read.prmtop}},
+  \code{\link{read.crd}}, \code{\link{read.dcd}},
+  \code{\link{read.ncdf}}.
 }
 \examples{
 
