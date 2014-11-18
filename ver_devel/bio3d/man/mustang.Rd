@@ -5,8 +5,8 @@
   Create a multiple sequence alignment from a bunch of PDB files.
 }
 \usage{
-mustang(files, exefile="mustang", outfile="aln.mustang.fa", 
-       verbose=TRUE)  
+mustang(files, exefile="mustang", outfile="aln.mustang.fa",
+        cleanpdb=FALSE, cleandir="mustangpdbs", verbose=TRUE)  
 }
 \arguments{
   \item{files}{ a character vector of PDB file names. }
@@ -14,6 +14,11 @@ mustang(files, exefile="mustang", outfile="aln.mustang.fa",
     how is \sQuote{MUSTANG} invoked). }
   \item{outfile}{ name of \sQuote{FASTA} output file to which alignment
     should be written. }
+  \item{cleanpdb}{ logical, if TRUE iterate over the PDB files and map
+    non-standard residues to standard residues (e.g. SEP->SER..) to
+    produce \sQuote{clean} PDB files. }
+  \item{cleandir}{ character string specifying the directory in which
+    the \sQuote{clean} PDB files should be written. }
   \item{verbose}{ logical, if TRUE \sQuote{MUSTANG} warning and error
     messages are printed. } 
 }
@@ -25,6 +30,12 @@ mustang(files, exefile="mustang", outfile="aln.mustang.fa",
   This function calls the \sQuote{MUSTANG} program, to perform a multiple
   sequence alignment, which MUST BE INSTALLED on your system and in the
   search path for executables.
+
+  Note that non-standard residues are mapped to \dQuote{Z} in
+  MUSTANG. As a workaround the bio3d \sQuote{mustang} function will
+  attempt to map any non-standard residues to standard residues
+  (e.g. SEP->SER, etc). To avoid this behaviour use
+  \sQuote{cleanpdb=FALSE}.  
   
 }
 \value{

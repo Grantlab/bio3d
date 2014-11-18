@@ -1,5 +1,5 @@
 "mustang" <- function(files, exefile="mustang", outfile="aln.mustang.fa",
-                      verbose=TRUE) {
+                      cleanpdb=FALSE, cleandir="mustangpdbs", verbose=TRUE) {
   ## Check if the program is executable
   os1 <- .Platform$OS.type
   status <- system(paste(exefile, "--version"),
@@ -12,6 +12,26 @@
   if(!all(file.exists(files)))
     stop(paste("Missing files:", paste(files[ !file.exists(files) ], collapse=", ")))
 
+  ## produce cleaned CA pdb files for mustang
+  if(cleanpdb) {
+    if(!file.exists(cleandir))
+      dir.create(cleandir)
+    newfiles <- c()
+    for(i in 1:length(files)) {
+      outfile <- paste(cleandir, basename(files[i]), sep="/")
+      pdb     <- read.pdb(files[i])
+      sele    <- atom.select(pdb, "calpha", verbose=verbose)
+      new     <- trim.pdb(pdb, sele)
+      seq1    <- aa321(new$atom$resid)
+      seq3     <- aa123(seq1)
+      new$atom$type  <- "ATOM"
+      new$atom$resid <- seq3
+      write.pdb(new, file=outfile)
+      newfiles <- c(newfiles, outfile)
+    }
+    files <- newfiles
+  }
+  
   infile <- tempfile()
   outfile <- tempfile()
   dirn <- unique(dirname(files))
