@@ -74,11 +74,8 @@ mktrj(...)
 data(transducin)
 attach(transducin, warn.conflicts=FALSE)
 
-# Ignore gap containing positions
-gaps.pos <- gap.inspect(pdbs$xyz)
-
-# PCA
-pc.xray <- pca.xyz(pdbs$xyz[, gaps.pos$f.inds])
+# Calculate princiapl components
+pc.xray <- pca(pdbs, fit=TRUE)
 
 # Write PC trajectory of pc=1
 outfile = tempfile()
