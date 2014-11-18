@@ -13,7 +13,7 @@ cnapath(x, from, to, k = 10, ncore = NULL, \dots)
 \method{summary}{cnapath}(pa, \dots, pdb = NULL, label = NULL, col = NULL,
    plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE)
 \method{print}{cnapath}(pa, \dots)
-view.cnapath(pa, pdb = NULL, out.prefix = "view.cnapath", launch = FALSE)
+view.cnapath(pa, pdb, out.prefix = "view.cnapath", launch = FALSE)
 }
 \arguments{
   \item{x}{ A \sQuote{cna} object obtained from \code{\link{cna}}. }
