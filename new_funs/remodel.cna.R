@@ -22,9 +22,12 @@ normalize.cij <- function(cij, factor = NULL, mag = 2, cutoff = 0) {
    
    # Variance
    vars <- apply(pcij, 2, var)
-   colors <- (vars - min(vars, na.rm=TRUE))/
-             (max(vars, na.rm=TRUE) - min(vars, na.rm=TRUE)) * scale
-   
+   diff = max(vars, na.rm=TRUE) - min(vars, na.rm=TRUE)
+   if(diff > 0) 
+      colors <- (vars - min(vars, na.rm=TRUE))/ diff * scale
+   else
+      colors <- rep(0, length(vars))
+ 
    colors <- matrix(rep(colors, nrow(pcij)), nrow=nrow(pcij), byrow=TRUE)
    colors[pcij <= cutoff] <- NA
 
@@ -33,7 +36,7 @@ normalize.cij <- function(cij, factor = NULL, mag = 2, cutoff = 0) {
    pcij[pcij <= cutoff] <- NA
    vmin <- min(pcij, na.rm = TRUE)
    vmax <- max(pcij, na.rm = TRUE)
-   pcij <- (pcij - vmin) / (vmax - vmin) * scale + 0.1
+   pcij <- (pcij - vmin) / (vmax - vmin) * 0.9 + 0.05
 
    pcij[is.na(pcij)] <- 0
 
@@ -76,14 +79,17 @@ remodel.cna <- function(x, member = NULL, col = NULL, minus.log = TRUE,
 
    # membership
    if(is.null(member)) {
-      m = x[[1]]$communities$membership
+      m.all = lapply(x, function(net) net$communities$membership) 
    } else {
-      m = member
+      m.all = member
    }
 
+   if(!is.list(m.all)) m.all = lapply(1:length(x), function(i) m.all)
+ 
    # number of communities 
-   n <- max(m)
-  
+   n <- unique(sapply(m.all, max))
+   if(length(n) > 1) stop("Unequal community partition across networks")
+ 
    # node colors 
    if(is.null(col)) {
       if(!is.null(member)) col = 1:n
@@ -98,11 +104,13 @@ remodel.cna <- function(x, member = NULL, col = NULL, minus.log = TRUE,
    if(!is.null(member) || method != "none") {
 
       col.cg.edge = NULL
-      cg.node.size <- table(m)
+      cg.node.size <- lapply(m.all, table)
 
-      n2 <- pairwise(max(m))
+      n2 <- pairwise(n)
 
-      cg.cij <- lapply(x, function(y) {
+      cg.cij <- lapply(1:length(x), function(yi) {
+         y = x[[yi]]
+         m = m.all[[yi]]
          cij <- y$cij
          if(minus.log) cij[cij>0] = exp(-cij[cij>0])
          if(method != "none") { 
@@ -142,10 +150,14 @@ remodel.cna <- function(x, member = NULL, col = NULL, minus.log = TRUE,
 
       if(method != "none" && normalize) {
          w <- normalize.cij(cg.cij, ...)
+
          if(!is.null(w$color)) {
             col.cg.edge <- lapply(w$color, function(x) x[lower.tri(x)])
             tcol <- unlist(col.cg.edge)
-            tcol[!is.na(tcol)] <- vec2color(tcol[!is.na(tcol)])
+            if(length(unique(tcol[!is.na(tcol)])) == 1)
+               tcol[!is.na(tcol)] <- rep("#0000FF", length(sum(!is.na(tcol))))
+            else 
+               tcol[!is.na(tcol)] <- vec2color(tcol[!is.na(tcol)])
             tcol <- split(tcol, f=rep(1:length(col.cg.edge), each=length(col.cg.edge[[1]])) )
             col.cg.edge <- lapply(tcol, function(x) x[!is.na(x)]) 
          }
@@ -156,15 +168,18 @@ remodel.cna <- function(x, member = NULL, col = NULL, minus.log = TRUE,
          y = x[[i]]
          if(is.list(cg.cij)) cij <- cg.cij[[i]]
          else cij <- cg.cij
-         if(minus.log) cij[cij>0] <- -log(cij[cij>0])
+         if(minus.log) {
+            cij[cij>=1] <- 0.9999
+            cij[cij>0] <- -log(cij[cij>0])
+         }
          y$community.network <- graph.adjacency(cij, 
                                     mode = "undirected",
                                     weighted = TRUE,
                                     diag = FALSE)
-         y$community.network <- set.vertex.attribute(y$community.network, "size", value=cg.node.size)
+         y$community.network <- set.vertex.attribute(y$community.network, "size", value=cg.node.size[[i]])
          if(!is.null(col.cg.edge)) 
             y$community.network <- set.edge.attribute(y$community.network, "color", value=col.cg.edge[[i]])
-         y$communities$membership <- m
+         y$communities$membership <- m.all[[i]]
          y$community.cij <- cij
          if(!is.null(key)) {
             inds = which(abs(y$cij[key[[i]]]) > 0)
@@ -176,7 +191,9 @@ remodel.cna <- function(x, member = NULL, col = NULL, minus.log = TRUE,
 
    # update node color, community network node color, and community reindex
    if(!is.null(col)) {
-      x <- lapply(x, function(y) {
+      x <- lapply(1:length(x), function(yi) {
+         y = x[[yi]]
+         m = m.all[[yi]]
          y$network <- set.vertex.attribute(y$network, "color", value= col[m])
          y$community.network <- set.vertex.attribute(y$community.network, "color", value = col)
          if(!is.null(y$community.reindex)) {
