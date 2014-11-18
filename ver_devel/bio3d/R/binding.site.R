@@ -2,11 +2,13 @@
   function(a, b = NULL,a.inds = NULL, b.inds = NULL,
            cut=5, hydrogens=TRUE) {
 
-  if (missing(a))
-    stop("binding.site: must supply an input 'pdb' object 'a', i.e. from 'read.pdb'")
+  if (!is.pdb(a))
+    stop("must supply an input 'pdb' object 'a', i.e. from 'read.pdb'")
 
   if(!is.null(b)) {
-
+    if(!is.pdb(b))
+      stop("'b' should be a 'pdb' object as obtained from 'read.pdb'")
+    
     if ( hydrogens ) {
       if(is.null(a.inds))
         a.inds <- atom.select(a, string='///////')
@@ -23,14 +25,8 @@
 
   else {
     complex <- a
-
-    a <- NULL
-    a$atom <- complex$atom[a.inds$atom, ]
-    a$xyz <- complex$xyz[a.inds$xyz]
-
-    b <- NULL
-    b$atom <- complex$atom[b.inds$atom, ]
-    b$xyz <- complex$xyz[b.inds$xyz]
+    a <- trim.pdb(complex, a.inds)
+    b <- trim.pdb(complex, b.inds)
 
     if ( hydrogens ) {
       a.inds <- atom.select(a, string='///////')
@@ -66,8 +62,17 @@
   atom.inds <- intersect(atom.inds, a.inds$atom)
   xyz.inds <- atom2xyz(atom.inds)
 
+  trim <- function(s) {
+    ##- Remove leading and trailing spaces from character strings
+    s <- sub("^ +", "", s)
+    s <- sub(" +$", "", s)
+    s[(s=="")]<-""
+    s
+  }
+  
   resno <- as.numeric( unique(a$atom[atom.inds, "resno"]) )
-  resnames <- apply(a$atom[atom.inds,c("resid", "resno")], 1, paste, collapse="")
+  resnames <- apply(a$atom[atom.inds,c("resid", "resno")], 1,
+                    function(x) paste(trim(x), collapse=""))
   resnames <- unique(resnames)
 
 

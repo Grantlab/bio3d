@@ -21,7 +21,7 @@ read.prmtop(file)
   Returns a list of class \sQuote{prmtop} (inherits class
   \sQuote{amber}) with components according to the flags present in the PrmTop
   file. See the AMBER documentation for a complete list of
-  flags/components. 
+  flags/components: \url{http://ambermd.org/formats.html}.
 
   Selected components:
   \item{ATOM_NAME}{ a character vector of atom names. }

@@ -74,7 +74,7 @@ mktrj(...)
 data(transducin)
 attach(transducin, warn.conflicts=FALSE)
 
-# Calculate princiapl components
+# Calculate principal components
 pc.xray <- pca(pdbs, fit=TRUE)
 
 # Write PC trajectory of pc=1
