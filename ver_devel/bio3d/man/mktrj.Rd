@@ -11,16 +11,12 @@
 \usage{
 mktrj(...)
 
-## S3 method for class \sQuote{pca}
 \method{mktrj}{pca}(pca = NULL, pc = 1, mag = 1, step = 0.125, file = NULL,  ...)
 
-## S3 method for class \sQuote{nma}
 \method{mktrj}{nma}(nma = NULL, mode = 7, mag = 10, step = 1.25, file = NULL,  ...)
 
-## S3 method for class \sQuote{enma}
 \method{mktrj}{enma}(enma = NULL, pdbs = NULL, s.inds = NULL, m.inds = NULL,
-                     mag = 10, step = 1.25, file = NULL,
-                     rock = TRUE, ncore = NULL, ...) 
+      mag = 10, step = 1.25, file = NULL, rock = TRUE, ncore = NULL, ...) 
 }
 \arguments{
   \item{pca}{ an object of class \code{"pca"} as obtained with

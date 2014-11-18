@@ -12,14 +12,11 @@
 \usage{
 atom.select(\dots)
 
-## S3 method for class \sQuote{pdb}
 \method{atom.select}{pdb}(pdb, string=NULL, chain=NULL, resno=NULL, resid=NULL,
-eleno=NULL, elety=NULL, type=NULL, verbose=TRUE, rm.insert=FALSE, \dots)
+            eleno=NULL, elety=NULL, type=NULL, verbose=TRUE, rm.insert=FALSE, \dots)
 
-## S3 method for class \sQuote{prmtop}
 \method{atom.select}{prmtop}(prmtop, ...)
 
-## S3 method for class \sQuote{select}
 \method{print}{select}(x, \dots)
 }
 \arguments{
