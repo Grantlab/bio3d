@@ -5,8 +5,12 @@ cij.cutoff.guess <- function(cij, p = NULL, collapse = TRUE) {
       
    cijs <- cij
    if("all.dccm" %in% names(cijs)) cijs <- cijs$all.dccm
-   if(is.array(cijs) && length(dim(cijs))==3)
-      cijs <- do.call("c", apply(cijs, 3, list))
+   if(is.array(cijs)) {
+      if(length(dim(cijs))==3)
+         cijs <- do.call("c", apply(cijs, 3, list))
+      else
+         cijs <- list(cijs)
+   }
    if(!is.list(cijs))
       stop("cijs should be matrix, array(dim=3), or list")
    
