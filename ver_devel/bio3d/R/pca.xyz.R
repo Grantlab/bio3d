@@ -106,9 +106,14 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE,
   
   class(U)="pca.loadings"
 
-  out <- list(L=L, U=U, z=z, au=au,
+  if(!is.null(mass)) {
+     mean = mean / sqrt(rep(mass, each=3))
+     out <- list(L=L, U=U, z=z, au=au,
+              sdev=sdev, mean=mean, mass=mass, call=cl)
+  }
+  else
+     out <- list(L=L, U=U, z=z, au=au,
               sdev=sdev, mean=mean, call=cl)
 
   class(out)="pca"; out
 }
-
