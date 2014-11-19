@@ -300,11 +300,21 @@
   return(round(mat, 4))
 }
 
-.buildDummyPdb <- function(pdb=NULL, xyz=NULL,  elety=NULL, resno=NULL, chain=NULL, resid=NULL) {
-
+.buildDummyPdb <- function(pdb=NULL, xyz=NULL,
+                           elety=NULL, resno=NULL, chain=NULL, resid=NULL) {
+  if(is.null(resno) | !is.vector(resno))
+    stop("provide a vector of residue numbers")
+  
   natoms <- length(resno)
-  tmp.pdb <- NULL
-
+  if(!is.null(xyz))
+    xyz <- as.xyz(xyz)
+  else
+    xyz <- as.xyz(rep(NA, natoms*3))
+  
+  if(natoms!=(ncol(xyz)/3))
+    stop(".buildDummyPdb: ncol(xyz)/3 != length(resno")
+  
+  tmp.pdb <- list()
   tmp.pdb$atom <- data.frame(cbind(rep("ATOM", natoms),
                                    seq(1, natoms),
                                    elety,
@@ -313,7 +323,7 @@
                                    chain,
                                    resno,
                                    NA,
-                                   round(matrix(xyz, ncol=3, byrow=T), 3),
+                                   matrix(round(xyz[1,], 3), ncol=3, byrow=TRUE),
                                    NA, NA, NA, NA, NA),
                              stringsAsFactors=FALSE)
   
@@ -321,10 +331,10 @@
                               "chain", "resno", "insert",
                               "x", "y", "z", "o", "b", "segid", "elesy", "charge")
   
-  tmp.pdb$xyz    <- as.xyz(xyz)
-  ca.inds        <- atom.select(tmp.pdb, "calpha", verbose=FALSE)
-  tmp.pdb$calpha <- seq(1, natoms) %in% ca.inds$atom
+  tmp.pdb$xyz    <- xyz
   class(tmp.pdb) <- "pdb"
+  ca.inds        <- atom.select.pdb(tmp.pdb, "calpha", verbose=FALSE)
+  tmp.pdb$calpha <- seq(1, natoms) %in% ca.inds$atom
   return(tmp.pdb)
 }
 

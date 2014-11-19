@@ -34,7 +34,7 @@ test_that("atom to mass tests", {
   
   ## Try center of mass at the same go
   coma <- c(-0.4991111, 20.5858389, 19.2604674)
-  expect_that(com(pdb.prot), equals(coma, tolerance=1e-6))
+  expect_that(c(com(pdb.prot)), equals(coma, tolerance=1e-6))
   
 #  coma <- c(-0.5829897, 20.5306061, 19.1081465)
 #  expect_that(com(pdb), equals(coma, tolerance=1e-6))
