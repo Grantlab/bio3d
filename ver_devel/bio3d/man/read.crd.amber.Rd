@@ -9,7 +9,7 @@
 }
 \arguments{
   \item{file}{ name of crd file to read. }
-  \item{\dots}{ arguments passed to and from functions. } 
+  \item{\dots}{ arguments passed to and from functions. }
 }
 \details{
   Read a AMBER Coordinate format file.
@@ -35,7 +35,7 @@
 }
 \seealso{
   \code{\link{read.prmtop}}, \code{\link{read.ncdf}},
-  \code{\link{amb2pdb}}, \code{\link{atom.select}},
+  \code{\link{as.pdb}}, \code{\link{atom.select}},
   \code{\link{read.pdb}}, \code{\link{read.crd.charmm}}  }
 \examples{
 \dontrun{
@@ -46,11 +46,11 @@ print(prmtop)
 ## Read a Amber CRD file
 crds <- read.crd("prot_solvated.inpcrd")
 
-## Atom selection 
+## Atom selection
 ca.inds <- atom.select(prmtop, "calpha")
 
 ## Convert to PDB format
-pdb <- amb2pdb(prmtop, crds, inds=ca.inds)
+pdb <- as.pdb(prmtop, crds, inds=ca.inds)
 }
 }
 \keyword{ IO }

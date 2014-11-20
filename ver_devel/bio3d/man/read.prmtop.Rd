@@ -13,9 +13,9 @@ read.prmtop(file)
 \details{
   This function provides basic functionality to read and parse a AMBER
   PrmTop file. The resulting \sQuote{prmtop} object contains a complete
-  list object of the information stored in the PrmTop file. 
+  list object of the information stored in the PrmTop file.
 
-  See examples for further details. 
+  See examples for further details.
 }
 \value{
   Returns a list of class \sQuote{prmtop} (inherits class
@@ -44,7 +44,7 @@ read.prmtop(file)
 }
 \seealso{
   \code{\link{read.crd}}, \code{\link{read.ncdf}},
-  \code{\link{amb2pdb}}, \code{\link{atom.select}},
+  \code{\link{as.pdb}}, \code{\link{atom.select}},
   \code{\link{read.pdb}} }
 \examples{
 \dontrun{
@@ -56,7 +56,7 @@ print(prmtop)
 prmtop$MASS
 prmtop$ATOM_NAME
 
-## Atom selection 
+## Atom selection
 ca.inds <- atom.select(prmtop, "calpha")
 
 ## Trajectory processing
@@ -66,10 +66,10 @@ trj <- read.ncdf("traj.nc", at.sel=ca.inds)
 crds <- read.crd("prot_solvated.inpcrd")
 
 ## Convert to PDB format
-pdb <- amb2pdb(prmtop, crds, inds=ca.inds)
+pdb <- as.pdb(prmtop, crds, inds=ca.inds)
 
 ## Convert to multimodel PDB format
-pdb <- amb2pdb(prmtop, trj[1:20,], inds=ca.inds, inds.crd=NULL)
+pdb <- as.pdb(prmtop, trj[1:20,], inds=ca.inds, inds.crd=NULL)
 
 ## RMSD of trajectory
 rd <- rmsd(crds$xyz[ca.inds$xyz], traj, fit=TRUE)
