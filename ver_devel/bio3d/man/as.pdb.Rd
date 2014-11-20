@@ -1,13 +1,18 @@
-\name{amb2pdb}
-\alias{amb2pdb}
-\title{ Amber to PDB converter }
+\name{as.pdb}
+\alias{as.pdb}
+\alias{as.pdb.prmtop}
+\title{ Amber PRMTOP to PDB converter }
 \description{
   Convert Amber parameter/topology and coordinate data to PDB format.
 }
 \usage{
-amb2pdb(prmtop, crd, inds = NULL, inds.crd = inds, ncore=NULL)
+as.pdb(\dots)
+
+\method{as.pdb}{prmtop}(pdb, crd, inds = NULL, inds.crd = inds, ncore=NULL, \dots)
+
 }
 \arguments{
+  \item{\dots}{ arguments passed to and from functions. }
   \item{prmtop}{ a list object of type \code{"prmtop"} (obtained with
     \code{\link{read.prmtop}}). }
   \item{crd}{ a list object of type \code{"crd"} (obtained with
@@ -43,8 +48,8 @@ amb2pdb(prmtop, crd, inds = NULL, inds.crd = inds, ncore=NULL)
 \author{ Lars Skjaerven }
 \seealso{
   \code{\link{read.crd}}, \code{\link{read.ncdf}},
-  \code{\link{amb2pdb}}, \code{\link{atom.select}},
-  \code{\link{read.pdb}} }
+  \code{\link{atom.select}}, \code{\link{read.pdb}}
+}
 \examples{
 \dontrun{
 ## Read a PRMTOP file
@@ -57,11 +62,11 @@ ca.inds <- atom.select(prmtop, "calpha")
 crds <- read.crd("prot_solvated.inpcrd")
 
 ## Convert to PDB format
-pdb <- amb2pdb(prmtop, crds, inds=ca.inds)
+pdb <- as.pdb(prmtop, crds, inds=ca.inds)
 
 ## Convert to PDB format
 trj <- read.ncdf("traj.nc", at.sel=ca.inds)
-pdb <- amb2pdb(prmtop, trj[20,], inds=ca.inds, inds.crd=NULL)
+pdb <- as.pdb(prmtop, trj[20,], inds=ca.inds, inds.crd=NULL)
 }
 }
 \keyword{ IO }

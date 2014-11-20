@@ -1,4 +1,4 @@
-amb2pdb <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL) {
+as.pdb.prmtop <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL) {
   ncore <- setup.ncore(ncore, bigmem=FALSE)
 
   if(ncore>1)
