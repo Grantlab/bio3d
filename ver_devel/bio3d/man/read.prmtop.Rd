@@ -8,7 +8,7 @@
 \usage{
 read.prmtop(file)
 
-\method{print}{prmtop}(x, printseq=FALSE, \dots)
+\method{print}{prmtop}(x, printseq=TRUE, \dots)
 }
 \arguments{
   \item{file}{ a single element character vector containing the name of
