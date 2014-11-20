@@ -9,7 +9,7 @@
 \usage{
 read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
          rm.alt = TRUE, verbose = TRUE)
-\method{print}{pdb}(x, \dots)
+\method{print}{pdb}(x, printseq=TRUE, \dots)
 \method{summary}{pdb}(object, printseq=FALSE, \dots)
 }
 \arguments{
