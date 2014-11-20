@@ -1,4 +1,4 @@
-as.pdb.prmtop <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL) {
+as.pdb.prmtop <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL, ...) {
   ncore <- setup.ncore(ncore, bigmem=FALSE)
 
   if(ncore>1)
@@ -14,14 +14,14 @@ as.pdb.prmtop <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL
     warning("producing PDB object with no XYZ coordinates")
     crd <- rep(NA, natoms.prmtop*3)
   }
-  
+
   if(!inherits(crd, "amber")) {
     new <- list()
     new$xyz <- as.xyz(crd)
     new$natoms <- ncol(new$xyz)/3
     crd <- new
   }
-    
+
   natoms.crd <- crd$natoms
   if( any(c(!is.null(inds), !is.null(inds.crd))) ) {
     if(is.null(inds)) {
@@ -35,11 +35,11 @@ as.pdb.prmtop <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL
       inds.crd$xyz = atom2xyz(inds.crd$atom)
       class(inds.crd)="select"
     }
-    
+
     natoms.prmtop = length(inds$atom)
     natoms.crd    = length(inds.crd$atom)
   }
-  
+
   if(natoms.prmtop != natoms.crd)
     stop(paste("atom number mismatch:", natoms.prmtop, "(prmtop) vs", natoms.crd, "(crds)"))
 
@@ -56,7 +56,7 @@ as.pdb.prmtop <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL
 
   resno <- unlist(mylapply(1:length(prmtop$RESIDUE_POINTER), resmap, 'resno'))
   resid <- unlist(mylapply(1:length(prmtop$RESIDUE_POINTER), resmap, 'resid'))
-  
+
   if(any(c(!is.null(inds), !is.null(inds.crd)))) {
     pdb <- .buildDummyPdb(pdb=NULL, xyz=crd$xyz[,inds.crd$xyz], elety=prmtop$ATOM_NAME[inds$atom],
                           resno=resno[inds$atom], chain=NA, resid=resid[inds$atom])
@@ -65,7 +65,7 @@ as.pdb.prmtop <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL
     pdb <- .buildDummyPdb(pdb=NULL, xyz=crd$xyz, elety=prmtop$ATOM_NAME,
                           resno=resno, chain=NA, resid=resid)
   }
-  
+
   pdb$call = match.call()
   return(pdb)
 }

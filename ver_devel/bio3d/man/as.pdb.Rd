@@ -8,7 +8,7 @@
 \usage{
 as.pdb(\dots)
 
-\method{as.pdb}{prmtop}(pdb, crd, inds = NULL, inds.crd = inds, ncore=NULL, \dots)
+\method{as.pdb}{prmtop}(prmtop, crd = NULL, inds = NULL, inds.crd = inds, ncore=NULL, \dots)
 
 }
 \arguments{
@@ -29,11 +29,11 @@ as.pdb(\dots)
 }
 \details{
   Converts Amber formatted parameter/topology (PRMTOP) and coordinate
-  objects to a PDB object. 
+  objects to a PDB object.
 }
 \value{
   Returns a list of class \code{"pdb"} with the following components:
-  \item{atom}{ a character matrix containing all atomic coordinate ATOM data, 
+  \item{atom}{ a character matrix containing all atomic coordinate ATOM data,
     with a row per ATOM and a column per record type.  See below for details
     of the record type naming convention (useful for accessing columns). }
   \item{xyz }{ a numeric matrix of ATOM coordinate data. }
@@ -55,7 +55,7 @@ as.pdb(\dots)
 ## Read a PRMTOP file
 prmtop <- read.prmtop("prot_solvated.prmtop")
 
-## Atom selection 
+## Atom selection
 ca.inds <- atom.select(prmtop, "calpha")
 
 ## Read a Amber CRD file
