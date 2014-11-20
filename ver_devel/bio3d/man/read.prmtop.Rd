@@ -1,14 +1,23 @@
 \name{read.prmtop}
 \alias{read.prmtop}
+\alias{print.prmtop}
 \title{ Read AMBER Parameter/Topology files }
 \description{
   Read parameter and topology data from an AMBER PrmTop file.
 }
 \usage{
 read.prmtop(file)
+
+\method{print}{prmtop}(x, printseq=FALSE, \dots)
 }
 \arguments{
-  \item{file}{ name of prmtop file to read. }
+  \item{file}{ a single element character vector containing the name of
+    the PRMTOP file to be read. }
+  \item{x}{ a PRMTOP structure object obtained from
+    \code{\link{read.prmtop}}. }
+  \item{printseq}{ logical, if TRUE the residue sequence will be printed
+    to the screen. See also \code{\link{pdbseq}}. }
+  \item{...}{ additional arguments to \sQuote{print}. }
 }
 \details{
   This function provides basic functionality to read and parse a AMBER
@@ -45,7 +54,8 @@ read.prmtop(file)
 \seealso{
   \code{\link{read.crd}}, \code{\link{read.ncdf}},
   \code{\link{as.pdb}}, \code{\link{atom.select}},
-  \code{\link{read.pdb}} }
+  \code{\link{read.pdb}}
+}
 \examples{
 \dontrun{
 ## Read a PRMTOP file
