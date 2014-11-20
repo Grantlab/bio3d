@@ -6,19 +6,23 @@
   marginal regions.
 }
 \usage{
-\method{plot}{bio3d}(x, y = NULL, type = "h", main = "", sub = "", xlim = NULL, ylim = NULL, 
-                 ylim2zero = TRUE, xlab = NULL, ylab = NULL, axes = TRUE, 
-                 ann = par("ann"), col = par("col"), sse = NULL, top = TRUE, bot = TRUE, 
+\method{plot}{bio3d}(x, resno = NULL, type = "h", main = "", sub = "", xlim = NULL, ylim = NULL, 
+                 ylim2zero = TRUE, xlab = "Residue", ylab = NULL, axes = TRUE, 
+                 ann = par("ann"), col = par("col"), sse = NULL,
+                 sse.type="classic", sse.min.length=5, top = TRUE, bot = TRUE, 
                  helix.col = "gray20", sheet.col = "gray80", sse.border = FALSE, ...)
 }
 \arguments{
-  \item{x}{ the x coordinates for the plot.  Any reasonable way of
-    defining the coordinates is acceptable.  See the function
+  \item{x}{ a numeric vector of values to be plotted.  Any reasonable way of
+    defining these plot coordinates is acceptable.  See the function
     \sQuote{xy.coords} for details. }
-  \item{y}{ the y coordinates for the plot, see above. }
+  \item{resno}{ an optional vector with length equal to that of
+    \sQuote{x} that will be used to annotate the xaxis. This is typically
+    a vector of residue numbers. If NULL residue positions from 1 to the
+    length of \sQuote{x} will be used. See examples below. }
   \item{type}{ one-character string giving the type of plot desired.  The
     following values are possible, (for details, see \sQuote{plot}): \sQuote{p}
-    for points, \sQuote{l} for lines, \sQuote{o} for overplotted points and
+    for points, \sQuote{l} for lines, \sQuote{o} for over-plotted points and
     lines, \sQuote{b}, \sQuote{c}) for points joined by lines,
     \sQuote{s} and \sQuote{S} for stair steps and \sQuote{h} for
     histogram-like vertical lines.  Finally, \sQuote{n} does not produce
@@ -36,12 +40,21 @@
     \sQuote{yaxt} to suppress just one of the axes. }
   \item{ann}{ a logical value indicating whether the default annotation
     (title and x and y axis labels) should appear on the plot. }
-  \item{col}{ The colors for lines and points.  Multiple colours can be
+  \item{col}{ The colors for lines and points.  Multiple colors can be
     specified so that each point is given its own color.  If there are
     fewer colors than points they are recycled in the standard fashion.
-    Lines are plotted in the first colour specified. }
+    Lines are plotted in the first color specified. }
   \item{sse}{ secondary structure object as returned from
-    \code{\link{dssp}} or \code{\link{stride}}. }
+    \code{\link{dssp}}, \code{\link{stride}} or in certain cases
+    \code{\link{read.pdb}}. }
+  \item{sse.type}{ single element character vector that determines the
+    type of secondary structure annotation drawn. The following values
+    are possible, \sQuote{classic} and \sQuote{fancy}. See details and 
+    examples below. }
+  \item{sse.min.length}{ a single numeric value giving the length below
+    which secondary structure elements will not be drawn. This is useful
+    for the exclusion of short helix and strand regions that can often crowd
+    these forms of plots. }
   \item{top}{ logical, if TRUE rectangles for each sse are drawn towards
     the top of the plotting region.  }
   \item{bot}{ logical, if TRUE rectangles for each sse are drawn towards
@@ -52,6 +65,16 @@
   \item{\dots}{ other graphical parameters. }
 }
 \details{
+  This function is useful for plotting per-residue numeric vectors for a
+  given protein structure (e.g. results from RMSF, PCA, NMA etc.) along
+  with a schematic representation of major secondary structure elements.
+
+  Two forms of secondary structure annotation are available: so called
+  \sQuote{classic} and \sQuote{fancy}. The former draws marginal
+  rectangles and has been available within Bio3D from version 0.1. The
+  later draws more \sQuote{fancy} (and distracting) 3D like helices and
+  arrowed strands.
+  
   See the functions \sQuote{plot.default}, \code{\link{dssp}} and \code{\link{stride}} 
   for further details.
 }
@@ -71,17 +94,24 @@
 ## Plot of B-factor values along with secondary structure from PDB
 pdb <- read.pdb( "1bg2" )
 plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=pdb, ylab="B-factor")
+
+## Use PDB residue numbers and include short secondary structure elements
+plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=pdb, resno=pdb, ylab="B-factor",
+  typ="l", lwd=1.5, col="blue", sse.min.length=0)
 }
 
 \dontrun{
 ## Calculate secondary structure
-#sse <- stride(pdb, resno=FALSE)
-sse <- dssp(pdb, resno=FALSE)
+#sse <- stride(pdb)
+sse <- dssp(pdb)
 
 ## Plot of B-factor values along with calculated secondary structure
 plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor", typ="l",
 col="blue", lwd=2)
 }
 
+## Fancy secondary structure elements
+##plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=pdb, ssetype="fancy")
+## Currently not implemented
 }
 \keyword{ hplot }
