@@ -1,20 +1,23 @@
-dssp.trj <- function(pdb, trj, skip=1000, threshold=3, file.head="", ...) {
+dssp.xyz <- function(xyz, pdb, skip=1000, threshold=3, file.head="", ...) {
   if(!is.pdb(pdb))
     stop("provide a pdb object as obtained from function 'read.pdb'")
+
+  if(!is.xyz(xyz) | !is.matrix(xyz))
+    stop("provide an xyz object containing the trajectory coordinates")
   
   ##Filtering
-  filter.raw <- seq(1,dim(trj)[1],skip)
+  filter.raw <- seq(1,dim(xyz)[1],skip)
   
   ##DSSP calculation
-  dssp.ref  <- dssp(pdb, ...)
+  dssp.ref  <- dssp.pdb(pdb, ...)
   helix.ref <- sum(dssp.ref$helix$length)/sum(pdb$calpha)*100
   sheet.ref <- sum(dssp.ref$sheet$length)/sum(pdb$calpha)*100
   
   unfold.frames <- NULL
   for (frame in filter.raw){
     pdb.temp     <- pdb
-    pdb.temp$xyz <- trj[frame,]
-    dssp.test    <- dssp(pdb.temp, ...)
+    pdb.temp$xyz <- xyz[frame,]
+    dssp.test    <- dssp.pdb(pdb.temp, ...)
     helix.test   <- sum(dssp.test$helix$length)/sum(pdb$calpha)*100
     sheet.test   <- sum(dssp.test$sheet$length)/sum(pdb$calpha)*100
     helix.diff   <- helix.ref - helix.test
@@ -25,7 +28,7 @@ dssp.trj <- function(pdb, trj, skip=1000, threshold=3, file.head="", ...) {
       cat('Possible unfolding event(s) in frame', frame, '\n')
       cat('  ... saving frame to file', fname, '\n')
       
-      write.pdb(pdb=pdb, file=fname, xyz=trj[frame,])
+      write.pdb(pdb=pdb, file=fname, xyz=xyz[frame,])
       unfold.frames <- c(unfold.frames, frame)
     } 
   }

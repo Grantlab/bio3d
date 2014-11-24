@@ -1,5 +1,8 @@
 \name{dssp}
 \alias{dssp}
+\alias{dssp.pdb}
+\alias{dssp.pdbs}
+\alias{dssp.xyz}
 \alias{stride}
 \alias{print.sse}
 \title{ Secondary Structure Analysis with DSSP or STRIDE }
@@ -8,8 +11,16 @@
   or the method of Frishman and Argos (STRIDE).
 }
 \usage{
-dssp(pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE)
+dssp(\dots)
+
+\method{dssp}{pdb}(pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE, \dots)
+
+\method{dssp}{pdbs}(pdbs, \dots)
+
+\method{dssp}{xyz}(xyz, pdb, skip=1000, threshold=3, file.head="", \dots)
+
 stride(pdb, exefile = "stride", resno=TRUE)
+
 \method{print}{sse}(x, \dots)
 }
 \arguments{
@@ -22,10 +33,23 @@ stride(pdb, exefile = "stride", resno=TRUE)
   \item{full}{ logical, if TRUE bridge pairs and hbonds columns are
     parsed. }
   \item{verbose}{ logical, if TRUE \sQuote{DSSP} warning and error
-    messages are printed. } 
+    messages are printed. }
+  \item{pdbs}{ a list object of class \code{"pdbs"} (obtained with
+    \code{\link{pdbaln}} or \code{\link{read.fasta.pdb}}). }
+  \item{xyz}{ a trajectory object of class \code{"xyz"}, obtained from
+    \code{\link{read.ncdf}},  \code{\link{read.dcd}},
+    \code{\link{read.crd}}. } 
+  \item{skip}{ a number indicating the frame frequency in the trajectory
+    indicated; default = 1000. }
+  \item{threshold}{ a number indicating the threshold to be used for the
+    analysis: higher numbers will decrease the threshold, allowing to
+    accept structures with smaller secondary structure differences, with
+    respect of the reference \code{pdb} structure; default = 3} 
+  \item{file.head}{ a path where to save the structures with possible
+    unfolding events. }
   \item{x}{ an \code{sse} object obtained from \code{\link{dssp}} or 
     \code{\link{stride}}. }
-  \item{...}{ additional arguments to \sQuote{print}. }
+  \item{...}{ additional arguments to and from functions. }
   }
 \details{
   This function calls the \sQuote{DSSP} or \sQuote{STRIDE} program to define 
@@ -65,7 +89,7 @@ stride(pdb, exefile = "stride", resno=TRUE)
   \url{http://webclu.bio.wzw.tum.de/stride/},
   or copy it from an installation of VMD.
 }
-\author{ Barry Grant }
+\author{ Barry Grant, Lars Skjaerven (dssp.pdbs) }
 \note{
   A system call is made to the \sQuote{DSSP} or \sQuote{STRIDE} program, 
   which must be installed on your system and in the search path for executables.
@@ -91,12 +115,17 @@ stride(pdb, exefile = "stride", resno=TRUE)
   Chain ID of resno \dQuote{O-HN.1}: \dQuote{Chain3},\cr
   Chain ID of resno \dQuote{NH-O.2}: \dQuote{Chain4}.
 }
-\seealso{ \code{\link{read.pdb}},
+\seealso{
+  \code{\link{read.pdb}},
   \code{\link{torsion.pdb}}, \code{\link{torsion.xyz}},
-  \code{\link{plot.bio3d}}
+  \code{\link{plot.bio3d}},
+  
+  \code{\link{read.ncdf}}, \code{\link{read.dcd}},
+  \code{\link{read.prmtop}}, \code{\link{read.crd}},
 }
 \examples{
 \dontrun{
+##- PDB example
 # Read a PDB file
 pdb <- read.pdb("1bg2")
 sse <- dssp(pdb)
@@ -112,6 +141,26 @@ sse$helix
 # Precent SSE content
 sum(sse$helix$length)/sum(pdb$calpha) * 100
 sum(sse$sheet$length)/sum(pdb$calpha) * 100
+
+
+
+##- PDBs example
+## Fetch PDB files and split to chain A only PDB files
+ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
+raw.files <- get.pdb(ids, path = "raw_pdbs")
+files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain")
+
+## Sequence Alignement
+pdbs <- pdbaln(files)
+
+## SSE assignment
+sse <- dssp.pdbs(pdbs)
+
+
+
+##- XYZ Trajectory
+pdb <- read.pdb("1d1d", multi=TRUE)
+dssp.xyz(pdb$xyz, pdb, skip = 100, threshold = 1.5)
 
 }
 }
