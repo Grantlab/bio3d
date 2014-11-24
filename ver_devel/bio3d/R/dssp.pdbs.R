@@ -10,7 +10,7 @@
       stop(paste(pdbs$id[i], "does not exist"))
     
     tmp.pdb = read.pdb(pdbs$id[i])
-    tmp.sse = dssp.pdb(tmp.pdb, resno=FALSE, full=FALSE, verbose=FALSE)
+    tmp.sse = dssp.pdb(tmp.pdb, resno=FALSE, full=FALSE, verbose=FALSE, ...)
     
     tmp.sse$sse[ tmp.sse$sse == " " ] = "-"
     sse[i,  which(gaps.res$bin[i,]==0)] = tmp.sse$sse
