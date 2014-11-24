@@ -9,14 +9,14 @@
   network. 
 }
 \usage{
-cnapath(x, from, to, k = 10, ncore = NULL, \dots)
-\method{summary}{cnapath}(pa, \dots, pdb = NULL, label = NULL, col = NULL,
+cnapath(cna, from, to, k = 10, ncore = NULL, \dots)
+\method{summary}{cnapath}(object, \dots, pdb = NULL, label = NULL, col = NULL,
    plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE)
-\method{print}{cnapath}(pa, \dots)
-view.cnapath(pa, pdb, out.prefix = "view.cnapath", launch = FALSE)
+\method{print}{cnapath}(x, \dots)
+view.cnapath(x, pdb, out.prefix = "view.cnapath", launch = FALSE)
 }
 \arguments{
-  \item{x}{ A \sQuote{cna} object obtained from \code{\link{cna}}. }
+  \item{cna}{ A \sQuote{cna} object obtained from \code{\link{cna}}. }
   \item{from}{ Integer, node id for the source. }
   \item{to}{ Integer, node id for the sink. }
   \item{k}{ Integer, number of suboptimal paths to identify. }
@@ -27,7 +27,7 @@ view.cnapath(pa, pdb, out.prefix = "view.cnapath", launch = FALSE)
        the function \code{cnapath}), passed to \code{summary.cnapath} 
        (in the function \code{print.cnapath}), or as additional 
        paths for comparison (in the function \code{summary.cnapath}). }
-  \item{pa}{ A \sQuote{cnapath} class of object obtained from 
+  \item{object}{ A \sQuote{cnapath} class of object obtained from 
        \code{\link{cnapath}}. Multiple \sQuote{pa} input is allowed for 
        comparative statistical analysis in \code{\link{summary.cnapath}}. }
   \item{pdb}{ A \sQuote{pdb} class of object obtained from \code{\link{read.pdb}} 
@@ -40,7 +40,9 @@ view.cnapath(pa, pdb, out.prefix = "view.cnapath", launch = FALSE)
   \item{concise}{ logical, if TRUE only \sQuote{on path} residues will be displayed. }
   \item{cutoff}{ numeric, degeneracy cutoff for displaying nodes on paths. }
   \item{normalize}{ logical, if TRUE node degeneracy is defined by the percentage 
-       of total number of paths. }
+    of total number of paths. }
+  \item{x}{ A \sQuote{cnapath} class of object obtained from 
+    \code{\link{cnapath}}. }
   \item{out.prefix}{ prefix for the names of output files, \sQuote{view.vmd}
        and \sQuote{view.pdb}. }
   \item{launch}{ logical, if TRUE VMD will be launched. }

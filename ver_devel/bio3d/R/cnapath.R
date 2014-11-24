@@ -4,18 +4,18 @@
 # Yen, J.Y. (1971) Finding the K Shortest Loopless Paths in a Network.
 # Management Science. 17(11):712-716.
 
-cnapath <- function(x, from, to, k = 10, ncore = NULL, ...) {
-
+cnapath <- function(cna, from, to, k = 10, ncore = NULL, ...) {
+  
   oops <- requireNamespace("igraph", quietly = TRUE)
   if (!oops) 
      stop("igraph package missing: Please install, see: ?install.packages")
   
-  if(!inherits(x, "cna")) 
-     stop("Input x is not a 'cna' object")
+  if(!inherits(cna, "cna")) 
+     stop("Input cna is not a 'cna' object")
 
   ncore = setup.ncore(ncore)
 
-  graph = x$network
+  graph = cna$network
 
   # which path from the list is the shortest?
   select.shortest.path <- function(variants){

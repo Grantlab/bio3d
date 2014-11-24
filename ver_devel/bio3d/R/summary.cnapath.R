@@ -1,7 +1,7 @@
-summary.cnapath <- function(pa, ..., pdb = NULL, label = NULL, col = NULL, 
-   plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE) {
-
-   pa <- list(pa, ...)
+summary.cnapath <- function(object, ..., pdb = NULL, label = NULL, col = NULL, 
+                            plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE) {
+   
+   pa <- list(object, ...)
    if(!all(sapply(pa, inherits, "cnapath")))
       stop("Input pa is not a 'cnapath' object")
    
@@ -106,16 +106,16 @@ summary.cnapath <- function(pa, ..., pdb = NULL, label = NULL, col = NULL,
    return(out)
 }
 
-print.cnapath <- function(pa, ...) {
+print.cnapath <- function(x, ...) {
    dots = list(...)
 
-   if(is.list(pa) && all(sapply(pa, inherits, "cnapath"))) {
-      if(!"label" %in% names(dots) || is.null(dots$label)) dots$label = names(pa)
-      names(pa) <- NULL
-      args = c(pa, dots)
+   if(is.list(x) && all(sapply(x, inherits, "cnapath"))) {
+      if(!"label" %in% names(dots) || is.null(dots$label)) dots$label = names(x)
+      names(x) <- NULL
+      args = c(x, dots)
       o <- do.call(summary, args)
    } else {
-      o <- summary(pa, ...)
+      o <- summary(x, ...)
    }
 
    if("plot" %in% names(dots)) plot = dots$plot

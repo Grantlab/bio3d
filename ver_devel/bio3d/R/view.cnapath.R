@@ -1,17 +1,17 @@
-view.cnapath <- function(pa, pdb, out.prefix = "view.cnapath", launch = FALSE) {
+view.cnapath <- function(x, pdb, out.prefix = "view.cnapath", launch = FALSE) {
 
-   if(!inherits(pa, "cnapath")) 
-      stop("Input pa is not a 'cnapath' object")
+   if(!inherits(x, "cnapath")) 
+      stop("Input x is not a 'cnapath' object")
 
    file = paste(out.prefix, ".vmd", sep="")
    pdbfile = paste(out.prefix, ".pdb", sep="")
 
-   res <- unique(unlist(pa$path))
-   ind.source <- match(pa$path[[1]][1], res)
-   ind.sink <- match(pa$path[[1]][length(pa$path[[1]])], res)
+   res <- unique(unlist(x$path))
+   ind.source <- match(x$path[[1]][1], res)
+   ind.sink <- match(x$path[[1]][length(x$path[[1]])], res)
    
-   rmin <- min(pa$dist)
-   rmax <- max(pa$dist)
+   rmin <- min(x$dist)
+   rmax <- max(x$dist)
    rad <- function(r, rmin, rmax, radmin = 0.01, radmax = 0.5) {
       (rmax - r) / (rmax - rmin) * (radmax - radmin) + radmin
    }
@@ -20,14 +20,14 @@ view.cnapath <- function(pa, pdb, out.prefix = "view.cnapath", launch = FALSE) {
    col.mat <- matrix(NA, length(res), length(res))
    conn <- matrix(0, length(res), length(res))
    rr <- conn
-   for(j in 1:length(pa$path)) {
-      x = pa$path[[j]]
+   for(j in 1:length(x$path)) {
+      x = x$path[[j]]
       for(i in 1:(length(x)-1)) {
          i1 = match(x[i], res)
          i2 = match(x[i+1], res)
          if(conn[i1, i2] == 0) conn[i1, i2] = conn[i2, i1] = 1
-         r = rad(pa$dist[j], rmin, rmax)
-         ic = floor((rmax - pa$dist[j]) / (rmax - rmin) * 255) + 1
+         r = rad(x$dist[j], rmin, rmax)
+         ic = floor((rmax - x$dist[j]) / (rmax - rmin) * 255) + 1
          col = cols[ic]
          if(r > rr[i1, i2]) {
             rr[i1, i2] = rr[i2, i1] = r
