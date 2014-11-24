@@ -49,8 +49,9 @@ function(pdb, type = c("original", "pdb", "charmm", "amber", "gromacs"),
     prev.chain.res = 0  ## Number of residues in previous chain
     for (i in 1:length(s.ind)) {
       ## Combination of resno and insert code define a residue (wwpdb.org)
-      resno0 <- paste0(pdb$atom[s.ind[i]:e.ind[i], "resno"], 
-                       pdb$atom[s.ind[i]:e.ind[i], "insert"])
+      insert = pdb$atom[s.ind[i]:e.ind[i], "insert"]
+      insert[is.na(insert)] = ""
+      resno0 <- paste0(pdb$atom[s.ind[i]:e.ind[i], "resno"], insert)
 
       ## Ordered table of residue occurrences
       tbl <- table(resno0)[unique(resno0)]
@@ -64,20 +65,20 @@ function(pdb, type = c("original", "pdb", "charmm", "amber", "gromacs"),
       if(length(pdb$helix)>0) {
          chs = unique(pdb$helix$chain)
 
-         t.inds = match(pdb$helix$start[pdb$helix$chain %in% chs[i]], resno0)
+         t.inds = match(pdb$helix$start[pdb$helix$chain %in% chs[i]], unique(resno0))
          pdb$helix$start[pdb$helix$chain %in% chs[i]] = new.nums[t.inds]
 
-         t.inds = match(pdb$helix$end[pdb$helix$chain %in% chs[i]], resno0)
+         t.inds = match(pdb$helix$end[pdb$helix$chain %in% chs[i]], unique(resno0))
          pdb$helix$end[pdb$helix$chain %in% chs[i]] = new.nums[t.inds]
       }
 
       if(length(pdb$sheet)>0) {
          chs = unique(pdb$sheet$chain)
 
-         t.inds = match(pdb$sheet$start[pdb$sheet$chain %in% chs[i]], resno0)
+         t.inds = match(pdb$sheet$start[pdb$sheet$chain %in% chs[i]], unique(resno0))
          pdb$sheet$start[pdb$sheet$chain %in% chs[i]] = new.nums[t.inds]
 
-         t.inds = match(pdb$sheet$end[pdb$sheet$chain %in% chs[i]], resno0)
+         t.inds = match(pdb$sheet$end[pdb$sheet$chain %in% chs[i]], unique(resno0))
          pdb$sheet$end[pdb$sheet$chain %in% chs[i]] = new.nums[t.inds]
       }
     
