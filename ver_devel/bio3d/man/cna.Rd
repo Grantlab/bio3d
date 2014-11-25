@@ -151,7 +151,7 @@ net <- cna(cij)
 
 # Plot coarse grained network based on dynamically coupled communities
 xy <- plot.cna(net)
-plot.dccm2(cij, margin.segments=net$communities$membership)
+plot.dccm(cij, margin.segments=net$communities$membership)
 
 
 ##-- Begin to examine network structure - see CNA vignette for more details

@@ -1,6 +1,5 @@
 \name{plot.dccm}
 \alias{plot.dccm}
-\alias{plot.dccm2}
 \title{ DCCM Plot }
 \description{
   Plot a dynamical cross-correlation matrix.
@@ -91,10 +90,10 @@
 
   ## Plot with cluster annotation from dynamic network analysis
   #net <- cna(cij)
-  #plot.dccm2(cij, margin.segments=net$raw.communities$membership)
+  #plot.dccm(cij, margin.segments=net$raw.communities$membership)
 
   ## Focus on major communities (i.e. exclude those below a certain total length)
-  #plot.dccm2(cij, margin.segments=net$raw.communities$membership, segment.min=25)
+  #plot.dccm(cij, margin.segments=net$raw.communities$membership, segment.min=25)
 
 }
 
