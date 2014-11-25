@@ -6,7 +6,7 @@
   marginal regions.
 }
 \usage{
-\method{plot}{bio3d}(x, resno = NULL, type = "h", main = "", sub = "", xlim = NULL, ylim = NULL, 
+\method{plot}{bio3d}(x, resno = NULL, rm.gaps = FALSE, type = "h", main = "", sub = "", xlim = NULL, ylim = NULL, 
                  ylim2zero = TRUE, xlab = "Residue", ylab = NULL, axes = TRUE, 
                  ann = par("ann"), col = par("col"), sse = NULL,
                  sse.type="classic", sse.min.length=5, top = TRUE, bot = TRUE, 
@@ -20,6 +20,8 @@
     \sQuote{x} that will be used to annotate the xaxis. This is typically
     a vector of residue numbers. If NULL residue positions from 1 to the
     length of \sQuote{x} will be used. See examples below. }
+  \item{rm.gaps}{ logical, if TRUE gaps in \code{x}, indicated by NA values,
+    will be removed from plot. }
   \item{type}{ one-character string giving the type of plot desired.  The
     following values are possible, (for details, see \sQuote{plot}): \sQuote{p}
     for points, \sQuote{l} for lines, \sQuote{o} for over-plotted points and
@@ -109,6 +111,20 @@ sse <- dssp(pdb)
 plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor", typ="l",
 col="blue", lwd=2)
 }
+
+## Data with gaps
+attach(transducin)
+
+pdb = read.pdb("1tnd")
+pdb = trim.pdb(pdb, inds=atom.select(pdb, chain="A"))
+
+## Plot of B-factor values with gaps
+plot.bio3d(pdbs$b, resno=pdb, sse=pdb, ylab="B-factor")
+
+## Plot of B-factor values after removing all gaps 
+plot.bio3d(pdbs$b, rm.gaps=TRUE, resno = pdb, sse=pdb, ylab="B-factor")
+
+detach(transducin)
 
 ## Fancy secondary structure elements
 ##plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=pdb, ssetype="fancy")

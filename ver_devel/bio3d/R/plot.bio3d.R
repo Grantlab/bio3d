@@ -1,4 +1,4 @@
-plot.bio3d <- function(x, resno=NULL, type="h",
+plot.bio3d <- function(x, resno=NULL, rm.gaps = FALSE, type="h",
                   main="", sub="",
                   xlim=NULL, ylim=NULL, ylim2zero=TRUE,
                   xlab = "Residue", ylab = NULL, 
@@ -7,7 +7,7 @@ plot.bio3d <- function(x, resno=NULL, type="h",
                   sse=NULL, sse.type="classic", sse.min.length=5,
                   top=TRUE, bot=TRUE,
                   helix.col="gray20", sheet.col="gray80",
-                  sse.border=FALSE,
+                  sse.border=FALSE, 
                   ...) {
 
   
@@ -38,7 +38,10 @@ plot.bio3d <- function(x, resno=NULL, type="h",
     }
     return(ss)
   }
-
+ 
+  ## Check for gap positions 
+  gaps.pos = gap.inspect(x)
+  if(is.matrix(x)) x = x[1, ]   ## should support matrix in future
 
   if(!is.null(resno)) {
     if(is.pdb(resno)) {
@@ -46,13 +49,24 @@ plot.bio3d <- function(x, resno=NULL, type="h",
       ca.inds <- atom.select(resno, "calpha", verbose = FALSE)
       resno <- resno$atom$resno[ca.inds$atom]
     }
+    if(any(is.na(x))) {
+       tmp.resno <- rep(NA, length(x))
+       tmp.resno[!is.na(x)] = resno
+       resno = tmp.resno
+    }
     if(length(resno) != length(x)) {
       warning("Length of input 'resno' does not equal the length of input 'x'; Ignoring 'resno'")
       resno=NULL
     }
   }
   
-  xy <- xy.coords(x)
+  if(rm.gaps) {
+     xy <- xy.coords(x[gaps.pos$f.inds])
+     if(!is.null(resno)) resno <- resno[gaps.pos$f.inds]
+  }
+  else 
+     xy <- xy.coords(x)
+
   if (is.null(xlim))
     xlim <- range(xy$x[is.finite(xy$x)])
   if (is.null(ylim))
@@ -79,6 +93,24 @@ plot.bio3d <- function(x, resno=NULL, type="h",
     if(length(e) > 0) {
       e <- e[e[,"length"] >= sse.min.length,]
     } else { e <- NULL }
+
+    ## For gaps
+    if(length(gaps.pos$t.inds) > 0) {
+
+       # unwrap SSE after length filtering
+       tmp.sse = rep(" ", length(x))
+       tmp.inds = which(!is.na(x))
+       if(length(h) > 0) tmp.sse[tmp.inds[unbound(h)]] = "H"
+       if(length(e) > 0) tmp.sse[tmp.inds[unbound(e)]] = "E"
+      
+       # remove gaps if required
+       if(rm.gaps) tmp.sse = tmp.sse[gaps.pos$f.inds] 
+
+       # new SSE segments
+       h <- bounds( which(tmp.sse == "H") )
+       e <- bounds( which(tmp.sse == "E") )
+
+    }
 
     if(sse.type != "classic")
       warning("Only sse.type='classic' is currently available, 'fancy' coming soon")
@@ -107,7 +139,7 @@ plot.bio3d <- function(x, resno=NULL, type="h",
       	if(length(e) > 0)
           rect(xleft=e[,"start"], xright=e[,"end"],
                ybottom=bo, ytop=to, col=sheet.col, border=sse.border)
-      }
+    }
   }
 
   if(axes) {
@@ -118,6 +150,7 @@ plot.bio3d <- function(x, resno=NULL, type="h",
       axis(1, at)
     } else {
       labels <- resno[at]
+      labels[is.na(labels)] <- "" # for gaps, no label
       axis(1, at=at, labels=labels)
     }
   }
