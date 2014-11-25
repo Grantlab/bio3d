@@ -51,8 +51,14 @@ xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
 ## Do PCA
 pca <- pca.xyz(xyz)
 
-## DCCM
-cij <- dccm(pca, pc = 1:10)
+## DCCM: only use first 10 PCs
+cij <- dccm(pca, pc = c(1:10))
+
+## Plot DCCM
+plot(cij)
+
+## DCCM: remove first 10 PCs
+cij <- dccm(pca, pc = -c(1:10))
 
 ## Plot DCCM
 plot(cij)
