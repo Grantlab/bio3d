@@ -68,7 +68,7 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   adding several sequences to a profile alignment. 
 }
 \value{
-  A list with two components:
+  Returns a list of class \code{"fasta"} with the following components:
   \item{ali}{ an alignment character matrix with a row per sequence and
     a column per equivalent aminoacid/nucleotide. }
   \item{ids}{ sequence names as identifers.}

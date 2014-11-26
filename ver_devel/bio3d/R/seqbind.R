@@ -1,4 +1,6 @@
 seqbind <- function(..., blank = "-") {
+  cl <- match.call()
+  
   objs <- list(...)
   are.null <- unlist(lapply(objs, is.null))
   objs <- objs[!are.null]
@@ -28,5 +30,6 @@ seqbind <- function(..., blank = "-") {
   objs <- do.call(rbind, objs)
 
   out <- as.fasta(objs, id=rownames(objs))
+  out$call <- cl
   return(out)
 }
