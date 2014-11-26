@@ -6,15 +6,15 @@
   marginal regions.
 }
 \usage{
-\method{plot}{bio3d}(x, resno = NULL, rm.gaps = FALSE, type = "h",
-                 main = "", sub = "", xlim = NULL, ylim = NULL, 
-                 axes = TRUE, ylim2zero = TRUE,
-                 xlab = "Residue", ylab = NULL, 
-                 ann = par("ann"), col = par("col"), sse = NULL,
-                 sse.type="classic", sse.min.length=5,
-                 top = TRUE, bot = TRUE, 
-                 helix.col = "gray20", sheet.col = "gray80",
-                 sse.border = FALSE, ...)
+  plot.bio3d(x, resno = NULL, rm.gaps = FALSE, type = "h",
+             main = "", sub = "", xlim = NULL, ylim = NULL, 
+             axes = TRUE, ylim2zero = TRUE,
+             xlab = "Residue", ylab = NULL, 
+             ann = par("ann"), col = par("col"), sse = NULL,
+             sse.type="classic", sse.min.length=5,
+             top = TRUE, bot = TRUE, 
+             helix.col = "gray20", sheet.col = "gray80",
+             sse.border = FALSE, ...)
 }
 \arguments{
   \item{x}{ a numeric vector of values to be plotted.  Any reasonable way of
