@@ -1,45 +1,19 @@
-dssp.xyz <- function(xyz, pdb, skip=1000, threshold=3, file.head="", ...) {
+dssp.xyz <- function(xyz, pdb, ...) {
   if(!is.pdb(pdb))
     stop("provide a pdb object as obtained from function 'read.pdb'")
 
   if(!is.xyz(xyz) | !is.matrix(xyz))
     stop("provide an xyz object containing the trajectory coordinates")
-  
-  ##Filtering
-  filter.raw <- seq(1,dim(xyz)[1],skip)
-  
-  ##DSSP calculation
-  dssp.ref  <- dssp.pdb(pdb, ...)
-  helix.ref <- sum(dssp.ref$helix$length)/sum(pdb$calpha)*100
-  sheet.ref <- sum(dssp.ref$sheet$length)/sum(pdb$calpha)*100
-  
-  unfold.frames <- NULL
-  for (frame in filter.raw){
-    pdb.temp     <- pdb
-    pdb.temp$xyz <- xyz[frame,]
-    dssp.test    <- dssp.pdb(pdb.temp, ...)
-    helix.test   <- sum(dssp.test$helix$length)/sum(pdb$calpha)*100
-    sheet.test   <- sum(dssp.test$sheet$length)/sum(pdb$calpha)*100
-    helix.diff   <- helix.ref - helix.test
-    sheet.diff   <- sheet.ref - sheet.test
-    
-    if (helix.diff >= helix.ref/threshold || sheet.diff >= sheet.ref/threshold) {
-      fname <- paste(file.head, frame, '.pdb', sep="")
-      cat('Possible unfolding event(s) in frame', frame, '\n')
-      cat('  ... saving frame to file', fname, '\n')
-      
-      write.pdb(pdb=pdb, file=fname, xyz=xyz[frame,])
-      unfold.frames <- c(unfold.frames, frame)
-    } 
+
+  sse.mat <- NULL
+  dims <- dim(xyz)
+  for (i in 1:dims[1L]) {
+    pdb.tmp     <- pdb
+    pdb.tmp$xyz <- xyz[i,]
+    sse     <- dssp.pdb(pdb.tmp, ...)$sse
+    sse.mat <- rbind(sse.mat, sse)
   }
-  
-  if(is.null(unfold.frames)) {
-    cat('DSSP completed with no detected unfolding frames.')
-  }
-  else {
-    cat(length(unfold.frames), 'unfolding frame(s) detected.')
-  }
-  cat("\n")
-  
-  return(unfold.frames)
+
+  ##sse.mat[ sse.mat==" " ] <- "-"
+  return(sse.mat)
 }
