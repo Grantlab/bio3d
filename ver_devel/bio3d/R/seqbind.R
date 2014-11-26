@@ -26,7 +26,7 @@ seqbind <- function(..., blank = "-") {
     cbind(x, matrix(add, nrow=nrow(x), ncol=n-ncol(x)))  
   objs <- lapply(objs, extend, n = max.col, add = blank)
   objs <- do.call(rbind, objs)
-  #out <- list(ali=objs, id=rownames(objs))
-  #class(out) <- "fasta"
-  return(objs)
+
+  out <- as.fasta(objs, id=rownames(objs))
+  return(out)
 }
