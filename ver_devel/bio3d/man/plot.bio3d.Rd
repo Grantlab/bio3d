@@ -6,11 +6,15 @@
   marginal regions.
 }
 \usage{
-\method{plot}{bio3d}(x, resno = NULL, rm.gaps = FALSE, type = "h", main = "", sub = "", xlim = NULL, ylim = NULL, 
-                 ylim2zero = TRUE, xlab = "Residue", ylab = NULL, axes = TRUE, 
+\method{plot}{bio3d}(x, resno = NULL, rm.gaps = FALSE, type = "h",
+                 main = "", sub = "", xlim = NULL, ylim = NULL, 
+                 axes = TRUE, ylim2zero = TRUE,
+                 xlab = "Residue", ylab = NULL, 
                  ann = par("ann"), col = par("col"), sse = NULL,
-                 sse.type="classic", sse.min.length=5, top = TRUE, bot = TRUE, 
-                 helix.col = "gray20", sheet.col = "gray80", sse.border = FALSE, ...)
+                 sse.type="classic", sse.min.length=5,
+                 top = TRUE, bot = TRUE, 
+                 helix.col = "gray20", sheet.col = "gray80",
+                 sse.border = FALSE, ...)
 }
 \arguments{
   \item{x}{ a numeric vector of values to be plotted.  Any reasonable way of
@@ -95,15 +99,18 @@
 \donttest{
 ## Plot of B-factor values along with secondary structure from PDB
 pdb <- read.pdb( "1bg2" )
-plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=pdb, ylab="B-factor")
-
-## Use PDB residue numbers and include short secondary structure elements
-plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=pdb, resno=pdb, ylab="B-factor",
-  typ="l", lwd=1.5, col="blue", sse.min.length=0)
+bfac <- pdb$atom[pdb$calpha,"b"]
+plot.bio3d(bfac, sse=pdb, ylab="B-factor", col="gray")
+points(bfac, typ="l")
 }
 
 \dontrun{
-## Calculate secondary structure
+## Use PDB residue numbers and include short secondary structure elements
+plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=pdb, resno=pdb, ylab="B-factor",
+  typ="l", lwd=1.5, col="blue", sse.min.length=0)
+
+
+## Calculate secondary structure using stride() or dssp()
 #sse <- stride(pdb)
 sse <- dssp(pdb)
 
@@ -112,10 +119,10 @@ plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor", typ="l",
 col="blue", lwd=2)
 }
 
-## Data with gaps
+## Plot 'aligned' data respecting gap positions
 attach(transducin)
 
-pdb = read.pdb("1tnd")
+pdb = read.pdb("1tnd") ## Reference PDB see: pdbs$id[1]
 pdb = trim.pdb(pdb, inds=atom.select(pdb, chain="A"))
 
 ## Plot of B-factor values with gaps
