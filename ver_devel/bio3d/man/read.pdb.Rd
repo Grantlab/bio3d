@@ -80,9 +80,13 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
   Temperature factor \dQuote{b}.
   See examples for further details.
 }
-\seealso{ \code{\link{atom.select}}, \code{\link{write.pdb}},
-  \code{\link{read.dcd}}, \code{\link{read.fasta.pdb}},
-  \code{\link{read.fasta}} }
+\seealso{
+  \code{\link{atom.select}}, \code{\link{write.pdb}},
+  \code{\link{trim.pdb}}, \code{\link{cat.pdb}}, 
+  \code{\link{read.prmtop}}, \code{\link{as.pdb}},
+  \code{\link{read.dcd}}, \code{\link{read.ncdf}}, 
+  \code{\link{read.fasta.pdb}}, \code{\link{read.fasta}}
+}
 \examples{
 ## Read a PDB file from the RCSB online database
 #pdb <- read.pdb("4q21")

@@ -17,7 +17,7 @@ dssp(\dots)
 
 \method{dssp}{pdbs}(pdbs, \dots)
 
-\method{dssp}{xyz}(xyz, pdb, skip=1000, threshold=3, file.head="", \dots)
+\method{dssp}{xyz}(xyz, pdb, \dots)
 
 stride(pdb, exefile = "stride", resno=TRUE)
 
@@ -37,17 +37,9 @@ stride(pdb, exefile = "stride", resno=TRUE)
   \item{pdbs}{ a list object of class \code{"pdbs"} (obtained with
     \code{\link{pdbaln}} or \code{\link{read.fasta.pdb}}). }
   \item{xyz}{ a trajectory object of class \code{"xyz"}, obtained from
-    \code{\link{read.ncdf}},  \code{\link{read.dcd}},
-    \code{\link{read.crd}}. } 
-  \item{skip}{ a number indicating the frame frequency in the trajectory
-    indicated; default = 1000. }
-  \item{threshold}{ a number indicating the threshold to be used for the
-    analysis: higher numbers will decrease the threshold, allowing to
-    accept structures with smaller secondary structure differences, with
-    respect of the reference \code{pdb} structure; default = 3} 
-  \item{file.head}{ a path where to save the structures with possible
-    unfolding events. }
-  \item{x}{ an \code{sse} object obtained from \code{\link{dssp}} or 
+    \code{\link{read.ncdf}}, \code{\link{read.dcd}},
+    \code{\link{read.crd}}. }
+  \item{x}{ an \code{sse} object obtained from \code{\link{dssp.pdb}} or 
     \code{\link{stride}}. }
   \item{...}{ additional arguments to and from functions. }
   }
@@ -159,8 +151,8 @@ sse <- dssp.pdbs(pdbs)
 
 
 ##- XYZ Trajectory
-pdb <- read.pdb("1d1d", multi=TRUE)
-dssp.xyz(pdb$xyz, pdb, skip = 100, threshold = 1.5)
+pdb <- read.pdb("2mda", multi=TRUE)
+dssp.xyz(pdb$xyz, pdb)
 
 }
 }

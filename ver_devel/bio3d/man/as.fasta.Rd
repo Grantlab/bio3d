@@ -23,7 +23,7 @@ as.fasta(x, id=NULL, \dots)
   Returns a list of class \code{"fasta"} with the following components:
   \item{ali}{ an alignment character matrix with a row per sequence and
     a column per equivalent aminoacid/nucleotide. }
-  \item{ids}{ sequence names as identifers.}
+  \item{id}{ sequence names as identifers.}
   \item{call }{ the matched call. }
 }
 \references{
