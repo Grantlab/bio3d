@@ -70,22 +70,9 @@ pdbs <- read.fasta.pdb(aln)
 id <- get.pdb("2kin", URLonly=TRUE)
 pdb <- read.pdb(id)
 
-# map the non-gap positions
-gap.inds <- gap.inspect(pdbs$resno)
+# add pdb to the alignment 
 naln <- pdb2aln(aln=pdbs, pdb=pdb, id=id)
-ninds <- which(naln$ref["ali.pos", ] \%in\% gap.inds$f.inds)
-npc.inds <- naln$ref["ca.inds", ninds]
-
-# If gaps are found in PDB sequence with the predefined indices,
-# redefine the non-gap positions
-ngap.f.inds <- gap.inds$f.inds[!is.na(npc.inds)]
-npc.inds <- npc.inds[!is.na(npc.inds)]
-
-##--- fit the atomic coordinates to the aligned X-ray structure
-xyz <- fit.xyz(pdbs$xyz[1,], pdb$xyz, atom2xyz(ngap.f.inds), atom2xyz(npc.inds))
-
-## seq2aln(pdbseq(pdb), aln, id = id)
-## do we get the same result
+naln
 
 }
 

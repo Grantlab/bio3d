@@ -13,7 +13,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
    
    aa1 <- pdbseq(pdb)
    
-   if(!is.null(aln.id)) findid <- grep(aln.id, aln$id)
+   if(!is.null(aln.id)) findid <- which(regexpr(aln.id, aln$id) > 0)
    if(is.null(aln.id) || length(findid)==0) {
       # do sequence-profile alignment
       naln <- seq2aln(seq2add=aa1, aln=aln, id=id, 
@@ -49,9 +49,9 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
       ntmp[,!ins] <- aln$ali
     
       ## Add seq to bottom of adjusted alignment
-      naln.ali <- seqbind(ntmp, seq2tmp$ali[2,])
-      rownames(naln.ali) <- c(rownames(aln$ali), id)
-      naln <- list(id=c(aln$id, id), ali=naln.ali)
+      naln <- seqbind(ntmp, seq2tmp$ali[2,])
+      rownames(naln$ali) <- c(rownames(aln$ali), id)
+      naln$id <- c(aln$id, id)
    }
    
    # original alignment positions (include gaps)
