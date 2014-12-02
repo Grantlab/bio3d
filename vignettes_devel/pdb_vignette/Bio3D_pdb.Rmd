@@ -1,0 +1,336 @@
+---
+title: "Getting started with Bio3D"
+author: "Lars Skjaerven, Xin-Qiu Yao & Barry J. Grant"
+date: "September 28, 2014"
+affiliation: University of Michigan, Ann Arbor
+output:
+  pdf_document:
+    highlight: default 
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+    fig_width: 5
+    fig_height: 5
+    fig_caption: yes
+  md_document:
+    fig_height: 5
+    fig_width: 5
+    variant: markdown_phpextra
+bibliography: Bio3D_pdb.bib
+documentclass: article
+fontsize: 11pt
+geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
+linkcolor: black
+---
+
+# Introduction
+
+Bio3D[^1] is an R package containing utilities for the analysis of biomolecular
+structure, sequence and trajectory data [@grant06].  Features include the ability
+to read and write biomolecular structure, sequence and dynamic trajectory data,
+perform atom selection, re-orientation, superposition, rigid core
+identification, clustering, distance matrix analysis, conservation
+analysis, normal mode analysis and principal component analysis. Bio3d
+takes advantage of the extensive graphical and statistical capabilities of the 
+[R environment](http://www.r-project.org) 
+and thus represents a useful framework for exploratory analysis of structural data.
+
+
+## Using this vignette
+The aim of this document, termed a vignette[^2] in R parlance, is to provide a 
+brief overview of Bio3D. A number of other Bio3D package vignettes are
+available, including:
+
+At the time of writing these include:
+
+-   `Installing Bio3D`
+
+-   `Comparative protein structure analysis with Bio3D`
+
+-   `Sequence conservation analysis with Bio3D`
+
+-   `Beginning trajectory analysis with Bio3D`
+
+-   `Dynamic network analysis with Bio3D`
+
+-   `Normal mode analysis with Bio3D`
+
+
+
+# Getting started
+Start R (type R at the command prompt or, on Windows, double click on the R icon) 
+and load the bio3d package by typing `library(bio3d)` at the R console prompt. 
+
+```{r eval=TRUE, echo=FALSE}
+library(bio3d)
+```
+
+Then use the command `lbio3d()` and `help()` to list the functions within the package
+```{r eval=FALSE}
+lbio3d()
+help(bio3d)
+```
+
+## Finding Help
+To get help on a particular function try `?`function or `help(function)`. 
+For example, `?pca.xyz`
+
+```{r eval=FALSE}
+?pca.xyz
+``` 
+
+To search the help system for documentation matching a particular word or topic use the 
+command `help.search("topic")`. For example, `help.search("pdb")`
+
+```{r eval=FALSE}
+help.search("pdb")
+ ```
+
+Typing `help.start()` will start a local HTML interface. 
+After initiating `help.start()` in a session the `?function` commands will open as HTML pages. 
+To execute examples for a particular function use the command `example(function)`. 
+To run examples for the `read.dcd` function try example(`read.dcd`) 
+
+
+## Bio3d Demo
+Run the command `demo(bio3d)` to obtain a quick overview.
+
+```{r eval=FALSE}
+demo(bio3d)
+``` 
+
+The bio3d package consists of input/output functions, conversion and manipulation functions, analysis functions, and graphics functions all of which are fully documented. Remember that you can get help on any particular function by using the command ?function or help(function) from within R. 
+
+```{r eval=FALSE}
+help(read.pdb)
+```
+
+
+## Example Function Usage}
+To better understand how a particular function operates it is often helpful to view and execute an example. Every function within the bio3d package is documented with example code that you can view by issuing the help command. 
+
+Running the command example(function) will directly execute the example for a given function. 
+In addition, a number of worked examples are available as short Tutorials on the bio3d website. 
+
+```{r eval=FALSE}
+example(plot.bio3d)
+```
+
+
+
+# Working with PDB files
+Protein Data Bank files (or PDB files) are the most common format for the distribution and storage of high-resolution biomolecular coordinate data. The bio3d package contains functions for the reading (read.pdb, read.fasta.pdb, get.pdb, convert.pdb, basename.pdb), writing (write.pdb) and manipulation (trim.pdb, cat.pdb, pdbsplit, atom.select, pdbseq) of PDB files. Indeed numerous bio3d analysis functions are intended to operate on PDB file derived data (e.g. blast.pdb, chain.pdb, nma.pdb, pdb.annotate, pdbaln, pdbfit, struct.aln, dssp, pca.pdbs etc.)
+
+At their most basic, PDB coordinate files contain a list of all the atoms of one or more molecular structures. Each atom position is defined by its x,y,z coordinates in a conventional orthogonal coordinate system. Additional data, including listings of observed secondary structure elements, are also commonly (but not always) detailed in PDB files.
+
+## Read a PDB file
+To read a single PDB file with bio3d we can use the read.pdb() function. The minimal input required for this function is a specification of the file to be read. This can be either the file name of a local file on disc or the RCSB PDB identifier of a file to read directly from the on-line PDB repository. For example to read and inspect the on-line file '4q21': 
+
+```{r eval=TRUE}
+pdb <- read.pdb("4q21")
+```
+
+To get a quick summary of contents of the 'pdb' object you just created you can type pdb (or the equivalent print(pdb))
+
+```{r eval=TRUE}
+pdb
+```
+
+Note that the attributes ('+ attr:') of this object are listed on the last couple of lines. To find the attributes of any such object you can use:
+
+```{r eval=TRUE}
+attributes(pdb)
+```
+
+To access these individual attributes we use the dollar-attribute_name convention that is common with R list objects. For example:
+
+```{r eval=TRUE}
+print(pdb$xyz)
+head(pdb$atom)
+
+# Print $atom data for the first two atoms
+pdb$atom[1:2, ]
+
+# Print a subset of $atom data for the first two atoms
+pdb$atom[1:2, c("eleno", "x","y","z")]
+     
+# Print coordinate data from $xyz
+head(pdb$xyz)
+
+# Note that this is a numeric vector where each atom has three values (x, y and z)
+pdb$xyz[ atom2xyz(1:2) ]
+```
+
+#### Side-note: The 'pdb' class
+Objects created by the read.pdb function are of class 'pdb'. This is recognized by other so called generic bio3d functions (for example atom.select, nma etc.). A generic function is a function that examines the class of its first argument, and then decides what type of operation to perform (more specifically it decides which specific method to dispatch to). So for example, the generic atom.select function knows that the input is of class 'pdb' rather than an AMBER parameter and topology file and will act accordingly. This is part of the S3 object orientation system and a full discussion is beyond the scope of this introductory vignette. For our current purposes, we should realize that the object orientated nature of bio3d can simplify and facilitate our work with these types of objects.
+
+
+## Atom selection 
+The bio3d atom.select() function is arguably one of the most challenging for newcomers to master. This function operates on PDB structure objects (as created by read.pdb) and returns the numeric indices of a selected atom subset. These indices can then be used to access the $atom and $xyz attributes of PDB structure related objects. 
+
+For example to find the indices for all C-alpha atoms we can use the following command:
+
+```{r eval=TRUE}
+# select all C-alpha atoms
+ca.inds <- atom.select(pdb, "calpha")
+ca.inds
+```
+
+Note that the attributes of the returned 'ca.inds' from atom.select include both atom and xyz components. These are numeric vectors that can be used to access the corresponding atom and xyz components of the input PDB structure object. For example:
+
+```{r eval=TRUE}
+# selected atoms
+head( pdb$atom[ca.inds$atom, ] )
+head( pdb$xyz[ca.inds$xyz] )
+```
+
+In addition to the common selection strings (such as ‘calpha’ ‘cbeta’ ‘backbone’ ‘protein’ ‘notprotein’ ‘ligand’ ‘water’ ‘notwater’ ‘h’ and ‘noh’) various individual atom properties can be used for selection. 
+
+```{r eval=TRUE, results="hide"}
+# select chain I
+a.inds <- atom.select(pdb, chain="A")
+
+# select C-alphas of chain A
+ca.inds <- atom.select(pdb, "calpha", chain="A")
+
+# can combine multiple selection criteria to return their intersection
+cab.inds <- atom.select(pdb, elety=c("CA","CB"), chain="A", resno=10:20)
+```
+
+
+#### Question:
+Using atom.select how would you extract the amino acid sequence of your structure in 3-letter and 1-letter forms? 
+
+#### Answer:
+First select the C-alpha atoms, and use the returned atom indices to access the 'resid' values of pdb$atom.
+```{r eval=TRUE}
+aa3 <- pdb$atom$resid[ atom.select(pdb, "calpha")$atom ]
+head(aa3)
+```
+From there you can use the utility function aa321 to convert to 1-letter from
+```{r eval=TRUE}
+aa321(aa3)
+```
+
+Note that if you tried searching with `help.search("PDB sequence", package="bio3d")` you likely found a bio3d function that essentially does this all for you. Namely pdbseq:
+
+```{r eval=TRUE}
+head( pdbseq(pdb) )
+```
+Given the large number of functions in the bio3d package using help.search can be an effective way to find functionality related to your specific task. 
+
+
+## Write a PDB object
+Use the command write.pdb to output a structure object to a PDB formated file on your local disc.
+
+```{r eval=TRUE, results="hide"}
+# Output a backbone only PDB file to disc
+b.inds <- atom.select(pdb, "back")
+b.pdb <- trim.pdb(pdb, b.inds)
+write.pdb(b.pdb, file="4q21_back.pdb")
+```
+
+
+## Manipulate a PDB object
+Basic functions for concatenating, trimming, splitting, converting, rotating, translating and superposing PDB files are available but often you will want to manipulate the PDB objects in a custom way. Below we give an example of such a manipulation. 
+
+
+#### WORK IN PROGRESS FROM HERE ON, CONTRIBUTIONS FROM OTHERS WELCOME.
+
+
+```{r eval=TRUE, results="hide"}
+pdb <- read.pdb("1atp")
+
+# generate C-alpha only PDB
+ca.inds <- atom.select(pdb, "calpha")
+ca.pdb <- trim.pdb(pdb, ca.inds)
+
+# write C-alpha PDB to disk
+write.pdb(ca.pdb, file="1ATP_CA.pdb")
+
+# use chain A and B instead of E and I
+e.inds <- which(ca.pdb$atom$chain == "E")
+i.inds <- which(ca.pdb$atom$chain == "I")
+
+ca.pdb$atom$chain[ e.inds ] <- "A"
+ca.pdb$atom$chain[ i.inds ] <- "B"
+
+# renumber residues
+ca.pdb$atom$resno[e.inds] <- seq(1, length(e.inds))
+ca.pdb$atom$resno[i.inds] <- seq(1, length(i.inds))
+```
+
+## Temperature factor analysis
+
+```{r eval=TRUE}
+plot.bio3d(ca.pdb$atom$b, sse=ca.pdb)
+
+```
+
+
+## Simiple structural alignment
+```{r eval=TRUE}
+# read two PKA structures
+a <- read.pdb("1atp")
+b <- read.pdb("1cmk")
+
+# different sequence 
+#a
+#b
+
+# perform iterative alignment
+aln <- struct.aln(a, b)
+
+# store new coordinates of protein B
+b$xyz <- aln$xyz
+
+```
+
+## Concatenate multiple PDBs
+```{r eval=TRUE}
+
+a1 <- trim.pdb(a, atom.select(a, chain="E"))
+b1 <- trim.pdb(b, atom.select(b, chain="E"))
+
+a2 <- trim.pdb(a, atom.select(a, chain="I"))
+b2 <- trim.pdb(b, atom.select(b, chain="I"))
+
+# concatenate PDBs
+new <- cat.pdb(a1, b1, a2, b2)
+unique(new$atom$chain)
+
+# write new PDB object to file
+write.pdb(new, file="1ATP-1CMK.pdb")
+
+```
+
+
+# Document Details {.unnumbered}
+This document is shipped with the Bio3D package in both R and PDF formats. All code
+can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
+
+```{r eval=FALSE}
+library(rmarkdown)
+render("Bio3D_pdb.Rmd", "all")
+```
+
+
+# Information About the Current Bio3D Session {.unnumbered}
+```{r}
+sessionInfo() 
+```
+
+
+# References {.unnumbered}
+
+
+
+[^1]: The latest version of the package, full documentation and further
+    vignettes (including detailed installation instructions) can be
+    obtained from the main Bio3D website:
+    [thegrantlab.org/bio3d/](http://thegrantlab.org/bio3d/).
+
+[^2]: This vignette contains executable examples, see `help(vignette)`
+    for further details.
+
+[^3]: See also dedicated vignettes for *ensemble NMA* provided with the Bio3D package.
