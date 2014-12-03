@@ -1,83 +1,130 @@
-"binding.site" <-
-  function(a, b = NULL,a.inds = NULL, b.inds = NULL,
-           cut=5, hydrogens=TRUE) {
+"binding.site" <- function(a, b = NULL, a.inds = NULL, b.inds = NULL,
+                           cutoff=5, hydrogens=TRUE, byres=TRUE, verbose=FALSE) {
 
+  cl <- match.call()
+
+  trim <- function(s, leading=TRUE, trailing=TRUE) {
+    if(leading)
+      s <- sub("^ +", "", s)
+    if(trailing)
+      s <- sub(" +$", "", s)
+    s[(s=="")]<-""
+    s
+  }
+  
   if (!is.pdb(a))
     stop("must supply an input 'pdb' object 'a', i.e. from 'read.pdb'")
 
+  ## workaround for NA chains
+  if(any(is.na(a$atom$chain)))
+    a$atom$chain[is.na(a$atom$chain)] <- " "
+
+  ## backup of the original pdb provided
+  a.orig <- a
+  
+  ## two PDBs provided
   if(!is.null(b)) {
     if(!is.pdb(b))
       stop("'b' should be a 'pdb' object as obtained from 'read.pdb'")
     
     if ( hydrogens ) {
       if(is.null(a.inds))
-        a.inds <- atom.select(a, string='///////')
+        a.inds <- atom.select(a, string='///////', verbose=verbose)
       if(is.null(b.inds))
-        b.inds <- atom.select(b, string='///////')
+        b.inds <- atom.select(b, string='///////', verbose=verbose)
     }
     else {
       if(is.null(a.inds))
-        a.inds <- atom.select(a, string='noh')
+        a.inds <- atom.select(a, string='noh', verbose=verbose)
       if(is.null(b.inds))
-        b.inds <- atom.select(b, string='noh')
+        b.inds <- atom.select(b, string='noh', verbose=verbose)
     }
   }
 
+  ## one PDB object is provided
   else {
-    complex <- a
-    a <- trim.pdb(complex, a.inds)
-    b <- trim.pdb(complex, b.inds)
+    if(is.null(a.inds) & is.null(b.inds)) {
+      a.inds <- atom.select(a, "protein", verbose=verbose)
+      b.inds <- atom.select(a, "ligand", verbose=verbose)
+    }
+    
+    b <- trim.pdb(a, b.inds)
+    a <- trim.pdb(a, a.inds)
 
     if ( hydrogens ) {
-      a.inds <- atom.select(a, string='///////')
-      b.inds <- atom.select(b, string='///////')
+      a.inds <- atom.select(a, string='///////', verbose=verbose)
+      b.inds <- atom.select(b, string='///////', verbose=verbose)
     }
     else {
-       a.inds <- atom.select(a, string='noh')
-       b.inds <- atom.select(b, string='noh')
+       a.inds <- atom.select(a, string='noh', verbose=verbose)
+       b.inds <- atom.select(b, string='noh', verbose=verbose)
      }
   }
 
-  # Join the coordinates of the two entities
-  c <- c(a$xyz[a.inds$xyz], b$xyz[b.inds$xyz])
-  last <- as.numeric(a$atom[nrow(a$atom),"resno"])
+  ## omit hydrogens if any
+  a <- trim.pdb(a, a.inds)
+  b <- trim.pdb(b, b.inds)
 
-  # .. and make the last PDB entity to one residue
-  b$atom[,"resno"] <- last+1
+  ## Calcuate pair-wise distances
+  dmat <- dist.xyz(matrix(a$xyz, ncol=3, byrow=TRUE), matrix(b$xyz, ncol=3, byrow=TRUE))
 
-  # Calcualte distance matrix and group by residue number
-  dmat <- dm.xyz(c, grpby=c(a$atom[a.inds$atom,"resno"],
-                      b$atom[b.inds$atom,"resno"]), scut=0)
+  ## atoms of a in contact with b
+  cmap <- apply(dmat, 1, function(x) any(x <= cutoff))
+  atom.inds <- which(cmap)
 
-  resno.map <- unique(c(a$atom[a.inds$atom,"resno"], b$atom[b.inds$atom,"resno"]))
-  ligresno <- unique(b$atom[b.inds$atom,"resno"])
+  ## return NULL if no atoms are closer than cutoff
+  if(length(atom.inds)<1)  {
+    cat("  no atoms found within", cutoff, "A\n")
+    return(NULL)
+  }
 
-  # Fetch ligand residue indices and its distances to the protein
-  inds <- which(resno.map %in% ligresno)
-  distances <- dmat[,inds]
-  close.inds <- which(distances<cut)
+  ## get rid of any trailing and leading spaces
+  a$atom$resid <- trim(a$atom$resid)
+  a$atom$resno <- trim(a$atom$resno)
+  a$atom$elety <- trim(a$atom$elety)
+  a.orig$atom$resno <- trim(a.orig$atom$resno)
+  a.orig$atom$elety <- trim(a.orig$atom$elety)
 
-  # Make the output
-  atom.inds <- which(a$atom[,"resno"] %in% resno.map[close.inds])
-  atom.inds <- intersect(atom.inds, a.inds$atom)
-  xyz.inds <- atom2xyz(atom.inds)
-
-  trim <- function(s) {
-    ##- Remove leading and trailing spaces from character strings
-    s <- sub("^ +", "", s)
-    s <- sub(" +$", "", s)
-    s[(s=="")]<-""
-    s
+  ## return all atoms in a contacting residue, otherwise, just the atoms
+  if(byres) {
+    resno.map  <- apply(a$atom[atom.inds, c("resno", "chain")], 1, paste, collapse="-")
+    all.resno  <- apply(a.orig$atom[, c("resno", "chain")],     1, paste, collapse="-")
+    atom.inds2 <- which(all.resno %in% resno.map)
+  }
+  else {
+    resno.map  <- apply(a$atom[atom.inds, c("elety", "resno", "chain")], 1, paste, collapse="-")
+    all.resno  <- apply(a.orig$atom[, c("elety", "resno", "chain")],     1, paste, collapse="-")
+    atom.inds2 <- which(all.resno %in% resno.map)
   }
   
-  resno <- as.numeric( unique(a$atom[atom.inds, "resno"]) )
-  resnames <- apply(a$atom[atom.inds,c("resid", "resno")], 1,
-                    function(x) paste(trim(x), collapse=""))
-  resnames <- unique(resnames)
+  xyz.inds <- atom2xyz(atom.inds2)
 
+  ## check for chain IDs
+  tmp <- unique(paste(a$atom[atom.inds, "resid"],
+                      a$atom[atom.inds, "resno"],
+                      a$atom[atom.inds, "chain"],
+                      sep="-"))
 
-  out <- list("atom.inds"=atom.inds, "xyz.inds"=xyz.inds,
-              "resnames"=resnames, "resno"=resno)
+  resno <- as.numeric(unlist(lapply(strsplit(tmp, "-"), function(x) x[2])))
+  chain <- unlist(lapply(strsplit(tmp, "-"), function(x) x[3]))
+  chain[chain==" "] <- NA
+  
+  if(all(is.na(chain))) {
+    resnames <- unique(paste(a$atom[atom.inds, "resid"], "-",
+                             a$atom[atom.inds, "resno"],
+                             sep=""))
+  }
+  else {
+    resnames <- unique(paste(a$atom[atom.inds, "resid"], "-",
+                             a$atom[atom.inds, "resno"],
+                             " (", a$atom[atom.inds, "chain"], ")",
+                             sep=""))
+  }
+
+  sele <- list(atom=atom.inds2, xyz=xyz.inds)
+  class(sele) <- "select"
+
+  out <- list(inds=sele, resnames=resnames, resno=resno, chain=chain, call=cl)
   return(out)
 }
 

@@ -137,22 +137,24 @@ sum(sse$sheet$length)/sum(pdb$calpha) * 100
 
 
 ##- PDBs example
-## Fetch PDB files and split to chain A only PDB files
-ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
-raw.files <- get.pdb(ids, path = "raw_pdbs")
-files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain")
+aln  <- read.fasta( system.file("examples/kif1a.fa",package="bio3d") )
+pdbs <- read.fasta.pdb( aln )
 
-## Sequence Alignement
-pdbs <- pdbaln(files)
+## Aligned PDB defined secondary structure
+pdbs$sse
 
-## SSE assignment
-sse <- dssp.pdbs(pdbs)
-
+## Aligned DSSP defined secondary structure 
+sse <- dssp(pdbs)
 
 
 ##- XYZ Trajectory
 pdb <- read.pdb("2mda", multi=TRUE)
 dssp.xyz(pdb$xyz, pdb)
+
+## Note. for large MD trajectories you may want to skip some frames, e.g.
+xyz <- rbind(pdb$xyz, pdb$xyz)       ## dummy trajectory
+frames <- seq(1, to=nrow(xyz), by=4) ## frame numbers to examine
+ss <- dssp.xyz(xyz[frames, pdb)      ## matrix of sse frame x residue
 
 }
 }

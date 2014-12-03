@@ -106,7 +106,7 @@ help(read.pdb)
 ```
 
 
-## Example Function Usage}
+## Example Function Usage
 To better understand how a particular function operates it is often helpful to view and execute an example. Every function within the bio3d package is documented with example code that you can view by issuing the help command. 
 
 Running the command example(function) will directly execute the example for a given function. 
@@ -124,7 +124,7 @@ Protein Data Bank files (or PDB files) are the most common format for the distri
 At their most basic, PDB coordinate files contain a list of all the atoms of one or more molecular structures. Each atom position is defined by its x,y,z coordinates in a conventional orthogonal coordinate system. Additional data, including listings of observed secondary structure elements, are also commonly (but not always) detailed in PDB files.
 
 ## Read a PDB file
-To read a single PDB file with bio3d we can use the read.pdb() function. The minimal input required for this function is a specification of the file to be read. This can be either the file name of a local file on disc or the RCSB PDB identifier of a file to read directly from the on-line PDB repository. For example to read and inspect the on-line file '4q21': 
+To read a single PDB file with bio3d we can use the read.pdb() function. The minimal input required for this function is a specification of the file to be read. This can be either the file name of a local file on disc or the RCSB PDB identifier of a file to read directly from the on-line PDB repository. For example to read and inspect the on-line file with PDB ID `4q21`: 
 
 ```{r eval=TRUE}
 pdb <- read.pdb("4q21")
@@ -157,11 +157,13 @@ pdb$atom[1:2, c("eleno", "x","y","z")]
 # Print coordinate data from $xyz
 head(pdb$xyz)
 
-# Note that this is a numeric vector where each atom has three values (x, y and z)
-pdb$xyz[ atom2xyz(1:2) ]
+# Note that this is a numeric matrix 
+# with 3N columns (each atom has three values (x, y and z))
+# and number of rows corresponding to the number for models in the PDB file
+pdb$xyz[ 1, atom2xyz(1:2) ]
 ```
 
-#### Side-note: The 'pdb' class
+### Side-note: The 'pdb' class
 Objects created by the read.pdb function are of class 'pdb'. This is recognized by other so called generic bio3d functions (for example atom.select, nma etc.). A generic function is a function that examines the class of its first argument, and then decides what type of operation to perform (more specifically it decides which specific method to dispatch to). So for example, the generic atom.select function knows that the input is of class 'pdb' rather than an AMBER parameter and topology file and will act accordingly. This is part of the S3 object orientation system and a full discussion is beyond the scope of this introductory vignette. For our current purposes, we should realize that the object orientated nature of bio3d can simplify and facilitate our work with these types of objects.
 
 
@@ -181,7 +183,7 @@ Note that the attributes of the returned 'ca.inds' from atom.select include both
 ```{r eval=TRUE}
 # selected atoms
 head( pdb$atom[ca.inds$atom, ] )
-head( pdb$xyz[ca.inds$xyz] )
+head( pdb$xyz[, ca.inds$xyz] )
 ```
 
 In addition to the common selection strings (such as ‘calpha’ ‘cbeta’ ‘backbone’ ‘protein’ ‘notprotein’ ‘ligand’ ‘water’ ‘notwater’ ‘h’ and ‘noh’) various individual atom properties can be used for selection. 
@@ -232,77 +234,194 @@ write.pdb(b.pdb, file="4q21_back.pdb")
 
 
 ## Manipulate a PDB object
-Basic functions for concatenating, trimming, splitting, converting, rotating, translating and superposing PDB files are available but often you will want to manipulate the PDB objects in a custom way. Below we give an example of such a manipulation. 
+Basic functions for concatenating, trimming, splitting, converting, rotating, translating and superposing PDB files are available but often you will want to manipulate the PDB objects in a custom way. 
+Below we provide a basic example of such manipulation. We read in a multi-chained PDB structure in which we reassign residue numbers and chain identifiers.  
 
 
-#### WORK IN PROGRESS FROM HERE ON, CONTRIBUTIONS FROM OTHERS WELCOME.
-
+**WORK IN PROGRESS FROM HERE ON, CONTRIBUTIONS FROM OTHERS WELCOME.**
 
 ```{r eval=TRUE, results="hide"}
-pdb <- read.pdb("1atp")
+pdb <- read.pdb("4lhy")
 
-# generate C-alpha only PDB
-ca.inds <- atom.select(pdb, "calpha")
-ca.pdb <- trim.pdb(pdb, ca.inds)
+# select chains A, E and F
+inds <- atom.select(pdb, chain=c("A", "E", "F"))
 
-# write C-alpha PDB to disk
-write.pdb(ca.pdb, file="1ATP_CA.pdb")
+# trim PDB to selection
+pdb2 <- trim.pdb(pdb, inds)
 
-# use chain A and B instead of E and I
-e.inds <- which(ca.pdb$atom$chain == "E")
-i.inds <- which(ca.pdb$atom$chain == "I")
+# reassign chain identifiers
+e.inds <- atom.select(pdb2, chain="E")
+f.inds <- atom.select(pdb2, chain="F")
 
-ca.pdb$atom$chain[ e.inds ] <- "A"
-ca.pdb$atom$chain[ i.inds ] <- "B"
+pdb2$atom$chain[ e.inds$atom ] <- "B"
+pdb2$atom$chain[ f.inds$atom ] <- "B"
 
-# renumber residues
-ca.pdb$atom$resno[e.inds] <- seq(1, length(e.inds))
-ca.pdb$atom$resno[i.inds] <- seq(1, length(i.inds))
+# renumber residues in chain B
+b.inds <- atom.select(pdb2, chain="B")
+j <- 0
+dups <- duplicated(pdb2$atom$resno[ b.inds$atom ])
+for(i in 1:length(b.inds$atom)) {
+    if(!dups[i]) j <- j+1	
+    pdb2$atom$resno[ b.inds$atom[i] ] <- j
+}
 ```
 
-## Temperature factor analysis
-
-```{r eval=TRUE}
-plot.bio3d(ca.pdb$atom$b, sse=ca.pdb)
-
+```{r eval=TRUE, results='hide'}
+# re-orient the PDB
+xyz <- orient.pdb(pdb2)
+write.pdb(pdb2, xyz=xyz, file="4LHY_AEF-oriented.pdb")
 ```
 
 
-## Simiple structural alignment
-```{r eval=TRUE}
+## Coordinate superposition and structural alignment
+Structure superposition is essential for direct comparison of multiple structures. 
+Bio3D offers versatile functionality to perform coordinate superposition at various levels. 
+Below we demonstrate the use of functions **struct.aln()** and **fit.xyz**. 
+
+Function **struct.aln()** performs a sequence alignment followed by a structural alignment of 
+two PDB objects. This facilitates rapid superposition of two PDB structures with unequal, but
+related PDB sequences. Below we use **struct.aln()** to superimpose the multi-chained PDB ID 
+`4lhy` to PDB ID `4q21`:
+
+```{r eval=TRUE, results='hide'}
 # read two PKA structures
-a <- read.pdb("1atp")
-b <- read.pdb("1cmk")
-
-# different sequence 
-#a
-#b
+a <- read.pdb("4q21")
+b <- read.pdb("4lhy")
 
 # perform iterative alignment
 aln <- struct.aln(a, b)
 
 # store new coordinates of protein B
 b$xyz <- aln$xyz
-
 ```
 
+Note that **struct.aln()** performs cycles of refinement steps of the structural alignment
+to improve the fit by removing atoms with a high structural deviation. At each cycle it prints
+associated RMSD value of atoms included in the alignment. The resulting superimposed structures 
+are optionally written to your hard drive at default folder with name `fitlsq/`. 
+
+While **struct.aln()** operates on a pair of PDB objects, function **fit.xyz()** can perform
+coordinate superposition on multiple structures. However, indices needs to provided ensuring the 
+same number of atoms for which the fitting should be based. Below we superimpose a specific helix
+of `4lhy` onto an equivalent helix of `4q21`: 
+
+
+```{r eval=TRUE, results='hide'}
+# indices at which the superposition should be based
+a.ind <- atom.select(a, "//A/87:103///CA/")
+b.ind <- atom.select(b, "//A/93:109///CA/")
+
+# perform superposition
+xyz <- fit.xyz(fixed=a$xyz, mobile=b$xyz,
+               fixed.inds=a.ind$xyz,
+               mobile.inds=b.ind$xyz)
+
+# write coordinates to file
+write.pdb(b, xyz=xyz, file="4LHY-at-4Q21.pdb")
+```
+
+![Result of fitting a specific helix in PDB ID `4lhy` onto an equivalent helix of PDB ID `4q21` using function **fit.xyz()**.](figures/4Q21-4LHY-fit.png)
+
+
 ## Concatenate multiple PDBs
-```{r eval=TRUE}
 
-a1 <- trim.pdb(a, atom.select(a, chain="E"))
-b1 <- trim.pdb(b, atom.select(b, chain="E"))
+```{r eval=TRUE, results='hide'}
+a1 <- trim.pdb(a, atom.select(a, chain="A"))
+b1 <- trim.pdb(b, atom.select(b, chain="A"))
 
-a2 <- trim.pdb(a, atom.select(a, chain="I"))
-b2 <- trim.pdb(b, atom.select(b, chain="I"))
+b2 <- trim.pdb(b, atom.select(b, chain="E"))
+b3 <- trim.pdb(b, atom.select(b, chain="F"))
 
 # concatenate PDBs
-new <- cat.pdb(a1, b1, a2, b2)
+new <- cat.pdb(a1, b1, b2, b3)
 unique(new$atom$chain)
 
 # write new PDB object to file
-write.pdb(new, file="1ATP-1CMK.pdb")
+write.pdb(new, file="4Q21-4LHY.pdb")
 
 ```
+
+
+## Binding site identification
+```{r eval=TRUE, results='hide'}
+# read two PKA structures
+pdb <- read.pdb("4q21")
+bs <- binding.site(pdb)
+```
+
+```{r eval=TRUE, results='hide'}
+print(bs$resnames)
+```
+
+
+
+```{r eval=TRUE, results='hide'}
+b <- read.pdb("4lhy")
+b1 <- trim.pdb(b, atom.select(b, chain="A"))
+b2 <- trim.pdb(b, atom.select(b, chain=c("E", "F")))
+
+bs <- binding.site(b1, b2)
+
+b1$atom$b[ bs$inds$atom ] <- 1
+b1$atom$b[ -bs$inds$atom ] <- 0
+
+write.pdb(b1, file="4LHY-interface.pdb")
+```
+
+![Visualization of interface residues as obtained from function **binding.site()**.](figures/4LHY-interace.png)
+
+
+
+# Working with multi-model PDB files
+
+```{r eval=TRUE, results='hide'}
+pdb <- read.pdb("1d1d", multi=TRUE)
+ca.inds <- atom.select(pdb, 'calpha')
+
+pdb$xyz
+
+pdb$xyz[1:5, ca.inds$xyz]
+```
+
+
+
+## Identification of dynamic domains
+```{r eval=TRUE, results='hide'}
+# Domain analysis
+gs  <- geostas(pdb)
+
+# Fit all frames to the 'first' domain
+domain.inds <- atom2xyz(which(gs$grps==1))
+
+xyz <- fit.xyz(pdb$xyz[1, ca.inds$xyz],
+               pdb$xyz[, ca.inds$xyz],
+               fixed.inds = domain.inds,
+               mobile.inds = domain.inds)
+
+# write fitted coordinates
+write.pdb(xyz=xyz, chain=gs$grps, file="1d1d_fit-domain1.pdb")
+```
+
+![Multi-model PDB with 20 frames superimposed on 'domain 1' (colored grey) identified using function **geostas()**. See also related function **core.find()**. ](figures/1d1d_vis-geostas.png)
+
+
+
+```{r eval=TRUE, results='hide'}
+# Invariant core
+core <- core.find(pdb$xyz[, ca.inds$xyz])
+
+# fit to core region
+xyz <- fit.xyz(pdb$xyz[1, ca.inds$xyz],
+               pdb$xyz[, ca.inds$xyz],
+               fixed.inds = core$xyz,
+               mobile.inds = core$xyz)
+
+# write fitted coordinates
+write.pdb(xyz=xyz, file="1d1d_fit-core.pdb")
+```
+
+
+
 
 
 # Document Details {.unnumbered}
