@@ -37,18 +37,45 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
      options(cores = ncore)
   }
 
-#  coords <- NULL; res.nu <- NULL
-#  res.bf <- NULL; res.ch <- NULL
   blank <- rep(NA, ncol(aln$ali))
  
   mylapply <- lapply
   if(ncore > 1) mylapply <- mclapply
+
+
+  pdb2sse <- function(pdb) {
+    ##- Function to obtain an SSE sequence vector from a PDB object
+    ##   Result similar to that returned by stride(pdb)$sse and dssp(pdb)$sse
+    ##   This could be incorporated into read.pdb() if found to be more generally useful
+
+    if(is.null(pdb$helix) & is.null(pdb$sheet)) {
+      warning("No helix and sheet defined in input 'sse' PDB object: try using dssp()")
+      ##ss <- try(dssp(pdb)$sse)
+      ## Probably best to get user to do this separately due to possible 'exefile' problems etc..
+      return(NULL)
+    }
+    rn <- pdb$atom[pdb$calpha, c("resno", "chain")]
+    ss <- rep(" ", nrow(rn))
+    names(ss) = paste(rn$resno,rn$chain,sep="_")
+
+    for(i in 1:length(pdb$helix$start)) {
+      ss[ (rn$chain==pdb$helix$chain[i] &
+           rn$resno >= pdb$helix$start[i] &
+           rn$resno <= pdb$helix$end[i])] = "H"
+    }
+    for(i in 1:length(pdb$sheet$start)) {
+      ss[ (rn$chain==pdb$sheet$chain[i] &
+           rn$resno >= pdb$sheet$start[i] &
+           rn$resno <= pdb$sheet$end[i])] = "E"
+    }
+    return(ss)
+  }
  
 #  for (i in 1:length(aln$id)) {
   retval <- mylapply(1:length(aln$id), function(i) {
     coords <- NULL; res.nu <- NULL
     res.bf <- NULL; res.ch <- NULL
-    res.id <- NULL
+    res.id <- NULL; res.ss <- NULL
     cat(paste("pdb/seq:",i,"  name:", aln$id[i]),"\n")
 
     if(!toread[i]) {
@@ -59,11 +86,11 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
       res.bf <- rbind(res.bf, blank)
       res.ch <- rbind(res.ch, blank)
       res.id <- rbind(res.id, blank)
+      res.ss <- rbind(res.ss, blank)
       
     } else {
       pdb <- read.pdb( files[i], verbose=FALSE, ... )
       ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
-      ##pdbseq  <- aa321(pdb$atom[pdb$calpha,"resid"])
       pdbseq  <- aa321(pdb$atom$resid[ca.inds$atom])
       aliseq  <- toupper(aln$ali[i,])
       tomatch <- gsub("X","[A-Z]",aliseq[!is.gap(aliseq)])
@@ -86,7 +113,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
       }
       nseq[ali.res.ind] = start.num:((start.num - 1) + length(tomatch))
 
-      ##-- Check for miss-matchs
+      ##-- Check for miss-matches
       match <- aliseq != pdbseq[nseq] 
       if ( sum(match, na.rm=TRUE) >= 1 ) {
         mismatch.ind <- which(match)
@@ -97,7 +124,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
           details <- rbind(aliseq, !match,
                            pdbseq[nseq],
                            pdb$atom$resno[ca.inds$atom][nseq])
-                           ##pdb$atom[pdb$calpha,"resno"][nseq])
+                           
           rownames(details) = c("aliseq","match","pdbseq","pdbnum")
           msg <- paste("ERROR:", aln$id[i],
                        "alignment and pdb sequences do not match")
@@ -107,26 +134,28 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
         }
       }
       
-      ##-- Store nseq justified PDB data
-      ##ca.ali <- pdb$atom[pdb$calpha,][nseq,]
+      ##-- Store nseq justified/aligned PDB data
       ca.ali <- pdb$atom[ca.inds$atom,][nseq,]
       coords <- rbind(coords, as.numeric( t(ca.ali[,c("x","y","z")]) ))
       res.nu <- rbind(res.nu, ca.ali[, "resno"])
       res.bf <- rbind(res.bf, as.numeric( ca.ali[,"b"] ))
       res.ch <- rbind(res.ch, ca.ali[, "chain"])
       res.id <- rbind(res.id, ca.ali[, "resid"])
-#    } # end for
-#  } # end else
-    } # end else
-    return (list(coords=coords, res.nu=res.nu, res.bf=res.bf, res.ch=res.ch, res.id=res.id))
-  } ) # end mylapply
+
+      sse <- pdb2sse(pdb)
+      res.ss <- rbind(res.ss, sse[nseq])
+    } ## end else for (non)missing PDB file
+    return (list(coords=coords, res.nu=res.nu, res.bf=res.bf, res.ch=res.ch, res.id=res.id, res.ss=res.ss))
+  } ) ## end mylapply
+
   retval <- do.call(rbind, retval)
   coords <- matrix(unlist(retval[, "coords"]), nrow=length(aln$id), byrow=TRUE)
   res.nu <- matrix(unlist(retval[, "res.nu"]), nrow=length(aln$id), byrow=TRUE)
   res.bf <- matrix(unlist(retval[, "res.bf"]), nrow=length(aln$id), byrow=TRUE)
   res.ch <- matrix(unlist(retval[, "res.ch"]), nrow=length(aln$id), byrow=TRUE)
   res.id <- matrix(unlist(retval[, "res.id"]), nrow=length(aln$id), byrow=TRUE)
-  
+  res.ss <- matrix(unlist(retval[, "res.ss"]), nrow=length(aln$id), byrow=TRUE)
+ 
 
   rownames(aln$ali) <- aln$id
   rownames(coords) <- aln$id
@@ -134,6 +163,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
   rownames(res.bf) <- aln$id
   rownames(res.ch) <- aln$id
   rownames(res.id) <- aln$id
+  rownames(res.ss) <- aln$id
  
   if(fix.ali) {
      i1 <- which(is.na(res.nu))
@@ -143,10 +173,12 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
         warning("$ali component is modified to match $resno")
      }
   }
+
   out<-list(xyz=coords, resno=res.nu, b=res.bf,
-            chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id,
+            chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id, sse=res.ss,
             call = cl)
   class(out)=c("pdbs","fasta")
+
   return(out)
 }
 

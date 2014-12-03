@@ -43,6 +43,8 @@ read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
   \item{id}{character vector of PDB sequence/structure names.}
   \item{ali}{character matrix of aligned sequences.}
   \item{resid}{character matrix of aligned 3-letter residue names.}
+  \item{sse}{character matrix of aligned helix and strand secondary
+    structure elements as defined in each PDB file.}  
   \item{call}{ the matched call. }
 }
 \references{
