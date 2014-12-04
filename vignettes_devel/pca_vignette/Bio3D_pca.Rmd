@@ -46,10 +46,8 @@ vignette(package="bio3d")
 ```
 
 Note that to follow along with this vignette the [MUSCLE multiple
-sequence alignment program](http://www.drive5.com/muscle/) and the [DSSP
-secondary structure assignment
-program](http://swift.cmbi.ru.nl/gv/dssp/) must be installed on your
-system and in the search path for executables. Please see the
+sequence alignment program](http://www.drive5.com/muscle/) must be installed 
+on your system and in the search path for executables. Please see the
 installation vignette for full details.
 
 
@@ -148,17 +146,17 @@ particular case). The indices can be used to access e.g. the Cartesian
 coordinates of the selected atoms (`pdb$xyz[, ca.inds$xyz]`), or residue
 numbers and B-factor data for the selected atoms. For example:
 
-```{r, fig.cap="Residue B-factor data for PDB id 1TAG. Grey boxes depict secondary structure elements in the structur (dark grey: alpha helices; light grey: beta sheets)."}
+```{r, fig.cap="Residue B-factor data for PDB id 1TAG. Grey boxes depict secondary structure elements in the structure (dark grey: alpha helices; light grey: beta sheets)."}
 resnos <- pdb$atom[ca.inds$atom, "resno"] 
 bfacts <- pdb$atom[ca.inds$atom, "b"] 
-plot.bio3d(resnos,bfacts, sse=pdb, ylab="B-factor", xlab="Residue", typ="l") 
+plot.bio3d(bfacts, resno=resnos, sse=pdb, ylab="B-factor", xlab="Residue", typ="l") 
 ```
 
 In the above example we use these indices to plot residue number vs
 B-factor along with a basic secondary structure schematic (provided with
 the argument `sse=pdb`; Figure 1). As a further example of data access
-lets extract the sequence for the loop region (P-loop) between strand 3
-(beta 1) and helix 1 in our `pdb` object.
+lets extract the sequence for the loop region (P-loop) between beta 1 
+(the third strand in the beta sheet) and alpha 1 in our `pdb` object.
 
 ```{r}
 loop <- pdb$sheet$end[3]:pdb$helix$start[1]
@@ -184,13 +182,13 @@ three-letter and one-letter IUPAC amino acid codes.
 
 #### Question: {.unnumbered}
 
-How would select all backbone or sidechain atoms? HINT: see the example
+How would you select all backbone or sidechain atoms? HINT: see the example
 section of `help(atom.select)` and the `string` option.
 
 #### Side-note: {.unnumbered}
 
-Consider using the `help(combine.sel)` function when dealing with more
-complicated selections.
+Consider the `combine.sel` function for combining multiple atom selections. 
+See `help(combine.sel)` for more details. 
 
 
 ## Working with multiple PDB structures
@@ -211,8 +209,11 @@ identification, clustering, torsion analysis, distance matrix analysis,
 structure and sequence conservation analysis, normal mode analysis
 across related structures, and principal component analysis of
 structural ensembles. We will demonstrate some of these utilities in the
-following sections and in other package vignettes. However, before
-delving into more advanced analysis lets examine how we can read
+following sections. More comprehensive demonstrations for special tasks, e.g.
+various operations of PDB structures, analysis of MD trajectories 
+and normal mode analysis can be found in corresponding vignettes.
+
+Before delving into more advanced analysis lets examine how we can read
 multiple PDB structures from the RCSB PDB for a particular protein and
 perform some basic analysis:
 
@@ -281,11 +282,10 @@ stimuli promotes a cycle of GTP binding and hydrolysis on the G protein
 alpha subunit that leads to conformational rearrangements (i.e. internal
 structural changes) that activate multiple downstream effectors. The
 current dataset consists of transducin (including Gt and Gi/o) alpha
-subunit sequence and structural data and can be loaded with the command
-`data(transducin)`:
+subunit sequence and structural data and can be accessed with the command
+`attach(transducin)`:
 
 ```{r transducin, results="hide", message=FALSE,}
-data(transducin) 
 attach(transducin)
 ```
 
@@ -356,10 +356,8 @@ correspondences (**NOTE:** requires external program *MUSCLE* be in
 search path for executables):
 
 ```{r getpdbs, eval=FALSE}
-unq.ids <- unique(substr(hits$pdb.id, 1, 4) )
-# Download and chain split PDBs
-raw.files <- get.pdb(unq.ids, path="raw_pdbs")
-files <- pdbsplit(raw.files, ids=hits$pdb.id, path="raw_pdbs/split_chain")
+# Download PDBs and split by chain ID
+files <- get.pdb(hits, path="raw_pdbs", split = TRUE)
 
 # Extract and align sequences 
 pdbs <- pdbaln(files)
@@ -510,16 +508,13 @@ positions,  which we then exclude from subsequent RMSF calculation:
 gaps.res <- gap.inspect(pdbs$ali)
 gaps.pos <- gap.inspect(pdbs$xyz)
 
-# Plot loadings in relation to reference structure "1TAG"
+# Tailor the PDB structure to exclude gap positions for SSE annotation
+id = grep("1TAG", pdbs$id)
+ref.pdb = trim.pdb(pdb, inds=atom.select(pdb, resno = pdbs$resno[id, gaps.res$f.inds]))
 
-# Annotate SSE with renumbered residue indices
-sse <- dssp(pdb, resno=FALSE)
-ind <- grep("1TAG", pdbs$id)
-res.ref <- which(!is.gap(pdbs$ali[ind,])) 
-res.ind <- which(res.ref %in% gaps.res$f.ind)
-
-rf <- rmsf(xyz[, gaps.pos$f.inds]) 
-plot.bio3d(res.ind, rf, sse=sse, ylab="RMSF (Å)", xlab="Position", typ="l") 
+# Plot RMSF with SSE annotation and labeled with residue numbers
+rf <- rmsf(xyz[, gaps.pos$f.inds])
+plot.bio3d(rf, resno=ref.pdb, sse=ref.pdb, ylab="RMSF (Å)", xlab="Residue No.", typ="l") 
 ```
 
 
@@ -536,26 +531,26 @@ tor <- torsion.pdb(pdb)
 plot(tor$phi, tor$psi, xlab="phi", ylab="psi") 
 ```
 
-Lets compare the Calpha atom based pseudo-torsion angles between two structures:
+Lets compare the Calpha atom based pseudo-torsion angles between two structures, the inactive (PDB ID 1TAG) and active (PDB ID 1TND) transducin alpha subunit:
 
-```{r, fig.cap="Torsion angle difference between structures in GDP (1tag) and GTP (1tnd) nucleotide states"}
+```{r, fig.cap="Torsion angle difference between structures in inactive GDP bound (1tag) and active GTP analogue bound (1tnd) states"}
+# Locate the two structures in pdbs
 ind.a <- grep("1TAG_A", pdbs$id)
 ind.b <- grep("1TND_B", pdbs$id)
 
-a.xyz <- pdbs$xyz[ind.a,]
-b.xyz <- pdbs$xyz[ind.b,]
+# Exclude gaps in the two structures to make them comparable
+gaps.xyz2 <- gap.inspect(pdbs$xyz[c(ind.a, ind.b), ])
+a.xyz <- pdbs$xyz[ind.a, gaps.xyz2$f.inds]
+b.xyz <- pdbs$xyz[ind.b, gaps.xyz2$f.inds]
 
-gaps2.xyz <- is.gap(pdbs$xyz[ind.a,])
-gaps2.res <- is.gap(pdbs$ali[ind.a,]) 
-resno <- pdbs$resno[ind.a, !gaps2.res]
-
-a <- torsion.xyz(a.xyz[!gaps2.xyz],atm.inc=1)
-b <- torsion.xyz(b.xyz[!gaps2.xyz],atm.inc=1)
+# Compare CA based pseudo-torsion angles between the two structures
+a <- torsion.xyz(a.xyz, atm.inc=1)
+b <- torsion.xyz(b.xyz, atm.inc=1)
 d.ab <- wrap.tor(a-b)
+d.ab[is.na(d.ab)] <- 0
 
-# Annotate SSE with original PDB numbers
-sse2 <- dssp(read.pdb("1tag"))
-plot.bio3d(resno, abs(d.ab), typ="h", sse=sse2, xlab="Residue", ylab="Angle")
+# Plot results with SSE annotation
+plot.bio3d(abs(d.ab), resno=pdb, sse=pdb, typ="h", xlab="Residue No.", ylab = "Difference Angle")
 ```
 
 
@@ -566,11 +561,10 @@ maps with the function `cmap()`. In the example below we calculate the
 difference distance matrix by simply subtracting one distance matrix from another. Note the vectorized nature of the this calculation (i.e. we do not have to explicitly iterate through each element of the matrix):
 
 ```{r, fig.width=5.5, results="hide", fig.cap="Difference of distance matrices between structures in GDP(1tag) and GTP(1tnd) nucleotide states"}
-a <- dm(a.xyz[!gaps2.xyz]) 
-b <- dm(b.xyz[!gaps2.xyz])
+a <- dm(a.xyz) 
+b <- dm(b.xyz)
 
-plot( (a - b), nlevels=10, grid.col="gray", resnum.1=resno,
-resnum.2=resno, xlab="1tag", ylab="1tnd (positions relative to 1tag)") 
+plot( (a - b), nlevels=10, grid.col="gray", xlab="1tag", ylab="1tnd") 
 ```
 
 #### Question: {.unnumbered}
@@ -590,7 +584,7 @@ molecular dynamics trajectory analysis vignette.
 
 Briefly, the resulting principal components (orthogonal eigenvectors)
 describe the axes of maximal variance of the distribution of structures.
-Projection of the distribution onto the subspace defined by the largest
+Projection of the distribution onto the space defined by the largest
 principal components results in a lower dimensional representation of
 the structural dataset. The percentage of the total mean square
 displacement (or variance) of atom positional fluctuations captured in
@@ -631,20 +625,19 @@ residue to the first three principal components with the following
 commands (Figure 13).
 
 ```{r, eval=FALSE}
-par(mfrow = c(3, 1), cex = 0.6, mar = c(3, 4, 1, 1))
-plot.bio3d(res.ind, pc.xray$au[,1], sse=sse, ylab="PC1 (A)")
-plot.bio3d(res.ind, pc.xray$au[,2], sse=sse, ylab="PC2 (A)")
-plot.bio3d(res.ind, pc.xray$au[,3], sse=sse, ylab="PC3 (A)")
-par(op)
+par(mfrow = c(3, 1), cex = 0.75, mar = c(3, 4, 1, 1))
+plot.bio3d(pc.xray$au[,1], resno=ref.pdb, sse=ref.pdb, ylab="PC1")
+plot.bio3d(pc.xray$au[,2], resno=ref.pdb, sse=ref.pdb, ylab="PC2")
+plot.bio3d(pc.xray$au[,3], resno=ref.pdb, sse=ref.pdb, ylab="PC3")
 ```
 
 ```{r, fig.height=6, fig.width=6, echo=FALSE, fig.cap="Contribution of each residue to the first three principal components"}
 
 op <- par(no.readonly=TRUE) 
 par(mfrow = c(3, 1), cex = 0.75, mar = c(3, 4, 1, 1)) 
-plot.bio3d(res.ind, pc.xray$au[,1], sse=sse, ylab="PC1 (A)")
-plot.bio3d(res.ind, pc.xray$au[,2], sse=sse, ylab="PC2 (A)")
-plot.bio3d(res.ind, pc.xray$au[,3], sse=sse, ylab="PC3 (A)")
+plot.bio3d(pc.xray$au[,1], resno=ref.pdb, sse=ref.pdb, ylab="PC1")
+plot.bio3d(pc.xray$au[,2], resno=ref.pdb, sse=ref.pdb, ylab="PC2")
+plot.bio3d(pc.xray$au[,3], resno=ref.pdb, sse=ref.pdb, ylab="PC3")
 par(op)
 ``` 
 
@@ -691,7 +684,7 @@ plot(pc.xray$z[, 1:2], typ="p", pch=16, col=cols, xlab="PC1", ylab="PC2")
 ```{r, fig.width=7, fig.height=5, fig.cap="Clustering based on PC1-PC2"}
 # Dendrogram plot
 names(cols) <- pdbs$id
-hclustplot(hc, colors=cols, ylab="Distance in PC Space", main="PC1-2", fillbox=FALSE)
+hclustplot(hc, colors=cols, ylab="Distance in PC Space", main="PC1-2", cex=0.5, fillbox=FALSE)
 ```
 
 #### Sidenote: {.unnumbered}
