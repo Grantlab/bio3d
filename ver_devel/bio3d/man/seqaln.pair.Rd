@@ -58,9 +58,8 @@ if(check.utility("muscle")) {
 
 
 ##- Simple example
-aln <- list(ali=seqbind(c("X","C","X","X","A","G","K"),
-                        c("C","-","A","X","G","X","X","K")),
-            id=c("a","b"))
+aln <- seqbind(c("X","C","X","X","A","G","K"),
+               c("C","-","A","X","G","X","X","K"))
 
 seqaln.pair(aln, outfile = tempfile())
 
