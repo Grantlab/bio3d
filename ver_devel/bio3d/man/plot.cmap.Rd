@@ -86,7 +86,7 @@ pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 cm <- cmap(pdb)
 
 ##- Plot contact map
-plot.cmap(cm)
+plot.cmap(cm, sse=pdb)
 
 }
 \keyword{ hplot }
