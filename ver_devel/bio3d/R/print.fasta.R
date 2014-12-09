@@ -92,9 +92,11 @@ print.fasta <- function(x, alignment=TRUE, ...) {
   ##- conservation
   cons <- NULL
   if(conservation) {
-    tmp <- conserv(ali)
+    tmp1 <- conserv(ali, method="entropy10")
+    tmp2 <- conserv(ali, method="identity")
     cons <- rep(" ", ncol(ali))
-    cons[ tmp==1 ] <- "*"
+    cons[ tmp1==1 ] <- ":"
+    cons[ tmp2==1 ] <- "*"
   }
   
   ## Check and truncate possilbe long ids
