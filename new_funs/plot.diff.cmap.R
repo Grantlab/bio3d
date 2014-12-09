@@ -26,37 +26,26 @@ plot.diff.cmap <- function(x, y, col=c("red", "blue"), sse=NULL, sse.y=sse, col.
   else cex = 0.5
   dots2$cex = cex 
   dots2$pch = 20
-  # bottom sse and data, but no annotatios and axes
+  # bottom sse, data, axes and labels
   dots2$left = FALSE
-  dots2$axes = FALSE
-  dots2$ann = FALSE
   do.call(plot.cmap, c(list(x=comm, col=col.common, sse=sse), dots2))
-  # left sse and annotations/axes, but no data
+  # left sse only
   dots2$left = dots$left
   dots2$bot = FALSE
-  dots2$axes = dots$axes
-  dots2$ann = dots$ann
-  dots2$type = "n"
-  par(new=TRUE) 
-  do.call(plot.cmap, c(list(x=comm, col=col.common, sse=sse.y), dots2))
+  dots2$axes = FALSE
+  dots2$ann = FALSE
+  par(new=TRUE)
+  do.call(plot.cmap, c(list(x=array(NA, dim(comm)), sse=sse.y), dots2))
   par(op)
-  
+ 
   # don't repeat title, labels and x/y axes
-  dots$ann=FALSE
-  dots$axes=FALSE
-  dots$sse=NULL
+  dots$add = TRUE
 
   # plot the first cmap
-  par(new=TRUE) 
-#  dots$add = TRUE 
   do.call(plot.cmap, c(list(x=x.spec, col=col[1]), dots))
-  par(op)
   
   # plot the second cmap
-  par(new=TRUE) 
-#  dots$add = TRUE 
   do.call(plot.cmap, c(list(x=y.spec, col=col[2]), dots))
-  par(op)
 
   return(invisible(NULL))
 }
