@@ -6,7 +6,7 @@ plot.cmap <- function(x, col=2, pch=16,
                       sse=NULL, sse.type="classic", sse.min.length=5,
                       bot=TRUE, left=TRUE,
                       helix.col="gray20", sheet.col="gray80",
-                      sse.border=FALSE, 
+                      sse.border=FALSE, add=FALSE,
                       ...) {
   dims <- dim(x)
 
@@ -14,8 +14,16 @@ plot.cmap <- function(x, col=2, pch=16,
     xlim <- c(1, dims[1])
   if(is.null(ylim))
     ylim <- c(1, dims[2])
-    
-  plot.new()
+
+  if(!add) {
+    plot.new()
+  }
+  else {
+    axes <- FALSE
+    xlab <- NA; ylab <- NA;
+    main <- NA; sub <- NA;
+    sse <- NULL;
+  }
   plot.window(xlim=xlim, ylim=ylim, ...)
   
   inds <- which(x==1, arr.ind=TRUE)

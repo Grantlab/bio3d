@@ -10,7 +10,8 @@
            xlim=NULL, ylim=NULL, xlab = "Residue index", ylab = xlab, 
            axes=TRUE, ann=par("ann"), sse=NULL, sse.type="classic",
            sse.min.length=5, bot=TRUE, left=TRUE,
-           helix.col="gray20", sheet.col="gray80", sse.border=FALSE, ...)
+           helix.col="gray20", sheet.col="gray80", sse.border=FALSE,
+           add=TRUE, ...)
 }
 \arguments{
   \item{x}{ a numeric matrix of residue contacts as obtained from
@@ -49,6 +50,9 @@
   \item{helix.col}{ The colors for rectangles representing alpha helices. }
   \item{sheet.col}{ The colors for rectangles representing beta strands. }
   \item{sse.border}{ The border color for all sse rectangles. }
+  \item{add}{ logical, specifying if the contact map should be added to an
+    already existing plot. Note that when \sQuote{TRUE} only points are
+    plotted (no annotation). }
   \item{\dots}{ other graphical parameters. }
 }
 \details{
@@ -73,7 +77,8 @@
   \sQuote{x} values being plotted as no internal checks are performed.
 }
 \seealso{
-  \code{\link{cmap}}, \code{\link{dm}}, 
+  \code{\link{cmap}}, \code{\link{dm}},
+  \code{\link{plot.dmat}}, 
   \code{\link{plot.default}}, \code{\link{plot.bio3d}},
   \code{\link{dssp}}, \code{\link{stride}}
 }
@@ -87,6 +92,9 @@ cm <- cmap(pdb)
 
 ##- Plot contact map
 plot.cmap(cm, sse=pdb)
+
+##- Add to plot
+plot.cmap(t(cm), col=3, pch=17, add=TRUE)
 
 }
 \keyword{ hplot }
