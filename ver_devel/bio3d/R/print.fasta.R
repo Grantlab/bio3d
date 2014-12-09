@@ -95,7 +95,7 @@ print.fasta <- function(x, alignment=TRUE, ...) {
     tmp1 <- conserv(ali, method="entropy10")
     tmp2 <- conserv(ali, method="identity")
     cons <- rep(" ", ncol(ali))
-    cons[ tmp1==1 ] <- ":"
+    cons[ tmp1==1 ] <- "^"
     cons[ tmp2==1 ] <- "*"
   }
   
