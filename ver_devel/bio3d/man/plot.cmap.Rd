@@ -11,7 +11,7 @@
            axes=TRUE, ann=par("ann"), sse=NULL, sse.type="classic",
            sse.min.length=5, bot=TRUE, left=TRUE,
            helix.col="gray20", sheet.col="gray80", sse.border=FALSE,
-           add=TRUE, ...)
+           add=FALSE, ...)
 }
 \arguments{
   \item{x}{ a numeric matrix of residue contacts as obtained from

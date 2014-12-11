@@ -7,7 +7,8 @@
 }
 \usage{
 \method{print}{fasta}(x, alignment=TRUE, ...)
-.print.fasta.ali(x, width = NULL, col.inds = NULL, numbers = TRUE, ...)
+.print.fasta.ali(x, width = NULL, col.inds = NULL, numbers = TRUE,
+         conservation=TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,6 +25,9 @@
     subsets of alignment positions/columns for printing. } 
   \item{numbers}{ logical, if TRUE position numbers and a tick-mark every 
     10 positions are printed above and below sequence blocks. }
+  \item{conservation}{ logical, if TRUE conserved and semi-conserved
+    columns in the alignment are marked with an \sQuote{*} and 
+    \sQuote{^}, respectively. }
   \item{\dots}{ additional arguments to \sQuote{.print.fasta.ali}. }
 }
 \value{
