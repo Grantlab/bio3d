@@ -6,14 +6,12 @@
   method of Edgar.
 }
 \usage{
-seqaln.pair(aln, extra.args = "", ...)
+seqaln.pair(aln, \dots)
 }
 \arguments{
   \item{aln}{ a sequence character matrix, as obtained from
     \code{\link{seqbind}}, or an alignment list object as obtained from
       \code{\link{read.fasta}}. }
-  \item{extra.args}{ a single character string containing extra command
-    line arguments for the alignment program. }
   \item{\dots}{ additional arguments for the function \code{\link{seqaln}}. }
 }
 \details{

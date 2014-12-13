@@ -6,7 +6,7 @@
   wish to keep intact.
 }
 \usage{
-seq2aln(seq2add, aln, id = "seq", exefile = "muscle", file = "aln.fa")
+seq2aln(seq2add, aln, id = "seq", file = "aln.fa", \dots)
 }
 \arguments{
   \item{seq2add}{ an sequence character vector or an alignment list
@@ -17,10 +17,9 @@ seq2aln(seq2add, aln, id = "seq", exefile = "muscle", file = "aln.fa")
     and \code{\link{seqaln}}. }
   \item{id}{ a vector of sequence names to serve as sequence
     identifers. }
-  \item{exefile}{ file path to the \sQuote{MUSCLE} program on your system (i.e.
-    how is \sQuote{MUSCLE} invoked). }  
   \item{file}{ name of \sQuote{FASTA} output file to which alignment
     should be written. }
+  \item{\dots}{ additional arguments passed to \code{\link{seqaln}}. }
 }
 \details{
   This function calls the \sQuote{MUSCLE} program, to perform a profile
