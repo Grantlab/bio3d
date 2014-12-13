@@ -1,10 +1,11 @@
 "pdb2aln.ind" <-
 function(aln, pdb, inds = NULL, ...) {
+
+   # get the new alignment; also check arguments internally
+   naln <- pdb2aln(aln=aln, pdb=pdb, ...)
+
    if(is.null(inds)) 
       inds <- gap.inspect(aln$ali)$f.inds
-
-   # get the new alignment
-   naln <- pdb2aln(aln=aln, pdb=pdb, ...)
 
    ninds <- which(naln$ref["ali.pos",] %in% inds)
    ca.inds <- naln$ref["ca.inds", ninds]

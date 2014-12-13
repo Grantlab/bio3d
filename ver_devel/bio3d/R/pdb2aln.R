@@ -1,23 +1,23 @@
-
-#  Add a PDB sequence to an existing alignment. 
-#  Return an object containing id, ali, and ref.
-#  id and ali are the components of the new alignment.
-#  ref is an integer matrix containing the indices
-#  of original alignment and CA indices of the PDB file. 
 "pdb2aln" <-
-function(aln, pdb, id="seq.pdb", aln.id=NULL, 
-     exefile = "muscle", file="pdb2aln.fa") {
+function(aln, pdb, id="seq.pdb", aln.id=NULL, file="pdb2aln.fa", ...) {
+
+   # check inputs
+   if(!inherits(aln, "fasta") || !is.pdb(pdb))
+      stop("Incorrect type of input object:
+        pdb2aln(aln, pdb)")
+
+   cl <- match.call()
+
    # Mask the gaps in the first sequence to get the 
    # reference of original alignment positions 
    aln$ali[1, is.gap(aln$ali[1,])] <- "X"
    
    aa1 <- pdbseq(pdb)
    
-   if(!is.null(aln.id)) findid <- which(regexpr(aln.id, aln$id) > 0)
+   if(!is.null(aln.id)) findid <- grep(aln.id, aln$id)
    if(is.null(aln.id) || length(findid)==0) {
       # do sequence-profile alignment
-      naln <- seq2aln(seq2add=aa1, aln=aln, id=id, 
-            exefile = exefile, file=tempfile())
+      naln <- seq2aln(seq2add=aa1, aln=aln, id=id, file=tempfile(), ...)
       # check if the old alignment doesn't change
       if(!identical(aln$ali, naln$ali[1:(nrow(naln$ali)-1), !is.gap(naln$ali[1,]), drop = FALSE])) 
          warning("Alignment changed! Try aln.id with the closest sequence ID in the alignment")
@@ -32,7 +32,11 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
       ##- Align seq to masked template from alignment
       tmp.msk <- aln$ali[idhit, ]
       tmp.msk[is.gap(tmp.msk)] <- "X"
-      seq2tmp <- seqaln.pair(seqbind(tmp.msk, aa1), outfile=tempfile(), exefile=exefile)
+    
+      dots = list(...)
+      dots$outfile = tempfile()
+      args = c(list(aln = seqbind(tmp.msk, aa1)), dots)
+      seq2tmp <- do.call(seqaln.pair, args)
       
       ##- check sequence identity
       ii <- seq2tmp$ali[1,]=='X'
@@ -40,7 +44,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
         
       if(ide < 0.4) {
          warning(paste("Sequence identity is too low (<40%).",
-             "You may want profile alignment (aln.id=NULL)", sep=" "))
+             "You may want profile alignment (set aln.id=NULL)", sep=" "))
       }
  
       ##- Insert gaps to adjust alignment
@@ -66,7 +70,8 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL,
  
    if(!is.null(file)) 
       write.fasta(naln, file=file)
-   out <- list(id=naln$id, ali=naln$ali, ref=ref)
+
+   out <- list(id=naln$id, ali=naln$ali, ref=ref, call=cl)
    class(out) <- "fasta"
  
    return (out)
