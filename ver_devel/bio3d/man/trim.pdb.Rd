@@ -6,13 +6,16 @@
   given larger PDB object. 
 }
 \usage{
-trim.pdb(pdb, inds = NULL, sse = TRUE)
+trim.pdb(pdb, \dots, inds = NULL, sse = TRUE)
 }
 \arguments{
   \item{pdb}{ a PDB structure object obtained from
     \code{\link{read.pdb}}. }
+  \item{\dots}{ additional arguments passed to \code{\link{atom.select}}. If
+     \code{inds} is also provided, these arguments will be ignored. }
   \item{inds}{ a list object of ATOM and XYZ indices as obtained from
-    \code{\link{atom.select}}. }
+    \code{\link{atom.select}}. If NULL, atom selection will be obtained
+     from calling \code{atom.select(pdb, \dots)}. }
   \item{sse}{ logical, if \sQuote{FALSE} helix and sheet components are
     omitted from output. }
 }
@@ -77,6 +80,9 @@ sele <- atom.select(pdb, "calpha")
 
 ## Trim PDB
 new.pdb <- trim.pdb(pdb, inds=sele)
+
+## Or, simply
+#new.pdb <- trim.pdb(pdb, "calpha")
 
 ## Write to file
 write.pdb(new.pdb, file="calpha.pdb")

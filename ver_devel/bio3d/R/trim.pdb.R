@@ -1,6 +1,15 @@
-"trim.pdb" <-function(pdb, inds=NULL, sse=TRUE) {
+"trim.pdb" <-function(pdb, ..., inds=NULL, sse=TRUE) {
   if(!is.pdb(pdb))
     stop("input 'pdb' must be a PDB list object as returned from 'read.pdb'")
+
+  extra.args <- list(...)
+  
+  if(length(extra.args)>0) {
+     if(!is.null(inds))
+        warning("Multiple atom selections are provided. Only the one indicated by 'inds' will be used")
+     else 
+        inds = atom.select(pdb, ...)
+  }
 
   if(is.null(inds))
     stop("no selection indices provided")
