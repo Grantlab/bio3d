@@ -21,10 +21,10 @@ view.cnapath <- function(x, pdb, out.prefix = "view.cnapath", launch = FALSE) {
    conn <- matrix(0, length(res), length(res))
    rr <- conn
    for(j in 1:length(x$path)) {
-      x = x$path[[j]]
-      for(i in 1:(length(x)-1)) {
-         i1 = match(x[i], res)
-         i2 = match(x[i+1], res)
+      y = x$path[[j]]
+      for(i in 1:(length(y)-1)) {
+         i1 = match(y[i], res)
+         i2 = match(y[i+1], res)
          if(conn[i1, i2] == 0) conn[i1, i2] = conn[i2, i1] = 1
          r = rad(x$dist[j], rmin, rmax)
          ic = floor((rmax - x$dist[j]) / (rmax - rmin) * 255) + 1
