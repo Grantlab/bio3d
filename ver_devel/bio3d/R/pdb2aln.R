@@ -4,7 +4,7 @@ function(aln, pdb, id="seq.pdb", aln.id=NULL, file="pdb2aln.fa", ...) {
    # check inputs
    if(!inherits(aln, "fasta") || !is.pdb(pdb))
       stop("Incorrect type of input object:
-        pdb2aln(aln, pdb)")
+        Should be 'pdb2aln(aln, pdb, ...)'")
 
    cl <- match.call()
 
