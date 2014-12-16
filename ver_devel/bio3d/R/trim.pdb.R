@@ -7,7 +7,10 @@
   if(length(extra.args)>0) {
      if(!is.null(inds))
         warning("Multiple atom selections are provided. Only the one indicated by 'inds' will be used")
-     else 
+     else if(is.select(extra.args[[1]])) 
+        # to be back-compatible with the habit calling trim.pdb(pdb, inds)
+        inds = extra.args[[1]]
+     else
         inds = atom.select(pdb, ...)
   }
 
