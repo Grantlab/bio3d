@@ -19,8 +19,9 @@
     ## check atom composition - need backbone atoms to continue SSE analysis
     checkatoms <- TRUE
     if(checkatoms) {
-      tmp <- trim.pdb(pdb, atom.select(pdb, "protein", verbose=verbose))
-      tmp <- trim.pdb(tmp, atom.select(tmp, "backbone", verbose=verbose))
+      inds <- atom.select(pdb, "backbone", verbose=verbose)
+      tmp <- trim.pdb(tmp, inds)
+      
       resid <- paste(tmp$atom$resno, tmp$atom$chain, sep="-")
       musthave <- c("C", "CA", "N", "O")
 
