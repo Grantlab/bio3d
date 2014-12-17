@@ -2,14 +2,16 @@ core.find <- function(...)
   UseMethod("core.find")
 
 core.find.pdb <- function(pdb, verbose=FALSE, ...) {
-  if(nrow(pdb$xyz)<2)
-    stop("provide a multi model PDB file with more frames than 2")
+  if(nrow(pdb$xyz)<4)
+    stop("provide a multi model PDB file with 4 or more frames")
   
   inds1 <- combine.sel(atom.select(pdb, "calpha",   verbose=verbose),
-                       atom.select(pdb, "protein",  verbose=verbose))
+                       atom.select(pdb, "protein",  verbose=verbose),
+                       verbose=verbose)
   inds2 <- combine.sel(atom.select(pdb, "//////P/", verbose=verbose),
-                       atom.select(pdb, "nucleic",  verbose=verbose))
-  inds <- combine.sel(inds1, inds2, op="OR")
+                       atom.select(pdb, "nucleic",  verbose=verbose),
+                       verbose=verbose)
+  inds <- combine.sel(inds1, inds2, op="OR", verbose=verbose)
   
   tmp <- trim.pdb(pdb, inds)
   core <- core.find.pdbs(tmp$xyz, ...)
@@ -38,7 +40,7 @@ core.find.pdb <- function(pdb, verbose=FALSE, ...) {
   return(core)
 }
 
-core.find.xyz <- function(xyz, ...) {
+core.find.default <- function(xyz, ...) {
   return(core.find.pdbs(xyz, ...))
 }
 
@@ -52,7 +54,7 @@ function(pdbs,
          write.pdbs = FALSE,
          outpath="core_pruned",
          ncore = 1,
-         nseg.scale = 1) {
+         nseg.scale = 1, ...) {
 
   ##  Itterative core deffination for lsq fit optimisation  
   ##  (core positions are those with low ellipsoid volume)
