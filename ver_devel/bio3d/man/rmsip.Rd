@@ -8,7 +8,9 @@
 }
 \usage{
 rmsip(...)
+
 \method{rmsip}{enma}(enma, ncore=NULL, subset=10, ...)
+
 \method{rmsip}{default}(modes.a, modes.b, subset=10,
                         row.name="a", col.name="b", ...)
 }
@@ -40,8 +42,9 @@ rmsip(...)
   pairwise RMSIP values of the modes stored in the \code{enma} object.
 }
 \references{
-   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.   
-   Amadei, A. et al. (1999) \emph{Proteins} \bold{36}, 19--424.   
+  Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
+  Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.   
+  Amadei, A. et al. (1999) \emph{Proteins} \bold{36}, 19--424.   
 }
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{pca}}, \code{\link{nma}},

@@ -2,7 +2,7 @@
 \alias{overlap}
 \title{ Overlap analysis }
 \description{
-  Calculate the Squared Overlap between sets of vectors.
+  Calculate the squared overlap between sets of vectors.
 }
 \usage{
 overlap(modes, dv, nmodes=20)
