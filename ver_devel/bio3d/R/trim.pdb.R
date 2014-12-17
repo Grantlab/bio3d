@@ -2,6 +2,7 @@
   if(!is.pdb(pdb))
     stop("input 'pdb' must be a PDB list object as returned from 'read.pdb'")
 
+  cl <- match.call()
   extra.args <- list(...)
   
   if(length(extra.args)>0) {
@@ -116,7 +117,8 @@
                sheet=sheet, 
                seqres=pdb$seqres, ## return unmodified
                xyz=xyz,
-               calpha = calpha)
+               calpha = calpha,
+               call = cl)
   
   class(output) <- c("pdb", "sse")
   class(output$xyz) <- c("numeric","xyz")

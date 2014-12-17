@@ -16,6 +16,31 @@
 ###      stop(paste("Launching external program 'DSSP' failed\n",
 ###                 "  make sure '", exefile, "' is in your search path", sep=""))
     
+    ## check atom composition - need backbone atoms to continue SSE analysis
+    checkatoms <- TRUE
+    if(checkatoms) {
+      tmp <- trim.pdb(pdb, atom.select(pdb, "protein", verbose=verbose))
+      tmp <- trim.pdb(tmp, atom.select(tmp, "backbone", verbose=verbose))
+      resid <- paste(tmp$atom$resno, tmp$atom$chain, sep="-")
+      musthave <- c("C", "CA", "N", "O")
+
+      incomplete <- sapply(unique(resid), function(x) {
+        inds <- which(resid==x)
+        elety <- sort(tmp$atom$elety[inds])
+        if(!all(musthave %in% elety))
+          return(TRUE)
+        else
+          return(FALSE)
+      })
+
+      if(all(incomplete))
+        stop("No residues found with a complete set of backbone atoms")
+      if(any(incomplete))
+        warning(paste("Residues with missing backbone atoms detected:",
+                      paste(unique(resid)[incomplete], collapse=", "), 
+                      collapse=" "))
+    }
+    
     infile <- tempfile()
     outfile <- tempfile()
     write.pdb(pdb, file = infile)
