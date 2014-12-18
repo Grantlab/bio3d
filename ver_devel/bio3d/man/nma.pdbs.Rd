@@ -40,7 +40,7 @@
 }
 \details{
   This function performs normal mode analysis (NMA) on a set of aligned
-  protein structures obtained with function \code{r\link{ead.fasta.pdb}} or
+  protein structures obtained with function \code{\link{read.fasta.pdb}} or
   \code{\link{pdbaln}}. The main purpose is to provide aligned atomic
   fluctuations and mode vectors in an automated fashion. 
 
