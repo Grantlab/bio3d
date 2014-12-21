@@ -1,7 +1,7 @@
 ---
-title: "Getting started with Bio3D"
+title: "Beginning protein structure analysis with Bio3D"
 author: "Lars Skjaerven, Xin-Qiu Yao & Barry J. Grant"
-date: "September 28, 2014"
+date: "December 3, 2014"
 affiliation: University of Michigan, Ann Arbor
 output:
   pdf_document:
@@ -30,7 +30,7 @@ structure, sequence and trajectory data [@grant06].  Features include the abilit
 to read and write biomolecular structure, sequence and dynamic trajectory data,
 perform atom selection, re-orientation, superposition, rigid core
 identification, clustering, distance matrix analysis, conservation
-analysis, normal mode analysis and principal component analysis. Bio3d
+analysis, normal mode analysis and principal component analysis. Bio3D
 takes advantage of the extensive graphical and statistical capabilities of the 
 [R environment](http://www.r-project.org) 
 and thus represents a useful framework for exploratory analysis of structural data.
@@ -38,10 +38,7 @@ and thus represents a useful framework for exploratory analysis of structural da
 
 ## Using this vignette
 The aim of this document, termed a vignette[^2] in R parlance, is to provide a 
-brief overview of Bio3D. A number of other Bio3D package vignettes are
-available, including:
-
-At the time of writing these include:
+brief introduction to PDB structure analysis with Bio3D. A number of other Bio3D package vignettes are available, including:
 
 -   `Installing Bio3D`
 
@@ -61,56 +58,37 @@ At the time of writing these include:
 Start R (type R at the command prompt or, on Windows, double click on the R icon) 
 and load the bio3d package by typing `library(bio3d)` at the R console prompt. 
 
-```{r eval=TRUE, echo=FALSE}
+```{r eval=TRUE, echo=TRUE}
 library(bio3d)
 ```
 
-Then use the command `lbio3d()` and `help()` to list the functions within the package
+Then use the command `lbio3d()` or `help(package=bio3d)` to list the functions within the package and `help(FunctionName)` to obtain more information about an individual function.
 ```{r eval=FALSE}
+# List of bio3d function names
 lbio3d()
-help(bio3d)
+# Function names with brief description
+help(package=bio3d)
+# Detailed help on a pca.xyz
+help(pca.xyz)
 ```
-
-## Finding Help
-To get help on a particular function try `?`function or `help(function)`. 
-For example, `?pca.xyz`
-
-```{r eval=FALSE}
-?pca.xyz
-``` 
 
 To search the help system for documentation matching a particular word or topic use the 
 command `help.search("topic")`. For example, `help.search("pdb")`
 
 ```{r eval=FALSE}
 help.search("pdb")
- ```
-
-Typing `help.start()` will start a local HTML interface. 
-After initiating `help.start()` in a session the `?function` commands will open as HTML pages. 
-To execute examples for a particular function use the command `example(function)`. 
-To run examples for the `read.dcd` function try example(`read.dcd`) 
-
-
-## Bio3d Demo
-Run the command `demo(bio3d)` to obtain a quick overview.
-
-```{r eval=FALSE}
-demo(bio3d)
-``` 
-
-The bio3d package consists of input/output functions, conversion and manipulation functions, analysis functions, and graphics functions all of which are fully documented. Remember that you can get help on any particular function by using the command ?function or help(function) from within R. 
-
-```{r eval=FALSE}
-help(read.pdb)
 ```
 
+Typing `help.start()` will start a local HTML interface to the R documentation and help system. 
+After initiating `help.start()` in a session the `help()` commands will open as HTML pages. 
 
-## Example Function Usage
-To better understand how a particular function operates it is often helpful to view and execute an example. Every function within the bio3d package is documented with example code that you can view by issuing the help command. 
+## Bio3d functions and their typical usage
+The bio3d package consists of input/output functions, conversion and manipulation functions, analysis functions, and graphics functions all of which are fully documented both [online](http://thegrantlab.org/bio3d/html/index.html)) and within the R help system introduced in the previous section. 
 
-Running the command example(function) will directly execute the example for a given function. 
-In addition, a number of worked examples are available as short Tutorials on the bio3d website. 
+To better understand how a particular function operates it is often helpful to view and execute an example. Every function within the bio3d package is documented with example code that you can view by issuing the `help()` command. 
+
+Running the command `example(function)` will directly execute the example for a given function. 
+In addition, a number of worked examples are available as [Tutorials](http://thegrantlab.org/bio3d/tutorials) on the bio3d website. 
 
 ```{r eval=FALSE}
 example(plot.bio3d)
@@ -152,19 +130,29 @@ head(pdb$atom)
 pdb$atom[1:2, ]
 
 # Print a subset of $atom data for the first two atoms
-pdb$atom[1:2, c("eleno", "x","y","z")]
-     
-# Print coordinate data from $xyz
-head(pdb$xyz)
+pdb$atom[1:2, c("eleno", "elety", "x","y","z")]
 
-# Note that this is a numeric matrix 
-# with 3N columns (each atom has three values (x, y and z))
-# and number of rows corresponding to the number for models in the PDB file
+# Note that individual $atom records can also be accessed like this
+pdb$atom$elety[1:2]     
+
+# Which allows us to do the following
+plot.bio3d(pdb$atom$b[pdb$calpha], sse=pdb, typ="l", ylab="B-factor")
+```
+
+Note that the main `xyz` coordinate attribute is a numeric matrix with 3N columns (each atom has three values x, y and z). The number of rows here correspond to the number of models in the PDB file (typically one X-ray structures and multiple for NMR structures).
+
+```{r eval=TRUE}
+# Examine coordinate data in $xyz
+pdb$xyz
+dim(pdb$xyz)
+head(pdb$xyz) 
 pdb$xyz[ 1, atom2xyz(1:2) ]
 ```
 
 ### Side-note: The 'pdb' class
-Objects created by the read.pdb function are of class 'pdb'. This is recognized by other so called generic bio3d functions (for example atom.select, nma etc.). A generic function is a function that examines the class of its first argument, and then decides what type of operation to perform (more specifically it decides which specific method to dispatch to). So for example, the generic atom.select function knows that the input is of class 'pdb' rather than an AMBER parameter and topology file and will act accordingly. This is part of the S3 object orientation system and a full discussion is beyond the scope of this introductory vignette. For our current purposes, we should realize that the object orientated nature of bio3d can simplify and facilitate our work with these types of objects.
+Objects created by the read.pdb function are of class 'pdb'. This is recognized by other so called generic bio3d functions (for example atom.select, nma etc.). A generic function is a function that examines the class of its first argument, and then decides what type of operation to perform (more specifically it decides which specific method to dispatch to). So for example, the generic atom.select function knows that the input is of class 'pdb' rather than an AMBER parameter and topology file and will act accordingly. 
+
+A careful reader will also of noted that our 'pdb' object created above also has a second class, namely 'sse' (see the output of 'attributes(pdb)' or class(pdb)'). This stands for 'secondary structure elements' and is recognized by the plot.bio3d function to annotate the positions of major secondary structure elements in the marginal regions of these plots (see Figure 1). This is all part of the R S3 object orientation system and a full discussion is beyond the scope of this introductory vignette. For our current purposes, we should realize that the object orientated nature of bio3d can simplify and facilitate our work with these types of objects.
 
 
 ## Atom selection 
@@ -223,7 +211,7 @@ Given the large number of functions in the bio3d package using help.search can b
 
 
 ## Write a PDB object
-Use the command write.pdb to output a structure object to a PDB formated file on your local disc.
+Use the command write.pdb to output a structure object to a PDB formatted file on your local disc.
 
 ```{r eval=TRUE, results="hide"}
 # Output a backbone only PDB file to disc
@@ -289,10 +277,10 @@ a <- read.pdb("4q21")
 b <- read.pdb("4lhy")
 
 # perform iterative alignment
-aln <- struct.aln(a, b)
+#aln <- struct.aln(a, b)
 
 # store new coordinates of protein B
-b$xyz <- aln$xyz
+#b$xyz <- aln$xyz
 ```
 
 Note that **struct.aln()** performs cycles of refinement steps of the structural alignment
