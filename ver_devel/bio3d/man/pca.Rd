@@ -8,8 +8,9 @@
   pca(...)
 }
 \arguments{
-  \item{\dots}{ arguments passed to the methods \code{pca.xyz}, \code{pca.pdbs}, etc. Typically this includes either a numeric matrix of Cartesian
-    coordinates with a row per structure/frame (function
+  \item{\dots}{ arguments passed to the methods \code{pca.xyz},
+    \code{pca.pdbs}, etc. Typically this includes either a numeric
+    matrix of Cartesian coordinates with a row per structure/frame (function
     \code{pca.xyz()}), or an object  of class \code{pdbs} as obtained from
     function \code{pdbaln} or \code{read.fasta.pdb} (function
     \code{pca.pdbs()}). } 

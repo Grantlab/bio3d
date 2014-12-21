@@ -10,7 +10,7 @@
 \arguments{
   \item{x}{ the results of normal modes analysis obtained with
     \code{\link{nma}}. }
-  \item{pch}{ a vector of plotting characters or symbols: see \sQuote{points}. }
+  \item{pch}{ a vector of plotting characters or symbols: see \code{\link{points}}. }
   \item{col}{ a character vector of plotting colors.  }
   \item{cex}{ a numerical single element vector giving the amount by
     which plotting text and symbols should be magnified relative to the
@@ -18,7 +18,7 @@
   \item{mar}{ A numerical vector of the form c(bottom, left, top, right)
     which gives the number of lines of margin to be specified on the
     four sides of the plot.}
-  \item{\dots}{ extra plotting arguments passed to \code{plot.bio3d}
+  \item{\dots}{ extra plotting arguments passed to \code{\link{plot.bio3d}}
     that effect the atomic fluctuations plot only. }
 }
 \details{
@@ -29,6 +29,7 @@
   Called for its effect.
 }
 \references{
+  Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Lars Skjaerven }

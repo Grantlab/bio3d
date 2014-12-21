@@ -19,15 +19,15 @@ build.hessian(xyz, pfc.fun, fc.weights = NULL, sequ = NULL, sse = NULL,
 }
 \arguments{
   \item{pdb}{ an object of class \code{pdb} as obtained from
-    function \code{read.pdb}. }
-  \item{inds}{ atom and xyz coordinate indices obtained from \code{atom.select}
-    that selects the elements of \code{pdb} upon which the calculation
-    should be based. If not provided the function will attempt to select
-    the calpha atoms automatically (based on function
-    \code{atom.select}). }
+    function \code{\link{read.pdb}}. }
+  \item{inds}{ atom and xyz coordinate indices obtained from
+    \code{\link{atom.select}} that selects the elements of \code{pdb}
+    upon which the calculation should be based. If not provided the
+    function will attempt to select the calpha atoms automatically
+    (based on function \code{\link{atom.select}}). }
   \item{ff}{ character string specifying the force field to use:
     \sQuote{calpha}, \sQuote{anm}, \sQuote{pfanm}, \sQuote{calphax},
-   \sQuote{reach}, or \sQuote{sdenm}. }
+    \sQuote{reach}, or \sQuote{sdenm}. }
   \item{pfc.fun}{ customized pair force constant (\sQuote{pfc})
     function. The provided function should take a vector of distances as
     an argument to return a vector of force constants. If provided,
@@ -41,12 +41,10 @@ build.hessian(xyz, pfc.fun, fc.weights = NULL, sequ = NULL, sse = NULL,
     option is useful for very large structures and cases where memory
     may be limiting. }
   \item{hessian}{ hessian matrix as obtained from
-    \code{build.hessian}. For internal purposes and generally not
+    \code{\link{build.hessian}}. For internal purposes and generally not
     intended for public use. }
   \item{outmodes}{ atom indices as obtained from \code{\link{atom.select}}) 
-    specifying the atoms to include in the resulting mode object. For
-    \code{aanma}, also character strings \sQuote{calpha} (which is the default) 
-    or \sQuote{noh} can be used. }
+    specifying the atoms to include in the resulting mode object. }
   \item{xyz}{ a numeric vector of Cartesian coordinates. }
   \item{fc.weights}{ a numeric matrix of size NxN (where N is the number
     of calpha atoms) containg scaling factors for the pariwise force
@@ -58,10 +56,10 @@ build.hessian(xyz, pfc.fun, fc.weights = NULL, sequ = NULL, sse = NULL,
     numbers of the disulfide bridges in the structure. }
   \item{x}{ an \code{nma} object obtained from \code{\link{nma.pdb}}. }
   \item{nmodes}{ numeric, number of modes to be printed. }
-  \item{...}{ additional arguments to \code{build.hessian},
-    \code{aa2mass}, \code{pfc.fun}, and \code{print}. One useful option
-    here for dealing with unconventional residues is
-    \sQuote{mass.custom}, see the \code{aa2mass} function for details. }
+  \item{...}{ additional arguments to \code{\link{build.hessian}},
+    \code{\link{aa2mass}}, \code{pfc.fun}, and \code{\link{print}}. One
+    useful option here for dealing with unconventional residues is
+    \sQuote{mass.custom}, see the \code{\link{aa2mass}} function for details. }
 }
 \details{
   This function calculates the normal modes of a C-alpha model of a
@@ -75,9 +73,9 @@ build.hessian(xyz, pfc.fun, fc.weights = NULL, sequ = NULL, sse = NULL,
   was parameterized by fitting to a local minimum of a crambin model
   using the AMBER94 force field.
 
-  See \code{load.enmff} for details of the different force fields.
+  See \code{\link{load.enmff}} for details of the different force fields.
 
-  By default \code{nma.pdb()} will diagonalize the mass-weighted Hessian
+  By default \code{\link{nma.pdb}} will diagonalize the mass-weighted Hessian
   matrix. The resulting mode vectors are moreover scaled by the thermal
   fluctuation amplitudes.
 
@@ -88,7 +86,7 @@ build.hessian(xyz, pfc.fun, fc.weights = NULL, sequ = NULL, sse = NULL,
 }
 \value{
   Returns an object of class \sQuote{nma} with the following components:
-  \item{modes}{ numeric matrix  with columns containing the normal mode
+  \item{modes}{ numeric matrix with columns containing the normal mode
     vectors. Mode vectors are converted to unweighted Cartesian
     coordinates  when \code{mass=TRUE}. Note that the 6 first trivial
     eigenvectos appear in columns one to six. }
@@ -97,12 +95,12 @@ build.hessian(xyz, pfc.fun, fc.weights = NULL, sequ = NULL, sse = NULL,
   \item{force.constants}{ numeric vector containing the force constants
     corresponding to each mode (for \code{mass=FALSE)}). }
   \item{fluctuations}{ numeric vector of atomic fluctuations. }
-  \item{U}{ numeric vector containing the raw eigenvectors. Equals to
-    the \code{modes} component when \code{mass=FALSE} and
-    \code{temp=NULL}. }
+  \item{U}{ numeric matrix with columns containing the raw
+    eigenvectors. Equals to the \code{modes} component when
+    \code{mass=FALSE} and \code{temp=NULL}. }
   \item{L}{ numeric vector containing the raw eigenvalues. }
-  \item{xyz}{ numeric vector of the cartesian coordinates in which the
-    calculation was performed. }
+  \item{xyz}{ numeric matrix of class \code{xyz} containing the
+    Cartesian coordinates in which the calculation was performed. }
   \item{mass}{ numeric vector containing the residue masses used for the
     mass-weighting. }
   \item{temp}{ numerical, temperature for which the amplitudes for
@@ -118,7 +116,7 @@ build.hessian(xyz, pfc.fun, fc.weights = NULL, sequ = NULL, sse = NULL,
 
   The main (speed related) bottleneck is currently the diagonalization
   of the Hessian matrix which is performed with the core R function
-  \sQuote{eigen}. For computing a few (5-20) approximate modes the user
+  \code{\link{eigen}}. For computing a few (5-20) approximate modes the user
   can consult package \sQuote{irlba}.
 
   NMA is memory extensive and users should be cautions when running
@@ -130,12 +128,14 @@ build.hessian(xyz, pfc.fun, fc.weights = NULL, sequ = NULL, sse = NULL,
   implementation as well as for contributing with testing.
 }
 \references{
-  Hinsen, K. et al. (2000) \emph{Chemical Physics} \bold{261}, 25--37.
+  Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
+  Hinsen, K. et al. (2000) \emph{Chemical Physics} \bold{261}, 25--37.
 }
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{fluct.nma}}, \code{\link{mktrj.nma}},
-  \code{\link{dccm.nma}}, \code{\link{overlap}}, \code{\link{rmsip}}  }
+  \code{\link{dccm.nma}}, \code{\link{overlap}}, \code{\link{rmsip}},
+  \code{\link{load.enmff}}. }
 \examples{
 ## Fetch stucture
 pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
@@ -183,6 +183,7 @@ modes <- eigen(hessian)
 
 ## Dealing with unconventional residues
 pdb <- read.pdb("1xj0")
+
 ## nma(pdb)
 modes <- nma(pdb, mass.custom=list(CSX=121.166))
 }
