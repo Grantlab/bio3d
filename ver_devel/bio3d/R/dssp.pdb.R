@@ -20,7 +20,7 @@
     checkatoms <- TRUE
     if(checkatoms) {
       inds <- atom.select(pdb, "backbone", verbose=verbose)
-      tmp <- trim.pdb(tmp, inds)
+      tmp <- trim.pdb(pdb, inds)
       
       resid <- paste(tmp$atom$resno, tmp$atom$chain, sep="-")
       musthave <- c("C", "CA", "N", "O")
