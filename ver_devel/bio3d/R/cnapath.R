@@ -29,6 +29,13 @@ cnapath <- function(cna, from, to, k = 10, ncore = NULL, ...) {
 
   # first shortest path
   k0 <- igraph::get.shortest.paths(graph, from, to, output='both', ...)
+  
+  # if no shortest path found, network contains isolated parts.
+  if(length(k0$vpath[[1]]) == 0) {
+     cat("  No path found.\n", 
+         "  Please check if the network contains isolated parts!\n\n", sep="")
+     return(NULL)
+  }
 
   # number of currently found shortest paths
   kk <- 1
@@ -98,6 +105,12 @@ cnapath <- function(cna, from, to, k = 10, ncore = NULL, ...) {
     B <- B[-sp]
 
     setTxtProgressBar(pb, kk)
+  }
+
+  # stopped before reaching k paths
+  if(kk < k) {
+    setTxtProgressBar(pb, k)
+    warning("Reaching maximal number of possible paths (", kk, ")")
   }
   close(pb)
 
