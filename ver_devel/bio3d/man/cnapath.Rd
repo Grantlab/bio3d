@@ -13,7 +13,7 @@ cnapath(cna, from, to, k = 10, ncore = NULL, \dots)
 \method{summary}{cnapath}(object, \dots, pdb = NULL, label = NULL, col = NULL,
    plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE)
 \method{print}{cnapath}(x, \dots)
-view.cnapath(x, pdb, out.prefix = "view.cnapath", launch = FALSE)
+view.cnapath(x, pdb, out.prefix = "view.cnapath", spline = FALSE, launch = FALSE)
 }
 \arguments{
   \item{cna}{ A \sQuote{cna} object obtained from \code{\link{cna}}. }
@@ -45,6 +45,7 @@ view.cnapath(x, pdb, out.prefix = "view.cnapath", launch = FALSE)
     \code{\link{cnapath}}. }
   \item{out.prefix}{ prefix for the names of output files, \sQuote{view.vmd}
        and \sQuote{view.pdb}. }
+  \item{spline}{ logical, if TRUE all paths are displayed as spline curves. }
   \item{launch}{ logical, if TRUE VMD will be launched. }
 }
 \value{
