@@ -33,6 +33,8 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     if (dim(cm)[1] != dim(cij)[1]) {
       stop("Inputs 'cij' and 'cm' should have the same dimensions")
     }
+    # convert NAs to 0
+    cm[is.na(cm)] = 0
   }
 
   
