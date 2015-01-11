@@ -39,7 +39,7 @@ x <- rev(rep(6:10, 1:5))
 rle(x)
 ## lengths [1:5]  5 4 3 2 1
 ## values  [1:5] 10 9 8 7 6
-rle2
+rle2(x)
 ## lengths: int [1:5] 5 4 3 2 1
 ## values : int [1:5] 10 9 8 7 6
 ## indices: int [1:5] 5 9 12 14 15
