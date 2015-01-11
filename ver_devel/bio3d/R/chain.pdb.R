@@ -20,10 +20,12 @@ function(pdb, ca.dist=4, blank="X", rtn.vec=TRUE) {
   len <- diff( c(1,ind,length(d)) )
 
   cat(paste("\t Found",length(ind), "possible chain breaks\n"))
-  cat(paste("\t  After resno(s):",
-        paste( pdb$atom[ca$atom,"resno"][(ind)], collapse=", " ),"\n" ))
-  cat(paste("\t  Chain length(s):",
-        paste(len+1, collapse=", " ),"\n" ))
+  if(length(ind) > 0) {
+     cat(paste("\t  After resno(s):",
+           paste( pdb$atom[ca$atom,"resno"][(ind)], collapse=", " ),"\n" ))
+     cat(paste("\t  Chain length(s):",
+           paste(len+1, collapse=", " ),"\n" ))
+  }
 
   ## Make a chain id vector
   if(rtn.vec) {
