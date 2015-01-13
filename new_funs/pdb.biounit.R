@@ -168,7 +168,7 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
     raw.lines <- x
 
     # How many copies of biological unit?
-    biolines <- grep("^REMARK 350 BIOMOLECULE", raw.lines)
+    biolines <- grep("^REMARK\\s+350\\s+BIOMOLECULE", raw.lines)
     nbios <- length(biolines)
 
     if(nbios == 0) {
@@ -181,7 +181,7 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
 
     chain <- lapply(1:nbios, function(i) {
        # Get chain IDs to apply the transformation
-       chlines <- intersect(grep("^REMARK 350 APPLY THE FOLLOWING TO CHAINS", raw.lines), 
+       chlines <- intersect(grep("^REMARK\\s+350\\s+APPLY THE FOLLOWING TO CHAINS", raw.lines), 
                             biolines[i]:biolines2[i])
        if(length(chlines) == 1) {
           chs <- gsub("\\s*", "", sub("^.*:", "", raw.lines[chlines]))
@@ -198,7 +198,7 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
 
     mat <- lapply(1:nbios, function(i) {
        # Get transformation matrices
-       mtlines <- intersect(grep("^REMARK 350   BIOMT", raw.lines), 
+       mtlines <- intersect(grep("^REMARK\\s+350\\s+BIOMT", raw.lines), 
                             biolines[i]:biolines2[i])
         
        if(length(mtlines) == 0 || length(mtlines) %% 3 != 0) {
@@ -209,7 +209,7 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
           mat <- lapply(seq(1, length(mtlines), 3), function(j) {
              mt <- matrix(NA, 3, 4)
              for(k in 1:3) {
-                vals <- sub("^REMARK 350   BIOMT[123]\\s*", "", raw.lines[mtlines[j+k-1]])
+                vals <- sub("^REMARK\\s+350\\s+BIOMT[123]\\s*", "", raw.lines[mtlines[j+k-1]])
                 vals <- strsplit(vals, split="\\s+")[[1]]
                 mt[k, ] <- as.numeric(vals[-1])
              }
