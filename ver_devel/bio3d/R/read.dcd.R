@@ -272,7 +272,11 @@ function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
     if(cell) to.return <- matrix(NA, nrow=nframes,ncol=6)
     else to.return <- matrix(NA, nrow=nframes,ncol=natoms*3)
   } else {
-    library(bigmemory)  ##-! Insert to read big dcd files (Sep 29th 08)
+    ##-! Insert to read big dcd files (Sep 29th 08)
+    oops <- requireNamespace("bigmemory", quietly = TRUE)  
+    if(!oops) 
+        stop("Please install the bigmemory package from CRAN")
+
     if(cell) to.return <- bigmemory::big.matrix(nrow=nframes,ncol=6, init = NA, type = "double")
     else to.return <- bigmemory::big.matrix(nrow=nframes,ncol=natoms*3, init = NA, type = "double")
   }
