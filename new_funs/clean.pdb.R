@@ -55,7 +55,7 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   }
  
   ## check if 'alt' coords exist
-  if(any(rm.p <- !is.na(pdb$atom$alt))) {
+  if(any(rm.p <- !is.na(pdb$atom$alt) & pdb$atom$alt != "A")) {
      pdb$atom <- pdb$atom[!rm.p, ]
      pdb$xyz <- pdb$xyz[, -atom2xyz(which(rm.p))]
      msg <- rbind(msg, c(paste("Found", sum(rm.p), "ALT records"), "REMOVED", ""))
@@ -89,13 +89,13 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
                  ifelse(fix.chain, "ALL CHAINS ARE RELABELED", "")))
      
         msg <- rbind(msg, c("Original chain breaks:", "", ""))
-        pre.ca <- ca.inds$atom[chn.brk[, "end"]]
+        pre.ca <- ca.inds$atom[chn.brk[-nrow(chn.brk), "end"]]
         pre.msg <- capture.output(npdb$atom[pre.ca, c("resid", "resno", "chain")])
         msg <- rbind(msg, cbind(pre.msg, "", ""))
         msg <- rbind(msg, c("", "", ""))
  
         msg <- rbind(msg, c("New chain breaks:", "", "") )
-        new.ca <- ca.inds$atom[new.chn.brk[, "end"]]
+        new.ca <- ca.inds$atom[new.chn.brk[-nrow(new.chn.brk), "end"]]
         new.msg <- capture.output(npdb$atom[new.ca, c("resid", "resno", "chain")])
         msg <- rbind(msg, cbind(new.msg, "", ""))
 
