@@ -43,8 +43,8 @@
 #' biounit
 #'
 #' \dontrun{
-#' pdb <- pdb.biounit("2bfu")
-#' write.pdb(pdb, file="biounit.pdb")
+#' biounit <- pdb.biounit("2bfu")
+#' write.pdb(biounit[[1]], file="biounit.pdb")
 #' # open the pdb file in VMD to have a look on the biological unit
 #' } 
 pdb.biounit <- function(file, ncore = NULL, ...) {
@@ -153,7 +153,11 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
              return(biounit)
           } )
        }
-       if(length(biounits) == 1) biounits = biounits[[1]]  
+       ## multimeric state
+       nchs <- sapply(biounits, function(x) length(unique(x$atom[, "chain"])))
+       mer <- c("monomer", "dimer", "trimer", "tetramer", "multimer")
+       names(biounits) <- paste(remarks$method, ".determined.", mer[nchs], " (",  nchs, " chains)", sep="") 
+#       if(length(biounits) == 1) biounits = biounits[[1]]  
     }
     else {
       warning("Problems occurred in building biological unit. Return 'pdb' as is in the file")
@@ -167,10 +171,10 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
 
     raw.lines <- x
 
-    # How many copies of biological unit?
+    # How many distinct biological unit?
     biolines <- grep("^REMARK\\s+350\\s+BIOMOLECULE", raw.lines)
     nbios <- length(biolines)
-
+    
     if(nbios == 0) {
        warning("REMARK 350 is incomplete.")
        return(NULL)
@@ -179,8 +183,16 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
     # End line number of each biological unit
     biolines2 <- c(biolines[-1], length(raw.lines))
 
+    # How the biological unit was determined?
+    method <- sapply(1:nbios, function(i) {
+       author <- intersect(grep("^REMARK\\s+350\\s+AUTHOR DETERMINED BIOLOGICAL UNIT", raw.lines), 
+                            biolines[i]:biolines2[i])
+       if(length(author) >= 1) return("AUTHOR")
+       else return("SOFTWARE")
+    } )
+    
+    # Get chain IDs to apply the transformation
     chain <- lapply(1:nbios, function(i) {
-       # Get chain IDs to apply the transformation
        chlines <- intersect(grep("^REMARK\\s+350\\s+APPLY THE FOLLOWING TO CHAINS", raw.lines), 
                             biolines[i]:biolines2[i])
        if(length(chlines) == 1) {
@@ -220,6 +232,6 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
     } )
     if(any(is.na(mat))) return(NULL)
   
-    out <- list(num=nbios, chain=chain, mat=mat) 
+    out <- list(num=nbios, chain=chain, mat=mat, method=method) 
     return(out)
 }
