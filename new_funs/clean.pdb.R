@@ -89,15 +89,25 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
                  ifelse(fix.chain, "ALL CHAINS ARE RELABELED", "")))
      
         msg <- rbind(msg, c("Original chain breaks:", "", ""))
-        pre.ca <- ca.inds$atom[chn.brk[-nrow(chn.brk), "end"]]
-        pre.msg <- capture.output(npdb$atom[pre.ca, c("resid", "resno", "chain")])
-        msg <- rbind(msg, cbind(pre.msg, "", ""))
+        if(nrow(chn.brk) == 1) {
+           msg <- rbind(msg, c("  No chain break", "", ""))
+        } 
+        else {
+           pre.ca <- ca.inds$atom[chn.brk[-nrow(chn.brk), "end"]]
+           pre.msg <- capture.output( print(npdb$atom[pre.ca, c("resid", "resno", "chain")], row.names = FALSE) )
+           msg <- rbind(msg, cbind(pre.msg, "", ""))
+        }
         msg <- rbind(msg, c("", "", ""))
  
         msg <- rbind(msg, c("New chain breaks:", "", "") )
-        new.ca <- ca.inds$atom[new.chn.brk[-nrow(new.chn.brk), "end"]]
-        new.msg <- capture.output(npdb$atom[new.ca, c("resid", "resno", "chain")])
-        msg <- rbind(msg, cbind(new.msg, "", ""))
+        if(nrow(new.chn.brk) == 1) {
+           msg <- rbind(msg, c("  No chain breaks", "", ""))
+        } 
+        else { 
+           new.ca <- ca.inds$atom[new.chn.brk[-nrow(new.chn.brk), "end"]]
+           new.msg <- capture.output( print(npdb$atom[new.ca, c("resid", "resno", "chain")], row.names = FALSE) )
+           msg <- rbind(msg, cbind(new.msg, "", ""))
+        }
 
         if(fix.chain) {
            npdb$atom[, "chain"] <- new.chain
@@ -183,14 +193,30 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   ## update amino acid name
   naa.atom <- which(npdb$atom[, "resid"] %in% prot.aa[-c(1:20)])
   naa.res <- intersect(ca.inds$atom, naa.atom)
+  unk.atom <- which(!npdb$atom[, "resid"] %in% prot.aa)
+  unk.res <- intersect(ca.inds$atom, unk.atom)
   if(length(naa.res) > 0) {
      msg <- rbind(msg, c(paste("Found", length(naa.res), "non-standard amino acids"), 
               ifelse(fix.aa, "FIXED", "NO CHANGE"), 
               ifelse(fix.aa, "AMINO ACID NAMES ARE CHANGED", "")) )
+     tbl <- table(npdb$atom[naa.res, "resid"]) 
+     tbl <- paste("  ", names(tbl), "(", tbl, ")", collapse = ",")
+     msg <- rbind(msg, c(tbl, "", ""))
      if(fix.aa) {
          npdb$atom[naa.atom, "resid"] <- aa123(aa321(npdb$atom[naa.atom, "resid"])) 
+         msg <- rbind(msg, c(" Converted to", "", ""))
+         tbl <- table(npdb$atom[naa.res, "resid"])
+         tbl <- paste("  ", aa123(aa321(names(tbl))), "(", tbl, ")", collapse = ",")
+         msg <- rbind(msg, c(tbl, "", ""))
      }
   }
+  if(length(unk.res) > 0) {
+     msg <- rbind(msg, c(paste("Found", length(unk.res), "unknow amino acids"), 
+               "NO CHANGE", ""))
+     tbl <- table(npdb$atom[unk.res, "resid"]) 
+     tbl <- paste("  ", names(tbl), "(", tbl, ")", collapse = ",")
+     msg <- rbind(msg, c(tbl, "", ""))
+  } 
 
   ## update pdb$calpha
   npdb$calpha <- seq(1, nrow(npdb$atom)) %in% ca.inds$atom
@@ -212,9 +238,9 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
          if(nchar(x[2]) == 0)
             sprintf("%-40s", x[1])
          else if(nchar(x[3]) == 0)
-            paste(sprintf("%-40s", x[1]), "->", sprintf("%-15s", x[2]))
+            paste(sprintf("%-40s", x[1]), "->", sprintf("%-12s", x[2]))
          else
-            paste(paste(sprintf("%-40s", x[1]), "->", sprintf("%-15s", x[2]), "!!", x[3], "!!") )
+            paste(paste(sprintf("%-40s", x[1]), "->", sprintf("%-12s", x[2]), "!!", x[3], "!!") )
      } )
 #     chk.log <- paste(paste(chk.log, collapse = "\n"), "\n")
      if(verbose) print(chk.log)
