@@ -1,3 +1,41 @@
+#' Inspect And Clean Up A PDB Object
+#'
+#' Inspect alternative coordinates, chain breaks, bad residue
+#' numbering, non-standard/unknow amino acids, etc. Return
+#' a 'clean' pdb object with fixed residue numbering and optionally
+#' relabeled chain IDs, corrected amino acid names, removed water,
+#' ligand, or hydrogen atoms. All changes are recorded in the 
+#' returned object.
+#'
+#' @details call for its effects.
+#' 
+#' @param pdb an object of class \code{pdb} as obtained from
+#'    function \code{\link{read.pdb}}. 
+#' @param consecutive logical, if TRUE renumbering will result in
+#'    consecutive residue numbers spanning all chains. Otherwise new residue
+#'    numbers will begin at 1 for each chain.
+#' @param force.renumber logical, if TRUE atom and residue records are renumbered 
+#'    even if no 'insert' code is found in the \code{pdb} object.
+#' @param fix.chain logical, if TRUE chains are relabeled based on chain breaks detected.
+#' @param fix.aa logical, if TRUE non-standard amino acid names are converted into 
+#'    equivalent standard names. 
+#' @param rm.wat logical, if TRUE water atoms are removed.
+#' @param rm.lig logical, if TRUE ligand atoms are removed.
+#' @param rm.h logical, if TRUE hydrogen atoms are removed.
+#' @param verbose logical, if TRUE details of the conversion process are printed.
+#'
+#' @return a 'pdb' object with an additional \code{$chk.log} component storing 
+#'    all the processing messages.
+#'
+#' @seealso \code{\link{read.pdb}}
+#'
+#' @author Xin-Qiu Yao & Barry Grant
+#' 
+#' @examples
+#' \donttest{
+#'    pdb <- read.pdb("")
+#'    clean.pdb(pdb)
+#' } 
 "clean.pdb" <-
 function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE, 
     fix.aa = FALSE, rm.wat = FALSE, rm.lig = FALSE, rm.h = FALSE, verbose=TRUE) {
@@ -242,10 +280,13 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
          else
             paste(paste(sprintf("%-40s", x[1]), "->", sprintf("%-12s", x[2]), "!!", x[3], "!!") )
      } )
-#     chk.log <- paste(paste(chk.log, collapse = "\n"), "\n")
-     if(verbose) print(chk.log)
-     npdb$chk.log <- chk.log
   }
+  else {
+     chk.log <- "No problem found"
+  }
+# chk.log <- paste(paste(chk.log, collapse = "\n"), "\n")
+  if(verbose) print(chk.log)
+  npdb$chk.log <- chk.log
 
   return(npdb)
 } 
