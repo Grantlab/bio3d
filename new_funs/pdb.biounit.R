@@ -37,21 +37,24 @@
 #' @author Xin-Qiu Yao
 #'
 #' @examples
-#' pdb <- read.pdb("2dn1")
-#' biounit <- pdb.biounit("2dn1")
-#' pdb
-#' biounit
-#'
+#' \donttest{
+#'    pdb <- read.pdb("2dn1")
+#'    biounit <- pdb.biounit("2dn1")
+#'    pdb
+#'    biounit
+#' }
 #' \dontrun{
-#' biounit <- pdb.biounit("2bfu")
-#' write.pdb(biounit[[1]], file="biounit.pdb")
-#' # open the pdb file in VMD to have a look on the biological unit
+#'    biounit <- pdb.biounit("2bfu")
+#'    write.pdb(biounit[[1]], file="biounit.pdb")
+#'    # open the pdb file in VMD to have a look on the biological unit
 #' } 
 pdb.biounit <- function(file, ncore = NULL, ...) {
 
     require(bio3d)
     require(parallel)   
     ncore = setup.ncore(ncore) 
+
+    cl <- match.call()
 
     # This also does initial check on 'file' 
     pdb <- read.pdb(file, ...)
@@ -78,85 +81,85 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
     remarks <- .parse.pdb.remarks(raw.lines)
  
     if(!is.null(remarks)) { 
-       # number of copies in each biological unit
-       ncopy <- sapply(remarks$mat, length)
-   
-       if(max(ncopy) <= 10) {    
-          ## save copies as individual chains 
 
-          # available chain ID repository
-          chains0 <- setdiff(c(LETTERS, letters, 0:9), unique(pdb$atom[, "chain"]))
-       
-          # number of chains to apply transformation in each biological unit
-          nchain <- sapply(remarks$chain, length)
+       biounits <- lapply(1:remarks$num, function(i) {
+          # the transformation matrices
+          mats <- remarks$mat[[i]]
 
-          # start index in the chain ID repository for each biological unit
-          ch.ind <- cumsum(c(1, (ncopy - 1) * nchain))
+          # applied to the chains
+          chain <- remarks$chain[[i]]
+ 
+          # number of copies
+          ncopy <- length(mats)
+  
+          # Are chains treated differently?
+          nn <- length(unique(names(mats)))
 
-          biounits <- lapply(1:remarks$num, function(i) {
+          if(ncopy <= 10 || nn > 1) {    
+             ## save copies as individual chains 
 
-             # The original copy
-             biounit <- trim.pdb(pdb, chain=remarks$chain[[i]])
-
-             if(ncopy[i] >= 2) {    
-                xyz = rbind(matrix(biounit$xyz, nrow=3), 1)
-                chain <- biounit$atom[, "chain"] 
-                rl <- rle(chain)
-
-                ll <- mclapply(2:ncopy[i], function(j) {
-
-                   mt <- remarks$mat[[i]][[j]]
-                   xyz = matrix(mt %*% xyz, nrow=1)
-
-                   ch <- chains0[(ch.ind[i] + nchain[i] * (j-2)) :
-                              (ch.ind[i] + nchain[i] * (j-1) - 1)]
-                   names(ch) <- remarks$chain[[i]]
-                   rl$values <- ch[rl$values]
-                   chain <- inverse.rle(rl)
-                   return(list(xyz=xyz, chain=chain))
-                }, mc.cores = ncore )
-
-                biounit1 <- biounit
-                for(j in 2:ncopy[i]) {
-                   biounit1$atom <- rbind(biounit1$atom, biounit$atom)
+             # The original copy stored as spearated chains
+             biounit0 <- lapply(chain, function(x) trim.pdb(pdb, chain=x, verbose=FALSE) )
+             # available chain ID repository
+             chains0 <- setdiff(c(LETTERS, letters, 0:9), chain)
+             
+             jch <- 1
+             used.chain <- NULL
+             biounit <- NULL
+             for(j in 1:ncopy) {
+                mt <- mats[[j]]
+                chs <- strsplit(names(mats)[j], split=" ")[[1]]
+                for(k in chs) {
+                   bio <- biounit0[[match(k, chain)]]
+                   xyz <- rbind(matrix(bio$xyz, nrow=3), 1)
+                   xyz <- matrix(mt %*% xyz, nrow = 1)
+                   if(! k %in% used.chain) {
+                      ch <- k
+                      used.chain <- c(used.chain, k)
+                   } else {
+                      ch <- chains0[jch]
+                      jch = jch + 1
+                   }
+                   bio$xyz <- xyz
+                   bio$atom[, "chain"] <- ch
+                   bio$atom[, c("x", "y", "z")] <- round(matrix(xyz, ncol=3, byrow=TRUE), digits=3)
+                   
+                   biounit <- c(biounit, list(bio))
                 }
-                xyz <- lapply(ll, "[[", "xyz")
-                xyz <- cbind(biounit$xyz, do.call(cbind, xyz))
-                chain <- c(chain, sapply(ll, "[[", "chain"))
-            
-                # temporarily write the pdb of biounit, change ATOM (chain id, xyz, etc), and read it again
-                tmpf <- tempfile()
-                write.pdb(biounit1, xyz = xyz, chain = chain, file=tmpf)
-                biounit = read.pdb(tmpf, verbose=FALSE)
-             }
-             return(biounit)
-          } )
-       }
-       else {
-          ## save copies as multi-models
-          biounits <- lapply(1:remarks$num, function(i) {
+             } 
+             biounit <- do.call(cat.pdb, c(biounit, list(renumber=FALSE, rechain=FALSE)) )
+ 
+#             # temporarily write the pdb of biounit and re-read it
+#             tmpf <- tempfile()
+#             write.pdb(biounit, file=tmpf)
+#             biounit = read.pdb(tmpf, verbose=FALSE)
+          } 
+          else {
+             ## save copies as multi-models
 
              # The original copy
-             biounit <- trim.pdb(pdb, chain=remarks$chain[[i]])
+             biounit <- trim.pdb(pdb, chain=chain, verbose=FALSE)
 
-             if(ncopy[i] >= 2) {    
-                xyz = rbind(matrix(biounit$xyz, nrow=3), 1)
-                ll <- mclapply(2:ncopy[i], function(j) {
+             xyz = rbind(matrix(biounit$xyz, nrow=3), 1)
+             ll <- mclapply(2:ncopy, function(j) {
 
-                   mt <- remarks$mat[[i]][[j]]
-                   xyz = matrix(mt %*% xyz, nrow=1)
-                   xyz
-                }, mc.cores = ncore )
-                biounit$xyz <- rbind(biounit$xyz, do.call(rbind, ll))
-                class(biounit$xyz) <- "xyz"
-             }
-             return(biounit)
-          } )
-       }
+                mt <- mats[[j]]
+                xyz = matrix(mt %*% xyz, nrow=1)
+                xyz
+             }, mc.cores = ncore )
+             biounit$xyz <- rbind(biounit$xyz, do.call(rbind, ll))
+             class(biounit$xyz) <- "xyz"
+          }
+          
+          biounit$call <- cl
+          return(biounit)
+       } ) # end of lapply(1:remarks$num)
+
        ## multimeric state
-       nchs <- sapply(biounits, function(x) length(unique(x$atom[, "chain"])))
+       nchs <- sapply(biounits, function(x) length(unique(x$atom[, "chain"])) * nrow(x$xyz))
        mer <- c("monomer", "dimer", "trimer", "tetramer", "multimer")
-       names(biounits) <- paste(remarks$method, ".determined.", mer[nchs], " (",  nchs, " chains)", sep="") 
+       names(biounits) <- paste(remarks$method, ".determined.", 
+            mer[ifelse(nchs>5, 5, nchs)], " (",  nchs, " chains)", sep="") 
 #       if(length(biounits) == 1) biounits = biounits[[1]]  
     }
     else {
@@ -171,6 +174,10 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
 
     raw.lines <- x
 
+    # How many lines of REMARK 350?
+    remark350 <- grep("^REMARK\\s+350", raw.lines)
+    nlines <- length(remark350)
+
     # How many distinct biological unit?
     biolines <- grep("^REMARK\\s+350\\s+BIOMOLECULE", raw.lines)
     nbios <- length(biolines)
@@ -181,7 +188,7 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
     }
     
     # End line number of each biological unit
-    biolines2 <- c(biolines[-1], length(raw.lines))
+    biolines2 <- c(biolines[-1], remark350[nlines])
 
     # How the biological unit was determined?
     method <- sapply(1:nbios, function(i) {
@@ -195,9 +202,9 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
     chain <- lapply(1:nbios, function(i) {
        chlines <- intersect(grep("^REMARK\\s+350\\s+APPLY THE FOLLOWING TO CHAINS", raw.lines), 
                             biolines[i]:biolines2[i])
-       if(length(chlines) == 1) {
+       if(length(chlines) >= 1) {
           chs <- gsub("\\s*", "", sub("^.*:", "", raw.lines[chlines]))
-          chs <- strsplit(chs, split=",")[[1]]
+          chs <- unlist(strsplit(chs, split=","))
        } 
        else {
           warning(paste("Can't determine chain IDs from REMARK 350 for biological unit", 
@@ -212,6 +219,11 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
        # Get transformation matrices
        mtlines <- intersect(grep("^REMARK\\s+350\\s+BIOMT", raw.lines), 
                             biolines[i]:biolines2[i])
+       # Get chain ID again: different trans matrices may be applied to different chains
+       chlines <- intersect(grep("^REMARK\\s+350\\s+APPLY THE FOLLOWING TO CHAINS", raw.lines), 
+                            biolines[i]:biolines2[i])
+       chs <- gsub("\\s*", "", sub("^.*:", "", raw.lines[chlines]))
+       chs <- strsplit(chs, split=",")
         
        if(length(mtlines) == 0 || length(mtlines) %% 3 != 0) {
           warning("Incomplete transformation matrix")
@@ -227,6 +239,8 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
              }
              mt
           } )
+          chs.pos <- findInterval(mtlines[seq(1, length(mtlines), 3)], chlines)
+          names(mat) <- sapply(chs[chs.pos], paste, collapse=" ") ## apply each mat to specific chains
        }
        return(mat)
     } )
