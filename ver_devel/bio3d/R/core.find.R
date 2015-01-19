@@ -1,5 +1,51 @@
-"core.find" <-
-function(aln,
+core.find <- function(...)
+  UseMethod("core.find")
+
+core.find.pdb <- function(pdb, verbose=FALSE, ...) {
+  if(nrow(pdb$xyz)<4)
+    stop("provide a multi model PDB file with 4 or more frames")
+  
+  inds1 <- combine.sel(atom.select(pdb, "calpha",   verbose=verbose),
+                       atom.select(pdb, "protein",  verbose=verbose),
+                       verbose=verbose)
+  inds2 <- combine.sel(atom.select(pdb, "//////P/", verbose=verbose),
+                       atom.select(pdb, "nucleic",  verbose=verbose),
+                       verbose=verbose)
+  inds <- combine.sel(inds1, inds2, op="OR", verbose=verbose)
+  
+  tmp <- trim.pdb(pdb, inds)
+  core <- core.find.pdbs(tmp$xyz, ...)
+  
+  ## map to pdb inds
+  full.ids <- paste(pdb$atom$elety, pdb$atom$resno, pdb$atom$chain, sep="-")
+  tmp.ids  <- paste(tmp$atom$elety, tmp$atom$resno, tmp$atom$chain, sep="-")
+  
+  core$step.inds  <- which(full.ids %in% tmp.ids[core$step.inds])[core$step.inds]
+  core$atom       <- which(full.ids %in% tmp.ids[core$atom])
+  core$c1A.atom   <- which(full.ids %in% tmp.ids[core$c1A.atom])
+  core$c0.5A.atom <- which(full.ids %in% tmp.ids[core$c0.5A.atom])
+  
+  core$xyz        <- atom2xyz(core$atom)
+  core$c1A.xyz    <- atom2xyz(core$c1A.atom)
+  core$c0.5A.xyz  <- atom2xyz(core$c0.5A.atom)
+  
+  ##core$resno       <- which(full.ids %in% tmp.ids[core$resno])[core$resno]
+  ##core$c1A.resno   <- which(full.ids %in% tmp.ids[core$c1A.resno])[core$c1A.resno]
+  ##core$c0.5A.resno <- which(full.ids %in% tmp.ids[core$c0.5A.resno])[core$c0.5A.resno]
+
+  core$resno       <- tmp$atom$resno[core$resno]
+  core$c1A.resno   <- tmp$atom$resno[core$c1A.resno]
+  core$c0.5A.resno <- tmp$atom$resno[core$c0.5A.resno]
+  
+  return(core)
+}
+
+core.find.default <- function(xyz, ...) {
+  return(core.find.pdbs(xyz, ...))
+}
+
+"core.find.pdbs" <-
+function(pdbs,
          shortcut  = FALSE,
          rm.island = FALSE,
          verbose   = TRUE,
@@ -8,7 +54,7 @@ function(aln,
          write.pdbs = FALSE,
          outpath="core_pruned",
          ncore = 1,
-         nseg.scale = 1) {
+         nseg.scale = 1, ...) {
 
   ##  Itterative core deffination for lsq fit optimisation  
   ##  (core positions are those with low ellipsoid volume)
@@ -37,8 +83,8 @@ function(aln,
   }
   
 
-  if(is.matrix(aln)) {
-    xyz <- aln
+  if(is.matrix(pdbs)) {
+    xyz <- pdbs
     
     xyz.inds <- which(apply(is.na( xyz ), 2, sum)==0)
     res.inds<-xyz.inds[seq(3,length(xyz.inds),by=3)]/3
@@ -47,15 +93,15 @@ function(aln,
     pdbnum = c(1:(length(xyz.inds)/3))
     
   } else {
-    if( (is.list(aln)) && (class(aln)=="pdbs") ) {
-      xyz=aln$xyz
+    if( (is.list(pdbs)) && (class(pdbs)=="pdbs") ) {
+      xyz=pdbs$xyz
     
       xyz.inds <- which(apply(is.na( xyz ), 2, sum)==0)
-      res.inds <- which(apply(aln$ali=="-", 2, sum)==0)
+      res.inds <- which(apply(pdbs$ali=="-", 2, sum)==0)
     
-      pdbseq = aa123(aln$ali[1,]); pdbnum = aln$resno[1,]
+      pdbseq = aa123(pdbs$ali[1,]); pdbnum = pdbs$resno[1,]
     } else {
-      stop("input 'aln' should either be:
+      stop("input 'pdbs' should either be:
                a list object from 'read.fasta.pdb'
                or a numeric 'xyz' matrix of aligned coordinates")
     }

@@ -67,7 +67,7 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
   } else {
 
      ## Distance matrix (all-atom)
-     dmat <- dm.xyz( xyz, grpby, scut, mask.lower = mask.lower)
+     dmat <- dm.xyz( xyz, grpby, scut, mask.lower = mask.lower, ncore=ncore)
      ## Contact map
      return(matrix(as.numeric(dmat < dcut),
                 ncol = ncol(dmat),

@@ -33,6 +33,8 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
     if (dim(cm)[1] != dim(cij)[1]) {
       stop("Inputs 'cij' and 'cm' should have the same dimensions")
     }
+    # convert NAs to 0
+    cm[is.na(cm)] = 0
   }
 
   
@@ -118,9 +120,11 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
 
   if(minus.log){
     ##-- Calculate the -log of cij
-    ## change cij 1 to 0.9 to avoid log(1) = 0
+    ## change cij >= 0.9999 to 0.9999 to avoid numerical problems 
+    ##   (-log is too close to zero)
+
     cij.network <- cij.abs
-    cij.network[cij.network >= 1] = 0.9999
+    cij.network[cij.network >= 0.9999] = 0.9999
     cij.network <- -log(cij.network)
     ## remove infinite values
     cij.network[is.infinite(cij.network)] = 0

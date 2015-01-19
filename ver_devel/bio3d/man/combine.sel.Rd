@@ -43,8 +43,8 @@ pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 # Select C-alpha atoms of entire system
 ca.global.inds <- atom.select(pdb, "calpha")
 
-# Select C-beta atoms of entire system
-cb.global.inds <- atom.select(pdb, "cbeta")
+# Select C-beta atoms of entire protein 
+cb.global.inds <- atom.select(pdb, "protein", elety="CB")
 
 # Select backbone atoms of entire system 
 bb.global.inds <- atom.select(pdb, "backbone")

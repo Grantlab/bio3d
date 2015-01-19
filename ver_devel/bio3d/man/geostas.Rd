@@ -67,6 +67,7 @@ amsm.xyz(xyz, ncore = NULL)
 }
 \references{
   Romanowska, J. et al. (2012) \emph{JCTC} \bold{8}, 2588--2599.
+  Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Julia Romanowska and Lars Skjaerven }
