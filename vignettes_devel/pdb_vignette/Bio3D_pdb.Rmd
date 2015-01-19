@@ -1,7 +1,7 @@
 ---
 title: "Getting started with Bio3D"
 author: "Lars Skjaerven, Xin-Qiu Yao & Barry J. Grant"
-date: "September 28, 2014"
+date: "December 3, 2014"
 affiliation: University of Michigan, Ann Arbor
 output:
   pdf_document:
@@ -152,19 +152,29 @@ head(pdb$atom)
 pdb$atom[1:2, ]
 
 # Print a subset of $atom data for the first two atoms
-pdb$atom[1:2, c("eleno", "x","y","z")]
-     
-# Print coordinate data from $xyz
-head(pdb$xyz)
+pdb$atom[1:2, c("eleno", "elety", "x","y","z")]
 
-# Note that this is a numeric matrix 
-# with 3N columns (each atom has three values (x, y and z))
-# and number of rows corresponding to the number for models in the PDB file
+# Note that individual $atom records can also be accessed like this
+pdb$atom$elety[1:2]     
+
+# Which allows us to do the following
+plot.bio3d(pdb$atom$b[pdb$calpha], sse=pdb, typ="l", ylab="B-factor")
+```
+
+Note that the main $xyz coordinate attribute (in this case 'pdb$xyz') is a numeric matrix with 3N columns (each atom has three values x, y and z). The number of rows here correspond to the number of models in the PDB file (typically one X-ray structures and multiple for NMR structures).
+
+```{r eval=TRUE}
+# Examine coordinate data in $xyz
+pdb$xyz
+dim(pdb$xyz)
+head(pdb$xyz) 
 pdb$xyz[ 1, atom2xyz(1:2) ]
 ```
 
 ### Side-note: The 'pdb' class
-Objects created by the read.pdb function are of class 'pdb'. This is recognized by other so called generic bio3d functions (for example atom.select, nma etc.). A generic function is a function that examines the class of its first argument, and then decides what type of operation to perform (more specifically it decides which specific method to dispatch to). So for example, the generic atom.select function knows that the input is of class 'pdb' rather than an AMBER parameter and topology file and will act accordingly. This is part of the S3 object orientation system and a full discussion is beyond the scope of this introductory vignette. For our current purposes, we should realize that the object orientated nature of bio3d can simplify and facilitate our work with these types of objects.
+Objects created by the read.pdb function are of class 'pdb'. This is recognized by other so called generic bio3d functions (for example atom.select, nma etc.). A generic function is a function that examines the class of its first argument, and then decides what type of operation to perform (more specifically it decides which specific method to dispatch to). So for example, the generic atom.select function knows that the input is of class 'pdb' rather than an AMBER parameter and topology file and will act accordingly. 
+
+A careful reader will also of noted that our 'pdb' object created above also has a second class, namely 'sse' (see the output of 'attributes(pdb)' or class(pdb)'). This stands for 'secondary structure elements' and is recognized by the plot.bio3d function to annotate the positions of major secondary structure elements in the marginal regions of these plots (see Figure 1). This is all part of the R S3 object orientation system and a full discussion is beyond the scope of this introductory vignette. For our current purposes, we should realize that the object orientated nature of bio3d can simplify and facilitate our work with these types of objects.
 
 
 ## Atom selection 
