@@ -88,9 +88,10 @@ summary.pdb <- function(object, printseq=FALSE, ...) {
     if(nresnuc>0) {
       na.pdb <- trim.pdb(object, atom.select(object, "nucleic", verbose=FALSE))
       aa <- na.pdb$atom[atom.select(na.pdb, "nucleic", elety="P", verbose=FALSE)$atom, "resid"]
-      if(nres > 225) {
+      aa <- .aa321.na(aa)
+      if(nresnuc > 225) {
         ## Trim long sequences before output
-        aa <- c(aa[1:225], "...<cut>...", aa[(nres-3):nres])
+        aa <- c(aa[1:225], "...<cut>...", aa[(nresnuc-3):nresnuc])
       }
       aa <- paste("     ",  gsub(" ","", 
                                  strwrap( paste(aa,collapse=" "), 
