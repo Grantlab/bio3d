@@ -38,13 +38,23 @@ summary.cnapath <- function(object, ..., pdb = NULL, label = NULL, col = NULL,
       ca.inds <- atom.select(pdb, elety="CA", verbose = FALSE)
       resno <- pdb$atom[ca.inds$atom, "resno"]
       resid <- pdb$atom[ca.inds$atom, "resid"]
+      chain <- pdb$atom[ca.inds$atom, "chain"]
       lig.inds <- atom.select(pdb, "ligand", verbose = FALSE)
-      islig <- resno %in% pdb$atom[lig.inds$atom, "resno"]
+      islig <- paste(chain, resno, sep="_") %in% 
+           paste(pdb$atom[lig.inds$atom, "chain"], 
+                 pdb$atom[lig.inds$atom, "resno"], sep="_")
       resid[!islig] <- aa321(resid[!islig])
+
       o <- lapply(o, function(x) {
-            n <- paste(resid[as.numeric(names(x))], resno[as.numeric(names(x))], sep="")
-            names(x) <- n
-            x 
+         node <- as.numeric(names(x))
+
+         if(length(unique(pdb$atom[, "chain"])) > 1)
+            n <- paste(chain[node], paste(resid[node], resno[node], sep=""), sep="_")
+         else
+            n <- paste(resid[node], resno[node], sep="")
+
+         names(x) <- n
+         x 
       } )
    }
 

@@ -12,7 +12,25 @@ view.cnapath <- function(x, pdb, out.prefix = "view.cnapath", spline = FALSE, la
 
    ca.inds <- atom.select(pdb, elety="CA", verbose = FALSE)
    res.pdb <- pdb$atom[ca.inds$atom[res], "resno"] 
-   
+   chain.pdb <- pdb$atom[ca.inds$atom[res], "chain"]
+   names(res.pdb) <- chain.pdb
+
+   # make VMD atom selection string
+   .vmd.atomselect <- function(res) {
+      if(any(is.na(names(res))))
+          return(paste("resid", paste(res, collapse=" ")))
+      else {
+         res <- res[order(names(res))]
+         inds <- bounds(names(res), dup.inds=TRUE)
+         string <- NULL
+         for(i in 1:nrow(inds)) {
+            string <- c(string, paste("chain", names(res)[inds[i, "start"]],
+               "and resid", paste(res[inds[i, "start"]:inds[i, "end"]], collapse=" ")))
+         }   
+         return(paste(string, collapse=" or "))
+      }
+   }
+ 
    # Draw molecular structures
    cat("mol new ", pdbfile, " type pdb first 0 last -1 step 1 filebonds 1 autobonds 1 waitfor all
 mol delrep 0 top
@@ -23,12 +41,12 @@ mol material Opaque
 mol addrep top
 mol representation Licorice 0.300000 10.000000 10.000000
 mol color name
-mol selection {(resid ", res.pdb[ind.source], " ", res.pdb[ind.sink], ")}
+mol selection {(", .vmd.atomselect(res.pdb[c(ind.source, ind.sink)]), ")} 
 mol material Opaque
 mol addrep top 
 mol representation VDW 0.4 10
 mol color colorID 2
-mol selection {(resid ", paste(res.pdb, collapse=' '), ") and name CA}
+mol selection {(", .vmd.atomselect(res.pdb), ") and name CA}
 mol material Opaque
 mol addrep top
 ", file=file)
