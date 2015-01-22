@@ -142,10 +142,22 @@ function (file, maxlines=-1, multi=FALSE,
                  chain = trim(substring(raw.helix,20,20)),
                  type  = trim(substring(raw.helix,39,40)))
 
+  ##- insert code for initial and end residues of helices
+  insert.i <- trim(substring(raw.helix,26,26))
+  insert.e <- trim(substring(raw.helix,38,38))
+  names(helix$start) <- insert.i
+  names(helix$end) <- insert.e
+
   sheet  <- list(start = as.numeric(substring(raw.sheet,23,26)),
                  end   = as.numeric(substring(raw.sheet,34,37)),
                  chain = trim(substring(raw.sheet,22,22)),
                  sense = trim(substring(raw.sheet,39,40)))
+
+  ##- insert code for initial and end residues of sheets
+  insert.i <- trim(substring(raw.sheet,27,27))
+  insert.e <- trim(substring(raw.sheet,38,38))
+  names(sheet$start) <- insert.i
+  names(sheet$end) <- insert.e
 
 
  ## 2014-04-23
