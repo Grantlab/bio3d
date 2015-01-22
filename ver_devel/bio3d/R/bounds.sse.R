@@ -27,6 +27,8 @@
 #'    sse.ind 
 #' } 
 bounds.sse <- function(x, pdb=NULL) {
+
+  if(length(x) == 0) return (NULL)
   
   strings <- names(x) 
   if(is.null(strings)) {
@@ -63,13 +65,17 @@ bounds.sse <- function(x, pdb=NULL) {
 
   # sort segments based on sse id (i.e. keep the original order of sse)
   ind.order <- order(id[inds[, "start"]])
-  inds <- inds[ind.order, ]
+  inds <- inds[ind.order, , drop = FALSE]
 
   # helix
   h.inds <- which(x[inds[, "start"]] == "H")
   if(length(h.inds) > 0) {
+
+     h.id <- id[inds[h.inds, "start"]]
+     if(any(is.na(h.id))) h.id <- seq_along(h.id)
+ 
      h <- list(start = resno[inds[h.inds, "start"]], end = resno[inds[h.inds, "end"]], 
-        chain = chain[inds[h.inds, "start"]], id = id[inds[h.inds, "start"]])
+        chain = chain[inds[h.inds, "start"]], id = h.id)
      names(h$start) <- insert[inds[h.inds, "start"]]
      names(h$end) <- insert[inds[h.inds, "end"]]
   } else {
@@ -79,8 +85,12 @@ bounds.sse <- function(x, pdb=NULL) {
   # sheet
   e.inds <- which(x[inds[, "start"]] == "E")
   if(length(e.inds) > 0) {
+
+     e.id <- id[inds[e.inds, "start"]]
+     if(any(is.na(e.id))) e.id <- seq_along(e.id)
+ 
      e <- list(start = resno[inds[e.inds, "start"]], end = resno[inds[e.inds, "end"]], 
-        chain = chain[inds[e.inds, "start"]], id = id[inds[e.inds, "start"]])
+        chain = chain[inds[e.inds, "start"]], id = e.id)
      names(e$start) <- insert[inds[e.inds, "start"]]
      names(e$end) <- insert[inds[e.inds, "end"]]
   } else {

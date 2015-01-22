@@ -50,18 +50,22 @@
     new.sse <- bounds.sse(ss)
 
     helix <- new.sse$helix
-    ##- add back other components
-    add <- pdb$helix[!names(pdb$helix) %in% names(new.sse$helix)]
-    ##- match sse number in case some sse are completely removed
-    add <- lapply(add, function(x) x[new.sse$helix$id])
-    helix <- c(helix, add)
+    if(!is.null(helix)) {
+       ##- add back other components
+       add <- pdb$helix[!names(pdb$helix) %in% names(new.sse$helix)]
+       ##- match sse number in case some sse are completely removed
+       add <- lapply(add, function(x) x[new.sse$helix$id])
+       helix <- c(helix, add)
+    }
 
     sheet <- new.sse$sheet
-    ##- add back other components
-    add <- pdb$sheet[!names(pdb$sheet) %in% names(new.sse$sheet)]
-    ##- match sse number in case some sse are completely removed
-    add <- lapply(add, function(x) x[new.sse$sheet$id])
-    sheet <- c(sheet, add)
+    if(!is.null(sheet)) {
+       ##- add back other components
+       add <- pdb$sheet[!names(pdb$sheet) %in% names(new.sse$sheet)]
+       ##- match sse number in case some sse are completely removed
+       add <- lapply(add, function(x) x[new.sse$sheet$id])
+       sheet <- c(sheet, add)
+    }
 
     ##- remove 'id'; Maybe we don't need it?
     helix$id <- NULL

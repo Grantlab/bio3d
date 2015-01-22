@@ -56,10 +56,17 @@ pdb2sse <- function(pdb, verbose = TRUE) {
 
            insert1 <- ifelse(names(sse$end[j])=="", NA, names(sse$end[j]))
            sse.ref1 <- paste(sse$end[j], chain, insert1, sep = "_")
-
-           inds <- seq(match(sse.ref0, ref), match(sse.ref1, ref))
-           ss[inds] <- symbol[i]
-           names(ss)[inds] <- paste(names(ss)[inds], "_", j, sep="")
+        
+           ii <- match(sse.ref0, ref); jj <- match(sse.ref1, ref)
+           if(any(is.na(c(ii, jj)))) {
+              if(verbose) 
+                  warning(paste("The", i, "No.", j, 
+                     "start/end with non-protein residue."))
+           } else {
+              inds <- seq(ii, jj)
+              ss[inds] <- symbol[i]
+              names(ss)[inds] <- paste(names(ss)[inds], "_", j, sep="")
+           }
         }
      } 
   }
