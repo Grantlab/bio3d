@@ -111,10 +111,23 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   pdb <- .check.sse(pdb)
   log <- .update.log(log, pdb$clean.log)
 
+  ##   3. Fix pdb$calpha if it is mismatch pdb$atom
+  ca.inds <- atom.select(pdb, "calpha", verbose = FALSE)
+  calpha <- seq(1, nrow(pdb$atom)) %in% ca.inds$atom
+  if(!identical(pdb$calpha, calpha)) {
+     pdb$calpha <- calpha
+     log <- .update.log(log, "pdb$calpha", "UPDATED")
+  }
+  
+  ##   4. Fix object class if it is incorrect
+  if(!inherits(pdb, "pdb") || !inherits(pdb, "sse")) {
+     class(pdb) <- c("pdb", "sse")
+     log <- .update.log(log, "Object class", "UPDATED")
+  }
+  ###########
+ 
   ## following operations are on an independent object
   npdb <- pdb
-
-  ca.inds <- atom.select(npdb, "calpha", verbose = FALSE)
 
   ## check chain breaks and missing chain ids
   has.fixed.chain <- FALSE
@@ -255,7 +268,6 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
      }
   }
   
- 
   ## update seqres 
   if(has.fixed.chain && !is.null(npdb$seqres)) {
      chs <- unique(npdb$atom[ca.inds$atom, "chain"])
@@ -295,20 +307,9 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
 #     if(clean) clean <- FALSE
   } 
 
-  ## update pdb$calpha
-  npdb$calpha <- seq(1, nrow(npdb$atom)) %in% ca.inds$atom
-  if(!identical(pdb$calpha, npdb$calpha)) 
-     log <- .update.log(log, "pdb$calpha", "UPDATED")
-
   ## update pdb$call
   npdb$call <- cl
 
-  ## update class
-  if(!inherits(npdb, "pdb") || !inherits(npdb, "sse")) {
-     class(npdb) <- c("pdb", "sse")
-     log <- .update.log(log, "Object class", "UPDATED")
-  }
- 
   ## is the pdb clean?
   if(clean)
      log <- .update.log(log, "PDB is clean!")
