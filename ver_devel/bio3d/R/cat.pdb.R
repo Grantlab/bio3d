@@ -1,12 +1,11 @@
-cat.pdb <- function(..., renumber=TRUE, rechain=TRUE) {
+cat.pdb <- function(..., renumber=FALSE, rechain=FALSE) {
   cl <- match.call()
     
   objs <- list(...)
   are.null <- unlist(lapply(objs, is.null))
   objs <- objs[!are.null]
 
-  if(length(objs)<2)
-    stop("provide multiple (>1) PDB objects")
+  if(length(objs)<1) return(NULL)
 
   if(any(!unlist(lapply(objs, is.pdb))))
     stop("provide PDB objects as obtained from read.pdb()")
@@ -31,6 +30,8 @@ cat.pdb <- function(..., renumber=TRUE, rechain=TRUE) {
       for(j in 1:length(chains)) {
         inds <- which(objs[[i]]$atom$chain==chains[j])
         x$atom$chain[inds] <- LETTERS[k]
+        if(!is.null(x$helix)) x$helix$chain[] <- LETTERS[k]
+        if(!is.null(x$sheet)) x$sheet$chain[] <- LETTERS[k]
         k <- k+1
       }
       objs[[i]] <- x
@@ -39,48 +40,41 @@ cat.pdb <- function(..., renumber=TRUE, rechain=TRUE) {
 
   ## concat objects
   new <- objs[[1]]
-  for(i in 2:length(objs)) {
-    new$atom     <- rbind(new$atom, objs[[i]]$atom)
-    new$xyz      <- cbind(new$xyz, objs[[i]]$xyz)
+  if(length(objs) > 1) { 
+     for(i in 2:length(objs)) {
+       new$atom     <- rbind(new$atom, objs[[i]]$atom)
+       new$xyz      <- cbind(new$xyz, objs[[i]]$xyz)
+       new$seqres <- c(new$seqres, objs[[i]]$seqres)
+       new$helix <- c(new$helix, objs[[i]]$helix)
+       new$sheet <- c(new$sheet, objs[[i]]$sheet)
+     }
   }
-  new$atom$eleno <- seq(1, nrow(new$atom))
+  ## merge SSE info
+  for(i in c("helix", "sheet")) {
+     sse <- new[[i]]
+     if(!is.null(sse)) {
+        coms <- names(sse)
+        names(sse) <- NULL # avoid nested naming in results
+        inds <- which(!duplicated(coms))
+        for(j in inds) 
+           sse[[j]] <- do.call(c, sse[coms %in% coms[j]])
+        sse <- sse[inds]
+        names(sse) <- coms[inds]
+        new[[i]] <- sse
+     }
+  }
 
   ## renumber residues
-  if(renumber) {
-    prev.resno   <- 0
-    prev.resid   <- new$atom$resid[1]
-    prev.chain   <- new$atom$chain[1]
-    new.resno    <- prev.resno
-    
-    for(i in 1:nrow(new$atom)) {
-      now.resno  <- new$atom$resno[i]
-      now.resid  <- new$atom$resid[i]
-      now.chain  <- new$atom$chain[i]
-      
-      if(rechain & (now.chain!=prev.chain))
-        new.resno <- 0
-      
-      if(( now.resno!=prev.resno) | (now.resid!=prev.resid)) {
-        new.resno <- new.resno+1
-      }
-      new$atom$resno[i] <- new.resno
-      
-      prev.resno <- now.resno
-      prev.resid <- now.resid
-      prev.chain <- now.chain
-    }
-  }
+  new <- try(clean.pdb(new, consecutive = !rechain, 
+                force.renumber = renumber, verbose=FALSE))
+  if(inherits(new, "try-error")) 
+     stop("cat.pdb(): Bad format pdb generated. Try rechain=TRUE and/or renumber=TRUE")
 
   ## build new PDB object
-  new$sheet <- NULL
-  new$helix <- NULL
-  new$seqres <- NULL
-  ca.inds <- atom.select(new, "calpha", verbose=FALSE)
-  new$calpha <- seq(1, nrow(new$atom)) %in% ca.inds$atom
   new$call <- cl
 
   ## remap " " chain IDs to NA values
-  new$atom$chain[ new$atom$chain==" " ] <- NA
+  new$atom$chain[ new$atom$chain==" " ] <- as.character(NA)
 
   ## check connectivity
   chains <- unique(new$atom$chain)
