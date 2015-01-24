@@ -4,7 +4,7 @@
 #' numbering, non-standard/unknow amino acids, etc. Return
 #' a 'clean' pdb object with fixed residue numbering and optionally
 #' relabeled chain IDs, corrected amino acid names, removed water,
-#' ligand, or hydrogen atoms. All changes are recorded in the 
+#' ligand, or hydrogen atoms. All changes are recorded in a log in the 
 #' returned object.
 #'
 #' @details call for its effects.
@@ -24,7 +24,7 @@
 #' @param rm.h logical, if TRUE hydrogen atoms are removed.
 #' @param verbose logical, if TRUE details of the conversion process are printed.
 #'
-#' @return a 'pdb' object with an additional \code{$chk.log} component storing 
+#' @return a 'pdb' object with an additional \code{$clean.log} component storing 
 #'    all the processing messages.
 #'
 #' @seealso \code{\link{read.pdb}}
@@ -33,7 +33,7 @@
 #' 
 #' @examples
 #' \donttest{
-#'    pdb <- read.pdb("")
+#'    pdb <- read.pdb("1a7l")
 #'    clean.pdb(pdb)
 #' } 
 "clean.pdb" <-
@@ -48,7 +48,10 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   ## processing message
   ## stored as an N-by-3 matrix with columns: 
   ##     FACT, OPERATION, IMPORTANT NOTE
-  msg <- NULL
+  log <- NULL
+
+  ## a flag to indicate if the pdb is clean
+  clean <- TRUE
 
   ## Recognized amino acid names
   prot.aa <- c("ALA", "CYS", "ASP", "GLU",
@@ -68,7 +71,7 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
      if(length(wat$atom) > 0) {
         pdb$atom <- pdb$atom[-wat$atom, ]
         pdb$xyz <- pdb$xyz[, -wat$xyz]
-        msg <- rbind(msg, c(paste("Found", length(wat$atom), "water atoms"), "REMOVED", ""))
+        log <- .update.log(log, paste("Found", length(wat$atom), "water atoms"), "REMOVED")
      }
   }
 
@@ -78,7 +81,7 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
      if(length(lig$atom) > 0) {
         pdb$atom <- pdb$atom[-lig$atom, ]
         pdb$xyz <- pdb$xyz[, -lig$xyz]
-        msg <- rbind(msg, c(paste("Found", length(lig$atom), "ligand atoms"), "REMOVED", ""))
+        log <- .update.log(log, paste("Found", length(lig$atom), "ligand atoms"), "REMOVED")
      }
   }
 
@@ -88,7 +91,7 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
      if(length(h.inds$atom) > 0) {
         pdb$atom <- pdb$atom[-h.inds$atom, ]
         pdb$xyz <- pdb$xyz[, -h.inds$xyz]
-        msg <- rbind(msg, c(paste("Found", length(h.inds$atom), "hydrogens"), "REMOVED", ""))
+        log <- .update.log(log, paste("Found", length(h.inds$atom), "hydrogens"), "REMOVED")
      }
   }
  
@@ -96,8 +99,17 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   if(any(rm.p <- !is.na(pdb$atom$alt) & pdb$atom$alt != "A")) {
      pdb$atom <- pdb$atom[!rm.p, ]
      pdb$xyz <- pdb$xyz[, -atom2xyz(which(rm.p))]
-     msg <- rbind(msg, c(paste("Found", sum(rm.p), "ALT records"), "REMOVED", ""))
+     log <- .update.log(log, paste("Found", sum(rm.p), "ALT records"), "REMOVED")
   }
+
+  ## Some initial check: 
+  ##   1. Are all amino acid and/or nucleic acid residues
+  ##   distinguished by the combination chainID_resno_insert?
+  .check.residue.ambiguity(pdb)
+
+  ##   2. Check and clean up SSE annotation
+  pdb <- .check.sse(pdb)
+  log <- .update.log(log, pdb$clean.log)
 
   ## following operations are on an independent object
   npdb <- pdb
@@ -109,64 +121,75 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   capture.output( new.chain <- chain.pdb(npdb) )
   chain <- npdb$atom[, "chain"]  
   if(any(is.na(npdb$atom[, "chain"]))) {
-     msg <- rbind(msg, c("Found empty chain IDs", 
+     log <- .update.log(log, "Found empty chain IDs", 
                ifelse(fix.chain, "FIXED", "NO CHANGE"), 
-               ifelse(fix.chain, "ALL CHAINS ARE RELABELED", "")) )
+               ifelse(fix.chain, "ALL CHAINS ARE RELABELED", ""))
      if(fix.chain) {
         npdb$atom[, "chain"] <- new.chain
         has.fixed.chain <- TRUE 
      } 
+     else if(clean) 
+        clean <- FALSE 
   }
   else {
      ## check if new chain id assignment is consistent to original one
      chn.brk <- bounds(chain[ca.inds$atom], dup.inds=TRUE, pre.sort=FALSE)
      new.chn.brk <- bounds(new.chain[ca.inds$atom], dup.inds=TRUE, pre.sort=FALSE)
      if(!isTRUE(all.equal(chn.brk, new.chn.brk))) {
-        msg <- rbind(msg, c("Found inconsistent chain breaks",
+        log <- .update.log(log, "Found inconsistent chain breaks",
                  ifelse(fix.chain, "FIXED", "NO CHANGE"),
-                 ifelse(fix.chain, "ALL CHAINS ARE RELABELED", "")))
+                 ifelse(fix.chain, "ALL CHAINS ARE RELABELED", ""))
      
-        msg <- rbind(msg, c("Original chain breaks:", "", ""))
+        log <- .update.log(log, "Original chain breaks:")
         if(nrow(chn.brk) == 1) {
-           msg <- rbind(msg, c("  No chain break", "", ""))
+           log <- .update.log(log, "  No chain break")
         } 
         else {
            pre.ca <- ca.inds$atom[chn.brk[-nrow(chn.brk), "end"]]
-           pre.msg <- capture.output( print(npdb$atom[pre.ca, c("resid", "resno", "chain")], row.names = FALSE) )
-           msg <- rbind(msg, cbind(pre.msg, "", ""))
+           pre.log <- capture.output( print(npdb$atom[pre.ca, c("resid", "resno", "chain")], row.names = FALSE) )
+           log <- .update.log(log, pre.log)
         }
-        msg <- rbind(msg, c("", "", ""))
+        log <- .update.log(log)
  
-        msg <- rbind(msg, c("New chain breaks:", "", "") )
+        log <- .update.log(log, "New chain breaks:")
         if(nrow(new.chn.brk) == 1) {
-           msg <- rbind(msg, c("  No chain breaks", "", ""))
+           log <- .update.log(log, "  No chain breaks")
         } 
         else { 
            new.ca <- ca.inds$atom[new.chn.brk[-nrow(new.chn.brk), "end"]]
-           new.msg <- capture.output( print(npdb$atom[new.ca, c("resid", "resno", "chain")], row.names = FALSE) )
-           msg <- rbind(msg, cbind(new.msg, "", ""))
+           new.log <- capture.output( print(npdb$atom[new.ca, c("resid", "resno", "chain")], row.names = FALSE) )
+           log <- .update.log(log, new.log)
         }
 
         if(fix.chain) {
            npdb$atom[, "chain"] <- new.chain
            has.fixed.chain <- TRUE 
         }
+        else if(clean)
+           clean <- FALSE
      } 
   }
    
   ## Renumber residues and atoms
+  renumber <- FALSE
   if( any(!is.na(npdb$atom[, "insert"])) ) {
      renumber <- TRUE
-     msg <- rbind(msg, c("Found INSERT records", "RENUMBERED", ""))
+     log <- .update.log(log, "Found INSERT records", "RENUMBERED")
      npdb$atom[, "insert"] <- as.character(NA)
   }
   else if(force.renumber) {
      renumber <- TRUE 
-     msg <- rbind(msg, c("force.renumber = TRUE", "RENUMBERED", ""))
+     log <- .update.log(log, "force.renumber = TRUE", "RENUMBERED")
   }
-  else {
-     renumber <- FALSE
+  else if(has.fixed.chain) {
+     ## check again the ambiguity of residue labeling
+     chk <- try(.check.residue.ambiguity(npdb))
+     if(inherits(chk, "try-error")) {
+        renumber <- TRUE
+        log <- .update.log(log, "Found ambiguious residues after chain relabeling", "RENUMBERED")
+     }
   }
+
   if(renumber) {
 
     ## Assign consecutive atom numbers 
@@ -200,66 +223,82 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
          prev.chain.res = prev.chain.res + n.chain.res
        }
     }
-  } 
-  else {
-     if(has.fixed.chain) {
-        warning(paste("Chain IDs are relabeled but residues are not renumbered.",
-                    "Overlappling residue numbers may exist in the same chain!", sep="\n"))
-     }
   }
 
   ## update SSE
-  if(length(pdb$helix$start) > 0 || length(pdb$sheet$start) > 0) {
-     if(has.fixed.chain || renumber) {
-        sse <- .pdb2sse(pdb)
-        names(sse) <- sub(".*_.*_(.*)", "\\1", names(sse))
+  if(has.fixed.chain || renumber) {
+     ## Must use original pdb to unfold SSE
+     sse <- pdb2sse(pdb, verbose = FALSE)  
+
+     if(!is.null(sse)) {
+        id <- sub(".*_.*_.*_([^_]*)$", "\\1", names(sse))
         names(sse) <- paste(npdb$atom[ca.inds$atom, "resno"], 
-               npdb$atom[ca.inds$atom, "chain"], names(sse), sep="_")
-        sse.ind <- .bounds.sse(sse)
-#        if(length(sse.ind$helix$start) == length(pdb$helix$start))
-#           sse.ind$helix$type <- pdb$helix$type
-#        if(length(sse.ind$sheet$start) == length(pdb$sheet$start))
-#           sse.ind$sheet$sense <- pdb$sheet$sense
-           
-        npdb$helix <- sse.ind$helix
-        npdb$sheet <- sse.ind$sheet
- 
-        msg <- rbind(msg, c("SSE annotation", "UPDATED", ""))
+                            npdb$atom[ca.inds$atom, "chain"],
+                            npdb$atom[ca.inds$atom, "insert"],
+                            id, sep = "_")
+        new.sse <- bounds.sse(sse)
+     
+        if(!is.null(new.sse$helix)) {
+           npdb$helix$start <- new.sse$helix$start
+           npdb$helix$end <- new.sse$helix$end
+           npdb$helix$chain <- new.sse$helix$chain
+        }
+        if(!is.null(new.sse$sheet)) {
+           npdb$sheet$start <- new.sse$sheet$start
+           npdb$sheet$end <- new.sse$sheet$end
+           npdb$sheet$chain <- new.sse$sheet$chain
+        }
+      
+        if(!isTRUE(all.equal(npdb$helix, pdb$helix)) ||
+           !isTRUE(all.equal(npdb$sheet, pdb$sheet)) )
+           log <- .update.log(log, "SSE annotation", "UPDATED")
      }
   }
-
+  
+ 
+  ## update seqres 
+  if(has.fixed.chain && !is.null(npdb$seqres)) {
+     chs <- unique(npdb$atom[ca.inds$atom, "chain"])
+     names(npdb$seqres) <- vec2resno(chs, names(npdb$seqres))
+     if(!identical(npdb$seqres, pdb$seqres))
+        log <- .update.log(log, "SEQRES", "UPDATED")
+  }
+ 
   ## update amino acid name
   naa.atom <- which(npdb$atom[, "resid"] %in% prot.aa[-c(1:20)])
   naa.res <- intersect(ca.inds$atom, naa.atom)
   unk.atom <- which(!npdb$atom[, "resid"] %in% prot.aa)
   unk.res <- intersect(ca.inds$atom, unk.atom)
   if(length(naa.res) > 0) {
-     msg <- rbind(msg, c(paste("Found", length(naa.res), "non-standard amino acids"), 
+     log <- .update.log(log, paste("Found", length(naa.res), "non-standard amino acids"), 
               ifelse(fix.aa, "FIXED", "NO CHANGE"), 
-              ifelse(fix.aa, "AMINO ACID NAMES ARE CHANGED", "")) )
+              ifelse(fix.aa, "AMINO ACID NAMES ARE CHANGED", ""))
      tbl <- table(npdb$atom[naa.res, "resid"]) 
      tbl <- paste("  ", names(tbl), "(", tbl, ")", collapse = ",")
-     msg <- rbind(msg, c(tbl, "", ""))
+     log <- .update.log(log, tbl)
      if(fix.aa) {
          npdb$atom[naa.atom, "resid"] <- aa123(aa321(npdb$atom[naa.atom, "resid"])) 
-         msg <- rbind(msg, c(" Converted to", "", ""))
+         log <- .update.log(log, " Converted to")
          tbl <- table(npdb$atom[naa.res, "resid"])
          tbl <- paste("  ", aa123(aa321(names(tbl))), "(", tbl, ")", collapse = ",")
-         msg <- rbind(msg, c(tbl, "", ""))
+         log <- .update.log(log, tbl)
      }
+     else 
+        if(clean) clean <- FALSE
   }
   if(length(unk.res) > 0) {
-     msg <- rbind(msg, c(paste("Found", length(unk.res), "unknow amino acids"), 
-               "NO CHANGE", ""))
+     log <- .update.log(log, paste("Found", length(unk.res), "unknow amino acids"), 
+               "NO CHANGE")
      tbl <- table(npdb$atom[unk.res, "resid"]) 
      tbl <- paste("  ", names(tbl), "(", tbl, ")", collapse = ",")
-     msg <- rbind(msg, c(tbl, "", ""))
+     log <- .update.log(log, tbl)
+#     if(clean) clean <- FALSE
   } 
 
   ## update pdb$calpha
   npdb$calpha <- seq(1, nrow(npdb$atom)) %in% ca.inds$atom
   if(!identical(pdb$calpha, npdb$calpha)) 
-     msg <- rbind(msg, c("The component calpha", "UPDATED", ""))
+     log <- .update.log(log, "pdb$calpha", "UPDATED")
 
   ## update pdb$call
   npdb$call <- cl
@@ -267,86 +306,94 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   ## update class
   if(!inherits(npdb, "pdb") || !inherits(npdb, "sse")) {
      class(npdb) <- c("pdb", "sse")
-     msg <- rbind(msg, c("PDB object class", "UPDATED", ""))
+     log <- .update.log(log, "Object class", "UPDATED")
   }
-
-  ## log
-  if(!is.null(msg)) {
-     chk.log <- apply(msg, 1, function(x) {
-         if(nchar(x[2]) == 0)
-            sprintf("%-40s", x[1])
-         else if(nchar(x[3]) == 0)
-            paste(sprintf("%-40s", x[1]), "->", sprintf("%-12s", x[2]))
-         else
-            paste(paste(sprintf("%-40s", x[1]), "->", sprintf("%-12s", x[2]), "!!", x[3], "!!") )
-     } )
-  }
+ 
+  ## is the pdb clean?
+  if(clean)
+     log <- .update.log(log, "PDB is clean!")
   else {
-     chk.log <- "No problem found"
+     msg <- "PDB is still not clean. Try fix.chain=TRUE and/or fix.aa=TRUE"
+     log <- .update.log(log, msg)
+     warning(msg)
   }
-# chk.log <- paste(paste(chk.log, collapse = "\n"), "\n")
-  if(verbose) print(chk.log)
-  npdb$chk.log <- chk.log
+     
+  ## format log
+  log <- .format.log(log)
+  if(verbose) print(log)
 
+  npdb$clean.log <- log
   return(npdb)
 } 
-     
-.pdb2sse <- function(pdb) {
-  ##- Function to obtain an SSE sequence vector from a PDB object
-  ##   Result similar to that returned by stride(pdb)$sse and dssp(pdb)$sse
-  ##   This could be incorporated into read.pdb() if found to be more generally useful
-  ## Modified to include helix "type" and sheet "sense"
-  ## - Jan 15, 2015
 
-  if(is.null(pdb$helix) & is.null(pdb$sheet)) {
-    warning("No helix and sheet defined in input 'sse' PDB object: try using dssp()")
-    ##ss <- try(dssp(pdb)$sse)
-    ## Probably best to get user to do this separately due to possible 'exefile' problems etc..
-    return(NULL)
-  }
-  rn <- pdb$atom[pdb$calpha, c("resno", "chain")]
-  ss <- rep(" ", nrow(rn))
-  names(ss) = paste(rn$resno,rn$chain, "", sep="_")
-
-  for(i in 1:length(pdb$helix$start)) {
-    ind <- (rn$chain==pdb$helix$chain[i] &
-         rn$resno >= pdb$helix$start[i] &
-         rn$resno <= pdb$helix$end[i])
-    ss[ind] = "H"
-    names(ss)[ind] = sub("_$", paste("_", pdb$helix$type[i], sep=""), 
-                     names(ss)[ind])
-  }
-  for(i in 1:length(pdb$sheet$start)) {
-    ind <- (rn$chain==pdb$sheet$chain[i] &
-         rn$resno >= pdb$sheet$start[i] &
-         rn$resno <= pdb$sheet$end[i])
-    ss[ind] = "E"
-    names(ss)[ind] = sub("_$", paste("_", pdb$sheet$sense[i], sep=""), 
-                     names(ss)[ind])
-  }
-  return(ss)
+.update.log <- function(log, fact="", op="", note="") {
+  if(is.null(fact)) log
+  else if(is.matrix(fact)) .update.log(log, fact[,1], fact[,2], fact[,3])
+  else rbind(log, cbind(fact, op, note))
 }
 
-.bounds.sse <- function(sse) {
-  ## - reverse operation of .pdb2sse()
-  string0 <- strsplit(names(sse), split="_")
-  chain <- sapply(string0, "[", 2)
-  resno <- as.numeric(sapply(string0, "[", 1))
-  type <- sapply(string0, function(x) ifelse(length(x)>2, x[3], NA))
+.format.log <- function(log, format = c("print", "cat"), op.sign = "->", note.sign = "!!") {
+  format <- match.arg(format)
 
-  string <- paste(sse, chain, sep="_")
+  if(!is.null(log)) {
+    log <- apply(log, 1, function(x) {
+        if(nchar(x[2]) == 0)
+           sprintf("%-40s", x[1])
+        else if(nchar(x[3]) == 0)
+           paste(sprintf("%-40s", x[1]), op.sign, sprintf("%-12s", x[2]))
+        else
+           paste(paste(sprintf("%-40s", x[1]), op.sign, sprintf("%-12s", x[2]), note.sign, x[3], note.sign) )
+    } )
+  }
+  else {
+    log <- "No problem found"
+  }
 
-  ends <- c(which(string[-length(string)] != string[-1]), length(string))
-  starts <- c(1, ends[-length(ends)] + 1)
-  inds <- cbind(starts, ends)
-  colnames(inds) <- c("start", "end")
+  log <- switch(format, 
+     print = log, 
+     cat = paste(paste(log, collapse="\n"), "\n", sep="")
+  )
+  return(log)
+}
 
-  h <- which(sse[inds[, "start"]] == "H")
-  h.inds <- list(start = resno[inds[h, "start"]], end = resno[inds[h, "end"]], 
-     chain = chain[inds[h, "start"]], type = type[inds[h, "start"]])
-  e <- which(sse[inds[, "start"]] == "E")
-  e.inds <- list(start = resno[inds[e, "start"]], end = resno[inds[e, "end"]], 
-     chain = chain[inds[e, "start"]], sense = type[inds[e, "start"]])
+.check.residue.ambiguity <- function(pdb) {
 
-  return(list(helix = h.inds, sheet = e.inds) )
+   ca.inds <- atom.select(pdb, "calpha", verbose = FALSE)
+   c1p.inds <- atom.select(pdb, "nucleic", elety = "C1'", verbose = FALSE)
+   inds <- combine.sel(ca.inds, c1p.inds, op = "+")
+
+   if(length(inds$atom) > 0) {
+      strings <- paste(pdb$atom[inds$atom, "resno"],
+                       pdb$atom[inds$atom, "chain"],
+                       pdb$atom[inds$atom, "insert"], sep = "_")
+      if(any(duplicated(strings)))
+         stop(".check.residue.ambiguity(): Found ambiguous residue labeling")
+
+   }
+   invisible(NULL)
+}
+
+.check.sse <- function(pdb) {
+   log <- NULL
+   if(!is.null(pdb$helix)) {
+      if(length(pdb$helix$start) == 0) {
+         pdb['helix'] <- list(NULL)
+         log <- .update.log(log, "Empty SSE (helix)", "CLEANED")
+      }
+   }
+   if(!is.null(pdb$sheet)) {
+      if(length(pdb$sheet$start) == 0) {
+         pdb['sheet'] <- list(NULL)
+         log <- .update.log(log, "Empty SSE (sheet)", "CLEANED")
+      }
+   }
+
+   # if there is problem to generate sse vector
+   ss <- try(pdb2sse(pdb, verbose = FALSE))
+   if(inherits(ss, "try-error"))
+      stop(".check.sse(): Unable to generate SSE sequence")
+
+   pdb$clean.log <- log
+
+   return(pdb)
 }
