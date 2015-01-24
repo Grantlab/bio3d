@@ -127,8 +127,8 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
                    biounit <- c(biounit, list(bio))
                 }
              } 
-             biounit <- do.call(cat.pdb, c(biounit, list(renumber=FALSE, rechain=FALSE)) )
- 
+             biounit <- do.call(cat.pdb, biounit)
+
 #             # temporarily write the pdb of biounit and re-read it
 #             tmpf <- tempfile()
 #             write.pdb(biounit, file=tmpf)
