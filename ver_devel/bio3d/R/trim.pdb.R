@@ -40,7 +40,7 @@
   helix <- NULL; sheet <- NULL;
   
   if(sse) {
-    ss <- pdb2sse(pdb)
+    ss <- pdb2sse(pdb, verbose = FALSE)
 
     ##- Trimed positions
     calpha2 <- ca.inds$atom %in% inds$atom
