@@ -360,7 +360,7 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
 
    ca.inds <- atom.select(pdb, "calpha", verbose = FALSE)
    c1p.inds <- atom.select(pdb, "nucleic", elety = "C1'", verbose = FALSE)
-   inds <- combine.sel(ca.inds, c1p.inds, op = "+")
+   inds <- combine.sel(ca.inds, c1p.inds, op = "+", verbose = FALSE)
 
    if(length(inds$atom) > 0) {
       strings <- paste(pdb$atom[inds$atom, "resno"],
