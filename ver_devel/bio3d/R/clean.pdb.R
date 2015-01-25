@@ -120,8 +120,10 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   }
   
   ##   4. Fix object class if it is incorrect
-  if(!inherits(pdb, "pdb") || !inherits(pdb, "sse")) {
+  if(!inherits(pdb, "pdb") || !inherits(pdb, "sse") || 
+       !inherits(pdb$xyz, "xyz")) {
      class(pdb) <- c("pdb", "sse")
+     class(pdb$xyz) <- "xyz"
      log <- .update.log(log, "Object class", "UPDATED")
   }
   ###########
