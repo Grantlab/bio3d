@@ -13,7 +13,8 @@ cnapath(cna, from, to, k = 10, ncore = NULL, \dots)
 \method{summary}{cnapath}(object, \dots, pdb = NULL, label = NULL, col = NULL,
    plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE)
 \method{print}{cnapath}(x, \dots)
-view.cnapath(x, pdb, out.prefix = "view.cnapath", spline = FALSE, launch = FALSE)
+view.cnapath(x, pdb, out.prefix = "view.cnapath", spline = FALSE, 
+   colors = c("blue", "red"), launch = FALSE, \dots)
 }
 \arguments{
   \item{cna}{ A \sQuote{cna} object obtained from \code{\link{cna}}. }
@@ -25,8 +26,9 @@ view.cnapath(x, pdb, out.prefix = "view.cnapath", spline = FALSE, launch = FALSE
   \item{\dots}{ Additional arguments passed to igraph function 
        \code{\link[igraph:get.shortest.paths]{get.shortest.paths}} (in 
        the function \code{cnapath}), passed to \code{summary.cnapath} 
-       (in the function \code{print.cnapath}), or as additional 
-       paths for comparison (in the function \code{summary.cnapath}). }
+       (in \code{print.cnapath}), as additional paths for comparison 
+       (in \code{summary.cnapath}), or passed to the function \code{colorRamp} 
+       (in \code{view.cnapath}). }
   \item{object}{ A \sQuote{cnapath} class of object obtained from 
        \code{\link{cnapath}}. Multiple \sQuote{pa} input is allowed for 
        comparative statistical analysis in \code{\link{summary.cnapath}}. }
@@ -46,6 +48,10 @@ view.cnapath(x, pdb, out.prefix = "view.cnapath", spline = FALSE, launch = FALSE
   \item{out.prefix}{ prefix for the names of output files, \sQuote{view.vmd}
        and \sQuote{view.pdb}. }
   \item{spline}{ logical, if TRUE all paths are displayed as spline curves. }
+  \item{colors}{ character vector or integer scalar, define path colors. If a
+     character vector, passed to \code{colorRamp} function to generate the 
+     color scales. If an integer, color all paths the same way with VMD color 
+     ID equal to the integer. }
   \item{launch}{ logical, if TRUE VMD will be launched. }
 }
 \value{
@@ -103,6 +109,8 @@ print.cnapath(pas, pdb = pdb, col=c("red", "blue"), plot=TRUE)
 
 # View paths in 3D molecular graphic with VMD
 #view.cnapath(pa1, pdb, launch = TRUE)
+#view.cnapath(pa1, pdb, colors = 7, launch = TRUE)
+#view.cnapath(pa1, pdb, spline=TRUE, colors=c("pink", "red"), launch = TRUE)
 #pdb2 <- read.pdb("1kjy")
 #pdb2 <- trim.pdb(pdb2, atom.select(pdb2, chain="A", resno=npdbs$resno[2, gaps.res$f.inds]))
 #view.cnapath(pa2, pdb2, launch = TRUE)

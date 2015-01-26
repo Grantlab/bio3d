@@ -32,7 +32,7 @@ plot.cmap <- function(x, col=2, pch=16,
   if(!is.null(sse)) {
     ## Obtain SSE vector from PDB input 'sse'
     if(is.pdb(sse)) 
-      sse$sse <- .pdb2sse(sse)
+      sse$sse <- pdb2sse(sse)
     
     h <- bounds( which(sse$sse == "H") )
     e <- bounds( which(sse$sse == "E") )

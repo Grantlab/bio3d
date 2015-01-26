@@ -5,7 +5,7 @@
   Produce a new concatenated PDB object from two or more smaller PDB objects.
 }
 \usage{
-cat.pdb(\dots, renumber=TRUE, rechain=TRUE)
+cat.pdb(\dots, renumber=FALSE, rechain=FALSE)
 }
 \arguments{
   \item{\dots}{ two or more PDB structure objects obtained from
@@ -36,7 +36,7 @@ pdb1 <- read.pdb("1etl")
 pdb2 <- read.pdb("1hel")
 
 ## Concat
-new.pdb <- cat.pdb(pdb1, pdb2, pdb1)
+new.pdb <- cat.pdb(pdb1, pdb2, pdb1, rechain=TRUE, renumber=TRUE)
 
 ## Write to file
 write.pdb(new.pdb, file="concat.pdb")

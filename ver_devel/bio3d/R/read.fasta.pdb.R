@@ -42,35 +42,6 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
   mylapply <- lapply
   if(ncore > 1) mylapply <- mclapply
 
-
-  pdb2sse <- function(pdb) {
-    ##- Function to obtain an SSE sequence vector from a PDB object
-    ##   Result similar to that returned by stride(pdb)$sse and dssp(pdb)$sse
-    ##   This could be incorporated into read.pdb() if found to be more generally useful
-
-    if(is.null(pdb$helix) & is.null(pdb$sheet)) {
-      warning("No helix and sheet defined in input 'sse' PDB object: try using dssp()")
-      ##ss <- try(dssp(pdb)$sse)
-      ## Probably best to get user to do this separately due to possible 'exefile' problems etc..
-      return(NULL)
-    }
-    rn <- pdb$atom[pdb$calpha, c("resno", "chain")]
-    ss <- rep(" ", nrow(rn))
-    names(ss) = paste(rn$resno,rn$chain,sep="_")
-
-    for(i in 1:length(pdb$helix$start)) {
-      ss[ (rn$chain==pdb$helix$chain[i] &
-           rn$resno >= pdb$helix$start[i] &
-           rn$resno <= pdb$helix$end[i])] = "H"
-    }
-    for(i in 1:length(pdb$sheet$start)) {
-      ss[ (rn$chain==pdb$sheet$chain[i] &
-           rn$resno >= pdb$sheet$start[i] &
-           rn$resno <= pdb$sheet$end[i])] = "E"
-    }
-    return(ss)
-  }
- 
 #  for (i in 1:length(aln$id)) {
   retval <- mylapply(1:length(aln$id), function(i) {
     coords <- NULL; res.nu <- NULL
@@ -154,8 +125,14 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
   res.bf <- matrix(unlist(retval[, "res.bf"]), nrow=length(aln$id), byrow=TRUE)
   res.ch <- matrix(unlist(retval[, "res.ch"]), nrow=length(aln$id), byrow=TRUE)
   res.id <- matrix(unlist(retval[, "res.id"]), nrow=length(aln$id), byrow=TRUE)
-  res.ss <- matrix(unlist(retval[, "res.ss"]), nrow=length(aln$id), byrow=TRUE)
  
+  if( any(sapply(retval[, "res.ss"], is.null)) ) {
+     res.ss <- NULL
+  }
+  else {
+     res.ss <- matrix(unlist(retval[, "res.ss"]), nrow=length(aln$id), byrow=TRUE)
+     rownames(res.ss) <- aln$id
+  }
 
   rownames(aln$ali) <- aln$id
   rownames(coords) <- aln$id
@@ -163,7 +140,6 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
   rownames(res.bf) <- aln$id
   rownames(res.ch) <- aln$id
   rownames(res.id) <- aln$id
-  rownames(res.ss) <- aln$id
  
   if(fix.ali) {
      i1 <- which(is.na(res.nu))

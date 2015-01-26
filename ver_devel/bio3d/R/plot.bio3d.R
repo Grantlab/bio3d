@@ -52,7 +52,7 @@ plot.bio3d <- function(x, resno=NULL, rm.gaps = FALSE, type="h",
 
     ## Obtain SSE vector from PDB input 'sse'
     if(is.pdb(sse)) 
-      sse$sse <- .pdb2sse(sse)
+      sse$sse <- pdb2sse(sse)
  
     h <- bounds( which(sse$sse == "H") )
     e <- bounds( which(sse$sse == "E") )
@@ -133,31 +133,3 @@ plot.bio3d <- function(x, resno=NULL, rm.gaps = FALSE, type="h",
   }
 }
 
-
-.pdb2sse <- function(pdb) {
-  ##- Function to obtain an SSE sequence vector from a PDB object
-  ##   Result similar to that returned by stride(pdb)$sse and dssp(pdb)$sse
-  ##   This could be incorporated into read.pdb() if found to be more generally useful
-  
-  if(is.null(pdb$helix) & is.null(pdb$sheet)) {
-    warning("No helix and sheet defined in input 'sse' PDB object: try using dssp()")
-    ##ss <- try(dssp(pdb)$sse)
-    ## Probably best to get user to do this separately due to possible 'exefile' problems etc..
-    return(NULL)
-  }
-  rn <- pdb$atom[pdb$calpha, c("resno", "chain")]
-  ss <- rep(" ", nrow(rn))
-  names(ss) = paste(rn$resno,rn$chain,sep="_")
-  
-  for(i in 1:length(pdb$helix$start)) {
-    ss[ (rn$chain==pdb$helix$chain[i] &
-         rn$resno >= pdb$helix$start[i] &
-         rn$resno <= pdb$helix$end[i])] = "H"
-  }
-  for(i in 1:length(pdb$sheet$start)) {
-    ss[ (rn$chain==pdb$sheet$chain[i] &
-         rn$resno >= pdb$sheet$start[i] &
-         rn$resno <= pdb$sheet$end[i])] = "E"
-  }
-  return(ss)
-}

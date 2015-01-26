@@ -40,75 +40,36 @@
   helix <- NULL; sheet <- NULL;
   
   if(sse) {
-    ##-- Build reference SSE sequence matrix 'ss'
-    ref <- paste(pdb$atom[ca.inds$atom, "resno"], 
-                 pdb$atom[ca.inds$atom, "chain"], sep="_")
-    ss <- matrix(NA, ncol=length(ref), nrow=4) ## sse reference matrix
-    ss[4,] <- pdb$atom[ca.inds$atom, "resno"]    ## resno
-    colnames(ss) <- ref
+    ss <- pdb2sse(pdb, verbose = FALSE)
 
     ##- Trimed positions
-    ref.trim <- paste(atom[calpha, "resno"], 
-                      atom[calpha, "chain"], sep="_")
+    calpha2 <- ca.inds$atom %in% inds$atom
+    ss <- ss[calpha2]
+    
+    ##- New sse
+    new.sse <- bounds.sse(ss)
 
-    if(length(pdb$helix$start)>0) {
-      ##- HELIX chain, type and resno
-      chain.h <- rep(pdb$helix$chain, (pdb$helix$end-pdb$helix$start+1))
-      type.h <- rep(pdb$helix$type, (pdb$helix$end-pdb$helix$start+1))
-      resno.h <- unbound(pdb$helix$start, pdb$helix$end)
-
-      ##- Use reference vector for filling 'ss'
-      ref.h <- paste(resno.h, chain.h, sep="_")
-      i <- ref.h %in% ref ## Fix for HETATOM in SSE (1P3Q)
-      ss[1, ref.h[i]]="H"
-      ss[2, ref.h[i]]=chain.h[i]
-      ss[3, ref.h[i]]=type.h[i]
+    helix <- new.sse$helix
+    if(length(helix$start) > 0) {
+       ##- add back other components
+       add <- pdb$helix[!names(pdb$helix) %in% names(new.sse$helix)]
+       ##- match sse number in case some sse are completely removed
+       add <- lapply(add, function(x) x[new.sse$helix$id])
+       helix <- c(helix, add)
     }
 
-
-    if(length(pdb$sheet$start)>0) {
-      ##- SHEET chain, type and resno
-      chain.e <- rep(pdb$sheet$chain, (pdb$sheet$end-pdb$sheet$start+1))
-      if(is.null(pdb$sheet$sense))
-         type.e <- rep("", sum(pdb$sheet$end-pdb$sheet$start+1))
-      else 
-         type.e <- rep(pdb$sheet$sense, (pdb$sheet$end-pdb$sheet$start+1))
-      resno.e <- unbound(pdb$sheet$start, pdb$sheet$end)
-
-      ##- Use reference vector for filling 'ss'
-      ref.e <- paste(resno.e, chain.e, sep="_")
-      i <- ref.e %in% ref
-      ss[1, ref.e[i]]="E"
-      ss[2, ref.e[i]]=chain.e[i]
-      ss[3, ref.e[i]]=type.e[i]
+    sheet <- new.sse$sheet
+    if(length(sheet$start) > 0) {
+       ##- add back other components
+       add <- pdb$sheet[!names(pdb$sheet) %in% names(new.sse$sheet)]
+       ##- match sse number in case some sse are completely removed
+       add <- lapply(add, function(x) x[new.sse$sheet$id])
+       sheet <- c(sheet, add)
     }
 
-    ##- Lookup trimed positions 'ref.trim' in 'ss'
-    s <- ss[, ref.trim, drop=FALSE]
-
-    if( any(s[1,] =="H",na.rm=TRUE) ) {
-      sh <- (s[, s[1,] %in% "H"])
-      h.bounds <- bounds( as.numeric(sh[4,]), pre.sort=FALSE)
-      h.inds <- rle2(rep(1:nrow(h.bounds), h.bounds[,"length"]))$inds
-
-      helix$start = h.bounds[,"start"]
-      helix$end = h.bounds[,"end"]
-
-      helix$chain = sh[2, h.inds]
-      helix$type = sh[3, h.inds]
-    }
-
-    if( any(s[1,] =="E",na.rm=TRUE) ) {
-      se <- (s[, s[1,] %in% "E"])
-      e.bounds <- bounds( as.numeric(se[4,]), pre.sort=FALSE)
-      e.inds <- rle2(rep(1:nrow(e.bounds), e.bounds[,"length"]))$inds
-
-      sheet$start = e.bounds[,"start"]
-      sheet$end = e.bounds[,"end"]
-
-      sheet$chain = se[2, e.inds]
-      sheet$sense = se[3, e.inds]
-    } 
+    ##- remove 'id'; Maybe we don't need it?
+    helix$id <- NULL
+    sheet$id <- NULL
   }
 
   calpha = (atom[,"elety"]=="CA") & (atom[,"resid"]!="CA") & (atom[,"type"]=="ATOM")
