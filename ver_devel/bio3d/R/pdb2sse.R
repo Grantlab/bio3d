@@ -48,7 +48,7 @@ pdb2sse <- function(pdb, verbose = TRUE) {
 
      sse <- pdb[[i]]
 
-     if(!is.null(sse)) {
+     if(length(sse$start) > 0) {
         for(j in 1:length(sse$start)) {
            chain <- ifelse(sse$chain[j]=="", NA, sse$chain[j])
            insert0 <- ifelse(names(sse$start[j])=="", NA, names(sse$start[j]))

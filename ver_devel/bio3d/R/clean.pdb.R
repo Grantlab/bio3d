@@ -253,12 +253,12 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
                             id, sep = "_")
         new.sse <- bounds.sse(sse)
      
-        if(!is.null(new.sse$helix)) {
+        if(length(new.sse$helix$start) > 0) {
            npdb$helix$start <- new.sse$helix$start
            npdb$helix$end <- new.sse$helix$end
            npdb$helix$chain <- new.sse$helix$chain
         }
-        if(!is.null(new.sse$sheet)) {
+        if(length(new.sse$sheet$start) > 0) {
            npdb$sheet$start <- new.sse$sheet$start
            npdb$sheet$end <- new.sse$sheet$end
            npdb$sheet$chain <- new.sse$sheet$chain
@@ -378,16 +378,14 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
 
 .check.sse <- function(pdb) {
    log <- NULL
-   if(!is.null(pdb$helix)) {
-      if(length(pdb$helix$start) == 0) {
-         pdb['helix'] <- list(NULL)
-         log <- .update.log(log, "Empty SSE (helix)", "CLEANED")
+   if(!is.null(pdb$helix) | !is.null(pdb$sheet)) {
+      if(is.null(pdb$helix)) {
+         pdb$helix <- list(start=NULL, end=NULL, chain=NULL, type=NULL) 
+         log <- .update.log(log, "Helix is null but sheet is not", "UPDATED")
       }
-   }
-   if(!is.null(pdb$sheet)) {
-      if(length(pdb$sheet$start) == 0) {
-         pdb['sheet'] <- list(NULL)
-         log <- .update.log(log, "Empty SSE (sheet)", "CLEANED")
+      if(is.null(pdb$sheet)) {
+         pdb$sheet <- list(start=NULL, end=NULL, chain=NULL, sense=NULL) 
+         log <- .update.log(log, "Sheet is null but helix is not", "UPDATED")
       }
    }
 

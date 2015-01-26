@@ -79,7 +79,7 @@ bounds.sse <- function(x, pdb=NULL) {
      names(h$start) <- insert[inds[h.inds, "start"]]
      names(h$end) <- insert[inds[h.inds, "end"]]
   } else {
-     h <- NULL
+     h <- list(start=NULL, end=NULL, chain=NULL, id=NULL)
   }
 
   # sheet
@@ -94,7 +94,7 @@ bounds.sse <- function(x, pdb=NULL) {
      names(e$start) <- insert[inds[e.inds, "start"]]
      names(e$end) <- insert[inds[e.inds, "end"]]
   } else {
-     e <- NULL
+     e <- list(start=NULL, end=NULL, chain=NULL, id=NULL)
   }
  
   sse <- list(helix = h, sheet = e)

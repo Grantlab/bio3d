@@ -50,7 +50,7 @@
     new.sse <- bounds.sse(ss)
 
     helix <- new.sse$helix
-    if(!is.null(helix)) {
+    if(length(helix$start) > 0) {
        ##- add back other components
        add <- pdb$helix[!names(pdb$helix) %in% names(new.sse$helix)]
        ##- match sse number in case some sse are completely removed
@@ -59,7 +59,7 @@
     }
 
     sheet <- new.sse$sheet
-    if(!is.null(sheet)) {
+    if(length(sheet$start) > 0) {
        ##- add back other components
        add <- pdb$sheet[!names(pdb$sheet) %in% names(new.sse$sheet)]
        ##- match sse number in case some sse are completely removed
