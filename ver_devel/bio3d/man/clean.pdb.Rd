@@ -5,7 +5,7 @@
 \usage{
 clean.pdb(pdb, consecutive = TRUE, force.renumber = FALSE,
   fix.chain = FALSE, fix.aa = FALSE, rm.wat = FALSE, rm.lig = FALSE,
-  rm.h = FALSE, verbose = TRUE)
+  rm.h = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{pdb}{an object of class \code{pdb} as obtained from

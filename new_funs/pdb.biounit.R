@@ -57,7 +57,7 @@ pdb.biounit <- function(file, ncore = NULL, ...) {
     cl <- match.call()
 
     # This also does initial check on 'file' 
-    pdb <- read.pdb(file, ...)
+    capture.output( pdb <- read.pdb(file, ...) )
 
     dots <- list(...)
     if("maxlines" %in% names(dots)) 

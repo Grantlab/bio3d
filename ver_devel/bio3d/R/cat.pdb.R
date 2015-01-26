@@ -65,10 +65,15 @@ cat.pdb <- function(..., renumber=FALSE, rechain=FALSE) {
   }
 
   ## renumber residues
-  new <- try(clean.pdb(new, consecutive = !rechain, 
-                force.renumber = renumber, verbose=FALSE))
-  if(inherits(new, "try-error")) 
-     stop("cat.pdb(): Bad format pdb generated. Try rechain=TRUE and/or renumber=TRUE")
+  chk <- try(clean.pdb(new, consecutive = !rechain, 
+                force.renumber = renumber, verbose=FALSE), silent=TRUE)
+  if(inherits(chk, "try-error")) {
+     warning("cat.pdb(): Bad format pdb generated. Try rechain=TRUE and/or renumber=TRUE")
+     new['helix'] <- list(NULL)
+     new['sheet'] <- list(NULL)
+  }
+  else
+     new <- chk
 
   ## build new PDB object
   new$call <- cl
