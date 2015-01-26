@@ -87,40 +87,44 @@ xyz <- pdbs$xyz
 #-- Do PCA ignoring gap containing positions
 pc.xray <- pca.xyz(xyz, rm.gaps=TRUE)
 
-# Plot results (conformer plots & scree plot)
+# Plot results (conformer plots & scree plot overview)
 plot(pc.xray, col=annotation[, "color"])
+
+# Plot a single conformer plot of PC1 v PC2
+plot(pc.xray, pc.axes=1:2, col=annotation[, "color"])
 
 ## Plot atom wise loadings
 plot.bio3d(pc.xray$au[,1], ylab="PC1 (A)")
 
 \donttest{
 ## Plot loadings in relation to reference structure 1TAG
-gaps.res <- gap.inspect(pdbs$ali)
 pdb <- read.pdb("1tag")
+ind <- grep("1TAG", pdbs$id)             ## location in alignment
 
-ind <- grep("1TAG", pdbs$id)
-res.ind <- pdbs$resno[ind, gaps.res$f.ind]
+resno <- pdbs$resno[ind, !is.gap(pdbs)]  ## non-gap residues
+tpdb <- trim.pdb(pdb, resno=resno)
+
 op <- par(no.readonly=TRUE)
 par(mfrow = c(3, 1), cex = 0.6, mar = c(3, 4, 1, 1))
-plot.bio3d(res.ind, pc.xray$au[,1], sse=pdb, ylab="PC1 (A)")
-plot.bio3d(res.ind, pc.xray$au[,2], sse=pdb, ylab="PC2 (A)")
-plot.bio3d(res.ind, pc.xray$au[,3], sse=pdb, ylab="PC3 (A)")
+plot.bio3d(pc.xray$au[,1], resno, ylab="PC1 (A)", sse=tpdb)
+plot.bio3d(pc.xray$au[,2], resno, ylab="PC2 (A)", sse=tpdb)
+plot.bio3d(pc.xray$au[,3], resno, ylab="PC3 (A)", sse=tpdb)
 par(op)
 }
 
 \dontrun{
 # Write PC trajectory
+resno = pdbs$resno[1, !is.gap(pdbs)]
+resid = aa123(pdbs$ali[1, !is.gap(pdbs)])
+
 a <- mktrj.pca(pc.xray, pc=1, file="pc1.pdb",
-               resno = pdbs$resno[1, gaps.res$f.inds],
-               resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
+               resno=resno, resid=resid )
 
 b <- mktrj.pca(pc.xray, pc=2, file="pc2.pdb",
-               resno = pdbs$resno[1, gaps.res$f.inds],
-               resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
+               resno=resno, resid=resid )
 
 c <- mktrj.pca(pc.xray, pc=3, file="pc3.pdb",
-               resno = pdbs$resno[1, gaps.res$f.inds],
-               resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
+               resno=resno, resid=resid )
 }
 
 detach(transducin)

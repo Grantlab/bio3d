@@ -8,7 +8,8 @@
   (scree plot).
 }
 \usage{
-\method{plot}{pca}(x, pch = 16, col = par("col"), cex=0.8, mar=c(4, 4, 1, 1),...)
+\method{plot}{pca}(x, pc.axes=NULL, pch=16, col=par("col"), cex=0.8, mar=c(4, 4, 1, 1),...)
+
 \method{plot}{pca.scree}(x, y = NULL, type = "o", pch = 18,
          main = "", sub = "", xlim = c(0, 20), ylim = NULL,
          ylab = "Proporton of Variance (\%)",
@@ -20,6 +21,7 @@
 \arguments{
   \item{x}{ the results of principal component analysis obtained with
     \code{\link{pca.xyz}}. }
+  \item{pc.axes}{ an optional numeric vector of length two specifying the principal components to be plotted.  A NULL value will result in an overview plot of the first three PCs and a scree plot. See examples. }    
   \item{pch}{ a vector of plotting characters or symbols: see \sQuote{points}. }
   \item{col}{ a character vector of plotting colors.  }
   \item{cex}{ a numerical single element vector giving the amount by
@@ -60,24 +62,27 @@
 data(transducin)
 attach(transducin, warn.conflicts=FALSE)
 
-pc.xray <- pca.xyz(pdbs$xyz[, gap.inspect(pdbs$xyz)$f.inds])
+pc.xray <- pca(pdbs$xyz, rm.gaps=TRUE)
 plot(pc.xray)
 
-## color by nucleotide state
+## Color plot by nucleotide state
 vcolors <- annotation[, "color"]
 plot(pc.xray, col=vcolors)
+
+## Focus on a single plot of PC1 vs PC2
+plot(pc.xray, pc.axes=1:2, col=vcolors)
 
 ## add labels
 #labs <- rownames(annotation)
 #inds <- c(2,7)
 #plot.pca.score(pc.xray, inds=inds, col=vcolors, lab=labs)
 
-## color by seq identity
+## color by seq identity groupings
 #ide <- seqidentity(pdbs$ali)
 #hc <- hclust(as.dist(1-ide))
 #grps <- cutree(hc, h=0.2)
 #vcolors <- rainbow(max(grps))[grps]
-#plot(pc.xray, inds=inds, col=vcolors, lab=labs)
+#plot.pca.score(pc.xray, inds=inds, col=vcolors, lab=labs)
 
 detach(transducin)
 }
