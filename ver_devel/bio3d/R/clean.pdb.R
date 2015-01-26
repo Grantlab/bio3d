@@ -38,7 +38,7 @@
 #' } 
 "clean.pdb" <-
 function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE, 
-    fix.aa = FALSE, rm.wat = FALSE, rm.lig = FALSE, rm.h = FALSE, verbose=TRUE) {
+    fix.aa = FALSE, rm.wat = FALSE, rm.lig = FALSE, rm.h = FALSE, verbose=FALSE) {
 
   if(!is.pdb(pdb)) 
      stop("Input should be a 'pdb' object")
