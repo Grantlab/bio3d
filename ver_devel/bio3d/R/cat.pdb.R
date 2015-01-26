@@ -69,8 +69,8 @@ cat.pdb <- function(..., renumber=FALSE, rechain=FALSE) {
                 force.renumber = renumber, verbose=FALSE), silent=TRUE)
   if(inherits(chk, "try-error")) {
      warning("cat.pdb(): Bad format pdb generated. Try rechain=TRUE and/or renumber=TRUE")
-     new['helix'] <- NULL
-     new['sheet'] <- NULL
+     new['helix'] <- list(NULL)
+     new['sheet'] <- list(NULL)
   }
   else
      new <- chk
