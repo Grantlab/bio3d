@@ -51,7 +51,9 @@
   and one scree plot.
 }
 \value{
-  Called for its effect.
+  Produces a plot of PCA results in the active graphics device and invisibly 
+  returns the plotted \sQuote{z} coordinates along the requested \sQuote{pc.axes}. 
+  See examples section where these coordinates are used to identify plotted points.
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
@@ -70,9 +72,16 @@ vcolors <- annotation[, "color"]
 plot(pc.xray, col=vcolors)
 
 ## Focus on a single plot of PC1 vs PC2
-plot(pc.xray, pc.axes=1:2, col=vcolors)
+x <- plot(pc.xray, pc.axes=1:2, col=vcolors)
 
-## add labels
+## Identify points interactively with mouse clicks
+#identify(x, labels=basename.pdb(pdbs$id))
+
+## Add labels to select points
+inds <- c(1,10,37)
+text(x[inds,], labels=basename.pdb(pdbs$id[inds]), col="blue")
+
+## Alternative labeling method
 #labs <- rownames(annotation)
 #inds <- c(2,7)
 #plot.pca.score(pc.xray, inds=inds, col=vcolors, lab=labs)
