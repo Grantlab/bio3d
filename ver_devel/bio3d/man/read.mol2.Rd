@@ -6,17 +6,21 @@
 }
 \usage{
 read.mol2(file, maxlines = -1L)
+
+\method{print}{mol2}(x, \dots)
 }
 \arguments{
   \item{file}{ a single element character vector containing the name of
     the MOL2 file to be read. }
   \item{maxlines}{ the maximum number of lines to read before giving up
     with large files. Default is all lines. }
+  \item{x}{ an object as obtained from \code{read.sdf}. }
+  \item{...}{ additional arguments to \sQuote{print}. }
 }
 \details{
-  Basic functionality to parse a MOL2 file. The current version omits
-  bond information, and only \code{@<TRIPOS>MOLECULE} and
-  \code{@<TRIPOS>ATOM} records are stored.
+  Basic functionality to parse a MOL2 file. The current version reads
+  and stores \code{@<TRIPOS>MOLECULE}, \code{@<TRIPOS>ATOM} and
+  \code{@<TRIPOS>BOND} records. 
 
   In the case of a multi-molecule MOL2 file, each molecule will be stored
   as an individual object in a list. Conversely, if the multi-molecule
@@ -29,10 +33,12 @@ read.mol2(file, maxlines = -1L)
 }
 \value{
   Returns a list of molecules containing the following components:
-  \item{atom}{ a character matrix containing all atomic coordinate ATOM data, 
-  with a row per ATOM and a column per record type.  See below for details
-  of the record type naming convention (useful for accessing columns). }
-  \item{xyz}{ a numeric vector or matrix of ATOM coordinate data. }
+  \item{atom}{ a data frame containing all atomic coordinate ATOM data, 
+    with a row per ATOM and a column per record type.  See below for details
+    of the record type naming convention (useful for accessing
+    columns). }
+  \item{bond}{ a data frame containing all atomic bond information. }
+  \item{xyz}{ a numeric matrix of ATOM coordinate data. }
   \item{info}{ a numeric vector of MOL2 info data. }
   \item{name}{ a single element character vector containing the molecule name. }
 }
@@ -55,6 +61,13 @@ read.mol2(file, maxlines = -1L)
   Residue name \dQuote{resid},
   Atom charge \dQuote{charge},
   Status bit \dQuote{statbit},
+
+  For \code{bond} list components the column names are:
+  Bond identifier \dQuote{id},
+  number of the atom at one end of the bond\dQuote{origin},
+  number of the atom at the other end of the bond \dQuote{target},
+  the SYBYL bond type \dQuote{type}.
+    
   See examples for further details.
 }
 \seealso{ \code{\link{atom.select}}, \code{\link{read.pdb}} }
@@ -65,8 +78,14 @@ cat("\n")
 ## (returns a single object)
 mol <- read.mol2("single.mol2")
 
+## Short summary of the molecule
+print(mol)
+
 ## ATOM records
 mol$atom
+
+## BOND records
+mol$bond
 
 ## Print some coordinate data
 head(mol$atom[, c("x","y","z")])
