@@ -54,12 +54,7 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   clean <- TRUE
 
   ## Recognized amino acid names
-  prot.aa <- c("ALA", "CYS", "ASP", "GLU",
-               "PHE", "GLY", "HIS", "ILE", "LYS", "LEU", "MET", "ASN",
-               "PRO", "GLN", "ARG", "SER", "THR", "VAL", "TRP", "TYR",
-               "SEP", "TPO", "MLY", "MSE", "IAS", "ABA", "CSO", "CSD",
-               "CYM", "CME", "CSX", "CMT", "CYX", "HIE", "HIP", "HID",
-               "HSD", "HSE", "HSP", "DDE", "MHO", "ASX", "CIR", "PFF")
+  prot.aa <- aa.mass$aa3
   
   ## for residues and atoms renumbering
   first.eleno = 1
