@@ -5,7 +5,7 @@
   Produce a new concatenated PDB object from two or more smaller PDB objects.
 }
 \usage{
-cat.pdb(\dots, renumber=FALSE, rechain=FALSE)
+cat.pdb(\dots, renumber=FALSE, rechain=TRUE)
 }
 \arguments{
   \item{\dots}{ two or more PDB structure objects obtained from

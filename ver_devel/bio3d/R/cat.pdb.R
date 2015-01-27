@@ -1,11 +1,14 @@
-cat.pdb <- function(..., renumber=FALSE, rechain=FALSE) {
+cat.pdb <- function(..., renumber=FALSE, rechain=TRUE) {
   cl <- match.call()
-    
+   
   objs <- list(...)
   are.null <- unlist(lapply(objs, is.null))
   objs <- objs[!are.null]
 
-  if(length(objs)<1) return(NULL)
+  if(length(objs)==1) 
+     if(is.null(cl$rechain)) rechain = FALSE
+  else
+     if(length(objs)<1) return(NULL)
 
   if(any(!unlist(lapply(objs, is.pdb))))
     stop("provide PDB objects as obtained from read.pdb()")
