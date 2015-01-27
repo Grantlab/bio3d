@@ -2,7 +2,7 @@
 function(pdb, string=NULL,
          chain=NULL, resno=NULL, resid=NULL,
          eleno=NULL, elety=NULL, type=NULL,
-         verbose=TRUE, rm.insert=FALSE, ...) {
+         verbose=TRUE, rm.insert=FALSE, inverse=FALSE, ...) {
 
   ## Version 0.0 ... Fri Mar 17 14:45:37 PST 2006
   ##
@@ -296,6 +296,25 @@ function(pdb, string=NULL,
 
   ##- Combine selections from input string and components
   match <- combine.sel(sel1, sel2, op="AND", verbose=verbose)
+
+  ##- Inverse selection 
+  if(inverse) {
+    sele.all <- atom.select(pdb, "all", verbose=verbose)$atom
+
+    sele.new        <- NULL
+    sele.new$atom   <- which(!(sele.all %in% match$atom))
+    sele.new$xyz    <- atom2xyz(sele.new$atom)
+    class(sele.new) <- "select"
+    
+    match <- sele.new
+    rm(sele.new)
+    
+    if(verbose) {
+      cat("\n Selection inversed\n")
+      cat(paste(" *  Selected a total of:",length(match$atom),
+                "atoms  *"), sep="\n")
+    }
+  }
 
   return(match)
 }
