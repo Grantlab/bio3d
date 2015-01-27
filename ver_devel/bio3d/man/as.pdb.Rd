@@ -1,18 +1,22 @@
 \name{as.pdb}
 \alias{as.pdb}
+\alias{as.pdb.mol2}
 \alias{as.pdb.prmtop}
-\title{ Amber PRMTOP to PDB converter }
+\title{ Convert to PDB format }
 \description{
-  Convert Amber parameter/topology and coordinate data to PDB format.
+  Convert Tripos Mol2 format, or Amber parameter/topology and coordinate data to PDB format.
 }
 \usage{
 as.pdb(\dots)
 
-\method{as.pdb}{prmtop}(prmtop, crd = NULL, inds = NULL, inds.crd = inds, ncore=NULL, \dots)
+\method{as.pdb}{mol2}(mol2, \dots)
 
+\method{as.pdb}{prmtop}(prmtop, crd = NULL, inds = NULL, inds.crd = inds, ncore=NULL, \dots)
 }
 \arguments{
   \item{\dots}{ arguments passed to and from functions. }
+  \item{mol2}{ a list object of type \code{"mol2"} (obtained with
+    \code{\link{read.mol2}}). }
   \item{prmtop}{ a list object of type \code{"prmtop"} (obtained with
     \code{\link{read.prmtop}}). }
   \item{crd}{ a list object of type \code{"crd"} (obtained with
@@ -28,8 +32,8 @@ as.pdb(\dots)
     \code{ncore>1} requires package \sQuote{parallel} installed. }
 }
 \details{
-  Converts Amber formatted parameter/topology (PRMTOP) and coordinate
-  objects to a PDB object.
+  Converts Tripos Mol2 format and Amber formatted parameter/topology
+  (PRMTOP) and coordinate objects to a PDB object. 
 }
 \value{
   Returns a list of class \code{"pdb"} with the following components:
