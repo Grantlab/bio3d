@@ -13,7 +13,8 @@
 atom.select(\dots)
 
 \method{atom.select}{pdb}(pdb, string=NULL, chain=NULL, resno=NULL, resid=NULL,
-            eleno=NULL, elety=NULL, type=NULL, verbose=TRUE, rm.insert=FALSE, \dots)
+            eleno=NULL, elety=NULL, type=NULL, verbose=TRUE,
+            rm.insert=FALSE, inverse=FALSE, \dots)
 
 \method{atom.select}{prmtop}(prmtop, ...)
 
@@ -37,6 +38,8 @@ atom.select(\dots)
   \item{verbose}{ logical, if TRUE details of the selection are printed. }
   \item{rm.insert}{ logical, if TRUE insert ATOM records from the
     \code{pdb} object are ignored. }
+  \item{inverse}{ logical, if TRUE the inversed selection is retured
+    (i.e. all atoms NOT in the selection). }
   \item{prmtop}{ a structure object of class \code{"prmtop"}, obtained from
     \code{\link{read.prmtop}}. }
   \item{x}{ a atom.select object as obtained from
@@ -129,6 +132,9 @@ prmtop <- read.prmtop("prot_solvated.prmtop")
 
 ## Atom selection 
 ca.inds <- atom.select(prmtop, "calpha")
+
+## Inverse selection (all atoms except residues 1-5)
+atom.select(pdb, resno=1:5, inverse=TRUE)
 
 }
 }
