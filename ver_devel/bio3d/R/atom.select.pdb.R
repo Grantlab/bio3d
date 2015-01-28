@@ -1,3 +1,35 @@
+".are.protein" <- function(pdb, query.names = c("C", "CA", "N", "O")) {
+  return(.residue.type(pdb, query.names))
+}
+
+".are.nucleic" <- function(pdb, query.names = c("O3'", "C3'", "C4'", "C5'", "O5'")) {
+  return(.residue.type(pdb, query.names))
+}
+
+".residue.type" <- function(pdb, query.names=NULL) {
+  ## nucleic can be both XX' and XX*
+  pdb$atom$elety <- gsub("[*]", "'", pdb$atom$elety)
+
+  ## make unique residue identifiers
+  resid <- paste(pdb$atom$chain, pdb$atom$resno, sep="-")
+  
+  ## logical vector with one element per residue
+  res <- unlist(lapply(unique(resid), function(x) {
+    inds <- which(resid==x)
+    all(query.names %in% pdb$atom$elety[inds])
+  }))
+
+  ## residue to atom vector conversion
+  lens <- unlist(lapply(unique(resid), function(x) {
+    length(which(resid==x))
+  }))
+
+  ## final selection vector
+  sele <- rep(res, lens)
+  return(sele)
+}
+
+
 "atom.select.pdb" <-
 function(pdb, string=NULL,
          chain=NULL, resno=NULL, resid=NULL,
@@ -68,26 +100,17 @@ function(pdb, string=NULL,
 
      ##-- We have input selection string
      aa <- unique(pdb$atom[,"resid"])
-     prot.aa <- c("ALA", "CYS", "ASP", "GLU", 
-                  "PHE", "GLY", "HIS", "ILE", "LYS", "LEU", "MET", "ASN", 
-                  "PRO", "GLN", "ARG", "SER", "THR", "VAL", "TRP", "TYR", 
-                  "SEP", "TPO", "MLY", "MSE", "IAS", "ABA", "CSO", "CSD", 
-                  "CYM", "CME", "CSX", "CMT", "CYX", "HIE", "HIP", "HID", 
-                  "HSD", "HSE", "HSP", "DDE", "MHO", "ASX", "CIR", "PFF")
-     nuc.aa <- c("A", "U", "G", "C", "I",
-                 "DA", "DG", "DT", "DC", "DI")
-     
      hoh <- c("H2O", "OH2", "HOH", "HHO", "OHH", "SOL", "WAT",
               "TIP", "TIP2", "TIP3", "TIP4")
 
-     not.prot.aa <- (aa[!aa %in% prot.aa])
-     nuc.aa <- aa[aa %in% nuc.aa]
-     not.nuc.aa <- (aa[!aa %in% nuc.aa])
-     ligand.aa <- not.prot.aa[!not.prot.aa %in% hoh]
-     if(length(not.prot.aa) == 0) { not.prot.aa = "xxxxx" }
-     if(length(not.nuc.aa) == 0) { not.nuc.aa = "xxxxx" }
-     if(length(nuc.aa) == 0) { nuc.aa = "xxxxx" }
-     if(length(ligand.aa) == 0) { ligand.aa = "xxxxx" }
+     ## atom membership (logical vectors)
+     protein.atoms     <- .are.protein(pdb)
+     nucleic.atoms     <- .are.nucleic(pdb)
+     not.protein.atoms <- !protein.atoms
+     not.nucleic.atoms <- !nucleic.atoms
+     water.atoms       <- pdb$atom$resid %in% hoh
+     ligand.atoms      <- !protein.atoms & !nucleic.atoms & !water.atoms
+        
      
      if (string=="h") {
        h.atom <- which( substr(pdb$atom[,"elety"], 1, 1) %in% "H" )
@@ -109,20 +132,22 @@ function(pdb, string=NULL,
 
      ##-- Check for string 'shortcuts'
      i <- switch(string,
-                 calpha = paste("////",paste(prot.aa, collapse=","), "//CA/",sep=""),
-                 cbeta = paste("////",paste(prot.aa, collapse=","), "//N,CA,C,O,CB/",sep=""),
-                 backbone = paste("////",paste(prot.aa, collapse=","), "//N,CA,C,O/",sep=""),
-                 back = paste("////",paste(prot.aa, collapse=","), "//N,CA,C,O/",sep=""),
                  all = "///////",
-                 protein = paste("////",paste(prot.aa, collapse=","), "///",sep=""),
-                 notprotein = paste("////", paste(not.prot.aa, collapse=","), "///",sep=""),
-                 nucleic = paste("////",paste(nuc.aa, collapse=","), "///",sep=""),
-                 notnucleic = paste("////",paste(not.nuc.aa, collapse=","), "///",sep=""),
-                 ligand = paste("////", paste(ligand.aa, collapse=","), "///",sep=""),
-                 water = paste("////",paste(hoh, collapse=","), "///",sep=""),
-                 notwater = paste("////", paste(aa[!aa %in% hoh], collapse=","), "///",sep=""),
-                 #noh = "!H*",
-                 #h = "H*",
+                 calpha   = paste("/////", paste(pdb$atom$eleno[protein.atoms], collapse=","), "/CA/",sep=""),
+                 cbeta    = paste("/////", paste(pdb$atom$eleno[protein.atoms], collapse=","), "/CB/",sep=""),
+                 backbone = paste("/////", paste(pdb$atom$eleno[protein.atoms], collapse=","), "/N,CA,C,O/",sep=""),
+                 back     = paste("/////", paste(pdb$atom$eleno[protein.atoms], collapse=","), "/N,CA,C,O/",sep=""),
+                 
+                 protein    = paste("/////", paste(pdb$atom$eleno[protein.atoms], collapse=","), "//",sep=""),
+                 notprotein = paste("/////", paste(pdb$atom$eleno[!protein.atoms], collapse=","), "//",sep=""),
+                                  
+                 nucleic    = paste("/////", paste(pdb$atom$eleno[nucleic.atoms], collapse=","), "//",sep=""),
+                 notnucleic = paste("/////", paste(pdb$atom$eleno[!nucleic.atoms], collapse=","), "//",sep=""),
+                 
+                 ligand   = paste("/////", paste(pdb$atom$eleno[ligand.atoms], collapse=","), "//",sep=""),
+                 water    = paste("/////", paste(pdb$atom$eleno[water.atoms], collapse=","), "//",sep=""),
+                 notwater = paste("/////", paste(pdb$atom$eleno[!water.atoms], collapse=","), "//",sep=""),
+                 
                  NA)
      
      if(is.na(i)) {
