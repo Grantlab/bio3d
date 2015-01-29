@@ -1,15 +1,15 @@
-".is.protein" <- function(pdb, query.names = c("C", "CA", "N", "O")) {
-  return(.residue.type(pdb, query.names))
-}
+".is.protein" <- function(pdb) {
+    pdb$atom$insert[is.na(pdb$atom$insert)] <- ""
+    pdb$atom$chain[is.na(pdb$atom$chain)]   <- ""
+    resid <- paste(pdb$atom$chain, pdb$atom$insert, pdb$atom$resno, sep="-")
 
-## use known residue names to avoid assigning ligands as nucleic
-".is.nucleic" <- function(pdb, query.names = c("O3'", "C3'", "C4'", "C5'", "O5'")) {
-  non.nuc <- c("ATP", "ADP", "AMP", "GTP", "GDP", "GMP",
-               "TMP", "TDP", "TTP", "UMP", "UDP", "UTP",
-               "CMP", "CDP", "CTP")
-  nuc.lig <- pdb$atom$resid %in% non.nuc
-  restype <- .residue.type(pdb, query.names) &! nuc.lig
-  return(restype)
+    at.ca <- resid[ pdb$atom$elety == "CA" ]
+    at.o  <- resid[ pdb$atom$elety == "O" ]
+    at.c  <- resid[ pdb$atom$elety == "C" ]
+    at.n  <- resid[ pdb$atom$elety == "N" ]
+
+    common <- intersect(intersect(intersect(at.ca, at.o), at.n), at.c)
+    return(resid %in% common)
 }
 
 ## user known residue names only
@@ -23,28 +23,6 @@
   hoh <- c("H2O", "OH2", "HOH", "HHO", "OHH", "SOL",
            "WAT", "TIP", "TIP2", "TIP3", "TIP4")
   return(pdb$atom$resid %in% hoh.aa)
-}
-
-".residue.type" <- function(pdb, query.names=NULL) {
-  
-  ## nucleic can be both XX' and XX*
-  pdb$atom$elety <- gsub("[*]", "'", pdb$atom$elety)
-  pdb$atom$insert[is.na(pdb$atom$insert)] <- ""
-  pdb$atom$chain[is.na(pdb$atom$chain)]   <- ""
-  
-  ## make unique residue identifiers
-  resid <- paste(pdb$atom$chain, pdb$atom$insert, pdb$atom$resno, sep="-")
-  resid.unq <- unique(resid)
-  
-  ## selection vector
-  sele <- rep(FALSE, length(resid))
-  
-  for( res in resid.unq ) {
-    inds <- which(resid==res)
-    sele[inds] <- all(query.names %in% pdb$atom$elety[inds])
-  }
-  
-  return(sele)
 }
 
 
@@ -122,7 +100,7 @@ function(pdb, string=NULL,
        protein.atoms     <- .is.protein(pdb)
        not.protein.atoms <- !protein.atoms
      }
-     
+
      nucleic.atoms <- NULL; not.nucleic.atoms <- NULL;
      if(string %in% c("nucleic", "notnucleic", "ligand")) {
        nucleic.atoms     <- .is.nucleic(pdb)
@@ -134,11 +112,11 @@ function(pdb, string=NULL,
        water.atoms       <- .is.water(pdb)
        not.water.atoms   <- !water.atoms
      }
-     
-     ligand.atoms <- NULL; 
+
+     ligand.atoms <- NULL;
      if(string %in% c("ligand"))
        ligand.atoms      <- !protein.atoms & !nucleic.atoms & !water.atoms
-     
+
      if (string=="h") {
        h.atom <- which( substr(pdb$atom[,"elety"], 1, 1) %in% "H" )
        match <- list(atom=h.atom, xyz=atom2xyz(h.atom))
