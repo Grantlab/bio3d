@@ -118,7 +118,7 @@ function(pdb, string=NULL,
      if(string %in% c("water", "notwater", "ligand"))
        water.atoms       <- pdb$atom$resid %in% hoh
      
-     ligand.atoms <- NULL; water.atoms <- NULL;
+     ligand.atoms <- NULL; 
      if(string %in% c("ligand"))
        ligand.atoms      <- !protein.atoms & !nucleic.atoms & !water.atoms
      
