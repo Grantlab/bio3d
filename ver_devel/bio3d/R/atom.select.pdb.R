@@ -2,8 +2,27 @@
   return(.residue.type(pdb, query.names))
 }
 
+## use known residue names to avoid assigning ligands as nucleic
 ".is.nucleic" <- function(pdb, query.names = c("O3'", "C3'", "C4'", "C5'", "O5'")) {
-  return(.residue.type(pdb, query.names))
+  non.nuc <- c("ATP", "ADP", "AMP", "GTP", "GDP", "GMP",
+               "TMP", "TDP", "TTP", "UMP", "UDP", "UTP",
+               "CMP", "CDP", "CTP")
+  nuc.lig <- pdb$atom$resid %in% non.nuc
+  restype <- .residue.type(pdb, query.names) &! nuc.lig
+  return(restype)
+}
+
+## user known residue names only
+".is.nucleic" <- function(pdb) {
+  nuc.aa <- c("A",   "U",  "G",  "C",   "T",  "I",
+              "DA", "DU", "DG", "DC",  "DT", "DI")
+  return(pdb$atom$resid %in% nuc.aa)
+}
+
+".is.water" <- function(pdb) {
+  hoh <- c("H2O", "OH2", "HOH", "HHO", "OHH", "SOL",
+           "WAT", "TIP", "TIP2", "TIP3", "TIP4")
+  return(pdb$atom$resid %in% hoh.aa)
 }
 
 ".residue.type" <- function(pdb, query.names=NULL) {
@@ -98,10 +117,6 @@ function(pdb, string=NULL,
   parse.string <- function(pdb, string, verbose, rm.insert, type="") {
 
      ##-- We have input selection string
-     aa <- unique(pdb$atom[,"resid"])
-     hoh <- c("H2O", "OH2", "HOH", "HHO", "OHH", "SOL", "WAT",
-              "TIP", "TIP2", "TIP3", "TIP4")
-     
      protein.atoms <- NULL; not.protein.atoms <- NULL;
      if(string %in% c("protein", "calpha", "cbeta", "backbone", "back", "notprotein", "ligand")) {
        protein.atoms     <- .is.protein(pdb)
@@ -115,13 +130,14 @@ function(pdb, string=NULL,
      }
 
      water.atoms <- NULL
-     if(string %in% c("water", "notwater", "ligand"))
-       water.atoms       <- pdb$atom$resid %in% hoh
+     if(string %in% c("water", "notwater", "ligand")) {
+       water.atoms       <- .is.water(pdb)
+       not.water.atoms   <- !water.atoms
+     }
      
      ligand.atoms <- NULL; 
      if(string %in% c("ligand"))
        ligand.atoms      <- !protein.atoms & !nucleic.atoms & !water.atoms
-     
      
      if (string=="h") {
        h.atom <- which( substr(pdb$atom[,"elety"], 1, 1) %in% "H" )

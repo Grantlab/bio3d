@@ -28,11 +28,11 @@ function (aa) {
   # one-letter IUPAC code, for instance "ALA" into "A".
 
   aa1 <- c("-",".","X",
-           "C","G","T","A",
-           "C","G","U","A")
+           "C",  "G",  "T",  "A", "U",
+           "C",  "G",  "T","  A", "U")
   aa3 <- c("---", "---","UNK",
-           "DC", "DG", "DT", "DA",
-           "C",   "G", "T",  "A")
+           "DC", "DG", "DT", "DA", "DU",
+            "C",  "G",  "T",  "A",  "U")
   
     convert <- function(x) {
       if(is.na(x)) return(NA)
