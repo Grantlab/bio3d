@@ -59,20 +59,20 @@
 }
 
 .match.resno <- function(pdb, resno) {
-  if(!is.character(resno))
+  if(!is.numeric(resno))
     stop("'resno' must be a numeric vector")
   pdb$atom$resno %in% resno
 }
 
 .match.segid <- function(pdb, segid) {
   if(!is.character(segid))
-    stop("'segid' must be a numeric vector")
+    stop("'segid' must be a character vector")
   pdb$atom$segid %in% segid
 }
 
 .match.elesy <- function(pdb, elesy) {
   if(!is.character(elesy))
-    stop("'elesy' must be a numeric vector")
+    stop("'elesy' must be a character vector")
   pdb$atom$elesy %in% elesy
 }
 
@@ -132,7 +132,7 @@ atom.select.pdb <- function(pdb, string=NULL,
     M <- M & .match.segid(pdb, segid)
   }
   if(!is.null(elesy)) {
-    M <- M & .match.elsy(pdb, elesy)
+    M <- M & .match.elesy(pdb, elesy)
   }
   
   if(inverse)
