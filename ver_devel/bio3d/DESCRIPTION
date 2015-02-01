@@ -3,9 +3,11 @@ Title: Biological Structure Analysis
 Version: 2.1-4
 Author: Barry Grant, Xin-Qiu Yao, Lars Skjaerven, Julien Ide
 VignetteBuilder: knitr
+LinkingTo: Rcpp
 Imports:
     parallel,
-    grid
+    grid,
+    Rcpp
 Suggests:
     XML,
     RCurl,

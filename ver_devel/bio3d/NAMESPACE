@@ -1,3 +1,4 @@
 #exportPattern("^[[:alpha:]]+")
 exportPattern("^[^\\.]")
-import(parallel, grid)
+import(parallel, grid, Rcpp)
+useDynLib(bio3d)

@@ -1,15 +1,21 @@
-".is.protein" <- function(pdb) {
-  pdb$atom$insert[is.na(pdb$atom$insert)] <- ""
-  pdb$atom$chain[is.na(pdb$atom$chain)]   <- ""
-  resid <- paste(pdb$atom$chain, pdb$atom$insert, pdb$atom$resno, sep="-")
+".is.protein" <- function(pdb, cpp=TRUE) {
+  ##pdb$atom$insert[is.na(pdb$atom$insert)] <- ""
+  ##pdb$atom$chain[is.na(pdb$atom$chain)] <- ""
   
-  at.ca <- resid[ pdb$atom$elety == "CA" ]
-  at.o  <- resid[ pdb$atom$elety == "O" ]
-  at.c  <- resid[ pdb$atom$elety == "C" ]
-  at.n  <- resid[ pdb$atom$elety == "N" ]
+  if(cpp) {
+    return(.isProteinCpp(pdb$atom$resno, pdb$atom$chain, pdb$atom$insert, pdb$atom$elety))
+  }
+  else {
+    resid <- paste(pdb$atom$chain, pdb$atom$insert, pdb$atom$resno, sep="-")
   
-  common <- intersect(intersect(intersect(at.ca, at.o), at.n), at.c)
-  return(resid %in% common)
+    at.ca <- resid[ pdb$atom$elety == "CA"]
+    at.o  <- resid[ pdb$atom$elety == "O" ]
+    at.c  <- resid[ pdb$atom$elety == "C" ]
+    at.n  <- resid[ pdb$atom$elety == "N" ]
+    
+    common <- intersect(intersect(intersect(at.ca, at.o), at.n), at.c)
+    return(resid %in% common)
+  }
 }
 
 ".is.nucleic" <- function(pdb) {
@@ -79,12 +85,21 @@
 atom.select.pdb <- function(pdb, string=NULL,
                             type  = NULL, eleno = NULL, elety = NULL,
                             resid = NULL, chain = NULL, resno = NULL,
-                            segid = NULL, elesy = NULL, 
-                            inverse = FALSE, verbose=FALSE, ...) {
+                            segid = NULL, elesy = NULL, operator = "&",
+                            inverse = FALSE, verbose=FALSE,  ...) {
 
   if(!is.pdb(pdb))
     stop("'pdb' must be an object of class 'pdb'")
 
+  if(verbose) cat("\n")
+  .verboseout <- function(M, type) {
+    cat(" .. ", sprintf("%08s", length(which(M))), " atom(s) from '", type, "' selection \n", sep="")
+  }
+
+  operator <- operator[1]
+  if(!operator %in% c("&", "|"))
+    stop("allowed values for 'operator' are '&' or '|'")
+  
   cl <- match.call()
   M <- rep(TRUE, nrow(pdb$atom))
 
@@ -105,41 +120,74 @@ atom.select.pdb <- function(pdb, string=NULL,
                 atom      =  .match.type(pdb, "ATOM"),
                 NA
     )
+    
+    if(verbose) {
+      .verboseout(M, 'string')
+    }
+  }
+
+  ## combine logical vectors
+  .combinelv <- function(L, M, operator) {
+    if(operator=="&") M <- L & M
+    if(operator=="|") M <- L | M
+    return(M)
+  }
+  
+  if(!is.null(type)) {
+    L <- .match.elety(pdb, type)
+    if(verbose) .verboseout(L, 'type')
+    M <- .combinelv(L, M, operator)
+  }
+  if(!is.null(eleno)) {
+    L <- .match.elety(pdb, eleno)
+    if(verbose) .verboseout(L, 'eleno')
+    M <- .combinelv(L, M, operator)
+  }
+  if(!is.null(elety)) {
+    L <- .match.elety(pdb, elety)
+    if(verbose) .verboseout(L, 'elety')
+    M <- .combinelv(L, M, operator)
+  }
+  if(!is.null(resid)) {
+    L <- .match.resid(pdb, resid)
+    if(verbose) .verboseout(L, 'resid')
+    M <- .combinelv(L, M, operator)
+  }
+  if(!is.null(chain)) {
+    L <- .match.chain(pdb, chain)
+    if(verbose) .verboseout(L, 'chain')
+    M <- .combinelv(L, M, operator)
+  }
+  if(!is.null(resno)) {
+    L <- .match.resno(pdb, resno)
+    if(verbose) .verboseout(L, 'resno')
+    M <- .combinelv(L, M, operator)
+  }
+  if(!is.null(segid)) {
+    L <- .match.segid(pdb, segid)
+    if(verbose) .verboseout(L, 'segid')
+    M <- .combinelv(L, M, operator)
+  }
+  if(!is.null(elesy)) {
+    L <- .match.elesy(pdb, elesy)
+    if(verbose) .verboseout(L, 'elesy')
+    M <- .combinelv(L, M, operator)
   }
 
   if(verbose)
-    print(M)
+    cat(" ..", sprintf("%08s", length(which(M))), "atom(s) in final combined selection \n")
 
-  if(!is.null(type)) {
-    M <- M & .match.elety(pdb, type)
-  }
-  if(!is.null(eleno)) {
-    M <- M & .match.elety(pdb, eleno)
-  }
-  if(!is.null(elety)) {
-    M <- M & .match.elety(pdb, elety)
-  }
-  if(!is.null(resid)) {
-    M <- M & .match.resid(pdb, resid)
-  }
-  if(!is.null(chain)) {
-    M <- M & .match.chain(pdb, chain)
-  }
-  if(!is.null(resno)) {
-    M <- M & .match.resno(pdb, resno)
-  }
-  if(!is.null(segid)) {
-    M <- M & .match.segid(pdb, segid)
-  }
-  if(!is.null(elesy)) {
-    M <- M & .match.elesy(pdb, elesy)
-  }
-  
-  if(inverse)
+  if(inverse) {
+    if(verbose) {
+      cat(" ..", sprintf("%08s", length(which(!M))), "atom(s) in inversed selection \n")
+    }
     sele <- as.select(which(!M))
+  }
   else
     sele <- as.select(which(M))
 
   sele$call <- cl
+
+  if(verbose) cat("\n")
   return(sele)
 }
