@@ -15,8 +15,8 @@ atom.select(\dots)
 \method{atom.select}{pdb}(pdb, string = NULL,
                           type  = NULL, eleno = NULL, elety = NULL,
                           resid = NULL, chain = NULL, resno = NULL,
-                          segid = NULL, operator = "&",
-                          inverse = FALSE, verbose=FALSE, \dots)
+                          segid = NULL, operator = "AND",
+                          inverse = FALSE, value = FALSE, verbose=FALSE, \dots)
 
 \method{atom.select}{prmtop}(prmtop, ...)
 
@@ -40,10 +40,14 @@ atom.select(\dots)
   \item{segid}{ a character vector of segment identifiers. }
   \item{operator}{ a single element character specifying either the AND
     or OR operator by which individual selection components should be
-    combined. Allowed values are \sQuote{"&"} and \sQuote{"|"}. }
+    combined. Allowed values are \sQuote{"AND"} and \sQuote{"OR"}. }
   \item{verbose}{ logical, if TRUE details of the selection are printed. }
   \item{inverse}{ logical, if TRUE the inversed selection is retured
     (i.e. all atoms NOT in the selection). }
+  \item{value}{ logical, if FALSE, vectors containing the (integer) indices of
+    the matches determined by \code{atom.select} are returned, and if TRUE,
+    a \code{pdb} object containing the matching atoms themselves is
+    returned. }
   \item{prmtop}{ a structure object of class \code{"prmtop"}, obtained from
     \code{\link{read.prmtop}}. }
   \item{x}{ a atom.select object as obtained from
@@ -69,13 +73,13 @@ atom.select(\dots)
   will select all protein atoms found in chain A.
 
   Selection criteria are combined according to the provided
-  \code{operator} argument. The default operator \code{&} (AND) will
-  combine by intersection while \code{|} (OR) will take the union.
+  \code{operator} argument. The default operator \code{AND} (or \code{&}) will
+  combine by intersection while \code{OR} (or \code{|}) will take the union.
 
   For example, \code{atom.select(pdb, "protein", elety=c("N", "CA", "C"),
   resno=65:103)} will select the N, CA, C atoms in the protein residues
   65 through 103, while \code{atom.select(pdb, "protein", resid="ATP",
-  operator="|")} will select all protein atoms as well as any ATP
+  operator="OR")} will select all protein atoms as well as any ATP
   residue(s).
 
   Other \code{string} shortcuts include:

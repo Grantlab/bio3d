@@ -71,8 +71,8 @@
 atom.select.pdb <- function(pdb, string=NULL,
                             type  = NULL, eleno = NULL, elety = NULL,
                             resid = NULL, chain = NULL, resno = NULL,
-                            segid = NULL, operator = "&",
-                            inverse = FALSE, verbose=FALSE,  ...) {
+                            segid = NULL, operator = "AND", inverse = FALSE,
+                            value = FALSE, verbose=FALSE,  ...) {
 
   if(!is.pdb(pdb))
     stop("'pdb' must be an object of class 'pdb'")
@@ -82,9 +82,10 @@ atom.select.pdb <- function(pdb, string=NULL,
     cat(" .. ", sprintf("%08s", length(which(M))), " atom(s) from '", type, "' selection \n", sep="")
   }
 
-  operator <- operator[1]
+  op.tbl <- c(rep("AND",3), rep("OR",4))
+  operator <- op.tbl[match(operator, c("AND","and","&","OR","or","|","+"))]
   if(!operator %in% c("&", "|"))
-    stop("allowed values for 'operator' are '&' or '|'")
+    stop("allowed values for 'operator' are 'AND' or 'OR'")
 
   cl <- match.call()
   M <- rep(TRUE, nrow(pdb$atom))
@@ -114,8 +115,8 @@ atom.select.pdb <- function(pdb, string=NULL,
 
   ## combine logical vectors
   .combinelv <- function(L, M, operator) {
-    if(operator=="&") M <- L & M
-    if(operator=="|") M <- L | M
+    if(operator=="AND") M <- L & M
+    if(operator=="OR") M <- L | M
     return(M)
   }
 
@@ -168,7 +169,10 @@ atom.select.pdb <- function(pdb, string=NULL,
     sele <- as.select(which(M))
 
   sele$call <- cl
-
   if(verbose) cat("\n")
-  return(sele)
+
+  if(value)
+    return(trim.pdb(pdb, sele))
+  else
+    return(sele)
 }

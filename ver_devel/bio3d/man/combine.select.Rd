@@ -1,26 +1,26 @@
-\name{combine.sel}
-\alias{combine.sel}
+\name{combine.select}
+\alias{combine.select}
 \title{ Combine Atom Selections From PDB Structure }
 \description{
-  Do "and", "or", or "not" set operations between two or more atom 
+  Do "and", "or", or "not" set operations between two or more atom
   selections made by \code{\link{atom.select}}
 }
 \usage{
-combine.sel(sel1=NULL, sel2=NULL, \dots, op="AND", verbose=TRUE)
+combine.sel(sel1=NULL, sel2=NULL, \dots, operator="AND", verbose=TRUE)
 }
 \arguments{
   \item{sel1}{ an atom selection object of class \code{"select"}, obtained from
     \code{\link{atom.select}}. }
-  \item{sel2}{ a second atom selection object of class \code{"select"}, obtained 
+  \item{sel2}{ a second atom selection object of class \code{"select"}, obtained
     from \code{\link{atom.select}}. }
   \item{\dots}{ more select objects for the set operation. }
-  \item{op}{ name of the set operation. }
-  \item{verbose}{ logical, if TRUE details of the selection combination are 
+  \item{operator}{ name of the set operation. }
+  \item{verbose}{ logical, if TRUE details of the selection combination are
      printed. }
 }
 \details{
-  The value of \code{op} should be one of following:
-  (1) "AND", "and", or "&" for set intersect, 
+  The value of \code{operator} should be one of following:
+  (1) "AND", "and", or "&" for set intersect,
   (2) "OR", "or", "|", or "+" for set union,
   (3) "NOT", "not", "!", or "-" for set difference \code{sel1 - sel2 - sel3 ...}.
 }
@@ -28,6 +28,7 @@ combine.sel(sel1=NULL, sel2=NULL, \dots, op="AND", verbose=TRUE)
   Returns a list of class \code{"select"} with components:
   \item{atom }{atom indices of selected atoms.}
   \item{xyz }{xyz indices of selected atoms.}
+  \item{call }{the matched call.}
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
@@ -43,10 +44,10 @@ pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 # Select C-alpha atoms of entire system
 ca.global.inds <- atom.select(pdb, "calpha")
 
-# Select C-beta atoms of entire protein 
+# Select C-beta atoms of entire protein
 cb.global.inds <- atom.select(pdb, "protein", elety="CB")
 
-# Select backbone atoms of entire system 
+# Select backbone atoms of entire system
 bb.global.inds <- atom.select(pdb, "backbone")
 
 # Select all atoms with residue number from 46 to 50

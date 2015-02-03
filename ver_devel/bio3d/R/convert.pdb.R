@@ -16,7 +16,7 @@ function(pdb, type = c("original", "pdb", "charmm", "amber", "gromacs"),
     }
   }
   if(rm.h) {
-    inds <- combine.sel(inds, atom.select(pdb, "noh", verbose=FALSE), verbose=FALSE) 
+    inds <- combine.select(inds, atom.select(pdb, "noh", verbose=FALSE), verbose=FALSE) 
     if(verbose){
       cat(paste("\t Retaining", length(inds$atom),"non-hydrogen atoms\n"))
     } 

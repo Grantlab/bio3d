@@ -4,14 +4,10 @@ core.find <- function(...)
 core.find.pdb <- function(pdb, verbose=FALSE, ...) {
   if(nrow(pdb$xyz)<4)
     stop("provide a multi model PDB file with 4 or more frames")
-  
-  inds1 <- combine.sel(atom.select(pdb, "calpha",   verbose=verbose),
-                       atom.select(pdb, "protein",  verbose=verbose),
-                       verbose=verbose)
-  inds2 <- combine.sel(atom.select(pdb, "//////P/", verbose=verbose),
-                       atom.select(pdb, "nucleic",  verbose=verbose),
-                       verbose=verbose)
-  inds <- combine.sel(inds1, inds2, op="OR", verbose=verbose)
+
+  inds1 <- atom.select(pdb, "calpha", verbose=verbose)
+  inds2 <- atom.select(pdb, "nucleic", elety="P", verbose=verbose")  
+  inds <- combine.select(inds1, inds2, operator="OR", verbose=verbose)
   
   tmp <- trim.pdb(pdb, inds)
   core <- core.find.pdbs(tmp$xyz, ...)
