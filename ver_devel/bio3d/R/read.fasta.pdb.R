@@ -113,7 +113,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
       res.ch <- rbind(res.ch, ca.ali[, "chain"])
       res.id <- rbind(res.id, ca.ali[, "resid"])
 
-      sse <- pdb2sse(pdb)
+      sse <- pdb2sse(pdb, verbose = FALSE)
       res.ss <- rbind(res.ss, sse[nseq])
     } ## end else for (non)missing PDB file
     return (list(coords=coords, res.nu=res.nu, res.bf=res.bf, res.ch=res.ch, res.id=res.id, res.ss=res.ss))
