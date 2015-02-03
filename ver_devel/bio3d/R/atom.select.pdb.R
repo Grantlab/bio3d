@@ -1,21 +1,13 @@
-".is.protein" <- function(pdb, cpp=TRUE) {
-  ##pdb$atom$insert[is.na(pdb$atom$insert)] <- ""
-  ##pdb$atom$chain[is.na(pdb$atom$chain)] <- ""
+".is.protein" <- function(pdb) {
+  resid <- paste(pdb$atom$chain, pdb$atom$insert, pdb$atom$resno, sep="-")
   
-  if(cpp) {
-    return(.isProteinCpp(pdb$atom$resno, pdb$atom$chain, pdb$atom$insert, pdb$atom$elety))
-  }
-  else {
-    resid <- paste(pdb$atom$chain, pdb$atom$insert, pdb$atom$resno, sep="-")
+  at.ca <- resid[ pdb$atom$elety == "CA"]
+  at.o  <- resid[ pdb$atom$elety == "O" ]
+  at.c  <- resid[ pdb$atom$elety == "C" ]
+  at.n  <- resid[ pdb$atom$elety == "N" ]
   
-    at.ca <- resid[ pdb$atom$elety == "CA"]
-    at.o  <- resid[ pdb$atom$elety == "O" ]
-    at.c  <- resid[ pdb$atom$elety == "C" ]
-    at.n  <- resid[ pdb$atom$elety == "N" ]
-    
-    common <- intersect(intersect(intersect(at.ca, at.o), at.n), at.c)
-    return(resid %in% common)
-  }
+  common <- intersect(intersect(intersect(at.ca, at.o), at.n), at.c)
+  return(resid %in% common)
 }
 
 ".is.nucleic" <- function(pdb) {
