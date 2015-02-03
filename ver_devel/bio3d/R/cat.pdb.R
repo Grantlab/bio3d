@@ -24,21 +24,16 @@ cat.pdb <- function(..., renumber=FALSE, rechain=TRUE) {
     }
   }
 
-  ## assign new chain identifiers
-  if(rechain) {
-    k <- 1
-    for(i in 1:length(objs)) {
-      x <- objs[[i]]
-      chains <- unique(x$atom$chain)
-      for(j in 1:length(chains)) {
-        inds <- which(objs[[i]]$atom$chain==chains[j])
-        x$atom$chain[inds] <- LETTERS[k]
-        if(!is.null(x$helix)) x$helix$chain[] <- LETTERS[k]
-        if(!is.null(x$sheet)) x$sheet$chain[] <- LETTERS[k]
-        k <- k+1
-      }
-      objs[[i]] <- x
-    }
+  ## save original chain IDs
+  ori.chain <- unlist(lapply(objs, function(x) unique(x$atom$chain)))
+
+  ## always assign new chain identifiers 
+  ## and bring back original chain ID later if rechain=FALSE
+  k <- 1
+  for(i in 1:length(objs)) {
+    x <- objs[[i]]
+    objs[[i]] <- .update.chain(x, LETTERS[k:26])
+    k <- k + length(unique(x$atom$chain))
   }
 
   ## concat objects
@@ -78,6 +73,8 @@ cat.pdb <- function(..., renumber=FALSE, rechain=TRUE) {
   else
      new <- chk
 
+  if(!rechain) new <- .update.chain(new, ori.chain)
+
   ## build new PDB object
   new$call <- cl
 
@@ -95,4 +92,16 @@ cat.pdb <- function(..., renumber=FALSE, rechain=TRUE) {
   }
   
   return(new)
+}
+
+.update.chain <- function(x, chain.repo = LETTERS) {
+   new <- x
+   chains <- unique(x$atom$chain)
+   for(j in 1:length(chains)) {
+     inds <- which(x$atom$chain==chains[j])
+     new$atom$chain[inds] <- chain.repo[j]
+     if(!is.null(x$helix)) new$helix$chain[x$helix$chain==chains[j]] <- chain.repo[j]
+     if(!is.null(x$sheet)) new$sheet$chain[x$sheet$chain==chains[j]] <- chain.repo[j]
+   }
+   new
 }
