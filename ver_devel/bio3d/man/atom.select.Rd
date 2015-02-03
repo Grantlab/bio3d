@@ -12,9 +12,11 @@
 \usage{
 atom.select(\dots)
 
-\method{atom.select}{pdb}(pdb, string=NULL, chain=NULL, resno=NULL, resid=NULL,
-            eleno=NULL, elety=NULL, type=NULL, verbose=TRUE,
-            rm.insert=FALSE, inverse=FALSE, \dots)
+\method{atom.select}{pdb}(pdb, string=NULL,
+                          type  = NULL, eleno = NULL, elety = NULL,
+                          resid = NULL, chain = NULL, resno = NULL,
+                          segid = NULL, elesy = NULL, operator = "&",
+                          inverse = FALSE, verbose=FALSE, \dots)
 
 \method{atom.select}{prmtop}(prmtop, ...)
 
@@ -25,19 +27,22 @@ atom.select(\dots)
     \code{atom.select.prmtop}, or \code{print}. }
   \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
     \code{\link{read.pdb}}. }
-  \item{string}{ a character selection string with the following syntax:\cr
-    \code{/segid/chain/resno/resid/eleno/elety/}. Or a single selection keyword from 
-    \code{calpha} \code{cbeta} \code{backbone} \code{protein} \code{notprotein} \code{ligand} \code{water} \code{notwater} \code{h} \code{noh} }
-  \item{chain}{ a character vector of chain identifiers. }
-  \item{resno}{ a numeric or character vector of residue numbers. }
-  \item{resid}{ a character vector of residue name identifiers. }
-  \item{eleno}{ a numeric or character vector of element numbers. }
-  \item{elety}{ a character vector of atom names. }
+  \item{string}{ a single selection keyword from \code{calpha}
+    \code{cbeta} \code{backbone} \code{protein} \code{nucleic} 
+    \code{ligand} \code{water} \code{h} \code{noh} }
   \item{type}{ a single element character vector for selecting \sQuote{ATOM}
-     or \sQuote{HETATM} record types. }
+    or \sQuote{HETATM} record types. }
+  \item{eleno}{ a numeric vector of element numbers. }
+  \item{elety}{ a character vector of atom names. }
+  \item{resid}{ a character vector of residue name identifiers. }
+  \item{chain}{ a character vector of chain identifiers. }
+  \item{resno}{ a numeric vector of residue numbers. }
+  \item{segid}{ a character vector of segment identifiers. }
+  \item{elesy}{ a character vector of elesment symbols. }
+  \item{operator}{ a single element character specifying the operator in
+    which the selection should be based. Allowed values are \sQuote{"&"}
+    and \sQuote{"|"}. }
   \item{verbose}{ logical, if TRUE details of the selection are printed. }
-  \item{rm.insert}{ logical, if TRUE insert ATOM records from the
-    \code{pdb} object are ignored. }
   \item{inverse}{ logical, if TRUE the inversed selection is retured
     (i.e. all atoms NOT in the selection). }
   \item{prmtop}{ a structure object of class \code{"prmtop"}, obtained from
@@ -50,10 +55,11 @@ atom.select(\dots)
   corresponding to the intersection of various input criteria. 
 
   Input selection criteria include selection \code{string} keywords (such as 
-  \code{"calpha"}, \code{"backbone"}, \code{"protein"}, \code{"ligand"}, etc.)
-  and individual named selection components (including \sQuote{chain}, 
-  \sQuote{resno}, \sQuote{resid}, \sQuote{elety} etc.). For example,
-  \code{atom.select(pdb, "calpha")} or \code{atom.select(pdb,
+  \code{"calpha"}, \code{"backbone"}, \code{"protein"},
+  \code{"nucleic"}, \code{"ligand"}, etc.) and individual named
+  selection components (including \sQuote{chain},  \sQuote{resno},
+  \sQuote{resid}, \sQuote{elety} etc.). For example, 
+  \code{atom.select(pdb, "calpha")} or \code{atom.select(pdb, "protein", 
   elety="CA")}, which in this case are equivalent.
 
   Alternatively, a single element character vector containing a hierarchical
@@ -93,6 +99,12 @@ atom.select(\dots)
 
   See also \code{atom.select.pdb} or \code{atom.select.prmtop} for more
   information. 
+}
+\value{
+  Returns a list of class \code{"select"} with the following components:
+  \item{atom}{ a numeric matrix of atomic indices. }
+  \item{xyz }{ a numeric matrix of xyz indices. }
+  \item{call }{ the matched call. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
