@@ -1,11 +1,11 @@
 ".is.protein" <- function(pdb) {
   resid <- paste(pdb$atom$chain, pdb$atom$insert, pdb$atom$resno, sep="-")
-  
+
   at.ca <- resid[ pdb$atom$elety == "CA"]
   at.o  <- resid[ pdb$atom$elety == "O" ]
   at.c  <- resid[ pdb$atom$elety == "C" ]
   at.n  <- resid[ pdb$atom$elety == "N" ]
-  
+
   common <- intersect(intersect(intersect(at.ca, at.o), at.n), at.c)
   return(resid %in% common)
 }
@@ -68,16 +68,10 @@
   pdb$atom$segid %in% segid
 }
 
-.match.elesy <- function(pdb, elesy) {
-  if(!is.character(elesy))
-    stop("'elesy' must be a character vector")
-  pdb$atom$elesy %in% elesy
-}
-
 atom.select.pdb <- function(pdb, string=NULL,
                             type  = NULL, eleno = NULL, elety = NULL,
                             resid = NULL, chain = NULL, resno = NULL,
-                            segid = NULL, elesy = NULL, operator = "&",
+                            segid = NULL, operator = "&",
                             inverse = FALSE, verbose=FALSE,  ...) {
 
   if(!is.pdb(pdb))
@@ -91,7 +85,7 @@ atom.select.pdb <- function(pdb, string=NULL,
   operator <- operator[1]
   if(!operator %in% c("&", "|"))
     stop("allowed values for 'operator' are '&' or '|'")
-  
+
   cl <- match.call()
   M <- rep(TRUE, nrow(pdb$atom))
 
@@ -112,7 +106,7 @@ atom.select.pdb <- function(pdb, string=NULL,
                 atom      =  .match.type(pdb, "ATOM"),
                 NA
     )
-    
+
     if(verbose) {
       .verboseout(M, 'string')
     }
@@ -124,7 +118,7 @@ atom.select.pdb <- function(pdb, string=NULL,
     if(operator=="|") M <- L | M
     return(M)
   }
-  
+
   if(!is.null(type)) {
     L <- .match.elety(pdb, type)
     if(verbose) .verboseout(L, 'type')
@@ -158,11 +152,6 @@ atom.select.pdb <- function(pdb, string=NULL,
   if(!is.null(segid)) {
     L <- .match.segid(pdb, segid)
     if(verbose) .verboseout(L, 'segid')
-    M <- .combinelv(L, M, operator)
-  }
-  if(!is.null(elesy)) {
-    L <- .match.elesy(pdb, elesy)
-    if(verbose) .verboseout(L, 'elesy')
     M <- .combinelv(L, M, operator)
   }
 
