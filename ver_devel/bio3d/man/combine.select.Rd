@@ -1,12 +1,12 @@
-\name{combine.select}
-\alias{combine.select}
+\name{combine.selectect}
+\alias{combine.selectect}
 \title{ Combine Atom Selections From PDB Structure }
 \description{
   Do "and", "or", or "not" set operations between two or more atom
   selections made by \code{\link{atom.select}}
 }
 \usage{
-combine.sel(sel1=NULL, sel2=NULL, \dots, operator="AND", verbose=TRUE)
+combine.select(sel1=NULL, sel2=NULL, \dots, operator="AND", verbose=TRUE)
 }
 \arguments{
   \item{sel1}{ an atom selection object of class \code{"select"}, obtained from
@@ -55,19 +55,19 @@ aa.local.inds <- atom.select(pdb, resno=46:50)
 
 
 # Do set intersect: return C-alpha atoms with residue number from 46 to 50
-ca.local.inds <- combine.sel(ca.global.inds, aa.local.inds)
+ca.local.inds <- combine.select(ca.global.inds, aa.local.inds)
 print( pdb$atom[ ca.local.inds$atom, ] )
 
 # Do set subtract: return side-chain atoms with residue number from 46 to 50
-sc.local.inds <- combine.sel(aa.local.inds, bb.global.inds, op="-")
+sc.local.inds <- combine.select(aa.local.inds, bb.global.inds, op="-")
 print( pdb$atom[ sc.local.inds$atom, ] )
 
 # Do set union: return C-alpha and side-chain atoms with residue number from 46 to 50
-casc.local.inds <- combine.sel(ca.local.inds, sc.local.inds, op="+")
+casc.local.inds <- combine.select(ca.local.inds, sc.local.inds, op="+")
 print( pdb$atom[ casc.local.inds$atom, ] )
 
 # More than two selections: return side-chain atoms (but not C-beta) with residue number from 46 to 50
-sc2.local.inds <- combine.sel(aa.local.inds, bb.global.inds, cb.global.inds, op="-")
+sc2.local.inds <- combine.select(aa.local.inds, bb.global.inds, cb.global.inds, op="-")
 print( pdb$atom[ sc2.local.inds$atom, ] )
 
 }

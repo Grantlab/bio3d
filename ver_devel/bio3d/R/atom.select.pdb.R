@@ -84,7 +84,7 @@ atom.select.pdb <- function(pdb, string=NULL,
 
   op.tbl <- c(rep("AND",3), rep("OR",4))
   operator <- op.tbl[match(operator, c("AND","and","&","OR","or","|","+"))]
-  if(!operator %in% c("&", "|"))
+  if(!operator %in% c("AND", "OR"))
     stop("allowed values for 'operator' are 'AND' or 'OR'")
 
   cl <- match.call()
