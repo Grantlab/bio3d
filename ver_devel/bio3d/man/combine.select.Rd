@@ -62,15 +62,15 @@ ca.local.inds <- combine.select(ca.global.inds, aa.local.inds)
 print( pdb$atom[ ca.local.inds$atom, ] )
 
 # Do set subtract: return side-chain atoms with residue number from 46 to 50
-sc.local.inds <- combine.select(aa.local.inds, bb.global.inds, operator="-")
+sc.local.inds <- combine.select(aa.local.inds, bb.global.inds, op="-")
 print( pdb$atom[ sc.local.inds$atom, ] )
 
 # Do set union: return C-alpha and side-chain atoms with residue number from 46 to 50
-casc.local.inds <- combine.select(ca.local.inds, sc.local.inds, operator="+")
+casc.local.inds <- combine.select(ca.local.inds, sc.local.inds, op="+")
 print( pdb$atom[ casc.local.inds$atom, ] )
 
 # More than two selections: return side-chain atoms (but not C-beta) with residue number from 46 to 50
-sc2.local.inds <- combine.select(aa.local.inds, bb.global.inds, cb.global.inds, operator="-")
+sc2.local.inds <- combine.select(aa.local.inds, bb.global.inds, cb.global.inds, op="-")
 print( pdb$atom[ sc2.local.inds$atom, ] )
 
 }

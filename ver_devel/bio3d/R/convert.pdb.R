@@ -10,7 +10,7 @@ function(pdb, type = c("original", "pdb", "charmm", "amber", "gromacs"),
   ##-- Water and hydrogen removal
   inds <- NULL
   if(rm.wat) {
-    inds <- atom.select(pdb, "water", inverse=TRUE, verbose=FALSE)
+    inds <- atom.select(pdb, "notwater", verbose=FALSE)
     if(verbose){
       cat(paste("\t Retaining", length(inds$atom),"non-water atoms\n"))
     }
@@ -103,7 +103,7 @@ function(pdb, type = c("original", "pdb", "charmm", "amber", "gromacs"),
 
     ##- Check for non-standard residue names
     if(verbose){
-      not.prot.inds <- atom.select(pdb, "protein", inverse=TRUE, verbose = FALSE)$atom
+      not.prot.inds <- atom.select(pdb, "notprotein", verbose = FALSE)$atom
       if(length(not.prot.inds) > 0) { 
         not.prot.res <- paste(unique(pdb$atom[not.prot.inds, "resid"]), collapse = " ")
         cat(paste("\t Non-standard residue names present (",not.prot.res,")\n") )

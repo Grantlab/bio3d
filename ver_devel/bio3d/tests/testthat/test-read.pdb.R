@@ -11,7 +11,7 @@ test_that("read.pdb() reads a normal pdb file", {
   expect_true(inherits(pdb$xyz, "xyz"))
 
   expect_equal(nrow(pdb$atom), 1177)
-  expect_equal(sum(pdb$calpha), 128)
+  expect_equal(sum(pdb$calpha), 129)
 
   expect_equal(sum(pdb$atom$resid=="HOH"), 177)
   expect_equal(sum(pdb$atom$resid=="CL"), 2)

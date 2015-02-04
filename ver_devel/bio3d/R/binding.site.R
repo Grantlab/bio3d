@@ -29,9 +29,9 @@
     
     if ( hydrogens ) {
       if(is.null(a.inds))
-        a.inds <- atom.select(a, "all", verbose=verbose)
+        a.inds <- atom.select(a, string='///////', verbose=verbose)
       if(is.null(b.inds))
-        b.inds <- atom.select(b, "all", verbose=verbose)
+        b.inds <- atom.select(b, string='///////', verbose=verbose)
     }
     else {
       if(is.null(a.inds))
@@ -52,8 +52,8 @@
     a <- trim.pdb(a, a.inds)
 
     if ( hydrogens ) {
-      a.inds <- atom.select(a, "all", verbose=verbose)
-      b.inds <- atom.select(b, "all", verbose=verbose)
+      a.inds <- atom.select(a, string='///////', verbose=verbose)
+      b.inds <- atom.select(b, string='///////', verbose=verbose)
     }
     else {
        a.inds <- atom.select(a, string='noh', verbose=verbose)
