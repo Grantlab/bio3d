@@ -3,7 +3,7 @@ cmap.pdb <- function(pdb, inds=NULL, verbose=FALSE, ...) {
     stop("provide a pdb object as obtained from function 'pdb'")
 
   if(is.null(inds)) {
-    inds <- atom.select(pdb, "notwater", verbose=verbose)
+    inds <- atom.select(pdb, "water", inverse=TRUE, verbose=verbose)
   }
 
   pdb <- trim.pdb(pdb, inds)

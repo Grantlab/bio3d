@@ -67,11 +67,11 @@ cmap(\dots)
 pdb <- read.pdb( system.file("examples/hivp.pdb", package="bio3d") )
 
 ## Atom Selection indices
-inds <- atom.select(pdb, "calpha")
+inds <- atom.select(pdb, elety="CA")
 
 ## Reference contact map
 ref.cont <- cmap( pdb$xyz[inds$xyz], dcut=6, scut=3 )
-plot.dmat(ref.cont)
+plot.cmap(ref.cont)
 
 \dontrun{
 ##- Read Traj file
