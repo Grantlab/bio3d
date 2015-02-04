@@ -1,5 +1,5 @@
-\name{combine.selectect}
-\alias{combine.selectect}
+\name{combine.select}
+\alias{combine.select}
 \title{ Combine Atom Selections From PDB Structure }
 \description{
   Do "and", "or", or "not" set operations between two or more atom
@@ -34,7 +34,10 @@ combine.select(sel1=NULL, sel2=NULL, \dots, operator="AND", verbose=TRUE)
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Xin-Qiu Yao }
-\seealso{ \code{\link{atom.select}} }
+\seealso{
+  \code{\link{atom.select}}, \code{\link{as.select}}
+  \code{\link{read.pdb}}, \code{\link{trim.pdb}}
+}
 \examples{
 
 # Read a PDB file

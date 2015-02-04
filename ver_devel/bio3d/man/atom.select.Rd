@@ -87,7 +87,7 @@ atom.select(\dots)
   \code{"protein"}, \code{"ligand"}, \code{"water"}, \code{"h"},
   \code{"noh"}, \code{"atom"}, and \code{"hetatom"}.
 
-  In addition, the \code{combine.sel} function can further combine atom
+  In addition, the \code{combine.select} function can further combine atom
   selections using \sQuote{and}, \sQuote{or}, or \sQuote{not} logical
   operations.
 
@@ -114,7 +114,7 @@ atom.select(\dots)
 \author{ Barry Grant, Lars Skjaerven }
 \seealso{
   \code{\link{read.pdb}}, \code{\link{as.select}},
-  \code{\link{combine.sel}}, \code{\link{trim.pdb}},
+  \code{\link{combine.select}}, \code{\link{trim.pdb}},
   \code{\link{write.pdb}}, \code{\link{read.prmtop}},
   \code{\link{read.crd}}, \code{\link{read.dcd}},
   \code{\link{read.ncdf}}.
