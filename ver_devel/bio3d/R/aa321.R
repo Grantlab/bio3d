@@ -28,16 +28,16 @@ function (aa) {
   # one-letter IUPAC code, for instance "ALA" into "A".
 
   aa1 <- c("-",".","X",
-           "C",  "G",  "T",  "A", "U",
-           "C",  "G",  "T","  A", "U")
+           "C",  "G",  "T",  "A", "U", "I",
+           "C",  "G",  "T","  A", "U", "I")
   aa3 <- c("---", "---","UNK",
-           "DC", "DG", "DT", "DA", "DU",
-            "C",  "G",  "T",  "A",  "U")
+           "DC", "DG", "DT", "DA", "DU", "DI",
+            "C",  "G",  "T",  "A",  "U", "I")
   
     convert <- function(x) {
       if(is.na(x)) return(NA)
       if (all(x != aa3)) {
-        warning(paste("Unknown 3-letters code for aminoacid:",x))
+        warning(paste("Unknown 3-letters code for residue:",x))
         return("X") # mask unk
       }
       else {
