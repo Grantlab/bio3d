@@ -26,8 +26,7 @@ summary.pdb <- function(object, printseq=FALSE, ...) {
   
   nprot <-length(prot.inds)
   nnuc <-length(nuc.inds)
-  nresnuc <- length(unique(
-    paste(object$atom$chain[nuc.inds], object$atom$insert[nuc.inds], object$atom$resno[nuc.inds], sep="-")))
+  nresnuc <- length(atom.select(object, "nucleic", elety="P", verbose=FALSE)$atom)
                                                 
   het <- object$atom[other.inds,]
   nhet.atom <- nrow(het)
@@ -71,7 +70,7 @@ summary.pdb <- function(object, printseq=FALSE, ...) {
   if(printseq) {
     ##protein
     if(nres>0) {
-      prot.pdb <- trim.pdb(object, as.select(prot.inds))
+      prot.pdb <- trim.pdb(object, atom.select(object, "protein", verbose=FALSE))
       aa <- pdbseq(prot.pdb)
       if(!is.null(aa)) {
         if(nres > 225) {
@@ -87,12 +86,8 @@ summary.pdb <- function(object, printseq=FALSE, ...) {
     
     ## nucleic
     if(nresnuc>0) {
-      na.pdb <- trim.pdb(object, as.select(nuc.inds))
-      aa <- paste(object$atom$chain[nuc.inds], object$atom$insert[nuc.inds],
-                  object$atom$resno[nuc.inds], object$atom$resid[nuc.inds],
-                  sep="-")
-      aa <- aa[!duplicated(aa)]
-      aa <- unlist(lapply(strsplit(aa, "-"), function(x) x[4]))
+      na.pdb <- trim.pdb(object, atom.select(object, "nucleic", verbose=FALSE))
+      aa <- na.pdb$atom[atom.select(na.pdb, "nucleic", elety="P", verbose=FALSE)$atom, "resid"]
       aa <- .aa321.na(aa)
       if(nresnuc > 225) {
         ## Trim long sequences before output
