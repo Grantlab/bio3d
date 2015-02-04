@@ -1,13 +1,13 @@
-\name{aa.mass}
-\alias{aa.mass}
+\name{aa.table}
+\alias{aa.table}
 \docType{data}
-\title{ Amino Acid Residue Mass }
+\title{ Table of Relevant Amino Acids }
 \description{
   This data set provides the atomic masses of a selection of amino
   acids regularly occuring in proteins. 
 }
 \usage{
-aa.mass
+aa.table
 }
 \format{
   A data frame with the following components.
@@ -16,7 +16,7 @@ aa.mass
       acid code.}
     \item{\code{aa1}}{a character vector containing one-letter amino
       acid code.}
-    \item{\code{aaMass}}{a numeric vector containing the mass of the
+    \item{\code{mass}}{a numeric vector containing the mass of the
       respective amino acids. }
     \item{\code{formula}}{a character vector containing the formula of
       the amino acid in which the mass calculat was based. }
@@ -33,11 +33,11 @@ aa.mass
 }
 \examples{
 \donttest{
-data(aa.mass)
-aa.mass
+data(aa.table)
+aa.table
 
 ## table look up
-aa.mass["HIS", ]
+aa.table["HIS", ]
 
 ## read PDB, and fetch residue masses
 pdb <- read.pdb("1etl")

@@ -54,7 +54,7 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   clean <- TRUE
 
   ## Recognized amino acid names
-  prot.aa <- aa.mass$aa3
+  prot.aa <- aa.table$aa3
   
   ## for residues and atoms renumbering
   first.eleno = 1

@@ -84,8 +84,9 @@ atom.select(\dots)
 
   Other \code{string} shortcuts include:
   \code{"calpha"}, \code{"back"}, \code{"backbone"}, \code{"cbeta"},
-  \code{"protein"}, \code{"ligand"}, \code{"water"}, \code{"h"},
-  \code{"noh"}, \code{"atom"}, and \code{"hetatom"}.
+  \code{"protein"}, \code{"notprotein"}, \code{"ligand"},
+  \code{"water"}, \code{"notwater"}, \code{"h"}, \code{"noh"},
+  \code{"nucleic"}, and \code{"notnucleic"}.
 
   In addition, the \code{combine.select} function can further combine atom
   selections using \sQuote{and}, \sQuote{or}, or \sQuote{not} logical
@@ -93,8 +94,9 @@ atom.select(\dots)
 
 }
 \note{
-  Protein atoms are defined as any atom in a residue which contains all
-  four backbone atoms N, CA, C, and O.
+  Protein atoms are defined as any atom in a residue matching the
+  residue name in the attached \code{aa.table} data frame. See
+  \code{aa.table$aa3} for a complete list of residue names.
 
   Nucleic atoms are defined as all atoms found in residues with names A,
   U, G, C, T, I, DA, DU, DG, DC, DT, or DI.

@@ -38,10 +38,7 @@
     }
     else  {
       ## Read data matrix
-      #mat.file <- system.file(paste("matrices/aa_mass.mat",sep=""), package="bio3d")
-      #mat <- read.table(mat.file)
-      mat <- bio3d::aa.mass
-      ##return(mat)
+      mat <- bio3d::aa.table
     }
     
     ## Data frame with column names:

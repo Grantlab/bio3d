@@ -225,6 +225,7 @@
   cat(" Diagonalizing Hessian...")
   ptm <- proc.time()
   ei <- eigen(H, symmetric=TRUE)
+  #ei <- eigenC(H)
   t <- proc.time() - ptm
   cat("\tDone in", t[[3]], "seconds.\n")
   return(ei)

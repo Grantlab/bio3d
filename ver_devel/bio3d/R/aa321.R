@@ -4,8 +4,8 @@ function (aa) {
   # convert three-letters amino-acid code into
   # one-letter IUPAC code, for instance "ALA" into "A".
 
-  aa1 <- c("-", ".", "X", aa.mass$aa1, "H", "R")
-  aa3 <- c("---", "---","UNK", aa.mass$aa3, "DDE", "CIR")
+  aa1 <- c("-", ".", "X", aa.table$aa1)
+  aa3 <- c("---", "---","UNK", aa.table$aa3)
 
     convert <- function(x) {
       if(is.na(x)) return(NA)

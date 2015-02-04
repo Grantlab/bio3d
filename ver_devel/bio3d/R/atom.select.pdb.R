@@ -1,4 +1,29 @@
-".is.protein" <- function(pdb) {
+".is.protein" <- function(pdb, byres=TRUE) {
+  if(byres) {
+    return(.is.protein1(pdb))
+  }
+  else {
+    ## possible option to issue a warning when the two methods diverge
+    sel1 <- .is.protein1(pdb)
+    sel2 <- .is.protein2(pdb)
+    
+    if(!(identical(sel1, sel2))) {
+      sel <- cbind(sel1, sel2)
+      sums <- apply(sel, 1, sum)
+      inds <- which(sums==1)
+      unq <- paste(unique(pdb$atom$resid[inds]), collapse=",")
+      warning(paste("possible protein residue(s) with non-standard residue name(s) \n   (", unq, ")"))
+    }
+    return(sel1)
+  }
+}
+
+".is.protein1" <- function(pdb) {
+  aa <- aa.table$aa3
+  return(pdb$atom$resid %in% aa)
+}
+
+".is.protein2" <- function(pdb) {
   resid <- paste(pdb$atom$chain, pdb$atom$insert, pdb$atom$resno, sep="-")
 
   at.ca <- resid[ pdb$atom$elety == "CA"]
@@ -77,40 +102,24 @@ atom.select.pdb <- function(pdb, string=NULL,
   if(!is.pdb(pdb))
     stop("'pdb' must be an object of class 'pdb'")
 
-  if(verbose) cat("\n")
-  .verboseout <- function(M, type) {
-    cat(" .. ", sprintf("%08s", length(which(M))), " atom(s) from '", type, "' selection \n", sep="")
-  }
-
+  ## check input operator
   op.tbl <- c(rep("AND",3), rep("OR",4))
   operator <- op.tbl[match(operator, c("AND","and","&","OR","or","|","+"))]
   if(!operator %in% c("AND", "OR"))
-    stop("allowed values for 'operator' are 'AND' or 'OR'")
+    stop("Allowed values for 'operator' are 'AND' or 'OR'")
 
-  cl <- match.call()
-  M <- rep(TRUE, nrow(pdb$atom))
-
+  ## check input string
   if(!is.null(string)) {
-    M <- switch(string,
-                all       =   M,
-                protein   =  .is.protein(pdb),
-                nucleic   =  .is.nucleic(pdb),
-                water     =  .is.water(pdb),
-                calpha    =  .is.protein(pdb)  & .match.elety(pdb, "CA"),
-                cbeta     =  .is.protein(pdb)  & .match.elety(pdb, "CB"),
-                backbone  =  .is.protein(pdb)  & .match.elety(pdb, c("CA", "N", "C", "O")),
-                back      =  .is.protein(pdb)  & .match.elety(pdb, c("CA", "N", "C", "O")),
-                ligand    = !.is.protein(pdb)  & !.is.nucleic(pdb) & !.is.water(pdb),
-                h         =  .is.hydrogen(pdb),
-                noh       = !.is.hydrogen(pdb),
-                hetatom   =  .match.type(pdb, "HETATM"),
-                atom      =  .match.type(pdb, "ATOM"),
-                NA
-    )
+    str.allowed <- c("all", "protein", "notprotein", "nucleic", "notnucleic", "water", "notwater",
+                     "calpha", "cbeta", "backbone", "back", "ligand", "h", "noh")
+    if(!(string %in% str.allowed))
+      stop("Unknown 'string' keyword. See documentation for allowed values")
+  }
 
-    if(verbose) {
-      .verboseout(M, 'string')
-    }
+  ## verbose message output
+  if(verbose) cat("\n")
+  .verboseout <- function(M, type) {
+    cat(" .. ", sprintf("%08s", length(which(M))), " atom(s) from '", type, "' selection \n", sep="")
   }
 
   ## combine logical vectors
@@ -119,7 +128,34 @@ atom.select.pdb <- function(pdb, string=NULL,
     if(operator=="OR") M <- L | M
     return(M)
   }
+  
+  cl <- match.call()
+  M <- rep(TRUE, nrow(pdb$atom))
 
+  if(!is.null(string)) {   
+    M <- switch(string,
+                all         =   M,
+                protein     =  .is.protein(pdb),
+                notprotein  = !.is.protein(pdb),
+                nucleic     =  .is.nucleic(pdb),
+                notnucleic  = !.is.nucleic(pdb),
+                water       =  .is.water(pdb),
+                notwater    = !.is.water(pdb),
+                calpha      =  .is.protein(pdb)  & .match.elety(pdb, "CA"),
+                cbeta       =  .is.protein(pdb)  & .match.elety(pdb, "CB"),
+                backbone    =  .is.protein(pdb)  & .match.elety(pdb, c("CA", "N", "C", "O")),
+                back        =  .is.protein(pdb)  & .match.elety(pdb, c("CA", "N", "C", "O")),
+                ligand      = !.is.protein(pdb)  & !.is.nucleic(pdb) & !.is.water(pdb),
+                h           =  .is.hydrogen(pdb),
+                noh         = !.is.hydrogen(pdb),
+                NA
+    )
+
+    if(verbose) {
+      .verboseout(M, 'string')
+    }
+  }
+  
   if(!is.null(type)) {
     L <- .match.elety(pdb, type)
     if(verbose) .verboseout(L, 'type')

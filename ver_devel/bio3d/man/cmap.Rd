@@ -67,7 +67,7 @@ cmap(\dots)
 pdb <- read.pdb( system.file("examples/hivp.pdb", package="bio3d") )
 
 ## Atom Selection indices
-inds <- atom.select(pdb, elety="CA")
+inds <- atom.select(pdb, "calpha")
 
 ## Reference contact map
 ref.cont <- cmap( pdb$xyz[inds$xyz], dcut=6, scut=3 )

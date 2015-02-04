@@ -333,7 +333,7 @@
   
   tmp.pdb$xyz    <- xyz
   class(tmp.pdb) <- "pdb"
-  ca.inds        <- atom.select.pdb(tmp.pdb, elety="CA", verbose=FALSE)
+  ca.inds        <- atom.select.pdb(tmp.pdb, "calpha", verbose=FALSE)
   tmp.pdb$calpha <- seq(1, natoms) %in% ca.inds$atom
   return(tmp.pdb)
 }

@@ -6,8 +6,8 @@ test_that("rmsd() gets the same results as PyMOL", {
    invisible(capture.output(pdb.a <- read.pdb(file[1])))
    invisible(capture.output(pdb.b <- read.pdb(file[2])))
 
-   invisible(capture.output(inds.a <- atom.select(pdb.a, elety="CA")))
-   invisible(capture.output(inds.b <- atom.select(pdb.b, elety="CA")))
+   invisible(capture.output(inds.a <- atom.select(pdb.a, "calpha")))
+   invisible(capture.output(inds.b <- atom.select(pdb.b, "calpha")))
 
   rd1 <- rmsd(a=pdb.a$xyz, b=pdb.b$xyz, a.inds=inds.a$xyz, b.inds=inds.b$xyz, fit=FALSE)
   rd2 <- rmsd(a=pdb.a$xyz, b=pdb.b$xyz, a.inds=inds.a$xyz, b.inds=inds.b$xyz, fit=TRUE)
@@ -26,8 +26,8 @@ test_that("rmsd() with ncore>1 works properly", {
   invisible(capture.output(pdb.a <- read.pdb(file[1])))
   invisible(capture.output(pdb.b <- read.pdb(file[2])))
   
-  invisible(capture.output(inds.a <- atom.select(pdb.a, elety="CA")))
-  invisible(capture.output(inds.b <- atom.select(pdb.b, elety="CA")))
+  invisible(capture.output(inds.a <- atom.select(pdb.a, "calpha")))
+  invisible(capture.output(inds.b <- atom.select(pdb.b, "calpha")))
      
   ## check if ncore > 1 is really faster 
   time1 <- system.time(rmsd1 <- rmsd(a=pdb.a$xyz, b=pdb.b$xyz, a.inds=inds.a$xyz, b.inds=inds.b$xyz, fit=TRUE, ncore=1))
