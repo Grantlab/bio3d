@@ -33,7 +33,7 @@
               "LEU", "LYS", "MET", "PHE", "PRO",
               "SER", "THR", "TRP", "TYR", "VAL")
 
-      mat <- data.frame(aa3=aa, aa1=aa321(aa), aaMass=w, name=NA, formula=NA)
+      mat <- data.frame(aa3=aa, aa1=aa321(aa), mass=w, name=NA, formula=NA)
       rownames(mat) <- aa
     }
     else  {
@@ -54,11 +54,11 @@
       
       for(new.aa in new.aas) {
         if( new.aa %in% rownames(mat) ) {
-          mat[new.aa, "aaMass"] = mass.custom[[ new.aa ]]
+          mat[new.aa, "mass"] = mass.custom[[ new.aa ]]
         }
         else {
           nr <- data.frame(list(aa3=new.aa, aa1="X",
-                                aaMass=mass.custom[[ new.aa ]],
+                                mass=mass.custom[[ new.aa ]],
                                 name=NA, formula=NA))
           rownames(nr) <- new.aa
           mat <- rbind(mat, nr)
@@ -67,7 +67,7 @@
     }
 
     ## Fetch mass from data frame
-    wts <- mat[sequ,"aaMass"]
+    wts <- mat[sequ,"mass"]
 
     ## Check for missing masses
     if(NA%in%wts) {

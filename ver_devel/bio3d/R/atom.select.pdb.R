@@ -19,7 +19,7 @@
 }
 
 ".is.protein1" <- function(pdb) {
-  aa <- aa.table$aa3
+  aa <- bio3d::aa.table$aa3
   return(pdb$atom$resid %in% aa)
 }
 
@@ -93,7 +93,7 @@
   pdb$atom$segid %in% segid
 }
 
-atom.select.pdb <- function(pdb, string=NULL,
+atom.select.pdb <- function(pdb, string = NULL,
                             type  = NULL, eleno = NULL, elety = NULL,
                             resid = NULL, chain = NULL, resno = NULL,
                             segid = NULL, operator = "AND", inverse = FALSE,
