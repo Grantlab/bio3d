@@ -65,8 +65,9 @@ atom.select(\dots)
 
   For example, \code{atom.select(pdb, "calpha")} will return indices for
   all C-alpha (CA) atoms found in protein residues in the \code{pdb}
-  object, and \code{atom.select(pdb, "backbone")} will return indices
-  for all protein N,CA,C,O atoms.
+  object, \code{atom.select(pdb, "backbone")} will return indices
+  for all protein N,CA,C,O atoms, and \code{atom.select(pdb, "cbeta")}
+  for all protein N,CA,C,O,CB atoms. 
 
   Note that keyword \code{string} shortcuts can be combined with individual
   selection components, e.g. \code{atom.select(pdb, "protein", chain="A")}
@@ -88,8 +89,8 @@ atom.select(\dots)
   \code{"water"}, \code{"notwater"}, \code{"h"}, \code{"noh"},
   \code{"nucleic"}, and \code{"notnucleic"}.
 
-  In addition, the \code{combine.select} function can further combine atom
-  selections using \sQuote{and}, \sQuote{or}, or \sQuote{not} logical
+  In addition, the \code{\link{combine.select}} function can further combine atom
+  selections using \sQuote{AND}, \sQuote{OR}, or \sQuote{NOT} logical
   operations.
 
 }
