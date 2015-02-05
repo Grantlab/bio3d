@@ -3,6 +3,7 @@ function (aa) {
 
   # convert three-letters amino-acid code into
   # one-letter IUPAC code, for instance "ALA" into "A".
+  # new residues should be added to through the util/make_aatable.R script
 
   aa1 <- c("-",   ".",  "X",   bio3d::aa.table$aa1)
   aa3 <- c("---", "---","UNK", bio3d::aa.table$aa3)

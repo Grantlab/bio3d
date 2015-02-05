@@ -9,7 +9,11 @@ library(bio3d)
 ## Column 4: formula in peptide
 ## Column 5: Name of compound / amino acid
 
-## Add new residue names at the bottom of 'lines'
+## Howto update 'aa.table':
+## - Add new residue names at the bottom of 'rawtable'
+## - source this file
+## - move aa.table.rda to ../bio3d/data/aa.table.rda
+## - commit changes
 
 ## Deviations from HICUP:
 ##  LYN, 
@@ -61,7 +65,7 @@ rawtable <- c(
   "CMT", "C", "C4 H9 N O2 S",   "C4 H5 N O1 S",  "o-methylcysteine", 
   "MHO", "M", "C5 H11 N O3 S",  "C5 H9 N O2 S",  "s-oxymethionine", 
   "PFF", "F", "C9 H10 F N O2",  "C9 H8 F N O1",  "4-fluoro-l-phenylalanine", 
-  "KCX", "L", "C7 H14 N2 O4",   "C7 H12 N2 O3",  "lysine nz-carboxylic acid", 
+  "KCX", "K", "C7 H14 N2 O4",   "C7 H12 N2 O3",  "lysine nz-carboxylic acid", 
   "CSW", "C", "C3 H7 N O4 S",   "C3 H5 N O3 S",  "cysteine-s-dioxide", 
   "OCS", "C", "C3 H7 N O5 S",   "C3 H5 N O4 S",  "cysteinesulfonic acid", 
   "DDE", "H", "C13 H24 N5 O3",  "C13 H22 N5 O2", "diphthamide", 
