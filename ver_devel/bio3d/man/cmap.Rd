@@ -71,7 +71,7 @@ inds <- atom.select(pdb, "calpha")
 
 ## Reference contact map
 ref.cont <- cmap( pdb$xyz[inds$xyz], dcut=6, scut=3 )
-plot.dmat(ref.cont)
+plot.cmap(ref.cont)
 
 \dontrun{
 ##- Read Traj file

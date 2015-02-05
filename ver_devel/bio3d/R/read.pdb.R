@@ -239,10 +239,10 @@ function (file, maxlines=-1, multi=FALSE,
                xyz=as.xyz(xyz.models),
                calpha = NULL, call=cl)
 
+  class(output) <- c("pdb", "sse")  
   ca.inds <-  atom.select.pdb(output, string="calpha", verbose=FALSE)
   output$calpha <- seq(1, nrow(atom)) %in% ca.inds$atom
-  
-  class(output) <- c("pdb", "sse")
+
   return(output)
 
 }

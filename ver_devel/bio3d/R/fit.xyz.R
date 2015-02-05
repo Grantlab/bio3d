@@ -118,30 +118,32 @@ function(fixed,
           chains <- unique(res.chains[!is.na(res.chains)])
 
           if(length(chains)==0) {
-            string <- paste("///",
-                      paste(mobile$resno[i,core.inds.atom],collapse = ","),
-                            "///CA/", sep="")
-            inds <- atom.select(pdb, string,
-                                verbose=verbose ,rm.insert=TRUE)$xyz
+            ##string <- paste("///",
+            ##          paste(mobile$resno[i,core.inds.atom],collapse = ","),
+            ##                   "///CA/", sep="")
+            
+            inds <- atom.select(pdb, resno=res.resno, elety="CA",
+                                verbose=verbose)$xyz
 
           } else {
             if(length(chains)==1) {
-              string <- paste("//",chains,"/",
-                              paste(res.resno, collapse = ","),
-                              "///CA/", sep="")
-              inds <- atom.select(pdb, string,
-                                  verbose=verbose ,rm.insert=TRUE)$xyz
+              #string <- paste("//",chains,"/",
+              #                paste(res.resno, collapse = ","),
+              #                "///CA/", sep="")
+              
+              inds <- atom.select(pdb, resno=res.resno, chain=chains, elety="CA", 
+                                  verbose=verbose)$xyz
             } else {
               # indices for each chain
               inds <- NULL
               for(j in 1:length(chains)) {
-                string <- paste("//",chains[j],"/",
-                                paste(res.resno[ res.chains==chains[j] ],
-                                      collapse = ","),
-                                "///CA/", sep="")
-                inds <- c(inds, atom.select(pdb, string,
-                                            verbose=verbose,
-                                            rm.insert=TRUE)$xyz)
+                #string <- paste("//",chains[j],"/",
+                #                paste(res.resno[ res.chains==chains[j] ],
+                #                      collapse = ","),
+                #                "///CA/", sep="")
+                
+                inds <- c(inds, atom.select(pdb, resno=res.resno[ res.chains==chains[j] ],
+                                            chain=chains[j], elety="CA", verbose=verbose)$xyz)
               }
             }
           }

@@ -1,5 +1,6 @@
 \name{read.mol2}
 \alias{read.mol2}
+\alias{print.mol2}
 \title{ Read MOL2 File }
 \description{
   Read a Sybyl MOL2 file
