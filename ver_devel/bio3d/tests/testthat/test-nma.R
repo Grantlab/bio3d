@@ -216,7 +216,7 @@ test_that("NMA", {
   #
   ###################################################################
 
-  sele <- atom.select(pdb, "//A////CA/", verbose=FALSE)
+  sele <- atom.select(pdb, chain="A", elety="CA")
   xyz <- pdb$xyz[sele$xyz]
 
   i <- 2; j <- 5;
