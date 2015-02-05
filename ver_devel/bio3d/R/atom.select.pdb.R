@@ -2,7 +2,7 @@
 function(pdb, string=NULL,
          chain=NULL, resno=NULL, resid=NULL,
          eleno=NULL, elety=NULL, type=NULL,
-         verbose=TRUE, rm.insert=FALSE, inverse=FALSE, ...) {
+         verbose=TRUE, inverse=FALSE, ...) {
 
   ## Version 0.0 ... Fri Mar 17 14:45:37 PST 2006
   ##
@@ -64,7 +64,7 @@ function(pdb, string=NULL,
   }
   
   ##-- Parse string and return the selection
-  parse.string <- function(pdb, string, verbose, rm.insert, type="") {
+  parse.string <- function(pdb, string, verbose, type="") {
 
      ##-- We have input selection string
      aa <- unique(pdb$atom[,"resid"])
@@ -219,10 +219,10 @@ function(pdb, string=NULL,
        ##- Take intersection of all seven components
        match.inds <- ( (apply(sel.inds, 1, sum, na.rm=TRUE)==7) )
        
-       if (rm.insert) { # ignore INSERT records
-         insert <- which(!is.na(pdb$atom[,"insert"]))
-         match.inds[insert] <- FALSE
-       }
+#       if (rm.insert) { # ignore INSERT records
+#         insert <- which(!is.na(pdb$atom[,"insert"]))
+#         match.inds[insert] <- FALSE
+#       }
        ## return XYZ indices
        xyz.inds <- atom2xyz(which(match.inds))
    
@@ -267,7 +267,7 @@ function(pdb, string=NULL,
   if(got.string) {
     if(verbose) 
        cat("\n Build selection from input string\n")
-    sel1 <- parse.string(pdb, string, verbose, rm.insert)
+    sel1 <- parse.string(pdb, string, verbose)
   }
 
   if(got.component) {
@@ -291,7 +291,7 @@ function(pdb, string=NULL,
       }
       } else { type = ""}
  
-    sel2 <- parse.string(pdb, string, verbose, rm.insert, type=type)
+    sel2 <- parse.string(pdb, string, verbose, type=type)
   }
 
   ##- Combine selections from input string and components

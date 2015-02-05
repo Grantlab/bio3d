@@ -14,7 +14,7 @@ atom.select(\dots)
 
 \method{atom.select}{pdb}(pdb, string=NULL, chain=NULL, resno=NULL, resid=NULL,
             eleno=NULL, elety=NULL, type=NULL, verbose=TRUE,
-            rm.insert=FALSE, inverse=FALSE, \dots)
+            inverse=FALSE, \dots)
 
 \method{atom.select}{prmtop}(prmtop, ...)
 
@@ -36,8 +36,6 @@ atom.select(\dots)
   \item{type}{ a single element character vector for selecting \sQuote{ATOM}
      or \sQuote{HETATM} record types. }
   \item{verbose}{ logical, if TRUE details of the selection are printed. }
-  \item{rm.insert}{ logical, if TRUE insert ATOM records from the
-    \code{pdb} object are ignored. }
   \item{inverse}{ logical, if TRUE the inversed selection is retured
     (i.e. all atoms NOT in the selection). }
   \item{prmtop}{ a structure object of class \code{"prmtop"}, obtained from
