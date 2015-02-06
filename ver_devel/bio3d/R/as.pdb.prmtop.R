@@ -58,11 +58,11 @@ as.pdb.prmtop <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL
   resid <- unlist(mylapply(1:length(prmtop$RESIDUE_POINTER), resmap, 'resid'))
 
   if(any(c(!is.null(inds), !is.null(inds.crd)))) {
-    pdb <- .buildDummyPdb(pdb=NULL, xyz=crd$xyz[,inds.crd$xyz], elety=prmtop$ATOM_NAME[inds$atom],
+    pdb <- as.pdb.default(xyz=crd$xyz[,inds.crd$xyz], elety=prmtop$ATOM_NAME[inds$atom],
                           resno=resno[inds$atom], chain=NA, resid=resid[inds$atom])
   }
   else {
-    pdb <- .buildDummyPdb(pdb=NULL, xyz=crd$xyz, elety=prmtop$ATOM_NAME,
+    pdb <- as.pdb.default(xyz=crd$xyz, elety=prmtop$ATOM_NAME,
                           resno=resno, chain=NA, resid=resid)
   }
 

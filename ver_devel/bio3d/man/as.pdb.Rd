@@ -2,6 +2,7 @@
 \alias{as.pdb}
 \alias{as.pdb.mol2}
 \alias{as.pdb.prmtop}
+\alias{as.pdb.default}
 \title{ Convert to PDB format }
 \description{
   Convert Tripos Mol2 format, or Amber parameter/topology and coordinate data to PDB format.
@@ -12,6 +13,11 @@ as.pdb(\dots)
 \method{as.pdb}{mol2}(mol2, \dots)
 
 \method{as.pdb}{prmtop}(prmtop, crd = NULL, inds = NULL, inds.crd = inds, ncore=NULL, \dots)
+
+\method{as.pdb}{default}(xyz = NULL, type = NULL, resno = NULL,
+                   resid = NULL, eleno = NULL, elety = NULL, chain = NULL, insert = NULL, 
+                   alt = NULL, o = NULL, b = NULL, segid = NULL, elesy = NULL, charge = NULL, 
+                   verbose = TRUE, \dots)
 }
 \arguments{
   \item{\dots}{ arguments passed to and from functions. }
@@ -30,10 +36,67 @@ as.pdb(\dots)
     PRMTOP and CRD objects. }
   \item{ncore }{ number of CPU cores used to do the calculation.
     \code{ncore>1} requires package \sQuote{parallel} installed. }
+  
+  \item{xyz}{ a numeric vector/matrix of Cartesian coordinates. If
+    provided, the number of atoms in the new PDB object will be set to
+    \code{ncol(as.xyz(xyz))/3} (see \code{\link{as.xyz}}).
+
+    If \code{xyz} is not provided the number of atoms will be based on
+    the length of \code{eleno}, \code{resno}, or \code{resid} (in that
+    order). } 
+  \item{type}{ a character vector of record types, i.e. "ATOM" or "HETATM", 
+    with length equal to \code{ncol(as.xyz(xyz))/3}. Alternatively, a single element
+    character vector can be provided which will be repeated to match
+    the number of atoms. }
+  \item{resno}{ a numeric vector of residue numbers of length equal to
+    \code{ncol(as.xyz(xyz))/3}. }
+  \item{resid}{ a character vector of residue types/ids of length equal to
+    \code{ncol(as.xyz(xyz))/3}. Alternatively, a single element
+    character vector can be provided which will be repeated to match
+    the number of atoms. }
+  \item{eleno}{ a numeric vector of element/atom numbers of length equal to
+    \code{ncol(as.xyz(xyz))/3}. }
+  \item{elety}{ a character vector of element/atom types of length equal to
+    \code{ncol(as.xyz(xyz))/3}. Alternatively, a single element
+    character vector can be provided which will be repeated to match
+    the number of atoms. }
+  \item{chain}{ a character vector of chain identifiers with length equal to
+    \code{ncol(as.xyz(xyz))/3}. Alternatively, a single element
+    character vector can be provided which will be repeated to match
+    the number of atoms. }
+  \item{insert}{ a character vector of insertion code with length equal to
+    \code{ncol(as.xyz(xyz))/3}. }
+  \item{alt}{ a character vector of alternate record with length equal to
+    \code{ncol(as.xyz(xyz))/3}. }
+  \item{o}{ a numeric vector of occupancy values of length equal to
+    \code{ncol(as.xyz(xyz))/3}. Alternatively, a single element
+    numeric vector can be provided which will be repeated for to match
+    the number of atoms. }
+  \item{b}{ a numeric vector of B-factors of length equal to \code{ncol(as.xyz(xyz))/3}.
+    Alternatively, a single element numeric vector can be provided
+    which will be repeated to match the number of atoms.}
+  \item{segid}{ a character vector of segment id of length equal to
+    \code{ncol(as.xyz(xyz))/3}. Alternatively, a single element character vector can
+    be provided which will be repeated to match the number of
+    atoms. }
+  \item{elesy}{ a character vector of element symbol of length equal to
+    \code{ncol(as.xyz(xyz))/3}. Alternatively, a single element character vector can 
+    be provided which will be repeated to match the number of
+    atoms. }
+  \item{charge}{ a numeric vector of atomic charge of length equal to
+    \code{ncol(as.xyz(xyz))/3}. }
+  \item{verbose}{ logical, if TRUE details of the PDB generation process
+    is printed to screen. }
 }
 \details{
-  Converts Tripos Mol2 format and Amber formatted parameter/topology
-  (PRMTOP) and coordinate objects to a PDB object. 
+  This function converts Tripos Mol2 format and Amber formatted parameter/topology
+  (PRMTOP) and coordinate objects to a PDB object.
+
+  While \code{as.pdb.mol2} and \code{as.pdb.prmtop} converts specific
+  objects to a PDB object, \code{as.pdb.default} provides basic
+  functionality to convert raw data such as vectors of e.g. residue numbers,
+  residue identifiers, Cartesian coordinates, etc to a PDB object.
+
 }
 \value{
   Returns a list of class \code{"pdb"} with the following components:
@@ -55,6 +118,10 @@ as.pdb(\dots)
   \code{\link{atom.select}}, \code{\link{read.pdb}}
 }
 \examples{
+## Vector(s) to PDB object
+pdb <- as.pdb(resno=1:6, elety="CA", resid="ALA", chain="A")
+pdb
+
 \dontrun{
 ## Read a PRMTOP file
 prmtop <- read.prmtop("prot_solvated.prmtop")

@@ -300,43 +300,6 @@
   return(round(mat, 4))
 }
 
-.buildDummyPdb <- function(pdb=NULL, xyz=NULL,
-                           elety=NULL, resno=NULL, chain=NULL, resid=NULL) {
-  if(is.null(resno) | !is.vector(resno))
-    stop("provide a vector of residue numbers")
-  
-  natoms <- length(resno)
-  if(!is.null(xyz))
-    xyz <- as.xyz(xyz)
-  else
-    xyz <- as.xyz(rep(NA, natoms*3))
-  
-  if(natoms!=(ncol(xyz)/3))
-    stop(".buildDummyPdb: ncol(xyz)/3 != length(resno")
-  
-  tmp.pdb <- list()
-  tmp.pdb$atom <- data.frame(cbind(rep("ATOM", natoms),
-                                   seq(1, natoms),
-                                   elety,
-                                   NA,
-                                   resid,
-                                   chain,
-                                   resno,
-                                   NA,
-                                   matrix(round(xyz[1,], 3), ncol=3, byrow=TRUE),
-                                   NA, NA, NA, NA, NA),
-                             stringsAsFactors=FALSE)
-  
-  colnames(tmp.pdb$atom) <- c("type", "eleno", "elety", "alt", "resid",
-                              "chain", "resno", "insert",
-                              "x", "y", "z", "o", "b", "segid", "elesy", "charge")
-  
-  tmp.pdb$xyz    <- xyz
-  class(tmp.pdb) <- "pdb"
-  ca.inds        <- atom.select.pdb(tmp.pdb, "calpha", verbose=FALSE)
-  tmp.pdb$calpha <- seq(1, natoms) %in% ca.inds$atom
-  return(tmp.pdb)
-}
 
 ## Calculate 'aligned' normal modes of structure i in pdbs
 .calcAlnModes <- function(i, pdbs, xyz, gaps.res,
@@ -373,7 +336,7 @@
   sequ  <- resid
   
   ## Build a dummy PDB to use with function nma.pdb()
-  pdb.in <- .buildDummyPdb(pdb=NULL, xyz=tmp.xyz, elety=rep("CA", length(resno)),
+  pdb.in <- as.pdb.default(xyz=tmp.xyz, elety="CA", 
                            resno=resno, chain=chain, resid=resid)
 
   if(!is.null(outpath)) {
