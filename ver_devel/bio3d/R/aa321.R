@@ -3,9 +3,10 @@ function (aa) {
 
   # convert three-letters amino-acid code into
   # one-letter IUPAC code, for instance "ALA" into "A".
+  # new residues should be added to through the util/make_aatable.R script
 
-  aa1 <- c("-", ".", "X", aa.mass$aa1, "H", "R")
-  aa3 <- c("---", "---","UNK", aa.mass$aa3, "DDE", "CIR")
+  aa1 <- c("-",   ".",  "X",   bio3d::aa.table$aa1)
+  aa3 <- c("---", "---","UNK", bio3d::aa.table$aa3)
 
     convert <- function(x) {
       if(is.na(x)) return(NA)
@@ -28,16 +29,16 @@ function (aa) {
   # one-letter IUPAC code, for instance "ALA" into "A".
 
   aa1 <- c("-",".","X",
-           "C",  "G",  "T",  "A", "U",
-           "C",  "G",  "T","  A", "U")
+           "C",  "G",  "T",  "A", "U", "I",
+           "C",  "G",  "T","  A", "U", "I")
   aa3 <- c("---", "---","UNK",
-           "DC", "DG", "DT", "DA", "DU",
-            "C",  "G",  "T",  "A",  "U")
+           "DC", "DG", "DT", "DA", "DU", "DI",
+            "C",  "G",  "T",  "A",  "U", "I")
   
     convert <- function(x) {
       if(is.na(x)) return(NA)
       if (all(x != aa3)) {
-        warning(paste("Unknown 3-letters code for aminoacid:",x))
+        warning(paste("Unknown 3-letters code for residue:",x))
         return("X") # mask unk
       }
       else {

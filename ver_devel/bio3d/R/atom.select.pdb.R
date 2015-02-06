@@ -1,21 +1,38 @@
-".is.protein" <- function(pdb, cpp=TRUE) {
-  ##pdb$atom$insert[is.na(pdb$atom$insert)] <- ""
-  ##pdb$atom$chain[is.na(pdb$atom$chain)] <- ""
-  
-  if(cpp) {
-    return(.isProteinCpp(pdb$atom$resno, pdb$atom$chain, pdb$atom$insert, pdb$atom$elety))
+".is.protein" <- function(pdb, byres=TRUE) {
+  if(byres) {
+    return(.is.protein1(pdb))
   }
   else {
-    resid <- paste(pdb$atom$chain, pdb$atom$insert, pdb$atom$resno, sep="-")
-  
-    at.ca <- resid[ pdb$atom$elety == "CA"]
-    at.o  <- resid[ pdb$atom$elety == "O" ]
-    at.c  <- resid[ pdb$atom$elety == "C" ]
-    at.n  <- resid[ pdb$atom$elety == "N" ]
+    ## possible option to issue a warning when the two methods diverge
+    sel1 <- .is.protein1(pdb)
+    sel2 <- .is.protein2(pdb)
     
-    common <- intersect(intersect(intersect(at.ca, at.o), at.n), at.c)
-    return(resid %in% common)
+    if(!(identical(sel1, sel2))) {
+      sel <- cbind(sel1, sel2)
+      sums <- apply(sel, 1, sum)
+      inds <- which(sums==1)
+      unq <- paste(unique(pdb$atom$resid[inds]), collapse=",")
+      warning(paste("possible protein residue(s) with non-standard residue name(s) \n   (", unq, ")"))
+    }
+    return(sel1)
   }
+}
+
+".is.protein1" <- function(pdb) {
+  aa <- bio3d::aa.table$aa3
+  return(pdb$atom$resid %in% aa)
+}
+
+".is.protein2" <- function(pdb) {
+  resid <- paste(pdb$atom$chain, pdb$atom$insert, pdb$atom$resno, sep="-")
+
+  at.ca <- resid[ pdb$atom$elety == "CA"]
+  at.o  <- resid[ pdb$atom$elety == "O" ]
+  at.c  <- resid[ pdb$atom$elety == "C" ]
+  at.n  <- resid[ pdb$atom$elety == "N" ]
+
+  common <- intersect(intersect(intersect(at.ca, at.o), at.n), at.c)
+  return(resid %in% common)
 }
 
 ".is.nucleic" <- function(pdb) {
@@ -76,61 +93,67 @@
   pdb$atom$segid %in% segid
 }
 
-.match.elesy <- function(pdb, elesy) {
-  if(!is.character(elesy))
-    stop("'elesy' must be a character vector")
-  pdb$atom$elesy %in% elesy
-}
-
-atom.select.pdb <- function(pdb, string=NULL,
+atom.select.pdb <- function(pdb, string = NULL,
                             type  = NULL, eleno = NULL, elety = NULL,
                             resid = NULL, chain = NULL, resno = NULL,
-                            segid = NULL, elesy = NULL, operator = "&",
-                            inverse = FALSE, verbose=FALSE,  ...) {
+                            segid = NULL, operator = "AND", inverse = FALSE,
+                            value = FALSE, verbose=FALSE,  ...) {
 
   if(!is.pdb(pdb))
     stop("'pdb' must be an object of class 'pdb'")
 
+  ## check input operator
+  op.tbl <- c(rep("AND",3), rep("OR",4))
+  operator <- op.tbl[match(operator, c("AND","and","&","OR","or","|","+"))]
+  if(!operator %in% c("AND", "OR"))
+    stop("Allowed values for 'operator' are 'AND' or 'OR'")
+
+  ## check input string
+  if(!is.null(string)) {
+    str.allowed <- c("all", "protein", "notprotein", "nucleic", "notnucleic", "water", "notwater",
+                     "calpha", "cbeta", "backbone", "back", "ligand", "h", "noh")
+    if(!(string %in% str.allowed))
+      stop("Unknown 'string' keyword. See documentation for allowed values")
+  }
+
+  ## verbose message output
   if(verbose) cat("\n")
   .verboseout <- function(M, type) {
     cat(" .. ", sprintf("%08s", length(which(M))), " atom(s) from '", type, "' selection \n", sep="")
   }
 
-  operator <- operator[1]
-  if(!operator %in% c("&", "|"))
-    stop("allowed values for 'operator' are '&' or '|'")
+  ## combine logical vectors
+  .combinelv <- function(L, M, operator) {
+    if(operator=="AND") M <- L & M
+    if(operator=="OR") M <- L | M
+    return(M)
+  }
   
   cl <- match.call()
   M <- rep(TRUE, nrow(pdb$atom))
 
-  if(!is.null(string)) {
+  if(!is.null(string)) {   
     M <- switch(string,
-                all       =   M,
-                protein   =  .is.protein(pdb),
-                nucleic   =  .is.nucleic(pdb),
-                water     =  .is.water(pdb),
-                calpha    =  .is.protein(pdb)  & .match.elety(pdb, "CA"),
-                cbeta     =  .is.protein(pdb)  & .match.elety(pdb, "CB"),
-                backbone  =  .is.protein(pdb)  & .match.elety(pdb, c("CA", "N", "C", "O")),
-                back      =  .is.protein(pdb)  & .match.elety(pdb, c("CA", "N", "C", "O")),
-                ligand    = !.is.protein(pdb)  & !.is.nucleic(pdb) & !.is.water(pdb),
-                h         =  .is.hydrogen(pdb),
-                noh       = !.is.hydrogen(pdb),
-                hetatom   =  .match.type(pdb, "HETATM"),
-                atom      =  .match.type(pdb, "ATOM"),
+                all         =   M,
+                protein     =  .is.protein(pdb),
+                notprotein  = !.is.protein(pdb),
+                nucleic     =  .is.nucleic(pdb),
+                notnucleic  = !.is.nucleic(pdb),
+                water       =  .is.water(pdb),
+                notwater    = !.is.water(pdb),
+                calpha      =  .is.protein(pdb)  & .match.elety(pdb, "CA"),
+                cbeta       =  .is.protein(pdb)  & .match.elety(pdb, c("CA", "N", "C", "O", "CB")),
+                backbone    =  .is.protein(pdb)  & .match.elety(pdb, c("CA", "N", "C", "O")),
+                back        =  .is.protein(pdb)  & .match.elety(pdb, c("CA", "N", "C", "O")),
+                ligand      = !.is.protein(pdb)  & !.is.nucleic(pdb) & !.is.water(pdb),
+                h           =  .is.hydrogen(pdb),
+                noh         = !.is.hydrogen(pdb),
                 NA
     )
-    
+
     if(verbose) {
       .verboseout(M, 'string')
     }
-  }
-
-  ## combine logical vectors
-  .combinelv <- function(L, M, operator) {
-    if(operator=="&") M <- L & M
-    if(operator=="|") M <- L | M
-    return(M)
   }
   
   if(!is.null(type)) {
@@ -168,11 +191,6 @@ atom.select.pdb <- function(pdb, string=NULL,
     if(verbose) .verboseout(L, 'segid')
     M <- .combinelv(L, M, operator)
   }
-  if(!is.null(elesy)) {
-    L <- .match.elesy(pdb, elesy)
-    if(verbose) .verboseout(L, 'elesy')
-    M <- .combinelv(L, M, operator)
-  }
 
   if(verbose)
     cat(" ..", sprintf("%08s", length(which(M))), "atom(s) in final combined selection \n")
@@ -187,7 +205,10 @@ atom.select.pdb <- function(pdb, string=NULL,
     sele <- as.select(which(M))
 
   sele$call <- cl
-
   if(verbose) cat("\n")
-  return(sele)
+
+  if(value)
+    return(trim.pdb(pdb, sele))
+  else
+    return(sele)
 }

@@ -54,7 +54,7 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   clean <- TRUE
 
   ## Recognized amino acid names
-  prot.aa <- aa.mass$aa3
+  prot.aa <- bio3d::aa.table$aa3
   
   ## for residues and atoms renumbering
   first.eleno = 1
@@ -358,7 +358,7 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
 
    ca.inds <- atom.select(pdb, "calpha", verbose = FALSE)
    c1p.inds <- atom.select(pdb, "nucleic", elety = "C1'", verbose = FALSE)
-   inds <- combine.sel(ca.inds, c1p.inds, op = "+", verbose = FALSE)
+   inds <- combine.select(ca.inds, c1p.inds, operator = "+", verbose = FALSE)
 
    if(length(inds$atom) > 0) {
       strings <- paste(pdb$atom[inds$atom, "resno"],
