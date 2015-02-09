@@ -100,7 +100,7 @@ as.pdb(\dots)
   residue identifiers, Cartesian coordinates, etc to a PDB object. When
   \code{pdb} is provided the returned PDB object is built from the input
   object with fields replaced by any input vector arguments.
-  e.g. \code{as.pdb(pdb, xyz=crd}} will return the same PDB object, with
+  e.g. \code{as.pdb(pdb, xyz=crd)} will return the same PDB object, with
   only the Cartesian coordinates changed to \code{crd}.
 }
 \value{

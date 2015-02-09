@@ -92,11 +92,11 @@ function (file, maxlines=-1, multi=FALSE,
 
   ## Check if we want to store multiple model data
   if (length(raw.end) > 1) {
-    print("PDB has multiple END/ENDMDL records")
+    cat("  PDB has multiple END/ENDMDL records \n")
     if (!multi) {
-      print("multi=FALSE: taking first record only")
+      cat("  multi=FALSE: taking first record only \n")
     } else {
-      print("multi=TRUE: 'read.dcd/read.ncdf' will be quicker!")
+      cat("multi=TRUE: 'read.dcd/read.ncdf' will be quicker! \n")
       raw.lines.multi <- raw.lines
       type.multi <- type
     }
@@ -107,8 +107,8 @@ function (file, maxlines=-1, multi=FALSE,
   ##- Check for 'n' smaller than total lines in PDB file
   if ( length(raw.end) !=1 ) {
     if (length(raw.lines) == maxlines) {
-      print("You may need to increase 'maxlines'")
-      print("check you have all data in $atom")
+      cat("  You may need to increase 'maxlines' \n")
+      cat("   check you have all data in $atom \n")
     }
   }
 
