@@ -1,7 +1,10 @@
 core.find <- function(...)
   UseMethod("core.find")
 
-core.find.pdb <- function(pdb, verbose=FALSE, ...) {
+core.find.default <- function(xyz, ...)
+  core.find.pdbs(xyz, ...)
+
+core.find.pdb <- function(pdb, verbose=TRUE, ...) {
   if(nrow(pdb$xyz)<4)
     stop("provide a multi model PDB file with 4 or more frames")
 
@@ -10,7 +13,7 @@ core.find.pdb <- function(pdb, verbose=FALSE, ...) {
   inds <- combine.select(inds1, inds2, operator="OR", verbose=verbose)
 
   tmp <- trim.pdb(pdb, inds)
-  core <- core.find.pdbs(tmp$xyz, ...)
+  core <- core.find.pdbs(tmp$xyz, verbose=verbose, ...)
 
   ## map to pdb inds
   full.ids <- paste(pdb$atom$elety, pdb$atom$resno, pdb$atom$chain, sep="-")
@@ -36,9 +39,6 @@ core.find.pdb <- function(pdb, verbose=FALSE, ...) {
   return(core)
 }
 
-core.find.default <- function(xyz, ...) {
-  return(core.find.pdbs(xyz, ...))
-}
 
 "core.find.pdbs" <-
 function(pdbs,

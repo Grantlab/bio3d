@@ -462,20 +462,17 @@ Function **geostas()** attempts to identify rigid domains in a protein (or
 nucleic acid) structure based on its structural ensemble. Below we identify such domains and use function **fit.xyz()** to fit all models to one of the identified domains. We then use **write.pdb()** to store the aligned structures for visualization, e.g. in VMD:
 
 
-```{r eval=TRUE, results='hide'}
+```{r eval=TRUE, results='show'}
 # Domain analysis
 gs  <- geostas(pdb)
 
 # Fit all frames to the 'first' domain
-domain.inds <- atom2xyz(which(gs$grps==1))
+domain.inds <- gs$inds[[1]]
 
-xyz <- fit.xyz(pdb$xyz[1, ca.inds$xyz],
-               pdb$xyz[, ca.inds$xyz],
-               fixed.inds = domain.inds,
-               mobile.inds = domain.inds)
+xyz <- pdbfit(pdb, inds=domain.inds)
 
 # write fitted coordinates
-write.pdb(xyz=xyz, chain=gs$grps, file="1d1d_fit-domain1.pdb")
+write.pdb(pdb, xyz=xyz, chain=gs$grps, file="1d1d_fit-domain1.pdb")
 ```
 
 ![Multi-model PDB with 20 frames superimposed on 'domain 1' (colored grey) identified using function **geostas()**. See also related function **core.find()**. ](figures/1d1d_vis-geostas.png)
@@ -484,18 +481,15 @@ write.pdb(xyz=xyz, chain=gs$grps, file="1d1d_fit-domain1.pdb")
 ## Invariant core identification
 Function **core.find()** also works on a multi-model PDB file to determine the most invariant region a protein ensemble. Below we fit the NMR ensemble to the region identified by **core.find()**:
 
-```{r eval=TRUE, results='hide'}
+```{r eval=FALSE, results='hide'}
 # Invariant core
 core <- core.find(pdb)
 
 # fit to core region
-xyz <- fit.xyz(pdb$xyz[1,],
-               pdb$xyz,
-               fixed.inds = core$xyz,
-               mobile.inds = core$xyz)
+xyz <- pdbfit(pdb, inds=core)
 
 # write fitted coordinates
-write.pdb(xyz=xyz, file="1d1d_fit-core.pdb")
+write.pdb(pdb, xyz=xyz, file="1d1d_fit-core.pdb")
 ```
 
 

@@ -96,7 +96,7 @@ function (file, maxlines=-1, multi=FALSE,
     if (!multi) {
       cat("  multi=FALSE: taking first record only \n")
     } else {
-      cat("multi=TRUE: 'read.dcd/read.ncdf' will be quicker! \n")
+      cat("  multi=TRUE: 'read.dcd/read.ncdf' will be quicker! \n")
       raw.lines.multi <- raw.lines
       type.multi <- type
     }

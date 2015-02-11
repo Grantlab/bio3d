@@ -337,7 +337,7 @@
   
   ## Build a dummy PDB to use with function nma.pdb()
   pdb.in <- as.pdb.default(xyz=tmp.xyz, elety="CA", 
-                           resno=resno, chain=chain, resid=resid)
+                           resno=resno, chain=chain, resid=resid, verbose=FALSE)
 
   if(!is.null(outpath)) {
     fname <- file.path(outpath, basename(pdbs$id[i]))

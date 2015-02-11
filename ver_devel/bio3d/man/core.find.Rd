@@ -18,7 +18,7 @@ core.find(\dots)
 
 \method{core.find}{default}(xyz, \dots)
 
-\method{core.find}{pdb}(pdb, verbose=FALSE, \dots)
+\method{core.find}{pdb}(pdb, verbose=TRUE, \dots)
 }
 \arguments{
   \item{pdbs}{ a numeric matrix of aligned C-alpha xyz Cartesian
