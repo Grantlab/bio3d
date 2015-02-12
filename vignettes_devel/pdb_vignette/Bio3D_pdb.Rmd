@@ -349,7 +349,7 @@ two PDB objects. This facilitates rapid superposition of two PDB structures with
 related PDB sequences. Below we use **struct.aln()** to superimpose the multi-chained PDB ID 
 `4lhy` to PDB ID `4q21`:
 
-```{r eval=FALSE, results='hide'}
+```{r eval=TRUE, results='hide'}
 # read two G-protein structures
 a <- read.pdb("4q21")
 b <- read.pdb("4lhy")
@@ -375,7 +375,7 @@ same number of atoms for which the fitting should be based. Below we superimpose
 of `4lhy` onto an equivalent helix of `4q21`: 
 
 
-```{r eval=FALSE, results='hide'}
+```{r eval=TRUE, results='hide'}
 # indices at which the superposition should be based
 a.ind <- atom.select(a, chain="A", resno=87:103, elety="CA")
 b.ind <- atom.select(b, chain="A", resno=93:109, elety="CA")
