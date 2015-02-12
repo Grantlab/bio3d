@@ -50,6 +50,11 @@ geostas.pdb <- function(pdb, inds=NULL, verbose=TRUE, ...) {
   gs <- geostas.xyz(xyz, verbose=verbose, ...)
 
   ## map back so that indices matches input 'pdb'
+  if(verbose) {
+    cat("  .. converting indices to match input 'pdb' object \n")
+    cat("     (additional attribute 'atomgrps' generated) \n")
+  }
+
   gs$fit.inds <- inds$xyz[gs$fit.inds]
   resid <- paste(pdb$atom$resid, pdb$atom$resno, pdb$atom$chain, sep="-")
   
@@ -62,7 +67,7 @@ geostas.pdb <- function(pdb, inds=NULL, verbose=TRUE, ...) {
     grps[ tmp.inds ] <- i
   }
 
-  gs$grps <- grps
+  gs$atomgrps <- grps
   return(gs) 
 }
 

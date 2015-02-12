@@ -1,7 +1,7 @@
 ---
 title: "Beginning protein structure analysis with Bio3D"
 author: "Lars Skjaerven, Xin-Qiu Yao & Barry J. Grant"
-date: "December 3, 2014"
+date: "February 12, 2015"
 affiliation: University of Michigan, Ann Arbor
 output:
   pdf_document:
@@ -23,10 +23,10 @@ geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
 linkcolor: black
 ---
 
-# Introduction
+# Introduction {.unnumbered}
 
 Bio3D[^1] is an R package containing utilities for the analysis of biomolecular
-structure, sequence and trajectory data [@grant06].  Features include the ability
+structure, sequence and trajectory data [@grant06, @skjaerven15].  Features include the ability
 to read and write biomolecular structure, sequence and dynamic trajectory data,
 perform atom selection, re-orientation, superposition, rigid core
 identification, clustering, distance matrix analysis, conservation
@@ -36,7 +36,16 @@ takes advantage of the extensive graphical and statistical capabilities of the
 and thus represents a useful framework for exploratory analysis of structural data.
 
 
-## Using this vignette
+## New to R? {.unnumbered}
+There are now numerous on–line resources that can help you get started using R. A number of these can be found from the main R website at http://www.r-project.org. We particularly like the following:
+
+- [Try R](http://tryr.codeschool.com/): a nifty interactive R tutorial in your web browser
+- [An introduction to R](http://cran.r-project.org/doc/manuals/R-intro.pdf): The offical R manual
+- [Learn R](https://www.datacamp.com/): Learn by doing in your web browser (requires free registration)
+
+
+
+## Using this vignette {.unnumbered}
 The aim of this document, termed a vignette[^2] in R parlance, is to provide a 
 brief introduction to PDB structure analysis with Bio3D. A number of other Bio3D package vignettes are available, including:
 
@@ -44,14 +53,21 @@ brief introduction to PDB structure analysis with Bio3D. A number of other Bio3D
 
 -   `Comparative protein structure analysis with Bio3D`
 
--   `Sequence conservation analysis with Bio3D`
-
 -   `Beginning trajectory analysis with Bio3D`
 
 -   `Dynamic network analysis with Bio3D`
 
 -   `Normal mode analysis with Bio3D`
 
+
+
+
+## Requirements {.unnumbered}
+Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [Installing
+ Bio3D Vignette](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. 
+
+## About this document {.unnumbered}
+This vignette was generated using **Bio3D version `r packageVersion("bio3d")`**.
 
 
 # Getting started
@@ -124,7 +140,7 @@ attributes(pdb)
 
 To access these individual attributes we use the dollar-attribute_name convention that is common with R list objects. For example:
 
-```{r eval=TRUE}
+```{r eval=TRUE, fig.cap="Residue temperature factors for PDB ID `4q21` with SSE annotation in marginal regions plotted with function **plot.bio3d()**"}
 print(pdb$xyz)
 head(pdb$atom)
 
@@ -284,7 +300,7 @@ write.pdb(backpdb, chain="B")
 ## Manipulate a PDB object
 Basic functions for concatenating, trimming, splitting, converting, rotating, translating and superposing PDB files are available but often you will want to manipulate the PDB objects in a custom way. 
 
-Below we provide a basic example of such manipulation. We read in a multi-chained PDB structure in which we reassign the chain identifiers.  
+Below we provide a basic example of such manipulation where we read in a multi-chained PDB structure, reassign chain identifiers, and renumber selected residues.
 
 ```{r eval=TRUE, results="hide"}
 pdb <- read.pdb("4lhy")
@@ -322,6 +338,11 @@ write.pdb(pdb2, xyz=xyz, file="4LHY_AEF-oriented.pdb")
 Structure superposition is essential for direct comparison of multiple structures. 
 Bio3D offers versatile functionality to perform coordinate superposition at various levels. 
 Below we demonstrate the use of functions **struct.aln()** and **fit.xyz**. 
+
+#### Note: The struct.aln() function and MUSCLE {.unnumbered}
+The _MUSCLE_ multiple sequence alignment program (available from the [muscle home page](http://www.drive5.com/muscle/)) 
+must be installed on your system and in the search path for executables in order to run function **struct.aln()**. 
+Please see the installation vignette for further details.
 
 Function **struct.aln()** performs a sequence alignment followed by a structural alignment of 
 two PDB objects. This facilitates rapid superposition of two PDB structures with unequal, but
@@ -462,7 +483,7 @@ Function **geostas()** attempts to identify rigid domains in a protein (or
 nucleic acid) structure based on its structural ensemble. Below we identify such domains and use function **fit.xyz()** to fit all models to one of the identified domains. We then use **write.pdb()** to store the aligned structures for visualization, e.g. in VMD:
 
 
-```{r eval=TRUE, results='show'}
+```{r eval=TRUE, results='show', fig.width=5, fig.height=5, fig.cap="Plot of atomic movement similarity matrix with domain annotation for PDB ID `1d1d`"}
 # Domain analysis
 gs  <- geostas(pdb)
 
@@ -472,10 +493,14 @@ domain.inds <- gs$inds[[1]]
 xyz <- pdbfit(pdb, inds=domain.inds)
 
 # write fitted coordinates
-write.pdb(pdb, xyz=xyz, chain=gs$grps, file="1d1d_fit-domain1.pdb")
+write.pdb(pdb, xyz=xyz, chain=gs$atomgrps, file="1d1d_fit-domain1.pdb")
+
+# plot geostas results
+plot(gs, contour=FALSE)
 ```
 
 ![Multi-model PDB with 20 frames superimposed on 'domain 1' (colored grey) identified using function **geostas()**. See also related function **core.find()**. ](figures/1d1d_vis-geostas.png)
+
 
 
 ## Invariant core identification

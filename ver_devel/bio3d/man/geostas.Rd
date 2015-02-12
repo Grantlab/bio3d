@@ -105,11 +105,13 @@ amsm.xyz(xyz, ncore = NULL)
   will therefore differ.
 }
 \value{
-  Returns a list object with the following components:
+  Returns a list object of type \sQuote{geostas} with the following components:
   \item{amsm }{ a numeric matrix of atomic movement similarity (AMSM). }
   \item{fit.inds }{ a numeric vector of xyz indices used for fitting. }
   \item{grps }{ a numeric vector containing the domain assignment per
     residue. }
+  \item{atomgrps }{ a numeric vector containing the domain assignment per
+    atom (only provided for \code{geostas.pdb}). }
   \item{inds }{ a list of atom \sQuote{select} objects with indices to
     corresponding to the identified domains. }
 }
@@ -120,6 +122,7 @@ amsm.xyz(xyz, ncore = NULL)
 }
 \author{ Julia Romanowska and Lars Skjaerven }
 \seealso{
+  \code{\link{plot.geostas}}, 
   \code{\link{read.pdb}}, \code{\link{mktrj}},
   \code{\link{read.ncdf}}, \code{\link{read.dcd}},
   \code{\link{nma}}, \code{\link{dccm}}.
@@ -130,24 +133,19 @@ amsm.xyz(xyz, ncore = NULL)
 #### NMR-ensemble example
 ## Read a multi-model PDB file 
 pdb <- read.pdb("1d1d", multi=TRUE)
-ca.inds <- atom.select(pdb, "calpha")
 
 ## Find domains and write PDB
 gs  <- geostas(pdb, fit=TRUE)
 
 ## Plot a atomic movement similarity matrix
-plot.dccm(gs$amsm, at=seq(0, 1, 0.1), main="AMSM with Domain Assignment",
-          col.regions=rev(heat.colors(200)), margin.segments=gs$grps, contour=FALSE)
+plot.geostas(gs, contour=FALSE)
 
 ## Fit all frames to the 'first' domain
-domain.inds <- gs$inds[[1]]$xyz
+domain.inds <- gs$inds[[1]]
 
-xyz <- fit.xyz(pdb$xyz[1, ],
-               pdb$xyz,
-               fixed.inds = domain.inds,
-               mobile.inds = domain.inds)
+xyz <- pdbfit(pdb, inds=domain.inds)
 
-#write.pdb(pdb, xyz=xyz, chain=gs$grps)
+#write.pdb(pdb, xyz=xyz, chain=gs$atomgrps)
 
 }
 
