@@ -8,7 +8,7 @@
 }
 \usage{
 read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
-         rm.alt = TRUE, verbose = TRUE)
+         rm.alt = TRUE, ATOM.only = FALSE, verbose = TRUE)
 
 \method{print}{pdb}(x, printseq=TRUE, \dots)
 
@@ -25,6 +25,7 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
     models in multi-model files and their coordinates returned. }
   \item{rm.insert}{ logical, if TRUE PDB insert records are ignored. }
   \item{rm.alt}{ logical, if TRUE PDB alternate records are ignored. }
+  \item{ATOM.only}{ logical, if TRUE only ATOM/HETATM records are stored. }
   \item{verbose}{ print details of the reading process. }
   \item{x}{ a PDB structure object obtained from
     \code{\link{read.pdb}}.  }
@@ -56,6 +57,9 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
     ATOM and HETATM coordinate data. }
   \item{calpha }{ logical vector with length equal to \code{nrow(atom)}
     with TRUE values indicating a C-alpha \dQuote{elety}. }
+  \item{remark }{ a list object containing information taken from 'REMARK'
+    records of a \code{"pdb"}. It can be used for building biological units
+    (See \code{\link{biounit}}). }
   \item{call }{ the matched call. }
 }
 \references{
@@ -87,7 +91,8 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
   \code{\link{trim.pdb}}, \code{\link{cat.pdb}}, 
   \code{\link{read.prmtop}}, \code{\link{as.pdb}},
   \code{\link{read.dcd}}, \code{\link{read.ncdf}}, 
-  \code{\link{read.fasta.pdb}}, \code{\link{read.fasta}}
+  \code{\link{read.fasta.pdb}}, \code{\link{read.fasta}}, 
+  \code{\link{biounit}}
 }
 \examples{
 ## Read a PDB file from the RCSB online database

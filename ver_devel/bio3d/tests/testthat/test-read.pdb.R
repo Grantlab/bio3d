@@ -19,6 +19,23 @@ test_that("read.pdb() reads a normal pdb file", {
 
   expect_equal(sum(pdb$atom$type=="ATOM"), 998)
   expect_equal(sum(pdb$atom$type=="HETATM"), 179)
+
+  expect_equal(pdb$remark$biomat$num, 1)
+  expect_equal(pdb$remark$biomat$chain[[1]], "A")
+  true_mat <- matrix(c(1.0, 0.0, 0.0, 0.0,
+                       0.0, 1.0, 0.0, 0.0,
+                       0.0, 0.0, 1.0, 0.0), nrow=3, byrow=TRUE)
+  expect_equivalent(pdb$remark$biomat$mat[[1]][[1]], true_mat)
+
+  invisible(capture.output(spdb <- read.pdb(file, ATOM.only=TRUE)))
+  expect_equal(spdb$atom, pdb$atom)
+  expect_equal(spdb$xyz, pdb$xyz)
+  expect_equal(spdb$calpha, pdb$calpha)
+  expect_true(is.null(spdb$helix)) 
+  expect_true(is.null(spdb$sheet)) 
+  expect_true(is.null(spdb$seqres))
+  expect_true(is.null(spdb$remark))
+  
 })
 
 
