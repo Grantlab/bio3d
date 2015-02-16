@@ -517,6 +517,70 @@ xyz <- pdbfit(pdb, inds=core)
 write.pdb(pdb, xyz=xyz, file="1d1d_fit-core.pdb")
 ```
 
+# Working with Biological Units
+The primary PDB coordinate file of a crystal structure contains just one
+crystal asymmetric unit, which may or may not be the same as the 
+biologically-relevant assembly or biological unit. For example, the PDB
+entry '2dn1', which contains crystal structure of human hemoglobin, only stores 
+one pair of alpha and beta subunits (See Fig 7), while under physiological condition the 
+protein actually works as a tetramer (two alpha and two beta subunits). 
+In this case, the crystal asymetric unit is part of the biological unit. 
+More generally, the asymmetric unit stored in a PDB file can be:
+
+* One biological unit
+* A portion of a biological unit
+* Multiple biological units
+
+![The alpha/beta dimer of human hemoglobin as stored in the PDB entry '2dn1'. ](figures/2dn1.png)
+
+Reconstruction of the biological unit from a PDB file is essential as to understand the
+structure-function relationship one needs to work with the structural form in which the protein
+performs function in solution. Most PDB files provide information about how to construct
+biological units via symmetry operations (e.g. rotation and translation) performed on the stored coordinates. 
+In *Bio3D*, the function **read.pdb()** automatically extracts such information and stored in the returned
+'pdb' object. The function **biounit()** can then be called to build biological units based on the
+'pdb' object. Following example illustrates the construction of the hemoglobin alpha2/beta2 tetramer
+based on the PDB file containing alpha/beta dimer.
+
+```{r}
+pdb <- read.pdb("2dn1")
+biounit(pdb)
+```
+
+The function **biounit()** returns a 'list' object. Each component of the 'list' represents a possible 
+biological unit stored as a 'pdb' object. In above example, two new chains (chain C and D) are constructed
+from symmetry operations performed on the original chains (chain A and B). A molecular graph of the tetramer
+is shown in Fig 8.
+
+![The biological unit of human hemoglobin (tetramer) built from PDB entry '2dn1'. ](figures/2dn1-biounit.png)
+
+
+#### Side-note: {.unnumbered}
+The biological units described in a PDB file can be determined based on either expertise of authors of 
+the crystallographic structure or calucaltion of software (See [here](http://www.rcsb.org/pdb/101/static101.do?p=education_discussion/Looking-at-Structures/bioassembly_tutorial.html) for more details).  
+By default, **biounit()** returns all the determinations, which may contain biological units with various
+number of chains (i.e. distinct multimeric state). Note that it is dependent on users which biological unit 
+is finally adopted for further analysis. The 'names' attributes of the returned 'list' by 
+**biounit()** provides basic information about how the biological unit was determined and the corresponding 
+multimeric state, which may faciltate users to make the decision. 
+
+
+Optionally, **biounit()** returns the biological unit as a multi-model 'pdb' object. In this case,
+the topology of the 'pdb' (e.g. `$atom`) is the same as input, whereas additional coordinates generated
+via the symmetry operations are stored in distinc rows of `$xyz`. This is obtained by setting the argument
+`multi=TRUE`. It is particular useful for speed enhancements with biological units containing many 
+symmetric copies, for example a virus capsid: 
+
+```{r}
+pdb <- read.pdb("2bfu")
+bio <- biounit(pdb, multi = TRUE)
+bio
+bio[[1]]$xyz
+```
+
+#### Question: {.unnumbered}
+How to visulize the biological unit if `multi=TRUE`? **HINT:** Setting proper options in VMD to display multiple frames of a trajectory simultaneously.
+
 
 # Where to Next
 If you have read this far, congratulations! We are ready to have some fun and move to other package vignettes that describe more interesting analysis including advanced **Comparative Structure Analysis** (where we will mine available experimental data and supplement it with simulation results to map the conformational dynamics and coupled motions of proteins), **Trajectory Analysis** (where we analyze molecular dynamics simulation trajectories), enhanced methods for **Normal Mode Analysis** (where we will explore the dynamics of large protein families and superfamilies), and **Correlation Network Analysis** (where we will build and dissect dynamic networks form different correlated motion data).
