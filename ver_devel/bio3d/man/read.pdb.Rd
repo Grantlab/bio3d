@@ -25,7 +25,9 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
     models in multi-model files and their coordinates returned. }
   \item{rm.insert}{ logical, if TRUE PDB insert records are ignored. }
   \item{rm.alt}{ logical, if TRUE PDB alternate records are ignored. }
-  \item{ATOM.only}{ logical, if TRUE only ATOM/HETATM records are stored. }
+  \item{ATOM.only}{ logical, if TRUE only ATOM/HETATM records are stored.
+    Useful for speed enhancements with large files where secondary structure, 
+    biological unit and other remark records are not required. }
   \item{verbose}{ print details of the reading process. }
   \item{x}{ a PDB structure object obtained from
     \code{\link{read.pdb}}.  }
