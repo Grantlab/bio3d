@@ -3,7 +3,7 @@
 \alias{biounit}
 \title{Biological Units Construction}
 \usage{
-biounit(pdb, biomat = NULL, ncore = NULL)
+biounit(pdb, biomat = NULL, multi = FALSE, ncore = NULL)
 }
 \arguments{
 \item{pdb}{an object of class \code{pdb} as obtained from
@@ -14,16 +14,17 @@ function \code{\link{read.pdb}}.}
 symmetry operation on individual chains to build biological units.
 It will override the matrices stored in \code{pdb}.}
 
+\item{multi}{logical, if TRUE the biological unit is returned as a
+'multi-model' \code{pdb} object with each symmetric copy a distinct
+structural 'MODEL'. Otherwise, all copies are represented
+as separated chains.}
+
 \item{ncore}{number of CPU cores used to do the calculation. By default
          (\code{ncore=NULL}), use all available CPU cores.}
 }
 \value{
 a list of \code{pdb} objects with each representing an individual
    biological unit.
-
-   If the number of generated copies is small (<=10), each copy is represented as
-   independent chains with distinct chain IDs.
-   If the number of copies is large (>10), copies are represented as multiple 'models'.
 }
 \description{
 Construct biological assemblies/units based on a 'pdb' object.
@@ -51,7 +52,7 @@ transformation matrices stored in a 'pdb' object returned by
    biounit
 }
 \dontrun{
-   biounit <- biounit(read.pdb("2bfu"))
+   biounit <- biounit(read.pdb("2bfu"), multi=TRUE)
    write.pdb(biounit[[1]], file="biounit.pdb")
    # open the pdb file in VMD to have a look on the biological unit
 }

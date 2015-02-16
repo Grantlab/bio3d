@@ -23,16 +23,16 @@
 #'    (pdb$remark$biomat), containing matrices for 
 #'    symmetry operation on individual chains to build biological units.
 #'    It will override the matrices stored in \code{pdb}.
+#' @param multi logical, if TRUE the biological unit is returned as a 
+#'    'multi-model' \code{pdb} object with each symmetric copy a distinct
+#'    structural 'MODEL'. Otherwise, all copies are represented 
+#'    as separated chains.
 #' @param ncore number of CPU cores used to do the calculation. By default
 #'          (\code{ncore=NULL}), use all available CPU cores.
 #'
 #' @return 
 #'    a list of \code{pdb} objects with each representing an individual 
 #'    biological unit.
-#'
-#'    If the number of generated copies is small (<=10), each copy is represented as
-#'    independent chains with distinct chain IDs.
-#'    If the number of copies is large (>10), copies are represented as multiple 'models'.
 #'
 #' @seealso \code{\link{read.pdb}}
 #'
@@ -46,11 +46,11 @@
 #'    biounit
 #' }
 #' \dontrun{
-#'    biounit <- biounit(read.pdb("2bfu"))
+#'    biounit <- biounit(read.pdb("2bfu"), multi=TRUE)
 #'    write.pdb(biounit[[1]], file="biounit.pdb")
 #'    # open the pdb file in VMD to have a look on the biological unit
 #' } 
-biounit <- function(pdb, biomat = NULL, ncore = NULL) {
+biounit <- function(pdb, biomat = NULL, multi = FALSE, ncore = NULL) {
 
     if(!is.pdb(pdb)) 
        stop("Please provide a 'pdb' object as obtained from 'read.pdb()'")
@@ -69,6 +69,18 @@ biounit <- function(pdb, biomat = NULL, ncore = NULL) {
 
     if(!is.null(remarks)) { 
 
+       # check max number of copies
+       ncopy.max <- max(sapply(remarks$mat, length))
+
+       if(!multi && ncopy.max > 10)
+          cat("It is slow to represent many symmetric copies as separated chains\n Try multi = TRUE\n")
+
+       # Are chains treated differently?
+       nn <- sapply(remarks$mat, function(x) length(unique(names(x))))
+
+       if(any(nn > 1) && multi)
+          stop("Can't store as multiple models as separated symmetry operations are performed on distinct chains within one biological unit")
+ 
        biounits <- lapply(1:remarks$num, function(i) {
           # the transformation matrices
           mats <- remarks$mat[[i]]
@@ -79,10 +91,7 @@ biounit <- function(pdb, biomat = NULL, ncore = NULL) {
           # number of copies
           ncopy <- length(mats)
   
-          # Are chains treated differently?
-          nn <- length(unique(names(mats)))
-
-          if(ncopy <= 10 || nn > 1) {    
+          if(!multi) {    
              ## save copies as individual chains 
 
              # The original copy stored as spearated chains
@@ -114,7 +123,7 @@ biounit <- function(pdb, biomat = NULL, ncore = NULL) {
                    biounit <- c(biounit, list(bio))
                 }
              } 
-             biounit <- do.call(cat.pdb, biounit)
+             biounit <- do.call(cat.pdb, c(biounit, list(rechain = FALSE)))
 
 #             # temporarily write the pdb of biounit and re-read it
 #             tmpf <- tempfile()
