@@ -536,7 +536,7 @@ More generally, the asymmetric unit stored in a PDB file can be:
 Reconstruction of the biological unit from a PDB file is essential as to understand the
 structure-function relationship one needs to work with the structural form in which the protein
 performs function in solution. Most PDB files provide information about how to construct
-biological units via symmetry operations (e.g. rotation and translation) performed on the stored coordinates. 
+biological units via symmetry operations (i.e. rotation and translation) performed on the stored coordinates. 
 In *Bio3D*, the function **read.pdb()** automatically extracts such information and stored in the returned
 'pdb' object. The function **biounit()** can then be called to build biological units based on the
 'pdb' object. Following example illustrates the construction of the hemoglobin alpha2/beta2 tetramer
@@ -544,6 +544,18 @@ based on the PDB file containing alpha/beta dimer.
 
 ```{r}
 pdb <- read.pdb("2dn1")
+pdb$remark$biomat
+```
+
+The `$remark$biomat` component in a 'pdb' object describe the transformation (translation and rotation)
+matrices that can be applied to construct biological units. It contains:
+
+* **num**, the number of biological units described
+* **chain**, a 'list' object. Each component is a vector of chain labels to which the transformation matrices are applied to get the corresponding biological unit
+* **mat**, a 'list' of transformation matrices for each biological unit
+* **method**, a character vector about the method ('AUTHOR' or 'SOFTWARE') that determined each biological unit
+
+```{r}
 biounit(pdb)
 ```
 
