@@ -326,7 +326,7 @@ plot.dccm((cij * cm), main="")
 ##plot.dccm(cij, margin.segments = net$communities$membership)
 
 #'  
-#' It is also possible to use a consensus of contact map and dynamical correlation matrices from replica simulations with the functions **cmap.filter()** and **filter.dccm()** - see their respective help pages for further details.
+#' It is also possible to use a consensus of contact map and dynamical correlation matrices from replica simulations with the functions **cmap.filter()** and **dccm.filter()** - see their respective help pages for further details.
 #' 
 #' 
 #' ## Part II: Customized network visualization
