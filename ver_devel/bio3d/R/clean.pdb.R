@@ -24,7 +24,7 @@
 #' @param rm.h logical, if TRUE hydrogen atoms are removed.
 #' @param verbose logical, if TRUE details of the conversion process are printed.
 #'
-#' @return a 'pdb' object with an additional \code{$clean.log} component storing 
+#' @return a 'pdb' object with an additional \code{$log} component storing 
 #'    all the processing messages.
 #'
 #' @seealso \code{\link{read.pdb}}
@@ -104,7 +104,7 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
 
   ##   2. Check and clean up SSE annotation
   pdb <- .check.sse(pdb)
-  log <- .update.log(log, pdb$clean.log)
+  log <- .update.log(log, pdb$log)
 
   ##   3. Fix pdb$calpha if it is mismatch pdb$atom
   ca.inds <- atom.select(pdb, "calpha", verbose = FALSE)
@@ -308,26 +308,26 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   npdb$call <- cl
 
   ## is the pdb clean?
-  if(clean)
-     log <- .update.log(log, "PDB is clean!")
-  else {
+#  if(clean)
+#     log <- .update.log(log, "PDB is clean!")
+  if(!clean) {
      msg <- "PDB is still not clean. Try fix.chain=TRUE and/or fix.aa=TRUE"
-     log <- .update.log(log, msg)
+#     log <- .update.log(log, msg)
      warning(msg)
   }
      
   ## format log
-  log <- .format.log(log)
+#  log <- .format.log(log)
   if(verbose) print(log)
 
-  npdb$clean.log <- log
+  npdb$log <- log
   return(npdb)
 } 
 
 .update.log <- function(log, fact="", op="", note="") {
   if(is.null(fact)) log
-  else if(is.matrix(fact)) .update.log(log, fact[,1], fact[,2], fact[,3])
-  else rbind(log, cbind(fact, op, note))
+  else if(is.data.frame(fact)) .update.log(log, fact[,1], fact[,2], fact[,3])
+  else rbind(log, data.frame(Data = fact, Action = op, Note = note))
 }
 
 .format.log <- function(log, format = c("print", "cat"), op.sign = "->", note.sign = "!!") {
@@ -389,7 +389,7 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
    if(inherits(ss, "try-error"))
       stop(".check.sse(): Unable to generate SSE sequence")
 
-   pdb$clean.log <- log
+   pdb$log <- log
 
    return(pdb)
 }

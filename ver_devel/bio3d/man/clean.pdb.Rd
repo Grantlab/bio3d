@@ -32,7 +32,7 @@ equivalent standard names.}
 \item{verbose}{logical, if TRUE details of the conversion process are printed.}
 }
 \value{
-a 'pdb' object with an additional \code{$clean.log} component storing
+a 'pdb' object with an additional \code{$log} component storing
    all the processing messages.
 }
 \description{
