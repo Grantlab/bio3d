@@ -28,7 +28,7 @@ mustang(files, exefile="mustang", outfile="aln.mustang.fa",
   structure.
   
   This function calls the \sQuote{MUSTANG} program, to perform a multiple
-  sequence alignment, which MUST BE INSTALLED on your system and in the
+  structure alignment, which MUST BE INSTALLED on your system and in the
   search path for executables.
 
   Note that non-standard residues are mapped to \dQuote{Z} in
