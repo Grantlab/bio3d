@@ -72,7 +72,7 @@ remodel.cna <- function(x, member = NULL, col = NULL, minus.log = TRUE,
    method <- match.arg(method)
  
    # assume a network ensemble 
-   if(!is.list(x)) x = list(x)
+   if(inherits(x, "cna")) x = list(x)
    
    # return network names
    names <- names(x)
