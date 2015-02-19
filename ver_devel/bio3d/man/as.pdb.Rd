@@ -12,12 +12,12 @@ as.pdb(\dots)
 
 \method{as.pdb}{mol2}(mol2, \dots)
 
-\method{as.pdb}{prmtop}(prmtop, crd = NULL, inds = NULL, inds.crd = inds, ncore=NULL, \dots)
+\method{as.pdb}{prmtop}(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL, \dots)
 
-\method{as.pdb}{default}(pdb = NULL, xyz = NULL, type = NULL, resno = NULL,
-                   resid = NULL, eleno = NULL, elety = NULL, chain = NULL, insert = NULL,
-                   alt = NULL, o = NULL, b = NULL, segid = NULL, elesy = NULL, charge = NULL,
-                   verbose = TRUE, \dots)
+\method{as.pdb}{default}(pdb=NULL, xyz=NULL, type=NULL, resno=NULL,
+                   resid=NULL, eleno=NULL, elety=NULL, chain=NULL, 
+                   insert=NULL, alt=NULL, o=NULL, b=NULL, segid=NULL, 
+                   elesy=NULL, charge=NULL, verbose=TRUE, \dots)
 }
 \arguments{
   \item{\dots}{ arguments passed to and from functions. }

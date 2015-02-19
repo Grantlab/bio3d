@@ -16,7 +16,7 @@ bounds.sse(x, pdb = NULL)
 a 'sse' object.
 }
 \description{
-Inverse process of the funciton \code{\link{pdb2sse()}}.
+Inverse process of the funciton \code{\link{pdb2sse}}.
 }
 \details{
 call for its effects.
