@@ -10,8 +10,8 @@ Utilities for the analysis of protein structure and sequence data.
 \tabular{ll}{
 Package: \tab bio3d\cr
 Type: \tab Package\cr
-Version: \tab 2.1-4\cr
-Date: \tab 2014-10-28\cr
+Version: \tab 2.2-0\cr
+Date: \tab 2015-02-19\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab \url{http://thegrantlab.org/bio3d/}\cr
 }
@@ -26,13 +26,13 @@ Perform sequence and structure database searches (\code{\link{blast.pdb}},
 \code{\link{hmmer}}), atom summaries (\code{\link{summary.pdb}}),  atom selection
 (\code{\link{atom.select}}), alignment (\code{\link{pdbaln}},  \code{\link{seqaln}}, 
 \code{\link{mustang}}) superposition (\code{\link{rot.lsq}},  \code{\link{fit.xyz}}), 
-rigid core identification (\code{\link{core.find}},  \code{\link{plot.core}}, 
+\code{\link{pdbfit}}), rigid core identification (\code{\link{core.find}},  \code{\link{plot.core}}, 
 \code{\link{fit.xyz}}), dynamic domain analysis (\code{\link{geostas}}), torsion/dihedral analysis
 (\code{\link{torsion.pdb}},  \code{\link{torsion.xyz}}), clustering (via
 \code{\link{hclust}}), principal component analysis
 (\code{\link{pca.xyz}},  \code{\link{pca.pdbs}}, \code{\link{pca.tor}},  \code{\link{plot.pca}},
 \code{\link{plot.pca.loadings}},  \code{\link{mktrj.pca}}), dynamical
-cross-correlation analysis (\code{\link{dccm}}, \code{\link{lmi}}, \code{\link{plot.dccm}}) and correlation network analysis (\code{\link{cna}},  \code{\link{plot.cna}}) of structure data.
+cross-correlation analysis (\code{\link{dccm}}, \code{\link{lmi}}, \code{\link{plot.dccm}}) and correlation network analysis (\code{\link{cna}},  \code{\link{plot.cna}}, \code{\link{cnapath}}) of structure data.
 
 Perform conservation analysis of sequence (\code{\link{seqaln}}, \code{\link{conserv}}, 
 \code{\link{seqidentity}},  \code{\link{entropy}},  \code{\link{consensus}})
@@ -52,10 +52,11 @@ manipulation and analysis of biological sequence and structural data
 (e.g. \code{\link{get.pdb}}, \code{\link{get.seq}}, \code{\link{aa123}},
 \code{\link{aa321}}, \code{\link{pdbseq}}, \code{\link{aln2html}}, \code{\link{atom.select}},
 \code{\link{rot.lsq}},  \code{\link{fit.xyz}}, \code{\link{is.gap}}, \code{\link{gap.inspect}},
-\code{\link{orient.pdb}}, \code{\link{pairwise}}, \code{\link{plot.bio3d}}, \code{\link{plot.nma}}, \code{\link{plot.blast}}, etc.).
+\code{\link{orient.pdb}}, \code{\link{pairwise}}, \code{\link{plot.bio3d}}, \code{\link{plot.nma}}, \code{\link{plot.blast}}, \code{\link{biounit}}, etc.).
 }
 \note{
-The latest version, package vignettes and documentation with worked example outputs can be obtained from the bio3d website:\cr
+The latest version, package vignettes and documentation with worked example 
+outputs can be obtained from the bio3d website:\cr
 \url{http://thegrantlab.org/bio3d/}.\cr
 \url{http://thegrantlab.org/bio3d/html/}.\cr
 \url{http://bitbucket.org/Grantlab/bio3d}.
@@ -68,6 +69,7 @@ Julien Ide <julien.ide.fr@gmail.com>
 }
 \references{
 Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
+Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399. 
 }
 \keyword{ documentation }
 \examples{

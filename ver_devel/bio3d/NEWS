@@ -1,13 +1,36 @@
 NEWS 
 ====
 
+v2.2
+Version 2.2, released in Feb 2015, contains new facilities for 
+sub-optimal path analysis of biomolecular correlation networks, 
+constructing biological units, identification and tidying of 
+malformed PDB files, and improved secondary structure annotation of 
+'pdbs' objects and various plots.  We have also updated and enhanced 
+atom selection functionality and developed a new vignette detailing 
+PDB structure manipulation and analysis facilities. For a fine-
+grained list of changes, or to report a bug, please consult: 
+
+* [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
+* [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+
+Major new functions include:
+* cnapath: Suboptimal Path Analysis for Correlation Networks
+* biounit: Biological Unit Construction
+* clean.pdb: Inspect And Clean Up A PDB Object
+* cat.pdb: Concatenate Multiple PDB Objects
+* pdb2sse: Obtain An SSE Sequence Vector From A PDB Object
+* bounds.sse: Obtain A SSE Object From An SSE Sequence Vector
+
 v2.1
+----
 Version 2.1, released in Sep 2014,  contains new facilities for Correlation 
 Network Analysis (cna) and Geometrically Stable Domain finding (geostas). 
 We have also changed 'PDB object data' storage from a matrix to a data.frame 
-format. Improved methods and functionality for ensemble NMA are now also included 
-along with extensive improvements to package vignettes and function documentation. 
-For a fine-grained list of changes, or to report a bug, please consult: 
+format. Improved methods and functionality for ensemble NMA are now also  
+included along with extensive improvements to package vignettes and function 
+documentation. For a fine-grained list of changes, or to report a bug, 
+please consult: 
 
 * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
 * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
