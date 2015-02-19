@@ -67,7 +67,7 @@ cnapath <- function(cna, from, to, k = 10, ncore = NULL, ...) {
        for(j in 1:length(A)) {
           if(length(A[[j]]$path) > i && identical(rootPath, A[[j]]$path[1:i])) {
              nn = A[[j]]$path[i+1]
-             ee = igraph::E(g)[spurNode %--% nn]
+             ee = igraph::E(g)[igraph::'%--%'(spurNode, nn)]
              if(length(ee)>0) g <- igraph::delete.edges(g, ee)
           }
        }

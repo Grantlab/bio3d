@@ -5,19 +5,20 @@
 This function filters a tridimensional contact matrix (nXnXz, where n is the residue number and z is the simulation number) selecting only the contact present in at least p simulations, where p<=z.
 }
 \usage{
-cmap.filter(cm, cutoff.sims = dim(cm)[3])
+cmap.filter(cm, cutoff.sims = dim(cm)[3], \dots)
 }
 \arguments{
   \item{cm}{ A numeric array with 3 dimensions (nXnXz) containing binary contact values. "n" is the residue number, "z" the simulation number. The matrix elements should be 1 if two residues are in contact and 0 if they are not in contact. 
 }
   \item{cutoff.sims}{A single element numeric vector corresponding to the minimum number of simulations a contact between two residues must be present. If not, it will be set to 0 in the output matrix.
 }
+  \item{\dots}{ Extra arguments. }
 }
 \value{
 The output matrix is a nXn binary matrix (n = residue number). Elements equal to 1 correspond to residues in contact, elements equal to 0 to residues not in contact.
 }
 \seealso{
-cmap (require bio3d package)
+  \code{\link{cmap}}
 }
 \examples{
 

@@ -1,5 +1,5 @@
 cmap.filter <-
-function(cm, cutoff.sims = dim(cm)[3]) {
+function(cm, cutoff.sims = dim(cm)[3], ...) {
 
   ## Check input
   if (length(dim(cm)) != 3) {
