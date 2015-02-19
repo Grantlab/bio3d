@@ -7,10 +7,10 @@ test_that("clean.pdb() does nothing for 'clean' pdb by default", {
 
   invisible(capture.output(npdb <- clean.pdb(pdb)))
  
-  expect_equal(substr(npdb$clean.log, 1, 13), "PDB is clean!")
+  expect_true(is.null(npdb$log))
 
   npdb$call <- NULL
-  npdb$clean.log <- NULL
+  npdb$log <- NULL
   pdb$call <- NULL
   expect_equal(pdb, npdb)
 
@@ -80,7 +80,7 @@ test_that("clean.pdb() relabels chains properly (fix.chain = TRUE)", {
   
   pdb0$call <- NULL
   npdb$call <- NULL
-  npdb$clean.log <- NULL
+  npdb$log <- NULL
   expect_equal(pdb0, npdb)
  
 } )
