@@ -70,7 +70,7 @@ xyz <- pdb$xyz[, inds$xyz]
 com.xyz(xyz)
 
 ## with mass weighting
-com.xyz(xyz, mass=atom2mass(pdb$atom[inds$atom, "elety"])
+com.xyz(xyz, mass=atom2mass(pdb$atom[inds$atom, "elety"]) )
 
 }
 
