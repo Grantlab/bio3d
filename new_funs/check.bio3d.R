@@ -14,7 +14,7 @@ check.bio3d <- function(pkg, as.cran = TRUE, cran.repos = "http://cran.at.r-proj
   
    ##- Check and install dependencies
    packages <- c("devtools", "roxygen2", "ncdf", "lattice", 
-                 "XML", "RCurl", "igraph", "knitr")
+                 "XML", "RCurl", "igraph", "knitr", "testthat")
    if(.Platform$OS.type == "unix") packages <- c(packages, "bigmemory")
    get.package <- function(x, cran.repos = cran.repos){
      if (!requireNamespace(x, quietly = TRUE)){
