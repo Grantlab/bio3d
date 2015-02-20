@@ -25,10 +25,10 @@ The output matrix is a nXn binary matrix (n = residue number). Elements equal to
 \dontrun{
   ## need abind package
   if(!require(abind)) {
-     install.packages("abind")
-     require(abind)
-  }
-
+     cat("Please install the package 'abind' from CRAN to run this example\n")
+  } 
+  else {
+     
   ## load example data
   pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
   pdb <- read.pdb(pdbfile)
@@ -60,6 +60,8 @@ The output matrix is a nXn binary matrix (n = residue number). Elements equal to
   image(cm.1, col=c(NA,"black"))
   image(cm.2, col=c(NA,"black"))
   image(cm.filter, col=c(NA,"black"))
+  }
+
 }
 }
 \keyword{analysis}
