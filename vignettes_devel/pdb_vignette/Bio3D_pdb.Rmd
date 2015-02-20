@@ -651,7 +651,7 @@ options with an equals sign (e.g. `fit=FALSE`) have default values.
 
 
 # Where to next
-If you have read this far, congratulations! We are ready to have some fun and move to other package vignettes that describe more interesting analysis including advanced **Comparative Structure Analysis** (where we will mine available experimental data and supplement it with simulation results to map the conformational dynamics and coupled motions of proteins), **Trajectory Analysis** (where we analyze molecular dynamics simulation trajectories), enhanced methods for **Normal Mode Analysis** (where we will explore the dynamics of large protein families and superfamilies), and **Correlation Network Analysis** (where we will build and dissect dynamic networks form different correlated motion data).
+If you have read this far, congratulations! We are ready to have some fun and move to [other package vignettes](http://thegrantlab.org/bio3d/tutorials) that describe more interesting analysis including advanced **Comparative Structure Analysis** (where we will mine available experimental data and supplement it with simulation results to map the conformational dynamics and coupled motions of proteins), **Trajectory Analysis** (where we analyze molecular dynamics simulation trajectories), enhanced methods for **Normal Mode Analysis** (where we will explore the dynamics of large protein families and superfamilies), and **Correlation Network Analysis** (where we will build and dissect dynamic networks form different correlated motion data).
 
 
 # Document and current Bio3D session details {.unnumbered}
