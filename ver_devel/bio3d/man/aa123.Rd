@@ -29,25 +29,29 @@ aa321(aa)
   For a description of IUPAC one-letter codes see:\cr
   \url{http://www.chem.qmul.ac.uk/iupac/AminoAcid/}
   
-  For a description of PDB residue codes see Appendix 4:\cr
-  \url{http://msdlocal.ebi.ac.uk/docs/pdb_format/appendix.html}
+  For more information on PDB residue codes see:\cr
+  \url{http://ligand-expo.rcsb.org/ld-search.html}
 
 }
 \author{ Barry Grant }
-\seealso{ \code{\link{read.pdb}}, \code{\link{read.fasta}} }
+\seealso{ \code{\link{read.pdb}}, \code{\link{read.fasta}}, \code{\link{pdbseq}} }
 \examples{
 # Simple conversion
 aa123(c("D","L","A","G","S","H"))
 aa321(c("ASP", "LEU", "ALA", "GLY", "SER", "HIS"))
 
 \dontrun{
-# Extract sequence from PDB file's ATOM and SEQRES cards
-pdb <- read.pdb( "http://www.rcsb.org/pdb/files/1BG2.pdb" ) 
+# Extract sequence from a PDB file's ATOM and SEQRES cards
+pdb <- read.pdb("1BG2") 
 s <- aa321(pdb$seqres)                   # SEQRES
 a <- aa321(pdb$atom[pdb$calpha,"resid"]) # ATOM
 
-# Write both sequences to fasta file
+# Write both sequences to a fasta file
 write.fasta(id=c("seqres","atom"), seqs=seqbind(s,a), file="eg2.fa")
+
+# Alternative approach for ATOM sequence extraction
+pdbseq(pdb)
+pdbseq(pdb, aa1=FALSE )
 }
 }
 \keyword{ utilities }

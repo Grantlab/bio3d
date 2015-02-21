@@ -1,15 +1,15 @@
-NEWS 
+NEWS
 ====
 
 v2.2
-Version 2.2, released in Feb 2015, contains new facilities for 
-sub-optimal path analysis of biomolecular correlation networks, 
-constructing biological units, identification and tidying of 
-malformed PDB files, and improved secondary structure annotation of 
-'pdbs' objects and various plots.  We have also updated and enhanced 
-atom selection functionality and developed a new vignette detailing 
+Version 2.2, released in Feb 2015, contains new facilities for
+sub-optimal path analysis of biomolecular correlation networks,
+constructing biological units, identification and tidying of
+malformed PDB files, and improved secondary structure annotation of
+'pdbs' objects and various plots.  We have also updated and enhanced
+atom selection functionality and developed a new vignette detailing
 PDB structure manipulation and analysis facilities. For a fine-
-grained list of changes, or to report a bug, please consult: 
+grained list of changes, or to report a bug, please consult:
 
 * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
 * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
@@ -21,16 +21,45 @@ Major new functions include:
 * cat.pdb: Concatenate Multiple PDB Objects
 * pdb2sse: Obtain An SSE Sequence Vector From A PDB Object
 * bounds.sse: Obtain A SSE Object From An SSE Sequence Vector
+* aa.table: Updated amino acid reference data that replaces older 'aa.mass'
+* as.fasta: Convert alignment/sequence in matrix/vector format to a FASTA object.
+* as.pdb: Convert coordinate data to PDB format
+* as.select: Convert atomic indices to a atom.select object
+* as.xyz: Convert vectors and matrices to 'xyz' class objects
+* atom.select.pdb: Atom selection from PDB objects has been extensively updated
+* basename.pdb: Utility for manipulation of PDB file names
+* check.utility: Check and Report on Missing Bio3D Utility Programs
+* cmapt: Update contact map methods for pdb and xyz objects
+* cna: Update correlation network analysis methods for dccm and ensmb objects"
+* cnapath: Suboptimal Path Analysis for Correlation Networks
+* com: Updated center of mass methods for pdb and xyz objects
+* combine.select: Combine atom.select objects, renamed from previous 'combine.sel'
+* cov.enma: New method to Calculate Covariance Matrix from Ensemble Normal Modes"
+* cov2dccm: Calculates the N-by-N cross-correlation matrix from a 3N-by-3N covariance matrix
+* covsoverlap: New methods for nma and enma objects
+* dm: Distance matrix gets new methods for pdb and xyz class objects
+* dssp: Secondary Structure Analysis with DSSP gets new methods for pdb, xyz and pdbs class objects
+* geostas: Geometrically stable domain finder gets new methods for nma, enma, pdb, pdbs and xyz objects.
+* is.pdbs: Is an Object of Class pdbs
+* mono.colors: New color palette
+* pdb2sse: Obtain An SSE Sequence Vector From A PDB Object
+* pdbfit: Coordinate superposition gets new methods for multi-model pdb objects and pdbs objects.
+* read.crd: Can Now Read Coordinate Data from Amber or CHARMM
+* read.prmtop: Read AMBER Parameter/Topology files
+* var.pdbs: Pairwise Distance Variance in Cartesian Coordinates
+* plot:  New or updated plot methods for 'cmap', 'geostas', and 'pca' class objects as well as a new plot.fluct() function that expands on plot.bio3d() for plotting atomic fluctuations from MD and NMA results.
+* print:  New print methods for cnapath, enma, geostas, mol2, nma, pca, pdb, prmtop, rle2,  select and sse objects.
+
 
 v2.1
 ----
-Version 2.1, released in Sep 2014,  contains new facilities for Correlation 
-Network Analysis (cna) and Geometrically Stable Domain finding (geostas). 
-We have also changed 'PDB object data' storage from a matrix to a data.frame 
-format. Improved methods and functionality for ensemble NMA are now also  
-included along with extensive improvements to package vignettes and function 
-documentation. For a fine-grained list of changes, or to report a bug, 
-please consult: 
+Version 2.1, released in Sep 2014,  contains new facilities for Correlation
+Network Analysis (cna) and Geometrically Stable Domain finding (geostas).
+We have also changed 'PDB object data' storage from a matrix to a data.frame
+format. Improved methods and functionality for ensemble NMA are now also
+included along with extensive improvements to package vignettes and function
+documentation. For a fine-grained list of changes, or to report a bug,
+please consult:
 
 * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
 * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
@@ -74,10 +103,10 @@ Major new functions include:
 
 v2.0
 ----
-Version 2.0, released in Nov 2013, contains over 30 new functions including  
-enhanced Normal Mode Analysis facilities as well extensive improvements to  
-existing code and documentation. For a fine-grained list of changes or to 
-report a bug, please consult: 
+Version 2.0, released in Nov 2013, contains over 30 new functions including
+enhanced Normal Mode Analysis facilities as well extensive improvements to
+existing code and documentation. For a fine-grained list of changes or to
+report a bug, please consult:
 
 * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
 * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
@@ -132,9 +161,9 @@ E.g.: 2.0-1
 
 And constructed with the following guidelines:
 
-* Breaking backward compatibility bumps the major (and resets the minor 
+* Breaking backward compatibility bumps the major (and resets the minor
   and patch)
-* New additions without breaking backward compatibility bumps the minor 
+* New additions without breaking backward compatibility bumps the minor
   (and resets the patch)
 * Bug fixes and misc changes bumps the patch
 
