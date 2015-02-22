@@ -66,6 +66,8 @@ mktrj(...)
   \code{\link{view.modes}}.
 }
 \examples{
+\donttest{
+
 ##- PCA example
 data(transducin)
 attach(transducin, warn.conflicts=FALSE)
@@ -92,5 +94,6 @@ outfile = file.path(tempdir(), "mode_7.pdb")
 mktrj(modes, mode=7, file = outfile)
 outfile
 
+}
 }
 \keyword{ utilities }

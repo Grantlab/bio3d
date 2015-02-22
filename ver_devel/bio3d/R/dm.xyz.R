@@ -2,6 +2,11 @@ dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, ncore=1, ...) {
   ## Parallelized by parallel package
   ncore <- setup.ncore(ncore, bigmem = FALSE)
 
+  if(ncore > 1) {
+    mcparallel <- get("mcparallel", envir = getNamespace("parallel"))
+    mccollect <- get("mccollect", envir = getNamespace("parallel"))
+  }
+
   ## function for multicore calculation of dmats
   calcdm <- function(r.inds, core.id, xyz) {
     j <- 1
