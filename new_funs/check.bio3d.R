@@ -1,4 +1,5 @@
-check.bio3d <- function(pkg, as.cran = TRUE, cran.repos = "http://cran.at.r-project.org/", ...) {
+check.bio3d <- function(pkg, as.cran = TRUE, run.dontrun = FALSE, run.donttest =FALSE,
+   cran.repos = "http://cran.at.r-project.org/", ...) {
 
    ##- Check if pkg is a file or a directory
    if(!is.character(pkg))
@@ -39,5 +40,10 @@ check.bio3d <- function(pkg, as.cran = TRUE, cran.repos = "http://cran.at.r-proj
       assignInNamespace("r_env_vars", r_env_vars, "devtools")
    }
    
-   devtools::check(pkg, cran=as.cran, document=FALSE, force_suggests=FALSE, ...) 
+   args = NULL 
+   if(run.dontrun) args <- c(args, "--run-dontrun")
+   if(run.donttest) args <- c(args, "--run-donttest")
+
+   devtools::check(pkg, cran=as.cran, document=FALSE, force_suggests=FALSE, 
+      args = args, ...) 
 }
