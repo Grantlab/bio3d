@@ -2,7 +2,7 @@ dssp.xyz <- function(xyz, pdb, ...) {
   if(!is.pdb(pdb))
     stop("provide a pdb object as obtained from function 'read.pdb'")
 
-  if(!is.xyz(xyz) | !is.matrix(xyz))
+  if(!is.xyz(xyz) && !is.matrix(xyz))
     stop("provide an xyz object containing the trajectory coordinates")
 
   sse.mat <- NULL
