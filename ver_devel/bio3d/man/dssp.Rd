@@ -154,7 +154,7 @@ dssp.xyz(pdb$xyz, pdb)
 ## Note. for large MD trajectories you may want to skip some frames, e.g.
 xyz <- rbind(pdb$xyz, pdb$xyz)       ## dummy trajectory
 frames <- seq(1, to=nrow(xyz), by=4) ## frame numbers to examine
-ss <- dssp.xyz(xyz[frames, pdb)      ## matrix of sse frame x residue
+ss <- dssp.xyz(xyz[frames, ], pdb)      ## matrix of sse frame x residue
 
 }
 }

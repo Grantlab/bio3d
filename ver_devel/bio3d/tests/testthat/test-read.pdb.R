@@ -80,10 +80,9 @@ test_that("read.pdb() reads and stores data properly", {
    invisible(capture.output(pdb <- read.pdb(file.path(datdir, "3DRC.pdb"))))
    write.pdb(pdb, file=file.path(datdir, "t1.pdb"))
    invisible(capture.output(pdb1 <- read.pdb(file.path(datdir, "t1.pdb"))))
-   # SSE and SEQRES missing in write.pdb()
-   pdb[c("seqres", "helix", "sheet", "call")] <- NULL
-   pdb1[c("seqres", "helix", "sheet", "call")] <- NULL
-   expect_identical(pdb, pdb1)
+   expect_identical(pdb$atom, pdb1$atom)
+   expect_identical(pdb$xyz, pdb1$xyz)
+   expect_identical(pdb$calpha, pdb1$calpha)
  
    # multi-model structure
    invisible(capture.output(pdb <- read.pdb(file.path(datdir, "1L2Y.pdb"), multi=TRUE)))
@@ -110,8 +109,8 @@ test_that("read.pdb() reads and stores data properly", {
    expect_equal(sum(pdb2$calpha), 74)
    expect_equivalent(pdb2$helix, list(start=c(22, 37, 56), end=c(35, 39, 60), 
        chain=rep("U",3), type=c("1", "5", "5")))
-   expect_equivalent(pdb2$sheet, list(start=c(2,12,41,48,66), end=c(7,16,45,49,71), 
-       chain=rep("U",5), sense=c("-1","0","-1","-1","1")))
+   expect_equivalent(pdb2$sheet, list(start=c(12,2,66,41,48), end=c(16,7,71,45,49), 
+       chain=rep("U",5), sense=c("0","-1","1","-1","-1")))
 })
 
 

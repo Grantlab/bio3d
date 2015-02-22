@@ -75,8 +75,8 @@ binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cutoff=5,
 
    \dontrun{  
      # Interaction between peptide and protein
-     rec.inds <- atom.select(pdb, string='//A/1:350////')
-     lig.inds <- atom.select(pdb, string='//I/5:24////')
+     rec.inds <- atom.select(pdb, chain='A', resno=c(1:350))
+     lig.inds <- atom.select(pdb, chain='I', resno=c(5:24))
      bs <- binding.site(pdb, a.inds=rec.inds, b.inds=lig.inds)
    }
 

@@ -26,8 +26,7 @@ The output matrix is a nXn binary matrix (n = residue number). Elements equal to
   ## need abind package
   if(!require(abind)) {
      cat("Please install the package 'abind' from CRAN to run this example\n")
-  } 
-  else {
+  } else {
      
   ## load example data
   pdbfile <- system.file("examples/hivp.pdb", package="bio3d")

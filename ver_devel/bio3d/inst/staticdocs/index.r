@@ -205,7 +205,7 @@ sd_section("Normal Mode Analysis:",
     "sse.bridges",
     "sip",
     "var.xyz",
-    "var.pdbs"
+    "var.pdbs",
     "view.dccm",
     "view.modes"
     )   

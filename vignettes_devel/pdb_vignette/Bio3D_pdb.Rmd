@@ -318,6 +318,11 @@ Function **cat.pdb()** can be used to concatenate two or more PDB files. This fu
 
 
 ```{r eval=TRUE, results='hide'}
+
+# read two G-protein structures
+a <- read.pdb("4q21")
+b <- read.pdb("4lhy")
+
 a1 <- trim.pdb(a, chain="A")
 
 b1 <- trim.pdb(b, chain="A")

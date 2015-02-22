@@ -175,7 +175,7 @@ modes <- nma(pdb, pfc.fun=my.ff)
 
 
 ## A more manual approach
-sele <- atom.select(pdb, "//A////CA/")
+sele <- atom.select(pdb, chain='A', elety='CA')
 xyz <- pdb$xyz[sele$xyz]
 
 hessian <- build.hessian(xyz, my.ff)

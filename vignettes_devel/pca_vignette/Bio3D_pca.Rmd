@@ -180,11 +180,11 @@ section of `help(atom.select)` and the `string` option.
 
 #### Side-note: {.unnumbered}
 
-Consider the `combine.sel` function for combining multiple atom selections.
-See `help(combine.sel)` and additional vignettes for more details.
+Consider the `combine.select` function for combining multiple atom selections.
+See `help(combine.select)` and additional vignettes for more details.
 
 Note that if you know a particular sequence pattern or motif characteristic
-of a region of interest you cold access it via a sequence search as follows:
+of a region of interest you could access it via a sequence search as follows:
 
 ```{r}
 aa <- pdbseq(pdb)
@@ -312,7 +312,7 @@ in the analysis of protein evolution.
 
 In this tutorial, to collect available transducin crystal structures, we
 first use BLAST to query the PDB database to find similar sequences (and
-hence structures) to our chosen representative (PDB ID "1tag"):
+hence structures) to our chosen representative (PDB Id: 1TAG):
 
 ```{r blast, results="hide", cache=TRUE}
 pdb <- read.pdb("1tag")
@@ -398,7 +398,7 @@ facilitate comparative structure analysis.
 
 Conventional structural superposition of proteins minimizes the root
 mean square difference between their full set of equivalent residues.
-This can be performed with Bio3D functions `pdbfit()` and `fit.xyz` as
+This can be performed with Bio3D functions `pdbfit()` and `fit.xyz()` as
 outlined previously. However, for certain applications such a
 superposition procedure can be inappropriate. For example, in the
 comparison of a multi-domain protein that has undergone a hinge-like
@@ -535,7 +535,7 @@ plot(tor$phi, tor$psi, xlab="phi", ylab="psi")
 ```
 
 Lets compare the Calpha atom based pseudo-torsion angles between two structures,
-the inactive (PDB ID 1TAG) and active (PDB ID 1TND) transducin alpha subunit:
+the inactive (PDB Id: 1TAG) and active (PDB Id: 1TND) transducin alpha subunit:
 
 ```{r, fig.cap="Torsion angle difference between structures in inactive GDP bound (1tag) and active GTP analogue bound (1tnd) states"}
 # Locate the two structures in pdbs
