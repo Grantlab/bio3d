@@ -59,5 +59,7 @@ layout.cna(net, pdb)
 # plot.cna( net, layout=layout.cna(net, pdb) )
 # plot3d.cna(net, pdb, layout=layout.cna(net, pdb, k=3))
 
+detach(hivp)
+
 }
 \keyword{ utility }

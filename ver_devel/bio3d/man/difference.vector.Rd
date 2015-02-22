@@ -48,5 +48,8 @@ dv <- difference.vector( pdbs$xyz[diff.inds,], gaps.pos$f.inds )
 
 # Calculate the squared overlap between the PCs and the difference vector  
 o <- overlap(pc.xray, dv)
+
+detach(kinesin)
+
 }
 \keyword{ utilities }

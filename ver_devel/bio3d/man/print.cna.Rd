@@ -56,6 +56,8 @@ print(net)
 x<- summary(net)
 x$members[[2]]
 
+detach(hivp)
+
 }
 \keyword{ utilities }
 

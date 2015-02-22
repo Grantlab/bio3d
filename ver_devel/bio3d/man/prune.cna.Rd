@@ -58,5 +58,8 @@ plot.cna(net)
 # Prune network
 dnet <- prune.cna(net, edges.min = 1)
 plot(dnet)
+
+detach(hivp)
+
 }
 \keyword{ utility }

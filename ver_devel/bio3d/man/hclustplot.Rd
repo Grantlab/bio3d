@@ -70,6 +70,9 @@ hclustplot(hc, k=3)
 ##- draw dendrogram with manual clustering annotation
 hclustplot(hc, colors=annotation[, "color"], labels=pdbs$id)
 }
+
+detach(transducin)
+
 }
 }
 \keyword{ hplot }

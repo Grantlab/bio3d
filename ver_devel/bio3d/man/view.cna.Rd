@@ -85,6 +85,9 @@ modes.gdi = nma(pdb.gdi)
 cij.gdi = dccm(modes.gdi)
 net.gdi = cna(cij.gdi, cutoff.cij=0.35)
 #view.cna(net.gdi, pdb.gdi, alpha = 0.7, launch=TRUE)
+
+detach(hivp)
+
 }
 }
 

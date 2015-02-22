@@ -47,7 +47,7 @@ s <- aa321(pdb$seqres)                   # SEQRES
 a <- aa321(pdb$atom[pdb$calpha,"resid"]) # ATOM
 
 # Write both sequences to a fasta file
-write.fasta(id=c("seqres","atom"), seqs=seqbind(s,a), file="eg2.fa")
+write.fasta(alignment=seqbind(s,a), id=c("seqres","atom"), file="eg2.fa")
 
 # Alternative approach for ATOM sequence extraction
 pdbseq(pdb)
