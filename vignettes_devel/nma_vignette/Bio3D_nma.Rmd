@@ -354,7 +354,7 @@ cij <- dccm(modes)
     
 ```{r ex2A-plot_enma3, eval=FALSE, fig.cap="Residue cross-correlations present in all DHFR structures analyzed."}
 # Determine correlations present only in all 9 input structures
-cij.all <- dccm.filter(cij$all.dccm, cutoff.sims=9, cutoff.cij = 0)
+cij.all <- filter.dccm(cij$all.dccm, cutoff.sims=9, cutoff.cij = 0)
 plot.dccm(cij.all, main="Consensus Residue Cross Correlation")
 ```
 

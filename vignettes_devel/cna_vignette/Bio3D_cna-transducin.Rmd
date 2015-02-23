@@ -157,7 +157,7 @@ In this example we perform ensemble NMA on 53 crystallographic transducin G-alph
 categorized into active GTP-analog-bound, inactive GDP-bound, and inhibitory GDI-bound states. For this analysis
 we utilize the example transducin structure dataset (further details of which can be obtained via `help(transducin)` along with the "Comparative Protein Structure Analysis with Bio3D" vignette available on-line). Briefly, this dataset includes aligned PDB coordinates (`pdbs`), structural invariant core positions (`core`) and annotations for each PDB structure (`annotation`).
 Cross-correlation matrices for all structures in the ensemble are calculated with the function **dccm()**. 
-State-specific ensemble average correlation matrices are then obtained with the function **dccm.filter()**.
+State-specific ensemble average correlation matrices are then obtained with the function **filter.dccm()**.
 Correlation networks are finally constructed with the function **cna()**, and visualization of the networks
 performed with the function **plot.cna()**:
 
@@ -174,9 +174,9 @@ cijs0 <- dccm(modes)
 ```
 
 Below we perform optional filtering and averaging per state of the individual structure cross-correlation matrices.
-In this example, we also utilize a cutoff for correlation (0.35 in this example) and a cutoff for C-alpha distance (10 angstrom) (See `help(dccm.filter)` and main text for details).
-```{r dccm.filter, cache=TRUE, message=FALSE}
-cij <- dccm.filter(cijs0, xyz=pdbs, fac=annotation[, "state3"], cutoff.cij=0.35, 
+In this example, we also utilize a cutoff for correlation (0.35 in this example) and a cutoff for C-alpha distance (10 angstrom) (See `help(filter.dccm)` and main text for details).
+```{r filter.dccm, cache=TRUE, message=FALSE}
+cij <- filter.dccm(cijs0, xyz=pdbs, fac=annotation[, "state3"], cutoff.cij=0.35, 
                 dcut=10, scut=0, pcut=0.75, ncore=8)
 ```
 

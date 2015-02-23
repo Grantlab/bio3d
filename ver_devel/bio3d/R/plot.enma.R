@@ -77,9 +77,9 @@
     yval <- yval[row.inds, col.inds, drop=FALSE]
     if(!is.null(pdbs)) {
       if(rm.gaps)
-        pdbs=pdbs.filter(pdbs, row.inds=row.inds, col.inds=gaps.pdbs$f.inds)
+        pdbs=trim.pdbs(pdbs, row.inds=row.inds, col.inds=gaps.pdbs$f.inds)
       else
-        pdbs=pdbs.filter(pdbs, row.inds=row.inds, col.inds=col.inds)
+        pdbs=trim.pdbs(pdbs, row.inds=row.inds, col.inds=col.inds)
     }
     col=col[!is.na(col)]
     
@@ -232,7 +232,7 @@
       }
     }
     else {
-      ##np <- pdbs.filter(pdbs, row.inds=row.inds, col.inds=1:ncol(pdbs$ali))
+      ##np <- trim.pdbs(pdbs, row.inds=row.inds, col.inds=1:ncol(pdbs$ali))
       ##do.call('.plot.enma.spread', c(list(x=yval[row.inds,, drop=FALSE],
       
       do.call('.plot.enma.spread', c(list(x=yval,
@@ -312,10 +312,10 @@
     if(!is.null(pdbs)) {
       if(rm.gaps) {
         gs <- gap.inspect(pdbs$ali)
-        pdbs <- pdbs.filter(pdbs, col.inds=gs$f.inds)
+        pdbs <- trim.pdbs(pdbs, col.inds=gs$f.inds)
       }
       
-      pdbs <- pdbs.filter(pdbs, row.inds=row.inds, col.inds=col.inds)
+      pdbs <- trim.pdbs(pdbs, row.inds=row.inds, col.inds=col.inds)
       sse <- .pdbs2sse(pdbs, ind=1, rm.gaps=rm.gaps)
     }
   }

@@ -7,7 +7,7 @@ test_that("Fitting still works", {
 
   attach(transducin)
   inds <- unlist(lapply(c("1TAG", "1AS0", "1AS2"), grep, pdbs$id))
-  pdbs <- pdbs.filter(pdbs, row.inds=inds)
+  pdbs <- trim.pdbs(pdbs, row.inds=inds)
   
   gaps <- gap.inspect(pdbs$xyz)
 
@@ -101,7 +101,7 @@ test_that("fit.xyz() with ncore>1 works properly", {
 
    attach(transducin)
    inds <- unlist(lapply(c("1TAG", "1AS0", "1AS2"), grep, pdbs$id))
-   pdbs <- pdbs.filter(pdbs, row.inds=inds)
+   pdbs <- trim.pdbs(pdbs, row.inds=inds)
    
    #invisible(capture.output(pdbs <- pdbaln(c("1tag", "1as0", "1as2"))))
    #inds <- gap.inspect(pdbs$xyz)$f.inds

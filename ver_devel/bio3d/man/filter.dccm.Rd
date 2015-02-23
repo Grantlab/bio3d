@@ -1,11 +1,11 @@
-\name{dccm.filter}
-\alias{dccm.filter}
+\name{filter.dccm}
+\alias{filter.dccm}
 \title{ Filter for Cross-correlation Matrices (Cij) }
 \description{
   This function builds various cij matrix for correlation network analysis
 }
 \usage{
-  dccm.filter(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL, 
+  filter.dccm(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL, 
       cutoff.sims = NULL, collapse = TRUE, extra.filter = NULL, ...)
 }
 \arguments{
@@ -59,7 +59,7 @@ gaps.pos <- gap.inspect(pdbs$xyz)
 modes <- nma.pdbs(pdbs, full=TRUE)
 dccms <- dccm.enma(modes)
 
-cij <- dccm.filter(dccms, xyz=pdbs)
+cij <- filter.dccm(dccms, xyz=pdbs)
 
 # Example protein kinase
 # Select Protein Kinase PDB IDs
@@ -84,7 +84,7 @@ dimnames(cij$all.dccm) = list(NULL, NULL, ids)
 plot.dccm(cij$all.dccm)
 
 # Filter to display only correlations present in all structures
-cij.all <- dccm.filter(cij, cutoff.sims = 8, cutoff.cij = 0)
+cij.all <- filter.dccm(cij, cutoff.sims = 8, cutoff.cij = 0)
 plot.dccm(cij.all, main = "Consensus Residue Cross Correlation")
 
 }

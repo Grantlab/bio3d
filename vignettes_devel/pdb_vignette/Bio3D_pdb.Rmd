@@ -141,7 +141,6 @@ Note that the main `xyz` coordinate attribute is a numeric matrix with 3N column
 pdb$xyz
 # Examine the row and column dimensions
 dim(pdb$xyz)
-head(pdb$xyz)
 pdb$xyz[ 1, atom2xyz(1:2) ]
 ```
 

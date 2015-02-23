@@ -127,15 +127,15 @@ pdbs.all <- pdbaln(files)
 
 # exclude DHFR-TS fusion protein
 excl.inds <- unlist(lapply(c("1qzf", "1sej"), grep, pdbs.all$id))
-pdbs <- pdbs.filter(pdbs.all, row.inds=-excl.inds)
+pdbs <- trim.pdbs(pdbs.all, row.inds=-excl.inds)
 
 # exclude structures with missing residues
 conn <- inspect.connectivity(pdbs, cut=4.05)
-pdbs <- pdbs.filter(pdbs, row.inds=which(conn))
+pdbs <- trim.pdbs(pdbs, row.inds=which(conn))
           
 # exclude conformational redundant structures
-rd <- rmsd.filter(pdbs$xyz, cutoff=0.25, fit=TRUE, ncore=4)
-pdbs <- pdbs.filter(pdbs, row.inds=rd$ind)
+rd <- filter.rmsd(pdbs$xyz, cutoff=0.25, fit=TRUE, ncore=4)
+pdbs <- trim.pdbs(pdbs, row.inds=rd$ind)
 ```
 
 
@@ -157,7 +157,7 @@ aln$id=aln$id[1:length(pdbs$id)]
 pdbs <- read.fasta.pdb(aln)
 
 # exclude gap-only columns
-pdbs = pdbs.filter(pdbs)
+pdbs = trim.pdbs(pdbs)
 
 # refit coordinates
 pdbs$xyz = pdbfit(pdbs)

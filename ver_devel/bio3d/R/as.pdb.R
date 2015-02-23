@@ -18,13 +18,26 @@ as.pdb.default <- function(pdb=NULL, xyz=NULL, type = NULL, resno = NULL,
   if(length(inds)==0)
     stop("insufficient arguments. provide 'pdb', 'xyz', 'eleno', 'resno', and/or 'resid'")
 
+  ## check content of pdb
+  if(!is.null(pdb)) {
+    if(!is.pdb(pdb))
+      stop("'pdb' must be of class 'pdb' as obtained from 'read.pdb'")
+  }
+
+  ## check content of xyz
+  if(!is.null(xyz)) {
+    if(!(is.numeric(xyz) & (is.matrix(xyz) | is.vector(xyz))))
+      stop("'xyz' must be a numeric vector/matrix")
+    
+    xyz <- as.xyz(xyz)
+  }
+
   ## if pdb is provided use it to determine natoms
   if (inds[1]==1) {
     natoms <- nrow(pdb$atom)
   }
   ## if xyz is provided use it to determine natoms
   else if (inds[1]==2) {
-    xyz <- as.xyz(xyz)
     natoms <- ncol(xyz)/3
   }
   ## else use eleno, resno, or resid
@@ -40,10 +53,6 @@ as.pdb.default <- function(pdb=NULL, xyz=NULL, type = NULL, resno = NULL,
 
   ## set value of 'xyz'
   if(!is.null(xyz)) {
-    if(!is.numeric(xyz) & !is.xyz(xyz))
-      stop("'xyz' must be a numeric vector/matrix")
-
-    xyz <- as.xyz(xyz)
     if((ncol(xyz)/3)!=natoms)
       stop("ncol(xyz)/3 != length(resno)")
   }
@@ -124,8 +133,14 @@ as.pdb.default <- function(pdb=NULL, xyz=NULL, type = NULL, resno = NULL,
     #class(out) <- class(pdb)
   #}
 
-  ca.inds    <- atom.select.pdb(out, "calpha", verbose=verbose)
-  out$calpha <- seq(1, natoms) %in% ca.inds$atom
+  unwhich <- function(x, n) {
+    out <- rep_len(FALSE, n)
+    out[x] <- TRUE
+    return(out)
+  }
+
+  ca.inds    <- atom.select(out, "calpha", verbose=verbose)
+  out$calpha <- unwhich(ca.inds$atom, natoms)
   out$call   <- cl
 
   if(verbose) {

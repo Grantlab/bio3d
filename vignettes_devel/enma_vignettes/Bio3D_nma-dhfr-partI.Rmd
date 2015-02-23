@@ -106,25 +106,25 @@ At this point the *pdbs.all* object contains all identified 101 structures. This
 structures with missing residues, and/or multiple structurally redundant conformers. For our
 subsequent NMA missing in-structure residues might bias the calculation, and redundant structures
 can be useful to omit to reduce the computational load. Below we inspect the connectivity of the
-PDB structures with a function call to **inspect.connectivity()**, and **pdbs.filter()** to
+PDB structures with a function call to **inspect.connectivity()**, and **trim.pdbs()** to
 filter out those structures from our *pdbs.all* object. Similarly, we omit structures that are
-conformationally redundant to reduce the computational load with function **rmsd.filter()**:
+conformationally redundant to reduce the computational load with function **filter.rmsd()**:
 
 ```{r example1e, cache=TRUE, warning=FALSE, results='hide'}
 # remove structures with missing residues
 conn <- inspect.connectivity(pdbs.all, cut=4.05)
-pdbs <- pdbs.filter(pdbs.all, row.inds=which(conn))
+pdbs <- trim.pdbs(pdbs.all, row.inds=which(conn))
 
 # which structures are omitted
 which(!conn)
 
 # remove conformational redundant structures
-rd <- rmsd.filter(pdbs$xyz, cutoff=0.1, fit=TRUE)
-pdbs <- pdbs.filter(pdbs, row.inds=rd$ind)
+rd <- filter.rmsd(pdbs$xyz, cutoff=0.1, fit=TRUE)
+pdbs <- trim.pdbs(pdbs, row.inds=rd$ind)
 
 # remove "humanized" e-coli dhfr
 excl <- unlist(lapply(c("3QL0", "4GH8"), grep, pdbs$id))
-pdbs <- pdbs.filter(pdbs, row.inds=which(!(1:length(pdbs$id) %in% excl)))
+pdbs <- trim.pdbs(pdbs, row.inds=which(!(1:length(pdbs$id) %in% excl)))
 
 # a list of PDB codes of our final selection
 ids <- unlist(strsplit(basename(pdbs$id), split=".pdb"))
@@ -210,9 +210,9 @@ mktrj(pc.xray, pc=1,
 Function **pdbfit()** can be used to write the PDB files to separate directories according to their cluster membership:
 
 ```{r example1j, eval=FALSE}
-pdbfit(pdbs.filter(pdbs, row.inds=which(grps.rd==1)), outpath="grps1") ## closed
-pdbfit(pdbs.filter(pdbs, row.inds=which(grps.rd==2)), outpath="grps2") ## open
-pdbfit(pdbs.filter(pdbs, row.inds=which(grps.rd==3)), outpath="grps3") ## occluded
+pdbfit(trim.pdbs(pdbs, row.inds=which(grps.rd==1)), outpath="grps1") ## closed
+pdbfit(trim.pdbs(pdbs, row.inds=which(grps.rd==2)), outpath="grps2") ## open
+pdbfit(trim.pdbs(pdbs, row.inds=which(grps.rd==3)), outpath="grps3") ## occluded
 ```
 
 
@@ -285,12 +285,14 @@ The above analysis can also nicely be integrated with molecular dynamics (MD) si
 pdb <- read.pdb("md-traj/1rx2-CA.pdb")
 trj <- read.ncdf("md-traj/1rx2_5ns.nc")
 
-md.inds <- pdb2aln.ind(aln=pdbs, pdb=pdb, id="md", inds=gaps.res$f.inds)
-trj <- trj[, atom2xyz(md.inds)]
-trj <- fit.xyz(fixed=pdbs$xyz[1, ],  mobile=trj,
-               fixed.inds=core$c0.5A.xyz, mobile.inds=core$c0.5A.xyz)
+inds <- pdb2aln.ind(pdbs, pdb, gaps.res$f.inds)
+inds.core <- pdb2aln.ind(pdbs, pdb, core$c0.5A.atom)
 
-proj <- project.pca(trj, pc.xray)
+# inds$a is for the pdbs object
+# inds$b is for the MD structure
+
+trj.fit <- fit.xyz(pdbs$xyz[1,], trj, core$c0.5A.xyz, inds.core$b$xyz)
+proj <- project.pca(trj.fit[, inds$b$xyz], pc.xray)
 cols <- densCols(proj[,1:2])
 ```
 
@@ -304,7 +306,7 @@ points(pc.xray$z[,1:2], col=grps.rd, pch=16)
 
 ```{r example1p, eval=TRUE}
 # PCA of the MD trajectory
-pc.md <- pca.xyz(trj)
+pc.md <- pca.xyz(trj.fit[, inds$b$xyz])
 
 # compare MD-PCA and NMA
 r <- rmsip(pc.md$U, modes$U.subspace[,,1])
