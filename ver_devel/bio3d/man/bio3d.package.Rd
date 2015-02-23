@@ -115,7 +115,7 @@ s1 <- aa321(pdb$seqres)
 s2 <- pdbseq(pdb)
 
 ## write a FASTA format sequence file
-write.fasta(seqs=seqbind(s1, s2), id=c("seqres","atom"), file="eg.fa")
+write.fasta(alignment=seqbind(s1, s2), id=c("seqres","atom"), file="eg.fa")
 
 ##----------------------------------------##
 
@@ -192,8 +192,9 @@ aln  <- read.fasta( system.file("examples/kif1a.fa", package="bio3d") )
 pdbs <- read.fasta.pdb( aln )
 
 ##-- DDM: Difference Distance Matrix
-a <- dm(pdbs$xyz[2,])
-b <- dm(pdbs$xyz[3,])
+all.dm <- dm(pdbs$xyz)
+a <- all.dm[,,2]
+b <- all.dm[,,3]
 ddm <- a - b
 plot(ddm,key=FALSE, grid=FALSE)
 
