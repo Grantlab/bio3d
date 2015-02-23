@@ -1,4 +1,4 @@
-check.bio3d <- function(pkg, as.cran = TRUE, run.dontrun = FALSE, run.donttest =FALSE,
+check.bio3d <- function(pkg, run.skipcran = FALSE, run.dontrun = FALSE, run.donttest =FALSE,
    cran.repos = "http://cran.at.r-project.org/", cleanup = FALSE, ...) {
 
    ##- Check if pkg is a file or a directory
@@ -29,21 +29,23 @@ check.bio3d <- function(pkg, as.cran = TRUE, run.dontrun = FALSE, run.donttest =
    }
    packages.rtn <- sapply(packages, get.package, cran.repos)
  
-   if(as.cran) {
+   if(!run.skipcran) {
       # replace devtools::r_env_vars to set NOT_CRAN = "false"
       # it is important to make skip_on_cran() work
+      r_env_vars0 <- devtools::r_env_vars
       r_env_vars <- function() {
          c(R_LIBS = paste(.libPaths(), collapse = .Platform$path.sep), 
          CYGWIN = "nodosfilewarning", R_TESTS = "", NOT_CRAN = "false", 
          TAR = devtools:::auto_tar())
       }
       assignInNamespace("r_env_vars", r_env_vars, "devtools")
+      on.exit(assignInNamespace("r_env_vars", r_env_vars0, "devtools")) 
    }
    
    args = NULL 
    if(run.dontrun) args <- c(args, "--run-dontrun")
    if(run.donttest) args <- c(args, "--run-donttest")
 
-   devtools::check(pkg, cran=as.cran, document=FALSE, force_suggests=FALSE, 
+   devtools::check(pkg, cran=TRUE, document=FALSE, force_suggests=FALSE, 
       args = args, cleanup = cleanup, ...) 
 }
