@@ -71,9 +71,7 @@
 
   ## check for missing masses before we start calculating
   if(any(pdbs$ali=="X") & mass==TRUE) {
-    mat.file <- system.file(paste("matrices/aa_mass.mat",sep=""), package="bio3d")
-    mat <- read.table(mat.file)
-    resnames <- c(row.names(mat), names(am.args$mass.custom))
+    resnames <- c(aa.table$aa3, names(am.args$mass.custom))
     
     ops.inds <- which(pdbs$ali=="X", arr.ind=TRUE)
     unknowns <- c()
@@ -89,8 +87,9 @@
     if(length(unknowns)>0) {
       options(warn=prev.warn)
       unknowns <- paste(unique(unknowns), collapse=", ")
-      stop(paste("Unknown aminoacid identifier(s):", unknowns,
-                 "\n  Use 'mass=FALSE' or 'mass.custom=list(UNK=156.2)'"))
+      stop(paste0("Unknown mass for amino acid(s): ", unknowns,
+                  "\n  Provide mass with argument 'mass.custom=list(", unknowns[1], "=100.00)',", 
+                  "\n  or ommit mass weighting with argument 'mass=FALSE'."))
     }
   }
 
