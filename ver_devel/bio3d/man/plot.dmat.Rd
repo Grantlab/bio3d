@@ -90,8 +90,8 @@ plot(d,
 pdbs <- pdbaln( get.pdb( c( "4q21", "521p"), path=tempdir(), overwrite=TRUE))
 
 # Get distance matrix
-a <- dm(pdbs$xyz[1,])
-b <- dm(pdbs$xyz[2,])
+a <- dm.xyz(pdbs$xyz[1,])
+b <- dm.xyz(pdbs$xyz[2,])
 
 # Calculate DDM
 c <- a - b

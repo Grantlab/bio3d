@@ -78,7 +78,7 @@
   plot.dccm(cij)
 
   ## Change the color scheme and the range of colored data levels
-  plot.dccm(cij, contour=F, col.regions=bwr.colors(200), at=seq(-1,1,by=0.01) )
+  plot.dccm(cij, contour=FALSE, col.regions=bwr.colors(200), at=seq(-1,1,by=0.01) )
 
   ## Add secondary structure annotation to plot margins
   sse <- dssp(read.pdb("1W5Y"), resno=FALSE)

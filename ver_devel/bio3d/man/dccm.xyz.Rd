@@ -107,7 +107,7 @@ plot(cij)
 
 ## Or
 library(lattice)
-contourplot(cij, region = TRUE, labels=F, col="gray40",
+contourplot(cij, region = TRUE, labels=FALSE, col="gray40",
             at=c(-1, -0.75, -0.5, -0.25, 0.25, 0.5, 0.75, 1),
             xlab="Residue No.", ylab="Residue No.",
             main="DCCM: dynamic cross-correlation map")

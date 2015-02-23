@@ -13,6 +13,8 @@ for i in ./bio3d/man/*.Rd; do
       [ `basename $i` != "mustang.Rd" ] && \
       [ `basename $i` != "as.pdb.Rd" ] && \
       [ `basename $i` != "atom.select.Rd" ] && \
+      [ `basename $i` != "read.crd.Rd" ] && \
+      [ `basename $i` != "read.crd.amber.Rd" ] && \
       [ `basename $i` != "read.mol2.Rd" ]; then
       echo $i
       # find and delete tags \dontrun{ and }
