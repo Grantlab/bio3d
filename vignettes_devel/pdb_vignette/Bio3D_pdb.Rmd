@@ -623,7 +623,7 @@ pdbs <- pdbaln(files)
 Below we examine the sequence and structural similarity.
 ```{r basictransducin}
 # Calculate sequence identity
-pdbs$id <- substr(basename(pdbs$id),1,6)
+pdbs$id <- basename.pdb(pdbs$id)
 seqidentity(pdbs)
 
 
@@ -636,10 +636,10 @@ pc <- pca(pdbfit(pdbs), rm.gaps=TRUE)
 plot(pc)
 ```
 
-```{r, nma, results="hide", fig.cap="Results of ensemble normal mode analysis (NMA) plotted by function **plot.enma()**"}
+```{r, nma, results="hide", fig.cap="Results of ensemble normal mode analysis (NMA) plotted by function **plot.enma()**", fig.width=8, fig.height=6}
 ## Quick NMA of all structures (see Figure 10)
 modes <- nma(pdbs)
-plot(modes, spread=TRUE)
+plot(modes, pdbs, spread=TRUE)
 
 ```
 
