@@ -1,7 +1,7 @@
 ---
 title: "Enhanced Normal Modes Analysis with Bio3D"
 author: "Lars Skjaerven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant"
-date: "October 30, 2014"
+date: "February 24, 2015"
 output:
   pdf_document:
     fig_caption: yes
@@ -19,7 +19,7 @@ documentclass: article
 fontsize: 11pt
 geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
 linkcolor: black
-bibliography: Bio3D_nma.bib
+bibliography: bio3d.bib
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 ---
 
@@ -28,7 +28,7 @@ affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbo
 # Background  {.unnumbered}
 Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics . The primary focus of Bio3D is the analysis of biomolecular structure, sequence and simulation data [@grant06].
 
-Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities. These include a unique collection of multiple elastic network model (ENM) force-fields (see **Example 1** below), automated ensemble analysis methods (**Example 2**), variance weighted NMA (**Example 3**), and NMA with user-defined force fields (**Example 4**). Here we demonstrate the use of these new features with working code that comprise complete executable examples[^2].
+Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities [@skjaerven15]. These include a unique collection of multiple elastic network model (ENM) force-fields (see **Example 1** below), automated ensemble analysis methods (**Example 2**), variance weighted NMA (**Example 3**), and NMA with user-defined force fields (**Example 4**). Here we demonstrate the use of these new features with working code that comprise complete executable examples[^2].
 
 ## Requirements {.unnumbered}
 Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [Installing Bio3D Vignette](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. In addition to Bio3D the _MUSCLE_ multiple sequence alignment program (available from the [muscle home page](http://www.drive5.com/muscle/)) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
@@ -213,20 +213,13 @@ with the implementation of the GeoStaS algorithm [@Romanowska2012a]. Below we de
 **geostas()** on an *nma* object, and an ensemble of X-ray structures.  See `help(geostas)`
 for more details and further examples.
 
-**GeoStaS with NMA**: Starting from the calculated normal modes, we generate
-conformers by interpolating along the eigenvectors of the first 5 normal modes of the
-GroEL subunit. We then use this ensemble as input to function **geostas()**:
+**GeoStaS with NMA**: Starting from the calculated normal modes, **geostas** generates a 
+conformational ensemble by interpolating along the eigenvectors of the first 5 normal modes of the
+GroEL subunit. This ensemble is then used to search for rigid domains:
 
 ```{r ex1C-goestas1, cache=TRUE, results="hide", warning=FALSE, message=FALSE}
-# Build conformational ensemble
-trj <- rbind(mktrj(modes, mode=7)[10:24,],
-             mktrj(modes, mode=8)[10:24,],
-             mktrj(modes, mode=9)[10:24,],
-             mktrj(modes, mode=10)[10:24,],
-             mktrj(modes, mode=11)[10:24,])
-
 # Run geostas to find domains
-gs <- geostas(trj, k=4)
+gs <- geostas(modes, k=4)
 ```
 
 ```{r eval=FALSE}
@@ -256,8 +249,8 @@ gs <- geostas(pdbs, k=4)
 
 ```{r plot_geostas-amsm, fig.width=5, fig.height=5, fig.cap="Atomic movement similarity matrix with domain annotation."}
 # Plot a atomic movement similarity matrix
-plot.dccm(gs$amsm, at=seq(0, 1, 0.1), main="AMSM with Domain Assignment",
-          col.regions=rev(heat.colors(200)), margin.segments=gs$grps, contour=FALSE)
+plot(gs, margin.segments=gs$grps, contour=FALSE)
+
 ```
 
 ```{r}
@@ -485,31 +478,13 @@ legend("bottomright",
 ### Variance weighting
 From the overlap analysis above we see the good agreement (high overlap value) between the conformational difference vector 
 and the normal modes calculated on the open structures. Contrary, the lowest frequency modes of the closed 
-structures does not show the same behavior. We will thus proceed with the weighting of the force constants. 
-First we'll define a quick function for calculating the weights which takes a matrix of Cartesian coordinates 
-as input:
+structures does not show the same behavior. We will thus proceed with the weighting of the force constants.
+First we will calculate the variance of all pairwise distances in the ensemble and use this as weights for the NMA:
 
 
 ```{r ex3A-weights, cache=TRUE}
-"make.weights" <- function(xyz) {
-  # Calculate pairwise distances
-  natoms <- ncol(xyz) / 3
-  all <- array(0, dim=c(natoms,natoms,nrow(xyz)))
-  for( i in 1:nrow(xyz) ) {
-    dists <- dist.xyz(xyz[i,])
-    all[,,i] <- dists
-  }
-  
-  # Calculate variance of pairwise distances
-  all.vars <- apply(all, 1:2, var)
-  
-  # Make the final weights
-  weights <- 1 - (all.vars / max(all.vars))
-  return(weights)
-}
-
-# Calcualte the weights
-wts <- make.weights(pdbs$xyz[, gaps.pos$f.inds])
+# Calcualte variance
+wts <- var.xyz(pdbs$xyz[, gaps.pos$f.inds])
 ```
  
 Weights to the force constants can be included by the argument 'fc.weights' to function **nma()**. 
@@ -615,10 +590,10 @@ modes.gtp <- nma(pdb.gtp)
 ```
 
 Now, we calculate the pairwise distance variance based on the structural ensemble with the function 
-**make.weights()** defined above. This will be used to weight the force constants in the elastic network model. 
+**var.xyz()** as described above. This will be used to weight the force constants in the elastic network model. 
 ```{r ex3B-weights, cache=TRUE, results='hide', warning=FALSE}
 # Calculate weights 
-weights <- make.weights(xyz[, gaps.pos$f.inds])
+weights <- var.xyz(xyz[, gaps.pos$f.inds])
 
 # Calculate normal modes with weighted pair force constants
 modes.gdp.b <- nma(pdb.gdp, fc.weights=weights**100)
