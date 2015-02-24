@@ -71,7 +71,7 @@
 
   ## check for missing masses before we start calculating
   if(any(pdbs$ali=="X") & mass==TRUE) {
-    resnames <- c(aa.table$aa3, names(am.args$mass.custom))
+    resnames <- c(bio3d::aa.table$aa3, names(am.args$mass.custom))
     
     ops.inds <- which(pdbs$ali=="X", arr.ind=TRUE)
     unknowns <- c()
