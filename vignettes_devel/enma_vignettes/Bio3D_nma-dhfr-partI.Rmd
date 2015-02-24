@@ -1,7 +1,7 @@
 ---
 title: "Ensemble NMA of *E.coli* DHFR structures"
 author: "Lars Skjaerven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant"
-date: "October 30, 2014"
+date: "February 24, 2015"
 output:
   pdf_document:
     fig_caption: yes
@@ -19,14 +19,14 @@ documentclass: article
 fontsize: 11pt
 geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
 linkcolor: black
-bibliography: Bio3D_nma-dhfr-partI.bib
+bibliography: bio3d.bib
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 ---
 
 # Background {.unnumbered}
 Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data [@grant06].
 
-Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities (see also the [**NMA Vignette**](http://thegrantlab.org/bio3d/tutorials)). These include a unique collection of multiple elastic network model force-fields, automated ensemble analysis methods, and variance weighted NMA. Here we provide an in-depth demonstration of ensemble NMA with working code that comprise complete executable examples[^2].
+Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities [@skjaerven15]. These include a unique collection of multiple elastic network model force-fields, automated ensemble analysis methods, and variance weighted NMA (see also the [**NMA Vignette**](http://thegrantlab.org/bio3d/tutorials)). Here we provide an in-depth demonstration of ensemble NMA with working code that comprise complete executable examples[^2].
 
 ## Requirements {.unnumbered}
 Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. In addition to Bio3D the _MUSCLE_ multiple sequence alignment program (available from the [muscle home page](http://www.drive5.com/muscle/) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
@@ -351,7 +351,7 @@ mktrj(pc.xray, pc=1, chain=gs.xray$grps)
 **GoeStaS on ensemble NMA**: We can also identify dynamic domains from the normal modes of the ensemble
 of 82 protein structures stored in the `modes` object. By using function **mktrj.enma()**
 we generate a trajectory from the first five modes for all 82 structures. We then input this
-trajectory to function **geostas()**. 
+trajectory to function **geostas()**:
 
 ```{r example1_gs-nma, cache=TRUE,}
 # Build conformational ensemble
@@ -371,6 +371,9 @@ gs.nma <- geostas(trj.nma, k=2, fit=FALSE)
 # Write NMA generated trajectory with domain assignment
 write.pdb(xyz=trj.nma, chain=gs.nma$grps)
 ```
+
+Note that function **geostas.enma()** wraps these three main functions calls to faciliatet this calculation. 
+See `help(geostas)` for more information. 
 
 
 **GeoStaS on a MD trajectory**: The domain analysis can also be performed on the trajectory data obtained
