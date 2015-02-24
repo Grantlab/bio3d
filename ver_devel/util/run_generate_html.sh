@@ -45,7 +45,7 @@ fi
 utildir=$utildir sh $utildir/tidy_html.sh
 
 # 7. create a link to the results
-rm $utildir/html
+rm -f $utildir/html
 ln -s $workdir/html $utildir
 
 # 8. refresh your browser

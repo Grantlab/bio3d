@@ -77,7 +77,7 @@ view.cnapath(x, pdb, out.prefix = "view.cnapath", spline = FALSE,
 attach(transducin)
 inds = match(c("1TND_A", "1TAG_A"), pdbs$id)
 
-npdbs <- pdbs.filter(pdbs, row.inds=inds)
+npdbs <- trim(pdbs, row.inds=inds)
 gaps.res <- gap.inspect(npdbs$ali)
 
 modes <- nma(npdbs)

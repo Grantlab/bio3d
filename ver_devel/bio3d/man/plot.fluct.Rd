@@ -63,7 +63,7 @@ attach(transducin)
 
 ## remove flexible termina for a full-length NMA calculation
 inds = 30:(ncol(pdbs$ali)-8)
-npdbs = pdbs.filter(pdbs, col.inds = inds)
+npdbs = trim(pdbs, col.inds = inds)
 gaps.res = gap.inspect(npdbs$ali)
 
 ## reference PDB for secondary structure annotation
