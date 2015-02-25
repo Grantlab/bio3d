@@ -1,7 +1,7 @@
 ---
 title: "Ensemble NMA across multiple species of DHFR"
 author: "Lars Skjaerven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant"
-date: "October 30, 2014"
+date: "February 24, 2015"
 output:
   pdf_document:
     fig_caption: yes
@@ -19,15 +19,14 @@ documentclass: article
 fontsize: 11pt
 geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
 linkcolor: black
-bibliography: Bio3D_nma-dhfr-partI.bib
+bibliography: bio3d.bib
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 ---
 
 # Background {.unnumbered}
 Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data [@grant06].
 
-Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities (see also the [**NMA Vignette**](http://thegrantlab.org/bio3d/tutorials)). These include a unique collection of multiple elastic network model force-fields, automated ensemble analysis methods, and variance weighted NMA. Here we provide an in-depth demonstration of ensemble NMA with working code that comprise complete executable examples[^2].
-
+Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities [@skjaerven15]. These include a unique collection of multiple elastic network model force-fields, automated ensemble analysis methods, and variance weighted NMA (see also the [**NMA Vignette**](http://thegrantlab.org/bio3d/tutorials)). Here we provide an in-depth demonstration of ensemble NMA with working code that comprise complete executable examples[^2].
 
 ## Requirements {.unnumbered}
 Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/download/download.html) available both on-line and from within the Bio3D package. In addition to Bio3D the _MUSCLE_ and _CLUSTALO_ multiple sequence alignment programs (available from the [muscle home page](http://www.drive5.com/muscle/) and [clustalo home page](http://www.clustal.org/omega)) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
@@ -54,10 +53,11 @@ example, our query sequence is searched against the Pfam profile HMM library
 The to **hmmer()** will return a data frame object containing the Pfam accession ID (`$acc`),
 description of the identified family (`$desc`), family name (`$name`), etc. 
 
-```{r getseq, results="hide", cache=TRUE, warning=FALSE,}
-# load the bio3d package
+```{r lbio3d, results="hide"}
 library(bio3d)
+```
 
+```{r getseq, cache=TRUE, results="hide"}
 # get sequence of Ecoli DHFR
 seq <- get.seq("1rx2_A")
 
@@ -127,15 +127,15 @@ pdbs.all <- pdbaln(files)
 
 # exclude DHFR-TS fusion protein
 excl.inds <- unlist(lapply(c("1qzf", "1sej"), grep, pdbs.all$id))
-pdbs <- pdbs.filter(pdbs.all, row.inds=-excl.inds)
+pdbs <- trim.pdbs(pdbs.all, row.inds=-excl.inds)
 
 # exclude structures with missing residues
 conn <- inspect.connectivity(pdbs, cut=4.05)
-pdbs <- pdbs.filter(pdbs, row.inds=which(conn))
+pdbs <- trim.pdbs(pdbs, row.inds=which(conn))
           
 # exclude conformational redundant structures
-rd <- rmsd.filter(pdbs$xyz, cutoff=0.25, fit=TRUE, ncore=4)
-pdbs <- pdbs.filter(pdbs, row.inds=rd$ind)
+rd <- filter.rmsd(pdbs$xyz, cutoff=0.25, fit=TRUE, ncore=4)
+pdbs <- trim.pdbs(pdbs, row.inds=rd$ind)
 ```
 
 
@@ -150,17 +150,17 @@ using argument `profile` to function **seqaln()**. Subsequently, we re-read the 
 aln <- seqaln(pdbs, profile=pfam.aln, exefile="clustalo", extra.args="--dealign")
 
 # store only PDBs in alignment
-aln$ali=aln$ali[1:length(pdbs$id),]
-aln$id=aln$id[1:length(pdbs$id)]
+aln$ali <- aln$ali[1:length(pdbs$id),]
+aln$id  <- aln$id[1:length(pdbs$id)]
 
 # re-read PDBs to match the new alignment
 pdbs <- read.fasta.pdb(aln)
 
 # exclude gap-only columns
-pdbs = pdbs.filter(pdbs)
+pdbs <- trim.pdbs(pdbs)
 
 # refit coordinates
-pdbs$xyz = pdbfit(pdbs)
+pdbs$xyz <- pdbfit(pdbs)
 ```
 
 ```{r pdbfit2, eval=FALSE}
@@ -170,15 +170,15 @@ pdbs$xyz <- pdbfit(pdbs, outpath="flsq/")
 
 ```{r ids, cache=TRUE, warning=FALSE,}
 # fetch IDs again
-ids = unlist(strsplit(basename(pdbs$id), split="\\.pdb"))
-species = hmm$species[hmm$acc %in% ids]
+ids <- unlist(strsplit(basename(pdbs$id), split="\\.pdb"))
+species <- hmm$species[hmm$acc %in% ids]
 ```
 
 
 ```{r labels, cache=TRUE, warning=FALSE,}
 # labels for annotating plots
 labs <- paste(substr(species, 1,1), ". ", 
-                 lapply(strsplit(species, " "), function(x) x[2]), sep="")
+              lapply(strsplit(species, " "), function(x) x[2]), sep="")
 print(unique(labs))
 ```
 

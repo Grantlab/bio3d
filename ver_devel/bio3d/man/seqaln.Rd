@@ -68,10 +68,10 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   adding several sequences to a profile alignment. 
 }
 \value{
-  A list with two components:
+  Returns a list of class \code{"fasta"} with the following components:
   \item{ali}{ an alignment character matrix with a row per sequence and
     a column per equivalent aminoacid/nucleotide. }
-  \item{ids}{ sequence names as identifers.}
+  \item{id}{ sequence names as identifers.}
   \item{call}{ the matched call. }
 }
 \references{
@@ -135,17 +135,15 @@ seqidentity(aln)
 
 
 ##-- For identical sequences with masking use a custom matrix
-aln <- list(ali=seqbind(c("X","C","X","X","A","G","K"),
-                        c("C","-","A","X","G","X","X","K")),
-            id=c("a","b"))
+aa <- seqbind(c("X","C","X","X","A","G","K"),
+              c("C","-","A","X","G","X","X","K"))
 
-temp <- seqaln(aln=aln, outfile="temp.fas", protein=TRUE,
+aln <- seqaln(aln=aln, id=c("a","b"), outfile="temp.fas", protein=TRUE,
                extra.args= paste("-matrix",
                 system.file("matrices/custom.mat", package="bio3d"),
                 "-gapopen -3.0 ",
                 "-gapextend -0.5",
                 "-center 0.0") )
-
 }
 }
 \keyword{ utilities }

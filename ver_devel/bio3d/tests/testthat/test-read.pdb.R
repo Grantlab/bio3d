@@ -19,6 +19,23 @@ test_that("read.pdb() reads a normal pdb file", {
 
   expect_equal(sum(pdb$atom$type=="ATOM"), 998)
   expect_equal(sum(pdb$atom$type=="HETATM"), 179)
+
+  expect_equal(pdb$remark$biomat$num, 1)
+  expect_equal(pdb$remark$biomat$chain[[1]], "A")
+  true_mat <- matrix(c(1.0, 0.0, 0.0, 0.0,
+                       0.0, 1.0, 0.0, 0.0,
+                       0.0, 0.0, 1.0, 0.0), nrow=3, byrow=TRUE)
+  expect_equivalent(pdb$remark$biomat$mat[[1]][[1]], true_mat)
+
+  invisible(capture.output(spdb <- read.pdb(file, ATOM.only=TRUE)))
+  expect_equal(spdb$atom, pdb$atom)
+  expect_equal(spdb$xyz, pdb$xyz)
+  expect_equal(spdb$calpha, pdb$calpha)
+  expect_true(is.null(spdb$helix)) 
+  expect_true(is.null(spdb$sheet)) 
+  expect_true(is.null(spdb$seqres))
+  expect_true(is.null(spdb$remark))
+  
 })
 
 
@@ -63,10 +80,9 @@ test_that("read.pdb() reads and stores data properly", {
    invisible(capture.output(pdb <- read.pdb(file.path(datdir, "3DRC.pdb"))))
    write.pdb(pdb, file=file.path(datdir, "t1.pdb"))
    invisible(capture.output(pdb1 <- read.pdb(file.path(datdir, "t1.pdb"))))
-   # SSE and SEQRES missing in write.pdb()
-   pdb[c("seqres", "helix", "sheet", "call")] <- NULL
-   pdb1[c("seqres", "helix", "sheet", "call")] <- NULL
-   expect_identical(pdb, pdb1)
+   expect_identical(pdb$atom, pdb1$atom)
+   expect_identical(pdb$xyz, pdb1$xyz)
+   expect_identical(pdb$calpha, pdb1$calpha)
  
    # multi-model structure
    invisible(capture.output(pdb <- read.pdb(file.path(datdir, "1L2Y.pdb"), multi=TRUE)))
@@ -84,7 +100,7 @@ test_that("read.pdb() reads and stores data properly", {
    pdb1 <- trim.pdb(pdb, inds = atom.select(pdb, "calpha", verbose=FALSE))
    expect_is(pdb1, "pdb")
    expect_equal(nrow(pdb1$atom), 228)
-   expect_equal(sum(pdb1$calpha), 224)
+   expect_equal(sum(pdb1$calpha), 228)
    expect_equivalent(pdb1$helix$start, pdb$helix$start)
    expect_equivalent(sort(pdb1$sheet$end), sort(pdb$sheet$end))
 
@@ -93,8 +109,8 @@ test_that("read.pdb() reads and stores data properly", {
    expect_equal(sum(pdb2$calpha), 74)
    expect_equivalent(pdb2$helix, list(start=c(22, 37, 56), end=c(35, 39, 60), 
        chain=rep("U",3), type=c("1", "5", "5")))
-   expect_equivalent(pdb2$sheet, list(start=c(2,12,41,48,66), end=c(7,16,45,49,71), 
-       chain=rep("U",5), sense=c("-1","0","-1","-1","1")))
+   expect_equivalent(pdb2$sheet, list(start=c(12,2,66,41,48), end=c(16,7,71,45,49), 
+       chain=rep("U",5), sense=c("0","-1","1","-1","-1")))
 })
 
 

@@ -52,7 +52,6 @@
 \dontrun{
 
 # Example of transducin
-data(transducin)
 attach(transducin)
 
 gaps.pos <- gap.inspect(pdbs$xyz)
@@ -87,6 +86,7 @@ plot.dccm(cij$all.dccm)
 cij.all <- filter.dccm(cij, cutoff.sims = 8, cutoff.cij = 0)
 plot.dccm(cij.all, main = "Consensus Residue Cross Correlation")
 
+detach(transducin)
 }
 
 }

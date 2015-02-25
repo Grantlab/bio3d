@@ -77,11 +77,11 @@
     yval <- yval[row.inds, col.inds, drop=FALSE]
     if(!is.null(pdbs)) {
       if(rm.gaps)
-        pdbs=pdbs.filter(pdbs, row.inds=row.inds, col.inds=gaps.pdbs$f.inds)
+        pdbs <- trim.pdbs(pdbs, row.inds=row.inds, col.inds=gaps.pdbs$f.inds)
       else
-        pdbs=pdbs.filter(pdbs, row.inds=row.inds, col.inds=col.inds)
+        pdbs <- trim.pdbs(pdbs, row.inds=row.inds, col.inds=col.inds)
     }
-    col=col[!is.na(col)]
+    col <- col[!is.na(col)]
     
     ## Sequence conservation
     h <- NULL
@@ -140,7 +140,7 @@
     ## SSE information
     dots <- list(...)
     sse.aln <- NULL
-    if(!is.null(pdbs)) {
+    if(!is.null(pdbs) & !spread) {
       if( "sse" %in% names(dots) )
         warning("SSE information from 'pdbs' will not be generated when 'sse' is provided")
       else
@@ -152,10 +152,9 @@
       dots$sse <- NULL
     }
 
-
     ## Perform test of significance
     ns <- levels(as.factor(col))
-    if((length(ns) !=2) && signif) {
+    if((length(ns) !=2) & signif) {
       warning("Number of states is not equal to 2. Ignoring significance test")
       signif <- FALSE
     }
@@ -222,9 +221,9 @@
     ## Plot fluctuations / deformations
     par(new=TRUE)
     if(!spread) {
-      do.call('plot.bio3d', c(list(x=yval[1,], xlab=xlab, ylab=ylab[1],
-                                   ylim=ylim, xlim=xlim, type='h', col=1, sse=sse.aln),
-                              dots))
+      do.call('plotb3', c(list(x=yval[1,], xlab=xlab, ylab=ylab[1],
+                               ylim=ylim, xlim=xlim, type='h', col=1, sse=sse.aln),
+                          dots))
       
       ## Plot all lines (col==NA will not be plotted)
       for(i in 1:nrow(yval)) {
@@ -232,36 +231,33 @@
       }
     }
     else {
-      ##np <- pdbs.filter(pdbs, row.inds=row.inds, col.inds=1:ncol(pdbs$ali))
-      ##do.call('.plot.enma.spread', c(list(x=yval[row.inds,, drop=FALSE],
-      
       do.call('.plot.enma.spread', c(list(x=yval,
-                                           pdbs=pdbs, col=col,
-                                           offset=offset,
-                                           xlab=xlab, ylab=ylab[1],
-                                           ylim=ylim, xlim=xlim),
-                                      dots))
+                                          pdbs=pdbs, col=col,
+                                          offset=offset,
+                                          xlab=xlab, ylab=ylab[1],
+                                          ylim=ylim, xlim=xlim),
+                                     dots))
     }
 
     ## Fluctuation / deformations variance
     if (variance) {
       fluct.sd <- apply(yval, 2, var, na.rm=T)
-      do.call('plot.bio3d', c(list(x=fluct.sd,
-                                   xlab=xlab, 
-                                   ylab=ylab[2],
-                                   ##ylim=ylim,
-                                   xlim=xlim,
-                                   col=1), dots))
+      do.call('plotb3', c(list(x=fluct.sd,
+                               xlab=xlab, 
+                               ylab=ylab[2],
+                               ##ylim=ylim,
+                               xlim=xlim,
+                               col=1), dots))
     }
     
     ## Plot sequence conservation / entropy
     if (conservation) {
-      do.call('plot.bio3d', c(list(x=h,
-                                   ylab=ylab[3],
-                                   xlab=xlab,
-                                   col=1), dots))
+      do.call('plotb3', c(list(x=h,
+                               ylab=ylab[3],
+                               xlab=xlab,
+                               col=1), dots))
     }
-
+    
     out <- list(signif=sig, sse=sse.aln)
     invisible(out)
   }
@@ -294,7 +290,7 @@
   gaps <- gap.inspect(newfluct)
   
   col.inds <- which(gaps$col < length(row.inds))
-  newfluct=newfluct[, col.inds, drop=FALSE]
+  newfluct <- newfluct[, col.inds, drop=FALSE]
   
   ## check for gaps
   gaps <- gap.inspect(newfluct)
@@ -307,33 +303,34 @@
   dots <- list(...)
   if( "sse" %in% names(dots) ) {
     sse <- dots$sse
+    dots$sse <- NULL
   }
   else {
     if(!is.null(pdbs)) {
       if(rm.gaps) {
         gs <- gap.inspect(pdbs$ali)
-        pdbs <- pdbs.filter(pdbs, col.inds=gs$f.inds)
+        pdbs <- trim.pdbs(pdbs, col.inds=gs$f.inds)
       }
       
-      pdbs <- pdbs.filter(pdbs, row.inds=row.inds, col.inds=col.inds)
+      pdbs <- trim.pdbs(pdbs, row.inds=row.inds, col.inds=col.inds)
       sse <- .pdbs2sse(pdbs, ind=1, rm.gaps=rm.gaps)
     }
   }
   
   dims <- dim(newfluct)
   if(is.null(xlim))
-    xlim=c(0, dims[2])
+    xlim <- c(0, dims[2])
 
   if(is.null(ylim))
-    ylim=c(0, (length(unique(col))*offset)-offset)
+    ylim <- c(0, (length(unique(col))*offset)-offset)
 
-  plot.bio3d(newfluct[1, ], col=1, type='l',
-             ylab=ylab, xlab=xlab, 
-             ylim=ylim, xlim=xlim, sse=sse, ...)
+  plotb3(newfluct[1, ], col=1, type='l',
+         ylab=ylab, xlab=xlab, 
+         ylim=ylim, xlim=xlim, sse=sse, ...)
   
-  col=col[!is.na(col)]
+  col <- col[!is.na(col)]
   for(i in 1:length(unique(col))) {
-    tmpinds=which(col==i)
+    tmpinds <- which(col==i)
     off <- ((i-1)* offset )
     for(j in 1:length(tmpinds))
       lines(newfluct[tmpinds[j], ] + off, col=i)
@@ -343,46 +340,66 @@
 
 
 ".pdbs2sse" <- function(pdbs, ind=1, rm.gaps=FALSE) {
-  sse.aln <- NULL
-  pdb.ref <- try(read.pdb(pdbs$id[ind]), silent=TRUE)
+  ind <- ind[1]
+  if(file.exists(pdbs$id[ind]))
+    id <- pdbs$id[ind]
+  else if(file.exists(rownames(pdbs$ali)[ind]))
+    id <- rownames(pdbs$ali)[ind]
   
+  sse.aln <- NULL
+  pdb.ref <- try(read.pdb(id), silent=TRUE)
+
   if(inherits(pdb.ref, "try-error"))
-    pdb.ref <- try(read.pdb(substr(basename(pdbs$id[1]), 1, 4)), silent=TRUE)
+    pdb.ref <- try(read.pdb(substr(basename(id), 1, 4)), silent=TRUE)
 
   gaps.res <- gap.inspect(pdbs$ali)
   
   sse.ref <- NULL
   if(!inherits(pdb.ref, "try-error"))
     sse.ref <- try(dssp(pdb.ref), silent=TRUE)
-  
-  if(!inherits(sse.ref, "try-error") && !inherits(pdb.ref, "try-error")) {
+
+  if(!inherits(sse.ref, "try-error") & !inherits(pdb.ref, "try-error")) {
     if(rm.gaps) {
-      resnos <- pdbs$resno[ind, gaps.res$f.inds]
+      resid <- paste0(pdbs$resno[ind, gaps.res$f.inds], pdbs$chain[ind, gaps.res$f.inds])
     }
     else {
-      resnos <- pdbs$resno[ind, ]
+      resid <- paste0(pdbs$resno[ind, ], pdbs$chain[ind, ])
     }
     
     ## Helices
-    resno.helix <- unbound(sse.ref$helix$start, sse.ref$helix$end)
-    inds <- which(resnos %in% as.character(resno.helix))
+    resid.helix <- unbound(sse.ref$helix$start, sse.ref$helix$end)
+    resid.helix <- paste0(resid.helix, rep(sse.ref$helix$chain, sse.ref$helix$length))
+    inds        <- which(resid %in% resid.helix)
     
     ## inds points now to the position in the alignment where the helices are
-    new.sse <- bounds( seq(1, length(resnos))[inds] )
+    new.sse <- bounds( seq(1, length(resid))[inds] )
     if(length(new.sse) > 0) {
-      sse.aln$helix$start <- new.sse[,"start"]
-      sse.aln$helix$end <- new.sse[,"end"]
+      sse.aln$helix$start  <- new.sse[,"start"]
+      sse.aln$helix$end    <- new.sse[,"end"]
+      sse.aln$helix$length <- new.sse[,"length"]
     }
     
     ## Sheets
-    resno.sheet <- unbound(sse.ref$sheet$start, sse.ref$sheet$end)
-    inds <- which(resnos %in% as.character(resno.sheet))
+    resid.sheet <- unbound(sse.ref$sheet$start, sse.ref$sheet$end)
+    resid.sheet <- paste0(resid.sheet, rep(sse.ref$sheet$chain, sse.ref$sheet$length))
+    inds        <- which(resid %in% resid.sheet)
     
-    new.sse <- bounds( seq(1, length(resnos))[inds] )
+    new.sse <- bounds( seq(1, length(resid))[inds] )
     if(length(new.sse) > 0) {
-      sse.aln$sheet$start <- new.sse[,"start"]
-      sse.aln$sheet$end <- new.sse[,"end"]
+      sse.aln$sheet$start  <- new.sse[,"start"]
+      sse.aln$sheet$end    <- new.sse[,"end"]
+      sse.aln$sheet$length <- new.sse[,"length"]
     }
+
+    ## SSE vector 
+    sse <- rep(" ", length(resid))
+    for(i in 1:length(sse.aln$helix$start))
+      sse[sse.aln$helix$start[i]:sse.aln$helix$end[i]] <- "H"
+
+    for(i in 1:length(sse.aln$sheet$start))
+      sse[sse.aln$sheet$start[i]:sse.aln$sheet$end[i]] <- "E"
+
+    sse.aln$sse <- sse
   }
   else {
     msg <- NULL
@@ -393,6 +410,6 @@
     
     warning(paste("SSE cannot be drawn", msg, sep="\n  "))
   }
-  
+
   return(sse.aln)
 }

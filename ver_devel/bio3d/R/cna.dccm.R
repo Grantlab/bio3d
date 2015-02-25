@@ -55,7 +55,7 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
   }
 
   contract.matrix <- function(cij.network, membership,## membership=comms$membership,
-                              collapse.method="max", minus.log=TRUE){
+                              collapse.method="max", minus.log=minus.log){  ## Changed from minus.log=TRUE
     
     ## Function to collapse a NxN matrix to an mxm matrix
     ##  where m is the communities of N. The collapse method

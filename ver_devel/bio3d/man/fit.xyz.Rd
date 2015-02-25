@@ -119,10 +119,10 @@ xyz <- fit.xyz( fixed = pdbs$xyz[1,],
 
 ##--- Fit two PDBs
 A <- read.pdb("1bg2")
-A.ind <- atom.select(A, "///256:269///CA/")
+A.ind <- atom.select(A, resno=c(256:269), elety='CA')
 
 B <- read.pdb("2kin")
-B.ind <- atom.select(B, "///257:270///CA/")
+B.ind <- atom.select(B, resno=c(257:270), elety='CA')
 
 xyz <- fit.xyz(fixed=A$xyz, mobile=B$xyz,
                fixed.inds=A.ind$xyz,

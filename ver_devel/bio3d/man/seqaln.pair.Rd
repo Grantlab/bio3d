@@ -6,14 +6,12 @@
   method of Edgar.
 }
 \usage{
-seqaln.pair(aln, extra.args = "", ...)
+seqaln.pair(aln, \dots)
 }
 \arguments{
   \item{aln}{ a sequence character matrix, as obtained from
     \code{\link{seqbind}}, or an alignment list object as obtained from
       \code{\link{read.fasta}}. }
-  \item{extra.args}{ a single character string containing extra command
-    line arguments for the alignment program. }
   \item{\dots}{ additional arguments for the function \code{\link{seqaln}}. }
 }
 \details{
@@ -58,9 +56,8 @@ if(check.utility("muscle")) {
 
 
 ##- Simple example
-aln <- list(ali=seqbind(c("X","C","X","X","A","G","K"),
-                        c("C","-","A","X","G","X","X","K")),
-            id=c("a","b"))
+aln <- seqbind(c("X","C","X","X","A","G","K"),
+               c("C","-","A","X","G","X","X","K"))
 
 seqaln.pair(aln, outfile = tempfile())
 

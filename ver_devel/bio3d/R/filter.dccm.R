@@ -1,5 +1,5 @@
 filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL, 
-          cutoff.sims = NULL, collapse = TRUE, extra.filter = NULL, ...) {
+                        cutoff.sims = NULL, collapse = TRUE, extra.filter = NULL, ...) {
 
    # check cij format
    cij <- x

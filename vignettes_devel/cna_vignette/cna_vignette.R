@@ -2,7 +2,7 @@
 #'title: "Protein Structure Networks with Bio3D"
 #'author: "Xin-Qiu Yao, Guido Scarabelli, Lars Skjaerven & Barry J. Grant"
 #'affiliation: University of Michigan, Ann Arbor, USA
-#'date: "October 8, 2014"
+#'date: "October 8, 2014 (last updated: Feburary 24, 2015)"
 #'output:
 #'  pdf_document:
 #'    fig_caption: yes
@@ -29,7 +29,7 @@ knitr::opts_chunk$set(fig.path='figures/', dev='png', dev.args=list(type="cairo"
 
 #+ preamble, include=FALSE, eval=FALSE
 library(rmarkdown)
-render("cna_vignette.R", "pdf_document", clean=FALSE)
+render("cna_vignette.R", "all", clean=FALSE)
 
 #' ## Background:
 #' Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data.
@@ -64,6 +64,7 @@ install.packages("igraph")
 #' 
 #+ example1, results="hide", warning=FALSE
 library(bio3d)
+library(igraph)
 pdbfile <- system.file("examples/hivp.pdb", package = "bio3d")
 pdb <- read.pdb( pdbfile )
 modes <- nma(pdb)
@@ -91,7 +92,7 @@ plot(net, pdb)
 
 #'
 #' #### Side note:
-#' \textit{The raw correlation matrix obtained from NMA (or indeed MD) typically has many small but non-zero value elements. By default the \textbf{cna()} function excludes some of the weakest values (close to zero) to avoid building an edge heavy network, which would considerably slow down further analysis. The \textbf{cutoff.cij} argument in the \textbf{cna()} function specifies the lower boundary for considering correlation values. All values whose absolute value is lower than \textbf{cutoff.cij} will be ignored when defining network edges.}
+#' *The raw correlation matrix obtained from NMA (or indeed MD) typically has many small but non-zero value elements. By default the **cna()** function excludes some of the weakest values (close to zero) to avoid building an edge heavy network, which would considerably slow down further analysis. The **cutoff.cij** argument in the **cna()** function specifies the lower boundary for considering correlation values. All values whose absolute value is lower than **cutoff.cij** will be ignored when defining network edges.*
 #'
 #'
 #' Note that the above code plots both a *full* all-residue network as well as a more coarse grained community network - see **Figure 2**. In this example, and by default, the Girvan-Newman clustering method was used to map the full network into communities of highly intra-connected but loosely inter-connected nodes these were in turn used to derive the simplified network displayed in **Figure 2B**. We will discuss community detection in a separate section below and for now simply highlight that a comparison of the full network and the distribution and connectivity of communities between similar biomolecular systems (e.g. in the presence and absence of a binding partner or mutation) has the potential to highlight differences in coupled motions that may be indicative of potential allosteric pathways. This approach has previously been applied to investigate allostery in tRNA–protein complexes, kinesin motor domains, G-proteins, thrombin, and other systems [1-4].
@@ -128,15 +129,15 @@ attributes(net)
 #' 
 #' Here we introduce each of these components in turn:
 #' 
-#' * **\$network**: The *full* protein structure network typically with a node per residue and connecting edges weighted by their corresponding correlation values (i.e. input cij values optionally filtered by the user defined 'cutoff.cij'). This filtered cij matrix is also returned in the output as **\$cij**, as listed below.
+#' * **`$network`**: The *full* protein structure network typically with a node per residue and connecting edges weighted by their corresponding correlation values (i.e. input cij values optionally filtered by the user defined 'cutoff.cij'). This filtered cij matrix is also returned in the output as **`$cij`**, as listed below.
 #' 
-#' * **\$communities**: A community clustering object detailing the results of clustering the full **\$network**. This is itself a list object with a number of attributes (see *attributes(net\$communities)* for details). Notable attributes include **\$communities\$membership**, **$communities\$modularity** and **\$communities\$algorithm**. These components detail the nodes (typically residues) belonging to each community; the modularity (which represents the difference in probability of intra- and intercommunity connections for a given network division); and the clustering algorithm used respectively. 
-#' * **\$cij**: The filtered correlation matrix used to build the full $network.
-#' * **\$community.network**: A coarse-grained community network object with the number of nodes equal to the number of communities present in **\$communities** (i.e. the community clustering of the full network discussed below) and edges based on the inter-community coupling as determined by the input 'collapse.method' (by default this is the maximum coupling between the original nodes of the respective communities).
-#' * **\$community.cij**: A cij matrix obtained by applying a "collapse.method" on \$cij. The rows and columns match the number of communities in $communities. The individual values are based on the cij couplings of inter-community residues. The currently available collapse methods for defining these values include: max, mean, trimmed and median.
+#' * **`$communities`**: A community clustering object detailing the results of clustering the full **`$network`**. This is itself a list object with a number of attributes (see *`attributes(net$communities)`* for details). Notable attributes include **`$communities$membership`**, **`$communities$modularity`** and **`$communities$algorithm`**. These components detail the nodes (typically residues) belonging to each community; the modularity (which represents the difference in probability of intra- and intercommunity connections for a given network division); and the clustering algorithm used respectively. 
+#' * **`$cij`**: The filtered correlation matrix used to build the full $network.
+#' * **`$community.network`**: A coarse-grained community network object with the number of nodes equal to the number of communities present in **`$communities`** (i.e. the community clustering of the full network discussed below) and edges based on the inter-community coupling as determined by the input 'collapse.method' (by default this is the maximum coupling between the original nodes of the respective communities).
+#' * **`$community.cij`**: A cij matrix obtained by applying a "collapse.method" on `$cij`. The rows and columns match the number of communities in $communities. The individual values are based on the cij couplings of inter-community residues. The currently available collapse methods for defining these values include: max, mean, trimmed and median.
 #' 
 #'
-#' Both the **\$network** and **$community.network** attributes are [igraph compatible network objects](http://igraph.sourceforge.net) [5] and contain additional node (or vertex) and edge annotations that can be accessed with the **V()** and **E()** functions in the following way:
+#' Both the **`$network`** and **`$community.network`** attributes are [igraph compatible network objects](http://igraph.sourceforge.net) [5] and contain additional node (or vertex) and edge annotations that can be accessed with the **V()** and **E()** functions in the following way:
 #'  
 #' 
 #+ dataLook
@@ -150,9 +151,9 @@ V(net$community.network)$name
 #' In addition to various Bio3D functions, the full set of extensive [igraph package](http://igraph.sourceforge.net) features can thus be used to further analyze these network objects.
 #' 
 #' ### The community clustering procedure
-#' The **\$communities** attribute returned by the **cna()** function provides details of the community clustering procedure. This procedure aims to split the full network into highly correlated local substructures (referred to as communities) within which the network connections are dense but between which they are sparser.  A number of community detection algorithms can be used to solve this so called graph-partitioning problem. The default Girvan-Newman edge-betweenness approach is a divisive algorithm that is based on the use of the edge betweenness as a partitioning criterion. "Betweenness" is calculated by finding the shortest path(s) between a pair of vertexes and scoring each of the edges on this/these path(s) with the inverse value of the number of shortest paths. (So if there was only one path of the shortest length, each edge on it would score 1 and if there were 10 paths of that length, each edge would score 1/10.) This is done for every pair of vertexes. In this way each edge accumulates a "betweenness" score for the whole network. The network is separated into clusters by removing the edge with the highest "betweenness", then recalculating betweenness and repeating. The method is fully described in (Girvan and Newman, 2002 PNAS) [6].
+#' The **`$communities`** attribute returned by the **cna()** function provides details of the community clustering procedure. This procedure aims to split the full network into highly correlated local substructures (referred to as communities) within which the network connections are dense but between which they are sparser.  A number of community detection algorithms can be used to solve this so called graph-partitioning problem. The default Girvan-Newman edge-betweenness approach is a divisive algorithm that is based on the use of the edge betweenness as a partitioning criterion. "Betweenness" is calculated by finding the shortest path(s) between a pair of vertexes and scoring each of the edges on this/these path(s) with the inverse value of the number of shortest paths. (So if there was only one path of the shortest length, each edge on it would score 1 and if there were 10 paths of that length, each edge would score 1/10.) This is done for every pair of vertexes. In this way each edge accumulates a "betweenness" score for the whole network. The network is separated into clusters by removing the edge with the highest "betweenness", then recalculating betweenness and repeating. The method is fully described in (Girvan and Newman, 2002 PNAS) [6].
 #' 
-#' A useful quantity used to measure the quality of a given community partition is the **modularity** (detailed in the **\$communities\$modularity** component of **cna()** output). The modularity represents the difference in probability of intra- and inter-community connections for a given network division. Modularity values fall in the range from 0 to 1, with higher values indicating higher quality of the community structure. The optimum community structures obtained for typical MD and NMA derived correlation networks fall in the 0.4 to 0.7 range.
+#' A useful quantity used to measure the quality of a given community partition is the **modularity** (detailed in the **`$communities$modularity`** component of **cna()** output). The modularity represents the difference in probability of intra- and inter-community connections for a given network division. Modularity values fall in the range from 0 to 1, with higher values indicating higher quality of the community structure. The optimum community structures obtained for typical MD and NMA derived correlation networks fall in the 0.4 to 0.7 range.
 #' 
 #' 
 
@@ -246,7 +247,7 @@ plot(net, pdb)
 
 
 #' #### Side note:
-#' \textit{ Due to the often noisy nature of correlations calculated from short MD simulations, we typically suggest running longer simulations and multiple replica simulations from which a consensus correlation matrix and consensus network can be generated and compared to results obtained from individual simulations. For example, see the following works: Scarabelli and Grant, (2014). Kinesin-5 allosteric inhibitors uncouple the dynamics of nucleotide, microtubule and neck-linker binding sites, Biophys J. in press and Yao and Grant, (2014). Characterizing nucleotide dependent allostery in G-Proteins with molecular dynamics and normal mode analysis. submitted.}
+#' *Due to the often noisy nature of correlations calculated from short MD simulations, we typically suggest running longer simulations and multiple replica simulations from which a consensus correlation matrix and consensus network can be generated and compared to results obtained from individual simulations. For example, see the following works: Scarabelli and Grant, (2014). Kinesin-5 allosteric inhibitors uncouple the dynamics of nucleotide, microtubule and neck-linker binding sites, Biophys J. in press and Yao and Grant, (2014). Characterizing nucleotide dependent allostery in G-Proteins with molecular dynamics and normal mode analysis. submitted.*
 #'
 #' 
 #' Note that the **dccm()** function can be slow to run on very large trajectories. In such cases you may want to use multiple CPU cores for the calculation by setting the 'ncore' option to an appropriate value for your computer - see *help(dccm)* for details.
@@ -325,7 +326,7 @@ plot.dccm((cij * cm), main="")
 ##plot.dccm(cij, margin.segments = net$communities$membership)
 
 #'  
-#' It is also possible to use a consensus of contact map and dynamical correlation matrices from replica simulations with the functions **cmap.filter()** and **filter.dccm()** - see their respective help pages for further details.
+#' It is also possible to use a consensus of contact map and dynamical correlation matrices from replica simulations with the functions **cmap.filter()** and **dccm.filter()** - see their respective help pages for further details.
 #' 
 #' 
 #' ## Part II: Customized network visualization
@@ -420,12 +421,43 @@ write.pdb(pdb, b=normalize.vector(node.betweenness), file="tmp.pdb")
  
 #'
 #' #### Suboptimal paths calculation.
-#' Identifying residues potentially involved in the dynamic coupling of distal protein regions can be facilitated by calculating possible linking paths through the correlation network objects. To run such an analysis, we can use the WISP program [7]. It is easy to interface the protein network built using Bio3D with WISP to perform a search for the shortest paths between two selected network nodes. WISP requires an input adjacency matrix of the network, which can be saved in a file using the following command:
+#' Identifying residues potentially involved in the dynamic coupling of distal protein regions can be facilitated by calculating possible linking paths through the correlation network objects. To run such an analysis, we can use the Bio3D function **cnapath()** and associated tools for printing and visulization (**summary.cnapath()**, **print.cnapath()** and **view.cnapath()**). 
+#+ cnapath, cache=TRUE, results="hide"
+pa <- cnapath(net, from=32, to=131, k=50)
+
+#' The 'from' and 'to' arguments in above function call represent the node IDs of the two ends (denoted by 'source' and 'sink', respectively) in the path anlaysis. The number of paths calculated is specified by the argument 'k' (Here we explore 50 suboptimal paths). 
+#'
+#' Some basic statistics about the paths, including path length distribution and node degeneracy (number of paths going through each node) can be obtained by using the function **print()** (or **summary()** for a similar effect). 
+#+ printpa, fig.cap="Length distribution and node degeneracy in path analysis"
+print(pa)
+# Or, simply type 'pa'
+
+# Compare two or more sets of paths 
+# (e.g. from networks of the same system but under distinct states)
+# print(pa1, pa2, ...)
+
+# Also plot graphics for length distribution and node degeneracy
+print(pa, label="HIVP", plot=TRUE)
+
+#' To visulize paths use the function **view.cnapath()** (NOTE: you need VMD installed properly).
+#+ viewpa, eval=FALSE
+# See Fig 20
+view.cnapath(pa, pdb=pdb, spline=TRUE, col='cyan', launch=TRUE)
+
+#' 
+#' ![**Visulization of suboptimal paths in a correlation network.** Paths are represented as cyan lines, and source/sink nodes are black spheres.](figures/cna_fig20.png)
+#' 
+
+
+#' #### Side-note: {.unnumbered}
+#' Set **spline=FALSE** to get faster loading of paths in VMD. Also, set **launch=FALSE** if you want to view paths later. To do that, load the two files generated by the function, 'view.cnapath.pdb' and 'view.cnapath.vmd', in VMD (Read VMD manual for more detailed instruction).
+#'
+#' To view an example of the output obtained and how key residues involved in the allosteric signaling were identified, please read the following work: Scarabelli and Grant, (2014). Kinesin-5 allosteric inhibitors uncouple the dynamics of nucleotide, microtubule and neck-linker binding sites, *Biophys J*, **107**, 2204-2213 and Yao and Grant, Allosteric networks in G-Proteins with molecular dynamics and normal mode analysis, *in preparation*.
+#'
+#' Alternatively, suboptimal path analysis can be performed with the WISP program [7]. It is easy to interface the protein network built using Bio3D with WISP to perform a search for the shortest paths between two selected network nodes. WISP requires an input adjacency matrix of the network, which can be saved in a file using the following command:
 
 #+ forWISIP, eval=FALSE
 write.table(net$cij, quote=FALSE, row.names=FALSE, col.names=FALSE, file="adj.txt")
-
-#' To view an example of the output obtained and how key residues involved in the allosteric signaling were identified, please read the following work: Scarabelli and Grant, (2014). Kinesin-5 allosteric inhibitors uncouple the dynamics of nucleotide, microtubule and neck-linker binding sites, Biophys J. in press and Yao and Grant, (2014). Characterizing nucleotide dependent allostery in G-Proteins with molecular dynamics and normal mode analysis. submitted.
 
 
 #'

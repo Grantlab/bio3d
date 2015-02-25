@@ -81,7 +81,7 @@ net <- cna(cij, cutoff.cij=0.2)
 
 # Plot coarse grain network based on dynamically coupled communities
 xy <- plot.cna(net)
-#plot.dccm2(cij, margin.segments=net$communities$membership)
+#plot.dccm(cij, margin.segments=net$communities$membership)
 
 # Chose a different PDB informed layout for plot
 plot.cna(net, pdb)

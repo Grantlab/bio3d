@@ -8,21 +8,12 @@ function(aln, id=NULL, profile=NULL,
                    extra.args = "",
                    verbose = FALSE) {
 
-  as.aln <- function(mat, id=NULL) {
-    if(is.null(id) && !is.null(rownames(mat)))
-      id=rownames(mat)
-    if(is.null(id) && is.null(rownames(mat)))
-      id=paste("seq",1:nrow(mat),sep="")
-    return(list(id=id, ali=mat))
-  }
-
   ## Log the call
   cl <- match.call()
+
+  ## alignment to fasta object
+  aln <- as.fasta(aln, id=id)
   
-  if(is.vector(aln) & !is.list(aln))
-    aln=matrix(aln, nrow=1)
-  if( (!is.list(aln)) | is.na(aln['id']) )
-    aln <- as.aln(aln,id=id)
   if(!is.null(profile) & !inherits(profile, "fasta"))
     stop("profile must be of class 'fasta'")
 

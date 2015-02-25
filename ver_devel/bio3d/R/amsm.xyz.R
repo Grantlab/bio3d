@@ -47,7 +47,7 @@
   }
 
   ##matrixCorr <- 1 - sqrt(matrixCorr / maxEigenVal)
-  
+  diag(matrixCorr) <- 1
   return(matrixCorr)
 }
 

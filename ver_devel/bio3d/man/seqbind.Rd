@@ -15,10 +15,14 @@ seqbind(..., blank = "-")
     same length as the longer argument. }
 }
 \value{
-  A matrix combining input arguments row-wise.
+  Returns a list of class \code{"fasta"} with the following components:
+  \item{ali}{ an alignment character matrix with a row per sequence and
+    a column per equivalent aminoacid/nucleotide. }
+  \item{id}{ sequence names as identifers.}
+  \item{call}{ the matched call. }
 }
 \references{
-    Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
+  Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Barry Grant }
 \seealso{ \code{\link{seqaln}}, \code{\link{read.fasta}},

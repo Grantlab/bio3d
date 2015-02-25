@@ -1,124 +1,93 @@
 
-## UNREFINED functions for Bio3D incorporation at some point
-##  Most of these are useful for protein structure modeling
+##-- Various UNREFINED functions for possible future Bio3D incorporation.
+##    Most of these are useful for protein structure modeling
 ##
-## These include (list to be updated):
-##  # fit.pdbs    - Quick Fit Fitter for PDBs
-##  pdbname     - Extract PDB identifier from filename
-##  srxn.bd     - Find BD trajectories that complete a give reaction
-##  srxn2trj.bd - Make XML BD trajectorys given srxn output
-##  # motif.find  - Return indices of a motif within a sequence
-##  getArgs     - Parse command line options when using Rscript
-##  txt2num     - Convert a character string to numeric
-##  read.apbs   - Read elec binding energy from APBS log files
-##  # chain.pdb   - Find possible chain breaks
-##  # pdbaln      - Quick and dirty alignment of PDB sequences
-##  alitrim     - Trim cols from alignment data structure
-##  # ncmap      - *see bio3d 'cmap'
-##  # ndm        - *see bio3d 'dm.xyz'
-##  seq2aln     - Add a sequence to an existing alignment
-##  write.pir   - write alignment for modeler
-##  write.sge   - write a series of Sun Grid Engine scripts
-##                for running AMBER on chemcca2, 31 or oolite
-##  interp      - interpolate between two vectors, useful for
-##                PCA z-score interpolation in combination
-##                with "pca.z2xyz"
-##  # fit         - A simple wrapper for fit.xyz when using
-##                pdbs style objects
-##  ide.group   - Return the indices of the largest group of
-##                sequences that have identity values above
-##                a particular 'cutoff'
-##  rama.inds   - Return xyz indices for PHI-PSI Ramachandran atoms
-##  plot.rama   - Ramachandran plot (basic)
-##  aln2aln     - Add one alignment to another that contains
-##                at least one similar entry
-##  # get.pdb     - download PDB files from a list of ids
-##  get.uniprot - download FASTA sequence files from a list of
-##                swissprot or uniprot ids
-##  # seq.pdb     - Return basic 1-letter calpha ATOM sequence from a
-##                pdb object
-## read.propka  - Read the output of PropKa produced by pdb2pqr
-## write.crdbox - Write AMBER CRD format trajectory files
-## blast.n      - Blast with nucleotide sequences
-## gb2fasta     - Convert GENEBANK to FASTA format
-## free2fasta   - Convert FREE (SCA) to FASTA format
-## fasta2free   - Convert FASTA to FREE (SCA) format. 
-## tlsq & ulsq  - Fitting rotation and translation matrices
-## renumber.pdb - Renumber resno and eleno records
-## vec2seq      - Match a vector via matching sequence to alignment
-## # vec2resno    - Replicate a vector based on consecutive resno entries
-## bgr.colors   - blue-gray-red color range
-## lsos         - a better list of current objects sorted by size
-## read.hmmer.tbl - read HMMER3 hmmsearch log files
-## # cons.aln     - score residue conservation in an alignment
-## dis.ftmap    - Process FTMAP results (min dist to residue of probes)
-## bootstrap.rmsf - Bootstrap sampling of frames for RMSF determination.
-## mustang        -  Structural alignment with mustang
-## add.dccm.grid  -  Add a grid or colored boxes to a plot.dccm() plot.
-## col.wheel      - useful for picking plot colors (e.g. col.wheel("dark") ) 
-## linMap         - Scale a input vector to lie between min and max values
-## fill.blanks   - Copy previously occurring non-missing values to consecutive missing values in a vector
-## read.protdist - Eead a PHYLIP protdist matrix
-## print.aln     - Print sequence alignment in a nice formated way
+## Functions include:
+##  basename.pdb - Extract PDB identifier from PDB filename 
+##							     (like basename() for pdbfiles)
+##  srxn.bd      - Find BD trajectories that complete a give reaction
+##  srxn2trj.bd  - Make XML BD trajectorys given srxn output
+##  getArgs      - Parse command line options when using Rscript
+##  # txt2num    - Convert a character string to numeric (broken for R 3.1+)
+##  read.apbs    - Read elec binding energy from APBS log files
+##  alitrim      - Trim cols from alignment data structure
+##  seq2aln.old  - Add a sequence to an existing alignment in the old way
+##  write.pir    - write alignment for modeler
+##  write.sge    - write a series of Sun Grid Engine scripts
+##							     for running AMBER on specific clusters 
+##							     (chemcca2, oolite, etc. - Not very useful currently)
+##  interp       - interpolate between two vectors, useful for
+##                 	PCA z-score interpolation in combination
+##                 	with "pca.z2xyz"
+##  ide.group    - Return the indices of the largest group of
+##                 	sequences that have identity values above
+##                 	a particular 'cutoff'
+##  rama.inds    - Return xyz indices for PHI-PSI Ramachandran atoms
+##  plot.rama    - Ramachandran plot (basic)
+##  aln2aln      - Add one alignment to another that contains
+##                 	at least one similar entry
+##  read.propka  - Read the output of PropKa produced by pdb2pqr
+##  utility funs - cat0, odd, even, less, lsos, occur, rescale
+##  write.crdbox - Write AMBER CRD format trajectory files
+##  blast.n      - Blast with nucleotide sequences
+##  gb2fasta     - Convert GENEBANK to FASTA format
+##  free2fasta   - Convert FREE (SCA) to FASTA format
+##  fasta2free   - Convert FASTA to FREE (SCA) format. 
+##  tlsq & ulsq  - Fitting rotation and translation matrices
+##  cat.pdb      - Concatenate PDB objects
+##  vec2seq      - Match a vector via matching sequence to alignment
+##  bgr.colors   - blue-gray-red color range
+##  lsos         - a better list of current objects sorted by size
+##  # read.hmmer - read HMMER3 hmmsearch log files 
+##  dis.ftmap    - Process FTMAP results (min dist to residue of probes)
+##                 	Also related functions 
+##							    'probe.trj, probe.val, probe.pdbs and ttest.probe'
+##  bootstrap.rmsf - Bootstrap sampling of frames for RMSF determination.
+##  #add.dccm.grid -  Add a grid or colored boxes to a plot.dccm() plot.
+##  col.wheel      - Color picking utility. Useful for picking plot colors 
+##							     (e.g. col.wheel("dark") ) 
+##  # linMap      - Scale a input vector to lie between min and max values 
+##				  			   (see also rescale() )
+##  rescale       - Scale input numeric values to have specified min and max values 
+##  fill.blanks   - Copy previously occurring non-missing values to consecutive 
+##	       						missing values in a vector
+##  gap.omit      - Remove gaps from input vector or cols from alignment matrix
+##  read.protdist - Read a PHYLIP protdist matrix
 ##
-## See also:
-##  ~/work/scop/scop.sf  - Have access to the full SCOP database in R
-##  ~/tmpwork/Rpackage/new_funs/HB.back.R
-##  ~/tmpwork/Rpackage/new_funs/Hbond.R
-##  ~/tmpwork/Rpackage/new_funs/io.R
-##  ~/tmpwork/Rpackage/new_funs/plot.cij.R
-##  ~/tmpwork/Rpackage/new_funs/read.prmtop.r
-##  ~/tmpwork/Rpackage/new_funs/read.inpcrd.r
-##  ~/tmpwork/Rpackage/new_funs/read.psf.R
-##  ~/tmpwork/Rpackage/new_funs/read.pqr.R
-##  ~/tmpwork/Rpackage/new_funs/read.pdb.R (with resolution etc)
-##  ~/tmpwork/Rpackage/new_funs/rot_trans/rot.trans.R
+## See also the contents of dir 'bio3d/new_funs/' for others. 
+##
+##  These include:  
+##   Hbond.R & HB.back.R
+##   io.R
+##   read.prmtop.r & read.inpcrd.r
+##   read.psf.R
+##   read.pqr.R
+##   read.pdb.R (with resolution etc.) [OLD matrix format only]
+##   rot.trans.R
+##
+## Also:
+##  ~/work/scop/scop.sf  - For access to the full SCOP database in R
+##
 
 
 
-### --- See bio3d pdbfit()
-###fit.pdbs <- function(pdbs, inds=NULL, outpath=NULL, ...) {
-###  ##
-###  ## Quick Fit Fitter for PDBs
-###  ##
-###  if(class(pdbs)!="3dalign") {
-###    stop("Input 'pdbs' should be of class '3dalign'")
-###  }
-###  full <- ifelse(is.null(outpath), FALSE, TRUE)
-###  if(is.null(inds)) {    inds <-gap.inspect(pdbs$xyz)$f.inds  }
-###  if(is.list(inds)){ inds=inds$xyz }
-###  return( fit.xyz( fixed=pdbs$xyz[1,], mobile=pdbs, fixed.inds=inds,
-###                  mobile.inds=inds, outpath=outpath,
-###                  full.pdbs=full, ... ))
-###}
+basename.pdb <- function(x, mk4=FALSE) {
+	##
+	##- Extract PDB identifier from filenames
+	##   like "basename()" for PDB files
+	##  E.g.:
+	##       basename.pdb("/somedir/somewhere/1bg2.pdb")
 
-
-###pdbname <- function(x, mk4=TRUE) {
-###  ##
-###  ## Extract PDB identifer from filenames
-###  ## like "basename()" for PDB files
-###  ##
-###  x <- sub(".pdb$","", basename(x))
-###  if(mk4) {
-###    return(substr(x,1,4))
-###  } else { return(x) }
-###}
-
-pdbname <- function(x, pdbid=FALSE) {
-  ## Extract PDB name or ID from file names
-  ## like basename() but for PDB files
-  y <- sub("\\.pdb$", "", basename(x))
-  if(pdbid)
-    y <- substr(y, 1, 4)
-
-  names(y) = x
-  return(y)
+  	y <- sub("\\.pdb$","", basename(x))
+  	if(mk4) { y <- substr(y,1,4) } 
+	names(y) <- x
+	return(y)
 }
 
 
 srxn.bd <- function(traj.file, reaction, outdir="trjout/") {
   ##
-  ## Find BD trajectories that complete a give reaction
+  ## Find BrownDye BD trajectories that complete a give reaction
   ##
 
   ## srx <- srxn.bd("traj0", reaction=8)
@@ -130,7 +99,8 @@ srxn.bd <- function(traj.file, reaction, outdir="trjout/") {
   log.file  <- paste(outdir,"/tlog_rxn_",reaction,
                      "_", trj.name, ".xml", sep="")
 
-  cmd1 <- paste("~bgrant/software/browndye/bin/process_trajectories -traj ",
+  cmd1 <- paste(##"~/software/browndye/bin/",
+                "process_trajectories -traj ",
                 traj.file,".xml -index ",traj.file,
                 ".index.xml -srxn ", reaction,
                 " > ", log.file, sep="")
@@ -234,26 +204,19 @@ srxn2trj.bd <- function(srx,
 }
 
 
-### --- See bio3d motif.find()
-###motif.find <- function(motif, sequence) {
-###  ## return indices of motif within sequence
-###  position <- regexpr( paste(motif, collapse=""), paste(sequence,collapse=""))
-###  inds <- c(position):c(position+attr(position, "match.length")-1)
-###  return(inds)
-###}
 
 getArgs <- function(set) {
 
-  ## Parse command line options (for Rscript IO handeling)
+  ## Parse command line options (for Rscript IO handling)
   ## If there is an equals sign (=) in the input args then it
   ## is parsed and the first part (before the = sign) treated
   ## as the variable name, with the second (after the = sign )
   ## taken as the value of the argument.
-  ## If there is no = sign then the arg value is assigned
+  ## If there is no = sign then the arg value is assigned a
   ## logical TRUE
   ##
   ## Note that all values will be characters (i.e. strings).
-  ## so YOU must sort them out afterwords
+  ## so YOU must sort them out afterwards YOURSELF!
   ##
   ## E.g.
   ##
@@ -295,127 +258,58 @@ getArgs <- function(set) {
 
 
 
-txt2num <- function(x) {
-  ## Convert a character string to numeric
-  ## txt2num( "1:4,6,lkk,1:10,fdsfsd,99a" )
+# txt2num <- function(x) {
+#   ## Convert a character string to numeric
+#   ## txt2num( "1:4,6,lkk,1:10,fdsfsd,99a" )
 
-  if(length(x)==0)
-    return(x)
+#   if(length(x)==0)
+#     return(x)
   
-  num1 <- unlist(strsplit(x, split = ","))
-  num2 <- suppressWarnings(as.numeric(num1))
+#   num1 <- unlist(strsplit(x, split = ","))
 
-  nsplit <- grep(":",num1)
-  num3 <- unlist(strsplit( num1[ grep(":",num1) ], split = ":"))
-  num4 <- apply( matrix(as.numeric(num3),nrow=2),
-                2, function(x){ x[1]:x[2] })
+#   ## Convert number only elements of num1
+#   num2 <- suppressWarnings(as.numeric(num1))
+
+#   if (any(is.na(num2))) {
+#   	na.ind <- which(is.na(num2))
+#   	nsplit <- grep(":",num1)
+
+#   	## Convert 'number:number' elements - could break here with 'a:b'
+#   	num3 <- lapply( strsplit( num1[ nsplit ], split = ":"), as.numeric)
+# 	num3 <- unlist( lapply(num3, function(x) { unbound(x[1],x[2]) }) )
+
+# 	## Elements of num1 that contain characters
+# 	char.ind <- na.ind[!na.ind %in% nsplit]
+
+# ##[0123456789]
+# ##[:digit:]
+
+#   	num3 <- unlist(strsplit( num1[ nsplit ], split = ":"))
+#   	num4 <- apply( matrix(as.numeric(num3),nrow=2),
+#    	             2, function(x){ x[1]:x[2] })
   
-  num <- NULL; j <- 1
-  for(i in 1:length(num1)) {
-    if(!is.na(num2[i])) {
-      num <- c(num, num2[i])
-    } else {
-      if( i %in% nsplit) {
-        if( ncol(num4)==1 ) {
-          num <- c(num, num4[,j])
-        } else {
-          num <- c(num, num4[[j]])
-        }
-          j <- j+1
-      } else {
-        cat(paste(" Ignoring character component: ",num1[i],"\n")) 
-      }
-    }
-  }
-  return(num)
-}
+# 	  num <- NULL; j <- 1
+#   	for(i in 1:length(num1)) {
+#     if(!is.na(num2[i])) {
+#       num <- c(num, num2[i])
+#     } else {
+#       if( i %in% nsplit) {
+#         if( ncol(num4)==1 ) {
+#           num <- c(num, num4[,j])
+#         } else {
+#           num <- c(num, num4[[j]])
+#         }
+#           j <- j+1
+#       } else {
+#         cat(paste(" Ignoring character component: ",num1[i],"\n")) 
+#       }
+#     }
+#   }
+# }
+#   return(num)
+# }
 
 
-### --- See bio3d::chain.pdb()
-###chain.break <- function(pdb, ca.dist=4, blank="X", rtn.vec=TRUE) {
-###  ##- Find possible chian breaks
-###  ##  (i.e. Caplpa's that are too far apart).
-###  ##
-###  ## chn <- chain.break(pdb)
-###  x <- diff( as.numeric(pdb$atom[pdb$calpha,"x"]) )^2
-###  y <- diff( as.numeric(pdb$atom[pdb$calpha,"y"]) )^2
-###  z <- diff( as.numeric(pdb$atom[pdb$calpha,"z"]) )^2
-###  d <- sqrt((y+y+z)/3)
-###
-###  ind <- which(d > ca.dist)
-###  len <- diff( c(1,ind,length(d)) )
-###  ## vec <- rep( LETTERS[1:length(len)], len)
-###
-###  cat(paste("Found",length(ind), " possible chain breaks\n"))
-###  cat(paste("After resno(s)",
-###        paste( pdb$atom[pdb$calpha,"resno"][(ind)], collapse=", " ),"\n" ))
-###  cat(paste("chain length(s)",
-###        paste(len, collapse=", " ),"\n" ))
-###
-###  if(rtn.vec) {
-###    ## Make a chain id vector
-###    resno.ind <- as.numeric(c(1, sort(as.numeric(c(ind,(ind+1)))), length(d)))
-###    resno.val <- pdb$atom[pdb$calpha,"resno"][resno.ind]
-###    resno.val <- matrix(as.numeric(resno.val),nrow=2)
-###
-###    vec <- rep(blank, nrow(pdb$atom))
-###    for(i in 1:(length(resno.val)/2)) {
-###      sel.ind <- atom.select(pdb,
-###                             resno=c(resno.val[1,i]:resno.val[2,i]),
-###                             verbose=FALSE)
-###      ##rep(LETTERS[i], length(sel.ind$atom))
-###      vec[sel.ind$atom]=LETTERS[i]
-###    }
-###    return(vec)
-###  }
-###}
-###
-### --- See bio3d::chain.pdb()
-###chain.pdb <- function(pdb, ca.dist=4, blank="X", rtn.vec=TRUE) {
-###  ##- Find possible chian breaks
-###  ##  i.e. Concetive Caplpa's that are further than 'ca.dist' apart,
-###  ##        print basic chain info and rtn a vector of chain ids
-###  ##        consisting of the 26 upper-case letters of the Roman
-###  ##        alphabet
-###  ##
-###  ## chn <- chain.pdb(pdb)
-###  ## pdb$atom[,"chain"] <- chain.pdb(pdb)
-###  ##
-###
-###  ## Distance between concetive C-alphas
-###  ca <- atom.select(pdb, "calpha", verbose=FALSE)
-###  xyz <- matrix(pdb$xyz[ca$xyz], nrow=3)
-###  d <- sqrt( rowSums( apply(xyz , 1, diff)^2 )/3 )
-###
-###  ## Chain break distance check
-###  ind <- which(d > ca.dist)
-###  len <- diff( c(1,ind,length(d)) )
-###
-###  cat(paste("Found",length(ind), " possible chain breaks\n"))
-###  cat(paste("After resno(s)",
-###        paste( pdb$atom[ca$atom,"resno"][(ind)], collapse=", " ),"\n" ))
-###  cat(paste("chain length(s)",
-###        paste(len+1, collapse=", " ),"\n" ))
-###
-###  ## Make a chain id vector
-###  if(rtn.vec) {
-###    resno.ind <- as.numeric(c(1, sort(as.numeric(c(ind,(ind+1)))), (length(d)+1)))
-###    resno.val <- pdb$atom[ca$atom,"resno"][resno.ind]
-###    resno.val <- matrix(as.numeric(resno.val),nrow=2)
-###
-###    vec <- rep(blank, nrow(pdb$atom))
-###    for(i in 1:(length(resno.val)/2)) {
-###      sel.ind <- atom.select(pdb,
-###                             resno=c(resno.val[1,i]:resno.val[2,i]),
-###                             verbose=FALSE)
-###      vec[sel.ind$atom]=LETTERS[i]
-###    }
-###    return(vec)
-###  }
-###}
-###
-  
-## pdbaln.R ==> see bio3d()
 
 
 alitrim <- function(aln, cols=NULL, rows=NULL, atom=TRUE) {
@@ -449,7 +343,7 @@ alitrim <- function(aln, cols=NULL, rows=NULL, atom=TRUE) {
 ### --- See bio3d::seq2aln()
 seq2aln.old <- function(seq, aln, aln.ind=NULL, id="seq") {
   ##- Add a sequence 'seq' to an existing alignment 'aln'
-  ##  aln.ind is the row indice of the closest guy in aln to seq
+  ##  aln.ind is the row index of the closest guy in aln to seq
   ##  l <- seq2aln(c(seq$ali), aln, which(aln$id %in% "d1i6ia_") )
 
   if(is.null(aln.ind)) {
@@ -530,70 +424,6 @@ seq2aln.old <- function(seq, aln, aln.ind=NULL, id="seq") {
     }
   }
 }
-
-##======================================##
-## All atom contact Functions
-##======================================##
-
-### --- See bio3d::cmap()
-###ndm <- function(xyz, grpby=NULL, scut=NULL) {
-###  ##-- New distance matrix function with 'grpby' option
-###  ##  ndm(pdb$xyz, grpby=pdb$atom[,"resno"], scut=3)
-###
-###  
-###  ##- Full Distance matrix (could use 'dm' or 'dist.xyz')
-###  dmat <- as.matrix(dist(matrix(xyz, ncol = 3, byrow = TRUE)))
-###  
-###  if(is.null(grpby)) {
-###    ##- Mask lower.tri  
-###    dmat[lower.tri(dmat)] = NA
-###    ##- Mask concetive residues
-###    if (!is.null(scut))
-###      dmat[diag.ind(dmat, n = scut)] = NA
-###
-###    return(dmat)
-###    
-###  } else {
-###    ##- Group by concetive numbers in 'grpby'
-###    if( length(xyz) != (length(grpby)*3) )
-###      stop("dimension miss-match in 'xyz' and 'grpby', check lengths")
-###
-###    ##- Bounds of 'grpby' numbers
-###    inds <- bounds(grpby, dup=TRUE)
-###    nres <- nrow(inds)
-###    
-###    ##- Per-residue matrix
-###    m <- matrix(, ncol=nres, nrow=nres)
-###    ij <- pairwise(nres)
-###    
-###    ##  Ignore concetive residues
-###    if (!is.null(scut))
-###      ij <- ij[ij[,2]-ij[,1] > (scut-1),]
-###    
-###    ##- Min per residue
-###    for(k in 1 : nrow(ij) ) {
-###      m[ij[k,1],ij[k,2]] <- min( dmat[ (inds[ij[k,1],"start"]:inds[ij[k,1],"end"]),
-###                                      (inds[ij[k,2],"start"]:inds[ij[k,2],"end"])],
-###                                na.rm=TRUE )
-###    }
-###    return(m)
-###  }
-###}
-###
-###
-###ncmap <- function(xyz, grpby,  dcut=4, scut=3) {
-###
-###  ## Distance matrix (all-atom)
-###  dmat <- ndm( xyz, grpby, scut)
-###  ## Contact map
-###  return(matrix(as.numeric(dmat < dcut),
-###                ncol = ncol(dmat),
-###                nrow = nrow(dmat)))
-###
-###}
-###
-
-
 
 
 
@@ -778,282 +608,167 @@ echo Finished at time: `date`\n", sep=""),
 
 
 
-write.sge.OLD <- function(prefix = "r",
-                      runtime = "72:00:00",
-                      ncpu = 72,
-                      iter = 1:10,
-                      cluster="flux") {
+# write.sge.OLD <- function(prefix = "r",
+#                       runtime = "72:00:00",
+#                       ncpu = 72,
+#                       iter = 1:10,
+#                       cluster="flux") {
 
-  ## Write out a series of Sun Grid Engine
-  ## shell scripts for running AMBER on flux or chemcca31
-  ## > write.sge(prefix="4q21")
+#   ## Write out a series of Sun Grid Engine
+#   ## shell scripts for running AMBER on flux or chemcca31
+#   ## > write.sge(prefix="4q21")
 
 
-  if (nchar(prefix) > 8) {
-    warning(paste("Your filename 'prefix' is over 8 characters in length,\n\t",
-                  "consider shortning so iteration digits are visible with qstat"))
-  }
+#   if (nchar(prefix) > 8) {
+#     warning(paste("Your filename 'prefix' is over 8 characters in length,\n\t",
+#                   "consider shortning so iteration digits are visible with qstat"))
+#   }
 
-  if(cluster=="flux") {
-    ## Run pmemd on FLUX
-    pbsfiles <- paste(prefix,".",sprintf("%02.0f", iter),".pbs",sep="")
-    submitfile <- paste("submit_",prefix,".sh",sep="")
+#   if(cluster=="flux") {
+#     ## Run pmemd on FLUX
+#     pbsfiles <- paste(prefix,".",sprintf("%02.0f", iter),".pbs",sep="")
+#     submitfile <- paste("submit_",prefix,".sh",sep="")
     
-    for(i in 1:length(iter)) {
+#     for(i in 1:length(iter)) {
 
-      cat(paste("#!/bin/bash
-#PBS -S /bin/bash
-#PBS -A bjgrant_flux
-###PBS -N test
-#PBS -q flux
-#PBS -M bjgrant@umich.edu
-#PBS -m abe
-#PBS -j oe
-#PBS -o out.$PBS_JOBNAME.log
-#PBS -e err.$PBS_JOBNAME.log
-#PBS -V
-#PBS -l procs=",ncpu,",qos=bjgrant_flux,walltime=",runtime,"
+#       cat(paste("#!/bin/bash
+# #PBS -S /bin/bash
+# #PBS -A bjgrant_flux
+# ###PBS -N test
+# #PBS -q flux
+# #PBS -M bjgrant@umich.edu
+# #PBS -m abe
+# #PBS -j oe
+# #PBS -o out.$PBS_JOBNAME.log
+# #PBS -e err.$PBS_JOBNAME.log
+# #PBS -V
+# #PBS -l procs=",ncpu,",qos=bjgrant_flux,walltime=",runtime,"
 
-echo Running job name $PBS_JOBNAME with ID $PBS_JOBID on host $PBS_O_HOST
-echo Nodes for run:
-cat $PBS_NODEFILE
-NPROCS=`wc -l < $PBS_NODEFILE`
-echo This job has allocated $NPROCS cores
-echo Working directory is $PBS_O_WORKDIR
-cd $PBS_O_WORKDIR
-echo Time is `date`
-echo Directory is `pwd`
+# echo Running job name $PBS_JOBNAME with ID $PBS_JOBID on host $PBS_O_HOST
+# echo Nodes for run:
+# cat $PBS_NODEFILE
+# NPROCS=`wc -l < $PBS_NODEFILE`
+# echo This job has allocated $NPROCS cores
+# echo Working directory is $PBS_O_WORKDIR
+# cd $PBS_O_WORKDIR
+# echo Time is `date`
+# echo Directory is `pwd`
 
-module delete openmpi
-module load openmpi/1.4.2-intel
-module load amber
+# module delete openmpi
+# module load openmpi/1.4.2-intel
+# module load amber
 
-##prv=07
-##cur=08
-prv=",sprintf("%02.0f", (iter[i]-1)),"
-cur=",sprintf("%02.0f",  iter[i]),"
+# ##prv=07
+# ##cur=08
+# prv=",sprintf("%02.0f", (iter[i]-1)),"
+# cur=",sprintf("%02.0f",  iter[i]),"
 
-MPIRUN=/home/software/rhel5/openmpi-1.4.2/intel-11.0/bin/mpirun
-AMBER=/home/software/rhel5/amber/11/exe/pmemd.MPI
+# MPIRUN=/home/software/rhel5/openmpi-1.4.2/intel-11.0/bin/mpirun
+# AMBER=/home/software/rhel5/amber/11/exe/pmemd.MPI
 
-AMBER_ARGS=\"-O -i dyna_prod.sander -p sys_box.prmtop -c dyna.$prv.rst -o dyna.$cur.out  -r dyna.$cur.rst -x dyna.$cur.traj.nc -inf dyna.$cur.inf\"
+# AMBER_ARGS=\"-O -i dyna_prod.sander -p sys_box.prmtop -c dyna.$prv.rst -o dyna.$cur.out  -r dyna.$cur.rst -x dyna.$cur.traj.nc -inf dyna.$cur.inf\"
 
-echo Running cmd: $MPIRUN -np $NPROCS  $AMBER $AMBER_ARGS
+# echo Running cmd: $MPIRUN -np $NPROCS  $AMBER $AMBER_ARGS
 
-$MPIRUN -np $NPROCS $AMBER $AMBER_ARGS
+# $MPIRUN -np $NPROCS $AMBER $AMBER_ARGS
 
-echo Finished at time: `date`\n", sep=""),
-        file=pbsfiles[i])
-    }
-    ##-- Write a master submission shell script for dependent jobs
-    head <- paste("#!/bin/bash
-## qsub -W depend=afterok:6664397 test1.pbs
-FIRST=`qsub ",pbsfiles[1],"`
-echo $FIRST\n")
+# echo Finished at time: `date`\n", sep=""),
+#         file=pbsfiles[i])
+#     }
+#     ##-- Write a master submission shell script for dependent jobs
+#     head <- paste("#!/bin/bash
+# ## qsub -W depend=afterok:6664397 test1.pbs
+# FIRST=`qsub ",pbsfiles[1],"`
+# echo $FIRST\n")
     
-    middle <- paste(paste(letters[iter[-1]],"=`qsub -W depend=afterok:$FIRST ",pbsfiles[-1],"` 
-echo $",letters[iter[-1]],"\n", sep=""), collapse="", sep="")
-    cat(paste(head, middle), file=submitfile)
+#     middle <- paste(paste(letters[iter[-1]],"=`qsub -W depend=afterok:$FIRST ",pbsfiles[-1],"` 
+# echo $",letters[iter[-1]],"\n", sep=""), collapse="", sep="")
+#     cat(paste(head, middle), file=submitfile)
 
-  }
+#   }
 
 
   
-#########
-  if(cluster=="c2") {
-    ## Run pmemd on new cluster2
-    for(i in 1:length(iter)) {
+# #########
+#   if(cluster=="c2") {
+#     ## Run pmemd on new cluster2
+#     for(i in 1:length(iter)) {
 
-      cat(paste("#!/bin/bash
-#$ -cwd
-#$ -l h_rt=",runtime,"
-#$ -V
-#$ -S /bin/bash
-#$ -pe orte ",ncpu,"
+#       cat(paste("#!/bin/bash
+# #$ -cwd
+# #$ -l h_rt=",runtime,"
+# #$ -V
+# #$ -S /bin/bash
+# #$ -pe orte ",ncpu,"
 
-echo Running on host `hostname`
-echo Time is `date`
-echo Directory is `pwd`
+# echo Running on host `hostname`
+# echo Time is `date`
+# echo Directory is `pwd`
 
-prv=",sprintf("%02.0f", (iter[i]-1)),"
-cur=",sprintf("%02.0f",  iter[i]),"
+# prv=",sprintf("%02.0f", (iter[i]-1)),"
+# cur=",sprintf("%02.0f",  iter[i]),"
 
-MPIRUN=/soft/linux/pkg/openmpi/bin/mpirun
-AMBER=/soft/linux/pkg/amber10/exe/pmemd
+# MPIRUN=/soft/linux/pkg/openmpi/bin/mpirun
+# AMBER=/soft/linux/pkg/amber10/exe/pmemd
 
-AMBER_ARGS=\"-O -i dyna_prod.sander -p sys_box.prmtop -c dyna.$prv.rst -o dyna.$cur.out  -r dyna.$cur.rst -x dyna.$cur.traj.crd -inf dyna.$cur.inf\"
+# AMBER_ARGS=\"-O -i dyna_prod.sander -p sys_box.prmtop -c dyna.$prv.rst -o dyna.$cur.out  -r dyna.$cur.rst -x dyna.$cur.traj.crd -inf dyna.$cur.inf\"
 
-$MPIRUN -np $NSLOTS  $AMBER $AMBER_ARGS
+# $MPIRUN -np $NSLOTS  $AMBER $AMBER_ARGS
 
-echo Finished at time: `date`\n", sep=""),
-        file=paste(prefix,".",sprintf("%02.0f", iter[i]),".sge",sep=""))
-    }
-  }
-
-
-  if(cluster=="c2AMD") {
-    ## Run AMD on new cluster2
-    for(i in 1:length(iter)) {
-
-      cat(paste("#!/bin/bash
-#$ -cwd
-#$ -l h_rt=",runtime,"
-#$ -V
-#$ -S /bin/bash
-#$ -pe orte ",ncpu,"
-
-echo Running on host `hostname`
-echo Time is `date`
-echo Directory is `pwd`
-
-prv=",sprintf("%02.0f", (iter[i]-1)),"
-cur=",sprintf("%02.0f",  iter[i]),"
-
-MPIRUN=/soft/linux/pkg/openmpi/bin/mpirun
-##AMBER=/soft/linux/pkg/amber10/exe/pmemd
-AMBER=/gpfs/cesar/amber10_cesar/exe/sander.MPI
-
-AMBER_ARGS=\"-O -i dyna_prod.sander -p sys_box.prmtop -c dyna.$prv.rst -o dyna.$cur.out  -r dyna.$cur.rst -x dyna.$cur.traj.crd -inf dyna.$cur.inf\"
-
-$MPIRUN -np $NSLOTS  $AMBER $AMBER_ARGS
-
-echo Finished at time: `date`\n", sep=""),
-        file=paste(prefix,".",sprintf("%02.0f", iter[i]),".sge",sep=""))
-    }
-  }
+# echo Finished at time: `date`\n", sep=""),
+#         file=paste(prefix,".",sprintf("%02.0f", iter[i]),".sge",sep=""))
+#     }
+#   }
 
 
+#   if(cluster=="c2AMD") {
+#     ## Run AMD on new cluster2
+#     for(i in 1:length(iter)) {
 
-  
-  if(cluster=="c31") {
-    ## Run on pmemd chemcca31
-    for(i in 1:length(iter)) {
+#       cat(paste("#!/bin/bash
+# #$ -cwd
+# #$ -l h_rt=",runtime,"
+# #$ -V
+# #$ -S /bin/bash
+# #$ -pe orte ",ncpu,"
 
-      cat(paste("#!/bin/bash
-#$ -cwd
-#$ -l h_rt=",runtime,"
-#$ -V
-#$ -S /bin/bash
-#$ -pe mpich ",ncpu,"
+# echo Running on host `hostname`
+# echo Time is `date`
+# echo Directory is `pwd`
 
-echo Running on host `hostname`
-echo Time is `date`
-echo Directory is `pwd`
-cat $TMPDIR/machines
+# prv=",sprintf("%02.0f", (iter[i]-1)),"
+# cur=",sprintf("%02.0f",  iter[i]),"
 
-prv=",sprintf("%02.0f", (iter[i]-1)),"
-cur=",sprintf("%02.0f",  iter[i]),"
+# MPIRUN=/soft/linux/pkg/openmpi/bin/mpirun
+# ##AMBER=/soft/linux/pkg/amber10/exe/pmemd
+# AMBER=/gpfs/cesar/amber10_cesar/exe/sander.MPI
 
-/soft/linux/pkg/openmpi-1.2.7-intel-mx2g/bin/mpirun -v -np $NSLOTS -machinefile $TMPDIR/machines /soft/linux/pkg/amber10/exe/pmemd -O -i dyna_prod.sander -p sys_box.prmtop -c dyna.$prv.rst  -o dyna.$cur.out  -r dyna.$cur.rst  -x dyna.$cur.traj.crd  -inf dyna.$cur.inf\n", sep=""),
-        file=paste(prefix,".",sprintf("%02.0f", iter[i]),".sge",sep=""))
-    }
-  } else {
-    
-    if(cluster=="oolite") {
-      ## Run on pmemd oolite
-      for(i in 1:length(iter)) {
-        cat(paste("#!/bin/tcsh
-#$ -cwd
-#$ -l h_rt=",runtime,"
-#$ -e sge.err
-#$ -o sge.out
-#$ -pe mpi ",ncpu,"
-#$ -S /bin/tcsh
+# AMBER_ARGS=\"-O -i dyna_prod.sander -p sys_box.prmtop -c dyna.$prv.rst -o dyna.$cur.out  -r dyna.$cur.rst -x dyna.$cur.traj.crd -inf dyna.$cur.inf\"
 
-setenv MPI_MAX_CLUSTER_SIZE 4
-setenv P4_GLOBMEMSIZE 32000000
-#$ -v P4_GLOBMEMSIZE
-#$ -V
+# $MPIRUN -np $NSLOTS  $AMBER $AMBER_ARGS
 
-echo Running on host `hostname`
-echo Time is `date`
-echo Directory is `pwd`
-cat $TMPDIR/machines
+# echo Finished at time: `date`\n", sep=""),
+#         file=paste(prefix,".",sprintf("%02.0f", iter[i]),".sge",sep=""))
+#     }
+#   } else {
+#       cat("Have not added the code for other clusters yet\n")
+#   }
 
-echo This job has allocated $NSLOTS processors
-
-set mpirun=/usr/local/topspin/mpi/mpich/bin/mpirun
-set pmemd=/share/apps/amber9/exe.pmemd.ts/pmemd
-
-set prv=",sprintf("%02.0f", (iter[i]-1)),"
-set cur=",sprintf("%02.0f",  iter[i]),"
-
-  $mpirun -machinefile $TMPDIR/machines -np $NSLOTS $pmemd -O -i dyna_prod.sander -p sys_box.prmtop -c dyna.$prv.rst  -o dyna.$cur.out  -r dyna.$cur.rst  -x dyna.$cur.traj.crd  -inf dyna.$cur.inf\n", sep=""),
-        file=paste(prefix,".",sprintf("%02.0f", iter[i]),".sge",sep=""))
-      }
-
-    }
-############
-    ## source("~/tmpwork/Rpackage/new_funs/model.R")
-    ## write.sge("a3_apo", ncpu=32, iter=1:20, cluster="ctbp1m")
-    
-    if(cluster=="ctbp1m") {
-      ## Run on pmemd ctbp1m
-      for(i in 1:length(iter)) {
-
-        cat(paste("#!/bin/bash
-#$ -cwd
-#$ -l h_rt=",runtime,"
-#$ -V
-#$ -S /bin/bash
-#$ -pe mpich ",ncpu,"
-
-echo Running on host `hostname`
-echo Time is `date`
-echo Directory is `pwd`
-cat $TMPDIR/machines
-
-prv=",sprintf("%02.0f", (iter[i]-1)),"
-cur=",sprintf("%02.0f",  iter[i]),"
-
-/soft/linux/openmpi-1.2.7-intel-mx2g/bin/mpirun -v -np $NSLOTS -machinefile $TMPDIR/machines /soft/linux/amber10/exe/pmemd -O -i dyna_prod.sander -p sys_box.prmtop -c dyna.$prv.rst  -o dyna.$cur.out  -r dyna.$cur.rst  -x dyna.$cur.traj.crd  -inf dyna.$cur.inf\n", sep=""),
-            file=paste(prefix,".",sprintf("%02.0f", iter[i]),".sge",sep=""))
-      }
-    }
-###########    
-    if (cluster=="amd") {
-      ## Run aMD on chemcca31
-      for(i in 1:length(iter)) {
-        
-        cat(paste("#!/bin/bash
-#$ -cwd
-#$ -l h_rt=",runtime,"
-#$ -V
-#$ -S /bin/bash
-#$ -pe mpich ",ncpu,"
-
-unsetenv LD_LIBRARY_PATH
-echo Running on host `hostname`
-echo Time is `date`
-echo Directory is `pwd`
-cat $TMPDIR/machines
-
-prv=",sprintf("%02.0f", (iter[i]-1)),"
-cur=",sprintf("%02.0f",  iter[i]),"
-
-/opt/mpich/myrinet/intel/bin/mpirun -v -np $NSLOTS -machinefile $TMPDIR/machines /home/dhamelbe/amber8/exe.torsion.whole.fix/sander -O -i production.in -p sys_box.prmtop -c production.$prv.restrt -o production.$cur.out -r production.$cur.restrt -x production.$cur.mdcrd -inf mdinfo.$cur.inf\n", sep=""),
-            file=paste(prefix,".",sprintf("%02.0f", iter[i]),".sge",sep=""))
-      }
-    } else {
-      cat("Have not added the code for other clusters yet\n")
-    }
-  }
-
-  ## Running instructions
-  cat(paste(" *  SCP files to ",
-            cluster, "\n\t(including dyna.",
-            sprintf("%02.0f", (iter[1]-1)),
-            ".rst sys_box.prmtop and dyna_prod.sander)\n\t",
-            "(possibly cp dyna_equil.rst  to dyna.00.rst)\n\t",
-            "> cp dyna_equil.rst dyna.00.rst\n\t",
-            "> scp dyna.00.rst sys_box.prmtop dyna_prod.sander ",
-            prefix,".*.pbs submit_",prefix,".sh bgrant@",cluster,":somepath/.\n\n",
-            " *  Submit jobs with:\n\t> qsub ",
-            paste(prefix,".",sprintf("%02.0f", iter[1]),
-                  ".sge",sep=""), "\n\t> qsub -hold_jid <JOBID> ",
-            paste(prefix,".",sprintf("%02.0f", iter[2]),
-                  ".sge",sep=""),"\n\t ...etc...\n",sep=""))
-}
+#   ## Running instructions
+#   cat(paste(" *  SCP files to ",
+#             cluster, "\n\t(including dyna.",
+#             sprintf("%02.0f", (iter[1]-1)),
+#             ".rst sys_box.prmtop and dyna_prod.sander)\n\t",
+#             "(possibly cp dyna_equil.rst  to dyna.00.rst)\n\t",
+#             "> cp dyna_equil.rst dyna.00.rst\n\t",
+#             "> scp dyna.00.rst sys_box.prmtop dyna_prod.sander ",
+#             prefix,".*.pbs submit_",prefix,".sh bgrant@",cluster,":somepath/.\n\n",
+#             " *  Submit jobs with:\n\t> qsub ",
+#             paste(prefix,".",sprintf("%02.0f", iter[1]),
+#                   ".sge",sep=""), "\n\t> qsub -hold_jid <JOBID> ",
+#             paste(prefix,".",sprintf("%02.0f", iter[2]),
+#                   ".sge",sep=""),"\n\t ...etc...\n",sep=""))
+# }
 
 
 
@@ -1077,28 +792,6 @@ interp <- function(start, end, nbeads=25) {
   return(store)
 }
 
-
-### ---- See bio3d::pdbfit()
-#####-- Define a new functions (an easy fit.xyz wrapper)
-###fit <- function(pdbs, inds, outpath=NULL, prefix = "", pdbext = "") {
-###  full <- ifelse(is.null(outpath), FALSE, TRUE)
-###  return( fit.xyz( fixed=pdbs$xyz[1,], mobile=pdbs,
-###                  fixed.inds  = inds, mobile.inds = inds,
-###                  prefix = prefix, pdbext = pdbext,
-###                  outpath = outpath, full.pdbs = full,het=TRUE ))
-###}
-###
-###
-###fit2 <- function(pdbs, inds=NULL, outpath=NULL, ...) {
-###  full <- ifelse(is.null(outpath), FALSE, TRUE)
-###  if(is.null(inds)) {
-###    inds <- gap.inspect(pdbs$xyz)$f.inds
-###  }
-###  return( fit.xyz( fixed=pdbs$xyz[1,], mobile=pdbs,
-###                  fixed.inds  = inds, mobile.inds = inds,
-###                  outpath = outpath, full.pdbs = full, ... ))
-###}
-###
 
 ### --- See bio3d::ide.filter()
 ide.group <- function(aln=NULL, ide=NULL, cutoff=0.6) {
@@ -1126,213 +819,6 @@ ide.group <- function(aln=NULL, ide=NULL, cutoff=0.6) {
 }
 
 
-
-
-##plot.blast <- function(b, cutoff=110) {
-##  ##- Plot alignment stats
-##  par(mfcol=c(4,1), mar=c(4, 4, 1, 2), cex.lab=1.5)
-##  plot(b$mlog.evalue, xlab="Hit No", ylab="-log(Evalue)")
-##  if(!is.null(cutoff))
-##    abline(h=cutoff, col="red", lty=3)
-##  plot(b$bitscore, xlab="Hit No", ylab="Bitscore")
-##  plot(b$hit.tbl[,"identity"], xlab="Hit No", ylab="Identity")
-##  plot(b$hit.tbl[,"alignmentlength"], xlab="Hit No", ylab="Length")
-##
-##  i <- b$mlog.evalue >= cutoff
-##  
-##  out <- cbind(b$pdb.id[i], b$gi.id[i])
-##  rownames(out) <- which(i)
-##  colnames(out) <- c("pdb.id", "gi.id")
-##  return(out)
-##}
-
-
-
-##get.pdb <- function(ids, path="./") {
-##  
-##  if(any(nchar(ids) != 4)) {
-##    warning("ids should be standard 4 character PDB formart: trying first 4 char...")
-##    ids <- substr(basename(ids),1,4)
-##  }
-##  ids <- unique(ids)
-##  
-##  pdb.files <- paste(ids, ".pdb", sep="")
-##  get.files <- file.path("http://www.rcsb.org/pdb/files", pdb.files)
-##  put.files <- file.path( path, pdb.files)
-##
-##  dir.create(path)
-##  rtn <- rep(NA, length(pdb.files))
-##  for(k in 1:length(pdb.files)) {
-##    rtn[k] <- download.file( get.files[k], put.files[k] )
-##  }
-##
-##  names(rtn) <- paste( path, "/", ids, ".pdb", sep="")
-##  if(any(rtn==1)) {
-##    warning("Some files could not be downloaded, check returned value")
-##    return(rtn)
-##  } else {
-##    return(names(rtn))
-##  }
-##}
-
-##get.uniprot <- function(ids, path="./", onefile=FALSE) {
-##  
-##  if(any(nchar(ids) != 6)) {
-##    warning("ids should be standard 6 character SWISSPROT/UNIPROT formart: trying first 6 char...")
-##    ids <- substr(basename(ids),1,6)
-##  }
-##  ids <- unique(ids)
-##  
-##  pdb.files <- paste(ids, ".fasta", sep="")
-##  get.files <- file.path("http://www.uniprot.org/uniprot", pdb.files)
-##  put.files <- file.path( path, pdb.files)
-##  mode="w"
-##  
-##  if(onefile) {
-##    mode="a"
-##    put.files <- rep(file.path( path, "combined_seqs.fasta"), length(pdb.files))
-##  }
-##  dir.create(path)
-##  rtn <- rep(NA, length(pdb.files))
-##  for(k in 1:length(pdb.files)) {
-##    rtn[k] <- download.file( get.files[k], put.files[k], mode=mode )
-##  }
-##
-##  names(rtn) <- ids
-##  rtn
-##}
-
-
-##get.nr <- function(gi, path="./", onefile=FALSE) {
-##
-##  ids <- unique(gi)
-##  pdb.files <- paste(ids, ".fasta", sep="")
-##  get.files <- paste("http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=protein&val=",
-##                     ids, "&dopt=fasta&sendto=t", sep="")
-##  put.files <- file.path( path, pdb.files)
-##
-##  mode="w"
-##  if(onefile) {
-##    mode="a"
-##    put.files <- rep(file.path( path, "combined_nr_seqs.fasta"), length(pdb.files))
-##  }
-##  dir.create(path)
-##  rtn <- rep(NA, length(pdb.files))
-##  for(k in 1:length(pdb.files)) {
-##    rtn[k] <- download.file( get.files[k], put.files[k], mode=mode )
-##  }
-##
-##  names(rtn) <- ids
-##  rtn
-##}
-
-
-
-##fetch.seqs <- function(gi, path="./", onefile=TRUE) {
-##  ## download FASTA format sequences from the NR database via
-##  ## there gi number (see also get.pdb, get.uniprot and get.nr)
-##  
-##  ids <- unique(gi)
-##  pdb.files <- paste(ids, ".fasta", sep="")
-##  get.files <- paste("http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=protein&val=",
-##                     ids, "&dopt=fasta&sendto=t", sep="")
-##  put.files <- file.path( path, pdb.files)
-##
-##  mode="w"
-##  if(onefile) {
-##    mode="a"
-##    put.files <- rep(file.path( path, "nr_seqs.fasta"), length(pdb.files))
-##  }
-##  dir.create(path)
-##  rtn <- rep(NA, length(pdb.files))
-##  for(k in 1:length(pdb.files)) {
-##    rtn[k] <- download.file( get.files[k], put.files[k], mode=mode )
-##  }
-##
-##  names(rtn) <- ids
-##  if(all(!rtn)) {
-##    if(onefile) {
-##      return(read.fasta( file.path( path, "nr_seqs.fasta") ))
-##    } else {
-##      return(rtn)
-##    }
-##  } else {
-##    warning("Not all downloads were sucesfull, see returned values")
-##    return(rtn)
-##  }
-##}
-
-
-
-##fetch.pdbs <- function(ids, path="./") {
-##  
-##  if(any(nchar(ids) != 4)) {
-##    warning("ids should be standard 4 character PDB formart: trying first 4 char...")
-##    ids <- substr(basename(ids),1,4)
-##  }
-##  ids <- unique(ids)
-##  
-##  pdb.files <- paste(ids, ".pdb", sep="")
-##  get.files <- file.path("http://www.rcsb.org/pdb/files", pdb.files)
-##  put.files <- file.path( path, pdb.files)
-##
-##  dir.create(path)
-##  rtn <- rep(NA, length(pdb.files))
-##  for(k in 1:length(pdb.files)) {
-##    rtn[k] <- download.file( get.files[k], put.files[k] )
-##  }
-##
-##  names(rtn) <- ids
-##  rtn
-##}
-
-
-
-
-##split.pdb <- function(raw.pdbs, path="split_chain/") {
-##
-##  dir.create(path)
-##  for(i in 1:length(raw.pdbs)) {
-##    pdb <- read.pdb(raw.pdbs[i], het2atom=TRUE)
-##    chains <- unique(pdb$atom[,"chain"])
-##    if(length(chains) > 0) {
-##      for(j in 1:length(chains)) {
-##        if( !is.na(chains[j]) ) {
-##          sel <- paste("//",chains[j],"/////")
-##          new <- atom.select(pdb,sel)
-##          new.pdb <- NULL
-##          new.pdb$atom <- pdb$atom[new$atom,]
-##          new.pdb$xyz <-  pdb$xyz[new$xyz]
-##
-##          new.name <- paste(path,
-##                            substr(basename(raw.pdbs[i]),1,4),
-##                            "_", chains[j], ".pdb", sep="")
-##
-##          write.pdb(new.pdb, file=new.name)
-##        }
-##      }
-##    }
-##  }
-##}
-
-
-
-### --- See bio3d::pdbaln()
-###pdb.seq.aln <- function(pdb.files, alnfile="pdb_aln.fa", ...) {
-###
-###  raw <- NULL
-###  for(i in 1:length(pdb.files)) {
-###    pdb <- read.pdb(pdb.files[i], het2atom=TRUE)
-###    seq <- aa321(pdb$atom[pdb$calpha,"resid"])
-###    if (is.null(seq)) {
-###      raw <- seqbind(raw, c("-","-"))
-###    } else {   
-###      raw <- seqbind(raw, seq)
-###    }
-###  }
-###  return(seqaln(raw, id=pdb.files, file=alnfile, ...))
-###}
-###
 
 ### --- See bio3d::torsion.pdb()
 rama.inds <- function( pdb, zone=c(33:40) ) {
@@ -1424,21 +910,6 @@ aln2aln <- function(aln.mv, aln.mv.ind=1, aln.rf, aln.rf.ind=1) {
   naln$id  <- c(aln.rf$id, aln.mv$id)
   return(naln)
 }
-
-
-### --- See bio3d::pdbseq()
-##seq.pdb <- function(pdb, inds=NULL) {
-##  ## b.inds <- atom.select(pdb, "//B////CA/")
-##  ## seq.pdb(pdb, b.inds)
-##
-##  if(is.null(inds))
-##    inds <- atom.select(pdb, "//////CA/")$atom
-##
-##  if(is.list(inds))
-##    inds <- inds$atom
-##  
-##  return(aa321(pdb$atom[inds,"resid"]))
-##}
 
 
 read.propka <- function(file) {
@@ -2002,163 +1473,9 @@ tlsq <- function(xyz, u) {
 }
 
 
-`read.maciek` <-
-function (file, maxlines=50000, multi=FALSE,
-                      rm.insert=FALSE, rm.alt=TRUE, verbose=TRUE) {
-
-  if(missing(file)) {
-    stop("read.pqr: please specify a PQR 'file' for reading")
-  }
-  if(!is.numeric(maxlines)) {
-    stop("read.pqr: 'maxlines' must be numeric")
-  }
-  if(!is.logical(multi)) {
-    stop("read.pqr: 'multi' must be logical TRUE/FALSE")
-  }
-  
-  # PDB FORMAT v2.0:    colpos,  datatype,    name,      description
-  atom.format <- matrix(c(-6,     NA,          NA,       # (ATOM)
-                          5,     'numeric',   "eleno",   # atom_no
-                         -1,     NA,          NA,        # (blank)
-                          3,     'character', "elety",   # atom_ty
-                          1,     'character', "alt",     # alt_loc
-                          4,     'character', "resid",   # res_na 
-                          1,     'character', "chain",   # chain_id 
-                          5,     'numeric',   "resno",   # res_no
-                          1,     'character', "insert",  # ins_code
-                         -3,     NA,           NA,       # (blank)
-                          10,     'numeric',   "x",       # x
-                          10,     'numeric',   "y",       # y
-                          10,     'numeric',   "z",       # z
-                          8,     'numeric',   "o",       # o  ### 6 for pdb
-                          8,     'numeric',   "b",       # b  ### 6 for pdb
-                         -6,     NA,           NA,       # (blank)
-                          4,     'character', "segid"    # seg_id
-                         ), ncol=3, byrow=TRUE,
-                       dimnames = list(c(1:17), c("widths","what","name")) )
-
-
-  ## split.string(raw.atom[1])
-  ## raw.atom[1]
-  split.string <- function(x) {
-    # split a string 'x'
-    x <- substring(x, first, last)
-    x[nchar(x) == 0] <- as.character(NA)
-    x
-  }
-  is.character0 <- function(x){length(x)==0 & is.character(x)}
-  
-  trim <- function (s) {
-    # Remove leading and traling
-    # spaces from character strings
-    s <- sub("^ +", "", s)
-    s <- sub(" +$", "", s)
-    s[(s=="")]<-NA
-    s
-  }
-
-
-  # finds first and last (substr positions)
-  widths <-  as.numeric(atom.format[,"widths"]) # fixed-width spec  
-  drop.ind <- (widths < 0) # cols to ignore (i.e. -ve)
-  widths <- abs(widths)    # absolute vales for later  
-  st <- c(1, 1 + cumsum( widths ))
-  first <- st[-length(st)][!drop.ind] # substr start
-  last <- cumsum( widths )[!drop.ind] # substr end
-
-  # read n lines of PDB file
-  raw.lines  <- readLines(file, n = maxlines)
-  type <- substring(raw.lines,1,6)
-
-  # check number of END/ENDMDL records
-  raw.end <- sort(c(which(type == "END"),
-                    which(type == "ENDMDL")))
-  
-  if (length(raw.end) > 1) {
-    print("PDB has multiple END/ENDMDL records")
-    if (!multi) {
-      print("multi=FALSE: taking first record only")
-      raw.lines <- raw.lines[ (1:raw.end[1]) ]
-      type <- type[ (1:raw.end[1]) ]
-    } else {
-      print("multi=TRUE: 'read.dcd' will be quicker!")
-    }
-  }
-  if ( length(raw.end) !=1 ) {
-    if (length(raw.lines) == maxlines) {
-      # have not yet read all the file
-      print("You may need to increase 'maxlines'")
-      print("check you have all data in $atom")
-    }
-  }
-
-  # split by record type
-  raw.header <- raw.lines[type == "HEADER"]
-  raw.seqres <- raw.lines[type == "SEQRES"]
-  raw.helix  <- raw.lines[type == "HELIX "]
-  raw.sheet  <- raw.lines[type == "SHEET "]
-  raw.atom   <- raw.lines[type == "ATOM  "]
-  het.atom   <- raw.lines[type == "HETATM"]
-  # also look for "TER" records
-  rm(raw.lines)
-  
-  if (verbose) {
-    if (!is.character0(raw.header)) { cat(" ", raw.header, "\n") }
-  }
-  seqres <- unlist(strsplit( trim(substring(raw.seqres,19,80))," "))
-
-  helix  <- list(start = as.numeric(substring(raw.helix,22,25)),
-                 end   = as.numeric(substring(raw.helix,34,37)),
-                 chain = trim(substring(raw.helix,20,20)),
-                 type  = trim(substring(raw.helix,39,40)))
-
-  sheet  <- list(start = as.numeric(substring(raw.sheet,23,26)),
-                 end   = as.numeric(substring(raw.sheet,34,37)),
-                 chain = trim(substring(raw.sheet,22,22)),
-                 sense = trim(substring(raw.sheet,39,40)))
-  
-  # format ATOM records as a character matrix
-  atom <- matrix(trim(sapply(raw.atom, split.string)), byrow=TRUE,
-                 ncol=nrow(atom.format[ !drop.ind,]), 
-                 dimnames = list(NULL, atom.format[ !drop.ind,"name"]) )
-
-  # Alt records with m[,"alt"] != NA
-  if (rm.alt) {
-    if ( sum( !is.na(atom[,"alt"]) ) > 0 ) {
-      cat("   PDB has ALT records, taking A only, rm.alt=TRUE\n")
-      alt.inds <- which( (atom[,"alt"] != "A") ) # take first alt only
-      if(length(alt.inds)>0)
-        atom <- atom[-alt.inds,]
-    }
-  }
-  # Insert records with m[,"insert"] != NA
-  if (rm.insert) {
-    if ( sum( !is.na(atom[,"insert"]) ) > 0 ) {
-      cat("   PDB has INSERT records, removing, rm.insert=TRUE\n")
-      insert.inds <- which(!is.na(atom[,"insert"])) # rm insert positions
-      atom <- atom[-insert.inds,]
-    }
-  }
-  het <- matrix(trim(sapply(het.atom, split.string)), byrow=TRUE,
-                ncol=nrow(atom.format[ !drop.ind,]), 
-                dimnames = list(NULL, atom.format[ !drop.ind,"name"]) )
-
-  output<-list(atom=atom,
-               het=het,
-               helix=helix,
-               sheet=sheet,
-               seqres=seqres,
-               xyz=as.numeric(t(atom[,c("x","y","z")])),
-               calpha = as.logical(atom[,"elety"]=="CA"))
-
-  class(output) <- "pdb"
-  return(output)
-  
-}
-
 
 occur <- function(v) {
-  ## The number of occurances of something in a vector at that point
+  ## The number of occurrences of something in a vector at that point
   ## v <- c("HSPA1", "HSPA2", "HSPA8", "HSPA8", "HSPA2", "HSPA8")
   ## occur(v)
   ## see also make.unique(v) and table
@@ -2189,40 +1506,6 @@ cat.pdb <- function(pdb1, pdb2) {
 }
 
 
-###--- See bio3d::convert.pdb()
-###"renumber.pdb" <-
-###function(pdb, first.resno=1, first.eleno=1, bychain=FALSE) {
-###
-###  ## Renumber 
-###  ori.num <- as.numeric(pdb$atom[,"resno"])
-###  ##ori.res <- pdb$atom[,"resid"]
-###
-###  if(bychain) {
-###    stop("No code here yet")
-###    ##ch <- chain.pdb(pdb)
-###    
-###  } else {
-###    ## concetive residue numbers
-###    ##tbl <- table(ori.num)
-###    ##new.nums <- first.resno:(first.resno+length(tbl)-1)
-###    ##pdb$atom[,"resno"] <- rep(new.nums, tbl)
-###
-###    ## Everytime old resno changed
-###    new.res.len <- rle(ori.num)$lengths
-###    nres <- length(new.res.len)
-###    new.num <- first.resno:(first.resno+nres-1)
-###    new.num <- rep(new.num,  new.res.len)
-###  }
-###
-###  ## Eleno
-###  npdb <- pdb
-###  npdb$atom[,"eleno"] <- seq(first.eleno, length=nrow(pdb$atom))
-###  npdb$atom[,"resno"] <- new.num
-###  
-###  return(npdb)
-###}
-###
-
 
 ## Match vector via matching sequence to alignment
 vec2seq <- function(vec, aa.seq, aln) {
@@ -2242,25 +1525,6 @@ vec2seq <- function(vec, aa.seq, aln) {
   }
   return(Nvec)
 }
-
-### --- See bio3d::vec2resno()
-###vec2resno <- function(vec, resno) {
-###  ## replicate vec based on concetive
-###  ## similar resno entries
-###
-###  if(class(resno)=="pdb")
-###    resno <- pdb$atom[,"resno"]
-###
-###  res.len <- rle(resno)$lengths
-###  if(length(vec) != length(res.len))
-###    stop("Length miss-match of 'vec' and concetive 'resno'")
-###
-###  if( sum(res.len) != length(resno) )
-###    stop("Replicated length Miss-match")
-###  
-###  return( rep(vec,  times=res.len))
-###}
-###
 
 
 ### --- See bio3d::vec2resno()
@@ -2396,45 +1660,6 @@ read.hmmer.tbl <- function(infile) {
 }
 
 
-### --- See bio3d::conserv()
-###cons.aln <- function(aln, gap.col=0.6) {
-###  ## Score residue conservation
-###  ## Exclude positions with >= gap.col percent gaps
-###  ##
-###  ##aln <- read.fasta("~/work/eb1/pfam_aln2.fa")
-###  ##con <- cons.aln(aln)
-###  ##plot(con$sim, typ="l")
-###  ##plot(con$ent.10, typ="h", col=con$col.ent.10)
-###  
-###  sim <- conserv(x=aln$ali, method="similarity", sub.matrix="bio3d")
-###  ent.10 <- conserv(x=aln$ali, method="entropy10")
-###  ent.22 <- conserv(x=aln$ali, method="entropy22")
-###  ide <- conserv(x=aln$ali, method="identity")
-###
-###  ## excluding positions >=60 percent gaps)
-###  H <- entropy(aln$ali)
-###  gap60.inds <- which(apply(H$freq[21:22,],2,sum)>=gap.col) ##0.6)
-###
-###  ent.10[gap60.inds] = 0
-###  ent.22[gap60.inds] = 0
-###
-###  col.sim <- rep("black", length(sim))
-###  col.ent.10 <- col.sim
-###  col.ent.22 <- col.sim
-###  col.ide <- col.sim
-###
-###  col.sim[sim >= 0.7] = "red"
-###  col.ent.10[ent.10 >= 0.7] = "red"
-###  col.ent.22[ent.22 >= 0.7] = "red"
-###  col.ide[ide >= 0.7] = "red"
-###
-###  return(list(sim=sim, ent.10=ent.10, ent.22=ent.22, ide=ide,
-###              gap60.inds=gap60.inds, col.sim=col.sim,
-###              col.ent.10=col.ent.10, col.ent.22=col.ent.22,
-###              col.ide=col.ide) )
-###}
-###
-
 pathInterp <- function(z, npoint=12) {
   ## Given PCA Z coords for two conformers (rows) return
   ## 'npoint' interpolated Z coords btwn these two
@@ -2456,7 +1681,7 @@ pathInterp <- function(z, npoint=12) {
 
 
 ##
-## Description:  Functions for FTmap analysis of trajectorys and aligned PDBs
+## Description:  Functions for FTmap analysis of trajectory data and aligned PDBs
 ## Date:         Wed Feb  8 10:42:39 EST 2012 
 ## Author:       Barry Grant bjgrant@umich.edu
 ##
@@ -2694,184 +1919,184 @@ bootstrap.rmsf <- function(xyz, N=5, n.repeat=10) {
 
 
 
-mustang <- function(pdbfiles, alnfile="mustangaln") {
-  ##
-  ## Structural alignment with mustang
-  ## pdbfiles should be a vector of PDB files names
-  ## alnfile is the output fasta format alignment
-  ##
-  if(length(pdbfiles) > 6) 
-    warning("Multiple structural alignment will be VERY slow for this many files")
+# mustang <- function(pdbfiles, alnfile="mustangaln") {
+#   ##
+#   ## Structural alignment with mustang
+#   ## pdbfiles should be a vector of PDB files names
+#   ## alnfile is the output fasta format alignment
+#   ##
+#   if(length(pdbfiles) > 6) 
+#     warning("Multiple structural alignment will be VERY slow for this many files")
     
-  cmd <- paste("~/bin/mustang -o", alnfile,
-               "-F fasta -s OFF -r ON -i",
-               paste(pdbfiles, collapse=" "))
-  cat("\nRunning:\n",cmd,"\n\n")
-  system(cmd)
-  aln <- read.fasta( paste(alnfile,".afasta",sep="") )
-  aln$ali[aln$ali=="Z"] <- "-"
-  gaps <- gap.inspect(aln$ali)
-  aln$ali <- aln$ali[,gaps$col!=nrow(aln$ali)]
-  return(aln)
-}
+#   cmd <- paste("~/bin/mustang -o", alnfile,
+#                "-F fasta -s OFF -r ON -i",
+#                paste(pdbfiles, collapse=" "))
+#   cat("\nRunning:\n",cmd,"\n\n")
+#   system(cmd)
+#   aln <- read.fasta( paste(alnfile,".afasta",sep="") )
+#   aln$ali[aln$ali=="Z"] <- "-"
+#   gaps <- gap.inspect(aln$ali)
+#   aln$ali <- aln$ali[,gaps$col!=nrow(aln$ali)]
+#   return(aln)
+# }
 
 
 ### --- See add.dccm.grid() below
-add.grid.old <- function(sse, col="gray", lty="dashed") {
-  ## Add a grid to a plot.dccm() plot
-  ##   sse <- dssp(pdb)
-  ##   plot.dccm(cij, sse=see)
-  ##   add.grid(sse)
+# add.grid.old <- function(sse, col="gray", lty="dashed") {
+#   ## Add a grid to a plot.dccm() plot
+#   ##   sse <- dssp(pdb)
+#   ##   plot.dccm(cij, sse=see)
+#   ##   add.grid(sse)
 
-  if(is.list(sse)) {
-    gridpoints <- c(sse$sheet$start[sse$sheet$length>4],
-                    sse$helix$start[sse$helix$length>4] )
-  } else {
-    gridpoints <- sse
-  }
+#   if(is.list(sse)) {
+#     gridpoints <- c(sse$sheet$start[sse$sheet$length>4],
+#                     sse$helix$start[sse$helix$length>4] )
+#   } else {
+#     gridpoints <- sse
+#   }
 
-  grid.rect(x=unit(gridpoints, "native"),
-            y=unit(gridpoints, "native"),
-            gp = gpar(fill=NA, col=col, lty=lty),
-            just=c("right","top"),
-            width=1, height=1,
-            vp=vpPath("plot_01.toplevel.vp","plot_01.panel.1.1.vp"))
+#   grid.rect(x=unit(gridpoints, "native"),
+#             y=unit(gridpoints, "native"),
+#             gp = gpar(fill=NA, col=col, lty=lty),
+#             just=c("right","top"),
+#             width=1, height=1,
+#             vp=vpPath("plot_01.toplevel.vp","plot_01.panel.1.1.vp"))
 
-  grid.rect(x=unit(gridpoints, "native"),
-            y=unit(gridpoints, "native"),
-            gp = gpar(fill=NA, col=col, lty=lty),
-            just=c("left","bottom"),
-            width=1, height=1,
-            vp=vpPath("plot_01.toplevel.vp","plot_01.panel.1.1.vp"))
+#   grid.rect(x=unit(gridpoints, "native"),
+#             y=unit(gridpoints, "native"),
+#             gp = gpar(fill=NA, col=col, lty=lty),
+#             just=c("left","bottom"),
+#             width=1, height=1,
+#             vp=vpPath("plot_01.toplevel.vp","plot_01.panel.1.1.vp"))
 
-  grid.lines(x=unit(c(0,max(gridpoints)), "native"),y=c(0,0),
-             gp = gpar(fill=NA, col="black"),
-             vp=vpPath("plot_01.toplevel.vp","plot_01.panel.1.1.vp"))
-  grid.lines(x=c(0,0),y=unit(c(max(gridpoints),0), "native"),
-             gp = gpar(fill=NA, col="black"),
-             vp=vpPath("plot_01.toplevel.vp","plot_01.panel.1.1.vp"))
-}
+#   grid.lines(x=unit(c(0,max(gridpoints)), "native"),y=c(0,0),
+#              gp = gpar(fill=NA, col="black"),
+#              vp=vpPath("plot_01.toplevel.vp","plot_01.panel.1.1.vp"))
+#   grid.lines(x=c(0,0),y=unit(c(max(gridpoints),0), "native"),
+#              gp = gpar(fill=NA, col="black"),
+#              vp=vpPath("plot_01.toplevel.vp","plot_01.panel.1.1.vp"))
+# }
 
 
-add.dccm.grid <- function(x, fill.col=NA, helix.col="purple", sheet.col="yellow",
-                          line.col="black", lty=1, lwd=1, segment.min=1,
-                          alpha=0.3, side=c(1,2)) {
+# add.dccm.grid <- function(x, fill.col=NA, helix.col="purple", sheet.col="yellow",
+#                           line.col="black", lty=1, lwd=1, segment.min=1,
+#                           alpha=0.3, side=c(1,2)) {
   
-  ## Add a grid or colored boxes to a plot.dccm() plot
-  ##   sse <- dssp(pdb)
-  ##   plot.dccm(cij, sse=see)
-  ##   add.dccm.grid(sse)
-  ##   add.dccm.grid(list("start"=c(50, 100, 150), "length"=c(10,25,50)))
-  ##   add.dccm.grid(list("start"=c(50, 100, 150), "length"=c(10,25,50)),
-  ##                 fill.col=c("blue","red","green"))
-  ##   plot.dccm2(cij, margin.segments=net$membership, segment.min=15)
-  ##   add.dccm.grid( net$membership, segment.min=15)
-  ##
-  ##   add.dccm.grid( net$membership, segment.min=25)
-  ##   add.dccm.grid( net$membership, segment.min=25, fill.col="gray")
+#   ## Add a grid or colored boxes to a plot.dccm() plot
+#   ##   sse <- dssp(pdb)
+#   ##   plot.dccm(cij, sse=see)
+#   ##   add.dccm.grid(sse)
+#   ##   add.dccm.grid(list("start"=c(50, 100, 150), "length"=c(10,25,50)))
+#   ##   add.dccm.grid(list("start"=c(50, 100, 150), "length"=c(10,25,50)),
+#   ##                 fill.col=c("blue","red","green"))
+#   ##   plot.dccm2(cij, margin.segments=net$membership, segment.min=15)
+#   ##   add.dccm.grid( net$membership, segment.min=15)
+#   ##
+#   ##   add.dccm.grid( net$membership, segment.min=25)
+#   ##   add.dccm.grid( net$membership, segment.min=25, fill.col="gray")
 
-  ##-- Function to draw box on plot
-  draw.box <- function(start, length, xymin=0, xymax=1,
-                       fill.col="gray", alpha=0.3, line.col="black", lty=1, lwd=1, 
-                       side=c(1,2) ) {
+#   ##-- Function to draw box on plot
+#   draw.box <- function(start, length, xymin=0, xymax=1,
+#                        fill.col="gray", alpha=0.3, line.col="black", lty=1, lwd=1, 
+#                        side=c(1,2) ) {
     
-    ##-- Draw Annotation Blocks On DCCM Plots
-    ##    draw.box(150,20) 
-    ##    draw.box(50,100, side=1, fill.col=NA, lty=2)
+#     ##-- Draw Annotation Blocks On DCCM Plots
+#     ##    draw.box(150,20) 
+#     ##    draw.box(50,100, side=1, fill.col=NA, lty=2)
 
-    ## Grid graphics paramaters
-    gp <- gpar(fill=fill.col, col=line.col,
-               lty=lty, lwd=lwd, alpha=alpha)
+#     ## Grid graphics paramaters
+#     gp <- gpar(fill=fill.col, col=line.col,
+#                lty=lty, lwd=lwd, alpha=alpha)
 
-    vp <- vpPath("plot_01.toplevel.vp",
-                 "plot_01.panel.1.1.vp")
+#     vp <- vpPath("plot_01.toplevel.vp",
+#                  "plot_01.panel.1.1.vp")
 
-    ##- Side 1: From Bottom Margin
-    if( (side==1) || (side=="both") || all(side==c(1,2)) ) {
-      grid.rect(x=unit(start-0.5, "native"),
-                y=xymin,
-                width=unit(length-0.5, "native"),
-                height=xymax,
-                gp=gp, just=c("left","bottom"), vp=vp) 
-    }
+#     ##- Side 1: From Bottom Margin
+#     if( (side==1) || (side=="both") || all(side==c(1,2)) ) {
+#       grid.rect(x=unit(start-0.5, "native"),
+#                 y=xymin,
+#                 width=unit(length-0.5, "native"),
+#                 height=xymax,
+#                 gp=gp, just=c("left","bottom"), vp=vp) 
+#     }
     
-    ##- Side 2: From Left Margin
-    if( (side==2) || (side=="both") || all(side==c(1,2)) ) {
-      grid.rect(x=xymin, 
-                y=unit(start-0.5, "native"),
-                width=xymax,
-                height=unit(length-0.5, "native"),
-                gp=gp, just=c("left","bottom"), vp=vp)      
-    }
-  }
+#     ##- Side 2: From Left Margin
+#     if( (side==2) || (side=="both") || all(side==c(1,2)) ) {
+#       grid.rect(x=xymin, 
+#                 y=unit(start-0.5, "native"),
+#                 width=xymax,
+#                 height=unit(length-0.5, "native"),
+#                 gp=gp, just=c("left","bottom"), vp=vp)      
+#     }
+#   }
 
 
-  ##NOTE: For all 'x' objects that are not vectors we will exclude
-  ##      segments that are under 'segment.min' in length
-  segment.min.exclusion = TRUE 
+#   ##NOTE: For all 'x' objects that are not vectors we will exclude
+#   ##      segments that are under 'segment.min' in length
+#   segment.min.exclusion = TRUE 
   
 
 
-  ##-- Parse 'x' Input --##
+#   ##-- Parse 'x' Input --##
   
-  ##- For vector input objects - e.g. $membership from cutree()
-  if( (is.vector(x)) && (!is.list(x)) ) {
-    grps <- table(x)
+#   ##- For vector input objects - e.g. $membership from cutree()
+#   if( (is.vector(x)) && (!is.list(x)) ) {
+#     grps <- table(x)
 
-    ## Exclude small grps less than 'segment.min'
-    ##  But do not do more filtering below 
-    grps = names( grps[grps > segment.min] )
-    segment.min.exclusion=FALSE ##<--- good idea but plots are too crowded!!
+#     ## Exclude small grps less than 'segment.min'
+#     ##  But do not do more filtering below 
+#     grps = names( grps[grps > segment.min] )
+#     segment.min.exclusion=FALSE ##<--- good idea but plots are too crowded!!
 
-    store.grps <- NULL; 
-    for(i in 1:length(grps)) {
-      store.grps <- rbind(store.grps,
-          cbind( bounds(which(x == grps[i])),
-                "grp"=as.numeric(grps[i])) )
-    }
-    ## convert to matrix for use below
-    x=store.grps
+#     store.grps <- NULL; 
+#     for(i in 1:length(grps)) {
+#       store.grps <- rbind(store.grps,
+#           cbind( bounds(which(x == grps[i])),
+#                 "grp"=as.numeric(grps[i])) )
+#     }
+#     ## convert to matrix for use below
+#     x=store.grps
 
-    ## Dont do any more filtering
+#     ## Dont do any more filtering
     
-  }
+#   }
 
-  ##- For SSE objects
-  if(class(x) == "dssp") {
-    start <- c(x$helix$start, x$sheet$start)
-    length <- c(x$helix$length, x$sheet$length)
+#   ##- For SSE objects
+#   if(class(x) == "dssp") {
+#     start <- c(x$helix$start, x$sheet$start)
+#     length <- c(x$helix$length, x$sheet$length)
     
-    ## If no 'fill.col' is provided use helix and sheet specific fill.col
-    if(is.na(fill.col)) {
-      fill.col <- c(rep(helix.col, length(x$helix$start)),
-                    rep(sheet.col, length(x$sheet$start)) )
-    }
-  }  
+#     ## If no 'fill.col' is provided use helix and sheet specific fill.col
+#     if(is.na(fill.col)) {
+#       fill.col <- c(rep(helix.col, length(x$helix$start)),
+#                     rep(sheet.col, length(x$sheet$start)) )
+#     }
+#   }  
 
-  ##- For other list objects
-  if(class(x) == "list") {
-    start <- x$start
-    length <- x$length
-  }
+#   ##- For other list objects
+#   if(class(x) == "list") {
+#     start <- x$start
+#     length <- x$length
+#   }
 
-  ##- For matrix objects - e.g. from bounds()
-  if(class(x) =="matrix") {
-    start  <- x[,"start"]
-    length <- x[,"length"]
-  }
+#   ##- For matrix objects - e.g. from bounds()
+#   if(class(x) =="matrix") {
+#     start  <- x[,"start"]
+#     length <- x[,"length"]
+#   }
 
 
-  ##-- Filter out short segments based on input 'segment.min'
-  if(segment.min.exclusion) {
-    inds <- !(length < segment.min)
-    start <- start[inds]
-    length <- length[inds]
-    if(length(fill.col > 1)) { fill.col <- fill.col[inds] }
-  }
+#   ##-- Filter out short segments based on input 'segment.min'
+#   if(segment.min.exclusion) {
+#     inds <- !(length < segment.min)
+#     start <- start[inds]
+#     length <- length[inds]
+#     if(length(fill.col > 1)) { fill.col <- fill.col[inds] }
+#   }
   
-  ## Draw
-  draw.box(start, length, fill.col=fill.col)
-}
+#   ## Draw
+#   draw.box(start, length, fill.col=fill.col)
+# }
 
   
 
@@ -2963,83 +2188,18 @@ read.protdist <- function(infile) {
 }
 
 
-print.aln <- function(x, width=60) {
 
-  ##-- Print sequence alignment in a nice formated way
-  ##    x<-read.fasta("poo.fa")
-  ##    print.aln(x)
-  ##
-  ##    file <- system.file("examples/kif1a.fa",package="bio3d")
-  ##    aln  <- read.fasta(file)
-  ##    print.aln(aln, width=40)
-  ##
-  ## Could use this as print.fasta() default 
-  ##
+rescale <- function(x, to = c(0, 1), from = range(x, na.rm = TRUE)) {
+	##- Scale input numeric values to have specified min and max values
+	##  to => desired range for output
+	##  from => input range (taken from input by default)
+	##    scale(c(1,3,10))
+	##    scale(1)
+	##    scale( c(1,3,10), from=c(1,100) )
 
-
-  if(class(x) %in% c("fasta", "3dalign")) {
-    id <- x$id
-    ali <- x$ali
-  } else {
-    id <- rownames(x)
-    ali <- x
-  }
-
-
-  ##- Format sequence identifiers
-  ids.nchar <- max(nchar(id))+2 ## with a gap of 2 spaces
-  ids.format <- paste0("%-",ids.nchar,"s")
-  ids <- sprintf(ids.format, id)
-  ## for later use in annotation printing
-  pad.format <- paste0("%+",(ids.nchar+1),"s")
-
-
-  ##- Work out sequence block widths
-  nseq <- length(ids)
-  nres <- ncol(ali)
-
-  block.start <- seq(1, nres, by=width)
-  block.end <- unique(c( seq(width, nres, by=width), nres))
-  nblocks <- length(block.start)
-
-  blank.annot <- rep(" ", width)
-  block.annot <- blank.annot
-  block.annot[ c(1,seq(10, width, by=10)) ] = "."
-
-  blocks <- matrix(NA, ncol=nblocks, nrow=nseq) 
-  for(i in 1:nblocks) {
-    ##- Sequence block
-    positions <- block.start[i]:block.end[i]
-    blocks[,i] <- paste0(ids, apply(ali[, positions, drop=FALSE], 1, paste, collapse=""))
-
-    ##- Annotations for each sequence block
-    number.annot = blank.annot[1:length(positions)]
-    number.annot[1] = sprintf(pad.format, block.start[i])
-    number.annot[length(positions)] = block.end[i]
-
-    block.annot = block.annot[1:length(positions)]
-    block.annot[1] = sprintf(pad.format, "|")
-    block.annot[length(positions)] = "|"
-
-    end.annot = block.annot
-    end.annot[1] = number.annot[1]
-    end.annot[length(end.annot)] = number.annot[length(number.annot)]
-
-    ##-- Formated Printing of annotations and sequence blocks
-    cat("\n")
-    ##- Numbers & ticks
-    cat(paste(number.annot, collapse=""),sep="\n")
-    cat(paste(block.annot, collapse=""),sep="\n")
-    ##- Sequence block
-    cat(blocks[,i], sep="\n")
-    ##- Ticks + numbers again
-    cat(paste(end.annot, collapse=""),"\n")
-  }
-
-  j <- paste(attributes(x)$names, collapse = ", ")
-  cat("\n")
-  cat(strwrap(paste(" + attr:", j, "( dim(x$ali) =", paste(dim(ali),collapse="x"),")\n"), width = 70, exdent = 8), sep = "\n")
-
+	if(length(unique(x))==1) {
+		## Rtn middle of range for single input values 
+		return( rep(mean(to), length(x)) )
+	}
+   (x - from[1])/diff(from) * diff(to) + to[1]
 }
-
-

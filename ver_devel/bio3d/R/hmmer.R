@@ -44,7 +44,7 @@
                     "uniprotrefprot", "pfamseq")
     db <- tolower(db)
     if(!db%in%db.allowed)
-      stop("db must be of type...")
+      stop(paste("db must be either:", paste(db.allowed, collapse=", ")))
     
     seqdb <- db
     hmmdb <- NULL
@@ -61,7 +61,7 @@
     db.allowed <- tolower(c("pfam", "gene3d", "superfamily", "tigrfam"))
     db <- tolower(db)
     if(!db%in%db.allowed)
-      stop("db must be of type...")
+      stop(paste("db must be either:", paste(db.allowed, collapse=", ")))
     
     seqdb <- NULL
     hmmdb <- db
@@ -84,7 +84,7 @@
     db.allowed <- tolower(c("pdb", "swissprot"))
     db <- tolower(db)
     if(!db%in%db.allowed)
-      stop("db must be of type...")
+      stop(paste("db must be either:", paste(db.allowed, collapse=", ")))
     
     seqdb <- db
     hmmdb <- NULL
@@ -111,7 +111,8 @@
                     "uniprotrefprot", "pfamseq")
     db <- tolower(db)
     if(!db%in%db.allowed)
-      stop("db must be of type...")
+      stop(paste("db must be either:", paste(db.allowed, collapse=", ")))
+
     seqdb <- db
     hmmdb <- NULL
     iter <- NULL

@@ -54,6 +54,9 @@ d <- identify.cna(xy, cna=net)
 
 # Right click to end the function...
 ## d <- identify(xy, summary(net)$members)
+
+detach(hivp)
+
 }
 }
 \keyword{ utility }

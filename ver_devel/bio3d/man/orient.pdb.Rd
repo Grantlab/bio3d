@@ -40,7 +40,7 @@ xyz  <- orient.pdb(pdb, atom.subset=inds$atom)
 
 
 # Based on a central Beta-strand
-inds <- atom.select(pdb, "///224:232///CA/")
+inds <- atom.select(pdb, resno=c(224:232), elety='CA')
 xyz  <- orient.pdb(pdb, atom.subset=inds$atom)
 #write.pdb(pdb, xyz = xyz, file = "mov3.pdb")
 }

@@ -4,11 +4,13 @@
 \alias{covsoverlap.nma}
 \title{ Covariance Overlap }
 \description{
-  Calculate the ovariance overlap obtained from NMA. 
+  Calculate the covariance overlap obtained from NMA. 
 }
 \usage{
 covsoverlap(...)
+
 \method{covsoverlap}{enma}(enma, ncore=NULL, ...)
+
 \method{covsoverlap}{nma}(a, b, subset=NULL, ...)
 }
 \arguments{
@@ -35,6 +37,7 @@ covsoverlap(...)
   Returns the similarity coefficient(s).
 }
 \references{
+  Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.   
   Romo, T.D. et al. (2011) \emph{Proteins} \bold{79}, 23--34.
 }

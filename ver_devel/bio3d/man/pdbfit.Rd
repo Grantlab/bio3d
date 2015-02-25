@@ -1,18 +1,30 @@
 \name{pdbfit}
 \alias{pdbfit}
+\alias{pdbfit.pdb}
+\alias{pdbfit.pdbs}
 \title{ PDB File Coordinate Superposition }
 \description{ Protein Databank Bank file coordinate superposition with
   the Kabsch algorithm. }
 \usage{
-pdbfit(pdbs, inds = NULL, outpath = NULL, ...)
+
+pdbfit(...)
+
+\method{pdbfit}{pdb}(pdb, inds = NULL, ...)
+
+\method{pdbfit}{pdbs}(pdbs, inds = NULL, outpath = NULL, ...)
+
 }
 \arguments{
+  \item{pdb}{ a multi-model pdb object of class \code{"pdb"}, as
+    obtained from \code{read.pdb}. }
   \item{pdbs}{ a list of class \code{"pdbs"} containing PDB file
     data, as obtained from \code{read.fasta.pdb} or
     \code{pdbaln}. }
-  \item{inds}{ a vector of indices that selects the coordinate
-    positions, in terms of x, y and z elements, upon which fitting
-    should be based. This defults to all equivalent non-gap positions. }
+  \item{inds}{ a list object with a \sQuote{xyz} component with indices
+    that selects the coordinate  positions (in terms of x, y and z
+    elements) upon which fitting should be based. This defaults to all
+    equivalent non-gap positions for function \code{pdbfit.pdbs}, and to
+    all calpha atoms for function \code{pdbfit.pdb}. }
   \item{outpath}{ character string specifing the output directory for
     optional coordinate file output. Note that full files (i.e. all atom
     files) are written, seebelow. }
@@ -23,10 +35,14 @@ pdbfit(pdbs, inds = NULL, outpath = NULL, ...)
   \code{fit.xyz}, wherein full details of the superposition procedure
   are documented.
 
-  Input to this function should be a list object obtained with the
-  function \code{\link{read.fasta.pdb}} or  \code{\link{pdbaln}}.  See
+  Input to \code{pdbfit.pdbs} should be a list object obtained with the
+  function \code{\link{read.fasta.pdb}} or \code{\link{pdbaln}}.  See
   the examples below.
 
+  For function \code{pdbfit.pdb} the input should be a multi-model
+  \code{pdb} object with multiple (>1) frames in the \sQuote{xyz}
+  component. 
+  
   The reference frame for supperposition (i.e. the fixed structure to
   which others are superposed) is the first entry in the input
   \code{"pdbs"} object. For finer control use \code{\link{fit.xyz}}.

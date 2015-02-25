@@ -80,6 +80,7 @@ function (pdb = NULL,
     if (is.null(elety)) elety = rep("CA", natom)
     if (is.null(chain)) chain = rep("", natom)
     else if (length(chain) == 1) chain = rep(chain, natom)
+    ##if(any(is.na(chain))) chain[is.na(chain)]= ""
     if (is.null(insert)) insert=rep("", natom)
     if (is.null(alt)) alt=rep("", natom)
     if (is.null(o))         o = rep("1.00",natom)
@@ -87,6 +88,10 @@ function (pdb = NULL,
     if (is.null(segid)) segid = rep("", natom)
     if (is.null(elesy)) elesy = rep("", natom)
     if (is.null(charge)) charge = rep("", natom)
+
+    chain[is.na(chain)]= ""
+    insert[is.na(insert)] = ""
+    alt[is.na(alt)] = ""
   }
 
   if (!is.logical(append)) 

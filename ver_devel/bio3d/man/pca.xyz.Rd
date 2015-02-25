@@ -8,7 +8,7 @@
  }
 \usage{
 \method{pca}{xyz}(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))),
-                 use.svd = FALSE, rm.gaps=FALSE, \dots)
+                 use.svd = FALSE, rm.gaps=FALSE, mass = NULL, \dots)
 
 \method{print}{pca}(x, nmodes=6, \dots)
 }
@@ -27,7 +27,24 @@
   \item{x}{ an object of class \code{pca}, as obtained from function
     \code{pca.xyz}. }
   \item{nmodes}{ numeric, number of modes to be printed. }
-  \item{\dots}{ additional arguments to \code{print}. }
+  \item{mass}{ a \sQuote{pdb} object or numeric vector of residue/atom masses. 
+     By default (\code{mass=NULL}), mass is ignored. If provided 
+     with a \sQuote{pdb} object, masses of all amino acids obtained from 
+     \code{\link{aa2mass}} are used. }
+  \item{\dots}{ additional arguments to \code{\link{fit.xyz}} 
+     (for \code{pca.xyz}) or to \code{print} (for \code{print.pca}). }
+}
+\note{
+     If \code{mass} is provided, mass weighted coordinates will be considered, 
+     and iteration of fitting onto the mean structure is performed internally. 
+     The extra fitting process is to remove external translation and rotation 
+     of the whole system. With this option, a direct comparison can be made 
+     between PCs from \code{\link{pca.xyz}} and vibrational modes from 
+     \code{\link{nma.pdb}}, with the fact that 
+                           \deqn{A=k_BTF^{-1}}{A=k[B]TF^-1}, 
+     where \eqn{A} is the variance-covariance matrix, \eqn{F} the Hessian 
+     matrix, \eqn{k_B}{k[B]} the Boltzmann's constant, and \eqn{T} the 
+     temperature.
 }
 \value{
   Returns a list with the following components:
@@ -70,40 +87,44 @@ xyz <- pdbs$xyz
 #-- Do PCA ignoring gap containing positions
 pc.xray <- pca.xyz(xyz, rm.gaps=TRUE)
 
-# Plot results (conformer plots & scree plot)
+# Plot results (conformer plots & scree plot overview)
 plot(pc.xray, col=annotation[, "color"])
+
+# Plot a single conformer plot of PC1 v PC2
+plot(pc.xray, pc.axes=1:2, col=annotation[, "color"])
 
 ## Plot atom wise loadings
 plot.bio3d(pc.xray$au[,1], ylab="PC1 (A)")
 
 \donttest{
 ## Plot loadings in relation to reference structure 1TAG
-gaps.res <- gap.inspect(pdbs$ali)
 pdb <- read.pdb("1tag")
+ind <- grep("1TAG", pdbs$id)             ## location in alignment
 
-ind <- grep("1TAG", pdbs$id)
-res.ind <- pdbs$resno[ind, gaps.res$f.ind]
+resno <- pdbs$resno[ind, !is.gap(pdbs)]  ## non-gap residues
+tpdb <- trim.pdb(pdb, resno=resno)
+
 op <- par(no.readonly=TRUE)
 par(mfrow = c(3, 1), cex = 0.6, mar = c(3, 4, 1, 1))
-plot.bio3d(res.ind, pc.xray$au[,1], sse=pdb, ylab="PC1 (A)")
-plot.bio3d(res.ind, pc.xray$au[,2], sse=pdb, ylab="PC2 (A)")
-plot.bio3d(res.ind, pc.xray$au[,3], sse=pdb, ylab="PC3 (A)")
+plot.bio3d(pc.xray$au[,1], resno, ylab="PC1 (A)", sse=tpdb)
+plot.bio3d(pc.xray$au[,2], resno, ylab="PC2 (A)", sse=tpdb)
+plot.bio3d(pc.xray$au[,3], resno, ylab="PC3 (A)", sse=tpdb)
 par(op)
 }
 
 \dontrun{
 # Write PC trajectory
+resno = pdbs$resno[1, !is.gap(pdbs)]
+resid = aa123(pdbs$ali[1, !is.gap(pdbs)])
+
 a <- mktrj.pca(pc.xray, pc=1, file="pc1.pdb",
-               resno = pdbs$resno[1, gaps.res$f.inds],
-               resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
+               resno=resno, resid=resid )
 
 b <- mktrj.pca(pc.xray, pc=2, file="pc2.pdb",
-               resno = pdbs$resno[1, gaps.res$f.inds],
-               resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
+               resno=resno, resid=resid )
 
 c <- mktrj.pca(pc.xray, pc=3, file="pc3.pdb",
-               resno = pdbs$resno[1, gaps.res$f.inds],
-               resid = aa123(pdbs$ali[1, gaps.res$f.inds]) )
+               resno=resno, resid=resid )
 }
 
 detach(transducin)
