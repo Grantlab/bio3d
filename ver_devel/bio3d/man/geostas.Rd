@@ -129,6 +129,7 @@ amsm.xyz(xyz, ncore = NULL)
 }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
 
 #### NMR-ensemble example
 ## Read a multi-model PDB file 

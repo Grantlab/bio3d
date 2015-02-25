@@ -54,6 +54,7 @@ com(...)
 }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
 
 ## Stucture of PKA:
 pdb <- read.pdb("3dnd")

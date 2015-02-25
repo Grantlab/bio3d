@@ -34,6 +34,8 @@ lmi(trj, grpby=NULL, ncore=1)
 \author{ Hongyang Li & Barry Grant}
 \examples{
 \donttest{
+# Redundant testing excluded
+
 ##-- Read example trajectory file
 trtfile <- system.file("examples/hivp.dcd", package="bio3d")
 trj <- read.dcd(trtfile)
@@ -57,5 +59,4 @@ col.scale <- colorRampPalette(c("gray95", "cyan"))(5)
 plot(cij, at=seq(0.4,1, length=5), col.regions=col.scale)
 }
 }
-
 

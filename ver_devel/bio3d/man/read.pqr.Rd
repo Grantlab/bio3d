@@ -69,6 +69,8 @@ read.pqr(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
   \code{\link{read.fasta}} }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
+
 # Read a PDB file
 pdb <- read.pdb( "4q21" )
   

@@ -73,6 +73,7 @@ view.cnapath(x, pdb, out.prefix = "view.cnapath", spline = FALSE,
    \code{\link[igraph:get.shortest.paths]{get.shortest.paths}}. }
 \examples{
 \donttest{
+# Redundant testing excluded
 
 attach(transducin)
 inds = match(c("1TND_A", "1TAG_A"), pdbs$id)

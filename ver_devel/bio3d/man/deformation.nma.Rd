@@ -43,7 +43,6 @@ deformation.nma(nma, mode.inds = NULL, pfc.fun = NULL, ncore = NULL)
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{nma} } }
 \examples{
-\donttest{
 ## Fetch stucture
 pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
@@ -52,7 +51,6 @@ modes <- nma(pdb)
 
 ## Calculate deformation energies
 def.energies <- deformation.nma(modes)
-}
 
 \dontrun{
 ## Fluctuations of first non-trivial mode

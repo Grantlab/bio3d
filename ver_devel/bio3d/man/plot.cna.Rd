@@ -71,6 +71,8 @@
   \code{\link[igraph:igraph.plotting]{igraph.plotting}} }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
+
 require(igraph)
 
 ##-- Build a CNA object

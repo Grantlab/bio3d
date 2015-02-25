@@ -32,7 +32,6 @@ aa.table
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \examples{
-\donttest{
 data(aa.table)
 aa.table
 
@@ -40,8 +39,7 @@ aa.table
 aa.table["HIS", ]
 
 ## read PDB, and fetch residue masses
-pdb <- read.pdb("1etl")
+pdb <- read.pdb(system.file("examples/1hel.pdb", package="bio3d"))
 aa2mass(pdb)
-}
 }
 \keyword{datasets}

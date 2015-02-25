@@ -37,6 +37,8 @@ uniprot(accid)
 \seealso{ \code{\link{blast.pdb}}, \code{\link{get.seq}} }
 \examples{
 \donttest{
+# UNIPROT server connection required - testing excluded
+
 prot <- uniprot('PH4H_HUMAN')
 prot$fullName
 prot$sequence

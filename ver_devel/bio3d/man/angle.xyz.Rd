@@ -32,9 +32,8 @@ angle.xyz(xyz, atm.inc = 3)
   \code{\link{read.pdb}}, \code{\link{read.dcd}}.
 }
 \examples{
-\donttest{
 ## Read a PDB file
-pdb <- read.pdb( "http://www.rcsb.org/pdb/files/1BG2.pdb" )
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 ## Angle between N-CA-C atoms of residue four
 inds <- atom.select(pdb, resno=4, elety=c("N","CA","C"))
@@ -45,6 +44,5 @@ inds <- atom.select(pdb, elety=c("N","CA","C"))
 summary( angle.xyz(pdb$xyz[inds$xyz]) )
 #hist( angle.xyz(pdb$xyz[inds$xyz]), xlab="Angle" )
 
-}
 }
 \keyword{ utilities }

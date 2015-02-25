@@ -62,8 +62,8 @@ struct.aln(fixed, mobile, fixed.inds=NULL, mobile.inds=NULL,
   \code{\link{seqaln}}, \code{\link{pdbaln}} }
 \examples{
 \donttest{
+# Needs MUSCLE installed - testing excluded
 
-## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
 if(check.utility("muscle")) {
 
      ## Stucture of PKA:

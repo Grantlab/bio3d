@@ -58,6 +58,8 @@ binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cutoff=5,
 \seealso{ \code{\link{read.pdb}}, \code{\link{atom.select}}, \code{\link{dm}} }
 \examples{
    \donttest{
+    # PDB server connection required - testing excluded
+
      pdb <- read.pdb('3dnd')
 
      ## automatically identify 'protein' and 'ligand'
@@ -81,6 +83,8 @@ binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cutoff=5,
    }
 
    \donttest{
+    # Redundant testing excluded
+
      # Interaction between two PDB entities   
      #rec <- read.pdb("receptor.pdb")
      #lig <- read.pdb("ligand.pdb")

@@ -59,6 +59,8 @@ read.dcd(trjfile, big=FALSE, verbose = TRUE, cell = FALSE)
   \code{\link{atom.select}} }
 \examples{
 \donttest{
+# Redundant testing excluded
+
 ##-- Read cell parameters from example trajectory file
 trtfile <- system.file("examples/hivp.dcd", package="bio3d")
 trj <- read.dcd(trtfile, cell = TRUE)

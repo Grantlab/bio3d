@@ -25,7 +25,7 @@
 
 
 #+ setup, include=FALSE
-knitr::opts_chunk$set(fig.path='figures/', dev='png', dev.args=list(type="cairo"), dpi=120)
+knitr::opts_chunk$set(dev='png', dev.args=list(type="cairo"), dpi=120)
 
 #+ preamble, include=FALSE, eval=FALSE
 library(rmarkdown)

@@ -97,6 +97,8 @@ plot(pc.xray, pc.axes=1:2, col=annotation[, "color"])
 plot.bio3d(pc.xray$au[,1], ylab="PC1 (A)")
 
 \donttest{
+# PDB server connection required - testing excluded
+
 ## Plot loadings in relation to reference structure 1TAG
 pdb <- read.pdb("1tag")
 ind <- grep("1TAG", pdbs$id)             ## location in alignment
