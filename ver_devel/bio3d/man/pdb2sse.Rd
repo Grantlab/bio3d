@@ -25,6 +25,8 @@ call for its effects.
 }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
+
    pdb <- read.pdb("1a7l")
    sse <- pdb2sse(pdb)
    sse

@@ -108,6 +108,7 @@
 }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
 
 ##-- Build a correlation network from NMA results
 ## Read example PDB

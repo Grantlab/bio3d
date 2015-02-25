@@ -69,9 +69,9 @@ plot(modes)
 #m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
 
 \donttest{
+## Needs MUSCLE installed - testing excluded
 
 ##- Ensemble NMA
-## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
 if(check.utility("muscle")) {
 
 ## Fetch PDB files and split to chain A only PDB files

@@ -28,6 +28,8 @@ motif.find(motif, sequence)
 }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
+
 aa.seq <- pdbseq( read.pdb( get.pdb("4q21", URLonly=TRUE) ) )
 motif = c("G....GKS")
 motif.find(motif, aa.seq)

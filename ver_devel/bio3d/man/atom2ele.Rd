@@ -49,6 +49,8 @@ atom.names <- c("CA", "O", "N", "OXT")
 atom2ele(atom.names)
 
 \donttest{
+# PDB server connection required - testing excluded
+
 ## Get atomic symbols from a PDB object with a customized data set
 pdb <- read.pdb("3RE0",verbose=FALSE)
 inds <- atom.select(pdb, resno=201, verbose=FALSE)

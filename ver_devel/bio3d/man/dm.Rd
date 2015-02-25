@@ -75,6 +75,7 @@ dm(\dots)
 \seealso{ \code{\link{plot.dmat}}, \code{\link{read.pdb}}, \code{\link{atom.select}} }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
 
 ##--- Distance Matrix Plot
 pdb <- read.pdb( "4q21" )

@@ -47,6 +47,8 @@ transformation matrices stored in a 'pdb' object returned by
 }
 \examples{
 \donttest{
+   # PDB server connection required - testing excluded
+
    pdb <- read.pdb("2dn1")
    biounit <- biounit(pdb)
    pdb

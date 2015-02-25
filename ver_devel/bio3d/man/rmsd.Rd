@@ -48,6 +48,7 @@ rmsd(a, b=NULL, a.inds=NULL, b.inds=NULL, fit=FALSE, ncore=1, nseg.scale=1)
   \code{\link{read.pdb}}, \code{\link{read.fasta.pdb}} }
 \examples{
 \donttest{
+# Redundant testing excluded
 
 # -- Calculate RMSD between two or more structures
 aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))

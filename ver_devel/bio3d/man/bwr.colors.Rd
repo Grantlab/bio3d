@@ -40,9 +40,10 @@ mono.colors(n)
 }
 \examples{
 \donttest{
+# Redundant testing excluded
 
 # Color a distance matrix
-pdb <- read.pdb( "1bg2" )
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 d <- dm(pdb,"calpha")
 
 plot(d, color.palette=bwr.colors)
@@ -51,7 +52,6 @@ plot(d,
      resnum.1 = pdb$atom[pdb$calpha,"resno"],
      color.palette = mono.colors,
      xlab="Residue Number", ylab="Residue Number")
-
 }
 }
 \keyword{ utilities }

@@ -29,6 +29,8 @@ In both \code{$helix} and \code{$sheet}, an additional
 }
 \examples{
 \donttest{
+   # PDB server connection required - testing excluded
+
    pdb <- read.pdb("1a7l")
    sse <- pdb2sse(pdb)
    sse.ind <- bounds.sse(sse)

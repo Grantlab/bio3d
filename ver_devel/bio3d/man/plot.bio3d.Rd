@@ -102,6 +102,8 @@
 \seealso{ \code{\link{plot.default}}, \code{\link{dssp}}, \code{\link{stride}} }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
+
 ## Plot of B-factor values along with secondary structure from PDB
 pdb <- read.pdb( "1bg2" )
 bfac <- pdb$atom[pdb$calpha,"b"]
