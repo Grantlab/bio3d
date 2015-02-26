@@ -8,7 +8,6 @@
 \usage{
 pdbseq(pdb, inds = NULL, aa1 = TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{pdb}{a PDB structure object obtained from
     \code{\link{read.pdb}}. }
@@ -19,7 +18,7 @@ pdbseq(pdb, inds = NULL, aa1 = TRUE)
     returned.}
 }
 \details{
-  See the functions \code{\link{atom.select}} and \code{\link{aa321}}
+  See the examples below and the functions \code{\link{atom.select}} and \code{\link{aa321}}
   for further details.
 }
 \value{
@@ -30,9 +29,9 @@ pdbseq(pdb, inds = NULL, aa1 = TRUE)
   
   For a description of IUPAC one-letter codes see:\cr
   \url{http://www.chem.qmul.ac.uk/iupac/AminoAcid/}
-  
-  For a description of PDB residue codes see Appendix 4:\cr
-  \url{http://msdlocal.ebi.ac.uk/docs/pdb_format/appendix.html}
+
+  For more information on PDB residue codes see:\cr
+  \url{http://ligand-expo.rcsb.org/ld-search.html}
 
 }
 \author{ Barry Grant }
@@ -42,6 +41,8 @@ pdbseq(pdb, inds = NULL, aa1 = TRUE)
 \dontrun{
 pdb <- read.pdb( "5p21" )
 pdbseq(pdb)
+
+#pdbseq(pdb, inds=atom.select(pdb, resno=5:15, elety="CA"), aa1=FALSE)
 }
 }
 \keyword{ utilities }

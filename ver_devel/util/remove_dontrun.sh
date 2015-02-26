@@ -5,12 +5,13 @@
 for i in ./bio3d/man/*.Rd; do
    # skip some examples because of the missing 
    # data or run errors
-   if [ `basename $i` != "dssp.trj.Rd" ] && \
-      [ `basename $i` != "nma.Rd" ] && \
-      [ `basename $i` != "read.all.Rd" ] && \
-      [ `basename $i` != "store.atom.Rd" ] && \
-      [ `basename $i` != "com.Rd" ] && \
-      [ `basename $i` != "mustang.Rd" ] && \
+   if [ `basename $i` != "read.crd.Rd" ] && \
+      [ `basename $i` != "read.crd.amber.Rd" ] && \
+      [ `basename $i` != "read.crd.charmm.Rd" ] && \
+      [ `basename $i` != "as.pdb.Rd" ] && \
+      [ `basename $i` != "atom.select.Rd" ] && \
+      [ `basename $i` != "read.prmtop.Rd" ] && \
+      [ `basename $i` != "bio3d.package.Rd" ] && \
       [ `basename $i` != "read.mol2.Rd" ]; then
       echo $i
       # find and delete tags \dontrun{ and }

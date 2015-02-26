@@ -1,7 +1,7 @@
 ---
 title: "Installing Bio3D"
-author: "Xin-Qiu Yao, Lars Skjaerven & Barry J. rant"
-date: "September 28, 2014"
+author: "Xin-Qiu Yao, Lars Skjaerven & Barry J. Grant"
+date: "February 25, 2015"
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 output:
   pdf_document:
@@ -16,7 +16,6 @@ output:
     fig_height: 5
     fig_width: 5
     variant: markdown_phpextra
-bibliography: Bio3D_install.bib
 documentclass: article
 fontsize: 11pt
 geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
@@ -25,145 +24,35 @@ linkcolor: black
 
 <br><br>
 
-# Background
-
-Bio3D[^1] is an R package that provides interactive tools for structural
-bioinformatics. The primary focus of Bio3D is the analysis of
-biomolecular structure, sequence and trajectory data [@grant06].
-
-### What can I do with Bio3D? {.unnumbered}
-
-Features include the ability to read and write biomolecular structure,
-sequence and dynamic trajectory data, query and search online sequence
-and structure databases, perform atom selection, re-orientation,
-superposition, rigid core identification, clustering, distance matrix
-analysis, alignment, conservation analysis, normal mode analysis,
-principal component analysis, and many other common sequence and
-structural analysis tasks.
-
-### Why an R package? {.unnumbered}
-
-Bio3D aims to leverage the extensive graphical and statistical
-capabilities of the R environment (<http://www.r-project.org>) and thus
-provide a useful integrated framework for the exploratory interactive
-analysis of biomolecular sequence and structure data.
-
-### What is the purpose of this document? {.unnumbered}
-
-The aim of this vignette[^2] is to provide Bio3D package installation instructions.
-
-### Where can I find more information? {.unnumbered}
-
-The latest version of the package, full documentation and furhter
-vignettes can be obtained from the main Bio3D website:
-<http://thegrantlab.org/bio3d/>.
-
-### What other vignettes are available? {.unnumbered}
-
-Available Bio3D package vignettes can be found online
-<http://thegrantlab.org/bio3d/html/> and within R once the Bio3D package
-is installed. To see available vignettes from within R use the R
-command:
-
-```{r, eval=FALSE}
-vignette(package="bio3d") 
-```
-
-At the time of writing these include:
-
--   `Installing Bio3D`
-
--   `Getting started with Bio3D`
-
--   `Comparative protein structure analysis with Bio3D`
-
--   `Sequence conservation analysis with Bio3D`
-
--   `Beginning trajectory analysis with Bio3D`
-
--   `Dynamic network analysis with Bio3D`
-
--   `Normal mode analysis with Bio3D`
-
-#### Side-note: {.unnumbered}
-
-We are always interested in adding additional functionality and
-documentation to the Bio3D package. If you have ideas or suggestions for
-improvements, or indeed code that you would like to distribute as part
-of this package, please contact us – we would like to hear from you!
-<br><br>
-
-# Quick Installation for Linux/Ubuntu Users
-
-Most required packages and programs are available from the official
-Ubuntu repository:
-
-    apt-get install r-base r-base-core netcdf-bin libnetcdf-dev libxml2-dev libcurl3-dev seaview muscle pymol 
-
-DSSP however is not, but can be installed by:
-
-    wget ftp://ftp.cmbi.ru.nl/pub/software/dssp/dssp-2.0.4-linux-amd64 -O /usr/local/bin/dssp
-    chmod a+x /usr/local/bin/dssp
-
-Download the source code of the latest Bio3D version:
-
-    wget http://thegrantlab.org/bio3d/phocadownload/Bio3D_version2.x/bio3d_2.1-0.tar.gz
-
-Start R by issuing the command `R` and then from the R prompt install
-required packages, and finally the Bio3D package:
-
-```{r, eval=FALSE}
-install.packages(c("ncdf", "lattice", "grid", "bigmemory", "parallel", "XML",
-		           "RCurl", "igraph"), dependencies=TRUE)
-install.packages("bio3d_2.1-0.tar.gz") 
-```
-
-If everything worked as expected you can skip ahead to section 5. If you
-experienced errors you should continue to read section 3 and the
-installation instructions in section 4.1.
-<br><br>
-
 # Installation Prerequisites
 
 Before you attempt to install Bio3D you should have a relatively recent
 version of R installed and working on your system (we recommend at least
-R version 3.0.1). Detailed instructions for obtaining and installing R
-on various platforms can be found on the R home page
-<http://www.r-project.org>.
+**R version 3.1.0**). Detailed instructions for obtaining and installing R
+on various platforms can be found on the R home page <http://www.r-project.org>.
 
-### Do I need to know R? {.unnumbered} 
+Bio3D makes use of a number of **additional R packages** including *ncdf*,
+*bigmemory*, *XML*, *RCurl* and *igraph*.
+Make sure required headers and libraries are installed on your system prior to installing
+these R packages. i.e. the R package `ncdf` requires `netcdf` and 
+`libnetcdf-dev`; `XML` requires `libxml2-dev`; and `RCurl` requires `libcurl3-dev`. 
 
-To get the most out of Bio3D you should be quite familiar with basic R
-usage. Some newcomers to R find this a steep learning curve. However,
-once you have mastered basic operations with vectors and matrices in R
-you should feel confident about getting stuck into using the Bio3D
-package.
+In addition, for full Bio3D functionality you should have *MUSCLE* (and optionally *DSSP*)
+installed on your system and in the search path for executables. 
 
-#### Sidenote: {.unnumbered}
 
-There are now numerous on–line resources that can help you get started
-using R. Again they can be found from the [main R
-website](http://www.r-project.org) at <http://www.r-project.org>. We
-also maintain a list of R resources at
-<http://bio3d.pbworks.com/w/page/68764093/Use_R>. However, google may be your best friend in this regard.
+**Note**: If you encounter difficulties in installing any of the suggested packages, note
+that most functions in Bio3D will work just fine without. e.g. `ncdf` is only required
+for reading/writing netcdf binary trajectory files; `igraph` for visualization of 
+correlation network analysis; `RCurl` and `XML` for searching and fetching data from 
+various biomolecular databases. 
 
-### Additional R Packages {.unnumbered}
 
-Bio3D makes use of a number of additional R packages including *ncdf*,
-*lattice*, *grid*, *bigmemory*, *XML*, *RCurl* and *igraph*. These can be
-most easily installed from within R with the command:
-
-```{r, eval=FALSE}
-install.packages(c("ncdf", "lattice", "grid", "bigmemory", "parallel", "XML",
-		           "RCurl", "igraph"), dependencies=TRUE)
-```
-
-<br>
-
-# Obtaining and Installing Bio3D
+# Obtaining Bio3D
 
 The Bio3D package is available in two forms from
-<http://thegrantlab.org/bio3d/>
+[CRAN](http://cran.r-project.org/web/packages/bio3d/) and 
+the [Bio3D website](http://thegrantlab.org/bio3d/)
 
 -   [as platform independent source
     code](http://thegrantlab.org/bio3d/download) (intended
@@ -177,49 +66,106 @@ and tools such as Perl 5.004 or later. If you run into problems with
 source installation please refer to section 6.1 of the [R Installation
 and Administration Manual](http://cran.r-project.org/doc/manuals/R-admin.html).
 
-## Linux/Unix Installation
 
-If you are unable to use the quick installation instructions described
-in section 2 in a Unix environment then you should download the latest
-Bio3D source tar.gz file from above. Then within an R session type:
+
+# Installing Bio3D
+Installing required headers, libraries, R packages, and utility programs are
+relatively straightforward on most common architectures and operative systems. Below
+we provide installation instructions for some of the most common OS's. 
+
+## Linux Systems (Ubuntu & Fedora)
+On a Debian system (e.g. Ubuntu) most required packages and programs
+can be installed directly through the official package manager system 
+with the `apt-get install` command:
+
+    apt-get install r-base-core netcdf-bin libnetcdf-dev libxml2-dev \
+                    libcurl3-dev seaview muscle pymol 
+
+For Red Hat based systems (e.g. Fedora) the equivalent command is:
+
+    yum install R-base R-devel netcdf-devel netcdf libxml2-devel \
+                libcurl-devel seaview pymol 
+
+The Bio3D package can be obtained and installed via [CRAN](http://cran.r-project.org/web/packages/bio3d/). Start R by issuing the command `R` and then from the R prompt install the Bio3D package:
 
 ```{r, eval=FALSE}
-install.packages("bio3d_2.1-0.tar.gz") 
+install.packages("bio3d", dependencies=TRUE)
 ```
 
-Or from the command line:
+Alternatively, Bio3D can be downloaded as source code e.g.
+from <https://bitbucket.org/Grantlab/bio3d/downloads> and installed
+with the command:
 
-    R CMD INSTALL bio3d_2.1-0.tar.gz
+```{r, eval=FALSE}
+install.packages("bio3d_2.2-0.tar.gz")
+```
 
-#### Sidenote: {.unnumbered}
+Note that **MUSCLE** is not available from the Fedora package manager, but can be installed by:
 
-This will only work if you have permission to write files to the
-standard package installation location. If you would rather install to a
-different location you can set the `R_LIBS` environment variable to a
-location of your choice. For example, if you use tcsh/bash then add a
-line similar to the following to your .tcshrc/.bashrc file:
+    wget http://www.drive5.com/muscle/downloads3.8.31/muscle3.8.31_i86linux64.tar.gz
+    tar xzvf muscle3.8.31_i86linux64.tar.gz
+    mv muscle3.8.31_i86linux64 /usr/local/bin/muscle
+    chmod a+x /usr/local/bin/muscle
 
-    # csh:
-    setenv R_LIBS /home/myname/R/lib/R/library
+**DSSP** is neither available from the package managers, but can be installed by:
 
-    # bash:
-    export R_LIBS=/home/myname/R/lib/R/library
+    wget ftp://ftp.cmbi.ru.nl/pub/software/dssp/dssp-2.0.4-linux-amd64 -O /usr/local/bin/dssp
+    chmod a+x /usr/local/bin/dssp
 
-Obviously you will want to change the path above to a directory of your
-choice.
+
+### Installing a minimal version of Bio3D {.unnumbered}
+A minimal version of Bio3D with reduced functionaly (i.e. for reading/writing
+binary trajectory files, and fetching data from various databases)
+will require only the R base installed (i.e. no additional packages needed).
+Thus, only the R base will be required. In Ubuntu this can be obtained with the
+following two commands:
+
+    apt-get install r-base-core
+
+```{r, eval=FALSE}
+install.packages("bio3d", dependencies=FALSE)
+```
+
+### Installing required R packages individually {.unnumbered}
+The Bio3D dependencies can be installed from within R with the command `install.packages`:
+
+```{r, eval=FALSE}
+# install only the XML package
+install.packages("XML")
+
+# install all required
+install.packages(c("XML", "RCurl", "ncdf", "igraph", "bigmemory"), 
+                 dependencies=TRUE)
+```
+
 
 ## MacOS X Installation
 
 R on Mac OS X can be used either on the command-line, like on other Unix
 systems, or via the R.app GUI. If you prefer to use the command line
-based R system then simply follow the Unix installation instructions
-above.
+based R system the installtion is similar to the Linux installation
+described above:
 
-Alternatively, you can use the `Packages and Data` menu of the GUI, in
+The Bio3D package can be obtained and installed via [CRAN](http://cran.r-project.org/web/packages/bio3d/).
+Start R by issuing the command `R` and then from the R prompt install the Bio3D package:
+```{r, eval=FALSE}
+install.packages("bio3d", dependencies=TRUE)
+```
+
+We recommend using [MacPort](http://www.macports.org/) for the installtion of NetCDF
+headers and libraries. For more details on the installation process see e.g.
+<http://mazamascience.com/WorkingWithData/?p=1474>. After the installtion of MacPort,
+NetCDF can be installed with the command:
+
+    port install netcdf
+
+
+Alternatively, you can use the `Packages and Data` menu of the R.app GUI, in
 particular the sub-item Package Installer: Download the source tar.gz
 file from above. In the R GUI select `Packages and Data` $\rightarrow$
 `Package Installer` $\rightarrow$ `Local Source Package`, and press the
 `Install` button. Select the Bio3D tar file and press `Open`.
+
 
 ## Windows Installation
 
@@ -229,6 +175,8 @@ To install the Bio3D package on Windows download the compiled binary
 Start R and from GUI click `Packages` $\rightarrow$
 `Install Package(s) from local zip file` then simply select your
 downloaded Bio3D zip file and click `Open` to finish the installation.
+
+
 
 ## Installing the development version of Bio3D
 
@@ -246,15 +194,40 @@ repository using the R function `install_bitbucket()` from the
 `devtools` package.
 
 ```{r, eval=FALSE}
-install.packages("devtools") 
+install.packages("devtools")
 library(devtools)
-install_bitbucket("bio3d", username="Grantlab", subdir="ver_devel/bio3d/") 
+install_bitbucket("Grantlab/bio3d", subdir = "ver_devel/bio3d/")
 ```
 
 Alternative installation methods and additional instructions are posted
 to the wiki section of our [bitbucket
 repository](https://bitbucket.org/Grantlab/bio3d/).
 <br><br>
+
+
+# Testing your installation
+
+You should now be able to load the Bio3D library into your current R
+session by typing the usual `library(bio3d)` command at the R Console.
+
+```{r, eval=FALSE}
+library(bio3d) 
+help(package="bio3d")
+vignette(package="bio3d") 
+```
+
+We now suggest you use the command `demo("pdb")`, `demo("pca")` and
+`demo("md")` to get a quick feel for some of the tasks that we will be
+introducing in subsequent vignettes:
+
+```{r, eval=FALSE}
+library(bio3d) 
+demo("pdb") 
+demo("pca") 
+demo("md") 
+```
+<br>
+
 
 # Additional utilities
 
@@ -337,28 +310,7 @@ in the search path. PyMOL is open-source software and available from
 <http://www.pymol.org>.
 <br><br>
 
-# Testing your installation
 
-You should now be able to load the Bio3D library into your current R
-session by typing the usual `library(bio3d)` command at the R Console.
-
-```{r, eval=FALSE}
-library(bio3d) 
-help(package="bio3d")
-vignette(package="bio3d") 
-```
-
-We now suggest you use the command `demo("pdb")`, `demo("pca")` and
-`demo("md")` to get a quick feel for some of the tasks that we will be
-introducing in subsequent vignettes:
-
-```{r, eval=FALSE}
-library(bio3d) 
-demo("pdb") 
-demo("pca") 
-demo("md") 
-```
-<br>
 
 # Where to next
 
@@ -381,9 +333,6 @@ were:
 ```{r}
 sessionInfo() 
 ```
-
-
-# References {.unnumbered}
 
 
 [^1]: The latest version of the package, full documentation and further

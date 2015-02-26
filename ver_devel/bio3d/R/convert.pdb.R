@@ -1,13 +1,11 @@
 "convert.pdb" <-
-function(pdb, type="original",
+function(pdb, type = c("original", "pdb", "charmm", "amber", "gromacs"),
          renumber=FALSE, first.resno=1, first.eleno=1,
          consecutive=TRUE,
          rm.h=TRUE, rm.wat=FALSE, verbose=TRUE) {
 
   ##-- Check the requested output format is one of 'type.options' 
-  type.options <- c("original", "pdb", "charmm", "amber", "gromacs")
-  type <- match.arg(type, type.options)
-
+  type <- match.arg(type)
 
   ##-- Water and hydrogen removal
   inds <- NULL
@@ -15,10 +13,10 @@ function(pdb, type="original",
     inds <- atom.select(pdb, "notwater", verbose=FALSE)
     if(verbose){
       cat(paste("\t Retaining", length(inds$atom),"non-water atoms\n"))
-    } 
+    }
   }
   if(rm.h) {
-    inds <- combine.sel(inds, atom.select(pdb, "noh", verbose=FALSE), verbose=FALSE) 
+    inds <- combine.select(inds, atom.select(pdb, "noh", verbose=FALSE), verbose=FALSE) 
     if(verbose){
       cat(paste("\t Retaining", length(inds$atom),"non-hydrogen atoms\n"))
     } 
@@ -51,8 +49,9 @@ function(pdb, type="original",
     prev.chain.res = 0  ## Number of residues in previous chain
     for (i in 1:length(s.ind)) {
       ## Combination of resno and insert code define a residue (wwpdb.org)
-      resno0 <- paste0(pdb$atom[s.ind[i]:e.ind[i], "resno"], 
-                       pdb$atom[s.ind[i]:e.ind[i], "insert"])
+      insert = pdb$atom[s.ind[i]:e.ind[i], "insert"]
+      insert[is.na(insert)] = ""
+      resno0 <- paste0(pdb$atom[s.ind[i]:e.ind[i], "resno"], insert)
 
       ## Ordered table of residue occurrences
       tbl <- table(resno0)[unique(resno0)]
@@ -62,6 +61,27 @@ function(pdb, type="original",
       new.nums <- (first.resno+prev.chain.res):(first.resno+n.chain.res-1+prev.chain.res)
       pdb$atom[s.ind[i]:e.ind[i],"resno"] <- rep(new.nums, tbl)
 
+      ## SSE
+      if(length(pdb$helix)>0) {
+         chs = unique(pdb$helix$chain)
+
+         t.inds = match(pdb$helix$start[pdb$helix$chain %in% chs[i]], unique(resno0))
+         pdb$helix$start[pdb$helix$chain %in% chs[i]] = new.nums[t.inds]
+
+         t.inds = match(pdb$helix$end[pdb$helix$chain %in% chs[i]], unique(resno0))
+         pdb$helix$end[pdb$helix$chain %in% chs[i]] = new.nums[t.inds]
+      }
+
+      if(length(pdb$sheet)>0) {
+         chs = unique(pdb$sheet$chain)
+
+         t.inds = match(pdb$sheet$start[pdb$sheet$chain %in% chs[i]], unique(resno0))
+         pdb$sheet$start[pdb$sheet$chain %in% chs[i]] = new.nums[t.inds]
+
+         t.inds = match(pdb$sheet$end[pdb$sheet$chain %in% chs[i]], unique(resno0))
+         pdb$sheet$end[pdb$sheet$chain %in% chs[i]] = new.nums[t.inds]
+      }
+    
       if(consecutive) {
         ## Update prev.chain.res for next iteration 
         prev.chain.res = prev.chain.res + n.chain.res
@@ -83,7 +103,7 @@ function(pdb, type="original",
 
     ##- Check for non-standard residue names
     if(verbose){
-      not.prot.inds <- atom.select(pdb, "notprotein", verbose = FALSE)$atom
+      not.prot.inds <- atom.select(pdb, "notprotein", verbose=FALSE)$atom
       if(length(not.prot.inds) > 0) { 
         not.prot.res <- paste(unique(pdb$atom[not.prot.inds, "resid"]), collapse = " ")
         cat(paste("\t Non-standard residue names present (",not.prot.res,")\n") )

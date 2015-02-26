@@ -23,7 +23,7 @@ function(pdb) {
   coords <- NULL
 # Changed for PDB format v3.3  
 #  blank <- matrix(NA, nrow = 13, ncol = length(atom.names))
-  blank <- matrix(NA, nrow = 15, ncol = length(atom.names))
+  blank <- matrix(NA, nrow = ncol(pdb$atom), ncol = length(atom.names))
   for (i in 1:length(res.list)) {
     res.blank <- blank
     res.ind <- which(res.list[i] == res.data)
@@ -39,10 +39,10 @@ function(pdb) {
   }
   natm <- length(atom.names)
   # PDB format v3.3
-  nxyz <- 15 * natm
+  nxyz <- ncol(pdb$atom) * natm
   #  nxyz <- 13 * natm
   nres <- length(coords)/(nxyz)
-  dim(coords) <- c(15, natm, nres)
+  dim(coords) <- c(ncol(pdb$atom), natm, nres)
 #  dim(coords) <- c(13, natm, nres)
   
   dimnames(coords) = list(atom = colnames(pdb$atom), type = atom.names,

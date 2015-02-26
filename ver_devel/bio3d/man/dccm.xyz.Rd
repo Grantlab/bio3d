@@ -94,7 +94,7 @@ pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 pdb <- read.pdb(pdbfile)
 
 ## select residues 24 to 27 and 85 to 90 in both chains
-inds <- atom.select(pdb,"///24:27,85:90///CA/")
+inds <- atom.select(pdb, resno=c(24:27,85:90), elety='CA')
 
 ## lsq fit of trj on pdb
 xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
@@ -107,7 +107,7 @@ plot(cij)
 
 ## Or
 library(lattice)
-contourplot(cij, region = TRUE, labels=F, col="gray40",
+contourplot(cij, region = TRUE, labels=FALSE, col="gray40",
             at=c(-1, -0.75, -0.5, -0.25, 0.25, 0.5, 0.75, 1),
             xlab="Residue No.", ylab="Residue No.",
             main="DCCM: dynamic cross-correlation map")

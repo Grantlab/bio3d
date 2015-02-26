@@ -1,4 +1,4 @@
-## Useful for checking the connectivity in a pdbs pdbs object
+## Useful for checking the connectivity in a pdb(s) object
 
 "inspect.connectivity" <- function(pdbs, cut=4.) {
   xyz <- NULL; ids <- NULL;
@@ -18,6 +18,11 @@
   }
   else {
     stop("Please provide coordinates as a \n 'pdbs', 'pdb', or xyz matrix format")
+  }
+
+  if(length(xyz)<6) {
+    warning("Insufficient C-alpha atoms in structure to determine connectivity")
+    return(FALSE)
   }
 
   is.connected <- function(xyz) {

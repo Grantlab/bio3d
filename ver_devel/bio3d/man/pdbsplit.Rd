@@ -7,7 +7,7 @@
 }
 \usage{
 pdbsplit(pdb.files, ids = NULL, path = "split_chain", overwrite=TRUE,
-         verbose = FALSE, ncore = 1, \dots)
+         verbose = FALSE, mk4=FALSE, ncore = 1, \dots)
 }
 \arguments{
   \item{pdb.files}{ a character vector of PDB file names. }
@@ -20,6 +20,8 @@ pdbsplit(pdb.files, ids = NULL, path = "split_chain", overwrite=TRUE,
     read and written if split files already exist. }
   \item{verbose}{ logical, if TRUE details of the PDB header and
     chain selections are printed. }
+  \item{mk4}{ logical, if TRUE output filenames will use only the first
+    four characters of the input filename (see \code{basename.pdb} for details).  }   
   \item{ncore}{ number of CPU cores used for the calculation.
     \code{ncore>1} requires package \sQuote{parallel} be installed. }
   \item{...}{ additional arguments to \code{read.pdb}. Useful e.g. for

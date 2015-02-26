@@ -71,9 +71,7 @@
 
   ## check for missing masses before we start calculating
   if(any(pdbs$ali=="X") & mass==TRUE) {
-    mat.file <- system.file(paste("matrices/aa_mass.mat",sep=""), package="bio3d")
-    mat <- read.table(mat.file)
-    resnames <- c(row.names(mat), names(am.args$mass.custom))
+    resnames <- c(bio3d::aa.table$aa3, names(am.args$mass.custom))
     
     ops.inds <- which(pdbs$ali=="X", arr.ind=TRUE)
     unknowns <- c()
@@ -89,8 +87,9 @@
     if(length(unknowns)>0) {
       options(warn=prev.warn)
       unknowns <- paste(unique(unknowns), collapse=", ")
-      stop(paste("Unknown aminoacid identifier(s):", unknowns,
-                 "\n  Use 'mass=FALSE' or 'mass.custom=list(UNK=156.2)'"))
+      stop(paste0("Unknown mass for amino acid(s): ", unknowns,
+                  "\n  Provide mass with argument 'mass.custom=list(", unknowns[1], "=100.00)',", 
+                  "\n  or ommit mass weighting with argument 'mass=FALSE'."))
     }
   }
 
@@ -300,33 +299,6 @@
   return(round(mat, 4))
 }
 
-.buildDummyPdb <- function(pdb=NULL, xyz=NULL,  elety=NULL, resno=NULL, chain=NULL, resid=NULL) {
-
-  natoms <- length(resno)
-  tmp.pdb <- NULL
-
-  tmp.pdb$atom <- data.frame(cbind(rep("ATOM", natoms),
-                                   seq(1, natoms),
-                                   elety,
-                                   NA,
-                                   resid,
-                                   chain,
-                                   resno,
-                                   NA,
-                                   round(matrix(xyz, ncol=3, byrow=T), 3),
-                                   NA, NA, NA, NA, NA),
-                             stringsAsFactors=FALSE)
-  
-  colnames(tmp.pdb$atom) <- c("type", "eleno", "elety", "alt", "resid",
-                              "chain", "resno", "insert",
-                              "x", "y", "z", "o", "b", "segid", "elesy", "charge")
-  
-  tmp.pdb$xyz    <- as.xyz(xyz)
-  ca.inds        <- atom.select(tmp.pdb, "calpha", verbose=FALSE)
-  tmp.pdb$calpha <- seq(1, natoms) %in% ca.inds$atom
-  class(tmp.pdb) <- "pdb"
-  return(tmp.pdb)
-}
 
 ## Calculate 'aligned' normal modes of structure i in pdbs
 .calcAlnModes <- function(i, pdbs, xyz, gaps.res,
@@ -363,8 +335,8 @@
   sequ  <- resid
   
   ## Build a dummy PDB to use with function nma.pdb()
-  pdb.in <- .buildDummyPdb(pdb=NULL, xyz=tmp.xyz, elety=rep("CA", length(resno)),
-                           resno=resno, chain=chain, resid=resid)
+  pdb.in <- as.pdb.default(xyz=tmp.xyz, elety="CA", 
+                           resno=resno, chain=chain, resid=resid, verbose=FALSE)
 
   if(!is.null(outpath)) {
     fname <- file.path(outpath, basename(pdbs$id[i]))

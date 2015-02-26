@@ -1,5 +1,5 @@
 filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL, 
-          cutoff.sims = NULL, collapse = TRUE, extra.filter = NULL, ...) {
+                        cutoff.sims = NULL, collapse = TRUE, extra.filter = NULL, ...) {
 
    # check cij format
    cij <- x
@@ -51,7 +51,10 @@ filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL
       ncij <- tapply(1:dim(cij)[3L], fac, function(i) {
          
          # contact map
-         cm <- cmap(xyz[i, ], ...) 
+         if(nlevels(fac) > 1)
+             cm <- cmap(xyz[i, ], ...) 
+         else
+             cm <- cmap(xyz, ...) 
    
          cij.min = apply(abs(pcij[, i]), 1, min)
          cij.max = apply(abs(pcij[, i]), 1, max)

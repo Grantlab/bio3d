@@ -48,6 +48,8 @@ pc.xray <- pca(pdbs)
 # Plot results (conformer plots & scree plot)
 plot(pc.xray, col=annotation[, "color"])
 
+detach(transducin)
+
 }
 \keyword{ utilities }
 \keyword{ multivariate }

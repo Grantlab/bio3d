@@ -27,8 +27,12 @@ motif.find(motif, sequence)
 \seealso{ \code{\link{regexpr}}, \code{\link{read.fasta}}, \code{\link{pdbseq}} 
 }
 \examples{
+\donttest{
+# PDB server connection required - testing excluded
+
 aa.seq <- pdbseq( read.pdb( get.pdb("4q21", URLonly=TRUE) ) )
 motif = c("G....GKS")
 motif.find(motif, aa.seq)
+}
 }
 \keyword{ utilities }

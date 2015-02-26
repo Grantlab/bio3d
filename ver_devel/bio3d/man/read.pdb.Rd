@@ -8,8 +8,10 @@
 }
 \usage{
 read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
-         rm.alt = TRUE, verbose = TRUE)
-\method{print}{pdb}(x, \dots)
+         rm.alt = TRUE, ATOM.only = FALSE, verbose = TRUE)
+
+\method{print}{pdb}(x, printseq=TRUE, \dots)
+
 \method{summary}{pdb}(object, printseq=FALSE, \dots)
 }
 \arguments{
@@ -23,6 +25,9 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
     models in multi-model files and their coordinates returned. }
   \item{rm.insert}{ logical, if TRUE PDB insert records are ignored. }
   \item{rm.alt}{ logical, if TRUE PDB alternate records are ignored. }
+  \item{ATOM.only}{ logical, if TRUE only ATOM/HETATM records are stored.
+    Useful for speed enhancements with large files where secondary structure, 
+    biological unit and other remark records are not required. }
   \item{verbose}{ print details of the reading process. }
   \item{x}{ a PDB structure object obtained from
     \code{\link{read.pdb}}.  }
@@ -50,10 +55,13 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
   \item{sheet }{ \sQuote{start}, \sQuote{end} and \sQuote{length} of E
     type sse, where start and end are residue numbers \dQuote{resno}. }
   \item{seqres }{ sequence from SEQRES field. }
-  \item{xyz }{ a numeric vector (or matrix for multi-model PDB files) of 
-     ATOM and HETATM coordinate data. }
+  \item{xyz }{ a numeric matrix of class \code{"xyz"} containing the
+    ATOM and HETATM coordinate data. }
   \item{calpha }{ logical vector with length equal to \code{nrow(atom)}
     with TRUE values indicating a C-alpha \dQuote{elety}. }
+  \item{remark }{ a list object containing information taken from 'REMARK'
+    records of a \code{"pdb"}. It can be used for building biological units
+    (See \code{\link{biounit}}). }
   \item{call }{ the matched call. }
 }
 \references{
@@ -80,15 +88,20 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
   Temperature factor \dQuote{b}.
   See examples for further details.
 }
-\seealso{ \code{\link{atom.select}}, \code{\link{write.pdb}},
-  \code{\link{read.dcd}}, \code{\link{read.fasta.pdb}},
-  \code{\link{read.fasta}} }
+\seealso{
+  \code{\link{atom.select}}, \code{\link{write.pdb}},
+  \code{\link{trim.pdb}}, \code{\link{cat.pdb}}, 
+  \code{\link{read.prmtop}}, \code{\link{as.pdb}},
+  \code{\link{read.dcd}}, \code{\link{read.ncdf}}, 
+  \code{\link{read.fasta.pdb}}, \code{\link{read.fasta}}, 
+  \code{\link{biounit}}
+}
 \examples{
 ## Read a PDB file from the RCSB online database
-pdb <- read.pdb("4q21")
+#pdb <- read.pdb("4q21")
 
 ## Read a PDB file from those included with the package
-###pdb <- read.pdb( system.file("examples/1bg2.pdb", package="bio3d") )
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 ## Print a brief composition summary
 pdb

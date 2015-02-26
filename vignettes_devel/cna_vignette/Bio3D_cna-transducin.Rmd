@@ -175,7 +175,7 @@ cijs0 <- dccm(modes)
 
 Below we perform optional filtering and averaging per state of the individual structure cross-correlation matrices.
 In this example, we also utilize a cutoff for correlation (0.35 in this example) and a cutoff for C-alpha distance (10 angstrom) (See `help(filter.dccm)` and main text for details).
-```{r filter_dccm, cache=TRUE, message=FALSE}
+```{r filter.dccm, cache=TRUE, message=FALSE}
 cij <- filter.dccm(cijs0, xyz=pdbs, fac=annotation[, "state3"], cutoff.cij=0.35, 
                 dcut=10, scut=0, pcut=0.75, ncore=8)
 ```

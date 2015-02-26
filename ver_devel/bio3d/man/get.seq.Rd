@@ -45,12 +45,12 @@ get.seq(ids, outfile = "seqs.fasta", db = "nr")
 }
 \examples{
 \dontrun{
-pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
-blast <- blast.pdb( pdbseq(pdb), database = "swissprot" )
-ids <- plot.blast( blast )
-seq <- get.seq(ids$gi.id, outfile=tempfile())
-seq$id[1:10]
-seq$ali[1:10,]
+## Sequence identifiers (GI or PDB codes e.g. from blast.pdb etc.)
+get.seq( c("P01112", "Q61411", "P20171") )
+
+#aa <-get.seq( c("4q21", "5p21") )
+#aa$id
+#aa$ali
 }
 }
 \keyword{ IO }

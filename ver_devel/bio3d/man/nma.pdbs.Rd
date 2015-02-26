@@ -3,7 +3,8 @@
 \alias{print.enma}
 \title{ Ensemble Normal Mode Analysis }
 \description{
-  Perform NMA on an ensemble of aligned protein structures.
+  Perform normal mode analysis (NMA) on an ensemble of aligned protein
+  structures.
 }
 \usage{
 \method{nma}{pdbs}(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
@@ -27,20 +28,20 @@
     structures). Thus, gap positions are removed from output. }
   \item{varweight}{ logical, if TRUE perform weighing of the pair force
     constants. Alternatively, provide a NxN matrix containing the
-    weights. See function \code{var.xyz}. }
+    weights. See function \code{\link{var.xyz}}. }
   \item{outpath}{ character string specifing the output directory to
     which the PDB structures should be written. }
   \item{ncore }{ number of CPU cores used to do the calculation.
     \code{ncore>1} requires package \sQuote{parallel} installed. }
   
   \item{x}{ an \code{enma} object obtained from \code{\link{nma.pdbs}}. }
-  \item{...}{ additional arguments to \code{nma}, \code{aa2mass}, and
-    \code{print}. }
+  \item{...}{ additional arguments to \code{nma}, \code{\link{aa2mass}}, and
+    \code{\link{print}}. }
 }
 \details{
   This function performs normal mode analysis (NMA) on a set of aligned
-  protein structures obtained with function \code{read.fasta.pdb} or
-  \code{pdbaln}. The main purpose is to provide aligned atomic
+  protein structures obtained with function \code{\link{read.fasta.pdb}} or
+  \code{\link{pdbaln}}. The main purpose is to provide aligned atomic
   fluctuations and mode vectors in an automated fashion. 
 
   The normal modes are calculated on the full structures as provided 
@@ -55,14 +56,15 @@
  }
 \value{
   Returns an \sQuote{enma} object with the following components:
-  \item{fluctuations }{ a numeric matrix with aligned atomic
-    fluctuations. }
-  \item{rmsip}{ a numeric matrix of RMSIP values between all pairs
-    of mode subsets. }
+  \item{fluctuations }{ a numeric matrix containing aligned atomic
+    fluctuations with one row per input structure. }
+  \item{rmsip}{ a numeric matrix of pair wise RMSIP values (only the ten
+    lowest frequency modes are included in the calculation). }
   \item{U.subspace }{ a three-dimensional array with aligned
     eigenvectors  (corresponding to the subspace defined by the first N
     non-trivial eigenvectors (\sQuote{U}) of the \sQuote{nma} object). }
-  \item{L}{ numeric matrix containing the raw eigenvalues. }
+  \item{L}{ numeric matrix containing the raw eigenvalues with one row
+    per input structure. }
   \item{xyz }{ an object of class \sQuote{xyz} containing the Cartesian
     coordinates in which the calculation was performed. Coordinates are
     superimposed to the first structure of the \code{pdbs} object when
@@ -71,6 +73,7 @@
     structure. }
 }
 \references{
+  Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Lars Skjaerven }
@@ -91,8 +94,8 @@
 }
 \examples{
 \donttest{
+# Needs MUSCLE installed - testing excluded
 
-## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
 if(check.utility("muscle")) {
 
 ## Fetch PDB files and split to chain A only PDB files

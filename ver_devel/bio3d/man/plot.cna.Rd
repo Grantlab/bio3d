@@ -70,6 +70,8 @@
   \code{\link[igraph:plot.communities]{plot.communities}},
   \code{\link[igraph:igraph.plotting]{igraph.plotting}} }
 \examples{
+\donttest{
+# PDB server connection required - testing excluded
 
 require(igraph)
 
@@ -81,13 +83,14 @@ net <- cna(cij, cutoff.cij=0.2)
 
 # Plot coarse grain network based on dynamically coupled communities
 xy <- plot.cna(net)
-#plot.dccm2(cij, margin.segments=net$communities$membership)
+#plot.dccm(cij, margin.segments=net$communities$membership)
 
 # Chose a different PDB informed layout for plot
 plot.cna(net, pdb)
 
 # Play with plot layout and colors...
 plot.cna(net, layout=layout.mds(net$community.network), col=c("blue","green") ) 
+}
 
 \dontrun{
 # Plot full residue network colored by communities - will be slow due to number of edges!!

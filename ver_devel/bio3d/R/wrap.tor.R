@@ -11,8 +11,12 @@ function(data,wrapav=TRUE,avestruc=NULL){
   
   if(!wrapav && is.null(avestruc))
     stop("Average structure is missing")
-  if(is.vector(data))
+  if(is.vector(data)) {
     data <- matrix(data,ncol=1)
+    return.vec = TRUE
+  } else {
+    return.vec = FALSE
+  }
 
   
   avestruc.i<-avestruc
@@ -42,6 +46,7 @@ function(data,wrapav=TRUE,avestruc=NULL){
     }
     datawrap <- cbind(datawrap,struc)
   }
+  if(return.vec) datawrap = as.vector(datawrap)
+
   return(datawrap)
 }
-

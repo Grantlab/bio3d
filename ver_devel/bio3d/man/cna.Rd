@@ -107,6 +107,8 @@
    \code{\link[igraph:fastgreedy.community]{fastgreedy.community}}
 }
 \examples{
+\donttest{
+# PDB server connection required - testing excluded
 
 ##-- Build a correlation network from NMA results
 ## Read example PDB
@@ -124,7 +126,6 @@ cij <- dccm(modes)
 net <- cna(cij, cutoff.cij=0.35)
 #plot(net, pdb)
 
-\donttest{
 ## within VMD set 'coloring method' to 'Chain' and 'Drawing method' to Tube
 #view.cna(net, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
 
@@ -138,7 +139,7 @@ pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 pdb <- read.pdb(pdbfile)
 
 ## select residues 24 to 27 and 85 to 90 in both chains
-inds <- atom.select(pdb,"///24:27,85:90///CA/")
+inds <- atom.select(pdb, resno=c(24:27,85:90), elety='CA')
 
 ## lsq fit of trj on pdb
 xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
@@ -151,7 +152,7 @@ net <- cna(cij)
 
 # Plot coarse grained network based on dynamically coupled communities
 xy <- plot.cna(net)
-plot.dccm2(cij, margin.segments=net$communities$membership)
+plot.dccm(cij, margin.segments=net$communities$membership)
 
 
 ##-- Begin to examine network structure - see CNA vignette for more details

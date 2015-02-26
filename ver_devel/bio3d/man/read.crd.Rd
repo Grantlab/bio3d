@@ -1,63 +1,59 @@
 \name{read.crd}
 \alias{read.crd}
-\title{ Read CRD File }
+\title{ Read Coordinate Data from Amber or Charmm }
 \description{
-  Read a CHARMM CARD (CRD) coordinate file.
+  Read a CHARMM CARD (CRD) or AMBER coordinate file.
 }
 \usage{
-read.crd(file, verbose = TRUE)
+read.crd(file, ...)
 }
 \arguments{
-  \item{file}{ the name of the CRD file to be read.  }
-  \item{verbose}{ print details of the reading process. }
+  \item{file}{ the name of the coordinate file to be read.  }
+  \item{\dots}{ additional arguments passed to the methods
+    \code{read.crd.charmm} or \code{read.crd.amber}. }
 }
 \details{
-  See the function \code{\link{read.pdb}} for more details.
+  \code{read.crd} is a generic function calling the corresponding function
+  determined by the class of the input argument \code{x}. Use
+  \code{methods("read.crd")} to get all the methods for \code{read.crd}
+  generic:
+
+  \code{\link{read.crd.charmm}} will be used for file extension
+  \sQuote{.crd}.
+
+  \code{\link{read.crd.amber}} will be used for file extension
+  \sQuote{.rst} or \sQuote{.inpcrd}.
+
+  See examples for each corresponding function for more details.
 }
 \value{
-  Returns a list with the following components:
-  \item{atom}{ a character matrix containing all atomic coordinate data,
-  with a row per atom and a column per record type.  See below for details
-  of the record type naming convention (useful for accessing columns). }
-  \item{xyz }{ a numeric vector of coordinate data. }
-  \item{calpha }{ logical vector with length equal to \code{nrow(atom)}
-    with TRUE values indicating a C-alpha \dQuote{elety}. }
+  See the \sQuote{value} section for the corresponding functions for
+  more details.
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
-
-  For a description of CHARMM CARD (CRD) format see:\cr
-  \url{http://www.charmmtutorial.org/index.php/CHARMM:The_Basics}.
 }
-\author{ Barry Grant }
-\note{
-  Similar to the output of \code{\link{read.pdb}}, the column names of
-  \code{atom} can be used as a convenient means of data access, namely:
-  Atom serial number \dQuote{eleno},
-  Atom type \dQuote{elety},
-  Alternate location indicator \dQuote{alt},
-  Residue name \dQuote{resid},
-  Residue sequence number \dQuote{resno},
-  Code for insertion of residues \dQuote{insert},
-  Orthogonal coordinates \dQuote{x},
-  Orthogonal coordinates \dQuote{y},
-  Orthogonal coordinates \dQuote{z},
-  Weighting factor \dQuote{b}.
-  See examples for further details.
-}
-\seealso{ \code{\link{write.crd}}, \code{\link{read.pdb}},
-  \code{\link{atom.select}}, \code{\link{write.pdb}},
-  \code{\link{read.dcd}}, \code{\link{read.fasta.pdb}},
-  \code{\link{read.fasta}} }
+\author{ Barry Grant and Lars Skjaerven}
+\seealso{
+  \code{\link{read.crd.amber}}, \code{\link{read.crd.charmm}},
+  \code{\link{write.crd}}, \code{\link{read.prmtop}},
+  \code{\link{read.pdb}}, \code{\link{write.pdb}},
+  \code{\link{atom.select}},
+  \code{\link{read.dcd}}, \code{\link{read.ncdf}} }
 \examples{
 \dontrun{
- pdb <- read.pdb("1bg2")
- crdfile <- tempfile()
- write.crd(pdb, file=crdfile)
- crd <- read.crd(crdfile)
- ca.inds <- which(crd$calpha)
- crd$atom[ca.inds[1:20],c("x","y","z")]
-# write.pdb(crd, file=tempfile())
+## Read a PRMTOP file
+prmtop <- read.prmtop("prot_solvated.prmtop")
+print(prmtop)
+
+## Read a Amber CRD file
+crds <- read.crd("prot_solvated.inpcrd")
+
+## Atom selection
+ca.inds <- atom.select(prmtop, "calpha")
+
+## Convert to PDB format
+pdb <- as.pdb(prmtop, crds, inds=ca.inds)
 }
 }
 \keyword{ IO }

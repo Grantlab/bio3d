@@ -1,11 +1,20 @@
 \name{cmap}
 \alias{cmap}
+\alias{cmap.default}
+\alias{cmap.xyz}
+\alias{cmap.pdb}
 \title{ Contact Map }
 \description{
   Construct a Contact Map for Given Protein Structure(s).}
 \usage{
-cmap(xyz, grpby=NULL, dcut = 4, scut = 3, pcut=1, mask.lower = TRUE,
-         ncore=1, nseg.scale=1)
+cmap(\dots)
+
+\method{cmap}{default}(\dots)
+
+\method{cmap}{xyz}(xyz, grpby = NULL, dcut = 4, scut = 3, pcut=1,
+            mask.lower = TRUE, ncore=1, nseg.scale=1, \dots)
+
+\method{cmap}{pdb}(pdb, inds = NULL, verbose = FALSE, \dots)
 }
 \arguments{
   \item{xyz}{ numeric vector of xyz coordinates or a numeric matrix of
@@ -13,9 +22,9 @@ cmap(xyz, grpby=NULL, dcut = 4, scut = 3, pcut=1, mask.lower = TRUE,
   \item{grpby}{ a vector counting connective duplicated elements that
     indicate the elements of \code{xyz} that should be considered as a group
     (e.g. atoms from a particular residue). }  
-  \item{dcut}{ a cuttoff distance value below which atoms are considered
+  \item{dcut}{ a cutoff distance value below which atoms are considered
     in contact. }
-  \item{scut}{ a cuttoff neighbour value which has the effect of
+  \item{scut}{ a cutoff neighbour value which has the effect of
     excluding atoms that are sequentially within this value. }
   \item{pcut}{ a cutoff probability of structures/frames showing a contact,
     above which atoms are considered in contact with respect to the ensemble}
@@ -25,10 +34,22 @@ cmap(xyz, grpby=NULL, dcut = 4, scut = 3, pcut=1, mask.lower = TRUE,
     \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{nseg.scale }{ split input data into specified number of segments
     prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
+  \item{pdb}{  a structure object of class \code{"pdb"}, obtained from
+    \code{\link{read.pdb}}. }
+  \item{inds}{ a list object of ATOM and XYZ indices as obtained from
+    \code{\link{atom.select}}. }
+  \item{verbose}{ logical, if TRUE details of the selection are
+    printed. }
+  \item{\dots}{ arguments passed to and from functions. }
 }
 \details{
   A contact map is a simplified distance matrix. See the distance matrix
   function \code{\link{dm}} for further details.
+  
+  Function \code{"cmap.pdb"} is a wrapper for \code{"cmap.xyz"}
+  which selects all \sQuote{notwater} atoms and calculates the contact
+  matrix grouped by residue number.
+
 }
 \value{
   Returns a N by N numeric matrix composed of zeros and ones, where
@@ -50,7 +71,7 @@ inds <- atom.select(pdb, "calpha")
 
 ## Reference contact map
 ref.cont <- cmap( pdb$xyz[inds$xyz], dcut=6, scut=3 )
-plot.dmat(ref.cont)
+plot.cmap(ref.cont)
 
 \dontrun{
 ##- Read Traj file

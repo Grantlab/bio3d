@@ -34,9 +34,13 @@ chain.pdb(pdb, ca.dist = 4, blank = "X", rtn.vec = TRUE)
 \seealso{ \code{\link{read.pdb}}, \code{\link{atom.select}}, \code{\link{trim.pdb}},
   \code{\link{write.pdb}} }
 \examples{
+\donttest{
+# PDB server connection required - testing excluded
+
 full.pdb <- read.pdb( get.pdb("5p21", URLonly=TRUE) )
 inds <- atom.select(full.pdb, resno=c(10:20,30:33))
 cut.pdb <- trim.pdb(full.pdb, inds)
 chain.pdb(cut.pdb)
+}
 }
 \keyword{ utilities }

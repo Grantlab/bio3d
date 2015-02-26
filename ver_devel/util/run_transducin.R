@@ -21,6 +21,11 @@ xyz <- fit.xyz(pdbs$xyz[1,], pdbs, core$c1A.xyz, core$c1A.xyz)
 pdbs$xyz <- xyz
 pdbs$id <- ids
 rownames(pdbs$ali) <- ids
+rownames(pdbs$xyz) <- ids
+rownames(pdbs$resno) <- ids
+rownames(pdbs$resid) <- ids
+rownames(pdbs$b) <- ids
+rownames(pdbs$chain) <- ids
 
 expect_identical(annotation, transducin$annotation)
 expect_equivalent(pdbs$ali, transducin$pdbs$ali)

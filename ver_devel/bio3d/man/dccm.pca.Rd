@@ -5,12 +5,13 @@
   Calculate the cross-correlation matrix from principal component analysis (PCA).
 }
 \usage{
-\method{dccm}{pca}(x, nmodes = NULL, ncore = NULL, \dots)
+\method{dccm}{pca}(x, pc = NULL, ncore = NULL, \dots)
 }
 \arguments{
   \item{x}{ an object of class \code{pca} as obtained from
     function \code{pca.xyz}. }
-  \item{nmodes}{ numerical, number of modes to consider. }
+  \item{pc}{ numerical, indices of PCs to be included in the calculation.
+    If all negative, PCs complementary to \code{abs(pc)} are included. }
   \item{ncore }{ number of CPU cores used to do the calculation.
     By default (\code{ncore = NULL}), use all available cores detected. }
   \item{\dots}{ additional arguments to \code{cov2dccm}. }
@@ -20,8 +21,8 @@
   component analysis (PCA) obtained from \code{pca.xyz} of a set of protein
   structures. It is an alternative way to calculate correlation in addition
   to the conventional way from xyz coordinates directly. But, in this new 
-  way one can freely chooses the number of modes to be included in the 
-  calculation (i.e. filter out fast modes).
+  way one can freely chooses the PCs to be included in the 
+  calculation (e.g. filter PCs with small eigenvalues).
 }
 \value{
   Returns a cross-correlation matrix.
@@ -42,7 +43,7 @@ pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 pdb <- read.pdb(pdbfile)
 
 ## Select residues 24 to 27 and 85 to 90 in both chains
-inds <- atom.select(pdb,"///24:27,85:90///CA/")
+inds <- atom.select(pdb, resno=c(24:27,85:90), elety='CA')
 
 ## lsq fit of trj on pdb
 xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
@@ -50,8 +51,14 @@ xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
 ## Do PCA
 pca <- pca.xyz(xyz)
 
-## DCCM
-cij <- dccm(pca, nmodes=10)
+## DCCM: only use first 10 PCs
+cij <- dccm(pca, pc = c(1:10))
+
+## Plot DCCM
+plot(cij)
+
+## DCCM: remove first 10 PCs
+cij <- dccm(pca, pc = -c(1:10))
 
 ## Plot DCCM
 plot(cij)

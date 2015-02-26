@@ -51,6 +51,9 @@ torsion.pdb(pdb)
 \seealso{ \code{\link{torsion.xyz}}, \code{\link{read.pdb}},
   \code{\link{dssp}}, \code{\link{stride}}. }
 \examples{
+\donttest{
+# PDB server connection required - testing excluded
+
 ##-- PDB torsion analysis
 pdb <- read.pdb( "1bg2" )
 tor <- torsion.pdb(pdb)
@@ -60,10 +63,9 @@ head(tor$tbl)
 plot(tor$phi, tor$psi)
 
 ## torsion analysis of a single coordinate vector 
-inds <- atom.select(pdb,"calpha")
-tor.ca <- torsion.xyz(pdb$xyz[inds$xyz], atm.inc=1)
+#inds <- atom.select(pdb,"calpha")
+#tor.ca <- torsion.xyz(pdb$xyz[inds$xyz], atm.inc=1)
 
-\dontrun{
 ##-- Compare two PDBs to highlight interesting residues
 aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
 m <- read.fasta.pdb(aln)

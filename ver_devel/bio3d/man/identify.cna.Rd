@@ -39,25 +39,12 @@
 \seealso{ \code{\link{plot.cna}}, \code{\link{identify}}, \code{\link[igraph:plot.igraph]{plot.igraph}}, \code{\link[igraph:plot.communities]{plot.communities}}, \code{\link[igraph:igraph.plotting]{igraph.plotting}} }
 \examples{
 \dontrun{
-# Read example trajectory file
-trtfile <- system.file("examples/hivp.dcd", package="bio3d")
-trj <- read.dcd(trtfile)
+
+attach(hivp)
 
 # Read the starting PDB file to determine atom correspondence
 pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 pdb <- read.pdb(pdbfile)
-
-# select residues 24 to 27 and 85 to 90 in both chains
-inds <- atom.select(pdb,"///24:27,85:90///CA/")
-
-# lsq fit of trj on pdb
-xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
-
-# calculate dynamical cross-correlation matrix
-cij <- dccm(xyz)
-
-# Build, and betweeness cluster, a network graph 
-net <- cna(cij)
 
 # Plot the network
 xy <- plot.cna(net)
@@ -67,6 +54,9 @@ d <- identify.cna(xy, cna=net)
 
 # Right click to end the function...
 ## d <- identify(xy, summary(net)$members)
+
+detach(hivp)
+
 }
 }
 \keyword{ utility }

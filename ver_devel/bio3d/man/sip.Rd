@@ -9,8 +9,11 @@
 }
 \usage{
 sip(...)
+
 \method{sip}{nma}(a, b, ...)
+
 \method{sip}{enma}(enma, ncore=NULL, ...)
+
 \method{sip}{default}(v, w, ...)
 }
 \arguments{
@@ -35,6 +38,7 @@ sip(...)
   Returns the similarity coefficient(s).
 }
 \references{
+  Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.   
   Fuglebakk, E. et al. (2013) \emph{JCTC} \bold{9}, 5618--5628.
 }
@@ -45,7 +49,7 @@ sip(...)
 }
 \examples{
 
-pdb <- read.pdb("1hel")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 a <- nma(pdb)
 b <- nma(pdb, ff="anm")
 

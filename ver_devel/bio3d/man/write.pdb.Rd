@@ -79,6 +79,8 @@ append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE, print.segid = FAL
 \seealso{ \code{\link{read.pdb}}, \code{\link{read.dcd}},
   \code{\link{read.fasta.pdb}}, \code{\link{read.fasta}} }
 \examples{
+\donttest{
+# PDB server connection required - testing excluded
 
 # Read a PDB file
 pdb <- read.pdb( "1bg2" )
@@ -92,6 +94,6 @@ outfile = file.path(tempdir(), "eg.pdb")
 write.pdb(pdb=pdb, resno = nums, file = outfile)
 
 invisible( cat("\nSee the output file:", outfile, sep = "\n") )
-
+}
 }
 \keyword{ IO }

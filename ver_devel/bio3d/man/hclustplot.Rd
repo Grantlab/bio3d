@@ -56,10 +56,11 @@ hclustplot(hc, k = NULL, h = NULL, colors = NULL, labels = NULL,
   \code{\link{hclust}}, \code{\link{cutree}}.  }
 \examples{
 \donttest{
+# Redundant testing excluded
 
 attach(transducin)
 
-##- perform clustering
+##- perform RMSD clustering
 rd <- rmsd(pdbs, fit=TRUE)
 hc <- hclust(as.dist(rd))
 
@@ -67,7 +68,9 @@ hc <- hclust(as.dist(rd))
 hclustplot(hc, k=3)
 
 ##- draw dendrogram with manual clustering annotation
-hclustplot(hc, colors=annotation[, "color"], labels=pdbs$id)
+#hclustplot(hc, colors=annotation[, "color"], labels=pdbs$id)
+
+detach(transducin)
 
 }
 }

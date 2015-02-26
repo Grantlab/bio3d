@@ -48,7 +48,6 @@ torsion.xyz(xyz, atm.inc = 4)
   \code{\link{wrap.tor}}, \code{\link{read.pdb}}, \code{\link{read.dcd}}.
 }
 \examples{
-\donttest{
 
 ## Calculate torsions for cis & trans conformers
 xyz <- rbind(c(0,-0.5,0,1,0,0,1,1,0,0,1.5,0),
@@ -67,6 +66,9 @@ plot(range(xyz), range(xyz), xlab="", ylab="", typ="n", axes=FALSE)
   text( t(apply(xyz, 1, function(x){
     apply(matrix(x, ncol=3, byrow=TRUE)[c(2,3),], 2, mean) })),
        labels=c(0,180), adj=-0.5, col="red")
+
+\donttest{
+# PDB server connection required - testing excluded
 
 ##-- PDB torsion analysis
 pdb <- read.pdb("1bg2")

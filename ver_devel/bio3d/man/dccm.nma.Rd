@@ -39,10 +39,9 @@
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{nma}}, \code{\link{plot.dccm}} }
 \examples{
-\donttest{
 
 ## Fetch stucture
-pdb <- read.pdb("1hel")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 ## Calculate normal modes
 modes <- nma(pdb)
@@ -53,6 +52,5 @@ cm <- dccm.nma(modes)
 ## Plot correlation map
 plot(cm, sse = pdb, contour = FALSE, col.regions = bwr.colors(20),
      at = seq(-1, 1, 0.1))
-}
 }
 \keyword{ analysis }

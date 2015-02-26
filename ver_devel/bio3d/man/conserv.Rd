@@ -50,7 +50,7 @@ score 1 and diverse columns score 0.
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
   Grant, B.J. et al. (2007) \emph{J. Mol. Biol.} \bold{368}, 1231--1248.
   
- }
+}
 \author{ Barry Grant }
 \note{
   Each of these conservation scores has particular strengths and

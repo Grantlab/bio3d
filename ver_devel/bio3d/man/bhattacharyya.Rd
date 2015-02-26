@@ -12,10 +12,15 @@
 }
 \usage{
 bhattacharyya(...)
+
 \method{bhattacharyya}{enma}(enma, covs=NULL, ncore=NULL, ...)
+
 \method{bhattacharyya}{array}(covs, ncore=NULL, ...)
+
 \method{bhattacharyya}{matrix}(a, b, q=90, n=NULL, ...)
+
 \method{bhattacharyya}{nma}(...)
+
 \method{bhattacharyya}{pca}(...)
 }
 \arguments{
@@ -40,6 +45,7 @@ bhattacharyya(...)
   Returns the similarity coefficient(s).
 }
 \references{
+  Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.   
   Fuglebakk, E. et al. (2013) \emph{JCTC} \bold{9}, 5618--5628.
 }

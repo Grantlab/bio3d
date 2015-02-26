@@ -1,7 +1,7 @@
 ---
 title: "Ensemble NMA of *E.coli* DHFR structures"
 author: "Lars Skjaerven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant"
-date: "October 1, 2014"
+date: "February 24, 2015"
 output:
   pdf_document:
     fig_caption: yes
@@ -19,14 +19,14 @@ documentclass: article
 fontsize: 11pt
 geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
 linkcolor: black
-bibliography: Bio3D_nma-dhfr-partI.bib
+bibliography: bio3d.bib
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 ---
 
 # Background {.unnumbered}
 Bio3D[^1] is an R package that provides interactive tools for structural bioinformatics. The primary focus of Bio3D is the analysis of bimolecular structure, sequence and simulation data [@grant06].
 
-Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities (see also the [**NMA Vignette**](http://thegrantlab.org/bio3d/tutorials)). These include a unique collection of multiple elastic network model force-fields, automated ensemble analysis methods, and variance weighted NMA. Here we provide an in-depth demonstration of ensemble NMA with working code that comprise complete executable examples[^2].
+Normal mode analysis (NMA) is one of the major simulation techniques used to probe large-scale motions in biomolecules. Typical application is for the prediction of functional motions in proteins. Version 2.0 of the Bio3D package now includes extensive NMA facilities [@skjaerven15]. These include a unique collection of multiple elastic network model force-fields, automated ensemble analysis methods, and variance weighted NMA (see also the [**NMA Vignette**](http://thegrantlab.org/bio3d/tutorials)). Here we provide an in-depth demonstration of ensemble NMA with working code that comprise complete executable examples[^2].
 
 ## Requirements {.unnumbered}
 Detailed instructions for obtaining and installing the Bio3D package on various platforms can be found in the [**Installing Bio3D Vignette**](http://thegrantlab.org/bio3d/tutorials) available both on-line and from within the Bio3D package. In addition to Bio3D the _MUSCLE_ multiple sequence alignment program (available from the [muscle home page](http://www.drive5.com/muscle/) must be installed on your system and in the search path for executables. Please see the installation vignette for further details.
@@ -106,25 +106,25 @@ At this point the *pdbs.all* object contains all identified 101 structures. This
 structures with missing residues, and/or multiple structurally redundant conformers. For our
 subsequent NMA missing in-structure residues might bias the calculation, and redundant structures
 can be useful to omit to reduce the computational load. Below we inspect the connectivity of the
-PDB structures with a function call to **inspect.connectivity()**, and **pdbs.filter()** to
+PDB structures with a function call to **inspect.connectivity()**, and **trim.pdbs()** to
 filter out those structures from our *pdbs.all* object. Similarly, we omit structures that are
-conformationally redundant to reduce the computational load with function **rmsd.filter()**:
+conformationally redundant to reduce the computational load with function **filter.rmsd()**:
 
 ```{r example1e, cache=TRUE, warning=FALSE, results='hide'}
 # remove structures with missing residues
 conn <- inspect.connectivity(pdbs.all, cut=4.05)
-pdbs <- pdbs.filter(pdbs.all, row.inds=which(conn))
+pdbs <- trim.pdbs(pdbs.all, row.inds=which(conn))
 
 # which structures are omitted
 which(!conn)
 
 # remove conformational redundant structures
-rd <- rmsd.filter(pdbs$xyz, cutoff=0.1, fit=TRUE)
-pdbs <- pdbs.filter(pdbs, row.inds=rd$ind)
+rd <- filter.rmsd(pdbs$xyz, cutoff=0.1, fit=TRUE)
+pdbs <- trim.pdbs(pdbs, row.inds=rd$ind)
 
 # remove "humanized" e-coli dhfr
 excl <- unlist(lapply(c("3QL0", "4GH8"), grep, pdbs$id))
-pdbs <- pdbs.filter(pdbs, row.inds=which(!(1:length(pdbs$id) %in% excl)))
+pdbs <- trim.pdbs(pdbs, row.inds=which(!(1:length(pdbs$id) %in% excl)))
 
 # a list of PDB codes of our final selection
 ids <- unlist(strsplit(basename(pdbs$id), split=".pdb"))
@@ -190,10 +190,7 @@ grps.rd <- cutree(hc.rd, k=4)
 ```
 
 
-Projection of the X-ray conformers on to their two largest eigenvectors shows that the
-E.coli DHFR structures can be divided into three major groups: closed, open, and occluded conformations: 
-
-```{r figi-1, fig.cap="Projection of MD conformers onto the X-ray PC space reveals that the E.coli DHFR structures can be divided into three major groups along their two first eigenvectors. Each dot is colored according to their cluster membership: occluded conformations (green), open conformations (black), and closed conformations (red). ", fig.height=5, fig.width=5,}
+```{r figi-1, fig.cap="Projection of the X-ray conformers shows that the E.coli DHFR structures can be divided into three major groups along their two first eigenvectors: closed, open, and occluded conformations. Each dot is colored according to their cluster membership: occluded conformations (green), open conformations (black), and closed conformations (red).", fig.height=5, fig.width=5,}
 plot(pc.xray$z[,1:2], col="grey50", pch=16, cex=1.3,
      ylab="Prinipcal Component 2", xlab="Principal Component 1")
 points(pc.xray$z[,1:2], col=grps.rd, pch=16, cex=0.9)
@@ -213,9 +210,9 @@ mktrj(pc.xray, pc=1,
 Function **pdbfit()** can be used to write the PDB files to separate directories according to their cluster membership:
 
 ```{r example1j, eval=FALSE}
-pdbfit(pdbs.filter(pdbs, row.inds=which(grps.rd==1)), outpath="grps1") ## closed
-pdbfit(pdbs.filter(pdbs, row.inds=which(grps.rd==2)), outpath="grps2") ## open
-pdbfit(pdbs.filter(pdbs, row.inds=which(grps.rd==3)), outpath="grps3") ## occluded
+pdbfit(trim.pdbs(pdbs, row.inds=which(grps.rd==1)), outpath="grps1") ## closed
+pdbfit(trim.pdbs(pdbs, row.inds=which(grps.rd==2)), outpath="grps2") ## open
+pdbfit(trim.pdbs(pdbs, row.inds=which(grps.rd==3)), outpath="grps3") ## occluded
 ```
 
 
@@ -288,12 +285,14 @@ The above analysis can also nicely be integrated with molecular dynamics (MD) si
 pdb <- read.pdb("md-traj/1rx2-CA.pdb")
 trj <- read.ncdf("md-traj/1rx2_5ns.nc")
 
-md.inds <- pdb2aln.ind(aln=pdbs, pdb=pdb, id="md", inds=gaps.res$f.inds)
-trj <- trj[, atom2xyz(md.inds)]
-trj <- fit.xyz(fixed=pdbs$xyz[1, ],  mobile=trj,
-               fixed.inds=core$c0.5A.xyz, mobile.inds=core$c0.5A.xyz)
+inds <- pdb2aln.ind(pdbs, pdb, gaps.res$f.inds)
+inds.core <- pdb2aln.ind(pdbs, pdb, core$c0.5A.atom)
 
-proj <- project.pca(trj, pc.xray)
+# inds$a is for the pdbs object
+# inds$b is for the MD structure
+
+trj.fit <- fit.xyz(pdbs$xyz[1,], trj, core$c0.5A.xyz, inds.core$b$xyz)
+proj <- project.pca(trj.fit[, inds$b$xyz], pc.xray)
 cols <- densCols(proj[,1:2])
 ```
 
@@ -307,7 +306,7 @@ points(pc.xray$z[,1:2], col=grps.rd, pch=16)
 
 ```{r example1p, eval=TRUE}
 # PCA of the MD trajectory
-pc.md <- pca.xyz(trj)
+pc.md <- pca.xyz(trj.fit[, inds$b$xyz])
 
 # compare MD-PCA and NMA
 r <- rmsip(pc.md$U, modes$U.subspace[,,1])
@@ -352,7 +351,7 @@ mktrj(pc.xray, pc=1, chain=gs.xray$grps)
 **GoeStaS on ensemble NMA**: We can also identify dynamic domains from the normal modes of the ensemble
 of 82 protein structures stored in the `modes` object. By using function **mktrj.enma()**
 we generate a trajectory from the first five modes for all 82 structures. We then input this
-trajectory to function **geostas()**. 
+trajectory to function **geostas()**:
 
 ```{r example1_gs-nma, cache=TRUE,}
 # Build conformational ensemble
@@ -372,6 +371,9 @@ gs.nma <- geostas(trj.nma, k=2, fit=FALSE)
 # Write NMA generated trajectory with domain assignment
 write.pdb(xyz=trj.nma, chain=gs.nma$grps)
 ```
+
+Note that function **geostas.enma()** wraps these three main functions calls to faciliatet this calculation. 
+See `help(geostas)` for more information. 
 
 
 **GeoStaS on a MD trajectory**: The domain analysis can also be performed on the trajectory data obtained
@@ -417,7 +419,7 @@ hc.rmsip <- hclust(dist(1-rmsip), method="ward.D2")
 grps.rmsip <- cutree(hc.rmsip, k=3)
 ```
 
-```{r fig1q-rmsip, fig.width=7, fig.height=4, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on their pairwise RMSIP values (calculated from NMA). Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows theconformerplot (see Figure 2), with colors according to clustering based on the pairwise RMSIP values."}
+```{r fig1q-rmsip, fig.width=7, fig.height=4, fig.cap="Dendrogram shows the results of hierarchical clustering of structures based on their pairwise RMSIP values (calculated from NMA). Colors of the labels depict associated conformatial state: green (occluded), black (open), and red (closed). The inset shows the conformerplot (see Figure 2), with colors according to clustering based on the pairwise RMSIP values."}
 hclustplot(hc.rmsip, k=3, colors=grps.rd, labels=ids, cex=0.7, main="RMSIP", fillbox=FALSE)
 
 par(fig=c(.65, 1, .45, 1), new = TRUE)

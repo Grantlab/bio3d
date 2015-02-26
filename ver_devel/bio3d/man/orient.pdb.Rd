@@ -27,6 +27,9 @@ orient.pdb(pdb, atom.subset = NULL, verbose = TRUE)
 \seealso{ \code{\link{read.pdb}}, \code{\link{write.pdb}},
 \code{\link{fit.xyz}}, \code{\link{rot.lsq}} , \code{\link{atom.select}}}
 \examples{
+\donttest{
+# PDB server connection required - testing excluded
+
 pdb <- read.pdb( "1bg2" )
 xyz <- orient.pdb(pdb)
 #write.pdb(pdb, xyz = xyz, file = "mov1.pdb")
@@ -39,8 +42,9 @@ xyz  <- orient.pdb(pdb, atom.subset=inds$atom)
 
 
 # Based on a central Beta-strand
-inds <- atom.select(pdb, "///224:232///CA/")
+inds <- atom.select(pdb, resno=c(224:232), elety='CA')
 xyz  <- orient.pdb(pdb, atom.subset=inds$atom)
 #write.pdb(pdb, xyz = xyz, file = "mov3.pdb")
+}
 }
 \keyword{ manip }

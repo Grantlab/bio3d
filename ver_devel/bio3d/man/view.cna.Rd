@@ -65,26 +65,13 @@ Barry Grant}
 
 \examples{
 \dontrun{
-  ##-- From MD
-trtfile <- system.file("examples/hivp.dcd", package="bio3d")
-trj <- read.dcd(trtfile)
+
+# Load the correlation network from MD data
+attach(hivp)
 
 # Read the starting PDB file to determine atom correspondence
 pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 pdb <- read.pdb(pdbfile)
-
-# select residues 24 to 27 and 85 to 90 in both chains
-inds <- atom.select(pdb, resno=c(24:27, 85:90), elety="CA")
-
-# lsq fit of trj on pdb
-xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
-
-# calculate dynamical cross-correlation matrix
-cij <- dccm(xyz)
-#plot(cij)
-
-# Build, and betweenness cluster, a network graph
-net <- cna(cij)
 
 # View cna 
 view.cna(net, pdb, launch=FALSE)
@@ -98,6 +85,9 @@ modes.gdi = nma(pdb.gdi)
 cij.gdi = dccm(modes.gdi)
 net.gdi = cna(cij.gdi, cutoff.cij=0.35)
 #view.cna(net.gdi, pdb.gdi, alpha = 0.7, launch=TRUE)
+
+detach(hivp)
+
 }
 }
 
