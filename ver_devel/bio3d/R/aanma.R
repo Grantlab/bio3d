@@ -23,11 +23,11 @@
   }
   else {
     if(rm.wat)
-      nowat.inds <- atom.select(pdb, "notwater", verbose=FALSE)
-    noh.inds <- atom.select(pdb, "noh", verbose=FALSE)
-    tmp.inds <- combine.sel(noh.inds, nowat.inds, verbose=FALSE)
-    pdb.in <- trim.pdb(pdb, tmp.inds)
-
+      pdb <- trim.pdb(pdb, "notwater", verbose=FALSE)
+    
+    pdb <- trim.pdb(pdb, "noh", verbose=FALSE)
+    pdb.in <- pdb
+    
     lig.inds <- atom.select(pdb.in, "ligand")
     if(lig.inds$atom>0) {
       ligs <- paste(unique(pdb.in$atom$resid[ lig.inds$atom ]), sep=", ")
