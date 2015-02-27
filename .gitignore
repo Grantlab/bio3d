@@ -13,5 +13,6 @@ figure*
 *.swp
 tmp*
 *.DS_Store
+html*
 
 *.vmd
