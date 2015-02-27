@@ -4,7 +4,7 @@
 \alias{covsoverlap.nma}
 \title{ Covariance Overlap }
 \description{
-  Calculate the ovariance overlap obtained from NMA. 
+  Calculate the covariance overlap obtained from NMA. 
 }
 \usage{
 covsoverlap(...)

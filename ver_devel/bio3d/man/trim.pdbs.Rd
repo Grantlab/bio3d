@@ -1,28 +1,28 @@
-\name{pdbs.filter}
-\alias{pdbs.filter}
-\title{ Filter or Trim a pdbs PDBs Object }
+\name{trim.pdbs}
+\alias{trim.pdbs}
+\title{ Filter or Trim a PDBs Object }
 \description{
-  Trim residues and/or filter out structures from a pdbs
-  PDBs object. 
+  Trim residues and/or filter out structures from a PDBs object. 
 }
 \usage{
-pdbs.filter(pdbs, row.inds=NULL, col.inds=NULL)
+\method{trim}{pdbs}(pdbs, row.inds=NULL, col.inds=NULL, \dots)
 }
 \arguments{
-  \item{pdbs}{ an object of class \code{3daling} as obtained from
+  \item{pdbs}{ an object of class \code{pdbs} as obtained from
     function \code{pdbaln} or \code{read.fasta.pdb}; a xyz matrix
     containing the cartesian coordinates of C-alpha atoms. }
   \item{row.inds }{ a numeric vector of indices pointing to the PDB
     structures to keep (rows in the \code{pdbs$ali} matrix). }
   \item{col.inds }{ a numeric vector of indices pointing to the
     alignment columns to keep (columns in the \code{pdbs$ali} matrix). } 
+  \item{\dots}{ additional arguments passed to and from functions. } 
 }
 \details{
   Utility function to remove structures, or trim off columns, in a   
-  \sQuote{pdbs} PDBs object. 
+  \sQuote{pdbs} object. 
 }
 \value{
-  Returns an updated \sQuote{pdbs} PDBs object with the following
+  Returns an updated \sQuote{pdbs} object with the following
   components:
   \item{xyz}{numeric matrix of aligned C-alpha coordinates.}
   \item{resno}{character matrix of aligned residue numbers.}
@@ -39,6 +39,7 @@ pdbs.filter(pdbs, row.inds=NULL, col.inds=NULL)
 \seealso{
   \code{\link{pdbaln}}, \code{\link{gap.inspect}},
   \code{\link{read.fasta}},\code{\link{read.fasta.pdb}},
+  \code{\link{trim.pdb}},
 }
 \examples{
 \dontrun{
@@ -53,7 +54,7 @@ pdbs <- pdbaln(files)
 cons <- inspect.connectivity(pdbs)
 
 ## omit files with missing residues
-pdbs.filter(pdbs, row.inds=which(cons))
+trim.pdbs(pdbs, row.inds=which(cons))
 }
 }
 \keyword{ utilities }

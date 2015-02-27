@@ -40,8 +40,8 @@ write.pir(alignment=NULL, ids=NULL, seqs=alignment$ali,
    \code{\link{write.fasta}} }
 \examples{
 \donttest{
+# Needs MUSCLE installed - testing excluded
 
-## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
 if(check.utility("muscle")) {
 
 ## Generate an input file for structural modeling of 

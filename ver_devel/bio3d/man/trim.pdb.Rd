@@ -1,4 +1,5 @@
-\name{trim.pdb}
+\name{trim}
+\alias{trim}
 \alias{trim.pdb}
 \title{ Trim a PDB Object To A Subset of Atoms. }
 \description{
@@ -6,7 +7,9 @@
   given larger PDB object. 
 }
 \usage{
-trim.pdb(pdb, \dots, inds = NULL, sse = TRUE)
+trim(\dots)
+
+\method{trim}{pdb}(pdb, \dots, inds = NULL, sse = TRUE)
 }
 \arguments{
   \item{pdb}{ a PDB structure object obtained from
@@ -15,7 +18,7 @@ trim.pdb(pdb, \dots, inds = NULL, sse = TRUE)
      \code{inds} is also provided, these arguments will be ignored. }
   \item{inds}{ a list object of ATOM and XYZ indices as obtained from
     \code{\link{atom.select}}. If NULL, atom selection will be obtained
-     from calling \code{atom.select(pdb, \dots)}. }
+    from calling \code{atom.select(pdb, \dots)}. }
   \item{sse}{ logical, if \sQuote{FALSE} helix and sheet components are
     omitted from output. }
 }
@@ -68,8 +71,10 @@ trim.pdb(pdb, \dots, inds = NULL, sse = TRUE)
   Temperature factor \dQuote{b}.
   See examples for further details.
 }
-\seealso{ \code{\link{read.pdb}}, \code{\link{atom.select}},
-  \code{\link{write.pdb}} }
+\seealso{
+  \code{\link{trim.pdbs}}, \code{\link{trim.xyz}},
+  \code{\link{read.pdb}}, \code{\link{atom.select}}
+}
 \examples{
 \dontrun{
 ## Read a PDB file from the RCSB online database

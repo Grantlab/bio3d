@@ -56,8 +56,8 @@ normalize.cij <- function(cij, factor = NULL, mag = 2, cutoff = 0) {
 
    cij <- do.call("c", ncij)
    colors <- do.call("c", ncolor)
-   if(length(cij) == 1) return (cij[[1]])
-   else return(list(cij=cij, color=colors) )
+   if(length(cij) == 1) colors = NULL
+   return( list(cij=cij, color=colors) )
 }
 
 # None: minus.log of max cij (default of cna()); if member=NULL and col=NULL, no change
@@ -72,7 +72,7 @@ remodel.cna <- function(x, member = NULL, col = NULL, minus.log = TRUE,
    method <- match.arg(method)
  
    # assume a network ensemble 
-   if(!is.list(x)) x = list(x)
+   if(inherits(x, "cna")) x = list(x)
    
    # return network names
    names <- names(x)

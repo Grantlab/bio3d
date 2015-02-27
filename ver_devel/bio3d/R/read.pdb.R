@@ -1,6 +1,6 @@
 "read.pdb" <-
 function (file, maxlines=-1, multi=FALSE,
-          rm.insert=FALSE, rm.alt=TRUE, verbose=TRUE) {
+          rm.insert=FALSE, rm.alt=TRUE, ATOM.only = FALSE, verbose=TRUE) {
 
   if(missing(file)) {
     stop("read.pdb: please specify a PDB 'file' for reading")
@@ -92,11 +92,11 @@ function (file, maxlines=-1, multi=FALSE,
 
   ## Check if we want to store multiple model data
   if (length(raw.end) > 1) {
-    print("PDB has multiple END/ENDMDL records")
+    cat("  PDB has multiple END/ENDMDL records \n")
     if (!multi) {
-      print("multi=FALSE: taking first record only")
+      cat("  multi=FALSE: taking first record only \n")
     } else {
-      print("multi=TRUE: 'read.dcd/read.ncdf' will be quicker!")
+      cat("  multi=TRUE: 'read.dcd/read.ncdf' will be quicker! \n")
       raw.lines.multi <- raw.lines
       type.multi <- type
     }
@@ -107,10 +107,20 @@ function (file, maxlines=-1, multi=FALSE,
   ##- Check for 'n' smaller than total lines in PDB file
   if ( length(raw.end) !=1 ) {
     if (length(raw.lines) == maxlines) {
-      print("You may need to increase 'maxlines'")
-      print("check you have all data in $atom")
+      cat("  You may need to increase 'maxlines' \n")
+      cat("   check you have all data in $atom \n")
     }
   }
+
+  ##- Shortened records if ATOM.only = TRUE
+  if(ATOM.only) {
+     raw.lines <- raw.lines[type %in% c("HEADER", "ATOM  ", "HETATM")]
+     type <- substring(raw.lines, first["type"], last["type"])
+  }
+ 
+  ##- Parse REMARK records for storing symmetry matrices to 
+  ##  build biological unit by calling 'biounit()'
+  remark <- .parse.pdb.remark350(raw.lines)
 
   ##- Split input lines by record type
   raw.header <- raw.lines[type == "HEADER"]
@@ -237,7 +247,7 @@ function (file, maxlines=-1, multi=FALSE,
                sheet=sheet,
                seqres=seqres,
                xyz=as.xyz(xyz.models),
-               calpha = NULL, call=cl)
+               calpha = NULL, remark = remark, call=cl)
 
   class(output) <- c("pdb", "sse")  
   ca.inds <-  atom.select.pdb(output, string="calpha", verbose=FALSE)
@@ -246,3 +256,85 @@ function (file, maxlines=-1, multi=FALSE,
   return(output)
 
 }
+
+##- parse REMARK records for building biological unit ('biounit()')
+.parse.pdb.remark350 <- function(x) {
+
+    raw.lines <- x
+
+    # How many lines of REMARK 350?
+    remark350 <- grep("^REMARK\\s+350", raw.lines)
+    nlines <- length(remark350)
+
+    # How many distinct biological unit?
+    biolines <- grep("^REMARK\\s+350\\s+BIOMOLECULE", raw.lines)
+    nbios <- length(biolines)
+
+    if(nbios == 0) {
+#       warning("REMARK 350 is incomplete.")
+       return(NULL)
+    }
+
+    # End line number of each biological unit
+    biolines2 <- c(biolines[-1], remark350[nlines])
+
+    # How the biological unit was determined?
+    method <- sapply(1:nbios, function(i) {
+       author <- intersect(grep("^REMARK\\s+350\\s+AUTHOR DETERMINED BIOLOGICAL UNIT", raw.lines),
+                            biolines[i]:biolines2[i])
+       if(length(author) >= 1) return("AUTHOR")
+       else return("SOFTWARE")
+    } )
+    # Get chain IDs to apply the transformation
+    chain <- lapply(1:nbios, function(i) {
+       chlines <- intersect(grep("^REMARK\\s+350\\s+APPLY THE FOLLOWING TO CHAINS", raw.lines),
+                            biolines[i]:biolines2[i])
+       if(length(chlines) >= 1) {
+          chs <- gsub("\\s*", "", sub("^.*:", "", raw.lines[chlines]))
+          chs <- unlist(strsplit(chs, split=","))
+       }
+       else {
+#          warning(paste("Can't determine chain IDs from REMARK 350 for biological unit",
+#              i, sep=""))
+          chs = NA
+       }
+       return(chs)
+    } )
+    if(any(is.na(chain))) return(NULL)
+
+    mat <- lapply(1:nbios, function(i) {
+       # Get transformation matrices
+       mtlines <- intersect(grep("^REMARK\\s+350\\s+BIOMT", raw.lines),
+                            biolines[i]:biolines2[i])
+       # Get chain ID again: different trans matrices may be applied to different chains
+       chlines <- intersect(grep("^REMARK\\s+350\\s+APPLY THE FOLLOWING TO CHAINS", raw.lines),
+                            biolines[i]:biolines2[i])
+       chs <- gsub("\\s*", "", sub("^.*:", "", raw.lines[chlines]))
+       chs <- strsplit(chs, split=",")
+
+       if(length(mtlines) == 0 || length(mtlines) %% 3 != 0) {
+#          warning("Incomplete transformation matrix")
+          mat <- NA
+       }
+       else {
+          mat <- lapply(seq(1, length(mtlines), 3), function(j) {
+             mt <- matrix(NA, 3, 4)
+             for(k in 1:3) {
+                vals <- sub("^REMARK\\s+350\\s+BIOMT[123]\\s*", "", raw.lines[mtlines[j+k-1]])
+                vals <- strsplit(vals, split="\\s+")[[1]]
+                mt[k, ] <- as.numeric(vals[-1])
+             }
+             mt
+          } )
+          chs.pos <- findInterval(mtlines[seq(1, length(mtlines), 3)], chlines)
+          names(mat) <- sapply(chs[chs.pos], paste, collapse=" ") ## apply each mat to specific chains
+       }
+       return(mat)
+    } )
+    if(any(is.na(mat))) return(NULL)
+
+    out <- list(biomat = list(num=nbios, chain=chain, mat=mat, method=method))
+    return(out)
+}
+
+

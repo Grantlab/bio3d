@@ -95,7 +95,7 @@ head(mol$atom[, c("x","y","z")])
 head(mol$xyz)
 
 ## Print atom charges
-head(mol$atom[, "charge")])
+head(mol$atom[, "charge"])
 
 
 

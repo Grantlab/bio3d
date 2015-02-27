@@ -41,6 +41,8 @@ pfam(id, alignment = "seed", verbose = FALSE)
 }
 \examples{
 \donttest{
+# PFAM server connection required - testing excluded
+
 aln <- pfam("piwi")
 aln <- pfam("PF02171")
 

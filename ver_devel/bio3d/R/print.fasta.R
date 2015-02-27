@@ -80,6 +80,9 @@ print.fasta <- function(x, alignment=TRUE, ...) {
     ali <- as.matrix(x)
     id <- rownames(x)
   }
+
+  ## remove any NA values
+  ali[is.na(ali)] <- "-"
   
   ##- Trim to 'col.inds' if provided 
   if(!is.null(col.inds)) {

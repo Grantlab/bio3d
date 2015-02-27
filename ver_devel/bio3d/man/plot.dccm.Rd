@@ -66,7 +66,7 @@
   pdb <- read.pdb(pdbfile)
 
   ## select residues 24 to 27 and 85 to 90 in both chains
-  inds <- atom.select(pdb,"///24:27,85:90///CA/")
+  inds <- atom.select(pdb, resno=c(24:27,85:90), elety='CA')
 
   ## lsq fit of trj on pdb
   xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
@@ -78,7 +78,7 @@
   plot.dccm(cij)
 
   ## Change the color scheme and the range of colored data levels
-  plot.dccm(cij, contour=F, col.regions=bwr.colors(200), at=seq(-1,1,by=0.01) )
+  plot.dccm(cij, contour=FALSE, col.regions=bwr.colors(200), at=seq(-1,1,by=0.01) )
 
   ## Add secondary structure annotation to plot margins
   sse <- dssp(read.pdb("1W5Y"), resno=FALSE)

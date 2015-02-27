@@ -1,8 +1,8 @@
 ---
 title: "Beginning Trajectory Analysis with Bio3D"
 author: "Xin-Qiu Yao, Lars Skjaerven, & Barry J. Grant"
-date: "October 30, 2014"
-affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
+date: "October 30, 2014 (last updated: Feburary 20, 2015)"
+affiliation: University of Michigan (Ann Arbor, USA) and University of Bergen (Norway) 
 output:
   pdf_document:
     highlight: default
@@ -36,19 +36,10 @@ analysis with the Bio3D R package [@grant06].
 
 Detailed instructions for obtaining and installing the Bio3D package on
 various platforms can be found in the [Installing
-Bio3D](http://thegrantlab.org/bio3d/) vignette available both on-line
-and from within the Bio3D package. To see available vignettes use the
-command:
+Bio3D](http://thegrantlab.org/bio3d/tutorials) vignette available online.
+This particular vignette was generated
+using **Bio3D version `r packageVersion("bio3d")`**.
 
-```{r, eval=FALSE}
-vignette(package="bio3d") 
-```
-
-## About this document {.unnumbered}
-This vignette was generated using **Bio3D version `r packageVersion("bio3d")`**.
-
-
-<br>
 
 # Getting Started
 
@@ -57,12 +48,12 @@ a quick feel for some of the tasks that we will be introducing in the
 following sections.
 
 ```{r, eval=FALSE}
-library(bio3d) 
-demo("md") 
+library(bio3d)
+demo("md")
 ```
 
 ```{r, echo=FALSE}
-library(bio3d) 
+library(bio3d)
 ```
 
 #### Side-note: {.unnumbered}
@@ -95,7 +86,7 @@ starting structure (pdbfile) and trajectory data (dcdfile).
 
 ```{r}
 dcdfile <- system.file("examples/hivp.dcd", package="bio3d")
-pdbfile <- system.file("examples/hivp.pdb", package="bio3d") 
+pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 ```
 
 #### Side-note: {.unnumbered}
@@ -107,15 +98,15 @@ the package in different locations. When using your own input files the
 `system.file()` command will not be required, for example
 
 ```{r, eval=FALSE}
-mydcdfile <- "/path/to/my/data/myfile.dcd" 
+mydcdfile <- "/path/to/my/data/myfile.dcd"
 ```
 
 <br>
 
 ```{r readtrj, results="hide", cache=TRUE}
 dcd <- read.dcd(dcdfile)
-pdb <- read.pdb(pdbfile) 
-``` 
+pdb <- read.pdb(pdbfile)
+```
 
 The `read.dcd()` and `read.pdb()` commands
 processes the input files and returns their output to the new objects
@@ -152,16 +143,16 @@ currently inputed data.
 # Trajectory Frame Superposition
 
 In this simple example we select all C-alpha atoms for trajectory frame
-superposition. 
+superposition.
 
 ```{r}
-ca.inds <- atom.select(pdb, elety="CA") 
-``` 
+ca.inds <- atom.select(pdb, elety="CA")
+```
 
 The returned `ca.inds` object is a list containing atom and xyz numeric
 indices that we can now use to superpose all frames of the trajectory on
 the selected indices (in this case corresponding to all alpha Carbon
-atoms). For this we will with the `fit.xyz()` function. 
+atoms). For this we will with the `fit.xyz()` function.
 
 ```{r}
 xyz <- fit.xyz(fixed=pdb$xyz, mobile=dcd,
@@ -176,7 +167,7 @@ correspond to frames and coordinates respectively) of `xyz` match those
 of the input trajectory:
 
 ```{r}
-dim(xyz) == dim(dcd) 
+dim(xyz) == dim(dcd)
 ```
 
 #### Question: {.unnumbered}
@@ -205,12 +196,12 @@ sets and is implemented in the Bio3D function `rmsd()`.
 ```{r, warning=FALSE, fig.cap="Simple time series of RMSD from the initial structure (note periodic jumps that we will later see correspond to transient openings of the flap regions of HIVpr)"}
 rd <- rmsd(xyz[1,ca.inds$xyz], xyz[,ca.inds$xyz])
 
-plot(rd, typ="l", ylab="RMSD", xlab="Frame No.") 
-points(lowess(rd), typ="l", col="red", lty=2, lwd=2) 
+plot(rd, typ="l", ylab="RMSD", xlab="Frame No.")
+points(lowess(rd), typ="l", col="red", lty=2, lwd=2)
 ```
 
 A quick histogram can be useful for examining the distribution of RMSD
-values. 
+values.
 
 ```{r, echo=TRUE, fig.cap="Note the spread of RMSD values and that the majority of sampled conformations are around 2 Angstroms from the starting structure"}
 hist(rd, breaks=40, freq=FALSE, main="RMSD Histogram", xlab="RMSD")
@@ -218,7 +209,7 @@ lines(density(rd), col="gray", lwd=3)
 ```
 
 ```{r}
-summary(rd) 
+summary(rd)
 ```
 
 #### Question: {.unnumbered}
@@ -237,7 +228,7 @@ hopefully, inspiring plots?
 RMSF is an often used measure of conformational variance and is
 implemented in the Bio3D function `rmsf()`. This analysis will highlight
 the portions of structure that are fluctuating from their mean structure
-the most (and least). 
+the most (and least).
 
 ```{r, echo=TRUE, fig.cap="Residue-wise RMSF indicates regions of high mobility"}
 rf <- rmsf(xyz[,ca.inds$xyz])
@@ -291,9 +282,9 @@ plot(pc, col=bwr.colors(nrow(xyz)) )
 Note that there are distinct groupings of conformations along the PC1 plane (one centered around -30 and a second, larger grouping, at +5). The continuous color scale (from blue to whit to red) indicates that there are periodic jumps between these conformers throughout the trajectory. Below we perform a quick clustering in PC-space to further highlight these distinct conformers.
 
 ```{r, echo=TRUE, fig.cap="Simple clustering in PC subspace"}
-hc <- hclust(dist(pc$z[,1:2])) 
-grps <- cutree(hc, k=2) 
-plot(pc, col=grps) 
+hc <- hclust(dist(pc$z[,1:2]))
+grps <- cutree(hc, k=2)
+plot(pc, col=grps)
 ```
 
 #### Question: {.unnumbered}
@@ -306,7 +297,7 @@ residue to the first two principal components.
 
 ```{r, echo=TRUE, fig.cap="Residue-wise loadings for PC1 (black) and PC2 (blue)"}
 plot.bio3d(pc$au[,1], ylab="PC1 (A)", xlab="Residue Position", typ="l")
-points(pc$au[,2], typ="l", col="blue") 
+points(pc$au[,2], typ="l", col="blue")
 ```
 
 #### Question: {.unnumbered}
@@ -328,7 +319,7 @@ want to perform all heavy atom PCA for such applications).
 
 ```{r, eval=FALSE}
 p1 <- mktrj.pca(pc, pc=1, b=pc$au[,1], file="pc1.pdb")
-p2 <- mktrj.pca(pc, pc=2,b=pc$au[,2], file="pc2.pdb") 
+p2 <- mktrj.pca(pc, pc=2,b=pc$au[,2], file="pc2.pdb")
 ```
 
 You can also write these trajectory’s as AMBER NetCDF format files with
@@ -337,7 +328,7 @@ the files in the normal way and display as tube representation for
 example (see figure below).
 
 ```{r, eval=FALSE}
-write.ncdf(p1, "trj_pc1.nc") 
+write.ncdf(p1, "trj_pc1.nc")
 ```
 
 ![Visualization of the first principal component of HIV-1 protease. Color scale from blue to red depict low to high atomic displacements.](figures/hiv_pc1.png)
@@ -358,7 +349,7 @@ termed a dynamical cross-correlation map, or DCCM.
 
 ```{r, echo=TRUE, results="hide", fig.cap="Dynamical cross-correlation map (DCCM) calculated with function **dccm()** using the MD simulation of HIV-1 protease as input."}
 cij<-dccm(xyz[,ca.inds$xyz])
-plot(cij) 
+plot(cij)
 ```
 
 #### Question: {.unnumbered}
@@ -372,8 +363,8 @@ A 3D visualization of these correlations can be provided through the
 function `view.dccm()`
 
 ```{r, eval=FALSE}
-# View the correlations in pymol 
-view.dccm(cij, pdb, launch=TRUE) 
+# View the correlations in pymol
+view.dccm(cij, pdb, launch=TRUE)
 ```
 
 ![Visualization of residue-residue cross correlations (using function **view.dccm()**). Red and blue lines indicate correlated and anti-correlation motions, respectively.](figures/dccm_hivpr.png)
@@ -389,7 +380,7 @@ vignette.
 # Where to Next
 
 If you have read this far, congratulations! We are ready to have some
-fun and move to other package vignettes that describe more interesting
+fun and move to [other package vignettes](http://thegrantlab.org/bio3d/tutorials) that describe more interesting
 analysis including Correlation Network Analysis (where we will build and
 dissect dynamic networks form different correlated motion data),
 enhanced methods for Normal Mode Analysis (where we will explore the
@@ -411,7 +402,7 @@ render("Bio3D_md.Rmd", "all")
 # Information About the Current Bio3D Session {.unnumbered}
 
 ```{r}
-sessionInfo() 
+sessionInfo()
 ```
 
 <br>

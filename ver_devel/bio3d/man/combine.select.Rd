@@ -57,19 +57,23 @@ bb.global.inds <- atom.select(pdb, "backbone")
 aa.local.inds <- atom.select(pdb, resno=46:50)
 
 
-# Do set intersect: return C-alpha atoms with residue number from 46 to 50
+# Do set intersect:
+# - Return C-alpha atoms with residue number from 46 to 50
 ca.local.inds <- combine.select(ca.global.inds, aa.local.inds)
 print( pdb$atom[ ca.local.inds$atom, ] )
 
-# Do set subtract: return side-chain atoms with residue number from 46 to 50
+# Do set subtract:
+# - Return side-chain atoms with residue number from 46 to 50
 sc.local.inds <- combine.select(aa.local.inds, bb.global.inds, operator="-")
 print( pdb$atom[ sc.local.inds$atom, ] )
 
-# Do set union: return C-alpha and side-chain atoms with residue number from 46 to 50
+# Do set union:
+# - Return C-alpha and side-chain atoms with residue number from 46 to 50
 casc.local.inds <- combine.select(ca.local.inds, sc.local.inds, operator="+")
 print( pdb$atom[ casc.local.inds$atom, ] )
 
-# More than two selections: return side-chain atoms (but not C-beta) with residue number from 46 to 50
+# More than two selections:
+# - Return side-chain atoms (but not C-beta) with residue number from 46 to 50
 sc2.local.inds <- combine.select(aa.local.inds, bb.global.inds, cb.global.inds, operator="-")
 print( pdb$atom[ sc2.local.inds$atom, ] )
 

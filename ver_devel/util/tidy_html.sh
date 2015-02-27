@@ -61,5 +61,5 @@ sed 's/<br \/>/:/' html/index.html > index.html
 mv index.html html/
 
 # additional output file
-mv eg.html html/
+if test -r eg.html; then  mv eg.html html/; fi
 

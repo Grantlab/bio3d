@@ -73,8 +73,8 @@ pdb.a <- read.pdb("1cmk")
 pdb.b <- read.pdb("3dnd")
 
 ## Fetch CA coordinates
-sele.a <- atom.select(pdb.a, "//E/15:350///CA")
-sele.b <- atom.select(pdb.b, "//A/1:350///CA")
+sele.a <- atom.select(pdb.a, chain='E', resno=c(15:350), elety='CA')
+sele.b <- atom.select(pdb.b, chain='A', resno=c(1:350), elety='CA')
 
 xyz <- rbind(pdb.a$xyz[sele.a$xyz],
              pdb.b$xyz[sele.b$xyz])

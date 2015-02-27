@@ -68,15 +68,13 @@
 \seealso{ \code{\link{dm}}, \code{\link{filled.contour}},
   \code{\link{contour}}, \code{\link{image}} }
 \examples{
-\donttest{
+
 # Read PDB file
-pdb <- read.pdb( "1bg2" )
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 # DM
 d <- dm(pdb,"calpha")
-}
 
-\dontrun{
 # Plot DM
 ##filled.contour(d, nlevels = 4)
 ##plot(d)
@@ -85,13 +83,13 @@ plot(d,
      color.palette = mono.colors,
      xlab="Residue Number", ylab="Residue Number")
 
-
-# Downlaod and align two PDB files
+\dontrun{
+# Download and align two PDB files
 pdbs <- pdbaln( get.pdb( c( "4q21", "521p"), path=tempdir(), overwrite=TRUE))
 
 # Get distance matrix
-a <- dm(pdbs$xyz[1,])
-b <- dm(pdbs$xyz[2,])
+a <- dm.xyz(pdbs$xyz[1,])
+b <- dm.xyz(pdbs$xyz[2,])
 
 # Calculate DDM
 c <- a - b

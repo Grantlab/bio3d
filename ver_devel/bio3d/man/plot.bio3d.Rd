@@ -1,12 +1,13 @@
 \name{plot.bio3d}
 \alias{plot.bio3d}
+\alias{plotb3}
 \title{ Plots with marginal SSE annotation }
 \description{
   Draw a standard scatter plot with optional secondary structure in the
   marginal regions.
 }
 \usage{
-  plot.bio3d(x, resno = NULL, rm.gaps = FALSE, type = "h",
+  plotb3(x, resno = NULL, rm.gaps = FALSE, type = "h",
              main = "", sub = "",
              xlim = NULL, ylim = NULL, ylim2zero = TRUE,
              xlab = "Residue", ylab = NULL, 
@@ -15,6 +16,10 @@
              top = TRUE, bot = TRUE, 
              helix.col = "gray20", sheet.col = "gray80",
              sse.border = FALSE, ...)
+
+             \method{plot}{bio3d}(...)
+
+
 }
 \arguments{
   \item{x}{ a numeric vector of values to be plotted.  Any reasonable way of
@@ -97,6 +102,8 @@
 \seealso{ \code{\link{plot.default}}, \code{\link{dssp}}, \code{\link{stride}} }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
+
 ## Plot of B-factor values along with secondary structure from PDB
 pdb <- read.pdb( "1bg2" )
 bfac <- pdb$atom[pdb$calpha,"b"]

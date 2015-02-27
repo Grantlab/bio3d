@@ -75,6 +75,7 @@ dm(\dots)
 \seealso{ \code{\link{plot.dmat}}, \code{\link{read.pdb}}, \code{\link{atom.select}} }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
 
 ##--- Distance Matrix Plot
 pdb <- read.pdb( "4q21" )
@@ -89,8 +90,8 @@ if(check.utility("muscle")) {
 pdbs <- pdbaln( get.pdb( c( "4q21", "521p"), path = tempdir() ), outfile = tempfile() )
 
 # Get distance matrix
-a <- dm(pdbs$xyz[1,])
-b <- dm(pdbs$xyz[2,])
+a <- dm.xyz(pdbs$xyz[1,])
+b <- dm.xyz(pdbs$xyz[2,])
 
 # Calculate DDM
 c <- a - b

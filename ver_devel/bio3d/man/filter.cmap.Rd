@@ -1,11 +1,11 @@
-\name{cmap.filter}
-\alias{cmap.filter}
+\name{filter.cmap}
+\alias{filter.cmap}
 \title{ Contact Map Consensus Filtering }
 \description{
 This function filters a tridimensional contact matrix (nXnXz, where n is the residue number and z is the simulation number) selecting only the contact present in at least p simulations, where p<=z.
 }
 \usage{
-cmap.filter(cm, cutoff.sims = dim(cm)[3])
+filter.cmap(cm, cutoff.sims = dim(cm)[3])
 }
 \arguments{
   \item{cm}{ A numeric array with 3 dimensions (nXnXz) containing binary contact values. "n" is the residue number, "z" the simulation number. The matrix elements should be 1 if two residues are in contact and 0 if they are not in contact. 
@@ -17,7 +17,7 @@ cmap.filter(cm, cutoff.sims = dim(cm)[3])
 The output matrix is a nXn binary matrix (n = residue number). Elements equal to 1 correspond to residues in contact, elements equal to 0 to residues not in contact.
 }
 \seealso{
-cmap (require bio3d package)
+  \code{\link{cmap}}
 }
 \examples{
 
@@ -52,7 +52,7 @@ cmap (require bio3d package)
   cm.all <- abind(cm.1, cm.2, along=3)
 
   ## calculate average contact matrix
-  cm.filter <- cmap.filter(cm=cm.all, cutoff.sims=2)
+  cm.filter <- filter.cmap(cm=cm.all, cutoff.sims=2)
 
   ## plot the result
   par(pty="s", mfcol=c(1,3))

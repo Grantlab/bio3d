@@ -1,6 +1,6 @@
 \name{cat.pdb}
 \alias{cat.pdb}
-\title{ Concatenate multiple PDB Objects. }
+\title{ Concatenate Multiple PDB Objects }
 \description{
   Produce a new concatenated PDB object from two or more smaller PDB objects.
 }

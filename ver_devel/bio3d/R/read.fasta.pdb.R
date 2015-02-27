@@ -66,11 +66,16 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
       aliseq  <- toupper(aln$ali[i,])
       tomatch <- gsub("X","[A-Z]",aliseq[!is.gap(aliseq)])
       
+      if(length(pdbseq)<1)
+        stop(paste(basename(aln$id[i]), ": insufficent Calpha's in PDB"), call.=FALSE)
+      
       ##-- Search for ali residues (1:15) in pdb
       start.num <- regexpr(pattern = paste(c(na.omit(tomatch[1:15])),collapse=""),
                            text = paste(pdbseq,collapse=""))[1]
+            
       if (start.num == -1) {
-        stop("Starting residues of sequence not found in PDB")
+        start.num <- 1
+        ##stop(paste(basename(aln$id[i]), ": starting residues of sequence does not match starting residues in PDB"), call.=FALSE)
       }
 
       ##-- Numeric vec, 'nseq', for mapping aln to pdb
@@ -78,7 +83,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
       ali.res.ind <- which(!is.gap(aliseq))
       if( length(ali.res.ind) > (length(pdbseq) - start.num + 1) ) {
         warning(paste(aln$id[i],
-         ": sequence has more residues than PDB has Calpha's"))
+         ": sequence has more residues than PDB has Calpha's"), call.=FALSE)
         ali.res.ind <- ali.res.ind[1:(length(pdbseq)-start.num+1)] ## exclude extra
         tomatch <-  tomatch[1:(length(pdbseq)-start.num+1)]        ## terminal residues
       }
@@ -92,16 +97,28 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
         n.miss <- length(mismatch.ind)
 
         if(sum(mismatch=="X") != n.miss) { ## ignore masked X res        
-          details <- rbind(aliseq, !match,
-                           pdbseq[nseq],
-                           pdb$atom$resno[ca.inds$atom][nseq])
-                           
-          rownames(details) = c("aliseq","match","pdbseq","pdbnum")
-          msg <- paste("ERROR:", aln$id[i],
-                       "alignment and pdb sequences do not match")
-          cat(msg,"\n"); print(details); cat(msg,"\n")
-          print( cbind(details[,mismatch.ind]) )
-          stop(msg)
+          details <- seqbind(aliseq, pdbseq[nseq])
+          details$ali[is.na(details$ali)] <- "-"
+          rownames(details$ali) <- c("aliseq","pdbseq")
+          details$id <- c("aliseq","pdbseq")
+          
+          resmatch <- which(!apply(details$ali, 2, function(x) x[1]==x[2]))
+          
+          resid <- paste(pdb$atom$resid[ca.inds$atom][nseq][resmatch][1], "-",
+                         pdb$atom$resno[ca.inds$atom][nseq][resmatch][1],
+                         " (", pdb$atom$chain[ca.inds$atom][nseq][resmatch][1], ")", sep="")
+          
+          cat("\n ERROR   Alignment mismatch. See alignment below for further details\n")
+          cat("         (row ", i, " of aln and sequence of '", aln$id[i], "').\n", sep="")
+          cat("         First mismatch residue in PDB is:", resid, "\n")
+          cat("         occurring at alignment position:", which(match)[1], "\n\n")
+          .print.fasta.ali(details)
+          
+          msg <- paste(basename.pdb(aln$id[i]),
+                       " alignment and PDB sequence miss-match\n",
+                       "       beginning at position ",
+                       which(match)[1], " (PDB RESNO ", resid, ")", sep="")
+          stop(msg, call.=FALSE)
         }
       }
       
@@ -154,6 +171,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
             chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id, sse=res.ss,
             call = cl)
   class(out)=c("pdbs","fasta")
+  class(out$xyz) = "xyz"
 
   return(out)
 }

@@ -28,7 +28,7 @@ mustang(files, exefile="mustang", outfile="aln.mustang.fa",
   structure.
   
   This function calls the \sQuote{MUSTANG} program, to perform a multiple
-  sequence alignment, which MUST BE INSTALLED on your system and in the
+  structure alignment, which MUST BE INSTALLED on your system and in the
   search path for executables.
 
   Note that non-standard residues are mapped to \dQuote{Z} in
@@ -65,7 +65,11 @@ mustang(files, exefile="mustang", outfile="aln.mustang.fa",
 }
 \examples{
 \dontrun{
-##-- Read a folder/directory of PDB files
+## Fetch PDB files and split to chain A only PDB files
+ids <- c("1a70_A", "1czp_A", "1frd_A")
+files <- get.pdb(ids, split = TRUE, path = tempdir())
+
+##-- Or, read a folder/directory of existing PDB files
 #pdb.path <- "my_dir_of_pdbs"
 #files  <- list.files(path=pdb.path ,
 #                     pattern=".pdb",

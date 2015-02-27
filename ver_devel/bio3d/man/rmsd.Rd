@@ -48,36 +48,28 @@ rmsd(a, b=NULL, a.inds=NULL, b.inds=NULL, fit=FALSE, ncore=1, nseg.scale=1)
   \code{\link{read.pdb}}, \code{\link{read.fasta.pdb}} }
 \examples{
 \donttest{
+# Redundant testing excluded
 
 # -- Calculate RMSD between two or more structures
 aln <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
 pdbs <- read.fasta.pdb(aln)
 
-#  Superposition before pairwise RMSD 
+# Gap positions
+inds <- gap.inspect(pdbs$xyz)
+
+# Superposition before pairwise RMSD 
 rmsd(pdbs$xyz, fit=TRUE)
 
-\dontrun{
+# RMSD between structure 1 and structures 2 and 3
+rmsd(a=pdbs$xyz[1,], b=pdbs$xyz[2:3,], a.inds=inds$f.inds, b.inds=inds$f.inds, fit=TRUE)
+
+# RMSD between structure 1 and all structures in alignment
+rmsd(a=pdbs$xyz[1,], b=pdbs, a.inds=inds$f.inds, b.inds=inds$f.inds, fit=TRUE)
+
 # RMSD without superposition
 rmsd(pdbs$xyz)
 
-# Indices (could use 'gap.inspect' function)
-gaps <- unique( which(is.na(pdbs$xyz),arr.ind=TRUE)[,2] )
-inds <- c(1:ncol(pdbs$xyz))[-gaps]
-
-# RMSD between structure 1 and structure 2
-rmsd(a=pdbs$xyz[1,], b=pdbs$xyz[2,], a.inds=inds, b.inds=inds)
-rmsd(a=pdbs$xyz[1,], b=pdbs$xyz[2,], a.inds=inds, b.inds=inds, fit=TRUE)
 }
 
-
-# RMSD between structure 1 and structures 2 and 3
-rmsd(a=pdbs$xyz[1,], b=pdbs$xyz[2:3,], a.inds=inds, b.inds=inds)
-
-# RMSD between structure 1 and all structures in alignment
-rmsd(a=pdbs$xyz[1,], b=pdbs, a.inds=inds, b.inds=inds, fit=TRUE)
-
-# pairwise RMSD
-rmsd(pdbs$xyz[,inds])
-}
 }
 \keyword{ utilities }

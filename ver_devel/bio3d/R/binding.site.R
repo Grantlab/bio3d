@@ -46,6 +46,11 @@
     if(is.null(a.inds) & is.null(b.inds)) {
       a.inds <- atom.select(a, "protein", verbose=verbose)
       b.inds <- atom.select(a, "ligand", verbose=verbose)
+
+      if(!length(a.inds$atom)>0)
+        stop("insufficent 'protein' atoms in structure")
+      if(!length(b.inds$atom)>0)
+        stop("insufficent 'ligand' atoms in structure")
     }
     
     b <- trim.pdb(a, b.inds)
@@ -56,11 +61,14 @@
       b.inds <- atom.select(b, "all", verbose=verbose)
     }
     else {
-       a.inds <- atom.select(a, string='noh', verbose=verbose)
-       b.inds <- atom.select(b, string='noh', verbose=verbose)
-     }
+      a.inds <- atom.select(a, string='noh', verbose=verbose)
+      b.inds <- atom.select(b, string='noh', verbose=verbose)
+    }
   }
-
+  
+  if(!(length(a.inds$atom)>0 | length(b.inds$atom)>0))
+    stop("insufficent atoms in selection(s)")
+  
   ## omit hydrogens if any
   a <- trim.pdb(a, a.inds)
   b <- trim.pdb(b, b.inds)

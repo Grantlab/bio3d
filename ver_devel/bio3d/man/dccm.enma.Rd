@@ -42,8 +42,8 @@
 \seealso{ \code{\link{nma}}, \code{\link{dccm.nma}}, \code{\link{plot.dccm}} }
 \examples{
 \donttest{
+## Needs MUSCLE installed - testing excluded
 
-## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
 if(check.utility("muscle")) {
 
 ## Fetch PDB files and split to chain A only PDB files

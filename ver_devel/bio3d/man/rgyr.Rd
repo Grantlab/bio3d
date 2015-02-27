@@ -33,6 +33,8 @@ rgyr(xyz, mass=NULL, ncore=1, nseg.scale=1)
   \code{\link{read.pdb}}, \code{\link{read.fasta.pdb}} }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
+
 # -- Calculate Rog of single structure
 pdb <- read.pdb("1bg2")
 mass <- rep(12, length(pdb$xyz)/3)

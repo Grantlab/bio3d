@@ -56,14 +56,13 @@
 \seealso{ \code{\link{plot.bio3d}}, \code{\link{rmsf}}, \code{\link{nma.pdbs}},
           \code{\link[stats:t.test]{t.test}}, \code{\link[graphics:polygon]{polygon}}. }
 \examples{
-\donttest{
-
+\dontrun{
 ## load transducin example data
 attach(transducin)
 
 ## remove flexible termina for a full-length NMA calculation
 inds = 30:(ncol(pdbs$ali)-8)
-npdbs = pdbs.filter(pdbs, col.inds = inds)
+npdbs = trim(pdbs, col.inds = inds)
 gaps.res = gap.inspect(npdbs$ali)
 
 ## reference PDB for secondary structure annotation
@@ -71,10 +70,10 @@ ref.pdb_id = substr(npdbs$id[1], 1, 4)
 ref.chain_id = substr(npdbs$id[1], 6, 6)
 ref.resno = npdbs$resno[1, !is.na(npdbs$resno[1, ])]
 pdb = read.pdb(ref.pdb_id)
-pdb = trim.pdb(pdb, inds=atom.select(pdb, resno=ref.resno, chain=ref.chain_id))
+pdb = trim(pdb, resno=ref.resno, chain=ref.chain_id)
 
 ## eNMA calculation and obtain modes of motion including atomic fluctuations
-modes <- nma.pdbs(npdbs, rm.gaps=FALSE, full=FALSE, ncore=NULL)
+modes <- nma(npdbs, rm.gaps=FALSE, full=FALSE, ncore=NULL)
 x = modes$fluctuation
 
 ## simple line plot with SSE annotation

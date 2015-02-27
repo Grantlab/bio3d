@@ -1,4 +1,4 @@
-plot.bio3d <- function(x, resno=NULL, rm.gaps = FALSE, type="h",
+plotb3 <- function(x, resno=NULL, rm.gaps = FALSE, type="h",
                        main="", sub="",
                        xlim=NULL, ylim=NULL, ylim2zero=TRUE,
                        xlab = "Residue", ylab = NULL, 
@@ -133,3 +133,4 @@ plot.bio3d <- function(x, resno=NULL, rm.gaps = FALSE, type="h",
   }
 }
 
+plot.bio3d <- function(...) { plotb3(...) }

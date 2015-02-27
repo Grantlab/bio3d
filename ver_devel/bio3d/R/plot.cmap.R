@@ -89,8 +89,8 @@ plot.cmap <- function(x, col=2, pch=16,
   }
   
   if(ann) {
-    if(is.null(xlab))  xlab=xy$xlab
-    if(is.null(ylab))  ylab=xy$ylab
+#    if(is.null(xlab))  xlab=xy$xlab
+#    if(is.null(ylab))  ylab=xy$ylab
     title(main=main, sub=sub, 
           xlab=xlab, ylab=ylab, ...)
   }

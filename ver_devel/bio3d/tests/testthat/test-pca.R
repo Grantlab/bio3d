@@ -10,7 +10,7 @@ test_that("pca functions works", {
 
   attach(transducin)
   inds <- unlist(lapply(c("1TND_A", "1TAG", "1AS0", "1AS2"), grep, pdbs$id))
-  pdbs <- pdbs.filter(pdbs, row.inds=inds)
+  pdbs <- trim.pdbs(pdbs, row.inds=inds)
   gaps <- gap.inspect(pdbs$xyz)
 
   ## Calc modes

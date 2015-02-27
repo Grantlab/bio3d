@@ -33,15 +33,19 @@ ln -s inst/matrices ./bio3d/
 sh $utildir/remove_dontrun.sh
 
 # 5. start an R session and run the commands to generate html files in ./html/
-Rscript -e "library(staticdocs)" \
+
+if ! Rscript -e "library(staticdocs)" \
         -e "options(device=x11)" \
-        -e "build_site(pkg='bio3d', site_path='html', examples=$example, launch=TRUE)"
+        -e "build_site(pkg='bio3d', site_path='html', examples=$example, launch=TRUE)"; then
+   echo "Error: running staticdocs"
+   exit 1
+fi
 
 # 6. tidy up html files
 utildir=$utildir sh $utildir/tidy_html.sh
 
 # 7. create a link to the results
-rm $utildir/html
+rm -f $utildir/html
 ln -s $workdir/html $utildir
 
 # 8. refresh your browser

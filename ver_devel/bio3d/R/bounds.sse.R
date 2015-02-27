@@ -1,6 +1,6 @@
 #' Obtain A SSE Object From An SSE Sequence Vector
 #'
-#' Inverse process of the funciton \code{\link{pdb2sse()}}.
+#' Inverse process of the funciton \code{\link{pdb2sse}}.
 #'
 #' @details call for its effects.
 #'

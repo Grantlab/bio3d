@@ -32,7 +32,7 @@ summary.pdb <- function(object, printseq=FALSE, ...) {
   het <- object$atom[other.inds,]
   nhet.atom <- nrow(het)
   
-  if(is.null(nhet.atom)) {
+  if(is.null(nhet.atom) | nhet.atom==0) {
     nhet.atom <- 0
     nhet.res <- 0
     hetres <- "none"
@@ -63,7 +63,7 @@ summary.pdb <- function(object, printseq=FALSE, ...) {
 
              "\n\n     Non-protein/nucleic Atoms#: ", nhet.atom,
              "  (residues: ", nhet.res, ")",
-             "\n     Non-protein/nucleic resid values: [", hetres," ]",
+             "\n     Non-protein/nucleic resid values: [ ", hetres," ]",
              "\n\n")
               
   cat(s)

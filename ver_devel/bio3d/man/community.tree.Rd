@@ -41,6 +41,7 @@
 }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
 
 ###-- Build a CNA object
 pdb <- read.pdb("4Q21")

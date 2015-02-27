@@ -73,11 +73,12 @@ view.cnapath(x, pdb, out.prefix = "view.cnapath", spline = FALSE,
    \code{\link[igraph:get.shortest.paths]{get.shortest.paths}}. }
 \examples{
 \donttest{
+# Redundant testing excluded
 
 attach(transducin)
-inds = match(c("1TND_A", "1KJY_A"), pdbs$id)
+inds = match(c("1TND_A", "1TAG_A"), pdbs$id)
 
-npdbs <- pdbs.filter(pdbs, row.inds=inds)
+npdbs <- trim(pdbs, row.inds=inds)
 gaps.res <- gap.inspect(npdbs$ali)
 
 modes <- nma(npdbs)
@@ -93,11 +94,11 @@ pa1
 
 # print two paths simultaneously
 pas <- list(pa1, pa2)
-names(pas) <- c("GTP", "GDI")
+names(pas) <- c("GTP", "GDP")
 print.cnapath(pas)
 
 # Or, for the same effect,
-# summary(pa1, pa2, label=c("GTP", "GDI"))
+# summary(pa1, pa2, label=c("GTP", "GDP"))
 
 # replace node numbers with residue name and residue number in the PDB file
 pdb <- read.pdb("1tnd")
@@ -105,13 +106,13 @@ pdb <- trim.pdb(pdb, atom.select(pdb, chain="A", resno=npdbs$resno[1, gaps.res$f
 print.cnapath(pas, pdb=pdb)
 
 # plot path length distribution and node degeneracy
-print.cnapath(pas, pdb = pdb, col=c("red", "blue"), plot=TRUE)
+print.cnapath(pas, pdb = pdb, col=c("red", "darkgreen"), plot=TRUE)
 
 # View paths in 3D molecular graphic with VMD
 #view.cnapath(pa1, pdb, launch = TRUE)
 #view.cnapath(pa1, pdb, colors = 7, launch = TRUE)
 #view.cnapath(pa1, pdb, spline=TRUE, colors=c("pink", "red"), launch = TRUE)
-#pdb2 <- read.pdb("1kjy")
+#pdb2 <- read.pdb("1tag")
 #pdb2 <- trim.pdb(pdb2, atom.select(pdb2, chain="A", resno=npdbs$resno[2, gaps.res$f.inds]))
 #view.cnapath(pa2, pdb2, launch = TRUE)
 

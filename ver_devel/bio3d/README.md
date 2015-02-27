@@ -17,10 +17,12 @@ Note that you can also get help on any particular function by using the command 
 We also distribute a number of extended **Bio3D vignettes** that provide worked examples of using Bio3D to perform a particular type of analysis. Currently available vignettes include:
 - Installing Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_install.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/installing-bio3d">HTML</a>)
 - Getting started with Bio3D ( PDF | <a href="http://thegrantlab.org/bio3d/user-guide">HTML</a> )
-- Beginning Trajectory Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_md.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/trajectory-analysis">HTML</a>)
-- Enhanced Methods for Normal Mode Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_nma.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/normal-mode-analysis">HTML</a>)
+- PDB structure manipulation and analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_pdb.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/structure-analysis">HTML</a>)
+- Beginning trajectory analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_md.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/trajectory-analysis">HTML</a>)
+- Enhanced methods for Normal Mode Analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_nma.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/normal-mode-analysis">HTML</a>)
 - Comparative sequence and structure analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_pca.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/principal-component-analysis">HTML</a>)
-- Correlation network analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_cna-transducin.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/correlation-network-analysis">HTML</a> )
+- Correlation network analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_cna-transducin.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1/81-vignettes/87-correlation-network-analysis-with-bio3d">HTML</a> )
+- Protein structure network analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/cna_vignette.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/protein-structure-networks">HTML</a> )
 
 There is also a <a href="http://thegrantlab.org/bio3d/bio3d.pdf">package manual</a> (in PDF format) that is a concatenation of each functions documentation. 
 

@@ -57,7 +57,9 @@ binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cutoff=5,
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{read.pdb}}, \code{\link{atom.select}}, \code{\link{dm}} }
 \examples{
-     \donttest{
+   \donttest{
+    # PDB server connection required - testing excluded
+
      pdb <- read.pdb('3dnd')
 
      ## automatically identify 'protein' and 'ligand'
@@ -70,16 +72,18 @@ binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cutoff=5,
      rec.inds <- atom.select(pdb, chain="A", resno=1:350)
      lig.inds <- atom.select(pdb, chain="A", resno=351)
      bs <- binding.site(pdb, a.inds=rec.inds, b.inds=lig.inds)
+   }
 
 
-
-     \dontrun{  
+   \dontrun{  
      # Interaction between peptide and protein
-     rec.inds <- atom.select(pdb, string='//A/1:350////')
-     lig.inds <- atom.select(pdb, string='//I/5:24////')
+     rec.inds <- atom.select(pdb, chain='A', resno=c(1:350))
+     lig.inds <- atom.select(pdb, chain='I', resno=c(5:24))
      bs <- binding.site(pdb, a.inds=rec.inds, b.inds=lig.inds)
-     }
+   }
 
+   \donttest{
+    # Redundant testing excluded
 
      # Interaction between two PDB entities   
      #rec <- read.pdb("receptor.pdb")
@@ -87,6 +91,6 @@ binding.site(a, b=NULL, a.inds=NULL, b.inds=NULL, cutoff=5,
      rec <- trim.pdb(pdb, inds=rec.inds)
      lig <- trim.pdb(pdb, inds=lig.inds)
      bs <- binding.site(rec, lig, hydrogens=FALSE)
-     }
+   }
 }
 \keyword{ utilities }

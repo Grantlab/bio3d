@@ -30,9 +30,10 @@ cat.pdb <- function(..., renumber=FALSE, rechain=TRUE) {
   ## always assign new chain identifiers 
   ## and bring back original chain ID later if rechain=FALSE
   k <- 1
+  chain.repo <- c(LETTERS, letters, 0:9)
   for(i in 1:length(objs)) {
     x <- objs[[i]]
-    objs[[i]] <- .update.chain(x, LETTERS[k:26])
+    objs[[i]] <- .update.chain(x, chain.repo[k:length(chain.repo)])
     k <- k + length(unique(x$atom$chain))
   }
 

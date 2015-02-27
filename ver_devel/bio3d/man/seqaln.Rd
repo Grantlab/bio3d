@@ -135,17 +135,15 @@ seqidentity(aln)
 
 
 ##-- For identical sequences with masking use a custom matrix
-aln <- list(ali=seqbind(c("X","C","X","X","A","G","K"),
-                        c("C","-","A","X","G","X","X","K")),
-            id=c("a","b"))
+aa <- seqbind(c("X","C","X","X","A","G","K"),
+              c("C","-","A","X","G","X","X","K"))
 
-temp <- seqaln(aln=aln, outfile="temp.fas", protein=TRUE,
+aln <- seqaln(aln=aln, id=c("a","b"), outfile="temp.fas", protein=TRUE,
                extra.args= paste("-matrix",
                 system.file("matrices/custom.mat", package="bio3d"),
                 "-gapopen -3.0 ",
                 "-gapextend -0.5",
                 "-center 0.0") )
-
 }
 }
 \keyword{ utilities }
