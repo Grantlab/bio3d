@@ -25,7 +25,7 @@ string trim(std::string s) {
 }
 
 // [[Rcpp::export('.read_pdb')]]
-List read_pdb(std::string filename) {
+List read_pdb(std::string filename, bool multi) {
   Rcpp::List out;
   
   vector<string> type;
@@ -47,6 +47,20 @@ List read_pdb(std::string filename) {
   vector<double> xyz;
 
   int models = 0;
+
+  vector<string> helix_chain;
+  vector<int> helix_resno_start;
+  vector<int> helix_resno_end;
+  vector<string> helix_type;
+
+  vector<string> sheet_chain;
+  vector<int> sheet_resno_start;
+  vector<int> sheet_resno_end;
+  vector<string> sheet_sense;
+
+  vector<string> seqres;
+  vector<string> seqres_chain;
+
   string tmp;
   string line;
   ifstream myfile;
@@ -56,9 +70,39 @@ List read_pdb(std::string filename) {
     while ( getline (myfile,line) ) {
       if(line.substr(0,5)=="MODEL") {
 	models+=1;
+
+	if(!multi && models>1) {
+	  models=1;
+	  break;
+	}
       }
       
-      if(line.substr(0,4)=="ATOM" || line.substr(0,5)=="HETATM") {
+      else if(line.substr(0,5)=="HELIX") {
+	helix_chain.push_back(trim(line.substr(19,1)));
+	helix_resno_start.push_back(std::stoi(line.substr(21,4)));
+	helix_resno_end.push_back(std::stoi(line.substr(33,4)));
+	helix_type.push_back(trim(line.substr(38,2)));
+      }
+
+      else if(line.substr(0,5)=="SHEET") {
+	sheet_chain.push_back(trim(line.substr(21,1)));
+	sheet_resno_start.push_back(std::stoi(line.substr(22,4)));
+	sheet_resno_end.push_back(std::stoi(line.substr(33,4)));
+	sheet_sense.push_back(trim(line.substr(38,2)));
+      }
+
+      else if(line.substr(0,6)=="SEQRES") {
+	
+	for(int i=0; i<13; i++) { 
+	  tmp=trim(line.substr(19+(i*4),3));
+	  if(tmp!="") {
+	    seqres.push_back(tmp);
+	    seqres_chain.push_back(trim(line.substr(11,1)));
+	  }
+	}
+      }
+      
+      else if(line.substr(0,4)=="ATOM" || line.substr(0,5)=="HETATM") {
 	// coordinates
 	double tmpx = std::stod(line.substr(30,8));
 	double tmpy = std::stod(line.substr(38,8));
@@ -69,7 +113,7 @@ List read_pdb(std::string filename) {
 	xyz.push_back(tmpz);
 
 	
-	if(models<2) {
+	if(models < 2) {
 	  x.push_back(tmpx);
 	  y.push_back(tmpy);
 	  z.push_back(tmpz);
@@ -86,6 +130,7 @@ List read_pdb(std::string filename) {
 	  // 4 last entries
 	  o.push_back(std::stod(line.substr(54,6)));
 	  b.push_back(std::stod(line.substr(60,6)));
+	  segid.push_back(trim(line.substr(72,4)));
 	  
 	  // elesy
 	  tmp = line.substr(76,2);
@@ -125,12 +170,32 @@ List read_pdb(std::string filename) {
 						   Rcpp::Named("z")=z,
 						   Rcpp::Named("o")=o,
 						   Rcpp::Named("b")=b,
+						   Rcpp::Named("segid")=segid,
 						   Rcpp::Named("elesy")=elesy,
 						   Rcpp::Named("charge")=charge,
 						   Rcpp::Named("stringsAsFactors")=false
 						   ),
 			   Rcpp::Named("xyz")=xyz,
-			   Rcpp::Named("models")=models
+			   Rcpp::Named("models")=models,
+			   Rcpp::Named("seqres")=seqres,
+			   Rcpp::Named("seqres_chain")=seqres_chain,
+
+			   Rcpp::Named("helix")=
+			   Rcpp::List::create(
+					      Rcpp::Named("start")=helix_resno_start,
+					      Rcpp::Named("end")=helix_resno_end,
+					      Rcpp::Named("chain")=helix_chain, 
+					      Rcpp::Named("chain")=helix_type
+					      ),
+			   
+			   Rcpp::Named("sheet")=
+			   Rcpp::List::create(
+					      Rcpp::Named("start")=sheet_resno_start,
+					      Rcpp::Named("end")=sheet_resno_end,
+					      Rcpp::Named("chain")=sheet_chain,
+					      Rcpp::Named("sense")=sheet_sense
+					      )
+			   
 			   );
 				
 				
