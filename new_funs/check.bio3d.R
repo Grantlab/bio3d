@@ -14,13 +14,16 @@ check.bio3d <- function(pkg, run.skipcran = FALSE, run.dontrun = FALSE, run.dont
       pkg = file.path(tp, "bio3d")
    }
 
-   repos <- getOption("repos")
-   repos["CRAN"] <- cran.repos
-   options(repos = repos)
+   ##- Setup CRAN repository site
+   if(!is.null(cran.repos)) {
+      repos <- getOption("repos")
+      repos["CRAN"] <- cran.repos
+      options(repos = repos)
+   }
  
    ##- Install devtools
    if(!requireNamespace('devtools', quietly = TRUE)) {
-      install.packages('devtools', dependencies = TRUE, repos = cran.repos)
+      install.packages('devtools', dependencies = TRUE)
    } else {
        cat("devtools already installed\n")
    }
