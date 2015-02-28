@@ -1,7 +1,7 @@
 #### Use Sys.setenv("PKG_CXXFLAGS"="-std=c++11")
 #### when compiling
 
-read.pdb2 <- function(file, multi=FALSE) {
+read.pdb2 <- function(file, multi=FALSE, rm.insert=FALSE, rm.alt=TRUE, hex=FALSE) {
   cl <- match.call()
 
   if(missing(file)) {
@@ -30,8 +30,11 @@ read.pdb2 <- function(file, multi=FALSE) {
   }
   
   ## parse PDB file with cpp function
-  pdb <- .read_pdb(file, multi=multi)
-  class(pdb) <- "pdb"
+  pdb <- .read_pdb(file, multi=multi, hex=hex)
+  if(!is.null(pdb$error))
+    stop(paste("Could not read", file))
+  else
+    class(pdb) <- "pdb"
 
   ## convert xyz to matrix
   if(pdb$models>1)
@@ -53,6 +56,32 @@ read.pdb2 <- function(file, multi=FALSE) {
 
   ## set call
   pdb$call <- cl
+
+  ## Remove 'Alt records'
+  if (rm.alt) {
+    if ( sum( !is.na(pdb$atom$alt) ) > 0 ) {
+      first.alt <- sort( unique(na.omit(pdb$atom$alt)) )[1]
+      cat(paste("   PDB has ALT records, taking",first.alt,"only, rm.alt=TRUE\n"))
+      alt.inds <- which( (pdb$atom$alt != first.alt) ) # take first alt only
+      if(length(alt.inds)>0) {
+        pdb$atom <- pdb$atom[-alt.inds,]
+        pdb$xyz <- trim.xyz(pdb$xyz, col.inds=-atom2xyz(alt.inds))
+      }
+    }
+  }
+
+  ## Remove 'Insert records'
+  if (rm.insert) {
+    if ( sum( !is.na(pdb$atom$insert) ) > 0 ) {
+      cat("   PDB has INSERT records, removing, rm.insert=TRUE\n")
+      insert.inds <- which(!is.na(pdb$atom$insert)) # rm insert positions
+      pdb$atom <- pdb$atom[-insert.inds,]
+      pdb$xyz <- trim.xyz(pdb$xyz, col.inds=-atom2xyz(insert.inds))
+    }
+  }
+  
+  if(any(duplicated(pdb$atom$eleno)))
+    warning("duplicated element numbers ('eleno') detected")
 
   ## finished
   return(pdb)

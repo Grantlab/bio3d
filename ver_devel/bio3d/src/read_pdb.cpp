@@ -24,10 +24,21 @@ string trim(std::string s) {
   return ltrim(rtrim(s));
 }
 
+// function get hexadecimal
+int getHex(string hexstr) {
+  return (int)strtol(hexstr.c_str(), 0, 16);
+}
+
 // [[Rcpp::export('.read_pdb')]]
-List read_pdb(std::string filename, bool multi) {
+List read_pdb(std::string filename, bool multi, bool hex) {
+  // out is a List object
   Rcpp::List out;
+
+  // keep track of number of atoms and models in PDB
+  int natoms = 0;
+  int models = 0;
   
+  // assign vectors for building final 'atom' object
   vector<string> type;
   vector<int> eleno;
   vector<string> elety;
@@ -43,11 +54,12 @@ List read_pdb(std::string filename, bool multi) {
   vector<double> b;
   vector<string> segid;
   vector<string> elesy;
-  vector<double> charge;
+  vector<string> charge;
+
+  // xyz object
   vector<double> xyz;
-
-  int models = 0;
-
+  
+  // store HELIX / SHEET records
   vector<string> helix_chain;
   vector<int> helix_resno_start;
   vector<int> helix_resno_end;
@@ -58,25 +70,36 @@ List read_pdb(std::string filename, bool multi) {
   vector<int> sheet_resno_end;
   vector<string> sheet_sense;
 
+  // store SEQRES
   vector<string> seqres;
   vector<string> seqres_chain;
 
+  // temp variables
   string tmp;
+  int tmp_eleno;
+
+  // for reading
   string line;
   ifstream myfile;
+
+  // open file and iterate over each line
   myfile.open(filename);
   
   if (myfile.is_open())  {
     while ( getline (myfile,line) ) {
+      
+      // keep of track of number of models in PDB file
       if(line.substr(0,5)=="MODEL") {
 	models+=1;
-
-	if(!multi && models>1) {
+	
+	// break out of loop if we dont want multi-model
+	if(!multi && models > 1) {
 	  models=1;
 	  break;
 	}
       }
       
+      // store helix info
       else if(line.substr(0,5)=="HELIX") {
 	helix_chain.push_back(trim(line.substr(19,1)));
 	helix_resno_start.push_back(std::stoi(line.substr(21,4)));
@@ -84,67 +107,68 @@ List read_pdb(std::string filename, bool multi) {
 	helix_type.push_back(trim(line.substr(38,2)));
       }
 
+      // store sheet info
       else if(line.substr(0,5)=="SHEET") {
 	sheet_chain.push_back(trim(line.substr(21,1)));
 	sheet_resno_start.push_back(std::stoi(line.substr(22,4)));
 	sheet_resno_end.push_back(std::stoi(line.substr(33,4)));
 	sheet_sense.push_back(trim(line.substr(38,2)));
       }
-
+      
+      // store SEQRES info
       else if(line.substr(0,6)=="SEQRES") {
-	
 	for(int i=0; i<13; i++) { 
-	  tmp=trim(line.substr(19+(i*4),3));
-	  if(tmp!="") {
+	  tmp = trim(line.substr(19+(i*4),3));
+	  if(tmp != "") {
 	    seqres.push_back(tmp);
 	    seqres_chain.push_back(trim(line.substr(11,1)));
 	  }
 	}
       }
       
+      // store ATOM/HETATM records
       else if(line.substr(0,4)=="ATOM" || line.substr(0,5)=="HETATM") {
-	// coordinates
+	// read coordinates
 	double tmpx = std::stod(line.substr(30,8));
 	double tmpy = std::stod(line.substr(38,8));
 	double tmpz = std::stod(line.substr(46,8));
-
+	
+	// always store coords in xyz object
 	xyz.push_back(tmpx);
 	xyz.push_back(tmpy);
 	xyz.push_back(tmpz);
-
 	
+	// only store other items for first MODEL
 	if(models < 2) {
+	  natoms++;
+	  
+	  // x, y, z for 'atom'
 	  x.push_back(tmpx);
 	  y.push_back(tmpy);
 	  z.push_back(tmpz);
+
+	  // eleno can be hexadecimal (e.g. from VMD)
+	  if(hex && natoms > 99999) {
+	    tmp_eleno = getHex(trim(line.substr(6,5)));
+	  }
+	  else {
+	    tmp_eleno = std::stoi(line.substr(6,5));
+	  }
+	  eleno.push_back(tmp_eleno);
 	  
+	  // read all others items as they are
+	  resno.push_back(std::stoi(line.substr(22,4)));
 	  type.push_back(rtrim(line.substr(0,5)));
-	  eleno.push_back(std::stoi(line.substr(6,5)));
 	  elety.push_back(trim(line.substr(12,4)));
 	  alt.push_back(trim(line.substr(16,1)));
 	  resid.push_back(trim(line.substr(17,4)));
 	  chain.push_back(trim(line.substr(21,1)));
-	  resno.push_back(std::stoi(line.substr(22,4)));
 	  insert.push_back(line.substr(26,1));
-	
-	  // 4 last entries
 	  o.push_back(std::stod(line.substr(54,6)));
 	  b.push_back(std::stod(line.substr(60,6)));
 	  segid.push_back(trim(line.substr(72,4)));
-	  
-	  // elesy
-	  tmp = line.substr(76,2);
-	  if(tmp=="  ")
-	    elesy.push_back("");
-	  else
-	    elesy.push_back(tmp);
-	  
-	  // charge
-	  tmp = line.substr(78,2);
-	  if(tmp=="  ")
-	    charge.push_back(NA_REAL);
-	  else
-	    charge.push_back(std::stod(tmp));
+	  elesy.push_back(trim(line.substr(76,2)));
+	  charge.push_back(trim(line.substr(78,2)));
 	}
       }
     }
@@ -155,6 +179,7 @@ List read_pdb(std::string filename, bool multi) {
     return(out);
   }
   
+  // build output List
   out = Rcpp::List::create(Rcpp::Named("atom")=
 			   Rcpp::DataFrame::create(
 						   Rcpp::Named("type")=type,
