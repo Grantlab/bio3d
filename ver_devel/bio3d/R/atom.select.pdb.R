@@ -130,11 +130,14 @@ atom.select.pdb <- function(pdb, string = NULL,
   }
   
   cl <- match.call()
-  M <- rep(TRUE, nrow(pdb$atom))
-
+  if(operator=="AND")
+    M <- rep(TRUE, nrow(pdb$atom))
+  if(operator=="OR")
+    M <- rep(FALSE, nrow(pdb$atom))
+  
   if(!is.null(string)) {   
     M <- switch(string,
-                all         =   M,
+                all         =   M <- rep(TRUE, nrow(pdb$atom)),
                 protein     =  .is.protein(pdb),
                 notprotein  = !.is.protein(pdb),
                 nucleic     =  .is.nucleic(pdb),
@@ -149,8 +152,8 @@ atom.select.pdb <- function(pdb, string = NULL,
                 h           =  .is.hydrogen(pdb),
                 noh         = !.is.hydrogen(pdb),
                 NA
-    )
-
+                )
+    
     if(verbose) {
       .verboseout(M, 'string')
     }
