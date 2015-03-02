@@ -157,12 +157,12 @@ atom.select.pdb <- function(pdb, string = NULL,
   }
   
   if(!is.null(type)) {
-    L <- .match.elety(pdb, type)
+    L <- .match.type(pdb, type)
     if(verbose) .verboseout(L, 'type')
     M <- .combinelv(L, M, operator)
   }
   if(!is.null(eleno)) {
-    L <- .match.elety(pdb, eleno)
+    L <- .match.eleno(pdb, eleno)
     if(verbose) .verboseout(L, 'eleno')
     M <- .combinelv(L, M, operator)
   }
