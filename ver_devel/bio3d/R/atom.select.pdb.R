@@ -130,11 +130,14 @@ atom.select.pdb <- function(pdb, string = NULL,
   }
   
   cl <- match.call()
-  M <- rep(TRUE, nrow(pdb$atom))
-
+  if(operator=="AND")
+    M <- rep(TRUE, nrow(pdb$atom))
+  if(operator=="OR")
+    M <- rep(FALSE, nrow(pdb$atom))
+  
   if(!is.null(string)) {   
     M <- switch(string,
-                all         =   M,
+                all         =   M <- rep(TRUE, nrow(pdb$atom)),
                 protein     =  .is.protein(pdb),
                 notprotein  = !.is.protein(pdb),
                 nucleic     =  .is.nucleic(pdb),
@@ -149,20 +152,20 @@ atom.select.pdb <- function(pdb, string = NULL,
                 h           =  .is.hydrogen(pdb),
                 noh         = !.is.hydrogen(pdb),
                 NA
-    )
-
+                )
+    
     if(verbose) {
       .verboseout(M, 'string')
     }
   }
   
   if(!is.null(type)) {
-    L <- .match.elety(pdb, type)
+    L <- .match.type(pdb, type)
     if(verbose) .verboseout(L, 'type')
     M <- .combinelv(L, M, operator)
   }
   if(!is.null(eleno)) {
-    L <- .match.elety(pdb, eleno)
+    L <- .match.eleno(pdb, eleno)
     if(verbose) .verboseout(L, 'eleno')
     M <- .combinelv(L, M, operator)
   }

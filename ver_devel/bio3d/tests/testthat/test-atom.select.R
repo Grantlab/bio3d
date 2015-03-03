@@ -40,7 +40,16 @@ test_that("atom.select() gets correct selections with various options", {
   capture.output(unk.inds <- atom.select(pdb, resid = "TES")$atom)
   expect_equal(length(unk.inds), 26)
   expect_equal(unk.inds[c(3, 13)], c(10, 94))
+
+  # Select 'ATOM' record: omit 1 'ALT'
+  capture.output(ATOM.inds <- atom.select(pdb, type = "ATOM")$atom)
+  expect_equal(length(ATOM.inds), 129)
  
+  # Select first 5 CA atoms by 'eleno'
+  capture.output(ca5.inds <- atom.select(pdb, eleno = c(3, 10, 20, 27, 42))$atom)
+  expect_equal(length(ca5.inds), 5)
+  expect_true(all(pdb$atom[ca5.inds, "elety"] == "CA"))
+
   # Select hydrogen/ligand/water
   capture.output(h.inds <- atom.select(pdb, "h")$atom)
   expect_equal(length(h.inds), 77)
@@ -93,5 +102,7 @@ test_that("atom.select() gets correct selections with various options", {
 
   capture.output(comb3.inds <- atom.select(pdb, "noh", resid = "TES", chain = "A") )
   expect_equal(comb3.inds$atom, c(8, 10, 12, 16, 17)) 
-   
+  
+  capture.output(comb4.inds <- atom.select(pdb, chain = "B", resid = "GDP", operator = "OR") )
+  expect_equal(length(comb4.inds$atom), 117)
 })
