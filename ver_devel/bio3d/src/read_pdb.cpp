@@ -1,33 +1,11 @@
-// [[Rcpp::plugins(cpp11)]]
 #include <Rcpp.h>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "utils.h"
+#include "convert.h"
 using namespace std;
 using namespace Rcpp;
-
-
-// trim from start
-string ltrim(std::string s) {
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
-  return s;
-}
-
-// trim from end
-string rtrim(std::string s) {
-  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
-  return s;
-}
-
-// trim from both ends
-string trim(std::string s) {
-  return ltrim(rtrim(s));
-}
-
-// function get hexadecimal
-int getHex(string hexstr) {
-  return (int)strtol(hexstr.c_str(), 0, 16);
-}
 
 // [[Rcpp::export('.read_pdb')]]
 List read_pdb(std::string filename, bool multi, bool hex) {
@@ -83,7 +61,7 @@ List read_pdb(std::string filename, bool multi, bool hex) {
   ifstream myfile;
 
   // open file and iterate over each line
-  myfile.open(filename);
+  myfile.open(filename.c_str());
   
   if (myfile.is_open())  {
     while ( getline (myfile,line) ) {
@@ -102,16 +80,20 @@ List read_pdb(std::string filename, bool multi, bool hex) {
       // store helix info
       else if(line.substr(0,5)=="HELIX") {
 	helix_chain.push_back(trim(line.substr(19,1)));
-	helix_resno_start.push_back(std::stoi(line.substr(21,4)));
-	helix_resno_end.push_back(std::stoi(line.substr(33,4)));
+	helix_resno_start.push_back(stringToInt(line.substr(21,4)));
+	helix_resno_end.push_back(stringToInt(line.substr(33,4)));
+	//helix_resno_start.push_back(std::stoi(line.substr(21,4)));
+	//helix_resno_end.push_back(std::stoi(line.substr(33,4)));
 	helix_type.push_back(trim(line.substr(38,2)));
       }
 
       // store sheet info
       else if(line.substr(0,5)=="SHEET") {
 	sheet_chain.push_back(trim(line.substr(21,1)));
-	sheet_resno_start.push_back(std::stoi(line.substr(22,4)));
-	sheet_resno_end.push_back(std::stoi(line.substr(33,4)));
+	sheet_resno_start.push_back(stringToInt(line.substr(22,4)));
+	sheet_resno_end.push_back(stringToInt(line.substr(33,4)));
+	//sheet_resno_start.push_back(std::stoi(line.substr(22,4)));
+	//sheet_resno_end.push_back(std::stoi(line.substr(33,4)));
 	sheet_sense.push_back(trim(line.substr(38,2)));
       }
       
@@ -129,9 +111,9 @@ List read_pdb(std::string filename, bool multi, bool hex) {
       // store ATOM/HETATM records
       else if(line.substr(0,4)=="ATOM" || line.substr(0,5)=="HETATM") {
 	// read coordinates
-	double tmpx = std::stod(line.substr(30,8));
-	double tmpy = std::stod(line.substr(38,8));
-	double tmpz = std::stod(line.substr(46,8));
+	double tmpx = stringToDouble(line.substr(30,8));
+	double tmpy = stringToDouble(line.substr(38,8));
+	double tmpz = stringToDouble(line.substr(46,8));
 	
 	// always store coords in xyz object
 	xyz.push_back(tmpx);
@@ -152,20 +134,20 @@ List read_pdb(std::string filename, bool multi, bool hex) {
 	    tmp_eleno = getHex(trim(line.substr(6,5)));
 	  }
 	  else {
-	    tmp_eleno = std::stoi(line.substr(6,5));
+	    tmp_eleno = stringToInt(line.substr(6,5));
 	  }
 	  eleno.push_back(tmp_eleno);
 	  
 	  // read all others items as they are
-	  resno.push_back(std::stoi(line.substr(22,4)));
+	  resno.push_back(stringToInt(line.substr(22,4)));
 	  type.push_back(rtrim(line.substr(0,5)));
 	  elety.push_back(trim(line.substr(12,4)));
 	  alt.push_back(trim(line.substr(16,1)));
 	  resid.push_back(trim(line.substr(17,4)));
 	  chain.push_back(trim(line.substr(21,1)));
 	  insert.push_back(line.substr(26,1));
-	  o.push_back(std::stod(line.substr(54,6)));
-	  b.push_back(std::stod(line.substr(60,6)));
+	  o.push_back(stringToDouble(line.substr(54,6)));
+	  b.push_back(stringToDouble(line.substr(60,6)));
 	  segid.push_back(trim(line.substr(72,4)));
 	  elesy.push_back(trim(line.substr(76,2)));
 	  charge.push_back(trim(line.substr(78,2)));
