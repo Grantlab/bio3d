@@ -24,15 +24,14 @@ List read_crd(std::string filename) {
 
   // data
   string title;
-  int natoms;
-  double simtime;
+  int natoms = NA_INTEGER;
+  double simtime = NA_REAL;
   
   // temp variables
   int i = 0;
-  int j = 0;
   string tmps;
   double tmpd;
-  size_t found;
+  vector<string> tmp_vec;
     
   // for reading
   string line;
@@ -54,16 +53,21 @@ List read_crd(std::string filename) {
       // natoms and simtime
       if(i==2) {
 	tmps = trim(line);
-	found = tmps.find_first_of(" ");
-
-	natoms = stringToInt(tmps.substr(0, found));
-	//simtime = stringToDouble(tmps.substr(found));
+	tmp_vec = split(tmps, ' ');
+	
+	if(tmp_vec.size()>0) {
+	  natoms = stringToInt(tmp_vec[0]);
+	}
+	
+	if(tmp_vec.size()>1) {
+	  simtime = stringToDouble(tmp_vec[1]);
+	}
 
 	continue;
       }
       
       // coords
-      if(natoms*3 > coords.size()) {
+      if(natoms*3 > (int)coords.size()) {
 	stringstream ss(line);
 	
 	while (ss >> std::setw(12) >> tmpd) {
@@ -73,19 +77,19 @@ List read_crd(std::string filename) {
 	continue;
       }
 
-      // vels
-      if(coords.size() == natoms*3 && vels.size() < natoms*3) {
+      // velocities
+      if((int)coords.size() == natoms*3 && (int)vels.size() < natoms*3) {
 	stringstream ss(line);
 	
 	while (ss >> std::setw(12) >> tmpd) {
 	  vels.push_back(tmpd);
 	}
-
+	
 	continue;
       }
 
       // box size
-      if(coords.size() == natoms*3) {
+      if((int)coords.size() == natoms*3) {
 	stringstream ss(line);
 	
 	while (ss >> std::setw(12) >> tmpd) {
@@ -97,20 +101,29 @@ List read_crd(std::string filename) {
     }
     myfile.close();
 
-  
+    
   }
   else {
     out = Rcpp::List::create(Rcpp::Named("error")="error");
     return(out);
   }
-
-
+  
+  // if velocities were not present, box info might be stored there
+  if(vels.size()==6 && box.empty()) {
+    box=vels;
+    vels.clear();
+  }
+  
+  out.push_back(title);
   out.push_back(natoms);
+  out.push_back(simtime);
   out.push_back(coords);
   out.push_back(vels);
   out.push_back(box);
   
-  content_names.push_back("num.atoms");
+  content_names.push_back("title");
+  content_names.push_back("natoms");
+  content_names.push_back("time");
   content_names.push_back("xyz");
   content_names.push_back("velocities");
   content_names.push_back("box");

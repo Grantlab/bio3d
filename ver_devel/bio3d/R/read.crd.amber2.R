@@ -18,6 +18,15 @@ read.crd.amber2 <- function(file) {
   else
     class(crd) <- c("amber", "crd")
 
+  if(is.na(crd$time))
+    crd$time <- NULL
+  
+  if(!length(crd$velocities)>0)
+    crd$velocities <- NULL
+
+  if(!length(crd$box)>0)
+    crd$box <- NULL
+  
   crd$xyz <- as.xyz(crd$xyz)
   crd$call <- cl
   

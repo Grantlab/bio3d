@@ -22,4 +22,9 @@ string trim(string s);
 // function get hexadecimal
 int getHex(string hexstr);
 
+// split a string
+vector<string> &split(const string &s, char delim, vector<string> &elems);
+vector<string> split(const string &s, char delim);
+
+
 #endif
