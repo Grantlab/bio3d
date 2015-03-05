@@ -12,7 +12,7 @@ as.pdb.prmtop <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL
   natoms.prmtop <- prmtop$POINTERS[1]
   if(is.null(crd)) {
     warning("producing PDB object with no XYZ coordinates")
-    crd <- rep(NA, natoms.prmtop*3)
+    crd <- as.numeric(rep(NA, natoms.prmtop*3))
   }
 
   if(!inherits(crd, "amber")) {
@@ -59,11 +59,11 @@ as.pdb.prmtop <- function(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL
 
   if(any(c(!is.null(inds), !is.null(inds.crd)))) {
     pdb <- as.pdb.default(xyz=crd$xyz[,inds.crd$xyz], elety=prmtop$ATOM_NAME[inds$atom],
-                          resno=resno[inds$atom], chain=NA, resid=resid[inds$atom])
+                          resno=resno[inds$atom], chain=as.character(NA), resid=resid[inds$atom])
   }
   else {
     pdb <- as.pdb.default(xyz=crd$xyz, elety=prmtop$ATOM_NAME,
-                          resno=resno, chain=NA, resid=resid)
+                          resno=resno, chain=as.character(NA), resid=resid)
   }
 
   pdb$call = match.call()
