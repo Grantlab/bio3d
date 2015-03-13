@@ -1,6 +1,6 @@
 print.fasta <- function(x, alignment=TRUE, ...) {
   
-  if ( (inherits(x, "fasta") | inherits(x, "3dalign")) ){ 
+  if ( (inherits(x, "fasta") | inherits(x, "pdbs")) ){ 
     id <- x$id
     ali <- as.matrix(x$ali)
     call <- paste(deparse(x$call), sep = "\n", collapse = "\n")
@@ -10,7 +10,7 @@ print.fasta <- function(x, alignment=TRUE, ...) {
     call <- NA
   }
 
-  if(inherits(x, "3dalign"))
+  if(inherits(x, "pdbs"))
     row.desc <- "structures"
   else
     row.desc <- "sequences"
@@ -58,7 +58,7 @@ print.fasta <- function(x, alignment=TRUE, ...) {
 
 .print.fasta.ali <- function(x, ##limit.out=NULL,
                              width=NULL, col.inds=NULL,
-                             numbers=TRUE, ...) {
+                             numbers=TRUE, conservation=TRUE, ...) {
   ##-- Print sequence alignment in a nice formated way
   ##    source("print.aln.R")
   ##    x<-read.fasta("poo.fa")
@@ -73,17 +73,33 @@ print.fasta <- function(x, alignment=TRUE, ...) {
   ##   Does not work if alignment contains only one position (one seq?)
   ##     y=x; y$ali=x$ali[,1]
 
-  if ( (inherits(x, "fasta") | inherits(x, "3dalign")) ){ 
+  if ( (inherits(x, "fasta") | inherits(x, "pdbs")) ){ 
     id <- x$id
     ali <- as.matrix(x$ali)
   } else {
     ali <- as.matrix(x)
     id <- rownames(x)
   }
+
+  ## remove any NA values
+  ali[is.na(ali)] <- "-"
   
   ##- Trim to 'col.inds' if provided 
   if(!is.null(col.inds)) {
     ali <- ali[,col.inds, drop=FALSE]
+  }
+
+  if(nrow(ali)<2)
+    conservation <- FALSE
+  
+  ##- conservation
+  cons <- NULL
+  if(conservation) {
+    tmp1 <- conserv(ali, method="entropy10")
+    tmp2 <- conserv(ali, method="identity")
+    cons <- rep(" ", ncol(ali))
+    cons[ tmp1==1 ] <- "^"
+    cons[ tmp2==1 ] <- "*"
   }
   
   ## Check and truncate possilbe long ids
@@ -102,6 +118,9 @@ print.fasta <- function(x, alignment=TRUE, ...) {
   
   ## Format for annotation printing (see below)
   pad.format <- paste0("%+",(ids.nchar+1),"s")
+
+  ## Format for conservation annotation printing (see below)
+  pad.format2 <- paste0("%+",(ids.nchar),"s")
   
   ##- Scale 'width' of output if not specified in input call
   tput.col <- 85  ## typical terminal width from system("tput cols")
@@ -126,7 +145,7 @@ print.fasta <- function(x, alignment=TRUE, ...) {
   
   block.annot  <- rep(" ", width)
   block.annot[ c(1,seq(10, width, by=10)) ] = "."
-  
+    
   blocks <- matrix(NA, ncol=nblocks, nrow=nseq) 
   for(i in 1:nblocks) {
     ##- Sequence block
@@ -144,6 +163,13 @@ print.fasta <- function(x, alignment=TRUE, ...) {
     
     ##- Sequence block
     cat(blocks[,i], sep="\n")
+
+    ##- Formated Printing of conservation (stars for conserved columns)
+    if(conservation) {
+      annot2 <- c("", cons[positions])
+      annot2[1] = sprintf(pad.format2, "")
+      cat(paste(annot2, collapse=""),"\n")
+    }
     
     ##- Ticks + numbers again
     if(numbers) {

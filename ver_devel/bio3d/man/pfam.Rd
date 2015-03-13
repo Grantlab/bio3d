@@ -40,11 +40,15 @@ pfam(id, alignment = "seed", verbose = FALSE)
   \code{\link{uniprot}}
 }
 \examples{
+\donttest{
+# PFAM server connection required - testing excluded
+
 aln <- pfam("piwi")
 aln <- pfam("PF02171")
 
-seq <- get.seq("1rx2_A")
+seq <- get.seq("1rx2_A", outfile = tempfile())
 hmm <- hmmer(seq, type="hmmscan", db="pfam")
 aln <- pfam(hmm$acc[1])
+}
 }
 \keyword{ utilities }

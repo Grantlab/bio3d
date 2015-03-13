@@ -9,14 +9,14 @@
     ifelse( r>cutoff, 0, r^(-2))
 }
 
-"ff.calpha" <- function(r, ...) {
+"ff.calpha" <- function(r, rmin=2.9, ...) {
   ## MMTK Units: kJ / mol / nm^2
   ##a <- 128; b <- 8.6 * 10^5; c <- 2.39 * 10^5;
   ## Bio3D Units: kJ / mol / A^2
 
-  ## Consider enhancement:
   ## In case of unreasonable CA-CA distance
-  r[(r<3.7)] <- 3.7
+  if(!is.null(rmin))
+    r[(r<rmin)] = rmin
   
   a <- 128 * 10^4; b <- 8.6 * 10^2; c <- 2.39 * 10^3;
   ifelse( r<4.0,
@@ -158,7 +158,8 @@
   ## sdENM by lazyload. contains an array with dimensions
   ## 20  x 20  x 27
   ## aa1 x aa2 x distance.category
-  
+  sdENM = bio3d::sdENM
+ 
   ## set sequence data to 1-letter aa code
   if(any(nchar(ssdat$seq)==3))
     sequ <- suppressWarnings( aa321(ssdat$seq) )  

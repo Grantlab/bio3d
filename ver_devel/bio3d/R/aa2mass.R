@@ -33,35 +33,42 @@
               "LEU", "LYS", "MET", "PHE", "PRO",
               "SER", "THR", "TRP", "TYR", "VAL")
 
-      mat <- data.frame(aa3=aa, aa1=aa321(aa), aaMass=w, name=NA, formula=NA)
+      mat <- data.frame(aa3=aa, aa1=aa321(aa), mass=w, formula=NA, name=NA)
       rownames(mat) <- aa
     }
     else  {
       ## Read data matrix
-      mat.file <- system.file(paste("matrices/aa_mass.mat",sep=""), package="bio3d")
-      mat <- read.table(mat.file)
-      ##return(mat)
+      mat <- bio3d::aa.table
     }
     
-    ## Data frame with column names:
-    ## aa3, aa1, aaMass, name, formula
+    ## Data frame with column names: aa3, aa1, mass, formula, name
     if (!is.null(mass.custom)) {
-      if(class(mass.custom)!="list")
+      if(class(mass.custom) != "list")
         stop("'mass.custom' must be of class 'list'")
       
       new.aas <- names(mass.custom)
-      if(any(duplicated(new.aas)) ||
-         any(new.aas %in% mat[,"aa3"]))
-        warning("duplicate residue name(s) provided")
+      if(any(duplicated(new.aas))) {
+        mass.custom[duplicated(new.aas)] <- NULL
+        warning("duplicate residue name(s) in 'mass.custom'. using first occurrence(s) only.")
+      }
+
+      new.aas <- names(mass.custom)
+      if(any(new.aas %in% mat$aa3)) {
+        dups <- paste(unique(new.aas[new.aas %in% mat$aa3]), collapse=", ")
+        warning(paste("residue name(s)", dups,
+                      "exists in 'aa.table'. overwriting with provided value(s)."))
+      }
       
       for(new.aa in new.aas) {
         if( new.aa %in% rownames(mat) ) {
-          mat[new.aa, "aaMass"] = mass.custom[[ new.aa ]]
+          ## Replace residue mass
+          mat[new.aa, "mass"] = mass.custom[[ new.aa ]]
         }
         else {
+          ## Add new residue to data frame (aa.table)
           nr <- data.frame(list(aa3=new.aa, aa1="X",
-                                aaMass=mass.custom[[ new.aa ]],
-                                name=NA, formula=NA))
+                                mass=mass.custom[[ new.aa ]],
+                                formula=NA, name=NA))
           rownames(nr) <- new.aa
           mat <- rbind(mat, nr)
         }
@@ -69,13 +76,13 @@
     }
 
     ## Fetch mass from data frame
-    wts <- mat[sequ,"aaMass"]
-
+    wts <- mat[sequ, "mass"]
+    
     ## Check for missing masses
-    if(NA%in%wts) {
-      inds <- which(wts%in%NA)
+    if(NA %in% wts) {
+      inds <- which(wts %in% NA)
       unknown <- paste(unique(sequ[inds]), collapse=" ")
-      stop(paste("Unknown aminoacid identifier: ", unknown, sep=""))
+      stop(paste("Unknown amino acid identifier: ", unknown, sep=""))
     }
     
     if(addter) {

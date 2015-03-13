@@ -31,7 +31,10 @@
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Barry Grant }
-\seealso{ \code{\link{read.fasta}}, \code{\link{ide.filter}}, \code{\link{entropy}}, \code{\link{consensus}} }
+\seealso{
+  \code{\link{read.fasta}}, \code{\link{filter.identity}},
+  \code{\link{entropy}}, \code{\link{consensus}}
+}
 \examples{
 \dontrun{
 aln <- read.fasta( system.file("examples/kif1a.fa",

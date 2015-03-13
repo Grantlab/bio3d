@@ -32,7 +32,7 @@ read.all(aln, prefix = "", pdbext = "", sel = NULL, ...)
   their associated PDB files.
 }
 \value{
-  Returns a list of class \code{"3dalign"} with the following five
+  Returns a list of class \code{"pdbs"} with the following five
   components:
   \item{xyz}{numeric matrix of aligned C-alpha coordinates.}
   \item{resno}{character matrix of aligned residue numbers.}
@@ -62,7 +62,6 @@ read.all(aln, prefix = "", pdbext = "", sel = NULL, ...)
   \code{\link{core.find}}, \code{\link{fit.xyz}}  }
 \examples{
 # still working on speeding this guy up
-cat("\n")
 \dontrun{
 ## Read sequence alignment
 file <- system.file("examples/kif1a.fa",package="bio3d")

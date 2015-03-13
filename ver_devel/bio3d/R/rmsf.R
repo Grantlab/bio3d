@@ -1,5 +1,5 @@
 "rmsf" <-
-function(xyz) {
+function(xyz, average = FALSE) {
   if(is.null(dim(xyz)))
     stop("input 'xyz' has NULL dimension")
 
@@ -20,7 +20,16 @@ function(xyz) {
     }
   }
 
+  fluct = rowSums( matrix( my.sd(xyz, na.rm = TRUE), ncol=3, byrow=TRUE )^2, na.rm=TRUE )
+  if(average) {
+     if(ncol(xyz) %% 3 == 0)
+        d = ncol(xyz) / 3
+     else 
+        d = ncol(xyz)
+     return( sqrt( sum(fluct)/d ) )
+  } else {
+     return( sqrt( fluct ) )
+  }
   
-  return( sqrt(rowSums((matrix(apply(xyz,2,my.sd,na.rm=TRUE),ncol=3,byrow=TRUE)^2),na.rm=TRUE)) )
 }
 

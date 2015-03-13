@@ -1,4 +1,4 @@
-nma           Normal Mode Analysis
+pdb	      PDB File Manipulation, Searching and Alignment
 pca           Principal Component Analysis
+nma           Normal Mode Analysis
 md	      Molecular Dynamics Trajectory Analysis
-pdb	      PDB File Manipulation, Serching and Alignment

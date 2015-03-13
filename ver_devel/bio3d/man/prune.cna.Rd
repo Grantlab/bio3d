@@ -1,8 +1,6 @@
 \name{prune.cna}
 \alias{prune.cna}
-\title{
-  Prune A cna Network Object
-}
+\title{ Prune A cna Network Object }
 \description{
 Remove nodes and their associated edges from a cna network graph.
 }
@@ -45,25 +43,13 @@ that is returned also.
    \code{\link{view.cna}}, \code{\link{plot.cna}}
 }
 \examples{
-# Read example trajectory file
-trtfile <- system.file("examples/hivp.dcd", package="bio3d")
-trj <- read.dcd(trtfile)
+
+# Load the correlation network
+attach(hivp)
 
 # Read the starting PDB file to determine atom correspondence
 pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 pdb <- read.pdb(pdbfile)
-
-# select residues 24 to 27 and 85 to 90 in both chains
-inds <- atom.select(pdb,"///24:27,85:90///CA/")
-
-# lsq fit of trj on pdb
-xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
-
-# calculate dynamical cross-correlation matrix
-cij <- dccm(xyz)
-
-# Build, and betweeness cluster, a network graph
-net <- cna(cij)
 
 # Plot coarse grain network based on dynamically coupled communities
 par(mfcol=c(1,2), mar=c(0,0,0,0))
@@ -72,5 +58,8 @@ plot.cna(net)
 # Prune network
 dnet <- prune.cna(net, edges.min = 1)
 plot(dnet)
+
+detach(hivp)
+
 }
 \keyword{ utility }

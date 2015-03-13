@@ -7,8 +7,7 @@ plot.dccm <-function(x, sse=NULL, colorkey=TRUE,
                      margin.segments=NULL, segment.col=vmd.colors(), 
                      segment.min=1, ...) {
 
-  require(lattice)
-  require(grid)
+  requireNamespace("lattice", quietly = TRUE)
   colnames(x) = NULL; rownames(x)=NULL
 
   draw.segment <- function(start, length, xymin, xymax, fill.col="gray", side=1) {
@@ -59,7 +58,7 @@ plot.dccm <-function(x, sse=NULL, colorkey=TRUE,
   }
   
   ##-- Main Plot
-  p1 <- contourplot(x, region = TRUE, labels=F, col="gray40",
+  p1 <- lattice::contourplot(x, region = TRUE, labels=F, col="gray40",
                     at=at, xlab=xlab, ylab=ylab,
                     colorkey=colorkey, main=main, ...)
 

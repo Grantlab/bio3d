@@ -1,0 +1,204 @@
+---
+title: "Getting started with Bio3D"
+author: "Lars Skjaerven, Xin-Qiu Yao & Barry J. Grant"
+date: "September 28, 2014"
+affiliation: University of Michigan, Ann Arbor
+output:
+  pdf_document:
+    highlight: default 
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+    fig_width: 5
+    fig_height: 5
+    fig_caption: yes
+  md_document:
+    fig_height: 5
+    fig_width: 5
+    variant: markdown_phpextra
+bibliography: Bio3D_introduction.bib
+documentclass: article
+fontsize: 11pt
+geometry: tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm
+linkcolor: black
+---
+
+# Introduction
+
+Bio3D[^1] is an R package containing utilities for the analysis of biomolecular
+structure, sequence and trajectory data [@grant06].  Features include the ability
+to read and write biomolecular structure, sequence and dynamic trajectory data,
+perform atom selection, re-orientation, superposition, rigid core
+identification, clustering, distance matrix analysis, conservation
+analysis, normal mode analysis and principal component analysis. Bio3d
+takes advantage of the extensive graphical and statistical capabilities of the 
+[R environment](http://www.r-project.org) 
+and thus represents a useful framework for exploratory analysis of structural data.
+
+
+## Using this vignette
+The aim of this document, termed a vignette[^2] in R parlance, is to provide a 
+brief overview of Bio3D. A number of other Bio3D package vignettes are
+available, including:
+
+At the time of writing these include:
+
+-   `Installing Bio3D`
+
+-   `Comparative protein structure analysis with Bio3D`
+
+-   `Sequence conservation analysis with Bio3D`
+
+-   `Beginning trajectory analysis with Bio3D`
+
+-   `Dynamic network analysis with Bio3D`
+
+-   `Normal mode analysis with Bio3D`
+
+
+## Installation Prequisites
+Before you attempt to install bio3d you should have a relatively
+recent version of R installed and working on your system. Detailed instructions 
+for obtaining and installing R on various platforms can be found on the 
+[R home page](http://www.r-project.org).
+
+## Do I need to know R?
+To get the most out of Bio3D you should be quite familiar with basic R
+usage. There are several on--line resources that can help you get
+started using R. Again they can be found from the
+[R home page](http://www.r-project.org).
+
+## Learning R
+Some users find this a steep learning curve;
+your experience may be similar. However, if you have mastered basic
+vectors and matrices you should feel confident about getting stuck into
+using the Bio3D package.
+
+## Addational utilities
+There are a number of additional packages and programs that will
+either interfae with Bio3D or that we consider generally invaluable for
+working with biomolecular structure (e.g. VMD or PyMOL) and sequence
+(e.g. Seaview) data. A brief description of how to obtain these
+additional packages is given below.
+
+## Bio3D deveolpment
+We are always interested in adding additional functionality to
+Bio3D. If you have ideas, sugestions or code that you would like to
+distribute as part of this package, please contact us. You are also
+encouraged to contribute your code or issues directely to our
+[bitbucket repository](https://bitbucket.org/Grantlab/bio3d/overview)
+for incoporation into the development version of the
+package. Please do get in touch -- we would like to hear from you!
+
+
+
+
+# Getting started
+Start R (type R at the comand prompt or, on Windows, double click on the R icon) 
+and load the bio3d package by typing `library(bio3d)` at the R console prompt. 
+
+```{r eval=TRUE, echo=FALSE}
+library(bio3d)
+```
+
+Then use the command `lbio3d()` and `help()` to list the functions within the package
+```{r eval=FALSE}
+lbio3d()
+help(bio3d)
+```
+
+## Finding Help
+To get help on a particular function try `?`function or `help(function)`. 
+For example, `?pca.xyz`
+
+```{r eval=FALSE}
+?pca.xyz
+``` 
+
+To search the help system for documentation matching a particular word or topic use the 
+command `help.search("topic")`. For example, `help.search("pdb")`
+
+```{r eval=FALSE}
+help.search("pdb")
+ ```
+
+Typing `help.start()` will start a local HTML interface. 
+After initiating `help.start()` in a session the `?function` commands will open as HTML pages. 
+To execute examples for a particular function use the command `example(function)`. 
+To run examples for the `read.dcd` function try example(`read.dcd`) 
+
+
+## Bio3d Demo
+Run the command `demo(bio3d)` to obtain a quick overview.
+
+```{r eval=FALSE}
+demo(bio3d)
+``` 
+
+The bio3d package consists of input/output functions, conversion and manipulation functions, analysis functions, and graphi
+cs functions all of which are fully documented. Remember that you can get help on any particular function by using the comm
+and ?function or help(function) from within R. 
+
+```{r eval=FALSE}
+help(pca.xyz)
+```
+
+
+## Example Function Usage}
+To better understand how a particular function operates it is often helpful to view and execute an example. Every function within the bio3d package is documented with example code that you can view by issuing the help command. 
+
+Running the command example(function) will directly execute the example for a given function. 
+In addition, a numer of worked examples are available as short Tutorials on the bio3d wiki. 
+
+```{r eval=FALSE}
+example(plot.bio3d)
+```
+
+
+
+# Basic usage
+
+
+## Read a PDB file
+
+
+```{r eval=TRUE}
+pdb <- read.pdb("1hel")
+
+print(pdb)
+
+head(pdb$atom)
+
+print(pdb$xyz)
+```
+
+
+# Document Details {.unnumbered}
+This document is shipped with the Bio3D package in both R and PDF formats. All code
+can be extracted and automatically executed to generate Figures and/or the PDF with the following commands:
+
+```{r eval=FALSE}
+library(rmarkdown)
+render("Bio3D_nma.Rmd", "all")
+```
+
+
+# Information About the Current Bio3D Session {.unnumbered}
+```{r}
+sessionInfo() 
+```
+
+
+# References {.unnumbered}
+
+
+
+[^1]: The latest version of the package, full documentation and further
+    vignettes (including detailed installation instructions) can be
+    obtained from the main Bio3D website:
+    [thegrantlab.org/bio3d/](http://thegrantlab.org/bio3d/).
+
+[^2]: This vignette contains executable examples, see `help(vignette)`
+    for further details.
+
+[^3]: See also dedicated vignettes for *ensemble NMA* provided with the Bio3D package.

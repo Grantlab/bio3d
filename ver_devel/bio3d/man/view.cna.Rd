@@ -1,8 +1,6 @@
 \name{view.cna}
 \alias{view.cna}
-\title{
-  View CNA Protein Structure Network Commumnity Output in VMD
-}
+\title{ View CNA Protein Structure Network Community Output in VMD }
 \description{
   This function generates a VMD scene file and a PDB file that can be 
   read and rendered by the VMD molecular viewer. Chose \sQuote{color by chain} 
@@ -67,28 +65,29 @@ Barry Grant}
 
 \examples{
 \dontrun{
-trtfile <- system.file("examples/hivp.dcd", package="bio3d")
-trj <- read.dcd(trtfile)
+
+# Load the correlation network from MD data
+attach(hivp)
 
 # Read the starting PDB file to determine atom correspondence
 pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 pdb <- read.pdb(pdbfile)
 
-# select residues 24 to 27 and 85 to 90 in both chains
-inds <- atom.select(pdb,"///24:27,85:90///CA/")
+# View cna 
+view.cna(net, pdb, launch=FALSE)
+## within VMD set 'coloring method' to 'Chain' and 'Drawing method' to Tube
 
-# lsq fit of trj on pdb
-xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
 
-# calculate dynamical cross-correlation matrix
-cij <- dccm(xyz)
-#plot(cij)
+##-- From NMA
+pdb.gdi = read.pdb("1KJY")
+pdb.gdi = trim.pdb(pdb.gdi, inds=atom.select(pdb.gdi, chain="A", elety="CA")) 
+modes.gdi = nma(pdb.gdi)
+cij.gdi = dccm(modes.gdi)
+net.gdi = cna(cij.gdi, cutoff.cij=0.35)
+#view.cna(net.gdi, pdb.gdi, alpha = 0.7, launch=TRUE)
 
-# Build, and betweeness cluster, a network graph
-net <- cna(cij)
+detach(hivp)
 
-# View cna
-view.cna(net, pdb), launch=FALSE)
 }
 }
 

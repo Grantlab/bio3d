@@ -5,7 +5,7 @@
   Get customizable annotations for query results from PDB.  
 }
 \usage{
-pdb.annotate(ids, anno.terms=NULL, unique=FALSE)
+pdb.annotate(ids, anno.terms = NULL, unique = FALSE, verbose = FALSE)
 }
 \arguments{
   \item{ids}{ A charater vector of one or more 4-letter PDB
@@ -16,9 +16,10 @@ pdb.annotate(ids, anno.terms=NULL, unique=FALSE)
     "compound","title",  "citation", "citationAuthor", "journalName",
     "publicationYear".  If anno.terms=NULL, all information would be
     returned. }
-  \item{unique}{ logical, if TRUE the annotation is provided for unique
-    PDB entries. By default the annotation is provided in the same order
-    (and length) as the input list of PDB ids. }
+  \item{unique}{ logical, if TRUE only unique PDB entries are
+    returned. Alternatively data for each chain ID is provided. }
+  \item{verbose}{ logical, if TRUE details of the RCurl \code{postForm}
+    routine is printed. }
 }
 \details{
   Given a list of PDB IDs and query terms, this function will download
@@ -29,19 +30,24 @@ pdb.annotate(ids, anno.terms=NULL, unique=FALSE)
   Returns a data frame of query results with a row for each PDB record,
   and annotation terms column-wise. 
 }
-\author{ Hongyang Li & Barry Grant}
+\author{ Hongyang Li, Barry Grant, Lars Skjaerven}
 \examples{
+\donttest{
+# PDB server connection required - testing excluded
 
 # Fetch all annotation terms
-pdbanno <- pdb.annotate(c("6Q21_B", "1NVW", "1P2U_A"))
+ids <- c("6Q21_B", "1NVW", "1P2U_A")
+anno <- pdb.annotate(ids)
 
 # Access terms, e.g. ligand names:
-pdbanno$ligandName
+anno$ligandName
+
+## only unique PDB IDs
+anno <- pdb.annotate(ids, unique=TRUE)
 
 # Fetch only specific terms
-pdb.annotate(c("6Q21_B", "1NVW", "1P2U_A"),
-             anno.terms = c("ligandId", "experimentalTechnique",
-                            "publicationYear", "citation"))
+pdb.annotate(ids, anno.terms = c("ligandId", "citation"))
 
+}
 }
 \keyword{ utilities }

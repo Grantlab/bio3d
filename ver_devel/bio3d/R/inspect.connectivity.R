@@ -1,27 +1,28 @@
-## Useful for checking the connectivity in a 3dalign pdbs object
+## Useful for checking the connectivity in a pdb(s) object
 
 "inspect.connectivity" <- function(pdbs, cut=4.) {
   xyz <- NULL; ids <- NULL;
-  if(inherits(pdbs, "3dalign")) {
+  if(inherits(pdbs, "pdbs")) {
     xyz <- pdbs$xyz
     n <- length(pdbs$id)
     ids <- pdbs$id
   }
   else if(is.pdb(pdbs)) {
-    ca.inds <- atom.select(pdbs, 'calpha')
-    xyz <- matrix(pdbs$xyz[ca.inds$xyz], nrow=1, byrow=TRUE)
+    ca.inds <- atom.select(pdbs, 'calpha', verbose=FALSE)
+    xyz <- as.xyz(pdbs$xyz)[1, ca.inds$xyz, drop=FALSE]
     n <- 1
   }
-  #else if(inherits(pdbs, "numeric")) {
-  #  xyz <- matrix(pdbs, nrow=1, byrow=TRUE)
-  #  n <- 1
-  #}
-  else if(inherits(pdbs, "matrix")) {
+  else if(inherits(pdbs, "xyz")) {
     xyz <- pdbs
     n <- nrow(xyz)
   }
   else {
-    stop("Please provide coordinates as a \n '3dalign', 'pdb', or xyz matrix format")
+    stop("Please provide coordinates as a \n 'pdbs', 'pdb', or xyz matrix format")
+  }
+
+  if(length(xyz)<6) {
+    warning("Insufficient C-alpha atoms in structure to determine connectivity")
+    return(FALSE)
   }
 
   is.connected <- function(xyz) {

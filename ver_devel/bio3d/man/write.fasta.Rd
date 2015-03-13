@@ -30,6 +30,9 @@ write.fasta(alignment=NULL, ids=NULL, seqs=alignment$ali, file, append = FALSE)
 }
 \seealso{ \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}} }
 \examples{
+\donttest{
+# PDB server connection required - testing excluded
+
 ## Read a PDB file
 pdb <- read.pdb("1bg2")
 
@@ -41,8 +44,9 @@ a <- aa321(pdb$atom[pdb$calpha,"resid"]) # ATOM
 #write.fasta( seqs=seqbind(s,a), file="eg.fa")
 #write.fasta( ids=c("seqres","atom"), seqs=seqbind(s,a), file="eg.fa" )
 
-write.fasta(list( id=c("seqres"),ali=s ), file="eg.fa")
-write.fasta(list( id=c("atom"),ali=a ), file="eg.fa", append=TRUE)
+outfile1 = file.path(tempdir(), "eg.fa")
+write.fasta(list( id=c("seqres"),ali=s ), file = outfile1)
+write.fasta(list( id=c("atom"),ali=a ), file = outfile1, append=TRUE)
 
 ## Align seqres and atom records
 #seqaln(seqbind(s,a))
@@ -53,7 +57,10 @@ aln<-read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
 ## Cut all but positions 130 to 245
 aln$ali=aln$ali[,130:245]
 
-write.fasta(aln, file="eg2.fa")
+outfile2 = file.path(tempdir(), "eg2.fa")
+write.fasta(aln, file = outfile2)
 
+invisible( cat("\nSee the output files:", outfile1, outfile2, sep="\n") )
+}
 }
 \keyword{ IO }

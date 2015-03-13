@@ -1,7 +1,7 @@
 ## class DistanceCalculator --> calculate()
 "amsm.xyz" <- function(xyz, ncore=NULL) {
   if(!is.matrix(xyz))
-    stop("'xyz' must be a trajectory matrix as obtained e.g. by\n")
+    stop("'xyz' must be a trajectory matrix")
   
   natoms <- ncol(xyz) / 3
   atom.pairs <- natoms * (natoms -1) / 2
@@ -47,7 +47,7 @@
   }
 
   ##matrixCorr <- 1 - sqrt(matrixCorr / maxEigenVal)
-  
+  diag(matrixCorr) <- 1
   return(matrixCorr)
 }
 
@@ -56,7 +56,7 @@
 ".amsm.distCalc" <- function(xyz, ncore=NULL) {
 
   if(!is.matrix(xyz))
-    stop("'xyz' must be a trajectory matrix as obtained e.g. by\n")
+    stop("'xyz' must be a trajectory matrix")
 
   ## Parallelized by package 'parallel'
   ncore <- setup.ncore(ncore, bigmem = FALSE)
@@ -115,19 +115,13 @@
     return(M)
   }
 
-  ## Compile functions?
-  ##for.atompair2 <- cmpfun(for.atompair2)
-  ##vectPS <- cmpfun(vectPS)
-  ##matrPS <- cmpfun(matrPS)
-
   ##atom.pairs <- natoms * (natoms -1) / 2
-  
   natoms <- ncol(xyz) / 3
   M      <- matrix(0, ncol=4, nrow=4)
   ij     <- combn(natoms,2)
   
   if(ncore==1) {
-    all.Ms <- lapply(1:ncol(ij), for.atompair2, xyz, ij)
+    all.Ms <- lapply(1:ncol(ij), for.atompair2, xyz, ij, M)
   }
   else {
     all.Ms <- mclapply(1:ncol(ij), for.atompair2, xyz, ij, M,

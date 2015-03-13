@@ -39,11 +39,32 @@ write.pir(alignment=NULL, ids=NULL, seqs=alignment$ali,
 \seealso{ \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}}, 
    \code{\link{write.fasta}} }
 \examples{
-## Read an alignment
-aln <- read.fasta(system.file("examples/hivp_xray.fa",package="bio3d"))
+\donttest{
+# Needs MUSCLE installed - testing excluded
 
-write.pir(aln, pdb.file = c(system.file("examples/hivp.pdb",package="bio3d"), 
-   rep("", length(aln$id)-1)), file="eg.pir")
+if(check.utility("muscle")) {
 
+## Generate an input file for structural modeling of 
+## transducin G-alpha subunit using the template 3SN6_A
+
+## Read transducin alpha subunit sequence
+seq <- get.seq("P04695", db = "uniprot", outfile = tempfile())
+
+## Read structure template
+path = tempdir()
+pdb.file <- get.pdb("3sn6_A", path = path, split = TRUE)
+pdb <- read.pdb(pdb.file)
+
+## Build an alignment between template and target
+aln <- seqaln(seqbind(pdbseq(pdb), seq), id = c("3sn6_A", seq$id), outfile = tempfile())
+
+## Write PIR format alignment file
+outfile = file.path(tempdir(), "eg.pir")
+write.pir(aln, pdb.file = c(pdb.file, ""), file = outfile)
+
+invisible( cat("\nSee the output file:", outfile, sep = "\n") )
+
+}
+}
 }
 \keyword{ IO }

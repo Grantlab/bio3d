@@ -1,10 +1,112 @@
-NEWS 
+NEWS
 ====
 
-Version 2.0 contains over 30 new functions including enhanced Normal Mode 
-Analysis facilities as well extensive improvements to existing code and 
-documentation. For a fine-grained list of changes or to report a bug, please 
-consult: 
+v2.2
+Version 2.2, released in Feb 2015, contains new facilities for
+sub-optimal path analysis of biomolecular correlation networks,
+constructing biological units, identification and tidying of
+malformed PDB files, and improved secondary structure annotation of
+'pdbs' objects and various plots.  We have also updated and enhanced
+atom selection functionality and developed a new vignette detailing
+PDB structure manipulation and analysis facilities. For a fine-
+grained list of changes, or to report a bug, please consult:
+
+* [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
+* [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+
+Major new functions include:
+* cnapath: Suboptimal Path Analysis for Correlation Networks
+* biounit: Biological Unit Construction
+* clean.pdb: Inspect And Clean Up A PDB Object
+* cat.pdb: Concatenate Multiple PDB Objects
+* pdb2sse: Obtain An SSE Sequence Vector From A PDB Object
+* bounds.sse: Obtain A SSE Object From An SSE Sequence Vector
+* aa.table: Updated amino acid reference data that replaces older 'aa.mass'
+* as.fasta: Convert alignment/sequence in matrix/vector format to a FASTA object.
+* as.pdb: Convert coordinate data to PDB format
+* as.select: Convert atomic indices to a atom.select object
+* as.xyz: Convert vectors and matrices to 'xyz' class objects
+* atom.select.pdb: Atom selection from PDB objects has been extensively updated
+* basename.pdb: Utility for manipulation of PDB file names
+* check.utility: Check and Report on Missing Bio3D Utility Programs
+* cmapt: Update contact map methods for pdb and xyz objects
+* cna: Update correlation network analysis methods for dccm and ensmb objects"
+* cnapath: Suboptimal Path Analysis for Correlation Networks
+* com: Updated center of mass methods for pdb and xyz objects
+* combine.select: Combine atom.select objects, renamed from previous 'combine.sel'
+* cov.enma: New method to Calculate Covariance Matrix from Ensemble Normal Modes"
+* cov2dccm: Calculates the N-by-N cross-correlation matrix from a 3N-by-3N covariance matrix
+* covsoverlap: New methods for nma and enma objects
+* dm: Distance matrix gets new methods for pdb and xyz class objects
+* dssp: Secondary Structure Analysis with DSSP gets new methods for pdb, xyz and pdbs class objects
+* geostas: Geometrically stable domain finder gets new methods for nma, enma, pdb, pdbs and xyz objects.
+* is.pdbs: Is an Object of Class pdbs
+* mono.colors: New color palette
+* pdb2sse: Obtain An SSE Sequence Vector From A PDB Object
+* pdbfit: Coordinate superposition gets new methods for multi-model pdb objects and pdbs objects.
+* read.crd: Can Now Read Coordinate Data from Amber or CHARMM
+* read.prmtop: Read AMBER Parameter/Topology files
+* var.pdbs: Pairwise Distance Variance in Cartesian Coordinates
+* plot:  New or updated plot methods for 'cmap', 'geostas', and 'pca' class objects as well as a new plot.fluct() function that expands on plot.bio3d() for plotting atomic fluctuations from MD and NMA results.
+* print:  New print methods for cnapath, enma, geostas, mol2, nma, pca, pdb, prmtop, rle2,  select and sse objects.
+
+
+v2.1
+----
+Version 2.1, released in Sep 2014,  contains new facilities for Correlation
+Network Analysis (cna) and Geometrically Stable Domain finding (geostas).
+We have also changed 'PDB object data' storage from a matrix to a data.frame
+format. Improved methods and functionality for ensemble NMA are now also
+included along with extensive improvements to package vignettes and function
+documentation. For a fine-grained list of changes, or to report a bug,
+please consult:
+
+* [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
+* [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+
+Major new functions include:
+* cna: Protein Dynamic Correlation Network Construction and Community Analysis.
+* plot.cna: Protein Structure Network Plots in 2D and 3D.
+* print.cna: Summarize and Print Features of a cna Network Graph
+* identify.cna: Identify Points in a CNA Protein Structure Network Plot
+* layout.cna: Protein Structure Network Layout
+* view.cna: View CNA Protein Structure Network Community Output in VMD
+* prune.cna: Prune A cna Network Object
+* community.tree: Reconstruction of the Girvan-Newman Community Tree for a CNA Class Object.
+* network.amendment: Amendment of a CNA Network According To A Input Community Membership Vector.
+* lmi: Linear Mutual Information Matrix
+* dccm.pca: Dynamic Cross-Correlation from Principal Component Analysis
+* filter.dccm: Filter for Cross-correlation Matrices (Cij)
+* cmap.filter: Contact Map Consensus Filtering
+* geostas (amsm.xyz): GeoStaS Domain Finder
+* bhattacharyya Bhattacharyya Coefficient
+* covsoverlap: Covariance Overlap
+* sip: Square Inner Product
+* cov.nma: Calculate Covariance Matrix from Normal Modes
+* mktrj.enma: Ensemble NMA Atomic Displacement Trajectory
+* pca.array: Principal Component Analysis of an array of matrices
+* hmmer: HMMER Sequence Search
+* plot.hmmer: Plot a Summary of HMMER Hit Statistics.
+* uniprot: Fetch UniProt Entry Data.
+* pfam: Download Pfam FASTA Sequence Alignment
+* hclustplot: Dendrogram with Clustering Annotation
+* write.pir: Write PIR Formated Sequences
+* mustang: Structure-based Sequence Alignment with MUSTANG
+* pdbs.filter: Filter or Trim a pdbs PDBs Object
+* dssp.pdbs: Secondary Structure Analysis of Aligned PDB Structures with DSSP
+* plot.fasta: Plot a Multiple Sequence Alignment
+* print.fasta: Printing Sequence Alignments
+* inspect.connectivity: Check the Connectivity of Protein Structures
+* var.xyz: Pairwise Distance Variance in Cartesian Coordinates
+* is.xyz(as.xyz, print.xyz): Is an Object of Class
+* setup.ncore: Setup for Running Bio3D Functions using Multiple CPU Cores
+
+v2.0
+----
+Version 2.0, released in Nov 2013, contains over 30 new functions including
+enhanced Normal Mode Analysis facilities as well extensive improvements to
+existing code and documentation. For a fine-grained list of changes or to
+report a bug, please consult:
 
 * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
 * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
@@ -59,9 +161,9 @@ E.g.: 2.0-1
 
 And constructed with the following guidelines:
 
-* Breaking backward compatibility bumps the major (and resets the minor 
+* Breaking backward compatibility bumps the major (and resets the minor
   and patch)
-* New additions without breaking backward compatibility bumps the minor 
+* New additions without breaking backward compatibility bumps the minor
   (and resets the patch)
 * Bug fixes and misc changes bumps the patch
 
@@ -70,7 +172,5 @@ For more information on SemVer, please visit http://semver.org/.
 
 -----
 
-For changes pior to v1.1-6 please see the bio3d wki:
+For changes prior to v1.1-6 (Apr 2013) please see the bio3d wki:
 * [Whats new wki page](http://bio3d.pbworks.com/w/page/7824486/WhatsNew)
-
-

@@ -41,19 +41,29 @@
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{nma}}, \code{\link{dccm.nma}}, \code{\link{plot.dccm}} }
 \examples{
+\donttest{
+## Needs MUSCLE installed - testing excluded
+
+if(check.utility("muscle")) {
+
 ## Fetch PDB files and split to chain A only PDB files
 ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
-raw.files <- get.pdb(ids, path = "raw_pdbs")
-files <- pdbsplit(raw.files, ids, path = "raw_pdbs/split_chain")
+files <- get.pdb(ids, split = TRUE, path = tempdir())
 
-## Sequence Alignement
-pdbs <- pdbaln(files)
+## Sequence/Structure Alignement
+pdbs <- pdbaln(files, outfile = tempfile())
 
 ## Normal mode analysis on aligned data
-all.modes <- nma.pdbs(pdbs, full=TRUE, fit=TRUE, rm.gaps=TRUE)
+modes <- nma(pdbs)
 
-## Calculate correlation matrices
-all.dccm <- dccm(all.modes)
+## Calculate all 6 correlation matrices
+cij <- dccm(modes)
+
+## Plot correlations for first structure
+plot.dccm(cij$all.dccm[,,1])
+
+}
+}
 
 }
 \keyword{ analysis }

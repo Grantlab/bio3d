@@ -5,21 +5,21 @@
   Produces a plot of atomic fluctuations of aligned normal modes.
 }
 \usage{
-\method{plot}{enma}(x, y="fluctuations",
+\method{plot}{enma}(x, 
         pdbs = NULL, conservation = NULL, variance = FALSE, 
+        spread = FALSE, offset = 1,
         col = NULL, signif = FALSE,
         pcut = 0.005, qcut = 0.04,
-        xlab = "Residue Position",
+        xlab = "Alignment Position",
         ylab=c("Fluctuations", "Fluct.variance", "Seq.conservation"),
         xlim = NULL, ylim = NULL,
         mar = c(4, 5, 2, 2), ...)
 }
 \arguments{
   \item{x}{ the results of ensemble NMA obtained with
-    \code{\link{nma.pdbs}}. }
-  \item{y}{ plot either \sQuote{fluctuations} (atom fluctuations) or
-    \sQuote{deformations} (average deformation energies). }
-  \item{pdbs}{ an object of class \sQuote{3dalign} in which the
+    \code{\link{nma.pdbs}}. Alternatively, a matrix in the similar
+    format as \code{enma$fluctuations} can be provided. }
+  \item{pdbs}{ an object of class \sQuote{pdbs} in which the
     \sQuote{enma} object \code{x} was obtained from. If provided SSE
     data of the first structure of \code{pdbs} will drawn. }
   \item{conservation}{ logical, if TRUE sequence conservation is
@@ -28,7 +28,13 @@
     \sQuote{entropy10}). A numeric vector of residue conservation values
     are also allowed. }    
   \item{variance}{ logical, if TRUE fluctuation variance is plotted. }
-  \item{col}{ a character vector of plotting colors.  }
+  \item{spread}{ logical, if TRUE the fluctuation profiles are spread -
+    i.e. not on top of each other. }
+  \item{offset}{ numerical offset value in use when
+    \sQuote{spread=TRUE}. }
+  \item{col}{ a character vector of plotting colors. Used also to group
+    fluctuation profiles when \sQuote{spread=TRUE}. NA values in col
+    will omit the corresponding fluctuation profile in the plot. }
   \item{signif}{ logical, if TRUE significance of difference is plotted. }
   \item{pcut}{ P-value cutoff for the significance. }
   \item{qcut}{ Cutoff for the minimal difference of mean fluctuation to plot 
@@ -51,6 +57,7 @@
   Called for its effect.
 }
 \references{
+  Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Lars Skjaerven, Barry Grant }
@@ -70,6 +77,13 @@ all.modes <- nma.pdbs(pdbs, rm.gaps=TRUE)
 
 ## Plot fluctuations
 plot.enma(all.modes, pdbs=pdbs, conservation=TRUE)
+
+## group and spread fluctuation profiles
+grps <- rep(NA, length(pdbs$id))
+grps[c(2,3)]=1
+grps[c(4,5)]=2
+
+plot.enma(all.modes, pdbs=pdbs, col=grps, spread=TRUE)
 }
 }
 \keyword{ hplot }

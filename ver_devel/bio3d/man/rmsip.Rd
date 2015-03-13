@@ -1,20 +1,32 @@
 \name{rmsip}
 \alias{rmsip}
+\alias{rmsip.default}
+\alias{rmsip.enma}
 \title{ Root Mean Square Inner Product }
 \description{
   Calculate the RMSIP between two mode subspaces. 
 }
 \usage{
-rmsip(modes.a, modes.b, subset=10, row.name="a", col.name="b")
+rmsip(...)
+
+\method{rmsip}{enma}(enma, ncore=NULL, subset=10, ...)
+
+\method{rmsip}{default}(modes.a, modes.b, subset=10,
+                        row.name="a", col.name="b", ...)
 }
 \arguments{
+  \item{enma}{ an object of class \code{"enma"} obtained from function
+    \code{nma.pdbs}. }
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
+  \item{subset}{ the number of modes to consider. }   
   \item{modes.a}{ an object of class \code{"pca"} or \code{"nma"} as
     obtained from functions \code{pca.xyz} or \code{nma}. }
   \item{modes.b}{ an object of class \code{"pca"} or \code{"nma"} as
     obtained from functions \code{pca.xyz} or \code{nma}. }
-  \item{subset}{ the number of modes to consider. }
   \item{row.name}{ prefix name for the rows. }
   \item{col.name}{ prefix name for the columns. }
+  \item{\dots}{ arguments passed to associated functions. }
 }
 \details{
   RMSIP is a measure for the similarity between two set of modes obtained
@@ -25,13 +37,23 @@ rmsip(modes.a, modes.b, subset=10, row.name="a", col.name="b")
   \item{overlap}{ a numeric matrix containing pairwise (squared) dot products 
     between the modes. }
   \item{rmsip}{ a numeric RMSIP value. }
+  
+  For function \code{rmsip.enma} a numeric matrix containing all
+  pairwise RMSIP values of the modes stored in the \code{enma} object.
 }
 \references{
-   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.   
-   Amadei, A. et al. (1999) \emph{Proteins} \bold{36}, 19--424.   
+  Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
+  Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.   
+  Amadei, A. et al. (1999) \emph{Proteins} \bold{36}, 19--424.   
 }
 \author{ Lars Skjaerven }
-\seealso{ \code{\link{pca.xyz}}, \code{\link{nma}}, \code{\link{overlap}} }
+\seealso{ \code{\link{pca}}, \code{\link{nma}},
+  \code{\link{overlap}}.
+
+  Other similarity measures:
+  \code{\link{sip}}, \code{\link{covsoverlap}},
+  \code{\link{bhattacharyya}}.
+}
 \examples{
 \dontrun{
 # Load data for HIV example

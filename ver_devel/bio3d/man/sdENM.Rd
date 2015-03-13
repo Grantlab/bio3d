@@ -8,26 +8,39 @@
 data(sdENM)
 }
 \format{
- A data frame containing the following columns:
- \enumerate{
-   \item{aa1}{ one-letter code of amino acid residue i }
-   \item{aa2}{ one-letter code of amino acid residue j }
-   \item{min}{ minimum distance in which the corresponding spring force
-     constant is value }
-   \item{max}{ maximum distance in which the corresponding spring force
-     constant is value  }
-   \item{k}{ spring force constant valid for the corresponding distance
-     range and amino acid pair. } 
-}
+  An array of 27 matrices containg the spring force constants for the
+  \sQuote{sdENM} force field (see Dehouch et al for more
+  information). Each matrix in the array holds the force constants for
+  all amino acid pairs for a specific distance range.
+
+  See examples for more details.
 }
 \source{
   Dehouck Y. & Mikhailov A.S. (2013) \emph{PLoS Comput Biol} \bold{9}:e1003209.
 }
 \references{
+  Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
+  Dehouck Y. et al. (2013) \emph{PLoS Comput Biol} \bold{9}:e1003209.
 }
 \examples{
 ## Load force constant data
 data(sdENM)
+
+## force constants for amino acids A, C, D, E, and F
+## in distance range [4, 4.5)
+sdENM[1:5, 1:5, 1]
+
+## and distance range [4.5, 5)
+sdENM[1:5, 1:5, 2]
+
+## amino acid pair A-P, at distance 4.2
+sdENM["A", "P", 1]
+
+\dontrun{
+## for use in NMA
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
+modes <- nma(pdb, ff="sdenm")
+}
 }
 \keyword{datasets}

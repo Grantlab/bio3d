@@ -11,7 +11,7 @@ fit.xyz(fixed, mobile,
         mobile.inds = NULL,
         verbose=FALSE,
         prefix= "", pdbext = "",
-        outpath = "fitlsq", het=FALSE, full.pdbs=FALSE, 
+        outpath = "fitlsq", full.pdbs=FALSE, 
         ncore = 1, nseg.scale = 1, ...)
 
 rot.lsq(xx, yy,
@@ -29,9 +29,6 @@ rot.lsq(xx, yy,
   \item{full.pdbs}{ logical, if TRUE \dQuote{full} coordinate files
     (i.e. all atoms) are written to the location specified by
     \code{outpath}. }
-  \item{het}{ logical, if TRUE \sQuote{HETATM} records from full PDB
-    files are written to output superposed PDB files.  Only required if
-    \code{full.pdbs} is TRUE. } 
   \item{prefix}{ prefix to mobile$id to locate \dQuote{full} input PDB files.  Only
         required if \code{full.pdbs} is TRUE. }
   \item{pdbext}{ the file name extension of the input PDB files. }
@@ -93,22 +90,24 @@ rot.lsq(xx, yy,
 \seealso{ \code{\link{rmsd}}, \code{\link{read.pdb}},
   \code{\link{read.fasta.pdb}}, \code{\link{read.dcd}} }
 \examples{
+\donttest{
+# PDB server connection required - testing excluded
+
 ##--- Read an alignment & Fit aligned structures
 aln  <- read.fasta(system.file("examples/kif1a.fa",package="bio3d"))
 pdbs <- read.fasta.pdb(aln)
 
 gaps <- gap.inspect(pdbs$xyz)
-rmsd( pdbs$xyz[, gaps$f.inds] )
 
 xyz <- fit.xyz( fixed  = pdbs$xyz[1,],
                mobile = pdbs$xyz,
                fixed.inds  = gaps$f.inds,
                mobile.inds = gaps$f.inds )
 
-rmsd( xyz[, gaps$f.inds] )
+#rmsd( xyz[, gaps$f.inds] )
+#rmsd( pdbs$xyz[, gaps$f.inds] )
 
 ##-- Superpose again this time outputing PDBs
-\dontrun{
 xyz <- fit.xyz( fixed = pdbs$xyz[1,],
                mobile = pdbs,
                fixed.inds  = gaps$f.inds,
@@ -118,10 +117,10 @@ xyz <- fit.xyz( fixed = pdbs$xyz[1,],
 
 ##--- Fit two PDBs
 A <- read.pdb("1bg2")
-A.ind <- atom.select(A, "///256:269///CA/")
+A.ind <- atom.select(A, resno=c(256:269), elety='CA')
 
 B <- read.pdb("2kin")
-B.ind <- atom.select(B, "///257:270///CA/")
+B.ind <- atom.select(B, resno=c(257:270), elety='CA')
 
 xyz <- fit.xyz(fixed=A$xyz, mobile=B$xyz,
                fixed.inds=A.ind$xyz,

@@ -72,9 +72,10 @@ pause()
 ### Set temp dir to store PDB files
 tmp.dir <- tempdir()
 
-### Download a set of Kinase structures
-ids <- c("4b7t_A", "2exm_A", "1opj_A", 
-         "4jaj_A", "1a9u_A", "1tki_A")
+### Download a set of DHFR structures 
+ids <- c("1rx2_A", "1rx4_A", "1rg7_A", 
+         "3fyv_X", "3sgy_B")
+
 
 
 ### Download and split by chain ID
@@ -98,7 +99,7 @@ summary( c(seqidentity(pdbs)) )
 pause()
 
 ### Calculate modes of aligned proteins
-modes <- nma.pdbs(pdbs, fit=TRUE, outpath=NULL)
+modes <- nma(pdbs)
 
 pause()
 
@@ -108,8 +109,11 @@ print(modes)
 pause()
 
 ### Plot fluctuations
-plot(modes, pdbs, type="h")
+plot(modes, pdbs)
 
 pause()
+
+### Cluster Modes simiarlity
+heatmap(1-modes$rmsip, labCol=ids)
 
 unlink(tmp.dir)

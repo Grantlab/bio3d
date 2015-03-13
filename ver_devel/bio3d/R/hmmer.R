@@ -1,8 +1,8 @@
 "hmmer" <- function(seq, type='phmmer', db=NULL, verbose=TRUE, timeout=90) {
   cl <- match.call()
     
-  oopsa <- require(XML)
-  oopsb <- require(RCurl)
+  oopsa <- requireNamespace("XML", quietly = TRUE)
+  oopsb <- requireNamespace("RCurl", quietly = TRUE)
   if(!all(c(oopsa, oopsb)))
      stop("Please install the XML and RCurl package from CRAN")
  
@@ -44,7 +44,7 @@
                     "uniprotrefprot", "pfamseq")
     db <- tolower(db)
     if(!db%in%db.allowed)
-      stop("db must be of type...")
+      stop(paste("db must be either:", paste(db.allowed, collapse=", ")))
     
     seqdb <- db
     hmmdb <- NULL
@@ -61,7 +61,7 @@
     db.allowed <- tolower(c("pfam", "gene3d", "superfamily", "tigrfam"))
     db <- tolower(db)
     if(!db%in%db.allowed)
-      stop("db must be of type...")
+      stop(paste("db must be either:", paste(db.allowed, collapse=", ")))
     
     seqdb <- NULL
     hmmdb <- db
@@ -84,7 +84,7 @@
     db.allowed <- tolower(c("pdb", "swissprot"))
     db <- tolower(db)
     if(!db%in%db.allowed)
-      stop("db must be of type...")
+      stop(paste("db must be either:", paste(db.allowed, collapse=", ")))
     
     seqdb <- db
     hmmdb <- NULL
@@ -111,7 +111,8 @@
                     "uniprotrefprot", "pfamseq")
     db <- tolower(db)
     if(!db%in%db.allowed)
-      stop("db must be of type...")
+      stop(paste("db must be either:", paste(db.allowed, collapse=", ")))
+
     seqdb <- db
     hmmdb <- NULL
     iter <- NULL
@@ -121,55 +122,60 @@
   
   ## Make the request to the HMMER website
   url <- paste('http://hmmer.janelia.org/search/', type, sep="")
-  if(rcurl) {
-    curl.opts <- list(httpheader = "Expect:",
-                      httpheader = "Accept:text/xml",
-                      ##timeout = timeout, 
-                      ##connecttimeout = timeout,
-                      verbose = verbose,
-                      followlocation = TRUE
-                      )
+  curl.opts <- list(httpheader = "Expect:",
+                    httpheader = "Accept:text/xml",
+                    verbose = verbose,
+                    followlocation = TRUE
+                    )
     
-    hmm <- postForm(url, hmmdb=hmmdb, seqdb=seqdb, seq=seq, 
-                    style = "POST",
-                    .opts = curl.opts,
-                    .contentEncodeFun=curlPercentEncode, .checkParams=TRUE )
-  }
-  else {
-    ## temporary workaround for hmmsearch, and jackhmmer
-    ## Check if the program is executable
-    os1 <- .Platform$OS.type
-    status <- system(paste("curl", "--version"),
-                     ignore.stderr = TRUE, ignore.stdout = TRUE)
-    
-    if(!(status %in% c(0,1)))
-      stop(paste("Launching external program failed\n",
-                 "  make sure '", "curl", "' is in your search path", sep=""))
+  hmm <- RCurl::postForm(url, hmmdb=hmmdb, seqdb=seqdb, seq=seq, 
+                  style = "POST",
+                  .opts = curl.opts,
+                  .contentEncodeFun=RCurl::curlPercentEncode, .checkParams=TRUE )
 
-    outfile <- tempfile()
-    cmd = paste("curl", " -L -H 'Expect:' -H 'Accept:text/xml'",
-      " -F seqdb=", db, " -F seq='<", alnfile, "' ",  url,
-      " > ", outfile, sep="")
-
-    if(verbose)
-      cat("Running command: ", cmd, "\n")
-
-    if (os1 == "windows")
-      success <- shell(shQuote(cmd), ignore.stderr = !verbose, ignore.stdout = !verbose)
-    else
-      success <- system(cmd, ignore.stderr = !verbose, ignore.stdout = !verbose)
-
-    if(success!=0)
-      stop(paste("An error occurred while running command\n '",
-                 "curl", "'", sep=""))
-    
-    hmm <- readLines(outfile)
-    unlink(outfile)
-  }
   
-  xml <- xmlParse(hmm)
-  data <- as.data.frame(t(xpathSApply(xml, '///hits', xpathSApply, '@*')),
-                        stringsAsFactors=FALSE)
+  add.pdbs <- function(x, ...) {
+    hit <- XML::xpathSApply(x, '@*')
+    pdbs <- unique(XML::xpathSApply(x, 'pdbs', XML::xmlToList))
+    new <- as.matrix(hit, ncol=1)
+    
+    if(length(pdbs) > 1) {
+      for(i in 2:length(pdbs)) {
+        hit["acc"]=pdbs[i]
+        new=cbind(new, hit)
+      }
+      colnames(new)=NULL
+    }
+    return(new)
+  }
+
+  fetch.pdbs <- function(x) {
+    unique(XML::xpathSApply(x, 'pdbs', XML::xmlToList))
+  }
+
+  xml <- XML::xmlParse(hmm)
+  data <- XML::xpathSApply(xml, '///hits', XML::xpathSApply, '@*')
+
+  pdb.ids <- NULL
+  if(db=="pdb") {
+    ## retrieve pdbs as a seperate list
+    ##pdb.ids <- xpathSApply(xml, '///hits', fetch.pdbs)
+    
+    ## or add pdbs into hits matrix
+    tmp <- XML::xpathSApply(xml, '///hits', add.pdbs)
+    data <- NULL
+    for ( i in 1:length(tmp) ) {
+      data <- cbind(data, tmp[[i]])
+    }
+    dups <- which(!duplicated(data["acc",]))
+    data=data[,dups]
+  }
+
+  data=as.data.frame(t(data), stringsAsFactors=FALSE)
+  
+  ##data <- as.data.frame(t(xpathSApply(xml, '///hits', xpathSApply, '@*')),
+  ##                      stringsAsFactors=FALSE)
+  
   
   ## convert to numeric
   fieldsToNumeric <- c("evalue", "pvalue", "score", "archScore", "ndom", "nincluded",
@@ -193,30 +199,8 @@
   
   class(data) <- c("hmmer", type, "data.frame")
   ##data$call <- cl
-  return(data)
+  
+  ##out <- list(hits=data, pdbs=pdb.ids)
+  out <- data
+  return(out)
 }
-
-
-##".write.stockholm" <- function(aln, file=NULL)  {
-##  if(!inherits(aln, "fasta"))
-##    stop("aln must be of type 'fasta'")
-##  
-##  rawlines <- "# STOCKHOLM 1.0"
-##  rawlines <- c(rawlines, paste("#=GF SQ", nrow(aln$ali)))
-##
-##  for( i in 1:nrow(aln$ali)) {
-##    seq <- aln$ali[i,]
-##    seq[is.gap(seq)]="-"
-##    seq=paste(seq, collapse="")
-##    tmpline <- paste(aln$id[i], seq, sep=" ")
-##      
-##    rawlines <- c(rawlines, tmpline)
-##  }
-##  rawlines <- c(rawlines, "//")
-##  
-##  if(is.null(file))
-##    return(paste(rawlines, collapse="\n"))
-##  else
-##    write.table(rawlines, file=file, append=FALSE, quote=FALSE,
-##                col.names=FALSE, row.names=FALSE)
-##}

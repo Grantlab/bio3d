@@ -1,8 +1,6 @@
 \name{layout.cna}
 \alias{layout.cna}
-\title{
- Protein Structure Network Layout
-}
+\title{ Protein Structure Network Layout }
 \description{
   Determine protein structure network layout in 2D and 3D from the geometric 
   center of each community.
@@ -38,34 +36,21 @@
 }
 \author{ Guido Scarabelli and Barry Grant }
 
-\seealso{ \code{\link{plot.cna}}, \code{\link{plot.communities}},
-  \code{\link{igraph.plotting}} \code{\link{plot.igraph}}}
+\seealso{ \code{\link{plot.cna}}, \code{\link[igraph:plot.communities]{plot.communities}},
+  \code{\link[igraph:igraph.plotting]{igraph.plotting}}, 
+  \code{\link[igraph:plot.igraph]{plot.igraph}}}
 \examples{
 
-# Read example trajectory file
-trtfile <- system.file("examples/hivp.dcd", package="bio3d")
-trj <- read.dcd(trtfile)
+# Load the correlation network
+attach(hivp)
 
 # Read the starting PDB file to determine atom correspondence
 pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 pdb <- read.pdb(pdbfile)
 
-# select residues 24 to 27 and 85 to 90 in both chains
-inds <- atom.select(pdb,"///24:27,85:90///CA/")
-
-# lsq fit of trj on pdb
-xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
-
-# calculate dynamical cross-correlation matrix
-cij <- dccm(xyz)
-#plot(cij)
-
-# Build, and betweeness cluster, a network graph 
-net <- cna(cij)
-
 # Plot will be slow
-xy <- plot.cna(net)
-plot3d.cna(net, pdb)
+#xy <- plot.cna(net)
+#plot3d.cna(net, pdb)
 
 layout.cna(net, pdb, k=3)
 layout.cna(net, pdb)
@@ -73,6 +58,8 @@ layout.cna(net, pdb)
 # can be used as input to plot.cna and plot3d.cna....
 # plot.cna( net, layout=layout.cna(net, pdb) )
 # plot3d.cna(net, pdb, layout=layout.cna(net, pdb, k=3))
+
+detach(hivp)
 
 }
 \keyword{ utility }

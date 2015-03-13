@@ -50,14 +50,12 @@ function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
     # first thing in file should be an '84' header
     if (check != 84) {
       # if not we have the wrong endianism
-      close(trj)
       if (end == "little") { end="big" } else { end="little" }
-      trj <- file(trjfile, "rb")   
-      check <- readBin(trj,"integer",1,endian=end)
+      check <- readBin(writeBin(check, raw()), "integer", 1, endian = end)
+
       if (check != 84) {
-        print("PROBLEM with endian detection")
         close(trj)
-        stop
+        stop("PROBLEM with endian detection")
       }
     }
 
@@ -274,9 +272,13 @@ function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
     if(cell) to.return <- matrix(NA, nrow=nframes,ncol=6)
     else to.return <- matrix(NA, nrow=nframes,ncol=natoms*3)
   } else {
-    library(bigmemory)  ##-! Insert to read big dcd files (Sep 29th 08)
-    if(cell) to.return <- big.matrix(nrow=nframes,ncol=6, init = NA, type = "double")
-    else to.return <- big.matrix(nrow=nframes,ncol=natoms*3, init = NA, type = "double")
+    ##-! Insert to read big dcd files (Sep 29th 08)
+    oops <- requireNamespace("bigmemory", quietly = TRUE)  
+    if(!oops) 
+        stop("Please install the bigmemory package from CRAN")
+
+    if(cell) to.return <- bigmemory::big.matrix(nrow=nframes,ncol=6, init = NA, type = "double")
+    else to.return <- bigmemory::big.matrix(nrow=nframes,ncol=natoms*3, init = NA, type = "double")
   }
 ### ==> !!! end big.matrix insert
   
@@ -303,10 +305,11 @@ function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
     }
   }
 #  if(verbose) { cat("done",sep="\n") }
-  if(verbose) { cat("\n") }
+  if(verbose)
+    cat("\n")
   close(trj)
 
-  class(to.return) = "xyz"
-  return(to.return) 
+  ##class(to.return) = "xyz"
+  return( as.xyz(to.return) ) 
 }
 

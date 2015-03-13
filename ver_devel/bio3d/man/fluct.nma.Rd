@@ -30,7 +30,7 @@ fluct.nma(nma, mode.inds=NULL)
 \seealso{ \code{\link{nma} } }
 \examples{
 ## Fetch stucture
-pdb <- read.pdb("1hel")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 ## Calculate (vibrational) normal modes
 modes <- nma(pdb)

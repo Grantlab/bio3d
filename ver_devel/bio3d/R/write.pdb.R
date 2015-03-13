@@ -45,11 +45,13 @@ function (pdb = NULL,
   
   if (!is.null(pdb)) {
     if (is.null(card)) card <- pdb$atom$type
+    else if(length(card) == 1) card = rep(card, natom)
     if (is.null(resno)) resno = pdb$atom[, "resno"]
     if (is.null(resid)) resid = pdb$atom[, "resid"]
     if (is.null(eleno)) eleno = pdb$atom[, "eleno"]
     if (is.null(elety)) elety = pdb$atom[, "elety"]
     if (is.null(chain)) chain = pdb$atom[, "chain"]
+    else if(length(chain) == 1) chain = rep(chain, natom)
     if (is.null(insert)) insert = pdb$atom[, "insert"]
     if (is.null(alt)) alt = pdb$atom[, "alt"]
     if (is.null(o)) o = pdb$atom[, "o"]
@@ -71,11 +73,14 @@ function (pdb = NULL,
     if (is.null(charge)) charge = pdb$atom[, "charge"]
   } else {
     if (is.null(card)) card = rep("ATOM", natom)
+    else if(length(card) == 1) card = rep(card, natom)
     if (is.null(resno)) resno = c(1:natom)
     if (is.null(resid)) resid = rep("ALA", natom)
     if (is.null(eleno)) eleno = c(1:natom)
     if (is.null(elety)) elety = rep("CA", natom)
     if (is.null(chain)) chain = rep("", natom)
+    else if (length(chain) == 1) chain = rep(chain, natom)
+    ##if(any(is.na(chain))) chain[is.na(chain)]= ""
     if (is.null(insert)) insert=rep("", natom)
     if (is.null(alt)) alt=rep("", natom)
     if (is.null(o))         o = rep("1.00",natom)
@@ -83,6 +88,10 @@ function (pdb = NULL,
     if (is.null(segid)) segid = rep("", natom)
     if (is.null(elesy)) elesy = rep("", natom)
     if (is.null(charge)) charge = rep("", natom)
+
+    chain[is.na(chain)]= ""
+    insert[is.na(insert)] = ""
+    alt[is.na(alt)] = ""
   }
 
   if (!is.logical(append)) 
@@ -91,9 +100,10 @@ function (pdb = NULL,
   if (length(as.vector(xyz))%%3 != 0) {
     stop("write.pdb: 'length(xyz)' must be divisable by 3.")
   }
-  check.lengths <- sum(length(resno), length(resid), length(eleno),
-                       length(elety), length(o), length(b), length(segid), 
-                       length(elesy), length(charge))
+  check.lengths <- sum(length(card), length(resno), length(resid), 
+                       length(eleno), length(elety), length(chain), 
+                       length(insert), length(alt), length(o), length(b), 
+                       length(segid), length(elesy), length(charge))
   if (check.lengths%%natom != 0) {
     stop("write.pdb: the lengths of all input vectors != 'length(xyz)/3'.")
   }

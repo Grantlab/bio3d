@@ -1,21 +1,28 @@
 \name{dm}
 \alias{dm}
+\alias{dm.pdb}
 \alias{dm.xyz}
 \title{ Distance Matrix Analysis }
 \description{
   Construct a distance matrix for a given protein structure.
 }
 \usage{
-dm(pdb, selection = "calpha", verbose=TRUE)
-dm.xyz(xyz, grpby = NULL, scut = NULL, mask.lower = TRUE)
+dm(\dots)
+
+\method{dm}{pdb}(pdb, inds = NULL, grp = TRUE, verbose=TRUE, \dots)
+
+\method{dm}{xyz}(xyz, grpby = NULL, scut = NULL, mask.lower = TRUE, ncore=1, \dots)
 }
 \arguments{
   \item{pdb}{ a \code{pdb} structure object as returned by
     \code{\link{read.pdb}} or a numeric vector of \sQuote{xyz} coordinates.}
-  \item{selection}{ a character string for selecting the \code{pdb} atoms
-    to undergo comparison (see \code{\link{atom.select}}). }
+  \item{inds}{ atom and xyz coordinate indices obtained from \code{atom.select}
+    that selects the elements of \code{pdb} upon which the calculation
+    should be based. }
+  \item{grp}{ logical, if TRUE atomic distances will be grouped according
+    to their residue membership. See \sQuote{grpby}. }
   \item{verbose}{ logical, if TRUE possible warnings are printed. }
-  \item{xyz}{ a numeric vector of Cartesian coordinates.}
+  \item{xyz}{ a numeric vector or matrix of Cartesian coordinates.}
   \item{grpby}{ a vector counting connective duplicated elements that
     indicate the elements of \code{xyz} that should be considered as a group
     (e.g. atoms from a particular residue). }
@@ -24,6 +31,9 @@ dm.xyz(xyz, grpby = NULL, scut = NULL, mask.lower = TRUE)
     value.}
   \item{mask.lower}{ logical, if TRUE the lower matrix elements
     (i.e. those below the diagonal) are returned as NA.}
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    \code{ncore>1} requires package \sQuote{parallel} installed. }
+  \item{\dots}{ arguments passed to and from functions. }
 }
 \details{
   Distance matrices, also called distance plots or distance maps, are an
@@ -37,7 +47,8 @@ dm.xyz(xyz, grpby = NULL, scut = NULL, mask.lower = TRUE)
 }
 \value{
   Returns a numeric matrix of class \code{"dmat"}, with all N by N
-  distances, where N is the number of selected atoms.
+  distances, where N is the number of selected atoms. With multiple
+  frames the output is provided in a three dimensional array. 
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
@@ -63,20 +74,24 @@ dm.xyz(xyz, grpby = NULL, scut = NULL, mask.lower = TRUE)
 }
 \seealso{ \code{\link{plot.dmat}}, \code{\link{read.pdb}}, \code{\link{atom.select}} }
 \examples{
+\donttest{
+# PDB server connection required - testing excluded
 
 ##--- Distance Matrix Plot
 pdb <- read.pdb( "4q21" )
 k <- dm(pdb,selection="calpha")
 filled.contour(k, nlevels = 10)
 
+## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
+if(check.utility("muscle")) {
 
 ##--- DDM: Difference Distance Matrix
 # Downlaod and align two PDB files
-pdbs <- pdbaln( get.pdb( c( "4q21", "521p"), path=tempdir() ))
+pdbs <- pdbaln( get.pdb( c( "4q21", "521p"), path = tempdir() ), outfile = tempfile() )
 
 # Get distance matrix
-a <- dm(pdbs$xyz[1,])
-b <- dm(pdbs$xyz[2,])
+a <- dm.xyz(pdbs$xyz[1,])
+b <- dm.xyz(pdbs$xyz[2,])
 
 # Calculate DDM
 c <- a - b
@@ -89,6 +104,8 @@ plot(c, axis.tick.space=10,
      resnum.2=pdbs$resno[2,],
      grid.col="black",
      xlab="Residue No. (4q21)", ylab="Residue No. (521p)")
+}
+}
 
 \dontrun{
 ##-- Residue-wise distance matrix based on the

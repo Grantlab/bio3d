@@ -34,7 +34,7 @@ read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
   their associated PDB files.
 }
 \value{
-  Returns a list of class \code{"3dalign"} with the following five
+  Returns a list of class \code{"pdbs"} with the following five
   components:
   \item{xyz}{numeric matrix of aligned C-alpha coordinates.}
   \item{resno}{character matrix of aligned residue numbers.}
@@ -43,6 +43,8 @@ read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
   \item{id}{character vector of PDB sequence/structure names.}
   \item{ali}{character matrix of aligned sequences.}
   \item{resid}{character matrix of aligned 3-letter residue names.}
+  \item{sse}{character matrix of aligned helix and strand secondary
+    structure elements as defined in each PDB file.}  
   \item{call}{ the matched call. }
 }
 \references{
@@ -57,6 +59,9 @@ read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
   \code{\link{read.fasta}}, \code{\link{read.pdb}},
   \code{\link{core.find}}, \code{\link{fit.xyz}}, \code{\link{read.all}} }
 \examples{
+\donttest{
+# Redundant testing excluded
+
 # Read sequence alignment
 file <- system.file("examples/kif1a.fa",package="bio3d")
 aln  <- read.fasta(file)
@@ -80,5 +85,7 @@ pdbs$xyz[, atom2xyz(335:339)]
 #  e.g. fit to first structure
 # xyz <- fit.xyz(pdbs$xyz[1,], pdbs)
 # xyz[, atom2xyz(335:339)]
+
+}
 }
 \keyword{ IO }

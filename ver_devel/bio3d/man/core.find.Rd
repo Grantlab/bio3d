@@ -1,20 +1,29 @@
 \name{core.find}
 \alias{core.find}
+\alias{core.find.default}
+\alias{core.find.pdbs}
+\alias{core.find.pdb}
 \title{ Identification of Invariant Core Positions }
 \description{
   Perform iterated rounds of structural superposition to identify the
   most invariant region in an aligned set of protein structures.
 }
 \usage{
-core.find(aln, shortcut = FALSE, rm.island = FALSE,
+core.find(\dots)
+
+\method{core.find}{pdbs}(pdbs, shortcut = FALSE, rm.island = FALSE,
           verbose = TRUE, stop.at = 15, stop.vol = 0.5,
           write.pdbs = FALSE, outpath="core_pruned",
-          ncore = 1, nseg.scale = 1)
+          ncore = 1, nseg.scale = 1, \dots)
+
+\method{core.find}{default}(xyz, \dots)
+
+\method{core.find}{pdb}(pdb, verbose=TRUE, \dots)
 }
 \arguments{
-  \item{aln}{ a numeric matrix of aligned C-alpha xyz Cartesian
+  \item{pdbs}{ a numeric matrix of aligned C-alpha xyz Cartesian
     coordinates. For example an alignment data structure obtained with
-    \code{\link{read.fasta.pdb}} or a trajectory subset obtained from \code{\link{read.dcd}}. }
+    \code{\link{read.fasta.pdb}} or \code{\link{pdbaln}}. }
   \item{shortcut}{ if TRUE, remove more than one position at a time. }
   \item{rm.island}{ remove isolated fragments of less than three
     residues. }
@@ -33,8 +42,15 @@ core.find(aln, shortcut = FALSE, rm.island = FALSE,
   \item{ncore }{ number of CPU cores used to do the calculation.
     \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{nseg.scale }{ split input data into specified number of segments
-    prior to running multiple core calculation. See \code{\link{fit.xyz}}.
-  }
+    prior to running multiple core calculation. See \code{\link{fit.xyz}}.}
+  \item{xyz}{ a numeric matrix of xyz Cartesian coordinates,
+    e.g. obtained from \code{\link{read.dcd}} or \code{\link{read.ncdf}}. }
+  \item{pdb}{ an object of type \code{pdb} as obtained from function
+    \code{\link{read.pdb}} with multiple frames (>=4) stored in its
+    \code{xyz} component. Note that the function will attempt to
+    identify C-alpha and phosphate atoms (for protein and nucleic acids,
+    respectively) in which the calculation should be based. }
+  \item{\dots}{ arguments passed to and from functions. }
 }
 \details{
   This function attempts to iteratively refine an initial structural
@@ -63,8 +79,9 @@ core.find(aln, shortcut = FALSE, rm.island = FALSE,
   \item{resno }{residue number of core residues at each round (taken
     from the first aligned structure) or, alternatively, the numeric
     index of core residues at each round.}
-  \item{atom }{atom indices of core atoms at each round.}
-  \item{xyz }{xyz indices of core atoms at each round.}
+  \item{step.inds}{atom indices of core atoms at each round.}
+  \item{atom }{atom indices of core positions in the last round.}
+  \item{xyz }{xyz indices of core positions in the last round.}
   \item{c1A.atom }{atom indices of core positions with a total volume
     under 1 Angstrom\^3.}
   \item{c1A.xyz }{xyz indices of core positions with a total volume
@@ -123,6 +140,10 @@ points(rmsf(xyz2[,gaps$f.inds]), typ="l", col="red")
 }
 
 \dontrun{
+##-- Run core.find() on a multimodel PDB file
+pdb <- read.pdb('1d1d', multi=TRUE)
+core <- core.find(pdb)
+
 ##-- Run core.find() on a trajectory
 trtfile <- system.file("examples/hivp.dcd", package="bio3d")
 trj <- read.dcd(trtfile)

@@ -12,7 +12,7 @@
 }
 \usage{
 load.enmff(ff = 'calpha')
-ff.calpha(r, ...)
+ff.calpha(r, rmin=2.9, ...)
 ff.anm(r, cutoff=15, gamma=1, ...)
 ff.pfanm(r, cutoff=NULL, ...)
 ff.calphax(r, atom.id, ssdat=NULL, verbose=FALSE, ...)
@@ -24,6 +24,9 @@ ff.reach(r, atom.id, ssdat=NULL, ...)
     \sQuote{calpha}, \sQuote{anm}, \sQuote{pfanm}, \sQuote{calphax},
     \sQuote{reach}, or  \sQuote{sdenm}. }
   \item{r}{ a numeric vector of c-alpha distances. }
+  \item{rmin}{ lowest allowed atom-atom distance for the force constant
+    calculation. The default of 2.9A is based on an evaluation of 24
+    high-resolution X-ray structures (< 1A). }
   \item{cutoff}{ numerical, cutoff for pair-wise interactions. }
   \item{gamma}{ numerical, global scaling factor. }
   \item{atom.id}{ atomic index. }
@@ -82,6 +85,7 @@ ff.reach(r, atom.id, ssdat=NULL, ...)
   residue-residue spring force constants. 
 }
 \references{
+  Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
   Hinsen, K. et al. (2000) \emph{Chemical Physics} \bold{261}, 25--37.
   Atilgan, A.R. et al. (2001) \emph{Biophysical Journal} \bold{80}, 505--515.
   Dehouck Y. & Mikhailov A.S. (2013) \emph{PLoS Comput Biol} \bold{9}:e1003209.
@@ -100,7 +104,7 @@ force.constants <- pfc.fun( seq(4,8, by=0.5) )
 
 ## Calculate the complete spring force constant matrix
 ## Fetch PDB
-pdb <- read.pdb("1hel")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 ## Fetch only c-alpha coordinates
 ca.inds <- atom.select(pdb, 'calpha')

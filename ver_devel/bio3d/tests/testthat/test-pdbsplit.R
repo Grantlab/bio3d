@@ -2,7 +2,8 @@ context("Testing pdbsplit()")
 
 
 test_that("pdbsplit works", {
-
+  skip_on_cran()
+  
   path <- tempdir()
   invisible(capture.output(rawfiles <- get.pdb("3R1C", path=path)))
   invisible(capture.output(files <- pdbsplit(rawfiles, ids=NULL, path=path)))
@@ -46,6 +47,16 @@ test_that("pdbsplit works", {
   pdb <- read.pdb(files[1])
   expect_that(nrow(pdb$atom), equals(1230))
 
+
+  ## non standard amino acids:
+  invisible(capture.output(rawfiles <- get.pdb("1cdk", path=path)))
+  invisible(capture.output(files <- pdbsplit(rawfiles, path=path)))
+  invisible(capture.output(pdb <- read.pdb(files[1])))
+  invisible(capture.output(inds <- atom.select(pdb, resno=197)$atom))
+
+  inds.expected <- c(1568, 1569, 1570, 1571, 1572,
+                     1573, 1574, 1575, 1576, 1577, 1578)
+  expect_that(inds, equals(inds.expected))
   
 }
           )

@@ -5,7 +5,7 @@
   Structural visualization of a cross-correlation matrix. 
 }
 \usage{
-view.dccm(dccm, pdb, step=0.2, omit=0.2, type="pymol", outprefix="corr",
+view.dccm(dccm, pdb, step=0.2, omit=0.2, radius=0.15, type="pymol", outprefix="corr",
           launch=FALSE, exefile="pymol")
 }
 \arguments{
@@ -17,6 +17,7 @@ view.dccm(dccm, pdb, step=0.2, omit=0.2, type="pymol", outprefix="corr",
   \item{step}{ binning interval of cross-correlation coefficents. }
   \item{omit}{ correlation coefficents with values (0-omit, 0+omit) will
     be omitted from visualization. }
+  \item{radius}{ radius of visualized correlations. }
   \item{type}{ character string specifying the type of visualization:
     \sQuote{pymol} or \sQuote{pdb}. }
   \item{outprefix}{ character string specifying the file prefix. If
@@ -51,7 +52,7 @@ view.dccm(dccm, pdb, step=0.2, omit=0.2, type="pymol", outprefix="corr",
 \examples{
 \dontrun{
 ## Fetch stucture
-pdb <- read.pdb("1hel")
+pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
 ## Calculate normal modes
 modes <- nma(pdb)

@@ -53,13 +53,13 @@ pdb <- read.pdb("3dnd")
 masses <- aa2mass(pdb)
 
 ## or
-masses <- atom2mass(pdb$atom[1:10,"resid"])
+masses <- aa2mass(pdb$atom[1:10,"resid"])
 
 ## Dealing with unconventional residues
-pdb <- read.pdb("1xj0", het2atom=TRUE)
+#pdb <- read.pdb("1xj0")
 
-mass.cust <- list("CSX"=122.166)
-masses <- aa2mass(pdb, mass.custom=mass.cust)
+#mass.cust <- list("CSX"=122.166)
+#masses <- aa2mass(pdb, mass.custom=mass.cust)
 }
 }
 \keyword{ utilities }

@@ -97,5 +97,7 @@ function(x, cutoff=NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5
   ##- Return details of hits above cutoff
   out <- cbind("pdb.id"=x$pdb.id[inds], "gi.id"=x$gi.id[inds], "group"=gps[inds])
   rownames(out) <- which(inds)
-  return(list(hits=out, pdb.id=x$pdb.id[inds], gi.id=x$gi.id[inds]))
+  o <- list(hits=out, pdb.id=x$pdb.id[inds], gi.id=x$gi.id[inds])
+  class(o) <- "blast" 
+  return(o)
 }

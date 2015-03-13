@@ -7,7 +7,6 @@ function(fixed,
          prefix = "",
          pdbext = "",
          outpath = "fitlsq",
-         het = FALSE,
          full.pdbs=FALSE,
          ncore=1,
          nseg.scale=1, # to resolve the memory problem in using multicore
@@ -68,8 +67,7 @@ function(fixed,
                    yfit=fixed.inds,
                    verbose=verbose)
 
-    class(fit)="xyz"
-    return(fit)
+    return(as.xyz(fit))
   } else {
     if(is.list(mobile)) {      # INPUT is a list object
       if(!is.numeric(mobile$xyz))
@@ -120,37 +118,39 @@ function(fixed,
           chains <- unique(res.chains[!is.na(res.chains)])
 
           if(length(chains)==0) {
-            string <- paste("///",
-                      paste(mobile$resno[i,core.inds.atom],collapse = ","),
-                            "///CA/", sep="")
-            inds <- atom.select(pdb, string,
-                                verbose=verbose ,rm.insert=TRUE)$xyz
+            ##string <- paste("///",
+            ##          paste(mobile$resno[i,core.inds.atom],collapse = ","),
+            ##                   "///CA/", sep="")
+            
+            inds <- atom.select(pdb, resno=res.resno, elety="CA",
+                                verbose=verbose)$xyz
 
           } else {
             if(length(chains)==1) {
-              string <- paste("//",chains,"/",
-                              paste(res.resno, collapse = ","),
-                              "///CA/", sep="")
-              inds <- atom.select(pdb, string,
-                                  verbose=verbose ,rm.insert=TRUE)$xyz
+              #string <- paste("//",chains,"/",
+              #                paste(res.resno, collapse = ","),
+              #                "///CA/", sep="")
+              
+              inds <- atom.select(pdb, resno=res.resno, chain=chains, elety="CA", 
+                                  verbose=verbose)$xyz
             } else {
               # indices for each chain
               inds <- NULL
               for(j in 1:length(chains)) {
-                string <- paste("//",chains[j],"/",
-                                paste(res.resno[ res.chains==chains[j] ],
-                                      collapse = ","),
-                                "///CA/", sep="")
-                inds <- c(inds, atom.select(pdb, string,
-                                            verbose=verbose,
-                                            rm.insert=TRUE)$xyz)
+                #string <- paste("//",chains[j],"/",
+                #                paste(res.resno[ res.chains==chains[j] ],
+                #                      collapse = ","),
+                #                "///CA/", sep="")
+                
+                inds <- c(inds, atom.select(pdb, resno=res.resno[ res.chains==chains[j] ],
+                                            chain=chains[j], elety="CA", verbose=verbose)$xyz)
               }
             }
           }
           pdb.xyz <- pdb$xyz
-          if (het) 
-            pdb.xyz <- c(pdb.xyz,
-                         as.numeric(t(pdb$het[,c("x","y","z")])))
+          #if (het) 
+          #  pdb.xyz <- c(pdb.xyz,
+          #               as.numeric(t(pdb$het[,c("x","y","z")])))
 
           if(length(inds) > length(fixed.inds)) {
             warning("Looks like we have a multi-chain pdb with no chain id: ignoring extra indices\n\t")
@@ -162,14 +162,13 @@ function(fixed,
                              xfit=inds, # sort!!
                              yfit=fixed.inds)
 
-          write.pdb(xyz = xyz.fit, pdb = pdb, het = het, 
+          write.pdb(xyz = xyz.fit, pdb = pdb, ##het = het, 
                     file = file.path(outpath, paste(basename(mobile$id[i]),
                       "_flsq.pdb",sep = "")) )
           return (NULL)
         } )
       }
-      class(fit)="xyz"
-      return(fit)
+      return(as.xyz(fit))
     } else {
       if(full.pdbs)
         warning("Need 'mobile' list object for 'full.pdbs=TRUE'")
@@ -203,8 +202,7 @@ function(fixed,
                            yfit = fixed.inds,
                            verbose=verbose))
         }
-        class(fit)="xyz"
-        return(fit)
+        return(as.xyz(fit))
       }
     }
   }
