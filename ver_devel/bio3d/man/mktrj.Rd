@@ -66,11 +66,10 @@ mktrj(...)
   \code{\link{view.modes}}.
 }
 \examples{
-\donttest{
+\dontrun{
 
 ##- PCA example
-data(transducin)
-attach(transducin, warn.conflicts=FALSE)
+attach(transducin)
 
 # Calculate principal components
 pc.xray <- pca(pdbs, fit=TRUE)
@@ -79,6 +78,7 @@ pc.xray <- pca(pdbs, fit=TRUE)
 outfile = tempfile()
 a <- mktrj(pc.xray, file = outfile)
 outfile
+
 detach(transducin)
 
 

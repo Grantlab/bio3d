@@ -47,6 +47,7 @@ get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, gzip = FALSE,
   \code{\link{read.fasta}}, \code{\link{pdbsplit}} }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
 
 ## PDB file paths
 get.pdb( c("1poo", "1moo"), URLonly=TRUE )

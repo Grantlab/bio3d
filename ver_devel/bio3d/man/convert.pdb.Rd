@@ -82,7 +82,7 @@ convert.pdb(pdb, type=c("original", "pdb", "charmm", "amber", "gromacs"),
   \code{\link{read.dcd}}, \code{\link{read.fasta.pdb}},
   \code{\link{read.fasta}} }
 \examples{
-\donttest{
+\dontrun{
 
 # Read a PDB file
 pdb <- read.pdb("4q21")

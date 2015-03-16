@@ -100,7 +100,7 @@ test_that("read.pdb() reads and stores data properly", {
    pdb1 <- trim.pdb(pdb, inds = atom.select(pdb, "calpha", verbose=FALSE))
    expect_is(pdb1, "pdb")
    expect_equal(nrow(pdb1$atom), 228)
-   expect_equal(sum(pdb1$calpha), 224)
+   expect_equal(sum(pdb1$calpha), 228)
    expect_equivalent(pdb1$helix$start, pdb$helix$start)
    expect_equivalent(sort(pdb1$sheet$end), sort(pdb$sheet$end))
 

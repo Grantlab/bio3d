@@ -31,6 +31,8 @@ write.fasta(alignment=NULL, ids=NULL, seqs=alignment$ali, file, append = FALSE)
 \seealso{ \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}} }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
+
 ## Read a PDB file
 pdb <- read.pdb("1bg2")
 

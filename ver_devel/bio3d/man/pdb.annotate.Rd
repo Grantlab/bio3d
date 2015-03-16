@@ -33,6 +33,7 @@ pdb.annotate(ids, anno.terms = NULL, unique = FALSE, verbose = FALSE)
 \author{ Hongyang Li, Barry Grant, Lars Skjaerven}
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
 
 # Fetch all annotation terms
 ids <- c("6Q21_B", "1NVW", "1P2U_A")

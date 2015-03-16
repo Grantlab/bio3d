@@ -1,7 +1,7 @@
 ---
 title: "Beginning Trajectory Analysis with Bio3D"
 author: "Xin-Qiu Yao, Lars Skjaerven, & Barry J. Grant"
-date: "October 30, 2014"
+date: "October 30, 2014 (last updated: Feburary 20, 2015)"
 affiliation: University of Michigan (Ann Arbor, USA) and University of Bergen (Norway) 
 output:
   pdf_document:
@@ -135,7 +135,7 @@ How would you extract the amino acid sequence of the HIVpr system in
 Note that typically one works with trajectory files that contain all
 protein atoms, or at the very least all backbone atoms. Solvent however
 can often be excluded prior to Bio3D input - it just depends upon your
-particular analysis questions. For example, we are not able to analyze
+particular analysis questions. For example, we are not able to analyze
 Hydrogen bonding patterns or details of water occupancy with the
 currently inputed data.
 <br><br>

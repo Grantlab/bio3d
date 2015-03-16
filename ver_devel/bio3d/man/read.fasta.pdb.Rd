@@ -60,6 +60,7 @@ read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
   \code{\link{core.find}}, \code{\link{fit.xyz}}, \code{\link{read.all}} }
 \examples{
 \donttest{
+# Redundant testing excluded
 
 # Read sequence alignment
 file <- system.file("examples/kif1a.fa",package="bio3d")

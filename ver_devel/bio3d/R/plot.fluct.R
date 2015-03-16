@@ -33,16 +33,16 @@
     ## These could be removed after merging this function with plot.bio3d()
     dots = list(...)
     if("rm.gaps" %in% names(dots)) rm.gaps = dots$rm.gaps
-    else rm.gaps = formals(plot.bio3d)$rm.gaps
+    else rm.gaps = formals(plotb3)$rm.gaps
     
     ## gaps positions
     gaps.pos <- gap.inspect(x)
 
-    if(rm.gaps) yvals = x[, gaps.pos$f.inds]
+    if(rm.gaps) yvals = x[, gaps.pos$f.inds, drop=FALSE]
     else yvals = x
 
     if("ylim2zero" %in% names(dots)) ylim2zero = dots$ylim2zero
-    else ylim2zero = formals(plot.bio3d)$ylim2zero
+    else ylim2zero = formals(plotb3)$ylim2zero
 
     if("xlim" %in% names(dots)) xlim = dots$xlim
     else xlim = c(1, ncol(yvals))
@@ -124,7 +124,7 @@
        if(!is.matrix(yvals))
           yvals = matrix(yvals, nrow=1)
        else 
-          yvals = yvals[col, ]  # correct order change due to tapply
+          yvals = yvals[col, , drop=FALSE]  # correct order change due to tapply
 
        # still keep the same gaps in first row
        # this will help plot SSE in plot.bio3d()
@@ -132,7 +132,7 @@
 
        x = yvals
        if(rm.gaps) 
-          yvals = x[, gaps.pos$f.inds]
+          yvals = x[, gaps.pos$f.inds, drop=FALSE]
 
        # trick to leave gap position unchanged.
        # Won't affect plot because plot.bio3d() only picks up the first row

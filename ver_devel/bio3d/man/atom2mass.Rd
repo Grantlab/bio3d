@@ -57,6 +57,7 @@ atom.names <- c("CA", "O", "N", "OXT")
 atom2mass(atom.names)
 
 \donttest{
+# PDB server connection required - testing excluded
 
 ## Get atomic symbols from a PDB object with a customized data set
 pdb <- read.pdb("3RE0", verbose=FALSE)

@@ -9,7 +9,7 @@ dssp.xyz <- function(xyz, pdb, ...) {
   dims <- dim(xyz)
   for (i in 1:dims[1L]) {
     pdb.tmp     <- pdb
-    pdb.tmp$xyz <- xyz[i,]
+    pdb.tmp$xyz <- as.xyz(xyz[i,])
     sse     <- dssp.pdb(pdb.tmp, ...)$sse
     sse.mat <- rbind(sse.mat, sse)
   }

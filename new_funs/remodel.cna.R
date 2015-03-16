@@ -56,8 +56,8 @@ normalize.cij <- function(cij, factor = NULL, mag = 2, cutoff = 0) {
 
    cij <- do.call("c", ncij)
    colors <- do.call("c", ncolor)
-   if(length(cij) == 1) return (cij[[1]])
-   else return(list(cij=cij, color=colors) )
+   if(length(cij) == 1) colors = NULL
+   return( list(cij=cij, color=colors) )
 }
 
 # None: minus.log of max cij (default of cna()); if member=NULL and col=NULL, no change

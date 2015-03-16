@@ -92,7 +92,7 @@ summary.cnapath <- function(object, ..., pdb = NULL, label = NULL, col = NULL,
             plot(y1[[i]], freq = FALSE, col = do.call(rgb, as.list(rgbcolors[,i])), 
             border = col[i], add = TRUE)
       }  
-      legend("topleft", label, bty = "n", text.col = col)
+      legend("topleft", legend = label, bty = "n", text.col = col)
 
       ##- for node degeneracy 
       y2 <- lapply(pa, function(x) unlist(x$path))

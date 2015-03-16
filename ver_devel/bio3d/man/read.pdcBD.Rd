@@ -68,6 +68,8 @@ read.pdcBD(file, maxlines = 50000, multi = FALSE, rm.insert = FALSE,
   \code{\link{read.fasta}} }
 \examples{
 \donttest{
+# PDB server connection required - testing excluded
+
 # Read a PDB file
 pdb <- read.pdb( "1bg2" )
   
