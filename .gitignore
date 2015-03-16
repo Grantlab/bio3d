@@ -3,7 +3,7 @@
 *bio3d.Rcheck*
 *sandbox*
 cache*
-figure*
+##figure*
 *.txt
 *.md
 *.Rnw
