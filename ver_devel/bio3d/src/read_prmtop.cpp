@@ -132,7 +132,7 @@ List read_prmtop(std::string filename) {
 	  }
 
 	  if(tmp_svector.size()==0)
-	    tmp_svector.push_back(NULL);
+	    tmp_svector.push_back("");
 	  continue;
 	}
 	
