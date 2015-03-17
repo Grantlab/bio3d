@@ -11,7 +11,7 @@
 \usage{
 mktrj(...)
 
-\method{mktrj}{pca}(pca = NULL, pc = 1, mag = 1, step = 0.125, file = NULL,  ...)
+\method{mktrj}{pca}(pca = NULL, pc = 1, mag = 1, step = 0.125, file = NULL, pdb = NULL, ...)
 
 \method{mktrj}{nma}(nma = NULL, mode = 7, mag = 10, step = 1.25, file = NULL,  ...)
 
@@ -29,6 +29,10 @@ mktrj(...)
   \item{mag}{ a magnification factor for scaling the displacements. }
   \item{step}{ the step size by which to increment along the pc/mode. }
   \item{file}{ a character vector giving the output PDB file name. }
+  \item{pdb}{ an object of class \code{"pdb"} as obtained from 
+    \code{\link{read.pdb}} or class \code{"pdbs"} as obtained from
+    \code{\link{read.fasta.pdb}}. If not NULL, used as reference to write
+    the PDB file. }
   \item{mode}{ the mode number along which displacements should be made.}
   \item{pdbs}{ a list object of class \code{"pdbs"} (obtained with
     \code{\link{pdbaln}} or \code{\link{read.fasta.pdb}}) which
