@@ -2,42 +2,81 @@
 library(shiny)
 
 # Define UI for application that draws a histogram
-shinyUI(fluidPage(
+shinyUI(navbarPage("Bio3D NMA",
 
-  # Application title
-  titlePanel("NMA on your favorite protein!"),
+                   tabPanel("PDB",
+                            sidebarLayout(
 
-  # Sidebar with a slider input for the number of bins
-  sidebarLayout(
-    sidebarPanel(
-      textInput("pdbid", "Ender a PDB code:", "1hel"),
+                                sidebarPanel(
+                                    textInput("pdbid", "Ender a PDB code:", "1hel"),
 
-      selectInput("forcefield", "Choose a forcefield:", 
-                  choices = c("calpha", "anm", "pfanm", "sdenm")),
+                                    textInput("chain", "Chain ID:", "A"),
 
-      sliderInput("cutoff",
-                  "Cutoff value:",
-                  min = 6,
-                  max = 50,
-                  value = 10),
+                                    submitButton("Submit")
+                                    ),
 
-      radioButtons("mass", "Mass-weighting:",
-                  c("Yes", "Nope")),
 
-      sliderInput("temp",
-                  "Temperature scaling:",
-                  min = 0,
-                  max = 500,
-                  value = 300),
+                                mainPanel(
+                                    h4("Summary"),
+                                    verbatimTextOutput("pdbSummary")
+                                    )
+                                )
+                            ),
 
-      radioButtons("plot", "What to plot:",
-                  c("Fluctuations", "Cross correlations"))
-    ),
+                   tabPanel("NMA",
+                            sidebarLayout(
+                                sidebarPanel(
+                                    selectInput("forcefield", "Choose a forcefield:",
+                                                choices = c("calpha", "anm", "pfanm", "sdenm")),
 
-    # Show a plot of the generated distribution
-    mainPanel(
-      plotOutput("distPlot")
-    )
-  )
-))
+                                    sliderInput("cutoff",
+                                                "Cutoff value:",
+                                                min = 6,
+                                                max = 50,
+                                                value = 10),
+
+                                    radioButtons("mass", "Mass-weighting:",
+                                                 c("Yes", "Nope")),
+
+                                    sliderInput("temp",
+                                                "Temperature scaling:",
+                                                min = 0,
+                                                max = 350,
+                                                value = 300),
+
+                                    submitButton("Submit")
+                                    ),
+
+                                mainPanel(
+                                    h4("Summary"),
+                                    verbatimTextOutput("modeSummary")
+                                    )
+                                )
+                            ),
+
+                   tabPanel("Fluctuations",
+                            plotOutput("fluctPlot")
+                            ),
+
+                     tabPanel("DCCM",
+                              sidebarLayout(
+                                sidebarPanel(
+                                    radioButtons("style", "Style:",
+                                                 c("Cyan", "Red-blue")),
+
+                                    checkboxInput('colorkey', 'Color key', TRUE),
+
+                                    checkboxInput('sse', 'Show SSE', TRUE),
+
+                                    submitButton("Submit")
+                                    ),
+
+                                  mainPanel(
+                                      plotOutput("dccmPlot")
+                                      )
+                                  )
+                              )
+                   )
+        )
+
 
