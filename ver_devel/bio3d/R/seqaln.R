@@ -17,7 +17,7 @@ function(aln, id=NULL, profile=NULL,
   if(!is.null(profile) & !inherits(profile, "fasta"))
     stop("profile must be of class 'fasta'")
 
-  if(length(grep(tolower(exefile), "clustalo"))>0) {
+  if(grepl("clustalo", tolower(exefile))) {
     prg <- "clustalo"
     ver <- "--version"
     
