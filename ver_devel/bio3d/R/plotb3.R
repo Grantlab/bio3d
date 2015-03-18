@@ -59,10 +59,10 @@ plotb3 <- function(x, resno=NULL, rm.gaps = FALSE, type="h",
     
     ## Remove short h and e elements that can crowd plots
     if(length(h) > 0) {
-      h <- h[h[,"length"] >= sse.min.length,]
+      h <- h[h[,"length"] >= sse.min.length,,drop=FALSE]
     } else { h <- NULL }
     if(length(e) > 0) {
-      e <- e[e[,"length"] >= sse.min.length,]
+      e <- e[e[,"length"] >= sse.min.length,,drop=FALSE]
     } else { e <- NULL }
 
     ## For gaps
