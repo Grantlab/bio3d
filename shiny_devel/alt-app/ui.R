@@ -21,21 +21,19 @@ shinyUI(fluidPage(
 
         ##- Chain selection
         h5("Detected chain IDs:"),
-        verbatimTextOutput("chains"),
-      
+        verbatimTextOutput("chains1"),
+        
         checkboxInput("limit", "Limit calculation to a subset of chains?"),
-       helpText("Note: Use this option to exclude particular chains form further consideration."),
-
+        helpText("Note: Use this option to exclude particular chains form further consideration."),
+        
         conditionalPanel(
           condition = "input.limit == true",
-          checkboxGroupInput("chain", label = "Limit to chain IDs:", 
-          choices = list("A" = 1, "B" = 2, "C" = 3),
-          selected = 1:3),
-          ## N.B. should use choices list from "chainIDs" defined in server.R
+          uiOutput("chains2"),
+          helpText("Note: Only selected chains will be analyzed. _NOT IMPLIMENTED_")
+          ),
 
-        helpText("Note: Only selected chains will be analyzed. _NOT IMPLIMENTED_")
-
-        )
+        actionButton("pdbaction", "Fetch PDB")
+        ##submitButton("Submit")
       )
     ),
 
@@ -61,8 +59,10 @@ shinyUI(fluidPage(
 
        checkboxInput("mass", "Mass-weighting", value=TRUE),
 
-      helpText("Note: Some help text here. _NOT IMPLIMENTED_")
-       ##submitButton("Submit") - will effect first PDB input panel also
+        actionButton("nmaaction", "Perform NMA"),
+        
+        helpText("Note: Some help text here. ")
+        ##submitButton("Submit") - will effect first PDB input panel also
       )
     ),
     
@@ -71,8 +71,8 @@ shinyUI(fluidPage(
       h4("3. Result Visualization"),
       tags$hr(),
 
-      checkboxInput('fluxs', 'Fluctuations', value=TRUE),
-      checkboxInput('fluxs', 'Fluctuations with B-factors', value=FALSE),
+      checkboxInput('fluxs1', 'Fluctuations', value=TRUE),
+      checkboxInput('fluxs2', 'Fluctuations with B-factors', value=FALSE),
       checkboxInput('cijs', 'Correlations', value=FALSE),
       checkboxInput('mktrj', 'Mode Displacements Trajectory', value=FALSE),
       checkboxInput('log', 'Calculation Summary Log', value=TRUE)
@@ -91,6 +91,18 @@ shinyUI(fluidPage(
 
   br(),br(),
 
+  
+  
+  conditionalPanel(
+    condition = "input.cijs == true",
+    plotOutput("dccmPlot"),
+    actionButton("plot2pdf", label = "Download Plot PDF")
+    ),
+  
+
+  br(),br(),
+
+  
 #  column(6,
 #    h4("DCCM"),
 #    verbatimTextOutput("pdbSummary") ),
@@ -100,8 +112,8 @@ shinyUI(fluidPage(
 
 
   ##-- The below should be an optional display that is turned off by default...
-  h5("Calculation Summary Log"),
-  #verbatimTextOutput("pdbSummary"),
+  h4("Calculation Summary Log"),
+  verbatimTextOutput("pdbSummary"),
   verbatimTextOutput("modeSummary")# ),
 
 
