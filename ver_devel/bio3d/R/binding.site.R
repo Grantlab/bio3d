@@ -2,6 +2,7 @@
                            cutoff=5, hydrogens=TRUE, byres=TRUE, verbose=FALSE) {
 
   cl <- match.call()
+  sep <- "_"
 
   trim <- function(s, leading=TRUE, trailing=TRUE) {
     if(leading)
@@ -11,7 +12,7 @@
     s[(s=="")]<-""
     s
   }
-  
+
   if (!is.pdb(a))
     stop("must supply an input 'pdb' object 'a', i.e. from 'read.pdb'")
 
@@ -21,12 +22,12 @@
 
   ## backup of the original pdb provided
   a.orig <- a
-  
+
   ## two PDBs provided
   if(!is.null(b)) {
     if(!is.pdb(b))
       stop("'b' should be a 'pdb' object as obtained from 'read.pdb'")
-    
+
     if ( hydrogens ) {
       if(is.null(a.inds))
         a.inds <- atom.select(a, "all", verbose=verbose)
@@ -52,7 +53,7 @@
       if(!length(b.inds$atom)>0)
         stop("insufficent 'ligand' atoms in structure")
     }
-    
+
     b <- trim.pdb(a, b.inds)
     a <- trim.pdb(a, a.inds)
 
@@ -65,10 +66,10 @@
       b.inds <- atom.select(b, string='noh', verbose=verbose)
     }
   }
-  
+
   if(!(length(a.inds$atom)>0 | length(b.inds$atom)>0))
     stop("insufficent atoms in selection(s)")
-  
+
   ## omit hydrogens if any
   a <- trim.pdb(a, a.inds)
   b <- trim.pdb(b, b.inds)
@@ -95,35 +96,35 @@
 
   ## return all atoms in a contacting residue, otherwise, just the atoms
   if(byres) {
-    resno.map  <- apply(a$atom[atom.inds, c("resno", "chain")], 1, paste, collapse="-")
-    all.resno  <- apply(a.orig$atom[, c("resno", "chain")],     1, paste, collapse="-")
+    resno.map  <- apply(a$atom[atom.inds, c("resno", "chain")], 1, paste, collapse=sep)
+    all.resno  <- apply(a.orig$atom[, c("resno", "chain")],     1, paste, collapse=sep)
     atom.inds2 <- which(all.resno %in% resno.map)
   }
   else {
-    resno.map  <- apply(a$atom[atom.inds, c("elety", "resno", "chain")], 1, paste, collapse="-")
-    all.resno  <- apply(a.orig$atom[, c("elety", "resno", "chain")],     1, paste, collapse="-")
+    resno.map  <- apply(a$atom[atom.inds, c("elety", "resno", "chain")], 1, paste, collapse=sep)
+    all.resno  <- apply(a.orig$atom[, c("elety", "resno", "chain")],     1, paste, collapse=sep)
     atom.inds2 <- which(all.resno %in% resno.map)
   }
-  
+
   xyz.inds <- atom2xyz(atom.inds2)
 
   ## check for chain IDs
   tmp <- unique(paste(a$atom[atom.inds, "resid"],
                       a$atom[atom.inds, "resno"],
                       a$atom[atom.inds, "chain"],
-                      sep="-"))
+                      sep=sep))
 
-  resno <- as.numeric(unlist(lapply(strsplit(tmp, "-"), function(x) x[2])))
-  chain <- unlist(lapply(strsplit(tmp, "-"), function(x) x[3]))
+  resno <- as.numeric(unlist(lapply(strsplit(tmp, sep), function(x) x[2])))
+  chain <- unlist(lapply(strsplit(tmp, sep), function(x) x[3]))
   chain[chain==" "] <- NA
-  
+
   if(all(is.na(chain))) {
-    resnames <- unique(paste(a$atom[atom.inds, "resid"], "-",
+    resnames <- unique(paste(a$atom[atom.inds, "resid"], "",
                              a$atom[atom.inds, "resno"],
                              sep=""))
   }
   else {
-    resnames <- unique(paste(a$atom[atom.inds, "resid"], "-",
+    resnames <- unique(paste(a$atom[atom.inds, "resid"], "",
                              a$atom[atom.inds, "resno"],
                              " (", a$atom[atom.inds, "chain"], ")",
                              sep=""))
