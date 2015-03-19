@@ -119,12 +119,12 @@
   chain[chain==" "] <- NA
 
   if(all(is.na(chain))) {
-    resnames <- unique(paste(a$atom[atom.inds, "resid"], "",
+    resnames <- unique(paste(a$atom[atom.inds, "resid"], " ",
                              a$atom[atom.inds, "resno"],
                              sep=""))
   }
   else {
-    resnames <- unique(paste(a$atom[atom.inds, "resid"], "",
+    resnames <- unique(paste(a$atom[atom.inds, "resid"], " ",
                              a$atom[atom.inds, "resno"],
                              " (", a$atom[atom.inds, "chain"], ")",
                              sep=""))
