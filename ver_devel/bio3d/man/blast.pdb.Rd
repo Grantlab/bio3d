@@ -18,7 +18,8 @@ get.blast(urlget, time.out = NULL, chain.single=TRUE)
 \arguments{
   \item{seq}{ a single element or multi-element character vector
     containing the query sequence. Alternatively a \sQuote{fasta}
-    object from function \code{get.seq} can be provided. }
+    object from function \code{get.seq} or \sQuote{pdb} object from 
+    function \code{read.pdb} can be provided. }
   \item{database}{ a single element character vector specifying the
     database against which to search. Current options are \sQuote{pdb},
     \sQuote{nr} and \sQuote{swissprot}. }
