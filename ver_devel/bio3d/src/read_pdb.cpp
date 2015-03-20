@@ -145,10 +145,10 @@ List read_pdb(std::string filename, bool multi, bool hex) {
 	  alt.push_back(trim(line.substr(16,1)));
 	  resid.push_back(trim(line.substr(17,4)));
 	  chain.push_back(trim(line.substr(21,1)));
-	  insert.push_back(line.substr(26,1));
-	  o.push_back(stringToDouble(line.substr(54,6)));
-	  b.push_back(stringToDouble(line.substr(60,6)));
-	  segid.push_back(trim(line.substr(72,4)));
+	  insert.push_back(trim(line.substr(26,1)));
+	  o.push_back(stringToDouble(trim(line.substr(54,6))));
+	  b.push_back(stringToDouble(trim(line.substr(60,6))));
+	  segid.push_back(trim(trim(line.substr(72,4))));
 	  elesy.push_back(trim(line.substr(76,2)));
 	  charge.push_back(trim(line.substr(78,2)));
 	}

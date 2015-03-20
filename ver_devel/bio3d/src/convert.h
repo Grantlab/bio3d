@@ -12,6 +12,10 @@ class BadConversion : public std::runtime_error {
 
 inline double stringToDouble(const std::string& s)
 {
+  if(s=="") {
+    return(NA_REAL);
+  }
+    
   std::istringstream i(s);
   double x;
   if (!(i >> x))
@@ -21,6 +25,10 @@ inline double stringToDouble(const std::string& s)
 
 inline int stringToInt(const std::string& s)
 {
+  if(s=="") {
+    return(NA_INTEGER);
+  }
+  
   std::istringstream i(s);
   int x;
   if (!(i >> x))
