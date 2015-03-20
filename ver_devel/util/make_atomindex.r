@@ -49,4 +49,5 @@ rawtable <- c(
 data <- as.data.frame(matrix(rawtable, ncol=2, byrow=TRUE), stringsAsFactors=FALSE)
 colnames(data) <- c("name", "symb")
 
-save(data, file="atom.index.rda")
+atom.index <- data
+save(atom.index, file="atom.index.rda")
