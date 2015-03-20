@@ -1,0 +1,108 @@
+
+
+##write.table(atom.index, quote=T, file="atom_index.dat", row.names=FALSE)
+
+rawtable <- c(
+  "H", "H",
+  "C", "C",
+  "CA", "C",
+  "CB", "C",
+  "CD", "C",
+  "CD1", "C",
+  "CD2", "C",
+  "CE", "C",
+  "CE1", "C",
+  "CE2", "C",
+  "CE3", "C",
+  "CG", "C",
+  "CG1", "C",
+  "CG2", "C",
+  "CH2", "C",
+  "CZ", "C",
+  "CZ2", "C",
+  "CZ3", "C",
+  "N", "N",
+  "ND1", "N",
+  "ND2", "N",
+  "NE", "N",
+  "NE1", "N",
+  "NE2", "N",
+  "NH1", "N",
+  "NH2", "N",
+  "NZ", "N",
+  "O", "O",
+  "OD1", "O",
+  "OD2", "O",
+  "OE1", "O",
+  "OE2", "O",
+  "OG", "O",
+  "OG1", "O",
+  "OH", "O",
+  "OXT", "O",
+  "S", "S",
+  "SD", "S",
+  "SG", "S",
+  "P", "P",
+  "MG", "Mg",
+  "MN", "Mn",
+  "K", "K",
+  "CL", "Cl",
+  "ZN", "Zn")
+
+data <- as.data.frame(matrix(rawtable, ncol=2, byrow=TRUE), stringsAsFactors=FALSE)
+colnames(data) <- c("name", "symb")
+
+
+
+rawtable <- c(
+  "H", "H",
+  "C", "C",
+  "CA", "C",
+  "CB", "C",
+  "CD", "C",
+  "CD1", "C",
+  "CD2", "C",
+  "CE", "C",
+  "CE1", "C",
+  "CE2", "C",
+  "CE3", "C",
+  "CG", "C",
+  "CG1", "C",
+  "CG2", "C",
+  "CH2", "C",
+  "CZ", "C",
+  "CZ2", "C",
+  "CZ3", "C",
+  "N", "N",
+  "ND1", "N",
+  "ND2", "N",
+  "NE", "N",
+  "NE1", "N",
+  "NE2", "N",
+  "NH1", "N",
+  "NH2", "N",
+  "NZ", "N",
+  "O", "O",
+  "OD1", "O",
+  "OD2", "O",
+  "OE1", "O",
+  "OE2", "O",
+  "OG", "O",
+  "OG1", "O",
+  "OH", "O",
+  "OXT", "O",
+  "S", "S",
+  "SD", "S",
+  "SG", "S",
+  "P", "P",
+  "MG", "Mg",
+  "MN", "Mn",
+  "K", "K",
+  "CL", "Cl",
+  "ZN", "Zn")
+
+data <- as.data.frame(matrix(rawtable, ncol=2, byrow=TRUE), stringsAsFactors=FALSE)
+colnames(data) <- c("name", "symb")
+
+
+save(data, file="atom.index.rda")
