@@ -11,7 +11,7 @@ rmsf(xyz, grpby=NULL, average=FALSE)
   \item{xyz}{ numeric matrix of coordinates with each row corresponding
     to an individual conformer. }
   \item{grpby}{ a vector counting connective duplicated elements that
-    indicate the elements of ‘xyz’ that should be considered as a
+    indicate the elements of 'xyz' that should be considered as a
     group (e.g. atoms from a particular residue). If provided a
     'pdb' object, grouping is automatically set by amino acid residues. }
   \item{average}{ logical, if TRUE averaged over atoms. }
