@@ -42,7 +42,7 @@ shinyUI(fluidPage(
         #,submitButton("Submit")
         ,actionButton("reset_pdb_input", "Reset PDB input")
       )
-    ),
+   ),
 
     column(4,
       wellPanel(
@@ -51,11 +51,10 @@ shinyUI(fluidPage(
 
         uiOutput('resetable_nma_input'),
         
-        helpText("Note: Some help text here. "),
+        helpText("Note: Cutoff applies only to 'ANM' and 'pfANM'. Recommended values are 15 and 50 Å, respectively."),
  
         actionButton("reset_nma_input", "Reset NMA inputs")
-        ##submitButton("Submit") - will effect first PDB input panel also
-      )
+        )
     ),
     
     column(4,
@@ -66,7 +65,10 @@ shinyUI(fluidPage(
         #checkboxInput('fluxs2', 'Fluctuations with B-factors', value=FALSE),
         checkboxInput('cijs', 'Correlations', value=FALSE),
         checkboxInput('mktrj', 'Mode Displacements Trajectory', value=FALSE),
-        checkboxInput('log', 'Calculation Summary Log', value=TRUE)
+        checkboxInput('domains', 'Domain analysis', value=FALSE),
+        checkboxInput('log', 'Calculation Summary Log', value=TRUE),
+
+        helpText("Scroll down to see results.")
       )
     )
   ),
@@ -76,8 +78,8 @@ shinyUI(fluidPage(
   #########################
   ##-- Results Section --##
   #########################
-  hr(),
   h2("Results"),
+  hr(),
 
   ##-A. Fluctuations Panel
   conditionalPanel(
@@ -103,7 +105,7 @@ shinyUI(fluidPage(
       fluidRow(
         column(3,
                h4("Plot options"),
-               checkboxInput('fluxs3', 'Show', value=TRUE),
+               checkboxInput('fluxs3', 'Show mode fluctuations', value=TRUE),
                selectInput("typ1", "Type:",
                            c("hist" = "h",
                              "lines" = "l",
@@ -180,6 +182,48 @@ shinyUI(fluidPage(
              ),
       column(3,
              downloadButton('plot2pdf', "Download Plot PDF")
+             ),
+      column(3,
+             downloadButton('dccm2zip', "Download PyMOL Visualization script")
+             )
+      )
+    ),
+  br(),br(),
+
+  
+
+  ##-E. TRAJ Panel
+  conditionalPanel(
+    condition = "input.mktrj == true",
+    h3("Generate trajectory"),
+    fluidRow(
+      column(9,
+             sliderInput("trj_nmodes", "Number of modes:",
+                         min = 1, max = 10, value = 5)
+             ),
+      column(3,
+             downloadButton('trj2zip', "Download PDB Trajectory")
+             )
+      )
+    ),
+  br(),br(),
+
+  
+  ##-F. Domain analysis
+  conditionalPanel(
+    condition = "input.domains == true",
+    h3("Domain analysis"),
+    fluidRow(
+      column(3,
+             sliderInput("ndomains", "Number of domains:",
+                         min = 2, max = 10, value = 3)
+             ),
+      column(6,
+             sliderInput("nmodes", "Number of modes:",
+                         min = 1, max = 5, value = 5)
+             ),
+      column(3,
+             downloadButton('geostas2zip', "Download PDB Trajectory")
              )
       )
     ),
@@ -188,9 +232,10 @@ shinyUI(fluidPage(
   
 
   hr(),
-  ##-D. Log Report Panel
+  ##-G. Log Report Panel
   conditionalPanel(
     condition = "input.log == true",
+    h3("Summary Log"),
     column(6,
            h4("PDB Summary"),
            verbatimTextOutput("pdbSummary")
