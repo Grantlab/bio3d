@@ -1,7 +1,14 @@
 "rmsf" <-
-function(xyz, average = FALSE) {
+function(xyz, grpby = NULL, average = FALSE) {
   if(is.null(dim(xyz)))
     stop("input 'xyz' has NULL dimension")
+
+  if(!is.null(grpby)) {
+      if(is.pdb(grpby))
+         grpby <- paste(grpby$atom$resno, grpby$atom$chain, sep="-")
+      if(length(grpby) != ncol(xyz)/3)
+         stop("Length of 'grpby' doesn't match 'xyz'")
+  }
 
   ## Cov function changed ~ R.2.7
   my.sd <- function (x, na.rm = FALSE) {
@@ -28,8 +35,9 @@ function(xyz, average = FALSE) {
         d = ncol(xyz)
      return( sqrt( sum(fluct)/d ) )
   } else {
-     return( sqrt( fluct ) )
+     if(is.null(grpby)) 
+        return( sqrt( fluct ) )
+     else
+        return( as.vector(tapply(sqrt( fluct ), as.factor(grpby), mean)) )
   }
-  
 }
-
