@@ -1,5 +1,5 @@
 library(shiny)
-
+library(rCharts)
 
 ## Could open some saved results as an RData file here for first time display 
 ## Calculations would then only run once single SUBMIT button was pressed.
