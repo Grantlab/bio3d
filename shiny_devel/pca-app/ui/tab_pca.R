@@ -21,7 +21,8 @@ tabPanel("3. PCA",
                )
              ),
            mainPanel(
-             plotOutput("pca_plot")
+             showOutput("pca_plot","dimple"),
+             dataTableOutput("myTable")
              )
            )
          )

@@ -1,6 +1,7 @@
 library(bio3d)
 library(lattice)
 library(shiny)
+library(rCharts)
 
 ## Define server logic for PCA shiny demo
 
@@ -260,6 +261,13 @@ shinyServer(function(input, output, session) {
     return(grps)
   })
 
+  pdb_annotate <- reactive({
+    pdbs <- fit()
+    annotation <- pdb.annotate(ids = unique(substr(basename(pdbs$id),1,4)),
+                               anno.terms=c("structureId","chainId","resolution","ligandId","publicationYear"))
+    return(annotation)
+  })
+
   output$checkboxgroup_label_ids <- renderUI({
     
     ids <- input$pdb_ids
@@ -269,7 +277,7 @@ shinyServer(function(input, output, session) {
     
   })
 
-  output$pca_plot <- renderPlot({
+  output$pca_plot <- renderChart2({
     invisible(capture.output( pc <- pca1() ))
 
     col <- 1
@@ -286,26 +294,43 @@ shinyServer(function(input, output, session) {
                 " (", round((pc$L[c(xax, yax)]/sum(pc$L)) * 
                             100, 2), "%)")
     
-    plot(pc$z[, xax], pc$z[, yax],
-         col=col, pch=16,
-         xlab=p[1], ylab=p[2])
+    ## generate a dataframe: pc$z + pdbids + group
+    x <- as.data.frame(cbind(pc$z, substr(basename(pdbs$id),1,6), col))
+    colnames(x)[c(xax,yax,dim(pc$z)[2]+1,dim(pc$z)[2]+2)] <- c(p,"id","group")
     
-    abline(h = 0, col = "gray", lty = 2)
-    abline(v = 0, col = "gray", lty = 2)
+    ## use dPlot() to generate the interactive plot
+    p1 <- dPlot(x = p[1], y = p[2], groups = "id", data = x, type = "bubble")
+    p1$colorAxis(type = "addColorAxis", colorSeries = "group",
+                 palette = c("red", "blue", "black") )
+    p1$xAxis(type = "addMeasureAxis")
 
-    if(input$labelplot) {
-      if(length(input$label_ids)>0) {
-        inds <- unlist(lapply(input$label_ids, grep, pdbs$id))
-        text(pc$z[inds, xax], pc$z[inds, yax],
-             labels=basename.pdb(pdbs$id[inds]),
-             pos=1, offset=input$offset)
-      }
-    }
+    return(p1) 
     
-    if(input$screeplot) {
-      plot.pca.scree(pc$L)
-    }
+#    plot(pc$z[, xax], pc$z[, yax],
+#         col=col, pch=16,
+#         xlab=p[1], ylab=p[2])
+#    
+#    abline(h = 0, col = "gray", lty = 2)
+#    abline(v = 0, col = "gray", lty = 2)
+#
+#    if(input$labelplot) {
+#      if(length(input$label_ids)>0) {
+#        inds <- unlist(lapply(input$label_ids, grep, pdbs$id))
+#        text(pc$z[inds, xax], pc$z[inds, yax],
+#             labels=basename.pdb(pdbs$id[inds]),
+#             pos=1, offset=input$offset)
+#      }
+#    }
+#    
+#    if(input$screeplot) {
+#      plot.pca.scree(pc$L)
+#    }
     
+  })
+
+  ## add the pdb.annotate() table
+  output$myTable = renderDataTable ({
+    pdb_annotate()
   })
 
   ############
