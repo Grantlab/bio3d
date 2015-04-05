@@ -1,69 +1,85 @@
 tabPanel("1. BLAST",
          
          fluidRow(
-           column(4,
+           column(6,
                   wellPanel(
-                    h4("1. PDB Input Selection"),
-                    tags$hr(),
-                    
-                    ##-PDB input (moved to server.R)
-                    uiOutput('resetable_pdb_input'),
-                    
-                    ##- Chain selection
-                    h5("Detected chain IDs:"),
-                    verbatimTextOutput("chains1"),
-                    
-                    checkboxInput("limit", "Limit calculation to a subset of chains?"),
-                    helpText("Note: Use this option to exclude particular chains form further consideration."),
+                    h4("1. Sequence Input"),
+                    ##tags$hr(),
+
+                    radioButtons("input_type", "",
+                                 c("Enter PDB code" = "pdb",
+                                   "Paste a sequence" = "sequence"),
+                                 inline=TRUE),
                     
                     conditionalPanel(
-                      condition = "input.limit == true",
-                      uiOutput("chains2"),
-                      helpText("Note: Only selected chains will be analyzed.")
+                      condition = "input.input_type == 'sequence'",
+                      tags$textarea(id="sequence", rows=4, cols=40, ""),
+                      actionButton("action_input", "Go")
                       ),
                     
-                    actionButton("reset_pdb_input", "Reset PDB input")
+                    conditionalPanel(
+                      condition = "input.input_type == 'pdb'",
+                      
+                      ##-PDB input 
+                      uiOutput('resetable_pdb_input'),
+                    
+                      ##- Chain selection
+                      uiOutput("chains2"),
+                      actionButton("reset_pdb_input", "Reset PDB input")
+                      )
                     )
                   ),
            
-           column(4,
+           column(6,
                   wellPanel(
                     h4("2. BLAST"),
-                    radioButtons("blast_prg", "",
-                                 c("HMMER" = "hmmer",
-                                   "BLAST" = "blast")),
-                    helpText("currently only hmmer implemented"),
                     
                     tags$hr(),
-                    sliderInput("cutoff", "Cutoff:",
-                                min = 0, max = 700, value = 250),
-                    
-                    helpText("TODO: default value should be obtained from plot.blast / plot.hmmer")
-                    )
-                  ),
-           
-           column(4,
-                  wellPanel(
-                    h4("3. PDB select"),
-                    tags$hr(),
-
-                    uiOutput("hits_slider"),
-                    uiOutput("pdbids_checkboxgroup")
-                    
-
+                    uiOutput("cutoff_slider"),
+                    uiOutput("hits_slider")
                     )
                   )
+           
+           #column(4,
+           #       wellPanel(
+           #         h4("3. PDB select"),
+           #         tags$hr(),
+           #         uiOutput("hits_slider"),
+           #         uiOutput("pdbids_checkboxgroup")
+           #         )
+           #       )
            ),
          
          #########################
          ##-- Results Section --##
          #########################
-         h2("Blast plot"),
+         h2("Blast results"),
          hr(),
          
          ##-A. blast panel
          fluidRow(
-           plotOutput("blast_plot")
+           column(12, 
+                  plotOutput("blast_plot")
+                  )
+           ),
+
+         fluidRow(
+           column(12,
+                  wellPanel(
+                    dataTableOutput("blast_table")
+                    )
+                  )
+           ),
+         
+
+         fluidRow(
+           column(12,
+                  wellPanel(
+                    h4("Uncheck PDB ID to exclude from analysis"),
+                    uiOutput("pdbids_checkboxgroup")
+                    )
+                  )
            )
+         
          
          )

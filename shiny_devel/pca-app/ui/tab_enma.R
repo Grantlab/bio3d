@@ -1,5 +1,5 @@
 
-tabPanel("4. NMA",
+tabPanel("5. NMA",
          fluidRow(
            plotOutput("nma_plot")
            ),
