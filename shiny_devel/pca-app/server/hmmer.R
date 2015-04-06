@@ -1,18 +1,23 @@
+## wget http://www.uniprot.org/docs/pdbtosp.txt
+## wget ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz
+
 ## obtain pdb_seqres.txt from
 ## ftp://ftp.rcsb.org/pub/pdb/derived_data/pdb_seqres.txt
 ## include in data/
 
-phmmer_local <- function(seq, exefile="phmmer", db="data/pdb_seqres.txt") {
-
-  os1 <- .Platform$OS.type
-  status <- system(exefile, ignore.stderr = TRUE, ignore.stdout = TRUE)
+phmmer_local <- function(seq) {
+  exefile <- configuration$hmmer$exefile
+  db <- configuration$hmmer$pdbseq
   
-  if(!(status %in% c(0,1)))
+  status <- system(exefile, ignore.stderr = TRUE, ignore.stdout = TRUE)
+  if(!(status %in% c(0,1))) {
     stop(paste("Launching external program failed\n",
                "  make sure '", exefile, "' is in your search path", sep=""))
-
-  if(!file.exists(db))
+  }
+  
+  if(!file.exists(db)) {
     stop("local database not found")
+  }
 
   infile <- tempfile()
   outfile1 <- tempfile()

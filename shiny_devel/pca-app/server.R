@@ -1,16 +1,19 @@
+## load configuration
+source("config.r")
+
+## source auxiliary functions
+source("server/hmmer.R")
+source("server/db.R")
+
+## load packages
 library(bio3d)
 library(lattice)
 library(shiny)
 library(rCharts)
-library(RMySQL)
-source("server/hmmer.R")
-source("server/db.R")
 
-## wget http://www.uniprot.org/docs/pdbtosp.txt
-## wget ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz
+if(configuration$db$use)
+  library(RMySQL)
 
-
-## Define server logic for PCA shiny demo
 
 shinyServer(function(input, output, session) {
 

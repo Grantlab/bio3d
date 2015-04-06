@@ -15,9 +15,13 @@ blast <- reactive({
     progress$set(message = 'Blasting',
                  detail = 'This can be slow...')
     progress$set(value = 2)
+
+    ## use local version if possible
+    if(configuration$hmmer$local)
+      hmm <- phmmer_local(seq)
+    else 
+      hmm <- hmmer(seq)
     
-    ##hmm <- hmmer(seq)
-    hmm <- phmmer_local(seq)
     progress$set(value = 5)
   }
   
@@ -42,7 +46,7 @@ output$blast_table <- renderDataTable({
       hits <- hits[1:n, , drop=FALSE]
   }
   
-  anno <- db_get_anno(hits$acc)
+  anno <- get_annotation(hits$acc)
   
   url <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=", substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   anno <- cbind(anno, url)

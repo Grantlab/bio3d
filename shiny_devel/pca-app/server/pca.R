@@ -108,7 +108,7 @@ output$pca_plot2 <- renderChart2({
 
 
 output$pdbs_table <- renderDataTable({
-  anno <- db_get_anno(basename.pdb(pdbs$id))
+  anno <- get_annotation(basename.pdb(pdbs$id))
   
   url <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=", substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   anno <- cbind(anno, url)
