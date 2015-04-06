@@ -1,5 +1,4 @@
- 
-tabPanel("4. PCA",
+tabPanel("4. PCA", icon=icon("arrow-right"),
          
          fluidRow(
            column(4, 

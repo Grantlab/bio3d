@@ -1,5 +1,4 @@
-
-tabPanel("3. FIT",
+tabPanel("3. FIT", icon=icon("arrow-right"),
          fluidRow(
            column(4,
                   wellPanel(

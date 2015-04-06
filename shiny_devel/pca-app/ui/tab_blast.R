@@ -1,4 +1,4 @@
-tabPanel("1. BLAST",
+tabPanel("1. BLAST", icon=icon("home"), 
          
          fluidRow(
            column(6,

@@ -1,5 +1,4 @@
-
-tabPanel("5. NMA",
+tabPanel("5. NMA", icon=icon("arrow-right"),
          fluidRow(
            plotOutput("nma_plot")
            ),

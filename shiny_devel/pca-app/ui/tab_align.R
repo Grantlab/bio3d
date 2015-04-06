@@ -1,4 +1,4 @@
-tabPanel("2. ALIGN",
+tabPanel("2. ALIGN", icon=icon("arrow-right"),
 
          
          fluidRow(
