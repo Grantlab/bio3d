@@ -1,10 +1,11 @@
-tabPanel("2. ALIGN", icon=icon("arrow-right"),
-
+tabPanel("2. ALIGN",
+         icon=icon("arrow-right"),
+         tags$style(type="text/css", "body {padding-top: 80px;}"),
          
          fluidRow(
            column(4,
                   wellPanel(
-                    h4("Alignment summary"),
+                    h4("A) Alignment summary"),
                     tags$hr(),
 
                     verbatimTextOutput("alignment_summary"),
@@ -15,33 +16,44 @@ tabPanel("2. ALIGN", icon=icon("arrow-right"),
 
                     )
                   ),
-                    
-                    
-           column(4,
-                  wellPanel(
-                    h4("Download Alignment"),
-                    hr(),
-                    
-                    ##downloadButton('pdbsRData', "Download pdbs object"),
-                    downloadButton('fastafile', "Download FASTA file"),
-                    helpText("Download the FASTA alignment file ... ")
-                    )
-                  ),
                                         
-           column(4,
-                  wellPanel(
-                    h4("Upload Alignment"),
-                    tags$hr(),
+           column(8,
+                  wellPanel(style="overflow: auto;",
 
-                    helpText("Upload manually edited alignment file"),
-                    fileInput('fastafile_upload', 'Upload FASTA File',
-                              accept=c('text/fasta', 'text/plain', '.fasta')),
-                    
-                    actionButton("reset_fasta", "Reset alignment")
-                    )
+                            h4("B) Edit alignment (optional)"),
+                            hr(),
+                            
+                            div(
+                              div(style="float: left; width: 45%;
+                                         padding: 10px;",
+                                  
+                                  strong("Download FASTA file"),
+                                  helpText("To edit the alignment, download the FASTA alignment file,
+                                            and upload in the box to the right. "),
+                                  
+                                  br(),
+                                  downloadButton('fastafile', "Download FASTA alignment file"),
+                                  actionButton("reset_fasta", "Reset alignment", icon=icon("undo"))
+                                  
+                                  ),
+                              
+                              div(style="float: right; width: 45%; 
+                                         padding: 10px; margin-left: 5px;",
+
+                                  strong("Upload FASTA file"),
+                                  helpText(strong("Important:"), "when editing the FASTA file, do not edit the
+                                            sequence identifiers, and do preserve the amino acid sequences."),
+                                  
+                                  fileInput('fastafile_upload', '',
+                                            accept=c('text/fasta', 'text/plain', '.fasta'))
+                                  
+                                  
+                                  )
+                              )
+                            )
                   )
            ),
-
+         
          hr(),
          fluidRow(
            column(12,

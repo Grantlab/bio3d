@@ -1,10 +1,11 @@
 tabPanel("1. BLAST", icon=icon("home"), 
+         tags$style(type="text/css", "body {padding-top: 80px;}"),
          
          fluidRow(
            column(6,
                   wellPanel(
-                    h4("1. Sequence Input"),
-                    ##tags$hr(),
+                    h4("A) Input query structure or sequence"),
+                    hr(),
 
                     radioButtons("input_type", "",
                                  c("Enter PDB code" = "pdb",
@@ -13,8 +14,8 @@ tabPanel("1. BLAST", icon=icon("home"),
                     
                     conditionalPanel(
                       condition = "input.input_type == 'sequence'",
-                      tags$textarea(id="sequence", rows=4, cols=40, ""),
-                      actionButton("action_input", "Go")
+                      tags$textarea(id="sequence", rows=4, cols=40, "")
+                      #actionButton("action_input", "Go")
                       ),
                     
                     conditionalPanel(
@@ -25,18 +26,19 @@ tabPanel("1. BLAST", icon=icon("home"),
                     
                       ##- Chain selection
                       uiOutput("chains2"),
-                      actionButton("reset_pdb_input", "Reset PDB input")
+                      actionButton("reset_pdb_input", "Reset PDB input", icon=icon("undo"))
                       )
                     )
                   ),
            
            column(6,
                   wellPanel(
-                    h4("2. BLAST"),
+                    h4("B) Hit selection for further analysis"),
                     
                     tags$hr(),
                     uiOutput("cutoff_slider"),
-                    uiOutput("hits_slider")
+                    uiOutput("hits_slider"),
+                    actionButton("reset_cutoff_slider", "Reset cutoff", icon=icon("undo"))
                     )
                   )
            

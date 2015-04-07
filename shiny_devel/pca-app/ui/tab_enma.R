@@ -1,4 +1,6 @@
 tabPanel("5. NMA", icon=icon("arrow-right"),
+         tags$style(type="text/css", "body {padding-top: 80px;}"),
+         
          fluidRow(
            plotOutput("nma_plot")
            ),

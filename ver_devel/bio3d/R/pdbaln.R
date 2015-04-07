@@ -82,9 +82,19 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
 #  }
   
   cat("\n\nExtracting sequences\n")
-  
   s <- mylapply(pdb.list, pdbseq)
 
+  ## check for NULL in pdbseq ouput
+  ## which would indicate no amino acid sequence in PDB
+  tmpcheck <- unlist(lapply(s, is.null))
+  if(any(tmpcheck)) {
+    err <- paste(
+      "Could not align PDBs due to missing amino acid sequence in files:\n ", 
+      paste(files[tmpcheck], collapse=", ")
+      )
+    stop(err)
+  }
+  
   s <- t(sapply(s, `[`, 1:max(sapply(s, length))))
   s[is.na(s)] <- "-"
   ##s <- seqaln(s, id=files, extra.args="-quiet", ...)

@@ -1,4 +1,5 @@
 tabPanel("4. PCA", icon=icon("arrow-right"),
+         tags$style(type="text/css", "body {padding-top: 80px;}"),
          
          fluidRow(
            column(4, 
