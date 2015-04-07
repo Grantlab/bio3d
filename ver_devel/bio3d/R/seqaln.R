@@ -13,6 +13,13 @@ function(aln, id=NULL, profile=NULL,
 
   ## alignment to fasta object
   aln <- as.fasta(aln, id=id)
+
+  ## nothing to align?
+  if(!nrow(aln$ali)>1) {
+    warning("nothing to align")
+    aln$ali <- aln$ali[ , !is.gap(aln$ali), drop=FALSE]
+    return(aln)
+  }
   
   if(!is.null(profile) & !inherits(profile, "fasta"))
     stop("profile must be of class 'fasta'")
