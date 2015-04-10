@@ -1,10 +1,3 @@
-## wget http://www.uniprot.org/docs/pdbtosp.txt
-## wget ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz
-
-## obtain pdb_seqres.txt from
-## ftp://ftp.rcsb.org/pub/pdb/derived_data/pdb_seqres.txt
-## include in data/
-
 phmmer_local <- function(seq) {
   exefile <- configuration$hmmer$exefile
   db <- configuration$hmmer$pdbseq

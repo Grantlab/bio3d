@@ -20,7 +20,7 @@ fetch_pdbs <- reactive({
   ##raw.files <- get.pdb(ids, gzip=TRUE)
   raw.files <- vector("character", length(unq))
   for(i in 1:length(unq)) {
-    raw.files[i] <- get.pdb(unq[i], path="raw_files", gzip=TRUE)
+    raw.files[i] <- get.pdb(unq[i], path=configuration$pdbdir$rawfiles, gzip=TRUE)
     progress$set(value = i)
   }
   progress$close()
@@ -38,7 +38,8 @@ fetch_pdbs <- reactive({
   for(i in 1:length(unq)) {
     inds <- grep(unq[i], ids)
     
-    files[inds] <- pdbsplit(raw.files[i], ids[inds], overwrite=FALSE)
+    files[inds] <- pdbsplit(raw.files[i], ids[inds], overwrite=FALSE,
+                            path=configuration$pdbdir$splitfiles)
     progress$set(value = i)
   }
   
@@ -69,7 +70,9 @@ align <- reactive({
     pdbs <- read.fasta.pdb(aln)
   }
   else {
-    pdbs <- pdbaln(files)
+    pdbs <- pdbaln(files, verbose=TRUE,
+                   exefile=configuration$muscle$exefile,
+                   outfile=tempfile(pattern="aln", fileext=".fasta"))
   }
 
   if(input$omit_missing) {
