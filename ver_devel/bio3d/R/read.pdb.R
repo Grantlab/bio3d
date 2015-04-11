@@ -1,7 +1,7 @@
 #### Use Sys.setenv("PKG_CXXFLAGS"="-std=c++11")
 #### when compiling
 
-read.pdb <- function(file, multi=FALSE, rm.insert=FALSE, rm.alt=TRUE, hex=FALSE) {
+read.pdb <- function(file, multi=FALSE, rm.insert=FALSE, rm.alt=TRUE, hex=FALSE, verbose=FALSE) {
   cl <- match.call()
 
   if(missing(file)) {
