@@ -45,17 +45,19 @@ function (pdb, atom.subset = NULL, verbose = TRUE ) {
   
   if (verbose) {
     cat("Dimensions:", "\n")
-    cat(" x  min=", round(min(z[, 1]), 3), "   max=", round(max(z[, 
-            1]), 3), "   range=", round(max(z[, 1]) - min(z[, 
-            1]), 3), "\n")
-    cat(" y  min=", round(min(z[, 2]), 3), "   max=", round(max(z[, 
-            2]), 3), "   range=", round(max(z[, 2]) - min(z[, 
-            1]), 3), "\n")
-    cat(" z  min=", round(min(z[, 3]), 3), "   max=", round(max(z[, 
-            3]), 3), "   range=", round(max(z[, 3]) - min(z[, 
-            1]), 3), "\n")
+    cat(" x  min=",  round(min(z[, 1]), 3),
+        "   max=",   round(max(z[, 1]), 3),
+        "   range=", round(max(z[, 1]) - min(z[, 1]), 3), "\n")
+    
+    cat(" y  min=", round(min(z[, 2]), 3),
+        "   max=", round(max(z[, 2]), 3),
+        "   range=", round(max(z[, 2]) - min(z[, 2]), 3), "\n")
+    
+    cat(" z  min=", round(min(z[, 3]), 3),
+        "   max=", round(max(z[, 3]), 3),
+        "   range=", round(max(z[, 3]) - min(z[, 3]), 3), "\n")
+    
   }
   z <- round(as.vector(t(z)),3)
   return(z)
 }
-
