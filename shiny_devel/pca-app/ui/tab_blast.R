@@ -25,7 +25,7 @@ tabPanel("1. BLAST", icon=icon("home"),
                       uiOutput('resetable_pdb_input'),
                     
                       ##- Chain selection
-                      uiOutput("chains2"),
+                      uiOutput("pdb_chains"),
                       actionButton("reset_pdb_input", "Reset PDB input", icon=icon("undo"))
                       )
                     )
@@ -36,9 +36,9 @@ tabPanel("1. BLAST", icon=icon("home"),
                     h4("B) Hit selection for further analysis"),
                     
                     tags$hr(),
-                    uiOutput("cutoff_slider"),
+                    uiOutput("resetable_cutoff_slider"),
                     uiOutput("hits_slider"),
-                    actionButton("reset_cutoff_slider", "Reset cutoff", icon=icon("undo"))
+                    actionButton("reset_cutoff", "Reset cutoff", icon=icon("undo"))
                     )
                   )
            
@@ -66,22 +66,17 @@ tabPanel("1. BLAST", icon=icon("home"),
            ),
 
          fluidRow(
+           column(12, 
+                  showOutput("blast_plot2", "dimple")
+                  )
+           ),
+
+         fluidRow(
            column(12,
                   wellPanel(
                     dataTableOutput("blast_table")
                     )
                   )
-           ),
-         
-
-         fluidRow(
-           column(12,
-                  wellPanel(
-                    h4("Uncheck PDB ID to exclude from analysis"),
-                    uiOutput("pdbids_checkboxgroup")
-                    )
-                  )
-           )
-         
+           )        
          
          )

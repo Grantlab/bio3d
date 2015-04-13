@@ -10,6 +10,7 @@ library(bio3d)
 library(lattice)
 library(shiny)
 library(rCharts)
+library(reshape2)
 
 if(configuration$db$use)
   library(RMySQL)

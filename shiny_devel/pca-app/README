@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS `pdb_annotation` (
   `ligandName` varchar(30) NOT NULL,
   `compound` varchar(30) NOT NULL,
   `db_id` varchar(30) NOT NULL,
-  `chainLength` int(11) NOT NULL
+  `chainLength` int(11) NOT NULL,
+  `sequence` text NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 ALTER TABLE `pdb_annotation`
