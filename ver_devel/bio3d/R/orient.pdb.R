@@ -59,5 +59,6 @@ function (pdb, atom.subset = NULL, verbose = TRUE ) {
     
   }
   z <- round(as.vector(t(z)),3)
-  return(z)
+  z <- as.xyz(z)
+  invisible(z)
 }
