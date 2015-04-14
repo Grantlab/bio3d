@@ -1,0 +1,75 @@
+
+pre.alignment {
+    border-style: solid;
+}
+
+.aln_aminoacid {
+    display: table-cell;
+    font-weight: bold;
+    padding: 1px 2px;
+    margin: 0px 0px;
+    width: 7px;
+}
+
+.aln_buff {
+    display: table-cell;
+    padding: 1px 2px;
+    margin: 0px;
+    width: 5px;
+    font-weight: bold;
+}
+
+.aln_row {
+    display: table-row;
+}
+
+.aln_id {
+    display: table-cell;
+    font-weight: normal;
+    padding: 1px 2px;
+    margin: 0px 0px;
+    width: 100px;
+}
+
+
+.aln_block {
+    display: table;
+    margin: 10px;
+    table-layout: fixed;
+}
+
+/* Small and hydrophobic*/
+.A, .V, .F, .P, .M, .I, .L, .W  { 
+    background-color:  #80b3e6; 
+} 
+
+/* Hydroxyl and amine amino acids */
+.S, .T, .N, .Q { 
+    background-color:  #1acc1a; 
+} 
+
+/* Charged */
+.D, .E { 
+    background-color: #cc4dcc;
+} 
+
+.R, .K { 
+    background-color: #e6331a;
+} 
+
+/* Histidine and tyrosine */
+.H, .Y { 
+    background-color: #1ab3b3;
+} 
+
+.G { 
+    background-color: #e6994d;
+} 
+
+.P { 
+    background-color: #cccc00;
+} 
+
+.C { 
+    background-color: #80b3e6;
+} 

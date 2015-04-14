@@ -6,7 +6,7 @@
   databases.
 }
 \usage{
-get.seq(ids, outfile = "seqs.fasta", db = "nr")
+get.seq(ids, outfile = "seqs.fasta", db = "nr", verbose = FALSE)
 }
 \arguments{
   \item{ids}{ A character vector of one or more appropriate database
@@ -15,6 +15,8 @@ get.seq(ids, outfile = "seqs.fasta", db = "nr")
     of the local file to which sequences will be written. }
   \item{db}{ A single element character vector specifying the database
     from which sequences are to be obtained. }
+  \item{verbose}{ logical, if TRUE URL details of the download process
+    are printed, else a progress bar is displayed. }
 }
 \details{
   This is a basic function to automate sequence file download from the
