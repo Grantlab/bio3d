@@ -68,7 +68,7 @@ bounds.sse <- function(x, pdb=NULL) {
   inds <- inds[ind.order, , drop = FALSE]
 
   # helix
-  h.inds <- which(x[inds[, "start"]] == "H")
+  h.inds <- which(x[inds[, "start"]] %in% c("H", "G"))
   if(length(h.inds) > 0) {
 
      h.id <- id[inds[h.inds, "start"]]

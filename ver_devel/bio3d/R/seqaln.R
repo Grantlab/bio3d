@@ -13,11 +13,19 @@ function(aln, id=NULL, profile=NULL,
 
   ## alignment to fasta object
   aln <- as.fasta(aln, id=id)
+
+  ## nothing to align?
+  if(!nrow(aln$ali) > 1) {
+    warning("nothing to align")
+    aln$ali <- aln$ali[ , !is.gap(aln$ali), drop=FALSE]
+    colnames(aln$ali) <- NULL
+    return(aln)
+  }
   
   if(!is.null(profile) & !inherits(profile, "fasta"))
     stop("profile must be of class 'fasta'")
 
-  if(length(grep(tolower(exefile), "clustalo"))>0) {
+  if(grepl("clustalo", tolower(exefile))) {
     prg <- "clustalo"
     ver <- "--version"
     

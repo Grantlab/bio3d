@@ -9,60 +9,72 @@
   network. 
 }
 \usage{
-cnapath(cna, from, to, k = 10, ncore = NULL, \dots)
+cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
 \method{summary}{cnapath}(object, \dots, pdb = NULL, label = NULL, col = NULL,
-   plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE)
+   plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE, weight = FALSE)
 \method{print}{cnapath}(x, \dots)
 view.cnapath(x, pdb, out.prefix = "view.cnapath", spline = FALSE, 
    colors = c("blue", "red"), launch = FALSE, \dots)
 }
 \arguments{
+
   \item{cna}{ A \sQuote{cna} object obtained from \code{\link{cna}}. }
-  \item{from}{ Integer, node id for the source. }
-  \item{to}{ Integer, node id for the sink. }
+  \item{from}{ Integer vector or matrix indicating node id(s) of source. If is matrix
+       and \code{to} is NULL, the first column represents source and the second sink. }
+  \item{to}{ Integer vector indicating node id(s) of sink. All combinations of 
+       \code{from} and \code{to} values will be used as source/sink pairs. }
   \item{k}{ Integer, number of suboptimal paths to identify. }
+  \item{collapse}{ Logical, if TRUE results from all source/sink pairs are merged with
+       a single \sQuote{cnapath} object returned. }
   \item{ncore}{ Number of CPU cores used to do the calculation. 
        By default (NULL), use all detected CPU cores. }
+
+  \item{object}{ A \sQuote{cnapath} class of object obtained from 
+       \code{cnapath}. Multiple \sQuote{object} input is allowed for 
+       comparing paths from different networks. }
+  \item{pdb}{ A \sQuote{pdb} class of object obtained from \code{\link{read.pdb}} 
+       and is used as the reference for node residue ids (in \code{summary.cnapath}) or 
+       for molecular visulaization with VMD (in \code{view.cnapath}). }
+  \item{label}{ Character, label for paths identified from different networks. }
+  \item{col}{ Colors for plotting statistical results for paths identified 
+       from different networks. }
+  \item{plot}{ Logical, if TRUE path length distribution and node degeneracy will be plotted. }
+  \item{concise}{ Logical, if TRUE only \sQuote{on path} residues will be displayed in the
+       node degeneracy plot. }
+  \item{cutoff}{ Numeric, nodes with node degeneracy larger than \code{cutoff} are
+       shown in the output. }
+  \item{normalize}{ Logical, if TRUE node degeneracy is divided by the total 
+       (weighted) number of paths. }
+  \item{weight}{ Logical, if TRUE each path is weighted by path length in calculating the
+       node degeneracty. }
+
+  \item{x}{ A \sQuote{cnapath} class of object obtained from \code{cnapath}. }
+  \item{out.prefix}{ Prefix for the names of output files, \sQuote{view.vmd}
+       and \sQuote{view.pdb}. }
+  \item{spline}{ Logical, if TRUE all paths are displayed as spline curves. }
+  \item{colors}{ Character vector or integer scalar, define path colors. If a
+     character vector, passed to \code{\link{colorRamp}} function to generate the 
+     color scales. If an integer, color all paths the same way with VMD color 
+     ID equal to the integer. }
+  \item{launch}{ Logical, if TRUE VMD will be launched. }
+
   \item{\dots}{ Additional arguments passed to igraph function 
        \code{\link[igraph:get.shortest.paths]{get.shortest.paths}} (in 
        the function \code{cnapath}), passed to \code{summary.cnapath} 
-       (in \code{print.cnapath}), as additional paths for comparison 
-       (in \code{summary.cnapath}), or passed to the function \code{colorRamp} 
-       (in \code{view.cnapath}). }
-  \item{object}{ A \sQuote{cnapath} class of object obtained from 
-       \code{\link{cnapath}}. Multiple \sQuote{pa} input is allowed for 
-       comparative statistical analysis in \code{\link{summary.cnapath}}. }
-  \item{pdb}{ A \sQuote{pdb} class of object obtained from \code{\link{read.pdb}} 
-       and is used as the reference for node residue ids or for molecular 
-       visulaization in VMD. }
-  \item{label}{ Character, labels for paths identified from different networks. }
-  \item{col}{ colors for plotting statistical resutls for paths identified 
-       from different networks. }
-  \item{plot}{ logical, if TRUE path length distribution and node degeneracy will be plotted. }
-  \item{concise}{ logical, if TRUE only \sQuote{on path} residues will be displayed. }
-  \item{cutoff}{ numeric, degeneracy cutoff for displaying nodes on paths. }
-  \item{normalize}{ logical, if TRUE node degeneracy is defined by the percentage 
-    of total number of paths. }
-  \item{x}{ A \sQuote{cnapath} class of object obtained from 
-    \code{\link{cnapath}}. }
-  \item{out.prefix}{ prefix for the names of output files, \sQuote{view.vmd}
-       and \sQuote{view.pdb}. }
-  \item{spline}{ logical, if TRUE all paths are displayed as spline curves. }
-  \item{colors}{ character vector or integer scalar, define path colors. If a
-     character vector, passed to \code{colorRamp} function to generate the 
-     color scales. If an integer, color all paths the same way with VMD color 
-     ID equal to the integer. }
-  \item{launch}{ logical, if TRUE VMD will be launched. }
+       (in \code{print.cnapath}), as additional paths for 
+       comparison (in \code{summary.cnapath}), or passed to the function 
+       \code{\link{colorRamp}} (in \code{view.cnapath}). }
 }
 \value{
-  The function \code{\link{cnapath}} returns a \sQuote{cnapath} class of list containing following three components:
+  The function \code{cnapath} returns a \sQuote{cnapath} class of list containing 
+  following three components:
   \item{path}{ a list object containing all identified suboptimal paths.  
       Each entry of the list is a sequence of node ids for the path. }
   \item{epath}{ a list object containing all identified suboptimal paths. 
       Each entry of the list is a sequence of edge ids for the path. }
   \item{dist}{ a numeric vector of all path lengths. }
 
-  The function \code{\link{summary.cnapath}} with return a matrix of (normalized)
+  The function \code{summary.cnapath} returns a matrix of (normalized)
   node degeneracy for \sQuote{on path} residues. 
 }
 \references{
