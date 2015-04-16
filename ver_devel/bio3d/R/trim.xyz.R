@@ -1,6 +1,5 @@
 "trim.xyz" <- function(xyz, row.inds=NULL, col.inds=NULL, ...) {
-  if(is.vector(xyz))
-    x = matrix(xyz, nrow=1)
+  xyz <- as.xyz(xyz)
 
   if(is.select(row.inds))
     row.inds <- row.inds$xyz
