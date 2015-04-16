@@ -30,16 +30,15 @@ output$checkboxgroup_label_ids <- renderUI({
 
 
 ## normal conformer plot
-output$pca_plot1 <- renderPlot({
-  invisible(capture.output( pc <- pca1() ))
   
+output$pca_plot1_conf <- renderPlot({
+  invisible(capture.output( pc <- pca1() ))
   col <- 1
   if(input$nclust>1)
     col <- clustgrps()
   
-  if(input$screeplot)
-    par(mfrow=c(1,2))
-  
+  op <- par(pty="s")
+    
   xax <- as.numeric(input$pcx)
   yax <- as.numeric(input$pcy)
   
@@ -51,14 +50,12 @@ output$pca_plot1 <- renderPlot({
        col="grey50", pch=16,
        xlab=p[1], ylab=p[2],
        cex=1.6)
-
   points(pc$z[, xax], pc$z[, yax],
          col=col, pch=16,
          cex=1.2)
   
   abline(h = 0, col = "gray", lty = 2)
   abline(v = 0, col = "gray", lty = 2)
-
   if(input$labelplot) {
     if(length(input$label_ids)>0) {
       inds <- unlist(lapply(input$label_ids, grep, pdbs$id))
@@ -67,24 +64,23 @@ output$pca_plot1 <- renderPlot({
            pos=1, offset=input$offset)
     }
   }
+  invisible(par(op))
   
-  if(input$screeplot) {
-    plot.pca.scree(pc$L)
-  }
-  
+})
+output$pca_plot1_scree <- renderPlot({
+  op <- par(pty="s")
+  plot.pca.scree(pc$L)
+  invisible(par(op))
 })
 
 ## fancy plot using rChart
-output$pca_plot2 <- renderChart2({
+output$pca_plot2_conf <- renderChart2({
   invisible(capture.output( pc <- pca1() ))
   
   col <- 1
   if(input$nclust>1)
     col <- clustgrps()
-  
-  if(input$screeplot)
-    par(mfrow=c(1,2))
-  
+
   xax <- as.numeric(input$pcx)
   yax <- as.numeric(input$pcy)
   
@@ -97,13 +93,48 @@ output$pca_plot2 <- renderChart2({
   colnames(x)[c(xax,yax,dim(pc$z)[2]+1, dim(pc$z)[2]+2)] <- c(p,"id","group")
   
   ## use dPlot() to generate the interactive plot
-  p1 <- dPlot(x = p[1], y = p[2], groups = "id", data = x, type = "bubble")
+  p1 <- dPlot(
+    x = p[1], y = p[2], 
+    groups = "id", 
+    data = x, 
+    type = "bubble",
+    height=420,
+    width=440,
+    bounds = list(x=45, y=20, height=360, width=365)
+  )
   
   p1$colorAxis(type = "addColorAxis", colorSeries = "group",
                palette = c("red", "blue", "black") )
   p1$xAxis(type = "addMeasureAxis")
-  
   return(p1) 
+})
+
+output$pca_plot2_scree <- renderChart2({
+  invisible(capture.output( pc <- pca1() ))
+
+  PC <- c(1:length(pc$L))
+  percent <- (pc$L/sum(pc$L))*100
+  cumv<-cumsum(percent)
+  data <- data.frame(rank=PC, var=percent, cumvar=cumv)
+  #xy <- xy.coords(x, y)
+  r1 <- nPlot(
+    var ~ rank,
+    data = data[1:20,],
+    type = "lineChart"#,
+    #bounds = list(x=80, y=75, height=425, width=400)
+  )
+  r1$xAxis(axisLabel = "Eigenvalue rank")
+  r1$yAxis(axisLabel = "Proportion of variance (%)", width=50 )
+  r1$chart(color = c("black","black") )
+  r1$chart(forceY = c(0,100))
+  r1$xAxis( tickValues=c(1:5, seq(5,20,5)) )
+  r1$yAxis( tickValues=c(round(data[1:5,2],2), seq(80,100,10)) )
+  r1$set(height=420,width=450)
+  r1$chart(tooltipContent = "#! function(item, x, y, e){
+      return 'Cumulative variance: ' + e.point.cumvar.toFixed(2) + '%'
+    } !#")
+  r1$chart(showLegend = FALSE)
+  return(r1)
 })
 
 
