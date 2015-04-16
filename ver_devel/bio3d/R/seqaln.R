@@ -15,7 +15,7 @@ function(aln, id=NULL, profile=NULL,
   aln <- as.fasta(aln, id=id)
 
   ## nothing to align?
-  if(!nrow(aln$ali) > 1) {
+  if(!nrow(aln$ali) > 1 && is.null(profile)) {
     warning("nothing to align")
     aln$ali <- aln$ali[ , !is.gap(aln$ali), drop=FALSE]
     colnames(aln$ali) <- NULL
