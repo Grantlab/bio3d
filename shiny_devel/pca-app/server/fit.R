@@ -37,50 +37,61 @@ rmsd1 <- reactive({
 ####################################
 ####     Plotting functions     ####
 ####################################
-output$rmsd_heatmap <- renderPlot({
+make.plot.heatmap <- function() {
   pdbs <- fit()
   rd <- rmsd1()
-
   rownames(rd) <- basename.pdb(pdbs$id)
   colnames(rd) <- basename.pdb(pdbs$id)
-
   hc <- hclust(as.dist(rd))
   grps <- cutree(hc, k=input$clusters)
-  
-  heatmap(rd, distfun=as.dist, symm=TRUE,
+  plot1 <- heatmap(rd, distfun=as.dist, symm=TRUE,
           ColSideColors=as.character(grps),
           RowSideColors=as.character(grps)
           )
+  return(plot1)
+}
+output$rmsd_heatmap <- renderPlot({
+  print(make.plot.heatmap())
 })
 
-output$rmsd_hist <- renderPlot({
+make.plot.rmsd.hist <- function() {
   pdbs <- fit()
   rd <- rmsd1()
-  hist(rd[upper.tri(rd)], breaks=40, xlab="RMSD (Å)", main="Histogram of RMSD")
+  plot2 <- hist(rd[upper.tri(rd)], breaks=40, xlab="RMSD (Å)", main="Histogram of RMSD")
+  return(plot2)
+}
+output$rmsd_hist <- renderPlot({
+  print(make.plot.rmsd.hist())  
 })
 
-output$rmsd_dendrogram <- renderPlot({
+make.plot.rmsd.dendogram <- function() {
   pdbs <- fit()
   rd <- rmsd1()
   pdbs$id <- basename.pdb(pdbs$id)
   hc <- hclust(as.dist(rd))
-  hclustplot(hc, k=input$clusters, labels=pdbs$id, cex=input$cex,
+  plot3 <- hclustplot(hc, k=input$clusters, labels=pdbs$id, cex=input$cex,
              ylab="RMSD (Å)", main="RMSD Cluster Dendrogram", fillbox=FALSE)
-
+  return(plot3)
+}
+output$rmsd_dendrogram <- renderPlot({
+  print(make.plot.rmsd.dendogram())
 })
 
-output$rmsf_plot <- renderPlot({
+make.plot.rmsf <- function(){
   pdbs <- fit()
   rd <- rmsd1()
   gaps.res <- gap.inspect(pdbs$ali)
   gaps.pos <- gap.inspect(pdbs$xyz)
-
   resno <- pdbs$resno[1, gaps.res$f.inds]
   ##sse <- .pdbs2sse(pdbs, ind=1, rm.gaps=TRUE)
   
   rf <- rmsf(pdbs$xyz[, gaps.pos$f.inds])
-  plot.bio3d(rf, resno=resno, 
-             ylab="RMSF (Å)", xlab="Residue No.")
+  plot4 <- plot.bio3d(rf, resno=resno, 
+             ylab="RMSF (Å)", xlab="Residue No.")  
+  return(plot4)
+}
+output$rmsf_plot <- renderPlot({
+  print(make.plot.rmsf())
 })
 
 ####################################
@@ -145,4 +156,36 @@ output$pdbsZIP = downloadHandler(
   filename = 'pdbs.zip',
   content = function(file) {
     zip(file, files=pdbs2files())
-  })
+})
+
+output$rmsd_heatmap2pdf = downloadHandler(
+  filename = "rmsd_heatmap.pdf",
+  content = function(FILE=NULL) {
+    pdf(file=FILE, onefile=T, width=12, height=12)
+    print(make.plot.heatmap())
+    dev.off()
+})
+
+output$rmsd_dendrogram2pdf = downloadHandler(
+  filename = "rmsd_dendrogram.pdf",
+  content = function(FILE=NULL) {
+    pdf(file=FILE, onefile=T, width=18, height=10)
+    print(make.plot.rmsd.dendogram())
+    dev.off()
+})
+
+output$rmsd_hist2pdf = downloadHandler(
+  filename = "rmsd_hist.pdf",
+  content = function(FILE=NULL) {
+    pdf(file=FILE, onefile=T, width=20, height=8)
+    print(make.plot.rmsd.hist())
+    dev.off()
+})
+
+output$rmsf2pdf = downloadHandler(
+  filename = "rmsf.pdf",
+  content = function(FILE=NULL) {
+    pdf(file=FILE, onefile=T, width=20, height=8)
+    print(make.plot.rmsf())
+    dev.off()
+})

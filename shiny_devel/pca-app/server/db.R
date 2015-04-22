@@ -21,7 +21,14 @@ db_connect <- function() {
 db_disconnect <- function(con) 
   dbDisconnect(con)
 
-get_annotation <- function(acc) {
+get_annotation <- function(acc, use_chain=TRUE) {
+  acc <- toupper(acc)
+  unq <- unique(substr(acc, 1, 4))
+  
+  if(!use_chain) {
+    acc <- unq
+  }
+
   con <- db_connect()
   
   if(!inherits(con, "MySQLConnection")) {
@@ -31,17 +38,16 @@ get_annotation <- function(acc) {
                                 "source", "compound",
                                 "experimentalTechnique", "resolution",
                                 "ligandId", "ligandName",
-                                "chainLength"
+                                "chainLength", "sequence"
                                 )
                          )
-    anno <- cbind(acc, anno)
+    anno$acc <- rownames(anno)
     return(anno)
   }
   
   missing_inds <- c()
-  for(i in 1:length(acc)) {
-    query <- paste0("SELECT acc FROM pdb_annotation WHERE acc='", toupper(acc[i]), "'")
-
+  for(i in 1:length(unq)) {
+    query <- paste0("SELECT acc FROM pdb_annotation WHERE structureId='", toupper(unq[i]), "'")
     res <- dbGetQuery(con, query)
     
     if(!nrow(res)>0)
@@ -49,10 +55,15 @@ get_annotation <- function(acc) {
   }
   
   if(length(missing_inds)>0)
-    res <- db_add_annotation(acc[missing_inds], con=con)
+    res <- db_add_annotation(unq[missing_inds], con=con)
   
-  where <- paste0("WHERE acc IN ('", paste(acc, collapse="', '"), "')")
-  query <- paste("SELECT acc, compound, source, ligandId, chainLength FROM pdb_annotation", where)
+  if(use_chain) {
+    where <- paste0("WHERE acc IN ('", paste(acc, collapse="', '"), "')")
+  }
+  else {
+    where <- paste0("WHERE structureId IN ('", paste(acc, collapse="', '"), "')")
+  }
+  query <- paste("SELECT acc, structureId, chainId, compound, source, ligandId, chainLength, sequence FROM pdb_annotation", where)
 
   res <- dbGetQuery(con, query)
    
@@ -62,8 +73,8 @@ get_annotation <- function(acc) {
 }
 
 db_add_annotation <- function(acc, con=NULL) {
-  anno <- pdb.annotate(acc)
-  anno$acc <- rownames(anno)
+  anno <- pdb.annotate(substr(acc, 1, 4))
+  anno$acc <- toupper(rownames(anno))
 
   close <- FALSE
   if(is.null(con)) {
@@ -76,7 +87,7 @@ db_add_annotation <- function(acc, con=NULL) {
                         "chainId", "source", "compound",
                         "experimentalTechnique", "resolution",
                         "ligandId", "ligandName",
-                        "chainLength", "db_id")],
+                        "chainLength", "db_id", "sequence")],
                       overwrite=FALSE,
                       row.names=FALSE,
                       append=TRUE)
