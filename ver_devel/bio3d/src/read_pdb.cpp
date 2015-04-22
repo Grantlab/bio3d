@@ -8,7 +8,7 @@ using namespace std;
 using namespace Rcpp;
 
 // [[Rcpp::export('.read_pdb')]]
-List read_pdb(std::string filename, bool multi, bool hex) {
+List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlines=-1, bool atoms_only=false) {
   // out is a List object
   Rcpp::List out;
 
@@ -52,9 +52,13 @@ List read_pdb(std::string filename, bool multi, bool hex) {
   vector<string> seqres;
   vector<string> seqres_chain;
 
+  // store REMARK 350 lines
+  vector<string> remark350;
+
   // temp variables
   string tmp;
   int tmp_eleno;
+  int counter = 0;
 
   // for reading
   string line;
@@ -65,6 +69,13 @@ List read_pdb(std::string filename, bool multi, bool hex) {
   
   if (myfile.is_open())  {
     while ( getline (myfile,line) ) {
+
+      // break if user has provided maxlines argument
+      counter++;
+      
+      if(maxlines != -1 && counter > maxlines) {
+	break;
+      }
       
       // keep of track of number of models in PDB file
       if(line.substr(0,5)=="MODEL") {
@@ -78,7 +89,7 @@ List read_pdb(std::string filename, bool multi, bool hex) {
       }
       
       // store helix info
-      else if(line.substr(0,5)=="HELIX") {
+      else if(line.substr(0,5)=="HELIX" && !atoms_only) {
 	helix_chain.push_back(trim(line.substr(19,1)));
 	helix_resno_start.push_back(stringToInt(line.substr(21,4)));
 	helix_resno_end.push_back(stringToInt(line.substr(33,4)));
@@ -86,9 +97,9 @@ List read_pdb(std::string filename, bool multi, bool hex) {
 	//helix_resno_end.push_back(std::stoi(line.substr(33,4)));
 	helix_type.push_back(trim(line.substr(38,2)));
       }
-
+      
       // store sheet info
-      else if(line.substr(0,5)=="SHEET") {
+      else if(line.substr(0,5)=="SHEET" && !atoms_only) {
 	sheet_chain.push_back(trim(line.substr(21,1)));
 	sheet_resno_start.push_back(stringToInt(line.substr(22,4)));
 	sheet_resno_end.push_back(stringToInt(line.substr(33,4)));
@@ -98,7 +109,7 @@ List read_pdb(std::string filename, bool multi, bool hex) {
       }
       
       // store SEQRES info
-      else if(line.substr(0,6)=="SEQRES") {
+      else if(line.substr(0,6)=="SEQRES" && !atoms_only) {
 	for(int i=0; i<13; i++) { 
 	  tmp = trim(line.substr(19+(i*4),3));
 	  if(tmp != "") {
@@ -107,9 +118,14 @@ List read_pdb(std::string filename, bool multi, bool hex) {
 	  }
 	}
       }
+
+      // store REMARK 350 records (raw lines only)
+      else if(line.substr(0,10)=="REMARK 350" && !atoms_only) {
+	remark350.push_back(trim(line));
+      }
       
       // store ATOM/HETATM records
-      else if(line.substr(0,4)=="ATOM" || line.substr(0,5)=="HETATM") {
+      else if(line.substr(0,4)=="ATOM" || line.substr(0,6)=="HETATM") {
 	// read coordinates
 	double tmpx = stringToDouble(line.substr(30,8));
 	double tmpy = stringToDouble(line.substr(38,8));
@@ -140,7 +156,7 @@ List read_pdb(std::string filename, bool multi, bool hex) {
 	  
 	  // read all others items as they are
 	  resno.push_back(stringToInt(line.substr(22,4)));
-	  type.push_back(rtrim(line.substr(0,5)));
+	  type.push_back(rtrim(line.substr(0,6)));
 	  elety.push_back(trim(line.substr(12,4)));
 	  alt.push_back(trim(line.substr(16,1)));
 	  resid.push_back(trim(line.substr(17,4)));
@@ -149,13 +165,24 @@ List read_pdb(std::string filename, bool multi, bool hex) {
 	  o.push_back(stringToDouble(trim(line.substr(54,6))));
 	  b.push_back(stringToDouble(trim(line.substr(60,6))));
 	  segid.push_back(trim(trim(line.substr(72,4))));
-	  elesy.push_back(trim(line.substr(76,2)));
-	  charge.push_back(trim(line.substr(78,2)));
+	  
+	  try{
+	    elesy.push_back(trim(line.substr(76,2)));
+	  } catch(...) {
+	    elesy.push_back("");
+	  }
+	  
+	  try{
+	    charge.push_back(trim(line.substr(78,2)));
+	  } catch(...) {
+	    charge.push_back("");
+	  }
 	}
       }
-    }
+    } // while ( getline (myfile,line) ) {
     myfile.close();
-  }
+  } // end   if (myfile.is_open())  {
+  
   else {
     out = Rcpp::List::create(Rcpp::Named("error")="error");
     return(out);
@@ -192,7 +219,7 @@ List read_pdb(std::string filename, bool multi, bool hex) {
 					      Rcpp::Named("start")=helix_resno_start,
 					      Rcpp::Named("end")=helix_resno_end,
 					      Rcpp::Named("chain")=helix_chain, 
-					      Rcpp::Named("chain")=helix_type
+					      Rcpp::Named("type")=helix_type
 					      ),
 			   
 			   Rcpp::Named("sheet")=
@@ -201,10 +228,11 @@ List read_pdb(std::string filename, bool multi, bool hex) {
 					      Rcpp::Named("end")=sheet_resno_end,
 					      Rcpp::Named("chain")=sheet_chain,
 					      Rcpp::Named("sense")=sheet_sense
-					      )
+					      ),
+
+			   Rcpp::Named("remark350")=remark350
 			   
 			   );
-				
-				
+  
   return(out);
 }

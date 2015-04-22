@@ -114,3 +114,19 @@ test_that("read.pdb() reads and stores data properly", {
 })
 
 
+test_that("read.pdb() reads PDB with , in atom names", {
+  skip_on_cran()
+
+  datdir <- tempdir()
+  invisible(capture.output(get.pdb("1H5T", path=datdir,
+                                   overwrite = FALSE, verbose = FALSE)))
+  
+  invisible(capture.output(pdb <- read.pdb(file.path(datdir, "1H5T.pdb"))))
+  sele <- atom.select(pdb, "notprotein")
+  expected <- c("TYD", "DAU", "SO4", "HOH")
+  expect_equal(unique(pdb$atom$resid[sele$atom]), expected)
+
+  sele <- atom.select(pdb, elety="C1,")
+  expected <- "C1,"
+  expect_equal(unique(pdb$atom$elety[sele$atom]), expected)
+})

@@ -4,12 +4,16 @@
 
 fetch_pdbs <- reactive({
   
+  print(input$pdb_ids)
   if(length(input$pdb_ids) > 0) 
     ids <- input$pdb_ids
   else
-    ids <- hits1()
+    ids <- get_hit_ids()
   
   unq <- unique(substr(ids, 1,4))
+
+  print(ids)
+  print(unq)
   
   progress <- shiny::Progress$new(session, min=1, max=length(unq))
   
@@ -118,9 +122,9 @@ output$alignment <- renderUI({
   cons[ tmp1==1 ] <- "^"
   cons[ tmp2==1 ] <- "*"
   
-  width <- 80
   nseq <- length(ids)
   nres <- ncol(ali)
+  width <- ifelse(nres > 80, 80, nres)
   
   block.start <- seq(1, nres, by=width)
   if(nres < width) {
@@ -129,42 +133,59 @@ output$alignment <- renderUI({
     block.end <- unique(c( seq(width, nres, by=width), nres))
   }
   nblocks <- length(block.start)
+  bufsize <- nchar(nres)-1
+  
 
-  buff <- matrix("", ncol=3, nrow=nseq)
-  block.annot  <- rep("", width)
-  block.annot[ c(1,seq(10, width, by=10)) ] = "."
+  x <- matrix("", ncol=bufsize + width + bufsize, nrow=nseq)
+  block.annot <- x[1,]
+  block.annot[c(bufsize + 1, seq(10+bufsize, width+bufsize, by=10)) ] <- "."
+  cons.annot <- x[1,]
+
+  #buff <- matrix("", ncol=bufsize, nrow=nseq)
+  #block.annot  <- rep(" ", width)
+  #block.annot[ c(1,seq(10, width, by=10)) ] = "."
 
   out <- list()
   for(i in 1:nblocks) {
-    positions <- block.start[i]:block.end[i]
-    x <- ali[, positions, drop=FALSE]
-    x <- cbind(buff, x, buff)
-    
-    annot <- block.annot[1:length(positions)]
-    annot[length(annot)] <- block.end[i]
-    annot[1] <- block.start[i]
-    annot <- c(buff[1,], annot, buff[1,])
-    
-    annot2 <- cons[positions]
-    annot2 <- c(buff[1,], annot2, buff[1,])
 
-    spl <- unlist(strsplit(annot[4], ""))
-    for(k in 1:length(spl))
-      annot[4-k+1] <- spl[length(spl)-k+1]
+    positions <- block.start[i]:block.end[i]
+    n <- length(positions)
+    aln.inds <- (bufsize + 1):(n + bufsize)
+    buf.inds1 <- 1:bufsize
+    buf.inds2 <- (1 + bufsize + n):(2 * bufsize + n)
+
+    if(n < (ncol(x) - 2 * bufsize)) {
+      x <- x[, 1:(n + 2 * bufsize)]
+      block.annot  <- block.annot[1:(n + 2 * bufsize)]
+      cons.annot  <- block.annot[1:(n + 2 * bufsize)]
+    }
+    x[, aln.inds] <- ali[, positions, drop=FALSE]
+   
+    annot <-  block.annot
+    annot[aln.inds[1]] <- block.start[i]
+    annot[aln.inds[length(aln.inds)]] <- block.end[i]
     
-    n <- length(annot)
-    spl <- unlist(strsplit(annot[n-3], ""))
+    annot2 <- cons.annot
+    annot2[aln.inds] <- cons[positions]
+
+    m <- buf.inds1[bufsize]+1
+    spl <- unlist(strsplit(annot[m], ""))
     for(k in 1:length(spl))
-      annot[n-3+k-1] <- spl[k]
+      annot[m-k+1] <- spl[length(spl)-k+1]   
+    
+    m <- buf.inds2[1]-1
+    spl <- unlist(strsplit(annot[m], ""))
+    for(k in 1:length(spl))
+      annot[m+k-1] <- spl[k]
 
 
     ## annotation row: numbering
     tmp <- list()
     tmp[[1]] <- span(
       span(" ", class="aln_id"),
-      lapply(annot[1:3],     function(x) span(x, class="aln_buff")),
-      lapply(annot[4:(n-4)], function(x) span(x, class="aln_aminoacid")),
-      lapply(annot[(n-3):n], function(x) span(x, class="aln_buff")),
+      lapply(annot[buf.inds1],     function(x) span(x, class="aln_buff")),
+      lapply(annot[aln.inds], function(x) span(x, class="aln_aminoacid")),
+      lapply(annot[buf.inds2], function(x) span(x, class="aln_buff")),
       class="aln_row"
       )
 
@@ -172,9 +193,9 @@ output$alignment <- renderUI({
     for(j in 1:nrow(x)) {
       tmp[[j+1]] <- span(
         span(ids[j], class="aln_id"),
-        lapply(x[j, 1:3],     function(x) span(x, class="aln_buff", class=x)),
-        lapply(x[j, 4:(n-4)], function(x) span(x, class="aln_aminoacid", class=x)),
-        lapply(x[j, (n-3):n], function(x) span(x, class="aln_buff", class=x)),
+        lapply(x[j, buf.inds1],     function(x) span(x, class="aln_buff", class=x)),
+        lapply(x[j, aln.inds], function(x) span(x, class="aln_aminoacid", class=x)),
+        lapply(x[j, buf.inds2], function(x) span(x, class="aln_buff", class=x)),
         class="aln_row"
         )
     }
@@ -182,9 +203,9 @@ output$alignment <- renderUI({
     ## annotation row: conservation
     tmp[[j+2]] <- span(
       span(" ", class="aln_id"),
-      lapply(annot2[1:3],     function(x) span(x, class="aln_buff")),
-      lapply(annot2[4:(n-4)], function(x) span(x, class="aln_aminoacid")),
-      lapply(annot2[(n-3):n], function(x) span(x, class="aln_buff")),
+      lapply(annot2[buf.inds1],     function(x) span(x, class="aln_buff")),
+      lapply(annot2[aln.inds], function(x) span(x, class="aln_aminoacid")),
+      lapply(annot2[buf.inds2], function(x) span(x, class="aln_buff")),
       class="aln_row"
       )
 
