@@ -61,15 +61,26 @@ tabPanel("1. BLAST", icon=icon("home"),
          ##-A. blast panel
          fluidRow(
            column(12, 
-                  plotOutput("blast_plot")
+#                   plotOutput("blast_plot")
+                  showOutput("blast_plot","nvd3"),
+                    tags$script(HTML(
+                      'var css = document.createElement("style");
+                      css.type = "text/css";
+                      css.innerHTML = ".nv-x .nv-axislabel { font-size: 20px; }";
+                      document.body.appendChild(css);
+                      css = document.createElement("style");
+                      css.type = "text/css";
+                      css.innerHTML = ".nv-y .nv-axislabel { font-size: 20px; }";
+                      document.body.appendChild(css);')
+                    )
                   )
            ),
 
-         fluidRow(
-           column(12, 
-                  showOutput("blast_plot2", "dimple")
-                  )
-           ),
+#         fluidRow(
+#           column(12, 
+#                  showOutput("blast_plot2", "dimple")
+#                  )
+#           ),
 
          fluidRow(
            column(12,
