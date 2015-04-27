@@ -4,7 +4,7 @@
 
 pca1 <- reactive({
   pdbs <- fit()
-  pc <<- pca(pdbs)
+  pc <- pca(pdbs)
   return(pc)
 })
 
@@ -22,16 +22,29 @@ clustgrps <- reactive({
 })
 
 output$checkboxgroup_label_ids <- renderUI({
-  ids <- basename.pdb(pdbs$id)
-  names(ids) <- ids
-  checkboxGroupInput("label_ids", "PDB IDs:",
-                     ids, selected=ids, inline=TRUE)
+  pdbs <- fit()
+  grps <- clustgrps()
+  ids <- basename.pdb(pdbs$id)[order(grps)]
+  names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
+  
+
+  checkboxInput("toggle_all", "Toggle all", TRUE)
+
+  if(input$toggle_all) {
+    checkboxGroupInput("label_ids", "PDB IDs:",
+                       ids, selected=ids, inline=TRUE)
+  }
+  else {
+    checkboxGroupInput("label_ids", "PDB IDs:",
+                       ids, selected=c(), inline=TRUE)
+  }
 })
 
 
 ## normal conformer plot
   
 output$pca_plot1_conf <- renderPlot({
+  invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
   col <- 1
   if(input$nclust>1)
@@ -49,25 +62,36 @@ output$pca_plot1_conf <- renderPlot({
   plot(pc$z[, xax], pc$z[, yax],
        col="grey50", pch=16,
        xlab=p[1], ylab=p[2],
-       cex=1.6)
+       cex=input$cex_points*1.5)
   points(pc$z[, xax], pc$z[, yax],
          col=col, pch=16,
-         cex=1.2)
+         cex=input$cex_points*1)
   
   abline(h = 0, col = "gray", lty = 2)
   abline(v = 0, col = "gray", lty = 2)
   if(input$labelplot) {
     if(length(input$label_ids)>0) {
       inds <- unlist(lapply(input$label_ids, grep, pdbs$id))
-      text(pc$z[inds, xax], pc$z[inds, yax],
-           labels=basename.pdb(pdbs$id[inds]),
-           pos=1, offset=input$offset)
+
+      if(input$distribute_labels) {
+        pointLabel(pc$z[inds, xax], pc$z[inds, yax],
+             labels=basename.pdb(pdbs$id[inds]),
+             pos=1, offset=input$offset, cex=input$cex_labels)
+      }
+      else {
+        text(pc$z[inds, xax], pc$z[inds, yax],
+             labels=basename.pdb(pdbs$id[inds]),
+             pos=1, offset=input$offset, cex=input$cex_labels)
+      }
     }
   }
   invisible(par(op))
   
 })
 output$pca_plot1_scree <- renderPlot({
+  invisible(capture.output( pdbs <- fit() ))
+  invisible(capture.output( pc <- pca1() ))
+
   op <- par(pty="s")
   plot.pca.scree(pc$L)
   invisible(par(op))
@@ -75,6 +99,7 @@ output$pca_plot1_scree <- renderPlot({
 
 ## fancy plot using rChart
 output$pca_plot2_conf <- renderChart2({
+  invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
   
   col <- 1
@@ -110,6 +135,7 @@ output$pca_plot2_conf <- renderChart2({
 })
 
 output$pca_plot2_scree <- renderChart2({
+  invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
 
   PC <- c(1:length(pc$L))
@@ -139,12 +165,43 @@ output$pca_plot2_scree <- renderChart2({
 
 
 output$pdbs_table <- renderDataTable({
+  pdbs <- fit()
+  grps <- clustgrps()
   anno <- get_annotation(basename.pdb(pdbs$id))
   
   url <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=", substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   anno <- cbind(anno, url)
   anno <- cbind(anno, id=1:nrow(anno))
+  anno$cluster <- grps
 
-  return(anno[, c("id", "url", "compound", "source", "ligandId", "chainLength")])
+  return(anno[, c("id", "url", "cluster", "compound", "source", "ligandId", "chainLength")])
 },  escape=FALSE)
 
+
+
+####################################
+####     Download functions     ####
+####################################
+traj2files <- reactive({
+  dir <- data_path()
+  
+  pdbs <- fit()
+  gaps <- gap.inspect(pdbs$ali)
+  pc <- pca1()
+  files <- rep(NA, 5)
+  for(i in 1:5) {
+    f <- paste0(dir, "/", "pc", i, ".pdb")
+    trj <- mktrj(pc, pc=i, file=f,
+                 resno=pdbs$resno[1, gaps$f.inds],
+                 resid=pdbs$resid[1, gaps$f.inds],
+                 chain=pdbs$chain[1, gaps$f.inds])
+    files[i] <- f
+  }
+  return(files)
+})
+
+output$pctrajZIP = downloadHandler(
+  filename = 'pc-traj.zip',
+  content = function(file) {
+    zip(file, files=traj2files(), flags = "-9Xj")
+})

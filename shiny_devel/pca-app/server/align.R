@@ -2,24 +2,41 @@
 ##-- Align
 ####################
 
-fetch_pdbs <- reactive({
-  
-  print(input$pdb_ids)
-  if(length(input$pdb_ids) > 0) 
+get_acc <- reactive({
+    
+  ## check first input from checkboxes
+  if(!is.null(input$pdb_ids)) {
     ids <- input$pdb_ids
-  else
-    ids <- get_hit_ids()
+    
+    if(length(ids) > 0)
+      return(toupper(ids))
+  }
   
-  unq <- unique(substr(ids, 1,4))
+  if(input$input_type != "multipdb") {
+    blast <- run_blast()
+    hits <- filter_hits()
+    acc <- hits$acc
+    return(toupper(acc))
+  }
+  else {
+    acc <- toupper(unique(trim(unlist(strsplit(input$pdb_codes, ",")))))
+    acc <- acc[acc!=""]
+    
+    anno <- get_annotation(acc, use_chain=FALSE)
+    inds <- unlist(sapply(acc, grep, anno$acc))
+    anno <- anno[inds, ]
+    acc <- anno$acc
+    return(toupper(acc))
+   }
+})
 
-  print(ids)
-  print(unq)
-  
+fetch_pdbs <- reactive({
+  ids <- get_acc()
+  unq <- unique(substr(ids, 1,4))
+ 
   progress <- shiny::Progress$new(session, min=1, max=length(unq))
-  
-  
   progress$set(message = 'Fetching PDBs',
-               detail = 'This may take some time...')
+               detail = 'Please wait ...')
   
   ##raw.files <- get.pdb(ids, gzip=TRUE)
   raw.files <- vector("character", length(unq))
@@ -30,13 +47,12 @@ fetch_pdbs <- reactive({
   progress$close()
   
   progress <- shiny::Progress$new(session, min=1, max=length(ids))
-  
-  
   progress$set(message = 'Splitting PDBs',
-               detail = 'This may take some time...')
-  
+               detail = 'Please wait ...')
+
   ##files <- pdbsplit(raw.files, ids)
-  
+
+    
   ## this is possibly error prone
   files <- vector("character", length(ids))
   for(i in 1:length(unq)) {
@@ -59,7 +75,7 @@ align <- reactive({
   on.exit(progress$close())
   
   progress$set(message = 'Aligning PDBs',
-               detail = 'This may take some time...')
+               detail = 'Please wait ...')
   progress$set(value = 2)
 
   if(!input$reset_fasta)
@@ -86,12 +102,14 @@ align <- reactive({
   
   progress$set(value = 5)
   rownames(pdbs$ali) <- basename.pdb(rownames(pdbs$ali))
-  pdbs <<- pdbs
+
+  progress$close()
   return(pdbs)
 })
 
-
-####   Alignment output   ####
+####################################
+####   Alignment output         ####
+####################################
 output$alignment_summary <- renderPrint({
   invisible(capture.output( aln <- align() ))
   id <- aln$id
@@ -112,7 +130,7 @@ output$alignment_summary <- renderPrint({
 
 output$alignment <- renderUI({
   invisible(capture.output( aln <- align() ))
-
+  
   ali <- aln$ali
   ids <- basename.pdb(aln$id)
   
@@ -141,13 +159,13 @@ output$alignment <- renderUI({
   block.annot[c(bufsize + 1, seq(10+bufsize, width+bufsize, by=10)) ] <- "."
   cons.annot <- x[1,]
 
-  #buff <- matrix("", ncol=bufsize, nrow=nseq)
-  #block.annot  <- rep(" ", width)
-  #block.annot[ c(1,seq(10, width, by=10)) ] = "."
+  progress <- shiny::Progress$new(session, min=1, max=nblocks)
+  progress$set(message = 'Generating HTML',
+               detail = 'Please wait')
+
 
   out <- list()
   for(i in 1:nblocks) {
-
     positions <- block.start[i]:block.end[i]
     n <- length(positions)
     aln.inds <- (bufsize + 1):(n + bufsize)
@@ -155,7 +173,7 @@ output$alignment <- renderUI({
     buf.inds2 <- (1 + bufsize + n):(2 * bufsize + n)
 
     if(n < (ncol(x) - 2 * bufsize)) {
-      x <- x[, 1:(n + 2 * bufsize)]
+      x <- x[, 1:(n + 2 * bufsize), drop=FALSE]
       block.annot  <- block.annot[1:(n + 2 * bufsize)]
       cons.annot  <- block.annot[1:(n + 2 * bufsize)]
     }
@@ -210,26 +228,29 @@ output$alignment <- renderUI({
       )
 
     out[[i]] <- span(tmp, class="aln_block")
+    progress$set(value = i)
   }
-    
+  progress$close()
+  
   pre(class="alignment", 
       out
       )
-    
 })
 
 
 
-####    Download functions ####
-output$pdbsRData = downloadHandler(
-  filename = 'pdbs.RData',
-  content = function(file) {
-    save(pdbs, file=file)
-  })
+####################################
+####     Download functions     ####
+####################################
 
+aln2file <- reactive({
+  fn <- paste0(data_path(), '/aln.fasta')
+  write.fasta(align(), file=fn)
+  return(fn)
+})
 
 output$fastafile = downloadHandler(
   filename = 'aln.fasta',
   content = function(file) {
-    write.fasta(align(), file=file)
+    aln2file()
   })
