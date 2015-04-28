@@ -1,56 +1,56 @@
 tabPanel("3. FIT", icon=icon("arrow-right"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
-         
+
          fluidRow(
            column(4,
                   wellPanel(
                     h4("Initial structure analysis"),
                     hr(),
-                    
+
                     radioButtons("fit_type", "Superimpose to",
                                  c("Invariant core" = "core",
                                    "All c-alpha atoms" = "full"),
                                  inline=TRUE),
-                    
+
                     radioButtons("str_plot", "Plot options",
                                  c("Heatmap" = "heatmap",
                                    "Dendrogram" = "dendrogram",
                                    "RMSF" = "rmsf",
                                    "RMSD Histogram" = "hist"),
                                  inline=TRUE),
-                    
+
                     sliderInput("clusters", "Cluster by pairwise RMSD",
                                 min = 1, max = 10, value = 3, step=1),
 
                     checkboxInput('show_options', 'More options', value=FALSE)
                     )
                   ),
-           
+
            column(8,
-                  
+
              conditionalPanel(
                condition = "input.str_plot == 'heatmap'",
                plotOutput("rmsd_heatmap"),
                downloadButton('rmsd_heatmap2pdf', "Download PDF")
                ),
-             
+
              conditionalPanel(
                condition = "input.str_plot == 'dendrogram'",
                plotOutput("rmsd_dendrogram"),
                downloadButton('rmsd_dendrogram2pdf', "Download PDF")
                ),
-             
+
              conditionalPanel(
                condition = "input.str_plot == 'rmsf'",
                plotOutput("rmsf_plot"),
                downloadButton('rmsf2pdf', "Download PDF")
                ),
-             
+
              conditionalPanel(
                condition = "input.str_plot == 'hist'",
                plotOutput("rmsd_hist"),
                downloadButton('rmsd_hist2pdf', "Download PDF")
-               )                 
+               )
              )
            ),
 
@@ -75,10 +75,10 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     )
              )
            ),
-                   
-         
+
+
          hr(),
-         
+
          fluidRow(
            column(4,
                   wellPanel(
@@ -94,7 +94,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     dataTableOutput("rmsd_table")
                     )
                   ),
-           
+
            column(4,
                   wellPanel(
                     h4("Download"),

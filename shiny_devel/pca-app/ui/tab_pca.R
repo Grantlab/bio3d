@@ -1,30 +1,32 @@
-tabPanel("4. PCA", icon=icon("arrow-right"), 
-  tags$style(type="text/css", "body {padding-top: 80px;}"), 
+tabPanel("4. PCA", icon=icon("arrow-right"),
+  tags$style(type="text/css", "body {padding-top: 80px;}"),
   fluidRow(
-    column(4, 
+    column(4,
       wellPanel(
         h4("Conformer plot"),
         helpText("Two dimensional representation of conformational variability described by the two principal components ..."),
         textInput("pcx", "PC on X-axis", value=1),
         textInput("pcy", "PC on Y-axis", value=2),
-        sliderInput("nclust", "Cluster by pairwise RMSD", 
+        sliderInput("nclust", "Cluster by pairwise RMSD",
           min = 1, max = 10, value = 3),
-        
+
         radioButtons("plot_type", "",
                    c("Normal" = "normal",
                      "Interactive" = "fancy"),
                      inline=TRUE),
-        
-        checkboxInput("show_options", "More options", value=FALSE)
+        conditionalPanel(
+             condition = "input.plot_type == 'normal'",
+             checkboxInput("show_options", "More options", value=FALSE)
+        )
         )
 
     ),
-    
-    column(width=4, 
+
+    column(width=4,
       conditionalPanel(
         condition = "input.plot_type == 'normal'",
         plotOutput("pca_plot1_conf")
-      ), 
+      ),
       conditionalPanel(
         condition = "input.plot_type == 'fancy'",
         showOutput("pca_plot2_conf","dimple")
@@ -51,28 +53,28 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
              downloadButton('pctrajZIP', "Download")
              )
            ),
-    
+
   conditionalPanel(
-    condition = "input.show_options == true",
+    condition = "input.show_options == true && input.plot_type == 'normal'",
       column(3,
              wellPanel(
                sliderInput("cex_points", "Point size",
                            min = 0.1, max = 3, value = 1, step=0.1)
                )
              ),
-      
+
       column(3,
              wellPanel(
-               checkboxInput("labelplot", "Label plot", value=FALSE), 
-             
+               checkboxInput("labelplot", "Label plot", value=FALSE),
+
                conditionalPanel(
                  condition = "input.labelplot == true",
-                 
-                 checkboxInput("distribute_labels", "Distribute labels", value=FALSE), 
+
+                 checkboxInput("distribute_labels", "Distribute labels", value=FALSE),
                  sliderInput("cex_labels", "Label size",
                              min = 0.1, max = 3, value = 1, step=0.1),
-                 
-                 sliderInput("offset", "label offset", 
+
+                 sliderInput("offset", "label offset",
                              min = 0, max = 2, value = 0.5, step=0.1)
                  )
                )
@@ -82,7 +84,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
              wellPanel(
                conditionalPanel(
                  condition = "input.labelplot == true",
-                 
+
                  checkboxInput("toggle_all", "Toggle all", TRUE),
                  uiOutput("checkboxgroup_label_ids")
                  )
@@ -92,7 +94,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
   ),
 
   fluidRow(
-    column(12, 
+    column(12,
       wellPanel(
         dataTableOutput("pdbs_table")
       )

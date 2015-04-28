@@ -1,13 +1,13 @@
 
 output$blast_plot <- renderUI({
   blast <- run_blast()
-  
+
   if(length(blast$acc) > 100) {
     plotOutput("blast_plot1")
   }
   else {
     showOutput("blast_plot2", "nvd3")
-    
+
     #tags$script(HTML(
     #  'var css = document.createElement("style");
     #                  css.type = "text/css";
@@ -19,25 +19,25 @@ output$blast_plot <- renderUI({
     #                  document.body.appendChild(css);'
     #  ))
   }
-    
+
 })
 
 ### Blast plot on front page
 output$blast_plot1 <- renderPlot({
   blast <- run_blast()
   hits <- set_cutoff(blast, input$cutoff)
-  
+
   cutoff <- hits$cutoff
   gp <- hits$gp.inds
   grps <- hits$grps
   z <- blast$score
-  
+
   plot(z, xlab="", ylab="Bitscore", col=grps)
   abline(v=gp, col="gray70", lty=3)
-  
+
   pos <- c(rep(3, length(gp))[-length(gp)],2)
-  text(gp, z[gp], 
-       labels=paste0("Nhit=", gp, ", y=", round(z[gp])), 
+  text(gp, z[gp],
+       labels=paste0("Nhit=", gp, ", y=", round(z[gp])),
        col="black", pos=3, cex=1)
 })
 
@@ -46,20 +46,21 @@ output$blast_plot2 <- renderChart2({
   blast <- run_blast()
   hits <- set_cutoff(blast, input$cutoff)
   blast$mlog.evalue <- blast$score
-  
+
   cutoff <- hits$cutoff
   gp <- hits$gp.hits
   gps <- hits$grps
   z <- blast$score
-  
+
   ## generate a dataframe: pc$z + pdbids + group
   data <- data.frame(
     Bitscore = z,
     id = blast$acc,
     group = sapply(gps, function(x) if(x==1) "Above" else "Below cutoff"),
-    Hits = 1:length(z)
+    Hits = 1:length(z),
+    desc = blast$desc
     )
-  
+
   p1 <- nPlot(
     x = "Hits", y = "Bitscore",
     group = "group",
@@ -69,21 +70,25 @@ output$blast_plot2 <- renderChart2({
   p1$chart( color = c("red","black") )
   p1$xAxis( axisLabel = "Hits" )
   p1$yAxis( axisLabel = "Bitscore", width=50 )
-  
-  
-  p1$chart( forceY = if( !(min(data$Bitscore)<0) && min(data$Bitscore)-20 < 0  ) 
+
+
+  p1$chart( forceY = if( !(min(data$Bitscore)<0) && min(data$Bitscore)-20 < 0  )
            c(0,max(data$Bitscore)+20) else range(data$Bitscore) + c(-20, 20) )
-  p1$chart(tooltipContent = "#! function(key, x, y, e){ 
-      return '<b>pdb:</b> ' + e.point.id
+  p1$chart(tooltipContent = "#! function(key, x, y, e){
+      return '<b>pdb:</b> ' + e.point.id + '</br>' + e.point.desc
     } !#")
     p1$setTemplate(afterScript = '<script>
       var css = document.createElement("style");
       css.type = "text/css";
-      css.innerHTML = ".nv-y .nv-axislabel { font-size: 30px; }";
+      css.innerHTML = ".nv-x .nv-axislabel { font-size: 20px; }";
       document.body.appendChild(css);
+      css = document.createElement("style");
+      css.innerHTML = ".nv-y .nv-axislabel { font-size: 20px; }";
+      document.body.appendChild(css);
+      document.getElementById("blast_plot2").focus();
     </script>'
                    )
-  
+
   return(p1)
 })
 
@@ -94,7 +99,7 @@ output$blast_table <- renderDataTable({
   if(input$input_type != "multipdb") {
     blast <- run_blast()
     hits <- filter_hits()
-    
+
     ## provide additional 5 non-checked table rows
     checked.inds <- which(hits$hits)
     unchecked.inds <- which(!hits$hits)
@@ -106,7 +111,7 @@ output$blast_table <- renderDataTable({
 
     unchecked.inds <- unchecked.inds[1:m]
     show.inds <- c(checked.inds, unchecked.inds)
-    
+
     hits <- blast[show.inds,, drop=FALSE]
     acc <- hits$acc
 
@@ -128,8 +133,8 @@ output$blast_table <- renderDataTable({
     hits$score <- rep(0, length(acc))
     checked <- rep("CHECKED", length(acc))
   }
-  
-  
+
+
   anno$url <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=", substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   anno$score <- hits$score
   anno$id <- 1:nrow(anno)
@@ -137,11 +142,11 @@ output$blast_table <- renderDataTable({
 
   checkbox <- paste0("<input type=\"checkbox\" name=\"pdb_ids\" value=\"", hits$acc, "\"",  checked, ">")
   anno$check <- checkbox
-  
+
   return(anno[, c("id", "check", "url", "compound", "source", "ligandId", "chainLength", "score")])
 }, escape=FALSE, options = list(lengthChange=FALSE, paging=FALSE))
-                                      
-  #,                                    
+
+  #,
   #                                      callback = "function(table) {
   #    table.on('click.dt', 'tr', function() {
   #      $(this).toggleClass('selected');
@@ -149,15 +154,15 @@ output$blast_table <- renderDataTable({
   #                          table.rows('.selected').indexes().toArray());
   #    });
   #  }")
-                                      
 
 
-## checkbox 
+
+## checkbox
 output$pdb_chains <- renderUI({
   anno <- input_pdb_annotation()
   radioButtons("chainId", label="Choose chain ID:",
                choices=anno$chainId, inline=TRUE)
-  
+
 })
 
 
@@ -177,7 +182,7 @@ output$resetable_cutoff_slider <- renderUI({
   blast <- run_blast()
   hits <- set_cutoff(blast, cutoff=NULL)
   cutoff <- hits$cutoff
-  
+
   sliderInput("cutoff", "Adjust cutoff:",
               min = floor(min(blast$score)), max = floor(max(blast$score)), value = cutoff)
 })
@@ -185,7 +190,7 @@ output$resetable_cutoff_slider <- renderUI({
 output$hits_slider <- renderUI({
   blast <- run_blast()
   hits <- set_cutoff(blast, cutoff=input$cutoff)
-  
+
   sliderInput("limit_hits", "Limit hits:",
               min = 1, max = length(hits$inds), value = 5, step=1)
 })
