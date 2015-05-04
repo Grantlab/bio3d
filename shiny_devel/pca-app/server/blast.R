@@ -23,7 +23,7 @@ get_sequence <- reactive({
 
   ## option 1 - PDB code provided
   if(input$input_type == "pdb") {
-    anno <<- input_pdb_annotation()
+    anno <- input_pdb_annotation()
 
     if(is.vector(input$chainId)) {
       ind <- which(anno$chainId==input$chainId[1])

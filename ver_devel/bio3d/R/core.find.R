@@ -50,7 +50,8 @@ function(pdbs,
          write.pdbs = FALSE,
          outpath="core_pruned",
          ncore = 1,
-         nseg.scale = 1, ...) {
+         nseg.scale = 1,
+         progress = NULL, ...) {
 
   ##  Itterative core deffination for lsq fit optimisation
   ##  (core positions are those with low ellipsoid volume)
@@ -128,6 +129,10 @@ function(pdbs,
   if(write.pdbs) { dir.create(outpath,FALSE)  }
 
   while(length(res.still.in) > stop.at) {
+
+    if(!is.null(progress)) {
+      progress$inc(1/length(res.inds))
+    }
 
     # Core fitting, (core => pdbnum[ res.still.in ])
     fit.to = rep(FALSE,ncol(xyz.moved))

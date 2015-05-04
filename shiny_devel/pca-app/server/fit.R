@@ -5,15 +5,15 @@
 find_core <- reactive({
   pdbs <- align()
 
-  progress <- shiny::Progress$new(session, min=1, max=5)
+  progress <- shiny::Progress$new()
   on.exit(progress$close())
 
   progress$set(message = 'Finding core',
-               detail = 'Please wait')
-  progress$set(value = 3)
+               detail = 'Please wait ...',
+               value = 0)
 
-  core <- core.find(pdbs)
-  progress$set(value = 6)
+  core <- core.find(pdbs, progress=progress)
+  progress$close()
   return(core)
 })
 

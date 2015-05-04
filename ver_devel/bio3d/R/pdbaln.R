@@ -1,5 +1,5 @@
 `pdbaln` <-
-function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
+function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, progress=progress, ...) {
 
   ## Log the call
   cl <- match.call()
@@ -69,6 +69,11 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
       pdb <- read.pdb(files[i])
     }
     cat(".")
+
+    if(!is.null(progress)) {
+      progress$inc(1/length(files)/2)
+    }
+    
     return( pdb )
   } )
 #  pdb.list <- NULL
@@ -100,7 +105,7 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
   ##s <- seqaln(s, id=files, extra.args="-quiet", ...)
   s <- seqaln(s, id=files, ...)
   cat("\n")
-  s <- read.fasta.pdb(s, prefix = "", pdbext = "", ncore=ncore, nseg.scale=nseg.scale)
+  s <- read.fasta.pdb(s, prefix = "", pdbext = "", ncore=ncore, nseg.scale=nseg.scale, progress=progress)
   s$call=cl
   
   if(fit)

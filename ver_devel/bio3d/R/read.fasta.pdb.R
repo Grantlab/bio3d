@@ -1,5 +1,5 @@
 "read.fasta.pdb" <-
-function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...) {
+function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, progress=progress, ...) {
 
   ## Log the call
   cl <- match.call()
@@ -47,6 +47,11 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
     coords <- NULL; res.nu <- NULL
     res.bf <- NULL; res.ch <- NULL
     res.id <- NULL; res.ss <- NULL
+
+    if(!is.null(progress)) {
+      progress$inc(1/length(aln$id)/2)
+    }
+    
     cat(paste("pdb/seq:",i,"  name:", aln$id[i]),"\n")
 
     if(!toread[i]) {

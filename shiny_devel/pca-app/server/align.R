@@ -46,23 +46,15 @@ fetch_pdbs <- reactive({
   }
   progress$close()
   
-  progress <- shiny::Progress$new(session, min=1, max=length(ids))
+  progress <- shiny::Progress$new()
+  on.exit(progress$close())
   progress$set(message = 'Splitting PDBs',
-               detail = 'Please wait ...')
+               detail = 'Please wait ...',
+               value = 0)
 
-  ##files <- pdbsplit(raw.files, ids)
-
-    
-  ## this is possibly error prone
-  files <- vector("character", length(ids))
-  for(i in 1:length(unq)) {
-    inds <- grep(unq[i], ids)
-    
-    files[inds] <- pdbsplit(raw.files[i], ids[inds], overwrite=FALSE,
-                            path=configuration$pdbdir$splitfiles)
-    progress$set(value = i)
-  }
-  
+  files <- pdbsplit(pdb.files=raw.files, ids=ids, overwrite=FALSE,
+                    path=configuration$pdbdir$splitfiles,
+                    progress=progress)
   progress$close()
   return(files)
 })
@@ -70,13 +62,13 @@ fetch_pdbs <- reactive({
 
 align <- reactive({
   files <- fetch_pdbs()
-  
-  progress <- shiny::Progress$new(session, min=1, max=5)
+
+  progress <- shiny::Progress$new()
   on.exit(progress$close())
-  
+
   progress$set(message = 'Aligning PDBs',
-               detail = 'Please wait ...')
-  progress$set(value = 2)
+               detail = 'Please wait ...',
+               value = 0)
 
   if(!input$reset_fasta)
     inc1 <<- 0
@@ -87,12 +79,13 @@ align <- reactive({
   if(!is.null(input$fastafile_upload) & !reset) {
     infile <- input$fastafile_upload
     aln <- read.fasta(infile$datapath)
-    pdbs <- read.fasta.pdb(aln)
+    pdbs <- read.fasta.pdb(aln, progress=progress)
   }
   else {
     pdbs <- pdbaln(files, verbose=TRUE,
                    exefile=configuration$muscle$exefile,
-                   outfile=tempfile(pattern="aln", fileext=".fasta"))
+                   outfile=tempfile(pattern="aln", fileext=".fasta"),
+                   progress=progress)
   }
 
   if(input$omit_missing) {
@@ -100,7 +93,6 @@ align <- reactive({
     pdbs <- trim.pdbs(pdbs, row.inds=which(conn))
   }
   
-  progress$set(value = 5)
   rownames(pdbs$ali) <- basename.pdb(rownames(pdbs$ali))
 
   progress$close()
