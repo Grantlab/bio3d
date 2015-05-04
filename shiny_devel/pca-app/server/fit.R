@@ -8,22 +8,25 @@ find_core <- reactive({
   progress <- shiny::Progress$new(session, min=1, max=5)
   on.exit(progress$close())
   
-  progress$set(message = 'Finding invariant core',
-               detail = 'This may take some time...')
-  progress$set(value = 2)
+  progress$set(message = 'Finding core',
+               detail = 'Please wait')
+  progress$set(value = 3)
   
-  core <<- core.find(pdbs)
-  progress$set(value = 5)
+  core <- core.find(pdbs)
+  progress$set(value = 6)
   return(core)
 })
 
 fit <- reactive({
+  pdbs <- align()
+  core <- find_core()
+  
   if(input$fit_type == "full") {
-    pdbs$xyz <<- pdbfit(pdbs)
+    pdbs$xyz <- pdbfit(pdbs)
   }
   else {
     core <- find_core()
-    pdbs$xyz <<- pdbfit(pdbs, core)
+    pdbs$xyz <- pdbfit(pdbs, core)
   }
   
   return(pdbs)
@@ -32,6 +35,50 @@ fit <- reactive({
 rmsd1 <- reactive({
   pdbs <- fit()
   rd <- rmsd(pdbs)
+
+  return(rd)
+})
+
+hclust1 <- reactive({
+  rd <- rmsd1()
+  hc <- hclust(as.dist(rd))
+})
+
+cutree1 <- reactive({
+  hc <- hclust1()
+  grps <- cutree(hc, k=input$clusters)
+})
+
+
+representatives <- reactive({
+  pdbs <- fit()
+  rd <- rmsd1()
+  hc <- hclust1()
+  grps <- cutree1()
+
+  unq <- unique(grps)
+  all.inds <- seq(1, length(grps))
+  rep.inds <- rep(NA, length(unq))
+  
+  for(i in 1:length(unq)) {
+    grp <- unq[i]
+    inds <- which(grps==grp)
+
+    if(length(inds) > 1) {
+      tmp <- rd[inds, inds]
+      
+      m <- rowMeans(tmp)
+      rep.ind <- which.min(m)
+      rep.ind <- all.inds[inds][rep.ind]
+    }
+    else {
+      rep.ind <- inds[1]
+    }
+
+    rep.inds[i] <- rep.ind
+  }
+
+  return(pdbs$id[rep.inds])
 })
 
 ####################################
@@ -44,12 +91,16 @@ make.plot.heatmap <- function() {
   colnames(rd) <- basename.pdb(pdbs$id)
   hc <- hclust(as.dist(rd))
   grps <- cutree(hc, k=input$clusters)
+  mar <- as.numeric(c(input$margins, input$margins))
   plot1 <- heatmap(rd, distfun=as.dist, symm=TRUE,
           ColSideColors=as.character(grps),
-          RowSideColors=as.character(grps)
+          RowSideColors=as.character(grps),
+          cexRow=input$cex, cexCol=input$cex,
+          margins=mar
           )
   return(plot1)
 }
+
 output$rmsd_heatmap <- renderPlot({
   print(make.plot.heatmap())
 })
@@ -57,9 +108,13 @@ output$rmsd_heatmap <- renderPlot({
 make.plot.rmsd.hist <- function() {
   pdbs <- fit()
   rd <- rmsd1()
-  plot2 <- hist(rd[upper.tri(rd)], breaks=40, xlab="RMSD (Å)", main="Histogram of RMSD")
-  return(plot2)
+  x <- rd[upper.tri(rd)]
+  plot2 <- hist(x, breaks=40, xlab="RMSD (Å)", main="Histogram of RMSD")
+  ##, freq=FALSE)
+  ##lines(density(x), col="gray", lwd=3)
+  ##return(plot2)
 }
+
 output$rmsd_hist <- renderPlot({
   print(make.plot.rmsd.hist())  
 })
@@ -69,36 +124,50 @@ make.plot.rmsd.dendogram <- function() {
   rd <- rmsd1()
   pdbs$id <- basename.pdb(pdbs$id)
   hc <- hclust(as.dist(rd))
+  mar <- c(input$margins, 5, 3, 1)
   plot3 <- hclustplot(hc, k=input$clusters, labels=pdbs$id, cex=input$cex,
-             ylab="RMSD (Å)", main="RMSD Cluster Dendrogram", fillbox=FALSE)
+             ylab="RMSD (Å)", main="RMSD Cluster Dendrogram", fillbox=FALSE,
+             mar = mar)
   return(plot3)
 }
+
 output$rmsd_dendrogram <- renderPlot({
   print(make.plot.rmsd.dendogram())
 })
 
 make.plot.rmsf <- function(){
   pdbs <- fit()
-  rd <- rmsd1()
   gaps.res <- gap.inspect(pdbs$ali)
   gaps.pos <- gap.inspect(pdbs$xyz)
+  
   resno <- pdbs$resno[1, gaps.res$f.inds]
-  ##sse <- .pdbs2sse(pdbs, ind=1, rm.gaps=TRUE)
+  sse <- pdbs2sse(pdbs, ind=1, rm.gaps=TRUE)
   
   rf <- rmsf(pdbs$xyz[, gaps.pos$f.inds])
-  plot4 <- plot.bio3d(rf, resno=resno, 
-             ylab="RMSF (Å)", xlab="Residue No.")  
+  plot4 <- plot.bio3d(rf, resno=resno, sse=sse,
+             ylab="RMSF (Å)", xlab="Residue No.")
+  
   return(plot4)
 }
+
 output$rmsf_plot <- renderPlot({
   print(make.plot.rmsf())
 })
 
 ####################################
-####     Data tables     ####
+####     Data summary           ####
 ####################################
 
+output$representatives <- renderPrint({
+  pdbs <- fit()
+  reps <- basename.pdb(representatives())
+  
+  cat(reps, sep="\n")
+    
+})
+
 output$print_core <- renderDataTable({
+  pdbs <- fit()
   core <- find_core()
   gaps <- gap.inspect(pdbs$ali)
 
@@ -120,12 +189,18 @@ output$print_core <- renderDataTable({
 }, options = list(searching=FALSE, lengthChange=FALSE, paging=FALSE))
 
 output$reference_selector <- renderUI({
+  pdbs <- fit()
   ids <- basename.pdb(pdbs$id)
   names(ids) <- ids
   selectInput("reference_id", "Reference PDB id:", ids)
 })
 
 output$rmsd_table <- renderDataTable({
+  pdbs <- fit()
+  rd <- rmsd1()
+  hc <- hclust1()
+  grps <- cutree1()
+
   if(!is.null(input$reference_id))
     ind <- grep(input$reference_id, pdbs$id)
   else
@@ -137,7 +212,7 @@ output$rmsd_table <- renderDataTable({
              fit = TRUE)
   names(rd) <- basename.pdb(pdbs$id)
   
-  return(data.frame(ids=names(rd), rmsd=rd))
+  return(data.frame(ids=names(rd), rmsd=round(rd,1), "cluster"=grps))
 }, options = list(searching=FALSE, lengthChange=FALSE, paging=TRUE))
 
 
@@ -145,23 +220,56 @@ output$rmsd_table <- renderDataTable({
 ####################################
 ####     Download functions     ####
 ####################################
+
+pdbs2rda <- reactive({
+  fn <- paste0(data_path(), '/pdbs.RData')
+  save(pdbs, file=fn)
+  return(fn)
+})
+
+output$pdbsRData = downloadHandler(
+  filename = 'pdbs.RData',
+  content = function(file) {
+    pdbs2rda()
+  })
+
+
 pdbs2files <- reactive({
+  path <- data_path()
   core <- find_core()
-  pdbs$xyz <<- pdbfit(pdbs, core)
-  pdbfit(pdbs, core, outpath="fitlsq")
-  return(paste0("fitlsq/", basename(pdbs$id), "_flsq.pdb"))
+  pdbs <- fit()
+  xyz <- pdbfit(pdbs, core, outpath=path)
+  files <- paste0(path, "/", basename.pdb(pdbs$id), ".pdb_flsq.pdb")
+  return(files)
 })
 
 output$pdbsZIP = downloadHandler(
   filename = 'pdbs.zip',
   content = function(file) {
-    zip(file, files=pdbs2files())
+    zip(file, files=pdbs2files(), flags = "-9Xj")
+})
+
+rmsd2files <- reactive({
+  path <- data_path()
+  pdbs <- fit()
+  rd <- round(rmsd1(), 2)
+  rownames(rd) <- basename.pdb(pdbs$id)
+  colnames(rd) <- basename.pdb(pdbs$id)
+  file <- paste0(path, "/", "rmsd-mat.dat")
+  write.table(rd, file=file, quote=FALSE)
+  return(file)
+})
+
+output$rmsdZIP = downloadHandler(
+  filename = 'rmsd-mat.zip',
+  content = function(file) {
+    zip(file, files=rmsd2files())
 })
 
 output$rmsd_heatmap2pdf = downloadHandler(
   filename = "rmsd_heatmap.pdf",
   content = function(FILE=NULL) {
-    pdf(file=FILE, onefile=T, width=12, height=12)
+    pdf(file=FILE, onefile=T, width=input$width, height=input$height)
     print(make.plot.heatmap())
     dev.off()
 })
@@ -169,7 +277,7 @@ output$rmsd_heatmap2pdf = downloadHandler(
 output$rmsd_dendrogram2pdf = downloadHandler(
   filename = "rmsd_dendrogram.pdf",
   content = function(FILE=NULL) {
-    pdf(file=FILE, onefile=T, width=18, height=10)
+    pdf(file=FILE, onefile=T, width=input$width, height=input$height)
     print(make.plot.rmsd.dendogram())
     dev.off()
 })
@@ -177,7 +285,7 @@ output$rmsd_dendrogram2pdf = downloadHandler(
 output$rmsd_hist2pdf = downloadHandler(
   filename = "rmsd_hist.pdf",
   content = function(FILE=NULL) {
-    pdf(file=FILE, onefile=T, width=20, height=8)
+    pdf(file=FILE, onefile=T, width=input$width, height=input$height)
     print(make.plot.rmsd.hist())
     dev.off()
 })
@@ -185,7 +293,8 @@ output$rmsd_hist2pdf = downloadHandler(
 output$rmsf2pdf = downloadHandler(
   filename = "rmsf.pdf",
   content = function(FILE=NULL) {
-    pdf(file=FILE, onefile=T, width=20, height=8)
+    pdf(file=FILE, onefile=T, width=input$width, height=input$height)
     print(make.plot.rmsf())
     dev.off()
 })
+

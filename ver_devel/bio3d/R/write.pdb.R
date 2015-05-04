@@ -243,8 +243,30 @@ function (pdb = NULL,
     if(end) {
       cat("END   \n", file = file,  append = TRUE)
     }
-
   }
+  ## Write connectivity
+  if(!is.null(pdb$con)) {
+    pdb$con[is.na(pdb$con)] <- ""
+    eleno.1 <- pdb$con$eleno.1
+    eleno.1 <- split(eleno.1, eleno.1)
+    eleno.1 <- unlist(lapply(eleno.1,
+                             function(object)
+                               rep(unique(object), ceiling(length(object)/4))))
+    eleno.2 <- split(pdb$con$eleno.2, pdb$con$eleno.1)
+    eleno.2 <- lapply(eleno.2,
+                      function(object) {
+                        v <- vector("character", 4*ceiling(length(object)/4))
+                        v[1:length(object)] <- object
+                        M <- matrix(v, ncol = 4, nrow = ceiling(length(object)/4))
+                        return(M)
+                      })
+    eleno.2 <- as.data.frame(do.call(rbind, eleno.2))
+    fmt <- "CONECT%5s%5s%5s%5s%5s"
+    args  <- c(fmt, as.list(cbind(eleno.1, eleno.2)))
+    lines <- do.call(sprintf, args)
+    cat(lines, file = file, sep = "\n", append = TRUE)
+  }
+  ## End write connectivity
   if (verbose) cat(" DONE","\n")
 }
 

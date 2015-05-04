@@ -8,23 +8,21 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     hr(),
                     
                     radioButtons("fit_type", "Superimpose to",
-                                 c("invariant core" = "core",
-                                   "all c-alpha atoms" = "full"),
+                                 c("Invariant core" = "core",
+                                   "All c-alpha atoms" = "full"),
                                  inline=TRUE),
                     
                     radioButtons("str_plot", "Plot options",
-                                 c("heatmap" = "heatmap",
-                                   "dendrogram" = "dendrogram",
-                                   "rmsf" = "rmsf",
-                                   "hist" = "hist"),
+                                 c("Heatmap" = "heatmap",
+                                   "Dendrogram" = "dendrogram",
+                                   "RMSF" = "rmsf",
+                                   "RMSD Histogram" = "hist"),
                                  inline=TRUE),
                     
-                    sliderInput("cex", "cex",
-                                min = 0.1, max = 3, value = 1, step=0.1),
-                    
                     sliderInput("clusters", "Cluster by pairwise RMSD",
-                                min = 1, max = 10, value = 3, step=1)
-                    
+                                min = 1, max = 10, value = 3, step=1),
+
+                    checkboxInput('show_options', 'More options', value=FALSE)
                     )
                   ),
            
@@ -52,10 +50,33 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                condition = "input.str_plot == 'hist'",
                plotOutput("rmsd_hist"),
                downloadButton('rmsd_hist2pdf', "Download PDF")
-               )
+               )                 
              )
            ),
 
+         conditionalPanel(
+           condition = "input.show_options == true",
+           fluidRow(
+             column(4,
+                    wellPanel(
+                    sliderInput("cex", "Label size",
+                                min = 0.1, max = 3, value = 1, step=0.1),
+                    sliderInput("margins", "Plot margins",
+                                min = 3, max = 10, value = 5, step=1)
+                    )
+                    ),
+             column(4,
+                    wellPanel(
+                    sliderInput("width", "width",
+                                min = 4, max = 12, value = 7, step=0.5),
+                    sliderInput("height", "height",
+                                min = 4, max = 12, value = 7, step=0.5)
+                    )
+                    )
+             )
+           ),
+                   
+         
          hr(),
          
          fluidRow(
@@ -81,6 +102,11 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     hr(),
                     downloadButton('rmsdZIP', "Download RMSD matrix"),
                     hr()
+                    ),
+
+                  wellPanel(
+                    h4("Cluster representatives"),
+                    verbatimTextOutput("representatives")
                     )
                   )
            )

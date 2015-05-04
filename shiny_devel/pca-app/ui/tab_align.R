@@ -3,7 +3,7 @@ tabPanel("2. ALIGN",
          tags$style(type="text/css", "body {padding-top: 80px;}"),
          
          fluidRow(
-           column(4,
+           column(5,
                   wellPanel(
                     h4("A) Alignment summary"),
                     tags$hr(),
@@ -17,7 +17,7 @@ tabPanel("2. ALIGN",
                     )
                   ),
                                         
-           column(8,
+           column(7,
                   wellPanel(style="overflow: auto;",
 
                             h4("B) Edit alignment (optional)"),

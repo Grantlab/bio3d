@@ -28,6 +28,7 @@ function(pdb, exefile = "stride", resno=TRUE) {
   # Read ASG instead of LOC lines
   sse <- substring(raw.tor, 25,25)
   cha <- substring(raw.tor, 10,10)
+  cha[cha == " "] <- NA  # catch for missing chain identifier 
   acc <- as.numeric(substring(raw.tor, 65, 69))
 
   res.num  <- suppressWarnings(as.numeric(substring(raw.tor, 12, 15)))

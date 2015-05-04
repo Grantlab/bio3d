@@ -21,10 +21,10 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
 ##                       ids, "&dopt=fasta&sendto=t", sep="")
 
   } else {
-    if(any(nchar(ids) != 6)) {
-      warning("ids should be standard 6 character SWISSPROT/UNIPROT formart: trying first 6 char...")
-      ids <- substr(basename(ids),1,6)
-    }
+#    if(any(nchar(ids) != 6)) {
+#      warning("ids should be standard 6 character SWISSPROT/UNIPROT formart: trying first 6 char...")
+#      ids <- substr(basename(ids),1,6)
+#    }
     ids <- unique(ids)
     get.files <- file.path("http://www.uniprot.org/uniprot",
                            paste(ids, ".fasta", sep="") )
@@ -42,9 +42,10 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
   retry <- 0
   k <- 1
   rtn <- rep(NA, length(ids))
+  tmp.fasta <- tempfile()
   while(k <= length(ids)) {
     res <- tryCatch({
-      download.file( get.files[k], outfile, mode="a", quiet=!verbose)
+      download.file( get.files[k], tmp.fasta, mode="w", quiet=!verbose)
     }, error = function(e) {
       return(1)
     })
@@ -59,8 +60,18 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
     else {
       retry <- 0
       rtn[k] <- res
+      if(res == 0) {
+        test <- try(aln <- read.fasta(tmp.fasta), silent=TRUE)
+        if(inherits(test, "try-error")) {
+           warning(paste("Failed to get sequence for", ids[k], "(check the ID)"))
+           rtn[k] <- 1
+        }
+        else {
+           write.fasta(aln, file=outfile, append=TRUE)
+        } 
+      }
       k <- k+1
-      
+
       if(!verbose & length(get.files) > 1)
         setTxtProgressBar(pb, k)
     }

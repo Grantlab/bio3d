@@ -3,14 +3,14 @@
 configuration <<- list(
 
   pdbdir = list(
-    rawfiles = "/path/to/pdb/raw_files",
-    splitfiles = "/path/to/pdb/split_files"
+    rawfiles = "raw_files",
+    splitfiles = "split_files"
     ),
   
   db = list(
     use = FALSE,
     host = "localhost",
-    dbname = "test",
+    dbname = "shiny_pdb-anno",
     username = "root",
     password = ""
     ),
@@ -23,6 +23,10 @@ configuration <<- list(
 
   muscle = list(
     exefile = "/usr/local/bin/muscle"
+    ),
+
+  user_data = list(
+    path = "/tmp"
     )
 
   )
