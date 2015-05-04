@@ -62,9 +62,9 @@ function (file, maxlines=-1, multi=FALSE,
   split.fields <- function(x) {
      ##- Split a character string for data.frame fwf reading
      ##  First splits a string 'x' according to 'first' and 'last'
-     ##  then re-combines to new string with "," as separator 
+     ##  then re-combines to new string with ";" as separator 
      x <- trim( substring(x, first, last) )
-     paste(x,collapse=",")
+     paste(x,collapse=";")
   } 
 
   is.character0 <- function(x){length(x)==0 & is.character(x)}
@@ -183,7 +183,7 @@ function (file, maxlines=-1, multi=FALSE,
  ## rm.insert=FALSE; rm.alt=TRUE; het2atom=FALSE; verbose=TRUE
 
   atom <- read.table(text=sapply(raw.atom, split.fields), 
-                    stringsAsFactors=FALSE, sep=",", quote='',
+                    stringsAsFactors=FALSE, sep=";", quote='',
                     colClasses=atom.format[!drop.ind,"what"],
                     col.names=atom.format[!drop.ind,"name"],
                     comment.char="", na.strings="")
