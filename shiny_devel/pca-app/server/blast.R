@@ -24,7 +24,7 @@ get_sequence <- reactive({
   ## option 1 - PDB code provided
   if(input$input_type == "pdb") {
     anno <<- input_pdb_annotation()
-  
+
     if(is.vector(input$chainId)) {
       ind <- which(anno$chainId==input$chainId[1])
       seq <- unlist(strsplit(anno$sequence[ind], ""))
@@ -58,11 +58,11 @@ input_pdb_annotation <- reactive({
   if(is.null(input$pdbid)) {
     return()
   }
-  
+
   if(nchar(input$pdbid)==4) {
     progress <- shiny::Progress$new(session, min=1, max=5)
     on.exit(progress$close())
-    
+
     progress$set(message = 'Fetching PDB data',
                  detail = 'Please wait')
     progress$set(value = 3)
@@ -70,7 +70,7 @@ input_pdb_annotation <- reactive({
     anno <- get_annotation(input$pdbid, use_chain=FALSE)
     for(i in 4:5)
       progress$set(value = i)
-    
+
     return(anno)
   }
   else {
@@ -90,7 +90,7 @@ output$input_pdb_summary <- renderPrint({
   else {
     anno <- anno[1,]
   }
-  
+
   cat(" Protein: ", anno$compound[1], "\n",
       "Species: ", anno$source[1], "\n")
 
@@ -101,17 +101,17 @@ run_blast <- reactive({
   if(is.null(input$chainId)) {
     stop()
   }
-  
+
   if(input$input_type == "multipdb") {
     stop(" no need to blast when input is multipdb")
   }
   else {
     message("blasting")
     input_sequence <- get_sequence()
-    
+
     progress <- shiny::Progress$new(session, min=1, max=5)
     on.exit(progress$close())
-    
+
     progress$set(message = 'Blasting',
                  detail = 'Please wait')
     progress$set(value = 2)
@@ -119,14 +119,14 @@ run_blast <- reactive({
     ## use local version if possible
     if(configuration$hmmer$local)
       hmm <- phmmer_local(input_sequence)
-    else 
+    else
       hmm <- hmmer(input_sequence)
 
     if(!nrow(hmm) > 0)
       stop("No BLAST hits found")
-    
+
     print(head(hmm))
-    
+
     progress$set(value = 5)
     return(hmm)
   }
@@ -144,12 +144,12 @@ filter_hits <- reactive({
 
   hits <- blast$score > cutoff
   acc <- blast$acc[hits]
-  
+
   limit <- as.numeric(input$limit_hits)
   hits2 <- rep(FALSE, length(hits))
   hits2[1:limit] <- TRUE
   hits2 <- hits & hits2
-  
+
   ## hits_all: logical vector of all hits
   ## hits: logical vector of limited hits
   ## acc: character vector of PDB ids
@@ -157,7 +157,7 @@ filter_hits <- reactive({
               acc=acc[hits2], acc_all=acc[hits])
 
   print(acc[hits2])
-  
+
   return(out)
 })
 
@@ -167,7 +167,7 @@ set_cutoff <- function(blast, cutoff=NULL) {
   x <- blast
   cluster <- TRUE
   cut.seed <- NULL
-  
+
   if(is.null(x$evalue))
     stop("missing evalues")
 
@@ -176,8 +176,8 @@ set_cutoff <- function(blast, cutoff=NULL) {
   ##- Find the point pair with largest diff evalue
   dx <- abs(diff(x$mlog.evalue))
   dx.cut = which.max(dx)
-  
-  
+
+
   if(!is.null(cutoff)) {
     ##- Use suplied cutoff
     gps = rep(2, length(x$mlog.evalue))
@@ -186,7 +186,7 @@ set_cutoff <- function(blast, cutoff=NULL) {
   }
   else {
     if(cluster) {
-      ## avoid clustering with many hits  
+      ## avoid clustering with many hits
       nhit <- length(x$mlog.evalue)
       if(nhit > 2000) {
         cluster <- FALSE
@@ -200,16 +200,16 @@ set_cutoff <- function(blast, cutoff=NULL) {
     }
 
     if(cluster){
-      ##- Partition into groups via clustering 
+      ##- Partition into groups via clustering
       ##  In future could use changepoint::cpt.var
       hc <- hclust( dist(x$mlog.evalue) )
-      if(!is.null(cutoff)) { cut.seed=cutoff } 
+      if(!is.null(cutoff)) { cut.seed=cutoff }
       gps <- cutree(hc, h=cut.seed)
-    } 
+    }
 
     if(!cluster || (length(unique(gps))==1)) {
-      ##- Either we don't want to run hclust or hclust/cutree 
-      ##   has returned only one grp so here we will divide   
+      ##- Either we don't want to run hclust or hclust/cutree
+      ##   has returned only one grp so here we will divide
       ##   into two grps at point of largest diff
       gps = rep(2, length(x$mlog.evalue))
       gps[1:dx.cut]=1
@@ -218,7 +218,7 @@ set_cutoff <- function(blast, cutoff=NULL) {
 
   gp.inds <- na.omit(rle2(gps)$inds)
   gp.nums <- x$mlog.evalue[gp.inds]
-  
+
   cat("  * Possible cutoff values:   ", floor(gp.nums), "\n",
       "           Yielding Nhits:   ", gp.inds, "\n\n")
 
@@ -234,5 +234,5 @@ set_cutoff <- function(blast, cutoff=NULL) {
 
   out <- list(inds=which(inds), gp.inds=gp.inds, grps=gps, cutoff=cutoff)
   return(out)
-  
+
 }

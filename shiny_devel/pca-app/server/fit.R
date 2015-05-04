@@ -4,14 +4,14 @@
 
 find_core <- reactive({
   pdbs <- align()
-  
+
   progress <- shiny::Progress$new(session, min=1, max=5)
   on.exit(progress$close())
-  
+
   progress$set(message = 'Finding core',
                detail = 'Please wait')
   progress$set(value = 3)
-  
+
   core <- core.find(pdbs)
   progress$set(value = 6)
   return(core)
@@ -20,7 +20,7 @@ find_core <- reactive({
 fit <- reactive({
   pdbs <- align()
   core <- find_core()
-  
+
   if(input$fit_type == "full") {
     pdbs$xyz <- pdbfit(pdbs)
   }
@@ -28,7 +28,7 @@ fit <- reactive({
     core <- find_core()
     pdbs$xyz <- pdbfit(pdbs, core)
   }
-  
+
   return(pdbs)
 })
 
@@ -59,14 +59,14 @@ representatives <- reactive({
   unq <- unique(grps)
   all.inds <- seq(1, length(grps))
   rep.inds <- rep(NA, length(unq))
-  
+
   for(i in 1:length(unq)) {
     grp <- unq[i]
     inds <- which(grps==grp)
 
     if(length(inds) > 1) {
       tmp <- rd[inds, inds]
-      
+
       m <- rowMeans(tmp)
       rep.ind <- which.min(m)
       rep.ind <- all.inds[inds][rep.ind]
@@ -116,7 +116,7 @@ make.plot.rmsd.hist <- function() {
 }
 
 output$rmsd_hist <- renderPlot({
-  print(make.plot.rmsd.hist())  
+  print(make.plot.rmsd.hist())
 })
 
 make.plot.rmsd.dendogram <- function() {
@@ -139,14 +139,14 @@ make.plot.rmsf <- function(){
   pdbs <- fit()
   gaps.res <- gap.inspect(pdbs$ali)
   gaps.pos <- gap.inspect(pdbs$xyz)
-  
+
   resno <- pdbs$resno[1, gaps.res$f.inds]
   sse <- pdbs2sse(pdbs, ind=1, rm.gaps=TRUE)
-  
+
   rf <- rmsf(pdbs$xyz[, gaps.pos$f.inds])
   plot4 <- plot.bio3d(rf, resno=resno, sse=sse,
              ylab="RMSF (Å)", xlab="Residue No.")
-  
+
   return(plot4)
 }
 
@@ -161,9 +161,9 @@ output$rmsf_plot <- renderPlot({
 output$representatives <- renderPrint({
   pdbs <- fit()
   reps <- basename.pdb(representatives())
-  
+
   cat(reps, sep="\n")
-    
+
 })
 
 output$print_core <- renderDataTable({
@@ -182,10 +182,10 @@ output$print_core <- renderDataTable({
 
   resid.inds <- which(resno %in% bds[,"end"])
   end <- paste0(resid[resid.inds], bds[, "end"])
-  
+
   out <- data.frame(start, end, length=bds[, "length"])
   return(out)
-  
+
 }, options = list(searching=FALSE, lengthChange=FALSE, paging=FALSE))
 
 output$reference_selector <- renderUI({
@@ -205,13 +205,13 @@ output$rmsd_table <- renderDataTable({
     ind <- grep(input$reference_id, pdbs$id)
   else
     ind <- 1
-  
+
   gaps <- gap.inspect(pdbs$xyz)
   rd <- rmsd(pdbs$xyz[ind, gaps$f.inds],
              pdbs$xyz[, gaps$f.inds],
              fit = TRUE)
   names(rd) <- basename.pdb(pdbs$id)
-  
+
   return(data.frame(ids=names(rd), rmsd=round(rd,1), "cluster"=grps))
 }, options = list(searching=FALSE, lengthChange=FALSE, paging=TRUE))
 

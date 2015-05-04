@@ -25,40 +25,42 @@ output$checkboxgroup_label_ids <- renderUI({
   pdbs <- fit()
   grps <- clustgrps()
   ids <- basename.pdb(pdbs$id)[order(grps)]
-  names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
-  
+#  names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
+  names(ids) <- ids
 
   checkboxInput("toggle_all", "Toggle all", TRUE)
 
   if(input$toggle_all) {
-    checkboxGroupInput("label_ids", "PDB IDs:",
-                       ids, selected=ids, inline=TRUE)
+      lapply(1:input$nclust, function(x) {
+             do.call(checkboxGroupInput,list("label_ids", paste0("Cluster: ", x), ids[grps[order(grps)]==x], selected=ids, inline=TRUE))
+  })
   }
   else {
-    checkboxGroupInput("label_ids", "PDB IDs:",
-                       ids, selected=c(), inline=TRUE)
+    lapply(1:input$nclust, function(x) {
+        do.call(checkboxGroupInput,list("label_ids", paste0("Cluster: ", x), ids[grps[order(grps)]==x], selected=c(), inline=TRUE))
+    })
   }
 })
 
 
 ## normal conformer plot
-  
+
 output$pca_plot1_conf <- renderPlot({
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
   col <- 1
   if(input$nclust>1)
     col <- clustgrps()
-  
+
   op <- par(pty="s")
-    
+
   xax <- as.numeric(input$pcx)
   yax <- as.numeric(input$pcy)
-  
+
   p <- paste0("PC", c(xax, yax),
-              " (", round((pc$L[c(xax, yax)]/sum(pc$L)) * 
+              " (", round((pc$L[c(xax, yax)]/sum(pc$L)) *
                           100, 2), "%)")
-  
+
   plot(pc$z[, xax], pc$z[, yax],
        col="grey50", pch=16,
        xlab=p[1], ylab=p[2],
@@ -66,7 +68,7 @@ output$pca_plot1_conf <- renderPlot({
   points(pc$z[, xax], pc$z[, yax],
          col=col, pch=16,
          cex=input$cex_points*1)
-  
+
   abline(h = 0, col = "gray", lty = 2)
   abline(v = 0, col = "gray", lty = 2)
   if(input$labelplot) {
@@ -86,7 +88,7 @@ output$pca_plot1_conf <- renderPlot({
     }
   }
   invisible(par(op))
-  
+
 })
 output$pca_plot1_scree <- renderPlot({
   invisible(capture.output( pdbs <- fit() ))
@@ -101,37 +103,37 @@ output$pca_plot1_scree <- renderPlot({
 output$pca_plot2_conf <- renderChart2({
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
-  
+
   col <- 1
   if(input$nclust>1)
     col <- clustgrps()
 
   xax <- as.numeric(input$pcx)
   yax <- as.numeric(input$pcy)
-  
+
   p <- paste0("PC", c(xax, yax),
-              " (", round((pc$L[c(xax, yax)]/sum(pc$L)) * 
+              " (", round((pc$L[c(xax, yax)]/sum(pc$L)) *
                           100, 2), "%)")
-  
+
   ## generate a dataframe: pc$z + pdbids + group
   x <- as.data.frame(cbind(pc$z, substr(basename(pdbs$id),1,6), col))
-  colnames(x)[c(xax,yax,dim(pc$z)[2]+1, dim(pc$z)[2]+2)] <- c(p,"id","group")
-  
+  colnames(x)[c(xax,yax,dim(pc$z)[2]+1, dim(pc$z)[2]+2)] <- c(p,"id","cluster")
+
   ## use dPlot() to generate the interactive plot
   p1 <- dPlot(
-    x = p[1], y = p[2], 
-    groups = "id", 
-    data = x, 
+    x = p[1], y = p[2],
+    groups = "id",
+    data = x,
     type = "bubble",
     height=420,
     width=440,
     bounds = list(x=45, y=20, height=360, width=365)
   )
-  
-  p1$colorAxis(type = "addColorAxis", colorSeries = "group",
+
+  p1$colorAxis(type = "addColorAxis", colorSeries = "cluster",
                palette = c("red", "blue", "black") )
   p1$xAxis(type = "addMeasureAxis")
-  return(p1) 
+  return(p1)
 })
 
 output$pca_plot2_scree <- renderChart2({
@@ -168,7 +170,7 @@ output$pdbs_table <- renderDataTable({
   pdbs <- fit()
   grps <- clustgrps()
   anno <- get_annotation(basename.pdb(pdbs$id))
-  
+
   url <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=", substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   anno <- cbind(anno, url)
   anno <- cbind(anno, id=1:nrow(anno))
@@ -184,7 +186,7 @@ output$pdbs_table <- renderDataTable({
 ####################################
 traj2files <- reactive({
   dir <- data_path()
-  
+
   pdbs <- fit()
   gaps <- gap.inspect(pdbs$ali)
   pc <- pca1()
