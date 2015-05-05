@@ -25,20 +25,19 @@ output$checkboxgroup_label_ids <- renderUI({
   pdbs <- fit()
   grps <- clustgrps()
   ids <- basename.pdb(pdbs$id)[order(grps)]
-#  names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
-  names(ids) <- ids
+  names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
 
   checkboxInput("toggle_all", "Toggle all", TRUE)
 
   if(input$toggle_all) {
-      lapply(1:input$nclust, function(x) {
-             do.call(checkboxGroupInput,list("label_ids", paste0("Cluster: ", x), ids[grps[order(grps)]==x], selected=ids, inline=TRUE))
-  })
+    checkboxGroupInput(inputId="label_ids", label="PDB IDs:", choices=ids, selected=ids, inline=TRUE)
+
+#      lapply(1:input$nclust, function(x) {
+#             do.call(checkboxGroupInput,list("label_ids1", paste0("Cluster: ", x), ids[grps[order(grps)]==x], selected=ids, inline=TRUE))
+#  })
   }
   else {
-    lapply(1:input$nclust, function(x) {
-        do.call(checkboxGroupInput,list("label_ids", paste0("Cluster: ", x), ids[grps[order(grps)]==x], selected=c(), inline=TRUE))
-    })
+        checkboxGroupInput(inputId="label_ids", label="PDB IDs:", choices=ids, selected=c(), inline=TRUE)
   }
 })
 
@@ -131,7 +130,7 @@ output$pca_plot2_conf <- renderChart2({
   )
 
   p1$colorAxis(type = "addColorAxis", colorSeries = "cluster",
-               palette = c("red", "blue", "black") )
+               palette = if(input$nclust==1) rep('black',3) else replace(palette(), which(palette() == 'green3'), 'green')[1:input$nclust] )
   p1$xAxis(type = "addMeasureAxis")
   return(p1)
 })
@@ -174,10 +173,18 @@ output$pdbs_table <- renderDataTable({
   url <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=", substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   anno <- cbind(anno, url)
   anno <- cbind(anno, id=1:nrow(anno))
-  anno$cluster <- grps
+  #anno$cluster <- grps
+  anno$cluster <- paste0(grps, "&nbsp;<span style=\"color:", replace(palette(),
+    which(palette()=='green3'), 'green')[grps], "; font-size:large\">&#x25CF;</span>")
 
   return(anno[, c("id", "url", "cluster", "compound", "source", "ligandId", "chainLength")])
-},  escape=FALSE)
+}, escape=FALSE#, options=list(rowCallback = I(
+#    'function(row,data) {
+#    if (data[0]==1)
+#        $("td", row).css("background","#ffa62f");
+#    }')
+#        )
+)
 
 
 
