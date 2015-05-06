@@ -1,3 +1,6 @@
+library(rgl)
+library(shinyRGL)
+
 tabPanel("4. PCA", icon=icon("arrow-right"),
   tags$style(type="text/css", "body {padding-top: 80px;}"),
   fluidRow(
@@ -16,7 +19,8 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
                      inline=TRUE),
         conditionalPanel(
              condition = "input.plot_type == 'normal'",
-             checkboxInput("show_options", "More options", value=FALSE)
+             checkboxInput("show_options", "More options", value=FALSE),
+             checkboxInput('show_trj', 'Show PC Trajectory', value=FALSE)
         )
         )
 
@@ -46,13 +50,13 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
   ),
 
   fluidRow(
-    column(3,
-           wellPanel(
-             h4("Trajectory download"),
-             helpText("Trajectories of the first 5 principal components can be downloaded and visualized in your favorite visualization program (e.g. PyMOL or VMD)."),
-             downloadButton('pctrajZIP', "Download")
-             )
-           ),
+#    column(3,
+#           wellPanel(
+#             h4("Trajectory download"),
+#             helpText("Trajectories of the first 5 principal components can be downloaded and visualized in your favorite visualization program (e.g. PyMOL or VMD)."),
+#             downloadButton('pctrajZIP', "Download")
+#             )
+#           ),
 
   conditionalPanel(
     condition = "input.show_options == true && input.plot_type == 'normal'",
@@ -93,6 +97,30 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
     )
   ),
 
+
+  conditionalPanel(
+    condition='input.show_trj == true',
+    column(3,
+           wellPanel(
+                     h4('PC Trajectory Viewing Options'),
+                     selectInput('viewPC', 'Choose Principal Component:', choices=c(1:10)),
+                     radioButtons('viewColor', label='Structure color',
+                                  choices=list('By Frame (blue->gray->red)'='default',
+                                               'Gray'='gray'),
+                                  selected='default'),
+                     radioButtons('viewBGcolor', label='Background color',
+                                  choices=list('Black'='black', 'White'='white'),
+                                  selected='white'),
+                     br(),
+                     actionButton('viewUpdate', label='Refresh'),
+                     downloadButton('pctraj', label='Download PDB Trajectory')
+                     )
+           ),
+    column(4,
+            webGLOutput('pcaWebGL')
+          )
+
+  ),
   fluidRow(
     column(12,
       wellPanel(

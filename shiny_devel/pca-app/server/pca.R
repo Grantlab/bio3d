@@ -1,6 +1,8 @@
 ####################
 ##-- PCA
 ####################
+library(rgl)
+library(shinyRGL)
 
 pca1 <- reactive({
   pdbs <- fit()
@@ -164,6 +166,18 @@ output$pca_plot2_scree <- renderChart2({
   return(r1)
 })
 
+output$pcaWebGL  <- renderWebGL({
+    #ptm <- proc.time()
+    pc <- pca1()
+    trj <- mktrj(pc, pc=as.numeric(input$viewPC))
+    class(trj)  <- 'xyz'
+    col <- switch(input$viewColor,
+                  'default'=colorRampPalette(c('blue', 'gray', 'red'))(nrow(trj)),
+                  'gray'=rep('gray', nrow(trj)) )
+    view.xyz(trj, bg.col=input$viewBGcolor, col=col, add=T)
+    #proc.time()
+    #cat(proc.time() - ptm)
+})
 
 output$pdbs_table <- renderDataTable({
   pdbs <- fit()
@@ -191,26 +205,54 @@ output$pdbs_table <- renderDataTable({
 ####################################
 ####     Download functions     ####
 ####################################
-traj2files <- reactive({
-  dir <- data_path()
+#traj2files <- reactive({
+#  dir <- data_path()
+#
+#  pdbs <- fit()
+#  gaps <- gap.inspect(pdbs$ali)
+#  pc <- pca1()
+#  files <- rep(NA, 5)
+#  for(i in 1:5) {
+#    f <- paste0(dir, "/", "pc", i, ".pdb")
+#    trj <- mktrj(pc, pc=i, file=f,
+#                 resno=pdbs$resno[1, gaps$f.inds],
+#                 resid=pdbs$resid[1, gaps$f.inds],
+#                 chain=pdbs$chain[1, gaps$f.inds])
+#    files[i] <- f
+#  }
+#  return(files)
+#})
+#
+#output$pctrajZIP = downloadHandler(
+#  filename = 'pc-traj.zip',
+#  content = function(file) {
+#    zip(file, files=traj2files(), flags = "-9Xj")
+#})
 
-  pdbs <- fit()
-  gaps <- gap.inspect(pdbs$ali)
-  pc <- pca1()
-  files <- rep(NA, 5)
-  for(i in 1:5) {
-    f <- paste0(dir, "/", "pc", i, ".pdb")
-    trj <- mktrj(pc, pc=i, file=f,
-                 resno=pdbs$resno[1, gaps$f.inds],
-                 resid=pdbs$resid[1, gaps$f.inds],
-                 chain=pdbs$chain[1, gaps$f.inds])
-    files[i] <- f
-  }
-  return(files)
+trj2pdb  <- reactive({
+    dir <- data_path()
+    pdbs <- fit()
+    gaps <- gap.inspect(pdbs$ali)
+    pc <- pca1()
+    fname  <- paste0(dir, '/', 'pc', input$viewPC, '.pdb')
+    mktrj.pca(pca=pc, pc=as.numeric(input$viewPC), file=fname,
+          resno=pdbs$resno[1, gaps$f.inds],
+          resid=pdbs$resid[1, gaps$f.inds],
+          chain=pdbs$chain[1, gaps$f.inds])
+    return(fname)
 })
 
-output$pctrajZIP = downloadHandler(
-  filename = 'pc-traj.zip',
-  content = function(file) {
-    zip(file, files=traj2files(), flags = "-9Xj")
-})
+output$pctraj = downloadHandler(
+    filename=function() {
+        paste0('pc', input$viewPC, '.pdb')
+    },
+    content=function(file) {
+        # Avoid possibility of not having write permission on server
+        src  <- normalizePath('pc-traj.pdb')
+        owd <- setwd(tempdir())
+        on.exit(setwd(owd))
+        file.copy(src, 'pc-traj.pdb')
+        file.rename(trj2pdb(), file)
+    }
+
+)

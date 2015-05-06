@@ -32,7 +32,7 @@ output$blast_plot1 <- renderPlot({
   grps <- hits$grps
   z <- blast$score
 
-  plot(z, xlab="", ylab="Bitscore", col=grps)
+  plot(z, xlab="", ylab="Bitscore", col=sapply(grps, function(x) if(x==1) 'red' else if(x==2) 'black'))
   abline(v=gp, col="gray70", lty=3)
 
   pos <- c(rep(3, length(gp))[-length(gp)],2)
