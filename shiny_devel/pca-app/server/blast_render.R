@@ -95,10 +95,12 @@ output$blast_plot2 <- renderChart2({
 
 ### Table of annotated BLAST results
 output$blast_table <- renderDataTable({
-  message("rendinger blast data table")
+  message("rendering blast data table")
   if(input$input_type != "multipdb") {
     blast <- run_blast()
     hits <- filter_hits()
+    grps <- set_cutoff(blast, cutoff=input$cutoff)$grps
+    print(grps)
 
     ## provide additional 5 non-checked table rows
     checked.inds <- which(hits$hits)
@@ -114,7 +116,6 @@ output$blast_table <- renderDataTable({
 
     hits <- blast[show.inds,, drop=FALSE]
     acc <- hits$acc
-
     anno <- get_annotation(acc)
 
     checked <- rep("CHECKED", length(acc))
@@ -129,15 +130,20 @@ output$blast_table <- renderDataTable({
     acc <- anno$acc
 
     hits <- NULL
+    grps <- NULL
     hits$acc <- acc
     hits$score <- rep(0, length(acc))
     checked <- rep("CHECKED", length(acc))
   }
 
-
   anno$url <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=", substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   anno$score <- hits$score
-  anno$id <- 1:nrow(anno)
+  if(exists('grps') && !is.null(grps)) {
+    anno$id <- paste0(1:nrow(anno), "&nbsp;<span style=\"color:",
+        sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' } ), "; font-size:large\">&#x25CF;</span>")
+  } else {
+    anno$id <- 1:nrow(anno)
+  }
 
 
   checkbox <- paste0("<input type=\"checkbox\" name=\"pdb_ids\" value=\"", hits$acc, "\"",  checked, ">")

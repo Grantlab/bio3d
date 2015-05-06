@@ -140,7 +140,9 @@ filter_hits <- reactive({
   input$input_type
 
   blast <- run_blast()
-  cutoff <- set_cutoff(blast, cutoff=NULL)$cutoff
+  cutoff <- set_cutoff(blast, cutoff=NULL)
+  grps <- cutoff$grps
+  cutoff <- cutoff$cutoff
 
   hits <- blast$score > cutoff
   acc <- blast$acc[hits]
@@ -154,7 +156,7 @@ filter_hits <- reactive({
   ## hits: logical vector of limited hits
   ## acc: character vector of PDB ids
   out <- list(hits=hits2, hits_all=hits,
-              acc=acc[hits2], acc_all=acc[hits])
+              acc=acc[hits2], acc_all=acc[hits], grps=grps)
 
   print(acc[hits2])
 
