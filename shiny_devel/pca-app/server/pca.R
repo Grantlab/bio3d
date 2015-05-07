@@ -61,13 +61,20 @@ output$pca_plot1_conf <- renderPlot({
   p <- paste0("PC", c(xax, yax),
               " (", round((pc$L[c(xax, yax)]/sum(pc$L)) *
                           100, 2), "%)")
+  require(gplots)
+  if(input$nclust < 9) {
+    cluster.colors <- col2hex(palette())[col]
+  } else {
+      cluster.colors <- col2hex(rainbow(input$nclust))[col]
+  }
+  detach('package:gplots', unload=T)
 
   plot(pc$z[, xax], pc$z[, yax],
        col="grey50", pch=16,
        xlab=p[1], ylab=p[2],
        cex=input$cex_points*1.5)
   points(pc$z[, xax], pc$z[, yax],
-         col=col, pch=16,
+         col=cluster.colors, pch=16,
          cex=input$cex_points*1)
 
   abline(h = 0, col = "gray", lty = 2)
@@ -120,6 +127,15 @@ output$pca_plot2_conf <- renderChart2({
   x <- as.data.frame(cbind(pc$z, substr(basename(pdbs$id),1,6), col))
   colnames(x)[c(xax,yax,dim(pc$z)[2]+1, dim(pc$z)[2]+2)] <- c(p,"id","cluster")
 
+  ## use rainbow palette for more than 8 clusters
+  require(gplots)
+  if(as.numeric(input$nclust) < 9) {
+      cluster.colors <- col2hex(palette())
+  } else {
+      cluster.colors <- col2hex(rainbow(input$nclust))
+  }
+  detach('package:gplots', unload=T)
+
   ## use dPlot() to generate the interactive plot
   p1 <- dPlot(
     x = p[1], y = p[2],
@@ -132,7 +148,7 @@ output$pca_plot2_conf <- renderChart2({
   )
 
   p1$colorAxis(type = "addColorAxis", colorSeries = "cluster",
-               palette = if(input$nclust==1) rep('black',3) else replace(palette(), which(palette() == 'green3'), 'green')[1:input$nclust] )
+               palette = if(input$nclust==1) rep('black',3) else cluster.colors[1:input$nclust] )
   p1$xAxis(type = "addMeasureAxis")
   return(p1)
 })
@@ -188,8 +204,15 @@ output$pdbs_table <- renderDataTable({
   anno <- cbind(anno, url)
   anno <- cbind(anno, id=1:nrow(anno))
   #anno$cluster <- grps
-  anno$cluster <- paste0(grps, "&nbsp;<span style=\"color:", replace(palette(),
-    which(palette()=='green3'), 'green')[grps], "; font-size:large\">&#x25CF;</span>")
+  require(gplots)
+  if(input$nclust < 9) {
+      cluster.colors <- col2hex(palette())
+  } else {
+      cluster.colors <- col2hex(rainbow(input$nclust))
+  }
+  detach('package:gplots', unload=T)
+  anno$cluster <- paste0(grps, "&nbsp;<span style=\"color:",
+    cluster.colors[grps], "; font-size:large\">&#x25CF;</span>")
 
   return(anno[, c("id", "url", "cluster", "compound", "source", "ligandId", "chainLength")])
 }, escape=FALSE#, options=list(rowCallback = I(
