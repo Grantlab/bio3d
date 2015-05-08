@@ -12,6 +12,10 @@ install: true
   
 script: Rscript -e "source('new_funs/check.bio3d.R'); check.bio3d('ver_devel/bio3d', check_dir='.', cleanup=FALSE)" && ! grep -q -e ERROR -e WARNING -e NOTE bio3d.Rcheck/00check.log
 
+after_success:
+   - Rscript -e 'devtools::install_github("jimhester/covr")'
+   - Rscript -e 'library(covr); coveralls()'
+
 notifications:
   email:
     recipients:
