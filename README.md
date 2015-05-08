@@ -46,4 +46,5 @@ You are welcome to:
 * Compose a friendly e-mail to: bjgrant@umich.edu
 
 [![Travis-CI Build Status](https://travis-ci.org/Grantlab/bio3d.png?branch=master)](https://travis-ci.org/Grantlab/bio3d)
+[![Coverage Status](https://coveralls.io/repos/Grantlab/bio3d/badge.svg)](https://coveralls.io/r/Grantlab/bio3d)
 
