@@ -277,13 +277,13 @@ view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
   }
 }
 
-view.3dalign <- function(x, type=1, col=NULL, add=FALSE, ...) {
+view.pdbs <- function(x, type=1, col=NULL, add=FALSE, ...) {
   ##-- Wrapper to visualize() for multiple structures
   ##
   ## ToDo.   Combine/merge with view.xyz() below and then simply 
-  ##          call view,xyz() within view.3dalign() view.nma() 
+  ##          call view.xyz() within view.pdbs() view.nma() 
   ##          view.pca(), view.cna() etc.
-  if(!inherits(x, "3dalign"))
-    stop("'x', must be an object of class '3dalign'")
+  if(!inherits(x, "pdbs"))
+    stop("'x', must be an object of class 'pdbs' as obtained from read.fasta.pdb()")
   view.xyz(x$xyz, type = type, col = col, add = add, ...)
 }
