@@ -21,7 +21,7 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
         pairs <- apply(from, 1, function(x) list(from=x[1], to=x[2]))
      } else {
         # all other nodes as sink
-        to <- setdiff(seq_along(igraph::V(cna)), from)
+        to <- setdiff(seq_along(igraph::V(cna$network)), from)
      }
   } 
   if(is.null(pairs)) {
