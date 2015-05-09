@@ -1,6 +1,3 @@
-library(rgl)
-library(shinyRGL)
-
 tabPanel("4. PCA", icon=icon("arrow-right"),
   tags$style(type="text/css", "body {padding-top: 80px;}"),
   fluidRow(
@@ -17,10 +14,10 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
                    c("Normal" = "normal",
                      "Interactive" = "fancy"),
                      inline=TRUE),
+        checkboxInput('show_trj', 'Show PC Trajectory', value=FALSE),
         conditionalPanel(
              condition = "input.plot_type == 'normal'",
-             checkboxInput("show_options", "More options", value=FALSE),
-             checkboxInput('show_trj', 'Show PC Trajectory', value=FALSE)
+             checkboxInput("show_options", "More options", value=FALSE)
         )
         )
 
@@ -105,14 +102,13 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
                      h4('PC Trajectory Viewing Options'),
                      selectInput('viewPC', 'Choose Principal Component:', choices=c(1:10)),
                      radioButtons('viewColor', label='Structure color',
-                                  choices=list('By Frame (blue->gray->red)'='default',
-                                               'Gray'='gray'),
-                                  selected='default'),
+                                  choices=list('Magnitude'='mag', 'By Frame (blue->gray->red)'='default'),
+                                  selected='mag'),
                      radioButtons('viewBGcolor', label='Background color',
                                   choices=list('Black'='black', 'White'='white'),
                                   selected='white'),
                      br(),
-                     actionButton('viewUpdate', label='Refresh'),
+                     actionButton('viewUpdate', label='Refresh', icon=icon('undo')),
                      downloadButton('pctraj', label='Download PDB Trajectory')
                      )
            ),

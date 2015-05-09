@@ -1,8 +1,6 @@
 ####################
 ##-- PCA
 ####################
-library(rgl)
-library(shinyRGL)
 
 pca1 <- reactive({
   pdbs <- fit()
@@ -61,21 +59,19 @@ output$pca_plot1_conf <- renderPlot({
   p <- paste0("PC", c(xax, yax),
               " (", round((pc$L[c(xax, yax)]/sum(pc$L)) *
                           100, 2), "%)")
-  require(gplots)
   if(input$nclust < 9) {
     cluster.colors <- col2hex(palette())[col]
   } else {
       cluster.colors <- col2hex(rainbow(input$nclust))[col]
   }
-  detach('package:gplots', unload=T)
 
+  #plot(pc$z[, xax], pc$z[, yax],
+  #     col="grey50", pch=16,
+  #     xlab=p[1], ylab=p[2],
+  #     cex=input$cex_points*1.5)
   plot(pc$z[, xax], pc$z[, yax],
-       col="grey50", pch=16,
-       xlab=p[1], ylab=p[2],
-       cex=input$cex_points*1.5)
-  points(pc$z[, xax], pc$z[, yax],
-         col=cluster.colors, pch=16,
-         cex=input$cex_points*1)
+         bg=cluster.colors, pch=21,
+         cex=input$cex_points, col='grey50')
 
   abline(h = 0, col = "gray", lty = 2)
   abline(v = 0, col = "gray", lty = 2)
@@ -128,13 +124,11 @@ output$pca_plot2_conf <- renderChart2({
   colnames(x)[c(xax,yax,dim(pc$z)[2]+1, dim(pc$z)[2]+2)] <- c(p,"id","cluster")
 
   ## use rainbow palette for more than 8 clusters
-  require(gplots)
   if(as.numeric(input$nclust) < 9) {
       cluster.colors <- col2hex(palette())
   } else {
       cluster.colors <- col2hex(rainbow(input$nclust))
   }
-  detach('package:gplots', unload=T)
 
   ## use dPlot() to generate the interactive plot
   p1 <- dPlot(
@@ -188,11 +182,23 @@ output$pcaWebGL  <- renderWebGL({
     trj <- mktrj(pc, pc=as.numeric(input$viewPC))
     class(trj)  <- 'xyz'
     col <- switch(input$viewColor,
-                  'default'=colorRampPalette(c('blue', 'gray', 'red'))(nrow(trj)),
-                  'gray'=rep('gray', nrow(trj)) )
+                  'mag'=vec2color(1:nrow(trj)), # vec2color(rmsf(m)), #!! col=col, type=2
+                  'default'=colorRampPalette(c('blue', 'gray', 'red'))(nrow(trj))
+                 )
     view.xyz(trj, bg.col=input$viewBGcolor, col=col, add=T)
     #proc.time()
     #cat(proc.time() - ptm)
+})
+
+observeEvent(input$viewUpdate, {
+    updateSelectInput(session, 'viewPC', label='Choose Principal Component:',
+        choices=c(1:10))
+    updateRadioButtons(session, 'viewColor', label='Structure color',
+        choices=list('Magnitude'='mag', 'By Frame (blue->gray->red)'='default'),
+        selected='mag')
+    updateRadioButtons(session, 'viewBGcolor', label='Background color',
+        choices=list('Black'='black', 'White'='white'),
+        selected='white')
 })
 
 output$pdbs_table <- renderDataTable({
@@ -200,21 +206,19 @@ output$pdbs_table <- renderDataTable({
   grps <- clustgrps()
   anno <- get_annotation(basename.pdb(pdbs$id))
 
-  url <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=", substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
-  anno <- cbind(anno, url)
+  pdbId <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=", substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
+  anno <- cbind(anno, pdbId)
   anno <- cbind(anno, id=1:nrow(anno))
-  #anno$cluster <- grps
-  require(gplots)
   if(input$nclust < 9) {
       cluster.colors <- col2hex(palette())
   } else {
       cluster.colors <- col2hex(rainbow(input$nclust))
   }
-  detach('package:gplots', unload=T)
-  anno$cluster <- paste0(grps, "&nbsp;<span style=\"color:",
-    cluster.colors[grps], "; font-size:large\">&#x25CF;</span>")
+  anno$cluster <- paste0("<span style=\"color:",
+    cluster.colors[grps], "; font-size:large\">&#x25CF;</span>&nbsp;",
+    grps)
 
-  return(anno[, c("id", "url", "cluster", "compound", "source", "ligandId", "chainLength")])
+  return(anno[, c("id", "pdbId", "cluster", "compound", "source", "ligandId", "chainLength")])
 }, escape=FALSE#, options=list(rowCallback = I(
 #    'function(row,data) {
 #    if (data[0]==1)

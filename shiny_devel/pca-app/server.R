@@ -11,6 +11,8 @@ library(bio3d)
 library(lattice)
 library(shiny)
 library(rCharts)
+library(rgl)
+library(shinyRGL)
 library(reshape2)
 library(maptools)
 
@@ -24,8 +26,7 @@ shinyServer(function(input, output, session) {
   source("server/blast_render.R", local=TRUE)$value
   source("server/align.R", local=TRUE)$value
   source("server/fit.R", local=TRUE)$value
-
   source("server/pca.R", local=TRUE)$value
   source("server/nma.R", local=TRUE)$value
-  
+
 })

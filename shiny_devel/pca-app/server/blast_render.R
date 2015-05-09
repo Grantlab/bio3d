@@ -136,20 +136,25 @@ output$blast_table <- renderDataTable({
     checked <- rep("CHECKED", length(acc))
   }
 
-  anno$url <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=", substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
-  anno$score <- hits$score
   if(exists('grps') && !is.null(grps)) {
-    anno$id <- paste0(1:nrow(anno), "&nbsp;<span style=\"color:",
-        sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' } ), "; font-size:large\">&#x25CF;</span>")
+    anno$pdbId <- paste0(
+      "<span style=\"color:",
+      sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' }),
+      "; font-size:large\">&#x25CF;</span>",
+      "&nbsp;<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
+      substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>"
+    )
   } else {
-    anno$id <- 1:nrow(anno)
+      paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
+        substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   }
-
+  anno$score <- hits$score
+  anno$id <- 1:nrow(anno)
 
   checkbox <- paste0("<input type=\"checkbox\" name=\"pdb_ids\" value=\"", hits$acc, "\"",  checked, ">")
   anno$check <- checkbox
 
-  return(anno[, c("id", "check", "url", "compound", "source", "ligandId", "chainLength", "score")])
+  return(anno[, c("id", "check", "pdbId", "compound", "source", "ligandId", "chainLength", "score")])
 }, escape=FALSE, options = list(lengthChange=FALSE, paging=FALSE))
 
   #,
@@ -160,7 +165,6 @@ output$blast_table <- renderDataTable({
   #                          table.rows('.selected').indexes().toArray());
   #    });
   #  }")
-
 
 
 ## checkbox
