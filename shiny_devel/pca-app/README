@@ -2,7 +2,11 @@
 # Requirements for Shiny PCA (server edition) 
 
 ## R-packages
--- rCharts, RMySQL
+-- rCharts, RMySQL, rgl, shinyRGL, maptools, reshape2
+
+### For server edition of shinyRGL: https://github.com/trestletech/shinyRGL
+-- install_github("shinyRGL", "trestletech")
+-- install_github("rgl", "trestletech", "js-class")
 
 ## Other programs
 -- MySQL database (with table "pdb_annotation")
@@ -34,3 +38,5 @@ ALTER TABLE `pdb_annotation`
 
 ALTER TABLE `pdb_annotation`
   MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary Key',AUTO_INCREMENT=1;
+
+

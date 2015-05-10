@@ -1,8 +1,8 @@
-library(shiny)
-library(rCharts)
+options(rgl.useNULL=TRUE)
 
-## Could open some saved results as an RData file here for first time display 
-## Calculations would then only run once single SUBMIT button was pressed.
+library(shiny)
+library(shinyRGL)
+library(rCharts)
 
 shinyUI(
    

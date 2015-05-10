@@ -1,3 +1,5 @@
+options(rgl.useNULL=TRUE)
+
 ## load configuration
 source("config.r")
 
