@@ -221,23 +221,50 @@ output$pdbsWebGL  <- renderWebGL({
   xyz <- pdbs$xyz
   n <- nrow(xyz)
   grps <- cutree1()
-    
+  core <- find_core()
+  dims <- dim(pdbs$ali)
+  gaps <- gap.inspect(pdbs$ali)
+
+  corecol <- function() {
+    col <- matrix(1, nrow=dims[1], ncol=dims[2])
+    col[, core$atom] <- 2
+    return(col)
+  }
+
+  gapscol <- function() {
+    col <- matrix(1, nrow=dims[1], ncol=dims[2])
+    if(length(gaps$t.inds)>0)
+      col[, gaps$t.inds] <- 2
+    return(col)
+  }
+  
   col <- switch(input$viewColor1,
                 'struct' = vec2color(1:n),
-                'cluster' = grps
+                'cluster' = grps,
+                'core' = corecol(),
+                'gaps' = gapscol()
                 )
-  view.xyz(xyz, bg.col=input$viewBGcolor1, col=col, add=TRUE)
   
+  typ <- switch(input$viewColor1,
+                'struct' = 1,
+                'cluster' = 1,
+                'core' = 2,
+                'gaps' = 2)
+
+  view.xyz(xyz, bg.col=input$viewBGcolor1, col=col, type=typ, add=TRUE)
 })
 
 observeEvent(input$viewUpdate1, {
-  updateRadioButtons(session, 'viewColor', label='Structure color',
+  updateRadioButtons(session, 'viewColor1', label='Structure color',
                      choices=list(
                        'By cluster ID'='cluster',
-                       'By structure ID'='struct'
+                       'By structure ID'='struct',
+                       'Invariant core'='core',
+                       'Gap regions (gaps)'='gaps'
                        ),
                      selected='cluster')
-  updateRadioButtons(session, 'viewBGcolor', label='Background color',
+  
+  updateRadioButtons(session, 'viewBGcolor1', label='Background color',
                      choices=list('Black'='black', 'White'='white'),
                      selected='white')
 })

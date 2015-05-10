@@ -76,7 +76,8 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
              )
            ),
 
-
+         
+         br(),
          fluidRow(
            column(4,
                   wellPanel(
@@ -86,7 +87,9 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     radioButtons('viewColor1', label='Structure colors',
                                  choices=list(
                                    'By cluster ID'='cluster',
-                                   'By structure ID'='struct'
+                                   'By structure ID'='struct',
+                                   'Invariant core'='core',
+                                   'Gap regions'='gaps'
                                    ),
                                  selected='cluster'),
                     
@@ -129,7 +132,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
            column(4,
                   wellPanel(
                     h4("Download"),
-                    downloadButton('pdbsZIP', "Download Aligned PDBs"),
+                    #downloadButton('pdbsZIP', "Download Aligned PDBs"),
                     hr(),
                     downloadButton('rmsdZIP', "Download RMSD matrix"),
                     hr()
