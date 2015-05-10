@@ -77,6 +77,37 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
            ),
 
 
+         fluidRow(
+           column(4,
+                  wellPanel(
+                    h4('PDBs Viewing Options'),
+                    checkboxInput('show_pdbs', 'Show PDBs', value=FALSE),
+                    
+                    radioButtons('viewColor1', label='Structure colors',
+                                 choices=list(
+                                   'By cluster ID'='cluster',
+                                   'By structure ID'='struct'
+                                   ),
+                                 selected='cluster'),
+                    
+                    radioButtons('viewBGcolor1', label='Background color',
+                                 choices=list('Black'='black', 'White'='white'),
+                                 selected='white'),
+                    br(),
+                    actionButton('viewUpdate1', label='Refresh', icon=icon('undo')),
+                    downloadButton('pdbsZIP', "Download Aligned PDBs")
+                    )
+                  ),
+           
+           column(6,
+                  conditionalPanel(
+                    condition='input.show_pdbs == true',
+                    webGLOutput('pdbsWebGL')
+                    )
+                  )
+           ),
+         
+
          hr(),
 
          fluidRow(

@@ -216,6 +216,33 @@ output$rmsd_table <- renderDataTable({
 }, options = list(searching=FALSE, lengthChange=FALSE, paging=TRUE))
 
 
+output$pdbsWebGL  <- renderWebGL({
+  pdbs <- fit()
+  xyz <- pdbs$xyz
+  n <- nrow(xyz)
+  grps <- cutree1()
+    
+  col <- switch(input$viewColor1,
+                'struct' = vec2color(1:n),
+                'cluster' = grps
+                )
+  view.xyz(xyz, bg.col=input$viewBGcolor1, col=col, add=TRUE)
+  
+})
+
+observeEvent(input$viewUpdate1, {
+  updateRadioButtons(session, 'viewColor', label='Structure color',
+                     choices=list(
+                       'By cluster ID'='cluster',
+                       'By structure ID'='struct'
+                       ),
+                     selected='cluster')
+  updateRadioButtons(session, 'viewBGcolor', label='Background color',
+                     choices=list('Black'='black', 'White'='white'),
+                     selected='white')
+})
+
+
 
 ####################################
 ####     Download functions     ####
