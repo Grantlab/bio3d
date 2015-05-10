@@ -69,7 +69,7 @@ output$pca_plot1_conf <- renderPlot({
   #     col="grey50", pch=16,
   #     xlab=p[1], ylab=p[2],
   #     cex=input$cex_points*1.5)
-  plot(pc$z[, xax], pc$z[, yax],
+  plot(pc$z[, xax], pc$z[, yax], xlab=p[1], ylab=p[2],
          bg=cluster.colors, pch=21,
          cex=input$cex_points, col='grey50')
 
@@ -179,13 +179,23 @@ output$pca_plot2_scree <- renderChart2({
 output$pcaWebGL  <- renderWebGL({
     #ptm <- proc.time()
     pc <- pca1()
-    trj <- mktrj(pc, pc=as.numeric(input$viewPC))
+    trj <- mktrj(pc, pc=as.numeric(input$viewPC), rock=FALSE)
+    n <- nrow(trj)
+    
+    amalcol <- function(x) {
+      col <- rep("grey50", length(x))
+      col[1] <- "blue"
+      col[length(col)] <- "red"
+      return(col)
+    }
+    
     class(trj)  <- 'xyz'
     col <- switch(input$viewColor,
-                  'mag'=vec2color(1:nrow(trj)), # vec2color(rmsf(m)), #!! col=col, type=2
-                  'default'=colorRampPalette(c('blue', 'gray', 'red'))(nrow(trj))
+                  'mag' = vec2color(1:n), # vec2color(rmsf(m)), #!! col=col, type=2
+                  'amalgan' = amalcol(1:n), 
+                  'default' = colorRampPalette(c('blue', 'gray', 'red'))(nrow(trj))
                  )
-    view.xyz(trj, bg.col=input$viewBGcolor, col=col, add=T)
+    view.xyz(trj, bg.col=input$viewBGcolor, col=col, add=TRUE)
     #proc.time()
     #cat(proc.time() - ptm)
 })
@@ -194,7 +204,11 @@ observeEvent(input$viewUpdate, {
     updateSelectInput(session, 'viewPC', label='Choose Principal Component:',
         choices=c(1:10))
     updateRadioButtons(session, 'viewColor', label='Structure color',
-        choices=list('Magnitude'='mag', 'By Frame (blue->gray->red)'='default'),
+        choices=list(
+          'Amalgan' = 'amalgan',
+          'Magnitude'='mag',
+          'By Frame (blue->gray->red)'='default'
+          ),
         selected='mag')
     updateRadioButtons(session, 'viewBGcolor', label='Background color',
         choices=list('Black'='black', 'White'='white'),

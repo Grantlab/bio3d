@@ -10,6 +10,10 @@ source("server/utils.R")
 
 ## load packages
 library(bio3d)
+#library(devtools)
+#load_all("~/workspace/bio3d/ver_devel/bio3d")
+
+
 library(lattice)
 library(shiny)
 library(rCharts)

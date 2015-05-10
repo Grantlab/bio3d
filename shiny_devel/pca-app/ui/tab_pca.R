@@ -1,5 +1,37 @@
 tabPanel("4. PCA", icon=icon("arrow-right"),
   tags$style(type="text/css", "body {padding-top: 80px;}"),
+
+  fluidRow(
+    column(4,
+           wellPanel(
+             h4('PC Trajectory Viewing Options'),
+             checkboxInput('show_trj', 'Show PC Trajectory', value=FALSE),
+             
+             selectInput('viewPC', 'Choose Principal Component:', choices=c(1:10)),
+             radioButtons('viewColor', label='Structure color',
+                          choices=list(
+                            'Amalgan' = 'amalgan',
+                            'Magnitude'='mag',
+                            'By Frame (blue->gray->red)'='default'
+                            ),
+                          selected='mag'),
+             radioButtons('viewBGcolor', label='Background color',
+                          choices=list('Black'='black', 'White'='white'),
+                          selected='white'),
+             br(),
+             actionButton('viewUpdate', label='Refresh', icon=icon('undo')),
+             downloadButton('pctraj', label='Download PDB Trajectory')
+             )
+           ),
+    
+    column(6,
+           conditionalPanel(
+             condition='input.show_trj == true',
+             webGLOutput('pcaWebGL')
+             )
+           )
+  ),
+         
   fluidRow(
     column(4,
       wellPanel(
@@ -14,11 +46,11 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
                    c("Normal" = "normal",
                      "Interactive" = "fancy"),
                      inline=TRUE),
-        checkboxInput('show_trj', 'Show PC Trajectory', value=FALSE),
+        
         conditionalPanel(
-             condition = "input.plot_type == 'normal'",
-             checkboxInput("show_options", "More options", value=FALSE)
-        )
+          condition = "input.plot_type == 'normal'",
+          checkboxInput("show_options", "More options", value=FALSE)
+          )
         )
 
     ),
@@ -95,28 +127,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
   ),
 
 
-  conditionalPanel(
-    condition='input.show_trj == true',
-    column(3,
-           wellPanel(
-                     h4('PC Trajectory Viewing Options'),
-                     selectInput('viewPC', 'Choose Principal Component:', choices=c(1:10)),
-                     radioButtons('viewColor', label='Structure color',
-                                  choices=list('Magnitude'='mag', 'By Frame (blue->gray->red)'='default'),
-                                  selected='mag'),
-                     radioButtons('viewBGcolor', label='Background color',
-                                  choices=list('Black'='black', 'White'='white'),
-                                  selected='white'),
-                     br(),
-                     actionButton('viewUpdate', label='Refresh', icon=icon('undo')),
-                     downloadButton('pctraj', label='Download PDB Trajectory')
-                     )
-           ),
-    column(4,
-            webGLOutput('pcaWebGL')
-          )
-
-  ),
+ 
   fluidRow(
     column(12,
       wellPanel(

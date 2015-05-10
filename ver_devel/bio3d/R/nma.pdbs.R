@@ -4,7 +4,7 @@
 
 "nma.pdbs" <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL,
                        rm.gaps=TRUE, varweight=FALSE, 
-                       outpath = NULL, ncore=1, ...) {
+                       outpath = NULL, ncore=1, progress = NULL, ...) {
  
   
   if(!inherits(pdbs, "pdbs"))
@@ -16,6 +16,9 @@
   if(!is.null(outpath))
     dir.create(outpath, FALSE)
 
+  ## server edition of NMA: run on 1 core
+  ncore <- 1
+  
   ## Parallelized by parallel package
   ncore <- setup.ncore(ncore, bigmem = TRUE)
   prev.warn <- getOption("warn")
@@ -229,7 +232,8 @@
                        pdbs, xyz, gaps.res,
                        mass, am.args, nm.keep, temp, keep, wts,
                        rm.gaps, full, 
-                       pfc.fun, ff, ff.args, outpath, pb, ncore, env=environment())
+                       pfc.fun, ff, ff.args, outpath, pb, ncore,
+                       env=environment(), progress=progress)
   close(pb)
   
   ##### Collect data #####
@@ -304,8 +308,9 @@
 .calcAlnModes <- function(i, pdbs, xyz, gaps.res,
                           mass, am.args, nm.keep, temp, keep, wts,
                           rm.gaps, full, 
-                          pfc.fun, ff, ff.args, outpath, pb, ncore, env=NULL) {
-
+                          pfc.fun, ff, ff.args, outpath, pb, ncore,
+                          env=NULL, progress=NULL) {
+  
   ## Set indices for this structure only
   f.inds <- NULL
   f.inds$res <- which(gaps.res$bin[i,]==0)
@@ -437,6 +442,10 @@
     j <- i
   setTxtProgressBar(pb, j)
 
+  if(!is.null(progress)) {
+    progress$inc(1/length(pdbs$id))
+  }
+  
   L <- modes$L[seq(7, keep+6)]
   if(!full) {
     remove(modes)

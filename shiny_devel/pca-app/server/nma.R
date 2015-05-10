@@ -2,16 +2,15 @@
 ## NMA
 ###########
 nma2 <- reactive({
-  progress <- shiny::Progress$new(session, min=1, max=5)
+  pdbs <- align()
+    
+  progress <- shiny::Progress$new()
   on.exit(progress$close())
   
   progress$set(message = 'Calculating normal modes',
-               detail = 'Please wait')
-  progress$set(value = 2)
-  
-  pdbs <- align()
-  modes <- nma(pdbs, fit=TRUE, rm.gaps=input$rm.gaps)
-  progress$set(value = 5)
+               detail = 'Please wait',
+               value = 0)
+  modes <- nma(pdbs, fit=TRUE, rm.gaps=input$rm.gaps, progress=progress)
   return(modes)
 })
 
