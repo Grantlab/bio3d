@@ -1,7 +1,7 @@
 #####################
 ##-- Superimpose and RMSD stuff
 ####################
-
+init_show_pdbs <- TRUE
 find_core <- reactive({
   pdbs <- align()
 
@@ -28,7 +28,10 @@ fit <- reactive({
     core <- find_core()
     pdbs$xyz <- pdbfit(pdbs, core)
   }
-
+  if(init_show_pdbs) {
+      updateCheckboxInput(session, 'show_pdbs', 'Show PDBs', value=TRUE)
+      init_show_pdbs <<- FALSE
+  }
   return(pdbs)
 })
 
@@ -237,14 +240,14 @@ output$pdbsWebGL  <- renderWebGL({
       col[, gaps$t.inds] <- 2
     return(col)
   }
-  
+
   col <- switch(input$viewColor1,
                 'struct' = vec2color(1:n),
                 'cluster' = grps,
                 'core' = corecol(),
                 'gaps' = gapscol()
                 )
-  
+
   typ <- switch(input$viewColor1,
                 'struct' = 1,
                 'cluster' = 1,
@@ -260,10 +263,10 @@ observeEvent(input$viewUpdate1, {
                        'By cluster ID'='cluster',
                        'By structure ID'='struct',
                        'Invariant core'='core',
-                       'Gap regions (gaps)'='gaps'
+                       'Gap regions'='gaps'
                        ),
                      selected='cluster')
-  
+
   updateRadioButtons(session, 'viewBGcolor1', label='Background color',
                      choices=list('Black'='black', 'White'='white'),
                      selected='white')

@@ -1,4 +1,4 @@
-tabPanel("1. BLAST", icon=icon("home"),
+tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
 
          ## experimental load and save results (from previous runs)

@@ -6,7 +6,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
            wellPanel(
              h4('PC Trajectory Viewing Options'),
              checkboxInput('show_trj', 'Show PC Trajectory', value=FALSE),
-             
+
              selectInput('viewPC', 'Choose Principal Component:', choices=c(1:10)),
              radioButtons('viewColor', label='Structure color',
                           choices=list(
@@ -23,7 +23,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
              downloadButton('pctraj', label='Download PDB Trajectory')
              )
            ),
-    
+
     column(6,
            conditionalPanel(
              condition='input.show_trj == true',
@@ -31,7 +31,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
              )
            )
   ),
-         
+
   fluidRow(
     column(4,
       wellPanel(
@@ -46,7 +46,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
                    c("Normal" = "normal",
                      "Interactive" = "fancy"),
                      inline=TRUE),
-        
+
         conditionalPanel(
           condition = "input.plot_type == 'normal'",
           checkboxInput("show_options", "More options", value=FALSE)
@@ -127,7 +127,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
   ),
 
 
- 
+
   fluidRow(
     column(12,
       wellPanel(

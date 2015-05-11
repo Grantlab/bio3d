@@ -76,15 +76,15 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
              )
            ),
 
-         
+
          br(),
          fluidRow(
            column(4,
                   wellPanel(
                     h4('PDBs Viewing Options'),
                     checkboxInput('show_pdbs', 'Show PDBs', value=FALSE),
-                    
-                    radioButtons('viewColor1', label='Structure colors',
+
+                    radioButtons('viewColor1', label='Structure color',
                                  choices=list(
                                    'By cluster ID'='cluster',
                                    'By structure ID'='struct',
@@ -92,7 +92,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                                    'Gap regions'='gaps'
                                    ),
                                  selected='cluster'),
-                    
+
                     radioButtons('viewBGcolor1', label='Background color',
                                  choices=list('Black'='black', 'White'='white'),
                                  selected='white'),
@@ -101,7 +101,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     downloadButton('pdbsZIP', "Download Aligned PDBs")
                     )
                   ),
-           
+
            column(6,
                   conditionalPanel(
                     condition='input.show_pdbs == true',
@@ -109,7 +109,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     )
                   )
            ),
-         
+
 
          hr(),
 
