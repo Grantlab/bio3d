@@ -132,11 +132,12 @@ output$blast_table <- renderDataTable({
     hits <- NULL
     grps <- NULL
     hits$acc <- acc
+    
     hits$score <- rep(0, length(acc))
     checked <- rep("CHECKED", length(acc))
   }
 
-  if(exists('grps') && !is.null(grps)) {
+  if(!is.null(grps) & !is.null(grps)) {
     anno$pdbId <- paste0(
       "<span style=\"color:",
       sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' }),
@@ -145,7 +146,7 @@ output$blast_table <- renderDataTable({
       substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>"
     )
   } else {
-      paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
+      anno$pdbId <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
         substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   }
   anno$score <- hits$score

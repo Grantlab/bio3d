@@ -180,6 +180,34 @@ output$pca_plot2_scree <- renderChart2({
   return(r1)
 })
 
+make.plot.loadings <- function(){
+  pdbs <- fit()
+  pc <- pca1()
+  gaps.res <- gap.inspect(pdbs$ali)
+  gaps.pos <- gap.inspect(pdbs$xyz)
+
+  resno <- pdbs$resno[1, gaps.res$f.inds]
+  sse <- pdbs2sse(pdbs, ind=1, rm.gaps=TRUE)
+  rf <- rmsf(pdbs$xyz[, gaps.pos$f.inds])
+
+  i <- as.numeric(input$loadings_pc)
+  plot4 <- plot.bio3d(pc$au[, i], resno=resno, sse=sse,
+                      ylab=paste0("PC-", i, " (Å)"), xlab="Residue No.")
+
+  if(input$toggle_rmsf1) {
+    par(new=TRUE)
+    plot5 <- plot.bio3d(rf, resno=resno, sse=sse, axes=FALSE, col=2, type="l", xlab="", ylab="")
+    axis(4, col=2)
+  }
+
+  
+  return(plot4)
+}
+
+output$loadings_plot <- renderPlot({
+  print(make.plot.loadings())
+})
+
 output$pcaWebGL  <- renderWebGL({
     #ptm <- proc.time()
     pc <- pca1()
@@ -196,10 +224,17 @@ output$pcaWebGL  <- renderWebGL({
     class(trj)  <- 'xyz'
     col <- switch(input$viewColor,
                   'mag' = vec2color(1:n), # vec2color(rmsf(m)), #!! col=col, type=2
-                  'amalgan' = amalcol(1:n), 
+                  'amalgam' = amalcol(1:n), 
                   'default' = colorRampPalette(c('blue', 'gray', 'red'))(nrow(trj))
                  )
-    view.xyz(trj, bg.col=input$viewBGcolor, col=col, add=TRUE)
+
+    typ <- switch(input$viewColor,
+                  'mag' = 1,
+                  'amalgam' = 1, 
+                  'default' = 1
+                 )
+    
+    view.xyz(trj, bg.col=input$viewBGcolor, col=col, add=TRUE, type=typ)
     #proc.time()
     #cat(proc.time() - ptm)
 })
@@ -209,11 +244,11 @@ observeEvent(input$viewUpdate, {
         choices=c(1:10))
     updateRadioButtons(session, 'viewColor', label='Structure color',
         choices=list(
-          'Amalgan' = 'amalgan',
+          'Amalgam' = 'amalgam',
           'Magnitude'='mag',
           'By Frame (blue->gray->red)'='default'
           ),
-        selected='mag')
+        selected='amalgam')
     updateRadioButtons(session, 'viewBGcolor', label='Background color',
         choices=list('Black'='black', 'White'='white'),
         selected='white')

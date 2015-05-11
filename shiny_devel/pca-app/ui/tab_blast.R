@@ -11,7 +11,18 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
 
          fluidRow(
-           column(6,
+           column(4,
+                  wellPanel(
+                    h3("Multiple structure analysis with Bio3D"),
+                    p("Bio3D@web provides a rapid and rigorous tool for comparative structure analysis of protein families."),
+                    p("Start by entering a PDB code of interest to perform structure similarity search. Proceed to sequence/structre alignment and structure analysis by navigating through the above tabs."),
+                    img(src="geostas_250x182.png",
+                        width=250, style="display: block; margin-left: auto; margin-right: auto;")
+                    )
+                  ),
+
+           
+           column(4,
                   wellPanel(
                     h4("A) Input query structure or sequence"),
                     hr(),
@@ -24,7 +35,8 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
                     conditionalPanel(
                       condition = "input.input_type == 'multipdb'",
-                      tags$textarea(id="pdb_codes", rows=4, cols=40, "")
+                      tags$textarea(id="pdb_codes", rows=4, cols=40, ""),
+                      helpText("Seperate PDB ids with ','")
                       ),
 
                     conditionalPanel(
@@ -49,7 +61,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                   ),
 
 
-           column(6,
+           column(4,
                   wellPanel(
 
                     conditionalPanel(

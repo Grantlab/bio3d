@@ -102,7 +102,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     )
                   ),
 
-           column(6,
+           column(8,
                   conditionalPanel(
                     condition='input.show_pdbs == true',
                     webGLOutput('pdbsWebGL')

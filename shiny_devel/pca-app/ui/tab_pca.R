@@ -10,11 +10,11 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
              selectInput('viewPC', 'Choose Principal Component:', choices=c(1:10)),
              radioButtons('viewColor', label='Structure color',
                           choices=list(
-                            'Amalgan' = 'amalgan',
+                            'Amalgam' = 'amalgam',
                             'Magnitude'='mag',
                             'By Frame (blue->gray->red)'='default'
                             ),
-                          selected='mag'),
+                          selected='amalgam'),
              radioButtons('viewBGcolor', label='Background color',
                           choices=list('Black'='black', 'White'='white'),
                           selected='white'),
@@ -24,7 +24,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
              )
            ),
 
-    column(6,
+    column(8,
            conditionalPanel(
              condition='input.show_trj == true',
              webGLOutput('pcaWebGL')
@@ -126,7 +126,19 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
     )
   ),
 
-
+  fluidRow(
+    column(4,
+           wellPanel(
+             h4('Residue loadings'),
+             selectInput('loadings_pc', 'Choose Principal Component:', choices=c(1:10)),
+             checkboxInput("toggle_rmsf1", "Show RMSF", FALSE)
+             )
+           ),
+    
+    column(8,
+           plotOutput("loadings_plot")
+           )
+  ),
 
   fluidRow(
     column(12,
