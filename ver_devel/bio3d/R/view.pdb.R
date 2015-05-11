@@ -13,25 +13,25 @@ view <- function(...)
 view.pdb <- function(pdb, mode="default", atom.sel=NULL, col=NULL, cna=NULL,
                      elety.custom = atom.index, ...) {
 
-   ##-- Wrapper for visualize() to view larger PDBs the way Barry 
+   ##-- Wrapper for visualize() to view larger PDBs the way Barry
    ##    likes to see them most often.
-   ##      To Do - Check validity on "atom.sel" input 
+   ##      To Do - Check validity on "atom.sel" input
    ##            - Check validity of "col" input and add "keyword" color types
    ##            - Add input more args, e.g. lwd=NULL, lwd.ca=3, lwd.nca=1 etc.
    ##         - Add cna code.
    ##
-   ##     N.B. In general this is still a quick and dirty prototype with 
-   ##          no consideration of efficiency and little error checking. 
+   ##     N.B. In general this is still a quick and dirty prototype with
+   ##          no consideration of efficiency and little error checking.
    ##
 
 
    mode.options <- c("default", "calpha", "back", "protein", "all")
    mode <- match.arg(mode, mode.options)
 
-   ##- Check on 'col' input 
+   ##- Check on 'col' input
    ##   This section of code could be improved
-   ##   'col' could be a vector of colors or a "keyword" 
-   ##    e.g. "sse", "index", "atom", etc. ) 
+   ##   'col' could be a vector of colors or a "keyword"
+   ##    e.g. "sse", "index", "atom", etc. )
    if(is.null(col)) {
     if(mode=="all") {
       ## Color by index
@@ -52,7 +52,7 @@ view.pdb <- function(pdb, mode="default", atom.sel=NULL, col=NULL, cna=NULL,
 
    if(!all(are.symb(pdb$atom$elesy)))
      pdb$atom$elesy <- atom2ele(pdb$atom$elesy, elety.custom)
-   
+
    if(!is.null(atom.sel)) {
     pdb <- trim.pdb(pdb, atom.sel)
     col <- col[atom.sel$atom]
@@ -63,8 +63,8 @@ view.pdb <- function(pdb, mode="default", atom.sel=NULL, col=NULL, cna=NULL,
      cat("Computing connectivity from coordinates...\n")
      connectivity(pdb) <- connectivity(pdb)
    }
-   
-   if(mode=="default") { 
+
+   if(mode=="default") {
       ## Calpha trace plus sidechains and ligand
       ca.sel   <- atom.select(pdb, "calpha", verbose = FALSE)
       prot.sel <- atom.select(pdb, "protein", verbose = FALSE)
@@ -72,16 +72,16 @@ view.pdb <- function(pdb, mode="default", atom.sel=NULL, col=NULL, cna=NULL,
       lig.sel  <- atom.select(pdb, "ligand", verbose = FALSE)
       side.sel <- combine.select(prot.sel, back.sel, operator="NOT", verbose = FALSE)
       side.sel <- combine.select(side.sel, ca.sel, operator="OR", verbose = FALSE)
-      
+
       ## Ligand
-      if(length(lig.sel$atom) != 0){        
+      if(length(lig.sel$atom) != 0){
           visualize(trim.pdb(pdb, lig.sel), con=FALSE, type="s", centre=FALSE)
       }
 
       ## Sidechain
       if(length(side.sel$atom) != 0) {
         visualize(trim.pdb(pdb, side.sel), con = FALSE, add = TRUE,
-                  type = "l", col = "gray", lwd = 1, centre=FALSE)        
+                  type = "l", col = "gray", lwd = 1, centre=FALSE)
       }
 
       ## Calpha
@@ -94,7 +94,7 @@ view.pdb <- function(pdb, mode="default", atom.sel=NULL, col=NULL, cna=NULL,
         visualize(ca.pdb, con=FALSE, col=col, add = TRUE,
                   type = "l", lwd=3, centre=FALSE, ...)
       }
-    } 
+    }
 
 
    if(mode=="calpha") {
@@ -109,7 +109,7 @@ view.pdb <- function(pdb, mode="default", atom.sel=NULL, col=NULL, cna=NULL,
       visualize(ca.pdb, con=FALSE, col=col, type = "l", lwd=3, centre=FALSE, ...)
     }
    }
-   
+
 
    if(mode=="protein") {
     ## Just protein
@@ -124,14 +124,14 @@ view.pdb <- function(pdb, mode="default", atom.sel=NULL, col=NULL, cna=NULL,
       }
    }
 
-   
+
    if(mode=="back") {
     back.sel <- atom.select(pdb,"back", verbose=FALSE)
     back.pdb <- trim.pdb(pdb, back.sel)
 #      connectivity(back.pdb) <- connectivity(back.pdb) ## <--- Using back.pdb here gives strange result!!!
 
-      col <- col[back.sel$atom] 
- 
+      col <- col[back.sel$atom]
+
     if(length(back.pdb$xyz)!=0) {
       visualize(back.pdb, con=FALSE, col=col, centre=FALSE, ...)
     }
@@ -150,7 +150,7 @@ view.pdb <- function(pdb, mode="default", atom.sel=NULL, col=NULL, cna=NULL,
       }
 
     }
-   #if(!is.null(cna)) { 
+   #if(!is.null(cna)) {
    #    visualize.cna(cna, pdb, ...) ## need to think more about this
    #}
 }
@@ -167,27 +167,27 @@ view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
   ##
   ## ToDo. - Incorporate best bits of view.3dalign()
   ##       - Ask user if more than 300 frames are to be drawn
-  ##       - Generally speed up - no need to re-calculate connectivity 
+  ##       - Generally speed up - no need to re-calculate connectivity
   ##          for xyz input (but required for 3dalign input)
   if(!inherits(x, "xyz"))
     stop("'x' must be an object of class 'xyz'")
-  
+
   as.xyz <- function(x, ...) {
     #     x <- matrix(x,nrow=3)
     x <- matrix(x[,!is.na(x[1,])], nrow=1)
     class(x) <- "xyz"
     return(x)
   }
-  
+
   nstru <- nrow(x)
   npos  <- ncol(x)/3
-  
+
   if(nstru > 300) {
     warning( paste("Input 'x' has",nstru, "frames. Only drawing first 300") )
     x <- x[1:300,]
     nstru <- 300
   }
-  
+
   xyz.list <- split(x, 1:nrow(x))
   xyz.list <- lapply(xyz.list, matrix, nrow = 3)
   are.na.list <- lapply(xyz.list, function(x) return(is.na(x[1,])))
@@ -201,17 +201,17 @@ view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
   } else {
     con.list <- replicate(nstru, calpha.connectivity(xyz.list[[1]]), simplify = FALSE)
   }
-  
-  ## -- The 'type' argument is for trying to sort out 'col' color specification 
-  ##     for different purposes.  Note. 'col' input could be: 
-  ##      1. a) single element vector to be applied to all structures, 
-  ##         b) a multiple element vector with a color per structure, 
+
+  ## -- The 'type' argument is for trying to sort out 'col' color specification
+  ##     for different purposes.  Note. 'col' input could be:
+  ##      1. a) single element vector to be applied to all structures,
+  ##         b) a multiple element vector with a color per structure,
   ##      2. a) a vector with a color per atom, or
   ##         b) a matrix with a column per atom position and row per structure
-  ## 
-  ##     This is specified by 'type=1' or 'type=2' 
-  ##     Eventually we want to be a bit smarter and remove the need for the 'type' argument 
-  
+  ##
+  ##     This is specified by 'type=1' or 'type=2'
+  ##     Eventually we want to be a bit smarter and remove the need for the 'type' argument
+
 
   ## Sort out color options with the aid of type argument
   if(type==1) {
@@ -260,12 +260,12 @@ view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
           ## again unclear what the user might want here...
         } else {
           col.list <- split(col, 1:nstru)
-          col.list <- mapply(function(col, M) return(col[!M]), col.list, are.na.list)
+          col.list <- mapply(function(col, M) return(col[!M]), col.list, are.na.list, SIMPLIFY=FALSE)
         }
       }
     }
   }
-  
+
   elesy <- rep("C", length(xyz.list[[1]])/3)
   visualize(xyz.list[[1]], elesy = elesy, con = con.list[[1]],
             col = col.list[[1]], add = add, centre=FALSE, ...)
@@ -280,8 +280,8 @@ view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
 view.pdbs <- function(x, type=1, col=NULL, add=FALSE, ...) {
   ##-- Wrapper to visualize() for multiple structures
   ##
-  ## ToDo.   Combine/merge with view.xyz() below and then simply 
-  ##          call view.xyz() within view.pdbs() view.nma() 
+  ## ToDo.   Combine/merge with view.xyz() below and then simply
+  ##          call view.xyz() within view.pdbs() view.nma()
   ##          view.pca(), view.cna() etc.
   if(!inherits(x, "pdbs"))
     stop("'x', must be an object of class 'pdbs' as obtained from read.fasta.pdb()")
