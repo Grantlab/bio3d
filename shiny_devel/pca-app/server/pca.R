@@ -200,7 +200,7 @@ make.plot.loadings <- function(){
     axis(4, col=2)
   }
 
-  
+
   return(plot4)
 }
 
@@ -210,30 +210,36 @@ output$loadings_plot <- renderPlot({
 
 output$pcaWebGL  <- renderWebGL({
     #ptm <- proc.time()
+    #pdbs <- fit()
     pc <- pca1()
     trj <- mktrj(pc, pc=as.numeric(input$viewPC), rock=FALSE)
     n <- nrow(trj)
-    
+
     amalcol <- function(x) {
       col <- rep("grey50", length(x))
       col[1] <- "blue"
       col[length(col)] <- "red"
       return(col)
     }
-    
+
+    magcol <- function() {
+        rf <- rmsf(trj)
+        return(t(replicate(n, vec2color(rf, c('blue', 'red')),simplify=TRUE)))
+    }
+
     class(trj)  <- 'xyz'
     col <- switch(input$viewColor,
-                  'mag' = vec2color(1:n), # vec2color(rmsf(m)), #!! col=col, type=2
-                  'amalgam' = amalcol(1:n), 
-                  'default' = colorRampPalette(c('blue', 'gray', 'red'))(nrow(trj))
+                  'mag' = magcol(), # vec2color(rmsf(m)), #!! col=col, type=2
+                  'amalgam' = amalcol(1:n),
+                  'default' = colorRampPalette(c('blue', 'gray', 'red'))(n)
                  )
 
     typ <- switch(input$viewColor,
-                  'mag' = 1,
-                  'amalgam' = 1, 
+                  'mag' = 2,
+                  'amalgam' = 1,
                   'default' = 1
                  )
-    
+
     view.xyz(trj, bg.col=input$viewBGcolor, col=col, add=TRUE, type=typ)
     #proc.time()
     #cat(proc.time() - ptm)
