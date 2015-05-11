@@ -17,7 +17,7 @@ view(...)
 
 \method{view}{xyz}(x, type = 1, col = NULL, add = FALSE, ...)
 
-\method{view}{3dalign}(x, type = 1, col = NULL, add = FALSE, ...)
+\method{view}{pdbs}(x, type = 1, col = NULL, add = FALSE, ...)
 
 vec2color(vec, pal = c("blue", "green", "red"), n = 30)
 }
@@ -35,18 +35,20 @@ vec2color(vec, pal = c("blue", "green", "red"), n = 30)
   \item{x}{ a numeric coordinate matrix or 3dalign object of pdbs. }
   \item{type}{ A single element numeric vector with values of 1 or 2
   that specifies the Color type rendering for multi-structure viewing 
-  - see examples.}
+  - see examples. ToDo: Add 3rd option for rmsf coloring also. }
 }
 \details{
     The view.pdb and view.xyz functions are wrappers for the visualize function.
 Basically, they attempt to view larger PDBs in a useful way (i.e. the way we like to see them most often). 
 To Do
- - Write this man page
+ - make consistent mode and type options across functions. 
+ - Write this man page. 
+ - Add details of the extensive customization that is possible with visualize.
  - Check validity of "atom.sel" input 
  - Check validity of "col" input and add "keyword" for color types
  - Add more input args, e.g. lwd=NULL, lwd.ca=3, lwd.nca=1 etc.
  - Add cna code.
- - Merge view.3dalign and view.xyz codes
+ - Merge view.pdbs and view.xyz codes so only one is needed
 
 N.B. In general this is still a quick and dirty prototype with 
 no consideration of efficiency and little error checking. 
