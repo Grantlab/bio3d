@@ -96,8 +96,8 @@ view.pdb2 <- function(pdb, type="default", atom.sel=NULL, col=NULL, cna=NULL, ..
       prot.sel <- atom.select(pdb, "protein", verbose = FALSE)
       back.sel <- atom.select(pdb, "back", verbose = FALSE)
       lig.sel  <- atom.select(pdb, "ligand", verbose = FALSE)
-		side.sel <- combine.sel(prot.sel, back.sel, op="NOT", verbose = FALSE)
-		side.sel <- combine.sel(side.sel, ca.sel, op="OR", verbose = FALSE)
+		side.sel <- combine.select(prot.sel, back.sel, operator="NOT", verbose = FALSE)
+		side.sel <- combine.select(side.sel, ca.sel, operator="OR", verbose = FALSE)
   		
   		## Bonds
   		if(!is.null(pdb$con)){

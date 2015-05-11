@@ -61,8 +61,9 @@
 
       ncore = setup.ncore(ncore)
 
-      op = par(no.readonly = TRUE)
-      on.exit(par(op))
+#      op = par(no.readonly = TRUE)
+      op = par()$new
+      on.exit(par(new=op))
  
       pairs <- pairwise(length(inds.signif))
 
