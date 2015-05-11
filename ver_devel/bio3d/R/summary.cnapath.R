@@ -1,20 +1,35 @@
-summary.cnapath <- function(object, ..., pdb = NULL, label = NULL, col = NULL, 
-                            plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE) {
+summary.cnapath <- function(object, ..., pdb = NULL, label = NULL, col = NULL,
+                            plot = FALSE, concise = FALSE, cutoff = 0.1, 
+                            normalize = TRUE, weight = FALSE) {
    
    pa <- list(object, ...)
    if(!all(sapply(pa, inherits, "cnapath")))
-      stop("Input pa is not a 'cnapath' object")
+      stop("Input should be object(s) of the 'cnapath' class")
    
    if(is.null(label)) label = 1:length(pa)
    if(is.null(col)) col = 1:length(pa)
 
    out <- list()
    
-   # read node numbers on paths
-   y <- lapply(pa, function(x) unlist(x$path))
-   
    # store node degeneracy 
-   node.deg <- lapply(y, table)
+   if(weight) {
+      node.deg <- lapply(pa, function(x) {
+         wt <- exp(-x$dist)
+         uniq.nodes <- sort(unique(unlist(x$path)))
+         tbl <- rep(0, length(uniq.nodes))
+         names(tbl) <- uniq.nodes
+         for(i in 1:length(x$path)) {
+            tbl[as.character(x$path[[i]])] <-  
+                tbl[as.character(x$path[[i]])] + wt[i]
+         }
+         tbl
+      } )
+   } else {
+      # read node numbers on paths
+      y <- lapply(pa, function(x) unlist(x$path))
+      node.deg <- lapply(y, table)
+   }
+
    if(normalize) {
       node.deg <- lapply(node.deg, function(x) x/max(x))
    }

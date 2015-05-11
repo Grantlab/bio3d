@@ -3,6 +3,8 @@
                         mag=1,      # magnification factor
                         step=0.125, # step size
                         file=NULL,  # output pdb file
+                        pdb=NULL,   # reference pdb object
+                        rock=TRUE,
                         ... ) {     # args for write.pdb
 
   ## make a trjactory of atomic displacments along a given pc
@@ -12,7 +14,16 @@
 
   if(is.null(file))
     file <- paste("pc_", pc, ".pdb", sep="")
-  
+ 
+  if(!is.null(pdb)) {
+     if(is.pdbs(pdb)) 
+        pdb <- pdbs2pdb(pdb, inds=1, rm.gaps=TRUE)[[1]] 
+     if(!is.pdb(pdb)) {
+        warning("Unrecognized 'pdb' object. Ignored")
+        pdb <- NULL
+     }
+  }
+ 
   nstep <- c(seq(step, to=mag, by=step))
   zcoor  <- cbind(sqrt(pca$L[pc])) %*% nstep
 
@@ -24,11 +35,18 @@
   plus  <- sapply(c(zcoor), scor, u=pca$U[,pc], m=pca$mean)
   minus <- sapply(c(-zcoor), scor, u=pca$U[,pc], m=pca$mean)
 
-  coor  <- t(cbind(pca$mean,
-                   plus, plus[,rev(1:ncol(plus))],
+  if(rock) {
+    coor  <- cbind(pca$mean,
+                   plus,  plus[,rev(1:ncol(plus))],
                    pca$mean,
-                   minus, minus[,rev(1:ncol(minus))]))
-
-  write.pdb(xyz=coor, file=file, ...)
+                   minus, minus[,rev(1:ncol(minus))])
+  }
+  else {
+    coor  <- cbind(plus[,rev(1:ncol(plus))],
+                   pca$mean,
+                   minus)
+  }
+  coor <- as.xyz(t(coor))
+  write.pdb(xyz=coor, file=file, pdb=pdb, ...)
   invisible(coor)
 }
