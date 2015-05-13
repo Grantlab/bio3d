@@ -1,5 +1,5 @@
 `pdbsplit` <-
-function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE, mk4=FALSE, ncore=1, progress=progress, ...) {
+function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE, mk4=FALSE, ncore=1, progress=NULL, ...) {
   
   toread <- file.exists(pdb.files)
   toread[substr(pdb.files, 1, 4) == "http"] <- TRUE
@@ -134,7 +134,8 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
     }
     if(!verbose)
       setTxtProgressBar(pb, i)
-    
+
+    gc()
     return( list(out=out, unused=unused, skipped=skipped) )
   }
   

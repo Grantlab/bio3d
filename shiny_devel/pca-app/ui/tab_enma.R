@@ -1,7 +1,41 @@
 tabPanel("5. NMA", icon=icon("arrow-right"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
+         
 
+  fluidRow(
+    column(4,
+           wellPanel(
+             h4('NM Trajectory Viewing Options'),
+             checkboxInput('show_trj2', 'Show NM Trajectory', value=FALSE),
+             
+             selectInput('viewMode', 'Choose Mode:', choices=c(1:10)),
+             uiOutput('struct_dropdown'),
+             
+             radioButtons('viewColor2', label='Structure color',
+                          choices=list(
+                            'Amalgam' = 'amalgam',
+                            'Magnitude'='mag',
+                            'By Frame (blue->gray->red)'='default'
+                            ),
+                          selected='amalgam'),
+             radioButtons('viewBGcolor2', label='Background color',
+                          choices=list('Black'='black', 'White'='white'),
+                          selected='white'),
+             br(),
+             #actionButton('viewUpdate2', label='Refresh', icon=icon('undo')),
+             downloadButton('nmtraj', label='Download PDB Trajectory')
+             )
+           ),
 
+    column(8,
+           conditionalPanel(
+             condition='input.show_trj2 == true',
+             webGLOutput('nmaWebGL')
+             )
+           )
+    ),
+
+         
          br(),br(),
          h3("Fluctuations"),
          hr(),
@@ -46,14 +80,14 @@ tabPanel("5. NMA", icon=icon("arrow-right"),
              column(3,
                     wellPanel(
                       h4("Clustering"),
-                      checkboxInput('cluster', 'Cluster', value=FALSE),
+                      checkboxInput('cluster', 'Color by clustering', value=FALSE),
                       radioButtons("group_by", "group by",
                                    c("RMSD" = "rmsd",
-                                     "RMSIP" = "rmsip",
-                                     "bhat" = "bhat"),
+                                     "RMSIP" = "rmsip"),
+                                     ##"bhat" = "bhat"),
                                    inline=TRUE),
                       sliderInput("nclusts", "N clusters:",
-                                  min = 1, max = 10, value = 1)
+                                  min = 1, max = 10, value = 3)
                       )
                     )
              ) 

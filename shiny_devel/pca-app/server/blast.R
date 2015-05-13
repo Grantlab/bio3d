@@ -18,6 +18,27 @@ output$resetable_pdb_input <- renderUI({
   textInput("pdbid", label="Enter RCSB PDB code/ID:", value = "4Q21") #)
 })
 
+### Input PDB object ### 
+get_pdb <- reactive({
+  anno <- input_pdb_annotation()
+  if(is.vector(input$chainId)) {
+    ind <- which(anno$chainId==input$chainId[1])
+    anno <- anno[ind,]
+  }
+  else {
+    anno <- anno[1,]
+  }
+
+  id <- anno$acc
+  message(id)
+  raw.files <- get.pdb(substr(id, 1,4), path=configuration$pdbdir$rawfiles, gzip=TRUE)
+  pdbfile <- pdbsplit(pdb.files=raw.files, ids=id, overwrite=FALSE,
+                      path=configuration$pdbdir$splitfiles, progress=NULL)
+  
+  pdb <- read.pdb(pdbfile)
+  return(pdb)
+})
+
 ### Input sequence ###
 get_sequence <- reactive({
 

@@ -1,4 +1,4 @@
-tabPanel("HELP", icon=icon("wheelchair"),
+tabPanel("HELP", icon=icon("question"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
 
          

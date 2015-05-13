@@ -77,6 +77,7 @@
            rtn[k] <- put.files[k]
            warning(paste(put.files[k], " exists. Skipping download"))
          }
+         gc()
        }
     }
     

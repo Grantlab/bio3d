@@ -16,6 +16,8 @@ shinyUI(
              source("ui/tab_fit.R", local=TRUE)$value,
              source("ui/tab_pca.R", local=TRUE)$value,
              source("ui/tab_enma.R", local=TRUE)$value,
+             source("ui/tab_pca-vs-nma.R", local=TRUE)$value,
+             
              source("ui/tab_help.R", local=TRUE)$value,
 
              includeCSS("www/styles.css")

@@ -1,3 +1,7 @@
+output$pdbWebGL  <- renderWebGL({
+  pdb <- get_pdb()
+  view.pdb(pdb)
+})
 
 output$blast_plot <- renderUI({
   blast <- run_blast()
@@ -26,7 +30,6 @@ output$blast_plot <- renderUI({
 output$blast_plot1 <- renderPlot({
   blast <- run_blast()
   hits <- set_cutoff(blast, input$cutoff)
-
   cutoff <- hits$cutoff
   gp <- hits$gp.inds
   grps <- hits$grps
@@ -34,11 +37,13 @@ output$blast_plot1 <- renderPlot({
 
   plot(z, xlab="", ylab="Bitscore", col=sapply(grps, function(x) if(x==1) 'red' else if(x==2) 'black'))
   abline(v=gp, col="gray70", lty=3)
+  abline(h=cutoff, col="gray70", lty=3)
 
   pos <- c(rep(3, length(gp))[-length(gp)],2)
   text(gp, z[gp],
-       labels=paste0("Nhit=", gp, ", y=", round(z[gp])),
+       labels=paste0("Nhit=", gp, ", cutoff=", round(z[gp])),
        col="black", pos=3, cex=1)
+
 })
 
 

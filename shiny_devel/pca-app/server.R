@@ -34,5 +34,7 @@ shinyServer(function(input, output, session) {
   source("server/fit.R", local=TRUE)$value
   source("server/pca.R", local=TRUE)$value
   source("server/nma.R", local=TRUE)$value
+  source("server/pca-vs-nma.R", local=TRUE)$value
+  
 
 })

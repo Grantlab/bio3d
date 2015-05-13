@@ -13,11 +13,23 @@ tabPanel("1. SEARCH", icon=icon("home"),
          fluidRow(
            column(4,
                   wellPanel(
-                    h3("Multiple structure analysis with Bio3D"),
-                    p("Bio3D@web provides a rapid and rigorous tool for comparative structure analysis of protein families."),
-                    p("Start by entering a PDB code of interest to perform structure similarity search. Proceed to sequence/structre alignment and structure analysis by navigating through the above tabs."),
-                    img(src="geostas_250x182.png",
-                        width=250, style="display: block; margin-left: auto; margin-right: auto;")
+                    
+                    conditionalPanel(
+                      condition = "input.show_pdb == true",
+                      h3("Input PDB"),
+                      webGLOutput('pdbWebGL')
+                      ),
+                    
+                    conditionalPanel(
+                      condition = "input.show_pdb == false",
+                      h3("Multiple structure analysis with Bio3D"),
+                      p("Bio3D@web provides a rapid and rigorous tool for comparative structure analysis of protein families."),
+                      p("Start by entering a PDB code of interest to perform structure similarity search. Proceed to sequence/structre alignment and structure analysis by navigating through the above tabs."),
+                      img(src="geostas_250x182.png",
+                          width=250, style="display: block; margin-left: auto; margin-right: auto;")
+                      )
+             
+                  
                     )
                   ),
 
@@ -25,13 +37,11 @@ tabPanel("1. SEARCH", icon=icon("home"),
            column(4,
                   wellPanel(
                     h4("A) Input query structure or sequence"),
-                    hr(),
-
                     radioButtons("input_type", "",
                                  c("Enter PDB code" = "pdb",
                                    "Paste a sequence" = "sequence",
                                    "Enter mutliple PDB codes" = "multipdb"),
-                                 inline=TRUE),
+                                 inline=FALSE),
 
                     conditionalPanel(
                       condition = "input.input_type == 'multipdb'",
@@ -55,12 +65,13 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       uiOutput("pdb_chains"),
                       verbatimTextOutput("input_pdb_summary"),
 
-                      actionButton("reset_pdb_input", "Reset PDB input", icon=icon("undo"))
+                      actionButton("reset_pdb_input", "Reset PDB input", icon=icon("undo")),
+                      checkboxInput('show_pdb', 'View Input PDB', value=FALSE)
                       )
                     )
                   ),
 
-
+         
            column(4,
                   wellPanel(
 
@@ -69,7 +80,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
                       h4("B) Hit selection for further analysis"),
 
-                      tags$hr(),
+                      ##tags$hr(),
                       uiOutput("resetable_cutoff_slider"),
                       uiOutput("hits_slider"),
                       actionButton("reset_cutoff", "Reset cutoff", icon=icon("undo"))

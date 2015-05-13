@@ -1,5 +1,5 @@
 `pdbaln` <-
-function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, progress=progress, ...) {
+function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, progress=NULL, ...) {
 
   ## Log the call
   cl <- match.call()

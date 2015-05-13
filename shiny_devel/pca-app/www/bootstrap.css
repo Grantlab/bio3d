@@ -4277,11 +4277,11 @@ textarea.input-group-sm>.form-control,textarea.input-group-sm>.input-group-addon
 }
 
 .navbar-nav>li>a{
-	font-size: 17px;
+	font-size: 15px;
 	padding-top: 20px;
 	padding-bottom: 20px;
-	padding-right: 25px;
-	padding-left: 25px;
+	padding-right: 17px;
+	padding-left: 17px;
 	line-height: 20px;
 }
 

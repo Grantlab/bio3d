@@ -10,7 +10,13 @@ nma2 <- reactive({
   progress$set(message = 'Calculating normal modes',
                detail = 'Please wait',
                value = 0)
-  modes <- nma(pdbs, fit=TRUE, rm.gaps=input$rm.gaps, progress=progress)
+  ##modes <- nma(pdbs, fit=TRUE, rm.gaps=input$rm.gaps, progress=progress)
+
+  rm.gaps <- TRUE
+  if(is.logical(input$rm.gaps))
+    rm.gaps <- input$rm.gaps
+    
+  modes <- nma(pdbs, fit=TRUE, rm.gaps=rm.gaps, progress=progress)
   return(modes)
 })
 
@@ -89,6 +95,59 @@ cutree2 <- reactive({
   grps <- cutree(hc, k=input$nclusts)
   return(grps)
 })
+
+
+
+####################################
+####     webGL functions        ####
+####################################
+
+output$struct_dropdown <- renderUI({
+  pdbs <- align()
+  ids <- 1:length(pdbs$id)
+  names(ids) <-  basename.pdb(pdbs$id)
+  selectInput('viewStruct', 'Choose Structure:',
+              choices=ids)
+})
+  
+output$nmaWebGL  <- renderWebGL({
+  pdbs <- align()
+  modes <- nma2()
+  trj <- mktrj(modes, pdbs=pdbs,
+               s.inds=as.numeric(input$viewStruct),
+               m.inds=as.numeric(input$viewMode),
+               rock=FALSE)
+  n <- nrow(trj)
+  
+  amalcol <- function(x) {
+    col <- rep("grey50", length(x))
+    col[1] <- "blue"
+    col[length(col)] <- "red"
+    return(col)
+  }
+  
+  magcol <- function() {
+    rf <- rmsf(trj)
+    return(t(replicate(n, vec2color(rf, c('blue', 'red')),simplify=TRUE)))
+  }
+
+  class(trj)  <- 'xyz'
+  col <- switch(input$viewColor2,
+                'mag' = magcol(), # vec2color(rmsf(m)), #!! col=col, type=2
+                'amalgam' = amalcol(1:n),
+                'default' = colorRampPalette(c('blue', 'gray', 'red'))(n)
+                )
+  
+  typ <- switch(input$viewColor2,
+                'mag' = 2,
+                'amalgam' = 1,
+                'default' = 1
+                )
+  
+    view.xyz(trj, bg.col=input$viewBGcolor2, col=col, add=TRUE, type=typ)
+})
+
+
 
 ####################################
 ####     Plotting functions     ####
@@ -218,3 +277,39 @@ output$nma_rmsip_heatmap2pdf = downloadHandler(
     make.plot.heatmap_rmsip2()
     dev.off()
 })
+
+####################################
+####     Download trajectory    ####
+####################################
+
+trj2pdb2  <- reactive({
+    dir <- data_path()
+    pdbs <- align()
+    modes <- nma2()
+    gaps <- gap.inspect(pdbs$ali)
+    fname  <- paste0(dir, '/', 'pc', input$viewPC, '.pdb')
+    trj <- mktrj(modes, pdbs=pdbs,
+                 s.inds=as.numeric(input$viewStruct),
+                 m.inds=as.numeric(input$viewMode),
+                 file=fname)
+                 #resno=pdbs$resno[1, gaps$f.inds],
+                 #resid=pdbs$resid[1, gaps$f.inds],
+                 #chain=pdbs$chain[1, gaps$f.inds])
+    
+    return(fname)
+})
+
+output$nmtraj = downloadHandler(
+    filename=function() {
+        paste0('pc', input$viewMode, '.pdb')
+    },
+    content=function(file) {
+        # Avoid possibility of not having write permission on server
+        src  <- normalizePath('nma-traj.pdb')
+        owd <- setwd(tempdir())
+        on.exit(setwd(owd))
+        file.copy(src, 'nma-traj.pdb')
+        file.rename(trj2pdb2(), file)
+    }
+
+)
