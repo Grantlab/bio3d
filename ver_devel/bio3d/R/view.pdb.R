@@ -10,156 +10,188 @@ vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
 view <- function(...)
   UseMethod("view")
 
-view.pdb <- function(pdb, mode="default", atom.sel=NULL, col=NULL, cna=NULL,
+view.pdb <- function(pdb, mode="overview", col="sse", cna=NULL, 
                      elety.custom = atom.index, ...) {
 
-   ##-- Wrapper for visualize() to view larger PDBs the way Barry
-   ##    likes to see them most often.
-   ##      To Do - Check validity on "atom.sel" input
-   ##            - Check validity of "col" input and add "keyword" color types
-   ##            - Add input more args, e.g. lwd=NULL, lwd.ca=3, lwd.nca=1 etc.
-   ##         - Add cna code.
-   ##
-   ##     N.B. In general this is still a quick and dirty prototype with
-   ##          no consideration of efficiency and little error checking.
-   ##
+  ##-- Wrapper for visualize() to view larger PDBs the way Barry
+  ##    likes to see them most often.
+  ##      To Do           
+  ##            - Add more input args, e.g. lwd=NULL, lwd.ca=3, lwd.nca=1 etc.
+  ##            - Add color by residue type code. 
+  ##            - Add cna code.
+  ##            - Add an 'add=FALSE/TRUE' input option so we can add to an 
+  ##               existing display.
+  ##
+  ##     N.B. In general this is still a quick and dirty prototype with
+  ##          no consideration of efficiency and little error checking.
+  ##
 
+  ##- Mode/display options will set what is actually drawn
+  mode.options <- c("overview", "calpha", "back", "protein", "all")
+  mode <- match.arg(mode, mode.options)
 
-   mode.options <- c("default", "calpha", "back", "protein", "all")
-   mode <- match.arg(mode, mode.options)
+  ##- Display/col options will set how drawn things are colored 
+  display <- NULL
+  if(length(col) == 1) {
+    ##- Requested 'col' may be a 'display color keyword' rather than a simple color
+    display.options <- c("sse", "index", "atom", "b", "residue")
+    display.check <- pmatch(col, display.options, nomatch = NA)
+    if(!is.na( display.check )) {
+      display <- display.options[display.check]
+    }
+  } 
 
-   ##- Check on 'col' input
-   ##   This section of code could be improved
-   ##   'col' could be a vector of colors or a "keyword"
-   ##    e.g. "sse", "index", "atom", etc. )
-   if(is.null(col)) {
-    if(mode=="all") {
-      ## Color by index
-      col <- vec2color(1:nrow(pdb$atom))
-    } else {
+  if( !is.null(display) ){
+    ##- Using 'Display color keywords'
+
+    if(display=="sse") {
       ## Color by secondary structure
-      ##col <- sse.color(pdb)
+      ## eventually these helix/sheet/coil colors could be passed in '...'
       col <- sse.vector(pdb, coil="gray", helix="purple", sheet="yellow", calpha=FALSE)
     }
-   } else {
+  
+    if(display=="index") {
+      ## Color by position/index 
+      col <- vec2color(1:nrow(pdb$atom))
+    }
+
+    if(display=="atom") {
+      ## Color by atom type  
+      col <- NULL 
+    }
+
+    if(display=="b") {
+      ## Color by numeric vector in b-factor field  
+      col <- vec2color(as.numeric(pdb$atom$b))
+    }
+
+    if(display=="residue") {
+      ## Color by residue type  
+      cat("Not yet implemented\n")
+    }
+
+  } else {
+    ##- Check on input color option
     if(length(col) == 1) {
       col=rep(col, nrow(pdb$atom))
     }
     if(length(col) != nrow(pdb$atom)) {
-      stop("Length of input color vector, 'col' does not match natom PDB")
+      if(!is.null(col))
+        warning("Length of input color vector, 'col' does not match natom PDB")
     }
-   }
+  }
 
-   if(!all(are.symb(pdb$atom$elesy)))
-     pdb$atom$elesy <- atom2ele(pdb$atom$elesy, elety.custom)
+  ## Atom/Element type check
+  if(!all(are.symb(pdb$atom$elesy)))
+    pdb$atom$elesy <- atom2ele(pdb$atom$elesy, elety.custom)
 
-   if(!is.null(atom.sel)) {
-    pdb <- trim.pdb(pdb, atom.sel)
-    col <- col[atom.sel$atom]
-   }
 
-   ## Bonds
-   if(is.null(pdb$con)) {
-     cat("Computing connectivity from coordinates...\n")
-     connectivity(pdb) <- connectivity(pdb)
-   }
+  ## Bonds/Connectivity check
+  #if(is.null(pdb$con)) {
+  #  cat("Computing connectivity from coordinates...\n")
+  #  connectivity(pdb) <- connectivity(pdb)
+  #}
 
-   if(mode=="default") {
-      ## Calpha trace plus sidechains and ligand
-      ca.sel   <- atom.select(pdb, "calpha", verbose = FALSE)
-      prot.sel <- atom.select(pdb, "protein", verbose = FALSE)
-      back.sel <- atom.select(pdb, "back", verbose = FALSE)
-      lig.sel  <- atom.select(pdb, "ligand", verbose = FALSE)
-      side.sel <- combine.select(prot.sel, back.sel, operator="NOT", verbose = FALSE)
+  add <- FALSE ## This could be a future input argument to set whether we add to an existing display
+
+  if(mode=="overview") {
+    ## Calpha trace plus sidechains and ligand
+    ca.sel   <- atom.select(pdb, "calpha", verbose = FALSE)
+    prot.sel <- atom.select(pdb, "protein", verbose = FALSE)
+    back.sel <- atom.select(pdb, "back", verbose = FALSE)
+    lig.sel  <- atom.select(pdb, "ligand", verbose = FALSE)
+    side.sel <- combine.select(prot.sel, back.sel, operator="NOT", verbose = FALSE)
+
+    ## Ligand
+    if(length(lig.sel$atom) != 0){
+      visualize(trim.pdb(pdb, lig.sel), con=FALSE, type="s", centre=FALSE)
+      add <- TRUE
+    }
+
+    ## Sidechain
+    if(length(side.sel$atom) != 0) {
       side.sel <- combine.select(side.sel, ca.sel, operator="OR", verbose = FALSE)
-
-      ## Ligand
-      if(length(lig.sel$atom) != 0){
-          visualize(trim.pdb(pdb, lig.sel), con=FALSE, type="s", centre=FALSE)
-      }
-
-      ## Sidechain
-      if(length(side.sel$atom) != 0) {
-        visualize(trim.pdb(pdb, side.sel), con = FALSE, add = TRUE,
-                  type = "l", col = "gray", lwd = 1, centre=FALSE)
-      }
-
-      ## Calpha
-      if(length(ca.sel$atom) != 0) {
-        ca.pdb <- trim.pdb(pdb, ca.sel)
-        connectivity(ca.pdb) <- calpha.connectivity(ca.pdb)
-
-        col <- col[ca.sel$atom]
-
-        visualize(ca.pdb, con=FALSE, col=col, add = TRUE,
-                  type = "l", lwd=3, centre=FALSE, ...)
-      }
+      visualize(trim.pdb(pdb, side.sel), con = FALSE, add = add,
+                type = "l", col = "gray", lwd = 1, centre=FALSE)
+      add <- TRUE
     }
 
+    ## Calpha
+    if(length(ca.sel$atom) != 0) {
+      ca.pdb <- trim.pdb(pdb, ca.sel)
+      connectivity(ca.pdb) <- calpha.connectivity(ca.pdb)
 
-   if(mode=="calpha") {
+      col <- col[ca.sel$atom]
+      visualize(ca.pdb, con=FALSE, col=col, add = add,
+                type = "l", lwd=3, centre=FALSE, ...)
+    }
+  }
+
+  if(mode=="calpha") {
     ## SSE colored C-alpha trace
     ca.sel <- atom.select(pdb,"calpha", verbose=FALSE)
     if(length(ca.sel$atom) != 0) {
-        ca.pdb <- trim.pdb(pdb, ca.sel)
-        connectivity(ca.pdb) <- calpha.connectivity(ca.pdb)
+      ca.pdb <- trim.pdb(pdb, ca.sel)
+      connectivity(ca.pdb) <- calpha.connectivity(ca.pdb)
 
-        col <- col[ca.sel$atom]
-
+      col <- col[ca.sel$atom]
       visualize(ca.pdb, con=FALSE, col=col, type = "l", lwd=3, centre=FALSE, ...)
     }
-   }
+  }
 
 
-   if(mode=="protein") {
+  if(mode=="protein") {
     ## Just protein
-      prot.sel <- atom.select(pdb, "protein", verbose = FALSE)
-      prot.pdb <- trim.pdb(pdb, prot.sel)
+    prot.sel <- atom.select(pdb, "protein", verbose = FALSE)
+    prot.pdb <- trim.pdb(pdb, prot.sel)
 #       connectivity(prot.pdb) <- connectivity(prot.pdb)
 
-      col <- col[prot.sel$atom]
+    col <- col[prot.sel$atom]
 
-      if(length(prot.pdb$xyz)!=0){
-        visualize(prot.pdb, con = FALSE, col=col, centre=FALSE, ...) ## col=col ?
-      }
-   }
+    if(length(prot.pdb$xyz)!=0){
+      visualize(prot.pdb, con = FALSE, col=col, centre=FALSE, ...) ## col=col ?
+    }
+  }
 
 
-   if(mode=="back") {
+  if(mode=="back") {
     back.sel <- atom.select(pdb,"back", verbose=FALSE)
     back.pdb <- trim.pdb(pdb, back.sel)
-#      connectivity(back.pdb) <- connectivity(back.pdb) ## <--- Using back.pdb here gives strange result!!!
+#    connectivity(back.pdb) <- connectivity(back.pdb) ## <--- Using back.pdb here gives strange result!!!
 
-      col <- col[back.sel$atom]
+    col <- col[back.sel$atom]
 
     if(length(back.pdb$xyz)!=0) {
       visualize(back.pdb, con=FALSE, col=col, centre=FALSE, ...)
     }
-   }
+  }
 
-   if(mode=="all") {
-     ## mode == all, is it everything but water?
-      nowat.sel <- atom.select(pdb, "notwater", verbose = FALSE)
-      nowat.pdb <- trim.pdb(pdb, nowat.sel)
-      connectivity(nowat.pdb) <- connectivity(nowat.pdb)
+#   if(mode=="nwat") {
+#     ## mode == all, is it everything but water?
+#     nowat.sel <- atom.select(pdb, "notwater", verbose = FALSE)
+#     nowat.pdb <- trim.pdb(pdb, nowat.sel)
+#
+#     col <- col[nowat.sel$atom]
+#
+#     if(length(nowat.pdb$xyz)!=0){
+#       visualize(nowat.pdb, con = FALSE, col=col, centre=FALSE, ...)
+#     }
+#   }
 
-      col <- col[nowat.sel$atom]
+  if(mode=="all") {
+    visualize(pdb, con = FALSE, col=col, centre=FALSE, ...)
+  }
 
-      if(length(nowat.pdb$xyz)!=0){
-        visualize(nowat.pdb, con = FALSE, col=col, centre=FALSE, ...)
-      }
-
-    }
-   #if(!is.null(cna)) {
-   #    visualize.cna(cna, pdb, ...) ## need to think more about this
-   #}
+  #if(!is.null(cna)) {
+  ## STILL TO DO:  
+  #   visualize.cna(cna, pdb, ...) ## need to think more about this
+  #}
 }
 
-view.character <- function(file, mode="default", atom.sel=NULL, col=NULL, cna=NULL, ...) {
+view.character <- function(file, mode="default", col=NULL, cna=NULL, ...) {
   ## This function is probably not needed
   ## Useful to visualize quickly a pdb file using a filename
-  x <- read.pdb(file)
-  view.pdb(pdb=x, mode=mode, atom.sel=atom.sel, col=col, cna=cna, ...)
+  view.pdb(pdb=read.pdb(file), mode=mode, col=col, cna=cna, ...)
 }
 
 view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
