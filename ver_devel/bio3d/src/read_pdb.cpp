@@ -42,11 +42,15 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
   vector<int> helix_resno_start;
   vector<int> helix_resno_end;
   vector<string> helix_type;
+  vector<string> helix_inserti;
+  vector<string> helix_inserte;
 
   vector<string> sheet_chain;
   vector<int> sheet_resno_start;
   vector<int> sheet_resno_end;
   vector<string> sheet_sense;
+  vector<string> sheet_inserti;
+  vector<string> sheet_inserte;
 
   // store SEQRES
   vector<string> seqres;
@@ -96,6 +100,8 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
 	//helix_resno_start.push_back(std::stoi(line.substr(21,4)));
 	//helix_resno_end.push_back(std::stoi(line.substr(33,4)));
 	helix_type.push_back(trim(line.substr(38,2)));
+	helix_inserti.push_back(trim(line.substr(25,1)));
+	helix_inserte.push_back(trim(line.substr(37,1)));
       }
       
       // store sheet info
@@ -106,6 +112,8 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
 	//sheet_resno_start.push_back(std::stoi(line.substr(22,4)));
 	//sheet_resno_end.push_back(std::stoi(line.substr(33,4)));
 	sheet_sense.push_back(trim(line.substr(38,2)));
+	sheet_inserti.push_back(trim(line.substr(26,1)));
+	sheet_inserte.push_back(trim(line.substr(37,1)));
       }
       
       // store SEQRES info
@@ -187,6 +195,17 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
     out = Rcpp::List::create(Rcpp::Named("error")="error");
     return(out);
   }
+
+  // add names to helix / sheet vector
+  NumericVector helix_start_out = wrap(helix_resno_start);
+  helix_start_out.names() = helix_inserti;
+  NumericVector helix_end_out = wrap(helix_resno_end);
+  helix_end_out.names() = helix_inserte;
+
+  NumericVector sheet_start_out = wrap(sheet_resno_start);
+  sheet_start_out.names() = sheet_inserti;
+  NumericVector sheet_end_out = wrap(sheet_resno_end);
+  sheet_end_out.names() = sheet_inserte;
   
   // build output List
   out = Rcpp::List::create(Rcpp::Named("atom")=
@@ -216,16 +235,16 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
 
 			   Rcpp::Named("helix")=
 			   Rcpp::List::create(
-					      Rcpp::Named("start")=helix_resno_start,
-					      Rcpp::Named("end")=helix_resno_end,
+					      Rcpp::Named("start")=helix_start_out,
+					      Rcpp::Named("end")=helix_end_out,
 					      Rcpp::Named("chain")=helix_chain, 
 					      Rcpp::Named("type")=helix_type
 					      ),
 			   
 			   Rcpp::Named("sheet")=
 			   Rcpp::List::create(
-					      Rcpp::Named("start")=sheet_resno_start,
-					      Rcpp::Named("end")=sheet_resno_end,
+					      Rcpp::Named("start")=sheet_start_out,
+					      Rcpp::Named("end")=sheet_end_out,
 					      Rcpp::Named("chain")=sheet_chain,
 					      Rcpp::Named("sense")=sheet_sense
 					      ),
