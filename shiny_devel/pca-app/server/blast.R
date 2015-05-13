@@ -30,12 +30,9 @@ get_pdb <- reactive({
   }
 
   id <- anno$acc
-  message(id)
   raw.files <- get.pdb(substr(id, 1,4), path=configuration$pdbdir$rawfiles, gzip=TRUE)
-  pdbfile <- pdbsplit(pdb.files=raw.files, ids=id, overwrite=FALSE,
-                      path=configuration$pdbdir$splitfiles, progress=NULL)
-  
-  pdb <- read.pdb(pdbfile)
+  pdb <- read.pdb(raw.files)
+  pdb <- trim.pdb(pdb, chain=substr(id, 6,6))
   return(pdb)
 })
 

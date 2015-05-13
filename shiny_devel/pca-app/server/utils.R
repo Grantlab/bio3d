@@ -1,4 +1,4 @@
-trim <- function(s) {
+trim.character <- function(s) {
   ##- Remove leading and trailing spaces from character strings
   s <- sub("^ +", "", s)
   s <- sub(" +$", "", s)
