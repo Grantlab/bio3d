@@ -57,23 +57,9 @@ read.pdb <- function(file, maxlines = -1, multi=FALSE, rm.insert=FALSE, rm.alt=T
   if(!length(pdb$helix$start) > 0) {
     pdb$helix <- NULL
   }
-  else {
-    nams <- 1:length(pdb$helix$start)
-    names(pdb$helix$start) <- nams
-    names(pdb$helix$end) <- nams
-    names(pdb$helix$chain) <- nams
-    names(pdb$helix$type) <- nams
-  }
 
   if(!length(pdb$sheet$start) > 0) {
     pdb$sheet <- NULL
-  }
-  else {
-    nams <- 1:length(pdb$sheet$start)
-    names(pdb$sheet$start) <- nams
-    names(pdb$sheet$end) <- nams
-    names(pdb$sheet$chain) <- nams
-    names(pdb$sheet$sense) <- nams
   }
 
   if(!length(pdb$seqres) > 0)
