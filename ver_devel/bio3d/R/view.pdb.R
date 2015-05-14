@@ -3,31 +3,53 @@ vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
   col <- colorRampPalette(pal)(n)
   vec.cut <- cut(vec, seq(min(vec), max(vec), length.out=n), include.lowest = TRUE)
   levels(vec.cut) <- 1:length(col)
-  col <- col[vec.cut]
-  return(col)
+  return(col[vec.cut])
 }
+
+
+### Testing snippets
+#pdb <- read.pdb("4q21")
+#y <- trim.pdb(pdb, atom.select(pdb, "sideCA", verbose = FALSE))
+
+#view(pdb,"calpha")
+#view.pdb2(y, add=TRUE, col="white", lwd=3)
+# view.pdb2(atom.select(pdb,"calpha",value=T), "none", "atom", add=T, type="s")
+#> view.pdb2(atom.select(pdb,"ligand",value=T), col="atom", add=T, type="ls")
+
+# view.pdb2(atom.select(pdb,"ligand",value=T), col="atom", add=T, type="s", radii="rvdw")
+# view.pdb2(atom.select(pdb,"ligand",value=T), col="atom", add=T, type="s")
+
+
+##> view.pdb2(pdb, "calpha", "sse", add=T, lwd=4)
+## Error in visualize.pdb(ca.pdb, con = FALSE, col = col, type = "l", lwd = 3,  :
+##  formal argument "lwd" matched by multiple actual arguments
+
+#ca <- atom.select(pdb,"calpha", value=T)
+#view.pdb2(ca)
+##### 
+
 
 view <- function(...)
   UseMethod("view")
 
-view.pdb <- function(pdb, mode="overview", col="sse", cna=NULL, 
+view.pdb <- function(pdb, mode="none", col="sse", add=FALSE, 
                      elety.custom = atom.index, ...) {
 
   ##-- Wrapper for visualize() to view larger PDBs the way Barry
   ##    likes to see them most often.
+  ##    Note. We can now use all visualize input args like: lwd, bg.col, etc.
+  ##          We can also add to existing view by setting add=T
   ##      To Do           
-  ##            - Add more input args, e.g. lwd=NULL, lwd.ca=3, lwd.nca=1 etc.
+  ##            - Check for duplicated input args, and take sse cols and 
+  ##               also calpha.connectivity d.cut from \dots 
   ##            - Add color by residue type code. 
-  ##            - Add cna code.
-  ##            - Add an 'add=FALSE/TRUE' input option so we can add to an 
-  ##               existing display.
   ##
   ##     N.B. In general this is still a quick and dirty prototype with
   ##          no consideration of efficiency and little error checking.
   ##
 
   ##- Mode/display options will set what is actually drawn
-  mode.options <- c("overview", "calpha", "back", "protein", "all")
+  mode.options <- c("none","overview", "calpha", "back", "protein", "all")
   mode <- match.arg(mode, mode.options)
 
   ##- Display/col options will set how drawn things are colored 
@@ -44,10 +66,18 @@ view.pdb <- function(pdb, mode="overview", col="sse", cna=NULL,
   if( !is.null(display) ){
     ##- Using 'Display color keywords'
 
+    ## Do we have any protein and therefore need to consider SSE coloring?
+    prot.sel <- atom.select(pdb, "protein", verbose = FALSE)
+    input.prot <- (length(prot.sel$atom) > 3)
+
     if(display=="sse") {
-      ## Color by secondary structure
+      ## Color by secondary structure if protein present otherwise gray
       ## eventually these helix/sheet/coil colors could be passed in '...'
-      col <- sse.vector(pdb, coil="gray", helix="purple", sheet="yellow", calpha=FALSE)
+      if(input.prot) {
+        col <- sse.vector(pdb, coil="gray", helix="purple", sheet="yellow", calpha=FALSE)
+      } else {
+        col <- "gray"
+      }
     }
   
     if(display=="index") {
@@ -71,13 +101,12 @@ view.pdb <- function(pdb, mode="overview", col="sse", cna=NULL,
     }
 
   } else {
-    ##- Check on input color option
-    if(length(col) == 1) {
-      col=rep(col, nrow(pdb$atom))
-    }
+    ##- Check on input color option length vs Natom
     if(length(col) != nrow(pdb$atom)) {
-      if(!is.null(col))
-        warning("Length of input color vector, 'col' does not match natom PDB")
+      if(!is.null(col) && (length(col) > 1))
+        warning("Length of input color vector, 'col', does not match natom PDB: recycling colors")
+
+      col=rep(col, nrow(pdb$atom))
     }
   }
 
@@ -92,7 +121,15 @@ view.pdb <- function(pdb, mode="overview", col="sse", cna=NULL,
   #  connectivity(pdb) <- connectivity(pdb)
   #}
 
-  add <- FALSE ## This could be a future input argument to set whether we add to an existing display
+
+  if(mode=="none") {
+    ## Here we just use visualize() with an extra catch for calpha 
+    ##  only input so we can use alternate connectivity calculation
+    if((length(atom.select(pdb,"protein")$atom) == sum(pdb$calpha)) && (sum(pdb$calpha) > 1))
+      connectivity(pdb) <- calpha.connectivity(pdb)
+
+    visualize(pdb, con=FALSE, col=col, add = add, centre=FALSE, ...)
+  }
 
   if(mode=="overview") {
     ## Calpha trace plus sidechains and ligand
@@ -100,11 +137,11 @@ view.pdb <- function(pdb, mode="overview", col="sse", cna=NULL,
     prot.sel <- atom.select(pdb, "protein", verbose = FALSE)
     back.sel <- atom.select(pdb, "back", verbose = FALSE)
     lig.sel  <- atom.select(pdb, "ligand", verbose = FALSE)
-    side.sel <- combine.select(prot.sel, back.sel, operator="NOT", verbose = FALSE)
+    side.sel  <- atom.select(pdb, "side", verbose = FALSE)
 
     ## Ligand
     if(length(lig.sel$atom) != 0){
-      visualize(trim.pdb(pdb, lig.sel), con=FALSE, type="s", centre=FALSE)
+      visualize(trim.pdb(pdb, lig.sel), con=FALSE, type="s", centre=FALSE, add=add)
       add <- TRUE
     }
 
@@ -135,7 +172,7 @@ view.pdb <- function(pdb, mode="overview", col="sse", cna=NULL,
       connectivity(ca.pdb) <- calpha.connectivity(ca.pdb)
 
       col <- col[ca.sel$atom]
-      visualize(ca.pdb, con=FALSE, col=col, type = "l", lwd=3, centre=FALSE, ...)
+      visualize(ca.pdb, con=FALSE, col=col, type = "l", lwd=3, centre=FALSE, add=add, ...)
     }
   }
 
@@ -149,7 +186,7 @@ view.pdb <- function(pdb, mode="overview", col="sse", cna=NULL,
     col <- col[prot.sel$atom]
 
     if(length(prot.pdb$xyz)!=0){
-      visualize(prot.pdb, con = FALSE, col=col, centre=FALSE, ...) ## col=col ?
+      visualize(prot.pdb, con = FALSE, col=col, centre=FALSE, add=add, ...) ## col=col ?
     }
   }
 
@@ -162,7 +199,7 @@ view.pdb <- function(pdb, mode="overview", col="sse", cna=NULL,
     col <- col[back.sel$atom]
 
     if(length(back.pdb$xyz)!=0) {
-      visualize(back.pdb, con=FALSE, col=col, centre=FALSE, ...)
+      visualize(back.pdb, con=FALSE, col=col, centre=FALSE, add=add, ...)
     }
   }
 
@@ -179,7 +216,7 @@ view.pdb <- function(pdb, mode="overview", col="sse", cna=NULL,
 #   }
 
   if(mode=="all") {
-    visualize(pdb, con = FALSE, col=col, centre=FALSE, ...)
+    visualize(pdb, con = FALSE, col=col, centre=FALSE, add=add, ...)
   }
 
   #if(!is.null(cna)) {

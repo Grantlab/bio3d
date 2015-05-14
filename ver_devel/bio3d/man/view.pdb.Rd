@@ -13,7 +13,7 @@
 \usage{
 view(...)
 
-\method{view}{pdb}(pdb, mode = "overview", col = "sse", cna = NULL, elety.custom = atom.index, ...)
+\method{view}{pdb}(pdb, mode = "none", col = "sse", add = FALSE, elety.custom = atom.index, ...)
 
 \method{view}{xyz}(x, type = 1, col = NULL, add = FALSE, ...)
 
@@ -29,7 +29,8 @@ vec2color(vec, pal = c("blue", "green", "red"), n = 30)
   \item{col}{ A vector or matrix of colors. The single keywords 'sse', 'index',
     'atom', 'b' and 'residue' are also valid for view.pdb. See
     examples. }
-  \item{cna}{ A protein structure network object. Not yet implemented. }
+  \item{add}{ Logical, if TRUE the requested 3D representation will be added
+    to a existing scene. Otherwise a new scene window will be created. }
   \item{elety.custom}{ Used for atom to element type mapping and to
     obtain radii and colors for non standard atoms. }  
   \item{\dots}{ Extra arguments for visualize functions. }
