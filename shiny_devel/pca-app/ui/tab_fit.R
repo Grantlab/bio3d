@@ -98,7 +98,8 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                                  selected='white'),
                     br(),
                     actionButton('viewUpdate1', label='Refresh', icon=icon('undo')),
-                    downloadButton('pdbsZIP', "Download Aligned PDBs")
+                    downloadButton('pdbsZIP', "Download Aligned PDBs"),
+                    downloadButton('pdbs2pymol', "Download PyMOL session file")
                     )
                   ),
 

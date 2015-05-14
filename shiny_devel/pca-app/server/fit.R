@@ -355,3 +355,31 @@ output$rmsf2pdf = downloadHandler(
     dev.off()
 })
 
+
+output$pdbs2pymol = downloadHandler(
+  filename = "pdbs.pse",
+  content = function(FILE=NULL) {
+    pymol(pdbs=fit(), col=find_core(), file="pdbs.pse")
+  })
+
+
+make_pse <- reactive({
+  path <- data_path()
+  core <- find_core()
+  pdbs <- fit()
+  
+  col <- switch(input$viewColor1,
+                "cluster" = cutree1(),
+                "struct" = NULL,
+                "core" = core,
+                "gaps" = "gaps")
+  
+  file <- pymol(pdbs, col=col, file=paste0(path, "/pdbs.pse"))
+  return(file)
+})
+
+output$pdbs2pymol = downloadHandler(
+  filename = 'pdbs.pse.zip',
+  content = function(file) {
+    zip(file, files=make_pse(), flags = "-9Xj")
+})
