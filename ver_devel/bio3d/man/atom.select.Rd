@@ -58,10 +58,12 @@ atom.select(\dots)
   corresponding to the intersection of various input criteria.
 
   Input selection criteria include selection \code{string} keywords (such as
-  \code{"calpha"}, \code{"backbone"}, \code{"protein"},
-  \code{"nucleic"}, \code{"ligand"}, etc.) and individual named
-  selection components (including \sQuote{chain},  \sQuote{resno},
-  \sQuote{resid}, \sQuote{elety} etc.).
+  \code{"protein"}, \code{"notprotein"}, \code{"nucleic"},
+  \code{"notnucleic"}, \code{"water"}, \code{"notwater"},
+  \code{"calpha"}, \code{"cbeta"}, \code{"backbone"}, \code{"back"},
+  \code{"side"}, \code{"sideCA"}, \code{"ligand"}, \code{"h"} and 
+  \code{"noh"} etc.) and individual named selection components
+  (including \sQuote{chain}, \sQuote{resno}, \sQuote{resid}, \sQuote{elety} etc.).
 
   For example, \code{atom.select(pdb, "calpha")} will return indices for
   all C-alpha (CA) atoms found in protein residues in the \code{pdb}
@@ -128,8 +130,11 @@ atom.select(\dots)
 # Read a PDB file
 pdb <- read.pdb( system.file("examples/1hel.pdb", package="bio3d") )
 
-# Select protein atoms of chain A
+# Selection indices of protein atoms of chain A
 atom.select(pdb, "protein", chain="A")
+
+# Use the value=TRUE option to return the actuall selected PDB subest
+atom.select(pdb, "protein", chain="A", value=TRUE)
 
 # Select all atoms except from the protein
 atom.select(pdb, "protein", inverse=TRUE, verbose=TRUE)
@@ -142,7 +147,10 @@ print( pdb$atom[ sele$atom, "resid" ] )
 print( pdb$xyz[ sele$xyz ] )
 
 # Trim PDB to selection
-ca.pdb <- trim.pdb(pdb, sele)
+#ca.pdb <- trim.pdb(pdb, sele)
+
+# Or simply trim within atom.select() itself
+#atom.select(pdb, "calpha", resno=43:54, value=TRUE)
 
 \dontrun{
 
