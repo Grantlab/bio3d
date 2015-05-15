@@ -13,7 +13,7 @@
 \usage{
 view(...)
 
-\method{view}{pdb}(pdb, mode = "none", col = "sse", add = FALSE, elety.custom = atom.index, ...)
+\method{view}{pdb}(pdb, as = "all", col = "atom", add = FALSE, elety.custom = atom.index, ...)
 
 \method{view}{xyz}(x, type = 1, col = NULL, add = FALSE, ...)
 
@@ -24,8 +24,9 @@ vec2color(vec, pal = c("blue", "green", "red"), n = 30)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{pdb}{ a PDB object as obtained from read.pdb.}
-  \item{mode}{ View/render mode that sets what and how things are drawn
-    - see examples.}
+  \item{as}{ View/render mode that sets what and how things are drawn. 
+    Current options include 'all', 'overview', 'nwat', 'protein', 
+    'calpha', 'back' and 'ligand' - see examples for details.}
   \item{col}{ A vector or matrix of colors. The single keywords 'sse', 'index',
     'atom', 'b' and 'residue' are also valid for view.pdb. See
     examples. }
@@ -33,7 +34,8 @@ vec2color(vec, pal = c("blue", "green", "red"), n = 30)
     to a existing scene. Otherwise a new scene window will be created. }
   \item{elety.custom}{ Used for atom to element type mapping and to
     obtain radii and colors for non standard atoms. }  
-  \item{\dots}{ Extra arguments for visualize functions. }
+  \item{\dots}{ Extra arguments for visualize, sse.vector and connectivity 
+    functions. These these functions for full argument list. }
   \item{vec}{ a numeric vector for color mapping. }
   \item{pal}{ color pallet specification. }
   \item{n}{ Number of desired color range mappings. }
@@ -76,15 +78,20 @@ view.pdb(pdb)
 \dontrun{
 
 # 1. view.pdb examples
-view(pdb, "calpha")
-view(pdb, "back")
-view(pdb, "all")
-view(pdb, "all", "atom")
-view(pdb, "all", "red")
-view(pdb, "all", "index")
-view(pdb, "all", "b")
-view(pdb, "all", col=vec2color(pdb$atom$b))
+view(pdb, "overview")
 
+view(pdb, "calpha", col="sse")
+view(pdb, "ligand", add=TRUE)
+
+view(pdb, "back")
+view(pdb, "all", "index")
+view(pdb, "calpha", col="b")
+view(pdb, "calpha", "red")
+
+
+#view(pdb, col="index")
+#view(pdb, "calpha", col="index", add=TRUE, lwd=4) 
+#view(atom.select(pdb,"ligand",value=TRUE), col="atom", add=TRUE, type="ls")
 
 
 ##- 2. View a structural fit from a '3dalign' class object
