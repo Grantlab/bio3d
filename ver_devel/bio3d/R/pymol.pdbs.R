@@ -16,14 +16,47 @@
 pymol <- function(...)
   UseMethod("pymol")
 
-pymol.pdbs <- function(pdbs, col=NULL, file="R.pse") {
+pymol.pdbs <- function(pdbs, col=NULL, file=NULL,
+                       type="script", exefile = "pymol") {
   
-  tdir <- tempdir()
-  pmlfile <- tempfile(tmpdir=tdir, fileext=".pml")
-  if(is.null(file))
-    psefile <- tempfile(tmpdir=tdir, fileext=".pse")
+  allowed <- c("session", "script", "launch")
+  if(!type %in% allowed) {
+    stop(paste("input argument 'type' must be either of:",
+               paste(allowed, collapse=", ")))
+  }
+
+  ## output file name
+  if(is.null(file)) {
+    if(type=="session")
+      file <- "R.pse"
+    if(type=="script")
+      file <- "R.pml"
+  }
+  
+  ## Check if the program is executable
+  if(type %in% c("session", "launch")) {
+    ver <- "-cq"
+    os1 <- .Platform$OS.type
+    status <- system(paste(exefile, ver),
+                     ignore.stderr = TRUE, ignore.stdout = TRUE)
+    
+    if(!(status %in% c(0,1)))
+      stop(paste("Launching external program failed\n",
+                 "  make sure '", exefile, "' is in your search path", sep=""))
+  }
+
+  ## use temp-dir unless we output a PML script
+  if(type %in% c("session", "launch"))
+    tdir <- tempdir()
   else
-    psefile <- file
+    tdir <- "."
+
+  pdbdir <- paste(tdir, "pdbs", sep="/")
+  if(!file.exists(pdbdir))
+    dir.create(pdbdir)
+  
+  pmlfile <- tempfile(tmpdir=tdir, fileext=".pml")
+  psefile <- tempfile(tmpdir=tdir, fileext=".pse")
   ids <- basename.pdb(pdbs$id)
 
   ## include stuff in the b-factor column
@@ -50,7 +83,7 @@ pymol.pdbs <- function(pdbs, col=NULL, file="R.pse") {
       pdb$xyz <- fit.xyz(pdbs$xyz[i, !gaps], pdb$xyz,
                          fixed.inds = 1:length(pdbs$xyz[i, !gaps]),
                          mobile.inds = sele$xyz)
-      fn <- paste0(tdir, "/", ids[i], ".pdb")
+      fn <- paste0(pdbdir, "/", ids[i], ".pdb")
 
       ## store new b-factor column to PDB
       tmpbf <- NULL
@@ -70,7 +103,7 @@ pymol.pdbs <- function(pdbs, col=NULL, file="R.pse") {
     files <- rep(NA, length(pdbs$id))
     for(i in 1:length(pdbs$id)) {
       pdb <- pdbs2pdb(pdbs, inds=i)[[1]]
-      fn <- paste0(tdir, "/", ids[i], ".pdb")
+      fn <- paste0(pdbdir, "/", ids[i], ".pdb")
 
       ## store new b-factor column to PDB
       tmpbf <- NULL
@@ -176,15 +209,55 @@ pymol.pdbs <- function(pdbs, col=NULL, file="R.pse") {
     lines[l+2] <- "set cartoon_trace_atoms, 1"
     l <- l+2
   }
-  
-  lines[l+1] <- paste("save", psefile)
+
+  if(type == "session")
+    lines[l+1] <- paste("save", psefile)
   lines <- lines[!is.na(lines)]
+  print(lines)
   write.table(lines, file=pmlfile, append=FALSE, quote=FALSE, sep="\n",
               row.names=FALSE, col.names=FALSE)
-  system(paste("pymol -cq", pmlfile))
-  
-  message(paste("PyMOL session written to file", psefile))
-  invisible(psefile)
+
+  if(type %in% c("session", "launch")) {
+    if(type == "session")
+      args <- "-cq"
+    else
+      args <- ""
+    
+    ## Open pymol
+    cmd <- paste('pymol', args, pmlfile)
+    
+    os1 <- .Platform$OS.type
+    if (os1 == "windows") {
+      success <- shell(shQuote(cmd))
+    }
+    else {
+      if(Sys.info()["sysname"]=="Darwin") {
+        success <- system(paste("open -a MacPyMOL", pmlfile))
+      }
+      else {
+        success <- system(cmd)
+      }
+    }
+    
+    if(success!=0)
+      stop(paste("An error occurred while running command\n '",
+                 exefile, "'", sep=""))
+  }
+
+  if(type == "session") {
+    file.copy(psefile, file, overwrite=TRUE)
+    unlink(pmlfile)
+    unlink(psefile)
+    message(paste("PyMOL session written to file", file))
+    invisible(file)
+  }
+
+  if(type == "script") {
+    file.copy(pmlfile, file, overwrite=TRUE)
+    unlink(pmlfile)
+    message(paste("PyMOL script written to file", file))
+    invisible(file)
+  }
 }
 
 
