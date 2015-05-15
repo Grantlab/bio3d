@@ -102,11 +102,11 @@ cutree2 <- reactive({
 ####     webGL functions        ####
 ####################################
 
-output$struct_dropdown <- renderUI({
+output$struct_dropdown2 <- renderUI({
   pdbs <- align()
   ids <- 1:length(pdbs$id)
   names(ids) <-  basename.pdb(pdbs$id)
-  selectInput('viewStruct', 'Choose Structure:',
+  selectInput('viewStruct2', 'Choose Structure:',
               choices=ids)
 })
   
@@ -114,7 +114,7 @@ output$nmaWebGL  <- renderWebGL({
   pdbs <- align()
   modes <- nma2()
   trj <- mktrj(modes, pdbs=pdbs,
-               s.inds=as.numeric(input$viewStruct),
+               s.inds=as.numeric(input$viewStruct2),
                m.inds=as.numeric(input$viewMode),
                rock=FALSE)
   n <- nrow(trj)
@@ -171,10 +171,21 @@ make.plot.nma <- function() {
   plot(modes, pdbs, col=col, signif=signif,
        spread=input$spread, conservation=input$seqide)
 
+  #if(input$toggle_rmsf2) {
+  #  gaps.res <- gap.inspect(pdbs$ali)
+  #  gaps.pos <- gap.inspect(pdbs$xyz)
+  #  rf <- rmsf(pdbs$xyz[, gaps.pos$f.inds])
+  #  
+  #  par(new=TRUE)
+  #  plot5 <- plot.bio3d(rf, axes=FALSE, col=2, type="l", xlab="", ylab="")
+  #  axis(4, col=2)
+  #}
+
+
 }
 
 
-output$nma_plot <- renderPlot({
+output$nma_fluctplot <- renderPlot({
    print(make.plot.nma())
  })
 
@@ -287,9 +298,9 @@ trj2pdb2  <- reactive({
     pdbs <- align()
     modes <- nma2()
     gaps <- gap.inspect(pdbs$ali)
-    fname  <- paste0(dir, '/', 'pc', input$viewPC, '.pdb')
+    fname  <- paste0(dir, '/', 'pc', input$viewMode, '.pdb')
     trj <- mktrj(modes, pdbs=pdbs,
-                 s.inds=as.numeric(input$viewStruct),
+                 s.inds=as.numeric(input$viewStruct2),
                  m.inds=as.numeric(input$viewMode),
                  file=fname)
                  #resno=pdbs$resno[1, gaps$f.inds],

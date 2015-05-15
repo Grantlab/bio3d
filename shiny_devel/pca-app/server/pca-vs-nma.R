@@ -33,6 +33,10 @@ nma3 <- reactive({
 pcanma_rmsip <- reactive({
   pc <- pca3()
   modes <- nma3()
+
+  if(is.null(input$viewStruct))
+    stop()
+  
   r <- rmsip(pc$U, modes$U.subspace[,, as.numeric(input$viewStruct)])
   return(r)
 })

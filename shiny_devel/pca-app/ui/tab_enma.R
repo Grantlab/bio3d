@@ -1,4 +1,4 @@
-tabPanel("5. NMA", icon=icon("arrow-right"),
+tabPanel("5. eNMA", icon=icon("arrow-right"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
          
 
@@ -9,7 +9,7 @@ tabPanel("5. NMA", icon=icon("arrow-right"),
              checkboxInput('show_trj2', 'Show NM Trajectory', value=FALSE),
              
              selectInput('viewMode', 'Choose Mode:', choices=c(1:10)),
-             uiOutput('struct_dropdown'),
+             uiOutput('struct_dropdown2'),
              
              radioButtons('viewColor2', label='Structure color',
                           choices=list(
@@ -36,64 +36,76 @@ tabPanel("5. NMA", icon=icon("arrow-right"),
     ),
 
          
-         br(),br(),
-         h3("Fluctuations"),
-         hr(),
+   fluidRow(
+     column(4,
+            wellPanel(
+              h4('Residue fluctuations'),
+              ##selectInput('', 'Choose Mode #:', choices=c("all", 1:10)),
+              ##checkboxInput("toggle_rmsf2", "Show RMSF", FALSE)
+              
+              checkboxInput('spread', 'Spread lines', value=FALSE),
+              checkboxInput('seqide', 'Sequence identity', value=FALSE),
+              ##checkboxInput('signif', 'Show fluct signif', value=FALSE),
+              checkboxInput('rm.gaps', 'Omit gaps', value=TRUE),
+              
+              checkboxInput('cluster', 'Color by clustering', value=FALSE),
+              radioButtons("group_by", "group by",
+                           c("RMSD" = "rmsd",
+                             "RMSIP" = "rmsip"),
+                           ##"bhat" = "bhat"),
+                           inline=TRUE),
+              sliderInput("nclusts", "N clusters:",
+                          min = 1, max = 10, value = 3),
+              checkboxInput('show_options1', 'More options', value=FALSE)
+              )
+            ),
+     column(8,
+            plotOutput("nma_fluctplot")
+            )
+     ),
          
-         fluidRow(
-           plotOutput("nma_plot")
-           ),
+     fluidRow(
+       column(3),
+       column(3),
+       column(3),
+       column(3,
+              downloadButton('nmaplot2pdf', "Download Plot PDF")
+              )
+       ),
+         
+      conditionalPanel(
+        condition = "input.show_options1 == true",
+        fluidRow(
+          column(3,
+                 wellPanel(
+                   sliderInput("width1", "width",
+                               min = 4, max = 12, value = 7, step=0.5),
+                   sliderInput("height1", "height",
+                               min = 4, max = 12, value = 7, step=0.5)
+                   )
+                 )
+          ) 
+        ),
 
-         fluidRow(
-           column(3,
-                  checkboxInput('show_options1', 'More options', value=FALSE)
-                  ),
-           column(3),
-           column(3),
-           column(3,
-                  downloadButton('nmaplot2pdf', "Download Plot PDF")
-                  )
-           ),
+    fluidRow(
+      column(4,
+             wellPanel(
+               h4('PCA vs NMA comparison'),
+               uiOutput('struct_dropdown3')
+               
+               )
+             ),
+      
+      column(4,
+             plotOutput("rmsip_plot3")
+             ),
 
-         conditionalPanel(
-           condition = "input.show_options1 == true",
-           fluidRow(
-             column(3,
-                    wellPanel(
-                      h4("Plot options"),
-                      checkboxInput('spread', 'Spread lines', value=FALSE),
-                      checkboxInput('seqide', 'Sequence identity', value=FALSE),
-                      ##checkboxInput('signif', 'Show fluct signif', value=FALSE),
-                      checkboxInput('rm.gaps', 'Omit gaps', value=TRUE)
-                      )
-                    ),
-             
-             column(3,
-                    wellPanel(
-                      sliderInput("width1", "width",
-                                  min = 4, max = 12, value = 7, step=0.5),
-                      sliderInput("height1", "height",
-                                  min = 4, max = 12, value = 7, step=0.5)
-                      )
-                    ),
-             
-             column(3,
-                    wellPanel(
-                      h4("Clustering"),
-                      checkboxInput('cluster', 'Color by clustering', value=FALSE),
-                      radioButtons("group_by", "group by",
-                                   c("RMSD" = "rmsd",
-                                     "RMSIP" = "rmsip"),
-                                     ##"bhat" = "bhat"),
-                                   inline=TRUE),
-                      sliderInput("nclusts", "N clusters:",
-                                  min = 1, max = 10, value = 3)
-                      )
-                    )
-             ) 
-           ),
-
-
+      column(4,
+             verbatimTextOutput("rmsip_print3")
+             )
+      ),
+           
+         
             
          br(),br(),
          h3("Cluster dendrogram"),
@@ -140,6 +152,8 @@ tabPanel("5. NMA", icon=icon("arrow-right"),
              )
            ),
 
+      
+  
 
          br(),br(),
          h3("Heatmaps"),
