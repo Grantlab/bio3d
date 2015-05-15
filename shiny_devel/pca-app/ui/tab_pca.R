@@ -20,7 +20,9 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
                           selected='white'),
              br(),
              actionButton('viewUpdate', label='Refresh', icon=icon('undo')),
-             downloadButton('pctraj', label='Download PDB Trajectory')
+             downloadButton('pctraj', label='Download PDB Trajectory'),
+             downloadButton('pca2pymol', "Download PyMOL session file")
+
              )
            ),
 

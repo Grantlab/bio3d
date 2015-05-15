@@ -341,4 +341,19 @@ output$pctraj = downloadHandler(
         file.rename(trj2pdb(), file)
     }
 
-)
+  )
+
+make_pca_pse <- reactive({
+  path <- data_path()
+  pc <- pca1()
+  outf <- paste0(path, "/pc", as.numeric(input$viewPC), ".pse")
+  file <- pymol.modes(pc, mode=as.numeric(input$viewPC), type="session",
+                file=outf)
+  return(outf)
+})
+
+output$pca2pymol = downloadHandler(
+  filename = 'pca.pse.zip',
+  content = function(file) {
+    zip(file, files=make_pca_pse(), flags = "-9Xj")
+})
