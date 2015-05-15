@@ -63,16 +63,6 @@ pymol.modes <- function(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
   psefile <- tempfile(tmpdir=tdir, fileext=".pse")
   pdbfile <- tempfile(tmpdir=tdir, fileext=".pdb")
   
-  ## make temp-files
-  #if(is.null(outprefix)) {
-  #  pdbfile <- tempfile(fileext = ".inpcrd.pdb")
-  #  outfile <- tempfile(fileext = ".py")
-  #}
-  #else {
-  #  pdbfile <- paste(outprefix, ".inpcrd.pdb", sep="")
-  #  outfile <- paste(outprefix, ".py", sep="")
-  #}
-
   ## start building pymol script
   scr <- c("from pymol import cmd")
   scr <- c(scr, "from pymol.cgo import *")
@@ -136,7 +126,10 @@ pymol.modes <- function(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
   
   name <- "vecs"
   scr <- c(scr, paste("cmd.load_cgo(obj, '", name, "')", sep=""))
-  
+
+  if(type == "session")
+    scr <- c(scr, paste0("cmd.save('", psefile, "')"))
+   
   ## Write PDB structure file
   write.pdb(xyz=xyz, file=pdbfile)
   
