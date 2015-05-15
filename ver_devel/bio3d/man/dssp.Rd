@@ -3,9 +3,7 @@
 \alias{dssp.pdb}
 \alias{dssp.pdbs}
 \alias{dssp.xyz}
-\alias{read.dssp}
 \alias{stride}
-\alias{read.stride}
 \alias{print.sse}
 \title{ Secondary Structure Analysis with DSSP or STRIDE }
 \description{
@@ -21,11 +19,7 @@ dssp(\dots)
 
 \method{dssp}{xyz}(xyz, pdb, \dots)
 
-read.dssp(file, resno=TRUE, full=FALSE)
-
 stride(pdb, exefile = "stride", resno=TRUE)
-
-read.stride(file, resno=TRUE)
 
 \method{print}{sse}(x, \dots)
 }
@@ -45,7 +39,6 @@ read.stride(file, resno=TRUE)
   \item{xyz}{ a trajectory object of class \code{"xyz"}, obtained from
     \code{\link{read.ncdf}}, \code{\link{read.dcd}},
     \code{\link{read.crd}}. }
-  \item{file}{ file path to existing \sQuote{DSSP} or \sQuote{STRIDE} output. }
   \item{x}{ an \code{sse} object obtained from \code{\link{dssp.pdb}} or 
     \code{\link{stride}}. }
   \item{...}{ additional arguments to and from functions. }
