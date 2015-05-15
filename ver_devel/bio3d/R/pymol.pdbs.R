@@ -165,7 +165,7 @@ pymol.pdbs <- function(pdbs, col=NULL, file=NULL,
         stop("col must be a vector with length equal to the number of structures in input pdbs")
 
       ## add more colors here
-      cols <- c("black", "red", "green", "blue", "cyan", "purple", "yellow", "grey50")
+      cols <- c("grey40", "red", "green", "blue", "cyan", "purple", "yellow", "grey90")
       for(j in 1:length(files)) {
         lines[l+1] <- paste0("color ", cols[col[j]], ", ", ids[j])
         l <- l+1
