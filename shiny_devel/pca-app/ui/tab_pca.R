@@ -4,7 +4,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
   fluidRow(
     column(4,
            wellPanel(
-             h4('PC Trajectory Viewing Options'),
+             h4('Principal Component Visualization'),
              checkboxInput('show_trj', 'Show PC Trajectory', value=FALSE),
 
              selectInput('viewPC', 'Choose Principal Component:', choices=c(1:10)),
@@ -39,46 +39,94 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
       wellPanel(
         h4("Conformer plot"),
         helpText("Two dimensional representation of conformational variability described by the two principal components ..."),
-        textInput("pcx", "PC on X-axis", value=1),
-        textInput("pcy", "PC on Y-axis", value=2),
-        sliderInput("nclust", "Cluster by pairwise RMSD",
+        
+        ##textInput("pcx", "PC on X-axis", value=1),
+        ##textInput("pcy", "PC on Y-axis", value=2),
+        selectInput('pcx', 'PC on X-axis:', choices=c(1:10), selected=1),
+        selectInput('pcy', 'PC on Y-axis:', choices=c(1:10), selected=2),
+
+        conditionalPanel(
+          condition = "input.plot_type == '3dscatter'",
+          selectInput('pcz', 'PC on Z-axis:', choices=c(1:10), selected=3)
+          ),
+
+        radioButtons('cluster_by', label='Cluster by',
+                          choices=list('RMSD'='rmsd', 'PC subspace'='pc_space'),
+                     selected='rmsd'),
+
+        conditionalPanel(
+          condition = "input.cluster_by == 'pc_space'",
+          sliderInput("clust_npcs", "PCs in subspace",
+                      min = 1, max = 10, value = 2)
+          ),
+        
+        sliderInput("nclust", "Clusters",
           min = 1, max = 10, value = 3),
 
         radioButtons("plot_type", "",
-                   c("Normal" = "normal",
-                     "Interactive" = "fancy"),
+                   c("2D scatter" = "normal",
+                     "3D scatter (rgl)" = "3dscatter1",
+                     "3D scatter (three-js)" = "3dscatter2",
+                     "Interactive" = "fancy"
+                     ),
                      inline=TRUE),
 
         conditionalPanel(
           condition = "input.plot_type == 'normal'",
           checkboxInput("show_options", "More options", value=FALSE)
+          ),
+        
+        conditionalPanel(
+          condition = "input.plot_type == '3dscatter2'",
+          selectInput("renderer", label="Rendering method",
+                      choices = list("Auto"="auto", "Canvas"="canvas", "WebGL"="webgl"),
+                      selected = 1),
+          checkboxInput("grid", label = "Grid", value = TRUE)
           )
         )
-
     ),
 
-    column(width=4,
-      conditionalPanel(
-        condition = "input.plot_type == 'normal'",
-        plotOutput("pca_plot1_conf")
+    conditionalPanel(
+      condition = "input.plot_type == '3dscatter1'",
+      column(width=8,
+             webGLOutput("scatterplot3d_webgl")
+             )
       ),
-      conditionalPanel(
-        condition = "input.plot_type == 'fancy'",
-        showOutput("pca_plot2_conf","dimple")
+
+    conditionalPanel(
+      condition = "input.plot_type == '3dscatter2'",
+      column(width=8,
+             scatterplotThreeOutput("scatterplot3d_rthreejs")
+             )
+      ),
+    
+    conditionalPanel(
+      condition = "input.plot_type != '3dscatter'",
+      
+      column(width=4,
+             conditionalPanel(
+               condition = "input.plot_type == 'normal'",
+               plotOutput("pca_plot1_conf")
+               ),
+             
+             conditionalPanel(
+               condition = "input.plot_type == 'fancy'",
+               showOutput("pca_plot2_conf","dimple")
+               )
+             ),
+      
+      column(4,
+             conditionalPanel(
+               condition = "input.plot_type == 'normal'",
+               plotOutput("pca_plot1_scree")
+               ),
+             conditionalPanel(
+               condition = "input.plot_type == 'fancy'",
+               showOutput("pca_plot2_scree","nvd3")
+               )
+             )
       )
     ),
-
-    column(4,
-      conditionalPanel(
-        condition = "input.plot_type == 'normal'",
-        plotOutput("pca_plot1_scree")
-      ),
-      conditionalPanel(
-        condition = "input.plot_type == 'fancy'",
-        showOutput("pca_plot2_scree","nvd3")
-      )
-    )
-  ),
 
   fluidRow(
 #    column(3,
@@ -94,7 +142,9 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
       column(3,
              wellPanel(
                sliderInput("cex_points", "Point size",
-                           min = 0.1, max = 3, value = 1, step=0.1)
+                           min = 0.1, max = 3, value = 1, step=0.1),
+               sliderInput("inner_margin", "Scale axes",
+                           min = 1, max = 2, value = 1.2, step=0.1)
                )
              ),
 
@@ -115,7 +165,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
                )
              ),
 
-      column(3,
+      column(6,
              wellPanel(
                conditionalPanel(
                  condition = "input.labelplot == true",
@@ -124,29 +174,47 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
                  uiOutput("checkboxgroup_label_ids")
                  )
                )
-      )
+             )
     )
-  ),
+    ),
+         
+         fluidRow(
+           column(4,
+                  wellPanel(
+                    h4('Residue contributions'),
+                    selectInput('loadings_pc', 'Choose Principal Component:',
+                                choices=c(1:10), selected=1, multiple=TRUE),
+                    checkboxInput("toggle_rmsf1", "Show RMSF", FALSE),
+                    downloadButton('pcloadings2pdf', label='Download PDF'),
+                    checkboxInput("show_options2", "More options", value=FALSE)
+                    )
+                  ),
+           
+           column(8,
+                  plotOutput("loadings_plot")
+                  )
+           ),
+         
+         conditionalPanel(
+           condition = "input.show_options2 == true",
 
-  fluidRow(
-    column(4,
-           wellPanel(
-             h4('Residue loadings'),
-             selectInput('loadings_pc', 'Choose Principal Component:', choices=c(1:10)),
-             checkboxInput("toggle_rmsf1", "Show RMSF", FALSE)
+           fluidRow(
+             column(4,
+                    wellPanel(
+                      sliderInput("width-pcload", "Width",
+                                  min = 4, max = 12, value = 7, step=0.5),
+                      sliderInput("height-pcload", "Height",
+                                  min = 4, max = 12, value = 7, step=0.5)
+                      )
+                    )
              )
            ),
-    
-    column(8,
-           plotOutput("loadings_plot")
+         
+         fluidRow(
+           column(12,
+                  wellPanel(
+                    dataTableOutput("pdbs_table")
+                    )
+                  )
            )
-  ),
-
-  fluidRow(
-    column(12,
-      wellPanel(
-        dataTableOutput("pdbs_table")
-      )
-    )
-  )
-)
+         )

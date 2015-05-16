@@ -48,14 +48,16 @@ output$rmsip_plot3 <- renderPlot({
 
 output$rmsip_print3 <- renderPrint({
   r <- pcanma_rmsip()
-  print(r)
+  r$overlap <- round(r$overlap, 2)
+  #class(r) <- NULL
+  print(r$overlap)
 })
 
 output$struct_dropdown3 <- renderUI({
   pdbs <- refit()
   ids <- 1:length(pdbs$id)
   names(ids) <-  basename.pdb(pdbs$id)
-  selectInput('viewStruct', 'Choose Structure:',
+  selectInput('viewStruct', 'Compare NMs of structure:',
               choices=ids)
 })
  

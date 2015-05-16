@@ -3,6 +3,7 @@ options(rgl.useNULL=TRUE)
 library(shiny)
 library(shinyRGL)
 library(rCharts)
+library(threejs)
 
 shinyUI(
    

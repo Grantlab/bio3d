@@ -21,6 +21,7 @@ library(rgl)
 library(shinyRGL)
 library(reshape2)
 library(maptools)
+library(threejs)
 
 if(configuration$db$use)
   library(RMySQL)

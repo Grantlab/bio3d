@@ -37,12 +37,17 @@ fetch_pdbs <- reactive({
   progress <- shiny::Progress$new(session, min=1, max=length(unq))
   progress$set(message = 'Fetching PDBs',
                detail = 'Please wait ...')
-  
-  ##raw.files <- get.pdb(ids, gzip=TRUE)
-  raw.files <- vector("character", length(unq))
-  for(i in 1:length(unq)) {
-    raw.files[i] <- get.pdb(unq[i], path=configuration$pdbdir$rawfiles, gzip=TRUE)
-    progress$set(value = i)
+
+  tryfiles <- paste0(configuration$pdbdir$rawfiles, "/", unq, ".pdb")
+  if(all(file.exists(tryfiles))) {
+    raw.files <- tryfiles
+  }
+  else {
+    raw.files <- vector("character", length(unq))
+    for(i in 1:length(unq)) {
+      raw.files[i] <- get.pdb(unq[i], path=configuration$pdbdir$rawfiles, gzip=TRUE)
+      progress$set(value = i)
+    }
   }
   progress$close()
   
@@ -52,9 +57,15 @@ fetch_pdbs <- reactive({
                detail = 'Please wait ...',
                value = 0)
 
-  files <- pdbsplit(pdb.files=raw.files, ids=ids, overwrite=FALSE,
-                    path=configuration$pdbdir$splitfiles,
-                    progress=progress)
+  tryfiles <- paste0(configuration$pdbdir$splitfiles, "/", ids, ".pdb")
+  if(all(file.exists(tryfiles))) {
+    files <- tryfiles
+  }
+  else {
+    files <- pdbsplit(pdb.files=raw.files, ids=ids, overwrite=FALSE,
+                      path=configuration$pdbdir$splitfiles,
+                      progress=progress)
+  }
   progress$close()
   return(files)
 })

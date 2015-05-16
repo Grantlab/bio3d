@@ -86,6 +86,11 @@ hclust2 <- reactive({
   if(input$group_by == "bhat") {
     hc <- hclust_bhat2()
   }
+
+  if(input$group_by == "pc_space") {
+    pc <- pca1()
+    hc <- hclust(dist(pc$z[,1:2]))
+  }
   
   return(hc)
 })
@@ -106,13 +111,16 @@ output$struct_dropdown2 <- renderUI({
   pdbs <- align()
   ids <- 1:length(pdbs$id)
   names(ids) <-  basename.pdb(pdbs$id)
-  selectInput('viewStruct2', 'Choose Structure:',
+  selectInput('viewStruct2', 'Show NMs for structure:',
               choices=ids)
 })
   
 output$nmaWebGL  <- renderWebGL({
   pdbs <- align()
   modes <- nma2()
+
+  print(pdbs$xyz)
+  
   trj <- mktrj(modes, pdbs=pdbs,
                s.inds=as.numeric(input$viewStruct2),
                m.inds=as.numeric(input$viewMode),
@@ -153,6 +161,25 @@ output$nmaWebGL  <- renderWebGL({
 ####     Plotting functions     ####
 ####################################
 
+output$checkboxgroup_label_ids2 <- renderUI({
+  pdbs <- align()
+  grps <- cutree2()
+  ids <- basename.pdb(pdbs$id)[order(grps)]
+  names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
+
+  checkboxInput("toggle_all2", "Toggle all", TRUE)
+  
+  if(input$toggle_all2) {
+    checkboxGroupInput(inputId="label_ids2", label="PDB IDs:",
+                       choices=ids, selected=ids, inline=TRUE)
+  }
+  else {
+    checkboxGroupInput(inputId="label_ids2", label="PDB IDs:",
+                       choices=ids, selected=c(), inline=TRUE)
+  }
+})
+
+
 make.plot.nma <- function() {
   pdbs <- align()
   modes <- nma2()
@@ -166,6 +193,13 @@ make.plot.nma <- function() {
   }
   else {
     col <- 1:length(pdbs$id)
+  }
+
+  if(length(input$label_ids2) > 0) {
+    inds <- unlist(lapply(input$label_ids2, grep, pdbs$id))
+    show <- rep(FALSE, length(pdbs$id))
+    show[inds] <- TRUE
+    col[!show] <- NA
   }
 
   plot(modes, pdbs, col=col, signif=signif,
@@ -242,11 +276,20 @@ make.plot.dendrogram2 <- function() {
   hclustplot(hc, k=input$nclusts, colors=grps, labels=ids, cex=input$cex2,
              main=main, fillbox=FALSE, mar=mar)
 
-  par(fig=c(.65, 1, .45, 1), new = TRUE)
-  plot(pc$z[,1:2], col="grey50", pch=16, cex=1.1*input$cex2, 
-       ylab="", xlab="", axes=FALSE)
-  points(pc$z[,1:2], col=grps, pch=16, cex=0.7*input$cex2)
-  box()
+  if(input$show_confplot2) {
+    xlim <- range(pc$z[,1])
+    ylim <- range(pc$z[,2])
+
+    par(fig=c(.65, 1, .45, 1), new = TRUE)
+    plot(pc$z[,1:2], col="grey20", pch=16, cex=1.1*input$cex2, 
+         ylab="", xlab="", axes=FALSE,
+         xlim=xlim, ylim=ylim)
+    rect(xlim[1]*1.2, ylim[1]*1.2, xlim[2]*1.2, ylim[2]*1.2, col="grey90")
+    points(pc$z[,1:2], col="grey20", pch=16, cex=1.2*input$cex2)
+    points(pc$z[,1:2], col=grps, pch=16, cex=0.8*input$cex2)
+    box()
+    mtext("PC conformer plot", side=3, line=0, adj=0, cex=0.9)
+  }
 }
 
 output$dendrogram2 <- renderPlot({

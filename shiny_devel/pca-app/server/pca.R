@@ -2,6 +2,7 @@
 ##-- PCA
 ####################
 init_show_trj <- TRUE
+
 pca1 <- reactive({
   pdbs <- fit()
   pc <- pca(pdbs)
@@ -14,8 +15,16 @@ pca1 <- reactive({
 
 clust <- reactive({
   pdbs <- fit()
-  rd <- rmsd(pdbs)
-  hc <- hclust(as.dist(rd))
+  pc <- pca1()
+
+  if(input$cluster_by == "rmsd") {
+    rd <- rmsd(pdbs)
+    hc <- hclust(as.dist(rd))
+  }
+
+  if(input$cluster_by == "pc_space") {
+    hc <- hclust(dist(pc$z[,1:as.numeric(input$clust_npcs)]))
+  }
   return(hc)
 })
 
@@ -34,14 +43,16 @@ output$checkboxgroup_label_ids <- renderUI({
   checkboxInput("toggle_all", "Toggle all", TRUE)
 
   if(input$toggle_all) {
-    checkboxGroupInput(inputId="label_ids", label="PDB IDs:", choices=ids, selected=ids, inline=TRUE)
+    checkboxGroupInput(inputId="label_ids", label="Label PDB IDs:",
+                       choices=ids, selected=ids, inline=TRUE)
 
-#      lapply(1:input$nclust, function(x) {
-#             do.call(checkboxGroupInput,list("label_ids1", paste0("Cluster: ", x), ids[grps[order(grps)]==x], selected=ids, inline=TRUE))
-#  })
+    ##lapply(1:input$nclust, function(x) {
+    ##do.call(checkboxGroupInput,list("label_ids1", paste0("Cluster: ", x), ids[grps[order(grps)]==x], selected=ids, inline=TRUE))
+    ##})
   }
   else {
-        checkboxGroupInput(inputId="label_ids", label="PDB IDs:", choices=ids, selected=c(), inline=TRUE)
+        checkboxGroupInput(inputId="label_ids", label="PDB IDs:",
+                           choices=ids, selected=c(), inline=TRUE)
   }
 })
 
@@ -65,28 +76,30 @@ output$pca_plot1_conf <- renderPlot({
                           100, 2), "%)")
   if(input$nclust < 9) {
     cluster.colors <- col2hex(palette())[col]
-  } else {
-      cluster.colors <- col2hex(rainbow(input$nclust))[col]
+  }
+  else {
+    cluster.colors <- col2hex(rainbow(input$nclust))[col]
   }
 
-  #plot(pc$z[, xax], pc$z[, yax],
-  #     col="grey50", pch=16,
-  #     xlab=p[1], ylab=p[2],
-  #     cex=input$cex_points*1.5)
-  plot(pc$z[, xax], pc$z[, yax], xlab=p[1], ylab=p[2],
-         bg=cluster.colors, pch=21,
-         cex=input$cex_points, col='grey50')
+  xlim <- range(pc$z[, xax]) * input$inner_margin
+  ylim <- range(pc$z[, yax]) * input$inner_margin
 
+  plot(pc$z[, xax], pc$z[, yax], xlab=p[1], ylab=p[2],
+       bg=cluster.colors, pch=21,
+       cex=input$cex_points, col='grey50',
+       xlim=xlim, ylim=ylim)
+  
   abline(h = 0, col = "gray", lty = 2)
   abline(v = 0, col = "gray", lty = 2)
+  
   if(input$labelplot) {
     if(length(input$label_ids)>0) {
       inds <- unlist(lapply(input$label_ids, grep, pdbs$id))
-
+      
       if(input$distribute_labels) {
         pointLabel(pc$z[inds, xax], pc$z[inds, yax],
-             labels=basename.pdb(pdbs$id[inds]),
-             pos=1, offset=input$offset, cex=input$cex_labels)
+                   labels=basename.pdb(pdbs$id[inds]),
+                   pos=1, offset=input$offset, cex=input$cex_labels)
       }
       else {
         text(pc$z[inds, xax], pc$z[inds, yax],
@@ -105,6 +118,72 @@ output$pca_plot1_scree <- renderPlot({
   op <- par(pty="s")
   plot.pca.scree(pc$L)
   invisible(par(op))
+})
+
+output$scatterplot3d_webgl <- renderWebGL({
+  invisible(capture.output( pdbs <- fit() ))
+  invisible(capture.output( pc <- pca1() ))
+  col <- 1
+  if(input$nclust>1)
+    col <- clustgrps()
+  
+  op <- par(pty="s")
+  
+  xax <- as.numeric(input$pcx)
+  yax <- as.numeric(input$pcy)
+  zax <- as.numeric(input$pcz)
+  
+  p <- paste0("PC", c(xax, yax, zax),
+              " (", round((pc$L[c(xax, yax, zax)]/sum(pc$L)) *
+                          100, 2), "%)")
+  if(input$nclust < 9) {
+    cluster.colors <- col2hex(palette())[col]
+  }
+  else {
+    cluster.colors <- col2hex(rainbow(input$nclust))[col]
+  }
+  
+  points3d(pc$z[, xax], pc$z[, yax], pc$z[, zax], col=cluster.colors, size=5)
+  axes3d()
+  title3d('','', p[1], p[2], p[3])
+})
+
+output$scatterplot3d_rthreejs <- renderScatterplotThree({
+  invisible(capture.output( pdbs <- fit() ))
+  invisible(capture.output( pc <- pca1() ))
+  
+  col <- 1
+  if(input$nclust>1)
+    col <- clustgrps()
+  
+  op <- par(pty="s")
+  
+  xax <- as.numeric(input$pcx)
+  yax <- as.numeric(input$pcy)
+  zax <- as.numeric(input$pcz)
+  
+  p <- paste0("PC", c(xax, yax, zax),
+              " (", round((pc$L[c(xax, yax, zax)]/sum(pc$L)) *
+                          100, 2), "%)")
+  if(input$nclust < 9) {
+    cluster.colors <- col2hex(palette())[col]
+  }
+  else {
+    cluster.colors <- col2hex(rainbow(input$nclust))[col]
+  }
+  
+  labs <- basename.pdb(pdbs$id)
+  
+  names(labs) <- NULL
+  df <- data.frame(x=pc$z[,xax], y=pc$z[,yax], z=pc$z[,zax])
+  names(df) <- p
+  scatterplot3js(x=df,
+                 color=cluster.colors,
+                 size=1,
+                 labels=labs,
+                 label.margin="80px 10px 10px 10px",
+                 renderer=input$renderer,
+                 grid=input$grid)
 })
 
 ## fancy plot using rChart
@@ -190,16 +269,24 @@ make.plot.loadings <- function(){
   sse <- pdbs2sse(pdbs, ind=1, rm.gaps=TRUE)
   rf <- rmsf(pdbs$xyz[, gaps.pos$f.inds])
 
-  i <- as.numeric(input$loadings_pc)
-  plot4 <- plot.bio3d(pc$au[, i], resno=resno, sse=sse,
-                      ylab=paste0("PC-", i, " (Å)"), xlab="Residue No.")
+  pcs <- as.numeric(input$loadings_pc)
+  print(pcs)
 
-  if(input$toggle_rmsf1) {
-    par(new=TRUE)
-    plot5 <- plot.bio3d(rf, resno=resno, sse=sse, axes=FALSE, col=2, type="l", xlab="", ylab="")
-    axis(4, col=2)
+  if(length(pcs)>1)
+    par(mfrow=c(length(pcs), 1))
+  if(length(pcs)==0)
+    pcs <- 1
+    
+  for(i in pcs) {
+    plot4 <- plot.bio3d(pc$au[, i], resno=resno, sse=sse,
+                        ylab=paste0("PC-", i, " (Å)"), xlab="Residue No.")
+    
+    if(input$toggle_rmsf1) {
+      par(new=TRUE)
+      plot5 <- plot.bio3d(rf, resno=resno, sse=sse, axes=FALSE, col=2, type="l", xlab="", ylab="")
+      axis(4, col=2)
+    }
   }
-
 
   return(plot4)
 }
@@ -356,4 +443,13 @@ output$pca2pymol = downloadHandler(
   filename = 'pca.pse.zip',
   content = function(file) {
     zip(file, files=make_pca_pse(), flags = "-9Xj")
+})
+
+
+output$pcloadings2pdf = downloadHandler(
+  filename = "pc_loadings.pdf",
+  content = function(FILE=NULL) {
+    pdf(file=FILE, width=input$width2, height=input$height2)
+    make.plot.loadings()
+    dev.off()
 })

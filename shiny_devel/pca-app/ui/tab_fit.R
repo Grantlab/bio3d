@@ -5,7 +5,6 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
            column(4,
                   wellPanel(
                     h4("Initial structure analysis"),
-                    hr(),
 
                     radioButtons("fit_type", "Superimpose to",
                                  c("Invariant core" = "core",
@@ -22,7 +21,28 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     sliderInput("clusters", "Cluster by pairwise RMSD",
                                 min = 1, max = 10, value = 3, step=1),
 
-                    checkboxInput('show_options', 'More options', value=FALSE)
+                    checkboxInput('show_options', 'More options', value=FALSE),
+
+                    conditionalPanel(
+                      condition = "input.str_plot == 'heatmap'",
+                      downloadButton('rmsd_heatmap2pdf', "Download PDF")
+                      ),
+                    
+                    conditionalPanel(
+                      condition = "input.str_plot == 'dendrogram'",
+                      downloadButton('rmsd_dendrogram2pdf', "Download PDF")
+                      ),
+                    
+                    conditionalPanel(
+                      condition = "input.str_plot == 'rmsf'",
+                      downloadButton('rmsf2pdf', "Download PDF")
+                      ),
+                    
+                    conditionalPanel(
+                      condition = "input.str_plot == 'hist'",
+                      downloadButton('rmsd_hist2pdf', "Download PDF")
+                      ),
+                    downloadButton('rmsdZIP', "Download RMSD matrix")
                     )
                   ),
 
@@ -30,26 +50,22 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
 
              conditionalPanel(
                condition = "input.str_plot == 'heatmap'",
-               plotOutput("rmsd_heatmap"),
-               downloadButton('rmsd_heatmap2pdf', "Download PDF")
+               plotOutput("rmsd_heatmap")
                ),
 
              conditionalPanel(
                condition = "input.str_plot == 'dendrogram'",
-               plotOutput("rmsd_dendrogram"),
-               downloadButton('rmsd_dendrogram2pdf', "Download PDF")
+               plotOutput("rmsd_dendrogram")
                ),
 
              conditionalPanel(
                condition = "input.str_plot == 'rmsf'",
-               plotOutput("rmsf_plot"),
-               downloadButton('rmsf2pdf', "Download PDF")
+               plotOutput("rmsf_plot")
                ),
 
              conditionalPanel(
                condition = "input.str_plot == 'hist'",
-               plotOutput("rmsd_hist"),
-               downloadButton('rmsd_hist2pdf', "Download PDF")
+               plotOutput("rmsd_hist")
                )
              )
            ),
@@ -131,14 +147,6 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                   ),
 
            column(4,
-                  wellPanel(
-                    h4("Download"),
-                    #downloadButton('pdbsZIP', "Download Aligned PDBs"),
-                    hr(),
-                    downloadButton('rmsdZIP', "Download RMSD matrix"),
-                    hr()
-                    ),
-
                   wellPanel(
                     h4("Cluster representatives"),
                     verbatimTextOutput("representatives")
