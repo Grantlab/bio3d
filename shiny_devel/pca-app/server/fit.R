@@ -279,15 +279,19 @@ observeEvent(input$viewUpdate1, {
 ####################################
 
 pdbs2rda <- reactive({
-  fn <- paste0(data_path(), '/pdbs.RData')
+  path <- data_path()
+  core <- find_core()
+  pdbs <- fit()
+  xyz <- pdbfit(pdbs, core)
+  fn <- paste0(path, "/", "pdbs.RData")
   save(pdbs, file=fn)
   return(fn)
 })
 
 output$pdbsRData = downloadHandler(
-  filename = 'pdbs.RData',
+  filename = 'pdbs.zip',
   content = function(file) {
-    pdbs2rda()
+    zip(file, files=pdbs2rda(), flags = "-9Xj")
   })
 
 

@@ -29,12 +29,10 @@
   if(is.null(file) & length(s.inds)==1 & length(m.inds)==1)
     file <- paste("mode_", m.inds+6, "-s", s.inds, ".pdb", sep="")
   
-  if(is.null(enma$call$rm.gaps))
-    rm.gaps <- TRUE
-  else if(enma$call$rm.gaps=="T" || enma$call$rm.gaps=="TRUE")
-    rm.gaps <- TRUE
-  else
+  if(dim(enma$U.subspace)[1] == dim(pdbs$xyz)[2])
     rm.gaps <- FALSE
+  else
+    rm.gaps <- TRUE
 
   if(!rm.gaps & length(s.inds)>1 & length(m.inds)>1)
     stop(paste("enma object must be calculated with argument rm.gaps=TRUE", "\n",

@@ -9,7 +9,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                     h4('Normal Modes Visualization'),
                     checkboxInput('show_trj2', 'Show NM Trajectory', value=FALSE),
                     
-                    selectInput('viewMode', 'Choose Mode:', choices=c(1:10)),
+                    selectInput('viewMode_nma', 'Choose Mode:', choices=c(1:10)),
                     uiOutput('struct_dropdown2'),
                     
                     radioButtons('viewColor2', label='Structure color',
@@ -48,13 +48,13 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                     checkboxInput('spread', 'Spread lines', value=FALSE),
                     checkboxInput('seqide', 'Sequence identity', value=FALSE),
                     ##checkboxInput('signif', 'Show fluct signif', value=FALSE),
-                    checkboxInput('rm.gaps', 'Omit gaps', value=TRUE),
+                    checkboxInput('rm.gaps', 'Omit gap regions', value=TRUE),
                     
                     checkboxInput('cluster', 'Color by clustering', value=TRUE),
-                    radioButtons("group_by", "Cluster by",
+                    radioButtons("group_by2", "Cluster by",
                                  c("RMSD" = "rmsd",
                                    "RMSIP" = "rmsip",
-                                   "PC distance" = "pc_space"
+                                   "PC subspace" = "pc_space"
                                    ),
                                  ##"bhat" = "bhat"),
                                  inline=TRUE),
@@ -150,13 +150,13 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                     checkboxInput('show_confplot2', 'Show PC conformer plot', value=FALSE),
                     checkboxInput('show_options2', 'More options', value=FALSE),
 
-                    radioButtons("group_by", "Cluster by",
-                                 c("RMSD" = "rmsd",
-                                   "RMSIP" = "rmsip",
-                                   "PC distance" = "pc_space"
-                                   ),
-                                 ##"bhat" = "bhat"),
-                                 inline=TRUE),
+                    #radioButtons("group_by", "Cluster by",
+                    #             c("RMSD" = "rmsd",
+                    #               "RMSIP" = "rmsip",
+                    #               "PC distance" = "pc_space"
+                    #               ),
+                    #             ##"bhat" = "bhat"),
+                    #             inline=TRUE),
                     
                     downloadButton('nmadendrogram2pdf', "Download Plot PDF")
                     )

@@ -46,7 +46,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
         selectInput('pcy', 'PC on Y-axis:', choices=c(1:10), selected=2),
 
         conditionalPanel(
-          condition = "input.plot_type == '3dscatter'",
+          condition = "input.plot_type == '3dscatter1' || input.plot_type == '3dscatter2'",
           selectInput('pcz', 'PC on Z-axis:', choices=c(1:10), selected=3)
           ),
 
@@ -184,7 +184,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
                     h4('Residue contributions'),
                     selectInput('loadings_pc', 'Choose Principal Component:',
                                 choices=c(1:10), selected=1, multiple=TRUE),
-                    checkboxInput("toggle_rmsf1", "Show RMSF", FALSE),
+                    checkboxInput("toggle_rmsf1", "Show RMSF", TRUE),
                     downloadButton('pcloadings2pdf', label='Download PDF'),
                     checkboxInput("show_options2", "More options", value=FALSE)
                     )

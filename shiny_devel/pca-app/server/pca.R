@@ -270,13 +270,17 @@ make.plot.loadings <- function(){
   rf <- rmsf(pdbs$xyz[, gaps.pos$f.inds])
 
   pcs <- as.numeric(input$loadings_pc)
-  print(pcs)
 
   if(length(pcs)>1)
     par(mfrow=c(length(pcs), 1))
   if(length(pcs)==0)
     pcs <- 1
-    
+
+  if(input$toggle_rmsf1)
+    par(mar=c(5, 4, 4, 5))
+  else
+    par(mar=c(5, 4, 4, 2))
+  
   for(i in pcs) {
     plot4 <- plot.bio3d(pc$au[, i], resno=resno, sse=sse,
                         ylab=paste0("PC-", i, " (Å)"), xlab="Residue No.")
@@ -285,6 +289,7 @@ make.plot.loadings <- function(){
       par(new=TRUE)
       plot5 <- plot.bio3d(rf, resno=resno, sse=sse, axes=FALSE, col=2, type="l", xlab="", ylab="")
       axis(4, col=2)
+      mtext("RMSF (Å)", side=4, line=3)
     }
   }
 

@@ -143,8 +143,6 @@ run_blast <- reactive({
     if(!nrow(hmm) > 0)
       stop("No BLAST hits found")
 
-    print(head(hmm))
-
     progress$set(value = 5)
     return(hmm)
   }
@@ -175,8 +173,6 @@ filter_hits <- reactive({
   ## acc: character vector of PDB ids
   out <- list(hits=hits2, hits_all=hits,
               acc=acc[hits2], acc_all=acc[hits], grps=grps)
-
-  print(acc[hits2])
 
   return(out)
 })

@@ -1,6 +1,8 @@
 ############
 ## NMA
 ###########
+init_show_trj_nma <- TRUE
+
 nma2 <- reactive({
   pdbs <- align()
     
@@ -10,13 +12,21 @@ nma2 <- reactive({
   progress$set(message = 'Calculating normal modes',
                detail = 'Please wait',
                value = 0)
-  ##modes <- nma(pdbs, fit=TRUE, rm.gaps=input$rm.gaps, progress=progress)
 
   rm.gaps <- TRUE
-  if(is.logical(input$rm.gaps))
+  if(is.logical(input$rm.gaps)) {
     rm.gaps <- input$rm.gaps
+  }
+  else {
+    rm.gaps <- TRUE
+  }
     
   modes <- nma(pdbs, fit=TRUE, rm.gaps=rm.gaps, progress=progress)
+  
+  if(init_show_trj_nma) {
+    updateCheckboxInput(session, 'show_trj2', 'Show NM Trajectory', value=TRUE)
+    init_show_trj_nma <<- FALSE
+  }
   return(modes)
 })
 
@@ -75,19 +85,19 @@ hclust_bhat2 <- reactive({
 
 
 hclust2 <- reactive({
-  if(input$group_by == "rmsd") {
+  if(input$group_by2 == "rmsd") {
     hc <- hclust_rmsd2()
   }
   
-  if(input$group_by == "rmsip") {
+  if(input$group_by2 == "rmsip") {
     hc <- hclust_rmsip2()
   }
 
-  if(input$group_by == "bhat") {
+  if(input$group_by2 == "bhat") {
     hc <- hclust_bhat2()
   }
 
-  if(input$group_by == "pc_space") {
+  if(input$group_by2 == "pc_space") {
     pc <- pca1()
     hc <- hclust(dist(pc$z[,1:2]))
   }
@@ -111,7 +121,7 @@ output$struct_dropdown2 <- renderUI({
   pdbs <- align()
   ids <- 1:length(pdbs$id)
   names(ids) <-  basename.pdb(pdbs$id)
-  selectInput('viewStruct2', 'Show NMs for structure:',
+  selectInput('viewStruct_nma', 'Show NMs for structure:',
               choices=ids)
 })
   
@@ -119,11 +129,9 @@ output$nmaWebGL  <- renderWebGL({
   pdbs <- align()
   modes <- nma2()
 
-  print(pdbs$xyz)
-  
   trj <- mktrj(modes, pdbs=pdbs,
-               s.inds=as.numeric(input$viewStruct2),
-               m.inds=as.numeric(input$viewMode),
+               s.inds=as.numeric(input$viewStruct_nma),
+               m.inds=as.numeric(input$viewMode_nma),
                rock=FALSE)
   n <- nrow(trj)
   
@@ -272,7 +280,7 @@ make.plot.dendrogram2 <- function() {
   ids <- basename.pdb(pdbs$id)
 
   mar <- c(input$margins2, 5, 3, 1)
-  main <- paste(toupper(input$group_by), "dendrogram")
+  main <- paste(toupper(input$group_by2), "dendrogram")
   hclustplot(hc, k=input$nclusts, colors=grps, labels=ids, cex=input$cex2,
              main=main, fillbox=FALSE, mar=mar)
 

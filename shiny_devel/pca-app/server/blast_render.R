@@ -105,7 +105,6 @@ output$blast_table <- renderDataTable({
     blast <- run_blast()
     hits <- filter_hits()
     grps <- set_cutoff(blast, cutoff=input$cutoff)$grps
-    print(grps)
 
     ## provide additional 5 non-checked table rows
     checked.inds <- which(hits$hits)
