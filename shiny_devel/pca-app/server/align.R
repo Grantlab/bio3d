@@ -99,6 +99,8 @@ align <- reactive({
                    progress=progress)
   }
 
+  message(pdbs$ali[1,])
+
   if(input$omit_missing) {
     conn <- inspect.connectivity(pdbs, cut=4.05)
     pdbs <- trim.pdbs(pdbs, row.inds=which(conn))
@@ -169,6 +171,7 @@ output$alignment <- renderUI({
 
   out <- list()
   for(i in 1:nblocks) {
+    x[x!=""] <- ""
     positions <- block.start[i]:block.end[i]
     n <- length(positions)
     aln.inds <- (bufsize + 1):(n + bufsize)
@@ -188,6 +191,8 @@ output$alignment <- renderUI({
     
     annot2 <- cons.annot
     annot2[aln.inds] <- cons[positions]
+    annot2[buf.inds1] <- ""
+    annot2[buf.inds2] <- ""
 
     m <- buf.inds1[bufsize]+1
     spl <- unlist(strsplit(annot[m], ""))
