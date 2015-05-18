@@ -49,6 +49,7 @@ fetch_pdbs <- reactive({
       progress$set(value = i)
     }
   }
+  gc()
   progress$close()
   
   progress <- shiny::Progress$new()
@@ -66,6 +67,7 @@ fetch_pdbs <- reactive({
                       path=configuration$pdbdir$splitfiles,
                       progress=progress)
   }
+  gc()
   progress$close()
   return(files)
 })
@@ -99,16 +101,14 @@ align <- reactive({
                    progress=progress)
   }
 
-  message(pdbs$ali[1,])
-
   if(input$omit_missing) {
     conn <- inspect.connectivity(pdbs, cut=4.05)
     pdbs <- trim.pdbs(pdbs, row.inds=which(conn))
   }
   
   rownames(pdbs$ali) <- basename.pdb(rownames(pdbs$ali))
-
   progress$close()
+  gc()
   return(pdbs)
 })
 
@@ -239,6 +239,7 @@ output$alignment <- renderUI({
     progress$set(value = i)
   }
   progress$close()
+  gc()
   
   pre(class="alignment", 
       out

@@ -6,10 +6,12 @@ init_show_trj <- TRUE
 pca1 <- reactive({
   pdbs <- fit()
   pc <- pca(pdbs)
+  
   if(init_show_trj) {
-      updateCheckboxInput(session, 'show_trj', 'Show PC Trajectory', value=TRUE)
-      init_show_trj <<- FALSE
+    updateCheckboxInput(session, 'show_trj', 'Show PC Trajectory', value=TRUE)
+    init_show_trj <<- FALSE
   }
+  
   return(pc)
 })
 
