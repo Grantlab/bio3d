@@ -109,14 +109,28 @@ align <- reactive({
   rownames(pdbs$ali) <- basename.pdb(rownames(pdbs$ali))
   progress$close()
   gc()
+  save(pdbs, file="pdbs.RData")
   return(pdbs)
 })
 
 ####################################
 ####   Alignment output         ####
 ####################################
+
+check_aln <- reactive({
+  aln <- align()
+  gaps <- gap.inspect(aln$ali)
+
+  ## hard-coded limit here -- matches stop.at argument in core.find()
+  if(!length(gaps$f.inds) > 15) {
+    stop("Insufficent non-gap regions in alignment to proceed")
+  }
+})
+
 output$alignment_summary <- renderPrint({
   invisible(capture.output( aln <- align() ))
+  check_aln()
+    
   id <- aln$id
   ali <- aln$ali
   
@@ -135,7 +149,7 @@ output$alignment_summary <- renderPrint({
 
 output$alignment <- renderUI({
   invisible(capture.output( aln <- align() ))
-  
+   
   ali <- aln$ali
   ids <- basename.pdb(aln$id)
   

@@ -4,7 +4,8 @@
 init_show_pdbs <- TRUE
 find_core <- reactive({
   pdbs <- align()
-
+  check_aln()
+  
   progress <- shiny::Progress$new()
   on.exit(progress$close())
 
@@ -19,6 +20,7 @@ find_core <- reactive({
 
 fit <- reactive({
   pdbs <- align()
+  check_aln()
   core <- find_core()
 
   if(input$fit_type == "full") {

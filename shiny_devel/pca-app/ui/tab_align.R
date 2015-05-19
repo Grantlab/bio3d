@@ -58,6 +58,7 @@ tabPanel("2. ALIGN",
          fluidRow(
            column(12,
                   h2("Final alignment"),
+                  p("(slow for large aligments)"),
                   uiOutput("alignment")
                   )
            )

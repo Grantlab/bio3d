@@ -5,6 +5,7 @@ init_show_trj_nma <- TRUE
 
 nma2 <- reactive({
   pdbs <- align()
+  check_aln()
     
   progress <- shiny::Progress$new()
   on.exit(progress$close())

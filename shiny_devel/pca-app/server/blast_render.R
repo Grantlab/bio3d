@@ -35,14 +35,21 @@ output$blast_plot1 <- renderPlot({
   grps <- hits$grps
   z <- blast$score
 
-  plot(z, xlab="", ylab="Bitscore", col=sapply(grps, function(x) if(x==1) 'red' else if(x==2) 'black'))
-  abline(v=gp, col="gray70", lty=3)
-  abline(h=cutoff, col="gray70", lty=3)
+  col <- sapply(grps, function(x) if(x==1) 'red' else if(x==2) 'black')
+  l <- as.numeric(input$limit_hits)
+  col[1:l] <- "blue"
+
+  plot(z, xlab="", ylab="Bitscore", bg=col, col="grey10", pch=21, cex=1.1)
+  abline(v=gp, col="gray50", lty=3)
+  abline(h=cutoff, col="gray50", lty=3)
 
   pos <- c(rep(3, length(gp))[-length(gp)],2)
   text(gp, z[gp],
        labels=paste0("Nhit=", gp, ", cutoff=", round(z[gp])),
        col="black", pos=3, cex=1)
+
+  legend("bottomleft", c("Selected hits", "Above cutoff", "Below cutoff"),
+         col=c("blue", "red", "black"), pch=16)
 
 })
 
@@ -142,9 +149,13 @@ output$blast_table <- renderDataTable({
   }
 
   if(!is.null(grps) & !is.null(grps)) {
+    col <- sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' })
+    l <- as.numeric(input$limit_hits)
+    col[1:l] <- "blue"
+    
     anno$pdbId <- paste0(
       "<span style=\"color:",
-      sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' }),
+      col,
       "; font-size:large\">&#x25CF;</span>",
       "&nbsp;<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
       substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>"
