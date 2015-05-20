@@ -113,7 +113,11 @@ function(pdbs,
   remain.vol   <- NULL
   core.length  <- NULL
 
-
+  if(!length(res.still.in) > stop.at) {
+    stop(paste0("Insufficient non-gap residues in alignment: \n",
+                "  non-gap residues (", length(res.still.in), ") <= 'stop.at' argument (", stop.at, ")"))
+  }
+  
   fit.to = rep(FALSE,ncol(xyz.moved))        # Preliminary fitting
   fit.to[ as.vector(xyz.still.in) ]<-TRUE    # on first structure
 #  xyz.tmp <- t(apply(xyz.moved, 1,           # to find mean structure
@@ -125,8 +129,10 @@ function(pdbs,
 
   mean.xyz <- apply(xyz.tmp,2,mean)
 
-  if(write.pdbs) { dir.create(outpath,FALSE)  }
-
+  if(write.pdbs) {
+    dir.create(outpath,FALSE)
+  }
+  
   while(length(res.still.in) > stop.at) {
 
     # Core fitting, (core => pdbnum[ res.still.in ])
