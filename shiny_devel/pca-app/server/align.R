@@ -109,7 +109,7 @@ align <- reactive({
   rownames(pdbs$ali) <- basename.pdb(rownames(pdbs$ali))
   progress$close()
   gc()
-  save(pdbs, file="pdbs.RData")
+  ##save(pdbs, file="pdbs.RData")
   return(pdbs)
 })
 

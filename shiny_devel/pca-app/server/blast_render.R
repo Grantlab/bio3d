@@ -35,21 +35,21 @@ output$blast_plot1 <- renderPlot({
   grps <- hits$grps
   z <- blast$score
 
-  col <- sapply(grps, function(x) if(x==1) 'red' else if(x==2) 'black')
+  col <- sapply(grps, function(x) if(x==1) 'red' else if(x==2) 'grey50')
   l <- as.numeric(input$limit_hits)
-  col[1:l] <- "blue"
+  col[1:l] <- "green"
 
   plot(z, xlab="", ylab="Bitscore", bg=col, col="grey10", pch=21, cex=1.1)
   abline(v=gp, col="gray50", lty=3)
-  abline(h=cutoff, col="gray50", lty=3)
+  abline(h=cutoff, col="red", lty=2)
 
   pos <- c(rep(3, length(gp))[-length(gp)],2)
   text(gp, z[gp],
        labels=paste0("Nhit=", gp, ", cutoff=", round(z[gp])),
        col="black", pos=3, cex=1)
 
-  legend("bottomleft", c("Selected hits", "Above cutoff", "Below cutoff"),
-         col=c("blue", "red", "black"), pch=16)
+  legend("bottomleft", c("Selected hits", "Above cutoff", "Below cutoff", "Cutoff"),
+         pt.bg = c("green", "red", "grey50", "red"), col=c(rep("grey10", 3), "red"), bg="grey90", lty=c(0, 0, 0, 2), pch=c(21,21,21,NA))
 
 })
 
@@ -151,7 +151,7 @@ output$blast_table <- renderDataTable({
   if(!is.null(grps) & !is.null(grps)) {
     col <- sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' })
     l <- as.numeric(input$limit_hits)
-    col[1:l] <- "blue"
+    col[1:l] <- "green"
     
     anno$pdbId <- paste0(
       "<span style=\"color:",

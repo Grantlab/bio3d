@@ -39,37 +39,45 @@ randstr <- function() {
     }
 
     ## Helices
-    resid.helix <- unbound(sse.ref$helix$start, sse.ref$helix$end)
-    resid.helix <- paste0(resid.helix, rep(sse.ref$helix$chain, sse.ref$helix$length))
-    inds        <- which(resid %in% resid.helix)
+    if(length(sse.ref$helix$start) > 0) {
+      resid.helix <- unbound(sse.ref$helix$start, sse.ref$helix$end)
+      resid.helix <- paste0(resid.helix, rep(sse.ref$helix$chain, sse.ref$helix$length))
+      inds        <- which(resid %in% resid.helix)
 
-    ## inds points now to the position in the alignment where the helices are
-    new.sse <- bounds( seq(1, length(resid))[inds] )
-    if(length(new.sse) > 0) {
-      sse.aln$helix$start  <- new.sse[,"start"]
-      sse.aln$helix$end    <- new.sse[,"end"]
-      sse.aln$helix$length <- new.sse[,"length"]
+      ## inds points now to the position in the alignment where the helices are
+      new.sse <- bounds( seq(1, length(resid))[inds] )
+      if(length(new.sse) > 0) {
+        sse.aln$helix$start  <- new.sse[,"start"]
+        sse.aln$helix$end    <- new.sse[,"end"]
+        sse.aln$helix$length <- new.sse[,"length"]
+      }
     }
 
     ## Sheets
-    resid.sheet <- unbound(sse.ref$sheet$start, sse.ref$sheet$end)
-    resid.sheet <- paste0(resid.sheet, rep(sse.ref$sheet$chain, sse.ref$sheet$length))
-    inds        <- which(resid %in% resid.sheet)
-
-    new.sse <- bounds( seq(1, length(resid))[inds] )
-    if(length(new.sse) > 0) {
-      sse.aln$sheet$start  <- new.sse[,"start"]
-      sse.aln$sheet$end    <- new.sse[,"end"]
-      sse.aln$sheet$length <- new.sse[,"length"]
+    if(length(sse.ref$sheet$start) > 0) {
+      resid.sheet <- unbound(sse.ref$sheet$start, sse.ref$sheet$end)
+      resid.sheet <- paste0(resid.sheet, rep(sse.ref$sheet$chain, sse.ref$sheet$length))
+      inds        <- which(resid %in% resid.sheet)
+      
+      new.sse <- bounds( seq(1, length(resid))[inds] )
+      if(length(new.sse) > 0) {
+        sse.aln$sheet$start  <- new.sse[,"start"]
+        sse.aln$sheet$end    <- new.sse[,"end"]
+        sse.aln$sheet$length <- new.sse[,"length"]
+      }
     }
 
     ## SSE vector
     sse <- rep(" ", length(resid))
-    for(i in 1:length(sse.aln$helix$start))
-      sse[sse.aln$helix$start[i]:sse.aln$helix$end[i]] <- "H"
+    if(length(sse.aln$helix$start) > 0) {
+      for(i in 1:length(sse.aln$helix$start))
+        sse[sse.aln$helix$start[i]:sse.aln$helix$end[i]] <- "H"
+    }
 
-    for(i in 1:length(sse.aln$sheet$start))
-      sse[sse.aln$sheet$start[i]:sse.aln$sheet$end[i]] <- "E"
+    if(length(sse.aln$sheet$start) > 0) {
+      for(i in 1:length(sse.aln$sheet$start))
+        sse[sse.aln$sheet$start[i]:sse.aln$sheet$end[i]] <- "E"
+    }
 
     sse.aln$sse <- sse
   }
