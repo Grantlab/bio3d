@@ -136,8 +136,60 @@ function (pdb = NULL,
             resno, insert, "", x, y, z, o, b, "", segid, elesy, charge)
   } 
 
+  ##### To write SSE annotations #####
+  format.sse <- function(pdb) {
+    # format 'sse' component in a pdb object to include resid and length
+    lapply(c(helix='helix', sheet='sheet'), function(x) {
+       sse <- pdb[[x]]
+       if(length(sse$start) > 0) {
+         ref <- pdb$atom[pdb$calpha, c("resno", "chain", "insert", "resid")]
+         refkey <- paste(ref$resno, ref$chain, ref$insert, sep = "_")
+         insert <- sub(' +', '', names(sse$start))
+         insert[insert == ''] <- NA
+         skey <- paste(sse$start, sse$chain, insert, sep="_")
+         insert <- sub(' +', '', names(sse$end))
+         insert[insert == ''] <- NA
+         ekey <- paste(sse$end, sse$chain, insert, sep="_")
+         resno = data.frame(start = sse$start, end = sse$end)
+         resid = data.frame(start = ref$resid[match(skey, refkey)], 
+                              end = ref$resid[match(ekey, refkey)])
+         insert = data.frame(start= names(sse$start), end = names(sse$end))
+         type = ifelse(x=='helix', 'type', 'sense')
+         length = match(ekey, refkey) - match(skey, refkey) + 1
+         return(list(resno=resno, resid=resid, chain=sse$chain, insert=insert,
+                     type=sse[[type]], length=length))
+       } else {
+         return (NULL)
+       }
+     } )
+  }
 
-  
+  if(!is.null(pdb)) {
+    lines <- NULL
+    sse <- format.sse(pdb)
+    if(!is.null(sse$helix)) {
+       format <- "%-6s %3d %3s %3s %1s %4d%1s %3s %1s %4d%1s%2s%30s %5d"
+       for(i in 1:nrow(sse$helix$resno))
+         lines <- rbind(lines, sprintf(format, 'HELIX', i, i, sse$helix$resid$start[i],
+               sse$helix$chain[i], sse$helix$resno$start[i], sse$helix$insert$start[i],
+               sse$helix$resid$end[i], sse$helix$chain[i], sse$helix$resno$end[i],
+               sse$helix$insert$end[i], sse$helix$type[i], '', sse$helix$length[i])) 
+    }
+    if(!is.null(sse$sheet)) {
+       format <- "%-6s %3d %3s%2d %3s %1s%4d%1s %3s %1s%4d%1s%2s"
+       for(i in 1:nrow(sse$sheet$resno))
+         lines <- rbind(lines, sprintf(format, 'SHEET', i, 'S1', nrow(sse$sheet$resno), 
+               sse$sheet$resid$start[i], sse$sheet$chain[i], sse$sheet$resno$start[i], 
+               sse$sheet$insert$start[i], sse$sheet$resid$end[i], sse$sheet$chain[i], 
+               sse$sheet$resno$end[i], sse$sheet$insert$end[i], sse$sheet$type[i]) )
+    }
+    if(!is.null(lines)) {
+       write.table(lines, file = file, quote = FALSE, row.names = FALSE, col.names = FALSE, append = append)
+       if(!append) append = TRUE
+    }
+  }
+  ##################################### 
+
   if(nfile==1) {
     coords <- matrix(round(as.numeric(xyz), 3), ncol = 3, byrow = TRUE)
     if (verbose) {
