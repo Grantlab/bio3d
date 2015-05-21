@@ -19,6 +19,7 @@ function (pdb = NULL,
           verbose =FALSE,
           chainter = FALSE,
           end = TRUE, 
+          sse = FALSE,
           print.segid = FALSE) {
 
   if(is.null(xyz) || !is.numeric(xyz))
@@ -164,24 +165,26 @@ function (pdb = NULL,
      } )
   }
 
-  if(!is.null(pdb)) {
+  if(!is.null(pdb) && sse) {
     lines <- NULL
-    sse <- format.sse(pdb)
-    if(!is.null(sse$helix)) {
+    new.sse <- format.sse(pdb)
+    if(!is.null(new.sse$helix)) {
+       xx <- new.sse$helix
        format <- "%-6s %3d %3s %3s %1s %4d%1s %3s %1s %4d%1s%2s%30s %5d"
-       for(i in 1:nrow(sse$helix$resno))
-         lines <- rbind(lines, sprintf(format, 'HELIX', i, i, sse$helix$resid$start[i],
-               sse$helix$chain[i], sse$helix$resno$start[i], sse$helix$insert$start[i],
-               sse$helix$resid$end[i], sse$helix$chain[i], sse$helix$resno$end[i],
-               sse$helix$insert$end[i], sse$helix$type[i], '', sse$helix$length[i])) 
+       for(i in 1:nrow(xx$resno))
+         lines <- rbind(lines, sprintf(format, 'HELIX', i, i, xx$resid$start[i],
+               xx$chain[i], xx$resno$start[i], xx$insert$start[i],
+               xx$resid$end[i], xx$chain[i], xx$resno$end[i],
+               xx$insert$end[i], xx$type[i], '', xx$length[i])) 
     }
-    if(!is.null(sse$sheet)) {
+    if(!is.null(new.sse$sheet)) {
+       xx <- new.sse$sheet
        format <- "%-6s %3d %3s%2d %3s %1s%4d%1s %3s %1s%4d%1s%2s"
-       for(i in 1:nrow(sse$sheet$resno))
-         lines <- rbind(lines, sprintf(format, 'SHEET', i, 'S1', nrow(sse$sheet$resno), 
-               sse$sheet$resid$start[i], sse$sheet$chain[i], sse$sheet$resno$start[i], 
-               sse$sheet$insert$start[i], sse$sheet$resid$end[i], sse$sheet$chain[i], 
-               sse$sheet$resno$end[i], sse$sheet$insert$end[i], sse$sheet$type[i]) )
+       for(i in 1:nrow(xx$resno))
+         lines <- rbind(lines, sprintf(format, 'SHEET', i, 'S1', nrow(xx$resno), 
+               xx$resid$start[i], xx$chain[i], xx$resno$start[i], 
+               xx$insert$start[i], xx$resid$end[i], xx$chain[i], 
+               xx$resno$end[i], xx$insert$end[i], xx$type[i]) )
     }
     if(!is.null(lines)) {
        write.table(lines, file = file, quote = FALSE, row.names = FALSE, col.names = FALSE, append = append)

@@ -9,7 +9,7 @@
 write.pdb(pdb = NULL, file = "R.pdb", xyz = pdb$xyz, type = NULL, resno = NULL,
  resid = NULL, eleno = NULL, elety = NULL, chain = NULL, insert = NULL, 
  alt = NULL, o = NULL, b = NULL, segid = NULL, elesy = NULL, charge = NULL, 
-append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE, print.segid = FALSE)
+append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE, sse = FALSE, print.segid = FALSE)
 }
 \arguments{
   \item{pdb}{ a PDB structure object obtained from
@@ -44,6 +44,7 @@ append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE, print.segid = FAL
   \item{chainter}{ logical, if TRUE a TER line is inserted at termination
     of a chain. }
   \item{end}{ logical, if TRUE END line is written. }
+  \item{sse}{ logical, if TRUE secondary structure annotations are written. }
   \item{print.segid}{ logical, if FALSE segid will not be written. }
 }
 \details{
