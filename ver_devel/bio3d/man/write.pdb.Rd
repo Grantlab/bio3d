@@ -9,7 +9,8 @@
 write.pdb(pdb = NULL, file = "R.pdb", xyz = pdb$xyz, type = NULL, resno = NULL,
  resid = NULL, eleno = NULL, elety = NULL, chain = NULL, insert = NULL, 
  alt = NULL, o = NULL, b = NULL, segid = NULL, elesy = NULL, charge = NULL, 
-append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE, sse = FALSE, print.segid = FALSE)
+ append = FALSE, verbose = FALSE, chainter = FALSE, end = TRUE, sse = FALSE, 
+ print.segid = FALSE)
 }
 \arguments{
   \item{pdb}{ a PDB structure object obtained from
