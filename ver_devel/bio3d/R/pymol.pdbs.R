@@ -16,7 +16,7 @@
 pymol <- function(...)
   UseMethod("pymol")
 
-pymol.pdbs <- function(pdbs, col=NULL, file=NULL,
+pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
                        type="script", exefile = "pymol") {
   
   allowed <- c("session", "script", "launch")
@@ -205,13 +205,31 @@ pymol.pdbs <- function(pdbs, col=NULL, file=NULL,
   } ## coloring ends
   
   if(!allatom) {
-    lines[l+1] <- "as cartoon"
-    lines[l+2] <- "set cartoon_trace_atoms, 1"
+    if(!as %in% c("cartoon", "ribbon")) {
+      warning("'as' set to 'ribbon' for c-alpha only structures")
+      as <- "ribbon"
+    }
+    
+    lines[l+1] <- paste("as", as)
+    lines[l+2] <- paste0("set ", as, "_trace_atoms, 1")
     l <- l+2
   }
+  else {
+    allowed <- c("lines", "cartoon", "ribbon")
+    if(!as %in% allowed) {
+      warning(paste("allowed values for 'as' are: ", paste(allowed, collapse=", ")))
+      as <- "ribbon"
+    }
+    lines[l+1] <- paste("as", as)
+    l <- l+1
+  }
 
+  lines[l+1] <- "zoom"
+  l <- l+1
+  
   if(type == "session")
     lines[l+1] <- paste("save", psefile)
+  
   lines <- lines[!is.na(lines)]
   write.table(lines, file=pmlfile, append=FALSE, quote=FALSE, sep="\n",
               row.names=FALSE, col.names=FALSE)

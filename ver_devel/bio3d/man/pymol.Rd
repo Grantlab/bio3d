@@ -12,7 +12,7 @@
 \usage{
 pymol(\dots)
 
-\method{pymol}{pdbs}(pdbs, col=NULL, file=NULL, type="script",
+\method{pymol}{pdbs}(pdbs, col=NULL, as="ribbon", file=NULL, type="script",
                      exefile="pymol")
 
 \method{pymol}{nma}(\dots)
@@ -39,6 +39,7 @@ pymol(\dots)
     \code{core.find} to color on the invariant core. Alternatively,
     provide a vector containing the color code for each structure in the
     \sQuote{pdbs} object. }
+  \item{as}{ show as \sQuote{ribbon}, \sQuote{cartoon}, \sQuote{lines}. }
   \item{file}{ a single element character vector specifying the file name
     of the PyMOL session/script file. }
   \item{type}{ a single element character vector specifying the output
