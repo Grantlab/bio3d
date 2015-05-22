@@ -1,8 +1,8 @@
 
-# Requirements for Shiny PCA (server edition) 
+# Requirements for Shiny PCA (server edition)
 
 ## R-packages
--- rCharts, RMySQL, rgl, shinyRGL, maptools, reshape2
+-- rCharts, RMySQL, rgl, shinyRGL, maptools, reshape2, abind
 
 ### For server edition of shinyRGL: https://github.com/trestletech/shinyRGL
 -- install_github("shinyRGL", "trestletech")

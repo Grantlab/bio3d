@@ -59,7 +59,34 @@ tabPanel("2. ALIGN",
            column(12,
                   h2("Final alignment"),
                   p("(slow for large aligments)"),
-                  uiOutput("alignment")
+                  uiOutput("alignment"),
+                  tags$head(tags$script(src='tooltip.js')),
+                  tags$head(tags$script(src='popover.js')),
+                  tags$script(HTML("$(document).ready(function(){
+                      $('span[data-toggle=\"popover\"]').popover({html: true,
+                      title: 'Text 1',
+                      content: '<h3>Press</h3> for some action',
+                      trigger: 'hover'
+                      });
+                  });
+                  ")),
+
+                                  tags$head(tags$script(HTML('$(document).ready(function(){
+                      //$(".btn")
+                      //.popover({html: true,
+                      //title: "Button 1",
+                      //content: "<h3>Press</h3> for some action",
+                      //trigger: "hover"
+                      //});
+                      $("body")
+                      .popover({html: true,
+                      selector: "[data-toggle=\'popover\']",
+                      container: "body",
+                      title: "Button 2",
+                      trigger: "hover"
+                      });
+                      });
+                      ')))
                   )
            )
          )

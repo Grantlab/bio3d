@@ -22,6 +22,7 @@ library(shinyRGL)
 library(reshape2)
 library(maptools)
 library(threejs)
+library(abind)
 
 if(configuration$db$use)
   library(RMySQL)
@@ -36,6 +37,6 @@ shinyServer(function(input, output, session) {
   source("server/pca.R", local=TRUE)$value
   source("server/nma.R", local=TRUE)$value
   source("server/pca-vs-nma.R", local=TRUE)$value
-  
+
 
 })

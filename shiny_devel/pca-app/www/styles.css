@@ -122,7 +122,6 @@ pre.alignment {
   opacity: 0.85;
   border: solid 2px;
   border-radius: 5px;
-  
 
   margin-top: -10px;
   margin-bottom: 0px;
@@ -143,4 +142,17 @@ pre.alignment {
     font-size: 100%;
 }
 
+//table cell-spacing
+table {
+    border-collapse: separate;
+    border-spacing: 5px;
+}
 
+table tr td:empty {
+    width: 50px;
+}
+
+table tr td {
+    padding-right: 10px;
+    padding-bottom: none;
+}
