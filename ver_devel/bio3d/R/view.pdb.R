@@ -18,6 +18,7 @@ vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
 #
 #view(pdb, "calpha")                   ## I miss the sse coloring
 #view(pdb, "calpha", "sse")            ##  there it is but I have to type more
+#view(pdb, "ligand", add=T, radii ="rvdw")
 #
 #view(pdb, "calpha", "sse", type="s", add=T)
 #view(y, add=TRUE, col="white", lwd=3)
@@ -26,6 +27,11 @@ vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
 #view(pdb, col="index")
 #view(pdb, "calpha", col="index", add=T, lwd=4) 
 #view(atom.select(pdb,"ligand",value=T), col="atom", add=T, type="ls")
+
+## Just colors gray - use col="atom"
+#view(pdb,"ligand", "sse")
+
+
 
 view <- function(...)
   UseMethod("view")
@@ -111,7 +117,7 @@ view.pdb <- function(pdb, as="all", col="atom", add=FALSE,
 
     ## Color by secondary structure if protein present
     if(display=="sse") {
-      if(input.prot) {
+      if(input.prot && (as!="ligand")) {
           sse.default <- list(coil="gray", helix="purple", sheet="yellow", calpha=FALSE)
           sse.args <- arg.filter( sse.default, FUN=sse.vector )
           col <- do.call('sse.vector', c(list(pdb=pdb), sse.args) )
@@ -249,8 +255,9 @@ view.pdb <- function(pdb, as="all", col="atom", add=FALSE,
 
 
   if(as=="nwat") {
-    do.call('visualize.pdb', c(list(pdb=pdb), vis.default.args) )
-    visualiz(atom.select(pdb,"ligand",value=TRUE), 
+    nwat.pdb <- atom.select(pdb,"notwater",value=TRUE)
+    do.call('visualize.pdb', c(list(pdb=nwat.pdb), vis.default.args) )
+    visualize(atom.select(pdb,"ligand",value=TRUE), 
       type="p", con = FALSE, centre=FALSE, add=TRUE)
   }
 
@@ -279,7 +286,7 @@ view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
   ##
   ## ToDo. 
   ##       - Change and improve 'type' to 'as' arg
-  ##       - Incorporate best bits of view.3dalign()
+  ##       - Incorporate best bits of view.pdb()
   ##       - Ask user if more than 300 frames are to be drawn
   ##       - Generally speed up - no need to re-calculate connectivity
   ##          for xyz input (but required for 3dalign input)

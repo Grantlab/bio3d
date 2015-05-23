@@ -97,7 +97,7 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
           new.pdb <- NULL
           
           sel <- atom.select(pdb, chain=chains[j], verbose=verbose) #====
-          new.pdb <- trim.pdb(pdb, sel, sse=FALSE)
+          new.pdb <- trim.pdb(pdb, sel, sse=TRUE)
 
           ## Multi-model records
           if (nrow(pdb$xyz)>1) {
