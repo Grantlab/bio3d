@@ -6,12 +6,12 @@ init_show_trj <- TRUE
 pca1 <- reactive({
   pdbs <- fit()
   pc <- pca(pdbs)
-  
+
   if(init_show_trj) {
     updateCheckboxInput(session, 'show_trj', 'Show PC Trajectory', value=TRUE)
     init_show_trj <<- FALSE
   }
-  
+
   return(pc)
 })
 
@@ -90,14 +90,14 @@ output$pca_plot1_conf <- renderPlot({
        bg=cluster.colors, pch=21,
        cex=input$cex_points, col='grey50',
        xlim=xlim, ylim=ylim)
-  
+
   abline(h = 0, col = "gray", lty = 2)
   abline(v = 0, col = "gray", lty = 2)
-  
+
   if(input$labelplot) {
     if(length(input$label_ids)>0) {
       inds <- unlist(lapply(input$label_ids, grep, pdbs$id))
-      
+
       if(input$distribute_labels) {
         pointLabel(pc$z[inds, xax], pc$z[inds, yax],
                    labels=basename.pdb(pdbs$id[inds]),
@@ -128,13 +128,13 @@ output$scatterplot3d_webgl <- renderWebGL({
   col <- 1
   if(input$nclust>1)
     col <- clustgrps()
-  
+
   op <- par(pty="s")
-  
+
   xax <- as.numeric(input$pcx)
   yax <- as.numeric(input$pcy)
   zax <- as.numeric(input$pcz)
-  
+
   p <- paste0("PC", c(xax, yax, zax),
               " (", round((pc$L[c(xax, yax, zax)]/sum(pc$L)) *
                           100, 2), "%)")
@@ -144,7 +144,7 @@ output$scatterplot3d_webgl <- renderWebGL({
   else {
     cluster.colors <- col2hex(rainbow(input$nclust))[col]
   }
-  
+
   points3d(pc$z[, xax], pc$z[, yax], pc$z[, zax], col=cluster.colors, size=5)
   axes3d()
   title3d('','', p[1], p[2], p[3])
@@ -153,17 +153,17 @@ output$scatterplot3d_webgl <- renderWebGL({
 output$scatterplot3d_rthreejs <- renderScatterplotThree({
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
-  
+
   col <- 1
   if(input$nclust>1)
     col <- clustgrps()
-  
+
   op <- par(pty="s")
-  
+
   xax <- as.numeric(input$pcx)
   yax <- as.numeric(input$pcy)
   zax <- as.numeric(input$pcz)
-  
+
   p <- paste0("PC", c(xax, yax, zax),
               " (", round((pc$L[c(xax, yax, zax)]/sum(pc$L)) *
                           100, 2), "%)")
@@ -173,9 +173,9 @@ output$scatterplot3d_rthreejs <- renderScatterplotThree({
   else {
     cluster.colors <- col2hex(rainbow(input$nclust))[col]
   }
-  
+
   labs <- basename.pdb(pdbs$id)
-  
+
   names(labs) <- NULL
   df <- data.frame(x=pc$z[,xax], y=pc$z[,yax], z=pc$z[,zax])
   names(df) <- p
@@ -282,11 +282,11 @@ make.plot.loadings <- function(){
     par(mar=c(5, 4, 4, 5))
   else
     par(mar=c(5, 4, 4, 2))
-  
+
   for(i in pcs) {
     plot4 <- plot.bio3d(pc$au[, i], resno=resno, sse=sse,
                         ylab=paste0("PC-", i, " (Å)"), xlab="Residue No.")
-    
+
     if(input$toggle_rmsf1) {
       par(new=TRUE)
       plot5 <- plot.bio3d(rf, resno=resno, sse=sse, axes=FALSE, col=2, type="l", xlab="", ylab="")
@@ -334,7 +334,7 @@ output$pcaWebGL  <- renderWebGL({
                   'default' = 1
                  )
 
-    view.xyz(trj, bg.col=input$viewBGcolor, col=col, add=TRUE, type=typ)
+    view.xyz(trj, bg.col=input$viewBGcolor, col=col, add=FALSE, type=typ)
     #proc.time()
     #cat(proc.time() - ptm)
 })

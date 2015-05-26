@@ -69,7 +69,7 @@ tabPanel("2. ALIGN",
                       container: "body",
                       title: "Residue info",
                       trigger: "hover",
-                      delay: { "show": 200, "hide": 100 },
+                      delay: { "show": 200, "hide": 40 },
                       placement: "auto bottom"
                       });
                       });

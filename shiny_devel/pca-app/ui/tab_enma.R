@@ -1,6 +1,6 @@
 tabPanel("5. eNMA", icon=icon("arrow-right"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
-         
+
 
          ### WebGL visualization
          fluidRow(
@@ -8,10 +8,10 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                   wellPanel(
                     h4('Normal Modes Visualization'),
                     checkboxInput('show_trj2', 'Show NM Trajectory', value=FALSE),
-                    
+
                     selectInput('viewMode_nma', 'Choose Mode:', choices=c(1:10)),
                     uiOutput('struct_dropdown2'),
-                    
+
                     radioButtons('viewColor2', label='Structure color',
                                  choices=list(
                                    'Amalgam' = 'amalgam',
@@ -19,7 +19,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                                    'By Frame (blue->gray->red)'='default'
                                    ),
                                  selected='amalgam'),
-                    
+
                     radioButtons('viewBGcolor2', label='Background color',
                                  choices=list('Black'='black', 'White'='white'),
                                  selected='white'),
@@ -28,7 +28,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                     downloadButton('nmtraj', label='Download PDB Trajectory')
                     )
                   ),
-           
+
            column(8,
                   conditionalPanel(
                     condition='input.show_trj2 == true',
@@ -36,7 +36,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                     )
                   )
            ),
-         
+
          ### Fluctuation plot
          fluidRow(
            column(4,
@@ -44,12 +44,12 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                     h4('Residue fluctuations'),
                     ##selectInput('', 'Choose Mode #:', choices=c("all", 1:10)),
                     ##checkboxInput("toggle_rmsf2", "Show RMSF", FALSE)
-                    
+
                     checkboxInput('spread', 'Spread lines', value=FALSE),
                     checkboxInput('seqide', 'Sequence identity', value=FALSE),
                     ##checkboxInput('signif', 'Show fluct signif', value=FALSE),
                     checkboxInput('rm.gaps', 'Omit gap regions', value=TRUE),
-                    
+
                     checkboxInput('cluster', 'Color by clustering', value=TRUE),
                     radioButtons("group_by2", "Cluster by",
                                  c("RMSD" = "rmsd",
@@ -68,8 +68,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                   plotOutput("nma_fluctplot")
                   )
            ),
-         
-         
+
          conditionalPanel(
            condition = "input.show_options1 == true",
            fluidRow(
@@ -90,8 +89,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                     )
                  )
            ),
-         
-         
+
          ### Heatmaps
          fluidRow(
            column(6,
@@ -103,8 +101,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                   plotOutput("rmsd_heatmap2")
                   )
            ),
-         
-         
+
          fluidRow(
            column(3,
                   checkboxInput('show_options3', 'More options', value=FALSE)
@@ -117,8 +114,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                   downloadButton('nma_rmsd_heatmap2pdf', "Download Plot PDF")
                   )
            ),
-         
-         
+
          conditionalPanel(
            condition = "input.show_options3 == true",
            fluidRow(
@@ -128,10 +124,8 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                                   min = 0.1, max = 3, value = 1, step=0.1),
                       sliderInput("margins3", "Margins",
                                   min = 3, max = 10, value = 5, step=1)
-                      
                       )
                     ),
-             
              column(3,
                     wellPanel(
                       sliderInput("width3", "Width and height",
@@ -140,8 +134,6 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                     )
              )
            ),
-         
-         
          ## Cluster dendrogram
          fluidRow(
            column(4,
@@ -157,7 +149,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                     #               ),
                     #             ##"bhat" = "bhat"),
                     #             inline=TRUE),
-                    
+
                     downloadButton('nmadendrogram2pdf', "Download Plot PDF")
                     )
                   ),
@@ -165,7 +157,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                   plotOutput("dendrogram2")
                   )
            ),
-         
+
          conditionalPanel(
            condition = "input.show_options2 == true",
            fluidRow(
@@ -175,10 +167,10 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                                   min = 0.1, max = 3, value = 1, step=0.1),
                       sliderInput("margins2", "Margins",
                                   min = 3, max = 10, value = 5, step=1)
-                      
+
                       )
                     ),
-             
+
              column(3,
                     wellPanel(
                       sliderInput("width-pcload", "Width",
@@ -199,17 +191,14 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                     uiOutput('struct_dropdown3')
                     )
                   ),
-           
+
            column(4,
                   plotOutput("rmsip_plot3")
                   ),
-           
+
            column(4,
                   verbatimTextOutput("rmsip_print3")
                   )
            )
-         
-         
 
-         
          )

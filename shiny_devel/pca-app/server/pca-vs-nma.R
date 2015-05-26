@@ -17,10 +17,10 @@ nma3 <- reactive({
   }
   else {
     pdbs <- refit()
-    
+
     progress <- shiny::Progress$new()
     on.exit(progress$close())
-    
+
     progress$set(message = 'Calculating normal modes',
                  detail = 'Please wait',
                  value = 0)
@@ -36,7 +36,7 @@ pcanma_rmsip <- reactive({
 
   if(is.null(input$viewStruct))
     stop()
-  
+
   r <- rmsip(pc$U, modes$U.subspace[,, as.numeric(input$viewStruct)])
   return(r)
 })

@@ -39,7 +39,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
       wellPanel(
         h4("Conformer plot"),
         helpText("Two dimensional representation of conformational variability described by the two principal components ..."),
-        
+
         ##textInput("pcx", "PC on X-axis", value=1),
         ##textInput("pcy", "PC on Y-axis", value=2),
         selectInput('pcx', 'PC on X-axis:', choices=c(1:10), selected=1),
@@ -59,7 +59,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
           sliderInput("clust_npcs", "PCs in subspace",
                       min = 1, max = 10, value = 2)
           ),
-        
+
         sliderInput("nclust", "Clusters",
           min = 1, max = 10, value = 3),
 
@@ -75,7 +75,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
           condition = "input.plot_type == 'normal'",
           checkboxInput("show_options", "More options", value=FALSE)
           ),
-        
+
         conditionalPanel(
           condition = "input.plot_type == '3dscatter2'",
           selectInput("renderer", label="Rendering method",
@@ -99,22 +99,22 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
              scatterplotThreeOutput("scatterplot3d_rthreejs")
              )
       ),
-    
+
     conditionalPanel(
       condition = "input.plot_type != '3dscatter'",
-      
+
       column(width=4,
              conditionalPanel(
                condition = "input.plot_type == 'normal'",
                plotOutput("pca_plot1_conf")
                ),
-             
+
              conditionalPanel(
                condition = "input.plot_type == 'fancy'",
                showOutput("pca_plot2_conf","dimple")
                )
              ),
-      
+
       column(4,
              conditionalPanel(
                condition = "input.plot_type == 'normal'",
@@ -177,7 +177,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
              )
     )
     ),
-         
+
          fluidRow(
            column(4,
                   wellPanel(
@@ -189,12 +189,12 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
                     checkboxInput("show_options2", "More options", value=FALSE)
                     )
                   ),
-           
+
            column(8,
                   plotOutput("loadings_plot")
                   )
            ),
-         
+
          conditionalPanel(
            condition = "input.show_options2 == true",
 
@@ -209,7 +209,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
                     )
              )
            ),
-         
+
          fluidRow(
            column(12,
                   wellPanel(

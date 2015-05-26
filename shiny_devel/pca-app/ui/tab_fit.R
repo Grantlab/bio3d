@@ -27,17 +27,17 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                       condition = "input.str_plot == 'heatmap'",
                       downloadButton('rmsd_heatmap2pdf', "Download PDF")
                       ),
-                    
+
                     conditionalPanel(
                       condition = "input.str_plot == 'dendrogram'",
                       downloadButton('rmsd_dendrogram2pdf', "Download PDF")
                       ),
-                    
+
                     conditionalPanel(
                       condition = "input.str_plot == 'rmsf'",
                       downloadButton('rmsf2pdf', "Download PDF")
                       ),
-                    
+
                     conditionalPanel(
                       condition = "input.str_plot == 'hist'",
                       downloadButton('rmsd_hist2pdf', "Download PDF")

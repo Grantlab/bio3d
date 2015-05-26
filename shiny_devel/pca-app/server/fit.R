@@ -5,7 +5,7 @@ init_show_pdbs <- TRUE
 find_core <- reactive({
   pdbs <- align()
   check_aln()
-  
+
   progress <- shiny::Progress$new()
   on.exit(progress$close())
 
@@ -256,7 +256,7 @@ output$pdbsWebGL  <- renderWebGL({
                 'core' = 2,
                 'gaps' = 2)
 
-  view.xyz(xyz, bg.col=input$viewBGcolor1, col=col, type=typ, add=TRUE)
+  view.xyz(xyz, bg.col=input$viewBGcolor1, col=col, type=typ, add=FALSE)
 })
 
 observeEvent(input$viewUpdate1, {
@@ -365,7 +365,7 @@ make_pdbs_pse <- reactive({
   path <- data_path()
   core <- find_core()
   pdbs <- fit()
-  
+
   col <- switch(input$viewColor1,
                 "cluster" = cutree1(),
                 "struct" = NULL,
