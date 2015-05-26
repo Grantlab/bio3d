@@ -62,28 +62,15 @@ tabPanel("2. ALIGN",
                   uiOutput("alignment"),
                   tags$head(tags$script(src='tooltip.js')),
                   tags$head(tags$script(src='popover.js')),
-                  tags$script(HTML("$(document).ready(function(){
-                      $('span[data-toggle=\"popover\"]').popover({html: true,
-                      title: 'Text 1',
-                      content: '<h3>Press</h3> for some action',
-                      trigger: 'hover'
-                      });
-                  });
-                  ")),
-
-                                  tags$head(tags$script(HTML('$(document).ready(function(){
-                      //$(".btn")
-                      //.popover({html: true,
-                      //title: "Button 1",
-                      //content: "<h3>Press</h3> for some action",
-                      //trigger: "hover"
-                      //});
+                  tags$head(tags$script(HTML('$(document).ready(function(){
                       $("body")
                       .popover({html: true,
                       selector: "[data-toggle=\'popover\']",
                       container: "body",
-                      title: "Button 2",
-                      trigger: "hover"
+                      title: "Residue info",
+                      trigger: "hover",
+                      delay: { "show": 200, "hide": 100 },
+                      placement: "auto bottom"
                       });
                       });
                       ')))

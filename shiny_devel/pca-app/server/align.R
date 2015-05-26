@@ -228,7 +228,7 @@ output$alignment <- renderUI({
     tmp[[1]] <- span(
       span(" ", class="aln_id"),
       lapply(annot[buf.inds1],     function(x) span(x, class="aln_buff")),
-      lapply(annot[aln.inds], function(x) span(x, class="aln_aminoacid")),
+      lapply(annot[aln.inds], function(x) span(x, class="aln_number")),
       lapply(annot[buf.inds2], function(x) span(x, class="aln_buff")),
       class="aln_row"
       )
@@ -239,10 +239,19 @@ output$alignment <- renderUI({
         span(ids[j], class="aln_id"),
         lapply(x[j, buf.inds1], function(x) span(x, class="aln_buff", class=x)),
         lapply(seq_along(1:length(x.mat[j, aln.inds,1])), function(x) span(x.mat[j,aln.inds,1][x], class="aln_aminoacid", class=x.mat[j,aln.inds,1][x]
-            , "title"="", "data-placement"="bottom",
+            , "title"="",
             "data-original-title"="Residue info","data-toggle"="popover",
-            "data-content"=paste0("<table class=\"tb_pop\"><tbody><tr><td>PDB residue number:</td><td>",
-               x.mat[j,aln.inds,2][x],"</td></tr><tr><td>Other</td><td>info</td></tr></tbody></table>"
+            "data-content"=paste0(
+                "<table class=\"tb_pop\">
+                <tbody>
+                    <tr><td>PDB ID:</td><td>",
+                        ids[j],"</td></tr>",
+                    "<tr><td>PDB residue number:</td><td>",
+                        x.mat[j,aln.inds,2][x],"</td></tr>
+                    <tr><td>Position in alignment:</td><td>",
+                    j,", ",((i-1)*width)+x,"</td></tr>",
+                "</tbody>
+                </table>"
             )
                            )),
         lapply(x[j, buf.inds2], function(x) span(x, class="aln_buff", class=x)),
@@ -254,7 +263,7 @@ output$alignment <- renderUI({
     tmp[[j+2]] <- span(
       span(" ", class="aln_id"),
       lapply(annot2[buf.inds1],     function(x) span(x, class="aln_buff")),
-      lapply(annot2[aln.inds], function(x) span(x, class="aln_aminoacid", title='boo')),
+      lapply(annot2[aln.inds], function(x) span(x, class="aln_conserv")),
       lapply(annot2[buf.inds2], function(x) span(x, class="aln_buff")),
       class="aln_row"
       )
