@@ -54,7 +54,7 @@ get_annotation <- function(acc, use_chain=TRUE) {
       missing_inds <- c(missing_inds, i)
   }
   
-  if(length(missing_inds)>0)
+  if(length(missing_inds) > 0)
     res <- db_add_annotation(unq[missing_inds], con=con)
   
   if(use_chain) {
@@ -63,13 +63,17 @@ get_annotation <- function(acc, use_chain=TRUE) {
   else {
     where <- paste0("WHERE structureId IN ('", paste(acc, collapse="', '"), "')")
   }
-  query <- paste("SELECT acc, structureId, chainId, compound, source, ligandId, chainLength, sequence FROM pdb_annotation", where)
+  query <- paste("SELECT acc, structureId, chainId, compound, source, ligandId, chainLength, sequence FROM pdb_annotation", where, "ORDER BY acc")
 
   res <- dbGetQuery(con, query)
+
+  if(use_chain) {
+    rownames(res) <- res$acc
+    res <- res[acc, ]
+  }
    
   db_disconnect(con)
   return(res)
-
 }
 
 db_add_annotation <- function(acc, con=NULL) {
