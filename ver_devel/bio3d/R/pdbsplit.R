@@ -97,7 +97,7 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
           new.pdb <- NULL
           
           sel <- atom.select(pdb, chain=chains[j], verbose=verbose) #====
-          new.pdb <- trim.pdb(pdb, sel, sse=FALSE)
+          new.pdb <- trim.pdb(pdb, sel, sse=TRUE)
 
           ## Multi-model records
           if (nrow(pdb$xyz)>1) {
@@ -111,7 +111,7 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
               new.name <- file.path(path, new.name)
               
               xyz <- pdb$xyz[k, sel$xyz]
-              write.pdb(new.pdb, file = new.name, xyz=xyz)
+              write.pdb(new.pdb, file = new.name, xyz=xyz, sse=TRUE)
               out <- c(out, new.name)
             }
           }
@@ -120,7 +120,7 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
             new.name <- file.path(path, new.name)
 
             if(!file.exists(new.name) || overwrite)
-              write.pdb(new.pdb, file = new.name)
+              write.pdb(new.pdb, file = new.name, sse=TRUE)
 
             out <- c(out, new.name)
           }
