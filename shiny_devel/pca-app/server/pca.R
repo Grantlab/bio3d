@@ -371,7 +371,12 @@ output$pdbs_table <- renderDataTable({
     cluster.colors[grps], "; font-size:large\">&#x25CF;</span>&nbsp;",
     grps)
 
-  return(anno[, c("id", "pdbId", "cluster", "compound", "source", "ligandId", "chainLength")])
+  table.header.org <- names(anno)
+  table.header <- c("id", "pdbId", "cluster", "compound", "source", "ligandId", "chainLength")
+  table.header.new <- c("ID", "PDB ID", "Cluster", "Compound", "Source", "Ligand ID", "Chain Length")
+  table.header.org[match(table.header, table.header.org)] <- table.header.new
+  names(anno) <- table.header.org
+  return(anno[, table.header.new])
 }, escape=FALSE#, options=list(rowCallback = I(
 #    'function(row,data) {
 #    if (data[0]==1)

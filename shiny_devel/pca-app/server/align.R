@@ -50,9 +50,9 @@ fetch_pdbs <- reactive({
     progress <- shiny::Progress$new(session, min=1, max=length(unq))
     progress$set(message = 'Fetching PDBs',
                  detail = 'Please wait ...')
-    
-    tryfiles <- paste0(configuration$pdbdir$rawfiles, "/", unq, ".pdb")  
-    
+
+    tryfiles <- paste0(configuration$pdbdir$rawfiles, "/", unq, ".pdb")
+
     if(all(file.exists(tryfiles))) {
       raw.files <- tryfiles
     }
@@ -65,13 +65,13 @@ fetch_pdbs <- reactive({
     }
     gc()
     progress$close()
-    
+
     progress <- shiny::Progress$new()
     on.exit(progress$close())
     progress$set(message = 'Splitting PDBs',
                  detail = 'Please wait ...',
                  value = 0)
-    
+
     tryfiles <- paste0(configuration$pdbdir$splitfiles, "/", ids, ".pdb")
     if(all(file.exists(tryfiles))) {
       files <- tryfiles
@@ -84,7 +84,7 @@ fetch_pdbs <- reactive({
     gc()
     progress$close()
   }
-  
+
   return(files)
 })
 
@@ -121,7 +121,7 @@ align <- reactive({
   if(configuration$pdbdir$archive) {
     pdbs$lab <- toupper(substr(pdbs$lab, 4, 9))
   }
-  
+
   if(input$omit_missing) {
     conn <- inspect.connectivity(pdbs, cut=4.05)
     pdbs <- trim.pdbs(pdbs, row.inds=which(conn))
@@ -253,32 +253,12 @@ output$alignment <- renderUI({
       lapply(annot[buf.inds2], function(x) span(x, class="aln_buff")),
       class="aln_row"
       )
-    
+
     ## sequence row
-    for(j in 1:nrow(x)) {
-      tmp[[j+1]] <- span(
-        span(ids[j], class="aln_id"),
-        lapply(x[j, buf.inds1], function(x) span(x, class="aln_buff", class=x)),
-        lapply(seq_along(1:length(x.mat[j, aln.inds,1])), function(x) span(x.mat[j,aln.inds,1][x], class="aln_aminoacid", class=x.mat[j,aln.inds,1][x]
-            , "title"="",
-            "data-original-title"="Residue info","data-toggle"="popover",
-            "data-content"=paste0(
-                "<table class=\"tb_pop\">
-                <tbody>
-                    <tr><td>PDB ID:</td><td>",
-                        ids[j],"</td></tr>",
-                    "<tr><td>PDB residue number:</td><td>",
-                        x.mat[j,aln.inds,2][x],"</td></tr>
-                    <tr><td>Position in alignment:</td><td>",
-                    j,", ",((i-1)*width)+x,"</td></tr>",
-                "</tbody>
-                </table>"
-            )
-                           )),
-        lapply(x[j, buf.inds2], function(x) span(x, class="aln_buff", class=x)),
-        class="aln_row"
-        )
-    }
+    tmp.j <- prep.seq.row(tmp, i, x, x.mat, ids, buf.inds1, buf.inds2, aln.inds, width)
+    tmp <- tmp.j$tmp
+    j <- tmp.j$j
+    rm(tmp.j)
 
     ## annotation row: conservation
     tmp[[j+2]] <- span(
@@ -300,7 +280,49 @@ output$alignment <- renderUI({
       )
 })
 
+####################################
+####  Non-reactive functions    ####
+####################################
 
+`prep.seq.row` <- function(tmp, i, x, x.mat, ids, buf.inds1, buf.inds2, aln.inds, width){
+    if( length(ids)<25 ) {
+        for(j in 1:nrow(x)) {
+          tmp[[j+1]] <- span(
+            span(ids[j], class="aln_id"),
+            lapply(x[j, buf.inds1], function(x) span(x, class="aln_buff", class=x)),
+            lapply(seq_along(1:length(x.mat[j, aln.inds,1])), function(x) span(x.mat[j,aln.inds,1][x], class="aln_aminoacid", class=x.mat[j,aln.inds,1][x]
+                , "title"="",
+                "data-original-title"="Residue info","data-toggle"="popover",
+                "data-content"=paste0(
+                    "<table class=\"tb_pop\">
+                    <tbody>
+                        <tr><td>PDB ID:</td><td>",
+                            ids[j],"</td></tr>",
+                        "<tr><td>PDB residue number:</td><td>",
+                            x.mat[j,aln.inds,2][x],"</td></tr>
+                        <tr><td>Position in alignment:</td><td>",
+                        j,", ",((i-1)*width)+x,"</td></tr>",
+                    "</tbody>
+                    </table>"
+                )
+                               )),
+            lapply(x[j, buf.inds2], function(x) span(x, class="aln_buff", class=x)),
+            class="aln_row"
+            )
+        }
+    } else {
+        for(j in 1:nrow(x)) {
+            tmp[[j+1]] <- span(
+                span(ids[j], class="aln_id"),
+                lapply(x[j, buf.inds1], function(x) span(x, class="aln_buff", class=x)),
+                lapply(seq_along(1:length(x.mat[j, aln.inds,1])), function(x) span(x.mat[j, aln.inds,1][x], class="aln_aminoacid", class=x.mat[j,aln.inds,1][x])),
+                lapply(x[j, buf.inds2], function(x) span(x, class="aln_buff", class=x)),
+                class="aln_row"
+            )
+        }
+    }
+    return(list(tmp=tmp, j=j))
+}
 
 ####################################
 ####     Download functions     ####

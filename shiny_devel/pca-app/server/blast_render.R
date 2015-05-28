@@ -143,7 +143,7 @@ output$blast_table <- renderDataTable({
     hits <- NULL
     grps <- NULL
     hits$acc <- acc
-    
+
     hits$score <- rep(0, length(acc))
     checked <- rep("CHECKED", length(acc))
   }
@@ -152,7 +152,7 @@ output$blast_table <- renderDataTable({
     col <- sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' })
     l <- as.numeric(input$limit_hits)
     col[1:l] <- "green"
-    
+
     anno$pdbId <- paste0(
       "<span style=\"color:",
       col,
@@ -169,8 +169,12 @@ output$blast_table <- renderDataTable({
 
   checkbox <- paste0("<input type=\"checkbox\" name=\"pdb_ids\" value=\"", hits$acc, "\"",  checked, ">")
   anno$check <- checkbox
-
-  return(anno[, c("id", "check", "pdbId", "compound", "source", "ligandId", "chainLength", "score")])
+  table.header.org <- names(anno)
+  table.header <- c("id", "check", "pdbId", "compound", "source", "ligandId", "chainLength", "score")
+  table.header.new <- c("ID", "Check", "PDB ID", "Compund", "Source", "Ligand ID", "Chain Length", "Score")
+  table.header.org[match(table.header, table.header.org)] <- table.header.new
+  names(anno) <- table.header.org
+  return(anno[, table.header.new])
 }, escape=FALSE, options = list(lengthChange=FALSE, paging=FALSE))
 
   #,
