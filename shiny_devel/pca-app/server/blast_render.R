@@ -1,6 +1,6 @@
 output$pdbWebGL  <- renderWebGL({
   pdb <- get_pdb()
-  view.pdb(pdb)
+  view.pdb(pdb, as="overview", col="sse")
 })
 
 output$blast_plot <- renderUI({

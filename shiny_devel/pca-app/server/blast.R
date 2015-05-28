@@ -30,9 +30,21 @@ get_pdb <- reactive({
   }
 
   id <- anno$acc
-  raw.files <- get.pdb(substr(id, 1,4), path=configuration$pdbdir$rawfiles, gzip=TRUE)
-  pdb <- read.pdb(raw.files)
-  pdb <- trim.pdb(pdb, chain=substr(id, 6,6))
+  if(configuration$pdbdir$archive) {
+    ids <- paste0(tolower(substr(id, 1, 4)), "_", substr(id, 6, 6))
+    raw.files <- paste0(configuration$pdbdir$splitfiles, "/", substr(ids, 2, 3), "/pdb", ids, ".ent.gz")
+    
+    if(!file.exists(raw.files))
+      stop("PDB not found")
+    
+    pdb <- read.pdb(raw.files)
+  }
+  else {
+    raw.files <- get.pdb(substr(id, 1,4), path=configuration$pdbdir$rawfiles, gzip=TRUE)
+    pdb <- read.pdb(raw.files)
+    pdb <- trim.pdb(pdb, chain=substr(id, 6,6))
+  }
+  
   return(pdb)
 })
 

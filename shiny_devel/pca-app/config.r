@@ -2,6 +2,7 @@
 configuration <<- list(
   
   pdbdir = list(
+    archive = FALSE,
     rawfiles = "raw_files",
     splitfiles = "split_files"
     ),
@@ -9,14 +10,14 @@ configuration <<- list(
   db = list(
     use = FALSE,
     host = "localhost",
-    dbname = "shiny_pdb-anno",
-    username = "root",
+    dbname = "shiny",
+    username = "shiny",
     password = ""
     ),
   
   hmmer = list(
     local = FALSE,
-    exefile = "phmmer",
+    exefile = system('which phmmer', intern=TRUE)
     pdbseq = "/path/to/pdb/seqs/pdb_seqres.txt"
     ),
   

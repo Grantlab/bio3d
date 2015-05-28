@@ -39,7 +39,7 @@ clustgrps <- reactive({
 output$checkboxgroup_label_ids <- renderUI({
   pdbs <- fit()
   grps <- clustgrps()
-  ids <- basename.pdb(pdbs$id)[order(grps)]
+  ids <- pdbs$lab[order(grps)]
   names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
 
   checkboxInput("toggle_all", "Toggle all", TRUE)
@@ -96,16 +96,16 @@ output$pca_plot1_conf <- renderPlot({
 
   if(input$labelplot) {
     if(length(input$label_ids)>0) {
-      inds <- unlist(lapply(input$label_ids, grep, pdbs$id))
+      inds <- unlist(lapply(input$label_ids, grep, pdbs$lab))
 
       if(input$distribute_labels) {
         pointLabel(pc$z[inds, xax], pc$z[inds, yax],
-                   labels=basename.pdb(pdbs$id[inds]),
+                   labels=pdbs$lab[inds],
                    pos=1, offset=input$offset, cex=input$cex_labels)
       }
       else {
         text(pc$z[inds, xax], pc$z[inds, yax],
-             labels=basename.pdb(pdbs$id[inds]),
+             labels=pdbs$lab[inds],
              pos=1, offset=input$offset, cex=input$cex_labels)
       }
     }
@@ -174,7 +174,7 @@ output$scatterplot3d_rthreejs <- renderScatterplotThree({
     cluster.colors <- col2hex(rainbow(input$nclust))[col]
   }
 
-  labs <- basename.pdb(pdbs$id)
+  labs <- pdbs$lab
 
   names(labs) <- NULL
   df <- data.frame(x=pc$z[,xax], y=pc$z[,yax], z=pc$z[,zax])
@@ -205,7 +205,7 @@ output$pca_plot2_conf <- renderChart2({
                           100, 2), "%)")
 
   ## generate a dataframe: pc$z + pdbids + group
-  x <- as.data.frame(cbind(pc$z, substr(basename(pdbs$id),1,6), col))
+  x <- as.data.frame(cbind(pc$z, pdbs$lab, col))
   colnames(x)[c(xax,yax,dim(pc$z)[2]+1, dim(pc$z)[2]+2)] <- c(p,"id","cluster")
 
   ## use rainbow palette for more than 8 clusters
@@ -357,7 +357,7 @@ observeEvent(input$viewUpdate, {
 output$pdbs_table <- renderDataTable({
   pdbs <- fit()
   grps <- clustgrps()
-  anno <- get_annotation(basename.pdb(pdbs$id))
+  anno <- get_annotation(pdbs$lab)
 
   pdbId <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=", substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   anno <- cbind(anno, pdbId)

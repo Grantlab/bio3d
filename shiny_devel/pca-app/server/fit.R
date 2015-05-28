@@ -30,10 +30,17 @@ fit <- reactive({
     core <- find_core()
     pdbs$xyz <- pdbfit(pdbs, core)
   }
+  
   if(init_show_pdbs) {
-      updateCheckboxInput(session, 'show_pdbs', 'Show PDBs', value=TRUE)
-      init_show_pdbs <<- FALSE
+    updateCheckboxInput(session, 'show_pdbs', 'Show PDBs', value=TRUE)
+    init_show_pdbs <<- FALSE
   }
+
+  pdbs$lab <- toupper(basename.pdb(pdbs$id))
+  if(configuration$pdbdir$archive) {
+    pdbs$lab <- toupper(substr(pdbs$lab, 4, 9))
+  }
+  
   return(pdbs)
 })
 
@@ -83,7 +90,7 @@ representatives <- reactive({
     rep.inds[i] <- rep.ind
   }
 
-  return(pdbs$id[rep.inds])
+  return(pdbs$lab[rep.inds])
 })
 
 ####################################
@@ -92,8 +99,8 @@ representatives <- reactive({
 make.plot.heatmap <- function() {
   pdbs <- fit()
   rd <- rmsd1()
-  rownames(rd) <- basename.pdb(pdbs$id)
-  colnames(rd) <- basename.pdb(pdbs$id)
+  rownames(rd) <- pdbs$lab
+  colnames(rd) <- pdbs$lab
   hc <- hclust(as.dist(rd))
   grps <- cutree(hc, k=input$clusters)
   mar <- as.numeric(c(input$margins, input$margins))
@@ -127,10 +134,9 @@ output$rmsd_hist <- renderPlot({
 make.plot.rmsd.dendogram <- function() {
   pdbs <- fit()
   rd <- rmsd1()
-  pdbs$id <- basename.pdb(pdbs$id)
   hc <- hclust(as.dist(rd))
   mar <- c(input$margins, 5, 3, 1)
-  plot3 <- hclustplot(hc, k=input$clusters, labels=pdbs$id, cex=input$cex,
+  plot3 <- hclustplot(hc, k=input$clusters, labels=pdbs$lab, cex=input$cex,
              ylab="RMSD (Å)", main="RMSD Cluster Dendrogram", fillbox=FALSE,
              mar = mar)
   return(plot3)
@@ -195,7 +201,7 @@ output$print_core <- renderDataTable({
 
 output$reference_selector <- renderUI({
   pdbs <- fit()
-  ids <- basename.pdb(pdbs$id)
+  ids <- pdbs$lab
   names(ids) <- ids
   selectInput("reference_id", "Reference PDB id:", ids)
 })
@@ -207,7 +213,7 @@ output$rmsd_table <- renderDataTable({
   grps <- cutree1()
 
   if(!is.null(input$reference_id))
-    ind <- grep(input$reference_id, pdbs$id)
+    ind <- grep(input$reference_id, pdbs$lab)
   else
     ind <- 1
 
@@ -215,7 +221,7 @@ output$rmsd_table <- renderDataTable({
   rd <- rmsd(pdbs$xyz[ind, gaps$f.inds],
              pdbs$xyz[, gaps$f.inds],
              fit = TRUE)
-  names(rd) <- basename.pdb(pdbs$id)
+  names(rd) <- pdbs$lab
 
   return(data.frame(ids=names(rd), rmsd=round(rd,1), "cluster"=grps))
 }, options = list(searching=FALSE, lengthChange=FALSE, paging=TRUE))
@@ -302,7 +308,7 @@ pdbs2files <- reactive({
   core <- find_core()
   pdbs <- fit()
   xyz <- pdbfit(pdbs, core, outpath=path)
-  files <- paste0(path, "/", basename.pdb(pdbs$id), ".pdb_flsq.pdb")
+  files <- paste0(path, "/", pdbs$lab, ".pdb_flsq.pdb")
   return(files)
 })
 
@@ -316,8 +322,8 @@ rmsd2files <- reactive({
   path <- data_path()
   pdbs <- fit()
   rd <- round(rmsd1(), 2)
-  rownames(rd) <- basename.pdb(pdbs$id)
-  colnames(rd) <- basename.pdb(pdbs$id)
+  rownames(rd) <- pdbs$lab
+  colnames(rd) <- pdbs$lab
   file <- paste0(path, "/", "rmsd-mat.dat")
   write.table(rd, file=file, quote=FALSE)
   return(file)

@@ -15,8 +15,8 @@ randstr <- function() {
   ind <- ind[1]
   if(file.exists(pdbs$id[ind]))
     id <- pdbs$id[ind]
-  else if(file.exists(rownames(pdbs$ali)[ind]))
-    id <- rownames(pdbs$ali)[ind]
+  #else if(file.exists(rownames(pdbs$ali)[ind]))
+  #  id <- rownames(pdbs$ali)[ind]
 
   sse.aln <- NULL
   pdb.ref <- try(read.pdb(id), silent=TRUE)

@@ -56,7 +56,7 @@ output$rmsip_print3 <- renderPrint({
 output$struct_dropdown3 <- renderUI({
   pdbs <- refit()
   ids <- 1:length(pdbs$id)
-  names(ids) <-  basename.pdb(pdbs$id)
+  names(ids) <-  pdbs$lab
   selectInput('viewStruct', 'Compare NMs of structure:',
               choices=ids)
 })

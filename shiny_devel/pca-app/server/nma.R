@@ -35,8 +35,8 @@ rmsip2 <- reactive({
   if(input$rm.gaps) {
     pdbs <- align()
     modes <- nma2()
-    rownames(modes$rmsip) <- basename.pdb(rownames(modes$rmsip))
-    colnames(modes$rmsip) <- basename.pdb(colnames(modes$rmsip))
+    rownames(modes$rmsip) <- pdbs$lab
+    colnames(modes$rmsip) <- pdbs$lab
     return(modes$rmsip)
   }
   else {
@@ -53,8 +53,8 @@ hclust_rmsip2 <- reactive({
 rmsd2 <- reactive({
   pdbs <- align()
   rd <- rmsd(pdbs, fit=TRUE)
-  rownames(rd) <- basename.pdb(pdbs$id)
-  colnames(rd) <- basename.pdb(pdbs$id)
+  rownames(rd) <- pdbs$lab
+  colnames(rd) <- pdbs$lab
   return(rd)
 })
 
@@ -70,8 +70,8 @@ bhat2 <- reactive({
     modes <- nma2()
     covs <- cov.enma(modes)
     bc <- bhattacharyya(modes, covs=covs)
-    rownames(bc) <- basename.pdb(pdbs$id)
-    colnames(bc) <- basename.pdb(pdbs$id)
+    rownames(bc) <- pdbs$lab
+    colnames(bc) <- pdbs$lab
     return(bc)
   }
   else {
@@ -121,7 +121,7 @@ cutree2 <- reactive({
 output$struct_dropdown2 <- renderUI({
   pdbs <- align()
   ids <- 1:length(pdbs$id)
-  names(ids) <-  basename.pdb(pdbs$id)
+  names(ids) <-  pdbs$lab
   selectInput('viewStruct_nma', 'Show NMs for structure:',
               choices=ids)
 })
@@ -173,7 +173,7 @@ output$nmaWebGL  <- renderWebGL({
 output$checkboxgroup_label_ids2 <- renderUI({
   pdbs <- align()
   grps <- cutree2()
-  ids <- basename.pdb(pdbs$id)[order(grps)]
+  ids <- pdbs$lab[order(grps)]
   names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
 
   checkboxInput("toggle_all2", "Toggle all", TRUE)
@@ -205,8 +205,8 @@ make.plot.nma <- function() {
   }
 
   if(length(input$label_ids2) > 0) {
-    inds <- unlist(lapply(input$label_ids2, grep, pdbs$id))
-    show <- rep(FALSE, length(pdbs$id))
+    inds <- unlist(lapply(input$label_ids2, grep, pdbs$lab))
+    show <- rep(FALSE, length(pdbs$lab))
     show[inds] <- TRUE
     col[!show] <- NA
   }
@@ -278,7 +278,7 @@ make.plot.dendrogram2 <- function() {
 
   hc <- hclust2()
   grps <- cutree2()
-  ids <- basename.pdb(pdbs$id)
+  ids <- pdbs$lab
 
   mar <- c(input$margins2, 5, 3, 1)
   main <- paste(toupper(input$group_by2), "dendrogram")

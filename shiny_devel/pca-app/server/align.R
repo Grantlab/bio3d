@@ -34,41 +34,57 @@ fetch_pdbs <- reactive({
   ids <- get_acc()
   unq <- unique(substr(ids, 1,4))
 
-  progress <- shiny::Progress$new(session, min=1, max=length(unq))
-  progress$set(message = 'Fetching PDBs',
-               detail = 'Please wait ...')
+  ## archive mode - pre splitted PDBs
+  if(configuration$pdbdir$archive) {
+    ids <- paste0(tolower(substr(ids, 1, 4)), "_", substr(ids, 6, 6))
+    files <- paste0(configuration$pdbdir$splitfiles, "/", substr(ids, 2, 3), "/pdb", ids, ".ent.gz")
 
-  tryfiles <- paste0(configuration$pdbdir$rawfiles, "/", unq, ".pdb")
-  if(all(file.exists(tryfiles))) {
-    raw.files <- tryfiles
-  }
-  else {
-    raw.files <- vector("character", length(unq))
-    for(i in 1:length(unq)) {
-      raw.files[i] <- get.pdb(unq[i], path=configuration$pdbdir$rawfiles, gzip=TRUE)
-      progress$set(value = i)
+    if(any(!file.exists(files))) {
+      missing <- paste(files[ !file.exists(files) ], collapse=", ")
+      stop(paste("PDB file(s) missing:", missing))
     }
   }
-  gc()
-  progress$close()
 
-  progress <- shiny::Progress$new()
-  on.exit(progress$close())
-  progress$set(message = 'Splitting PDBs',
-               detail = 'Please wait ...',
-               value = 0)
-
-  tryfiles <- paste0(configuration$pdbdir$splitfiles, "/", ids, ".pdb")
-  if(all(file.exists(tryfiles))) {
-    files <- tryfiles
-  }
+  ## download mode - downloads and splits PDBs
   else {
-    files <- pdbsplit(pdb.files=raw.files, ids=ids, overwrite=FALSE,
-                      path=configuration$pdbdir$splitfiles,
-                      progress=progress)
+    progress <- shiny::Progress$new(session, min=1, max=length(unq))
+    progress$set(message = 'Fetching PDBs',
+                 detail = 'Please wait ...')
+    
+    tryfiles <- paste0(configuration$pdbdir$rawfiles, "/", unq, ".pdb")  
+    
+    if(all(file.exists(tryfiles))) {
+      raw.files <- tryfiles
+    }
+    else {
+      raw.files <- vector("character", length(unq))
+      for(i in 1:length(unq)) {
+        raw.files[i] <- get.pdb(unq[i], path=configuration$pdbdir$rawfiles, gzip=TRUE)
+        progress$set(value = i)
+      }
+    }
+    gc()
+    progress$close()
+    
+    progress <- shiny::Progress$new()
+    on.exit(progress$close())
+    progress$set(message = 'Splitting PDBs',
+                 detail = 'Please wait ...',
+                 value = 0)
+    
+    tryfiles <- paste0(configuration$pdbdir$splitfiles, "/", ids, ".pdb")
+    if(all(file.exists(tryfiles))) {
+      files <- tryfiles
+    }
+    else {
+      files <- pdbsplit(pdb.files=raw.files, ids=ids, overwrite=FALSE,
+                        path=configuration$pdbdir$splitfiles,
+                        progress=progress)
+    }
+    gc()
+    progress$close()
   }
-  gc()
-  progress$close()
+  
   return(files)
 })
 
@@ -101,6 +117,11 @@ align <- reactive({
                    progress=progress)
   }
 
+  pdbs$lab <- toupper(basename.pdb(pdbs$id))
+  if(configuration$pdbdir$archive) {
+    pdbs$lab <- toupper(substr(pdbs$lab, 4, 9))
+  }
+  
   if(input$omit_missing) {
     conn <- inspect.connectivity(pdbs, cut=4.05)
     pdbs <- trim.pdbs(pdbs, row.inds=which(conn))
@@ -151,7 +172,7 @@ output$alignment <- renderUI({
   invisible(capture.output( aln <- align() ))
 
   ali <- aln$ali
-  ids <- basename.pdb(aln$id)
+  ids <- aln$lab
 
   tmp1 <- conserv(ali, method="entropy10")
   tmp2 <- conserv(ali, method="identity")
@@ -197,8 +218,8 @@ output$alignment <- renderUI({
       block.annot  <- block.annot[1:(n + 2 * bufsize)]
       cons.annot  <- block.annot[1:(n + 2 * bufsize)]
     }
-    #x[, aln.inds] <- ali[, positions, drop=FALSE]
-    require(abind)
+    ##x[, aln.inds] <- ali[, positions, drop=FALSE]
+
     x.mat <- abind(x, x, along=3)
     x.mat[, aln.inds, 1] <- ali[, positions, drop=FALSE]
     x.mat[, aln.inds, 2] <- aln$resno[, positions, drop=FALSE]
@@ -232,7 +253,7 @@ output$alignment <- renderUI({
       lapply(annot[buf.inds2], function(x) span(x, class="aln_buff")),
       class="aln_row"
       )
-    print(aln)
+    
     ## sequence row
     for(j in 1:nrow(x)) {
       tmp[[j+1]] <- span(
