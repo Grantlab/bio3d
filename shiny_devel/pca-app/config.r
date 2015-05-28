@@ -17,7 +17,7 @@ configuration <<- list(
   
   hmmer = list(
     local = FALSE,
-    exefile = system('which phmmer', intern=TRUE)
+    exefile = system('which phmmer', intern=TRUE),
     pdbseq = "/path/to/pdb/seqs/pdb_seqres.txt"
     ),
   
