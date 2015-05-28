@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+
+#include "gzstream.h"
 #include "utils.h"
 #include "convert.h"
 using namespace std;
@@ -65,15 +67,48 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
   int counter = 0;
 
   // for reading
+  vector<string> raw_lines;
   string line;
-  ifstream myfile;
 
-  // open file and iterate over each line
-  myfile.open(filename.c_str());
+  igzstream mystream;
+  mystream.open(filename.c_str());
   
-  if (myfile.is_open())  {
-    while ( getline (myfile,line) ) {
-
+  /**
+  if (filename.find(".gz") != std::string::npos) {
+     std::cout << "gzipped file detected\n";
+     
+    igzstream gzstream;
+    gzstream.open(filename.c_str());
+    if (gzstream.is_open())  {
+      while ( getline (gzstream, line) ) {
+	raw_lines.push_back(line);
+      }
+      gzstream.close();
+    }
+  }
+  else {
+    std::cout << "raw text file detected\n";
+    
+    ifstream rawstream;
+    rawstream.open(filename.c_str());
+    if (rawstream.is_open())  {
+      std::cout << "open\n";
+      while ( getline (rawstream, line) ) {
+	std::cout << line;
+	raw_lines.push_back(line);
+      }
+      rawstream.close();
+    }
+  }
+  */
+  
+  //for ( int line_nr = 0; line_nr < raw_lines.size(); line_nr++ ) {
+  //  line = raw_lines[line_nr];
+  //  std::cout << line;
+  
+  if (mystream.is_open())  {
+    while ( getline (mystream, line) ) {
+  
       // break if user has provided maxlines argument
       counter++;
       
@@ -188,11 +223,11 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
 	}
       }
     } // while ( getline (myfile,line) ) {
-    myfile.close();
+    mystream.close();
   } // end   if (myfile.is_open())  {
-  
+
   else {
-    out = Rcpp::List::create(Rcpp::Named("error")="error");
+    out = Rcpp::List::create(Rcpp::Named("error")="Error when reading file");
     return(out);
   }
 

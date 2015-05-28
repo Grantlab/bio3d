@@ -35,7 +35,7 @@ read.pdb <- function(file, maxlines = -1, multi=FALSE, rm.insert=FALSE, rm.alt=T
   ## parse PDB file with cpp function
   pdb <- .read_pdb(file, multi=multi, hex=FALSE, maxlines=maxlines, atoms_only=ATOM.only)
   if(!is.null(pdb$error))
-    stop(paste("Error in internal function when reading", file))
+    stop(paste("Error in reading PDB file", file))
   else
     class(pdb) <- c("pdb", "sse")
 
