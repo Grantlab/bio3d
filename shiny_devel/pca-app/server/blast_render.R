@@ -105,9 +105,7 @@ output$blast_plot2 <- renderChart2({
 })
 
 
-### Table of annotated BLAST results
-output$blast_table <- renderDataTable({
-  message("rendering blast data table")
+get_blasttable <- reactive({
   if(input$input_type != "multipdb") {
     blast <- run_blast()
     hits <- filter_hits()
@@ -119,8 +117,8 @@ output$blast_table <- renderDataTable({
 
     n <- length(blast$acc)
     m <- n - sum(hits$hits)
-    if (m > 5)
-      m <- 5
+    #if (m > 5)
+    #  m <- 5
 
     unchecked.inds <- unchecked.inds[1:m]
     show.inds <- c(checked.inds, unchecked.inds)
@@ -148,43 +146,51 @@ output$blast_table <- renderDataTable({
     checked <- rep("CHECKED", length(acc))
   }
 
+  anno$score <- hits$score
+  anno$struct_nr <- 1:nrow(anno)
+
   if(!is.null(grps) & !is.null(grps)) {
     col <- sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' })
     l <- as.numeric(input$limit_hits)
     col[1:l] <- "green"
-
-    anno$pdbId <- paste0(
+    
+    anno$acc <- paste0(
       "<span style=\"color:",
       col,
       "; font-size:large\">&#x25CF;</span>",
       "&nbsp;<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
       substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>"
-    )
-  } else {
-      anno$pdbId <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
-        substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
+      )
   }
-  anno$score <- hits$score
-  anno$id <- 1:nrow(anno)
-
-  checkbox <- paste0("<input type=\"checkbox\" name=\"pdb_ids\" value=\"", hits$acc, "\"",  checked, ">")
+  else {
+    anno$acc <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
+                         substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
+  }
+  
+  checkbox <- paste0("<input type=\"checkbox\" name=\"pdb_ids\" value=\"", hits$acc, "\" ",  checked, ">")
   anno$check <- checkbox
-  table.header.org <- names(anno)
-  table.header <- c("id", "check", "pdbId", "compound", "source", "ligandId", "chainLength", "score")
-  table.header.new <- c("ID", "Check", "PDB ID", "Compund", "Source", "Ligand ID", "Chain Length", "Score")
-  table.header.org[match(table.header, table.header.org)] <- table.header.new
-  names(anno) <- table.header.org
-  return(anno[, table.header.new])
-}, escape=FALSE, options = list(lengthChange=FALSE, paging=FALSE))
 
-  #,
-  #                                      callback = "function(table) {
-  #    table.on('click.dt', 'tr', function() {
-  #      $(this).toggleClass('selected');
-  #      Shiny.onInputChange('rows',
-  #                          table.rows('.selected').indexes().toArray());
-  #    });
-  #  }")
+  rownames(anno) <- NULL
+  show.cols <- c("acc", "compound", "source", "ligandId", "score")
+  col.inds <- sapply(show.cols, grep, colnames(anno))
+  
+  print(col.inds)
+  print(head(anno[, col.inds]))
+  return(anno[, col.inds])
+})
+
+output$blast_table <- renderDataTable({
+  datatable(get_blasttable(), extensions = 'Scroller', escape = FALSE,
+            colnames = c("ID", "Name", "Species", "Ligands", "Score"),
+            options = list(
+              deferRender = TRUE,
+              dom = "frtiS",
+              scrollY = 200,
+              scrollCollapse = TRUE
+              ))
+})
+
+
 
 
 ## checkbox

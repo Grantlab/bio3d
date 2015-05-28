@@ -131,7 +131,8 @@ tabPanel("1. SEARCH", icon=icon("home"),
          fluidRow(
            column(12,
                   wellPanel(
-                    dataTableOutput("blast_table")
+                    ##dataTableOutput("blast_table")
+                    DT::dataTableOutput('blast_table')
                     )
                   )
            )
