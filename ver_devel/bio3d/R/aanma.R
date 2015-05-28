@@ -12,9 +12,10 @@
   if(!is.pdb(pdb))
     stop("please provide a 'pdb' object as obtained from 'read.pdb()'")
   
-  ## Initialize
+  ## Initialize NMA calculation
   init <- .nma.init(ff=ff, pfc.fun=pfc.fun, ...)
 
+  ## check and prepare input PDB
   if(!is.null(hessian)) {
     pdb.in <- pdb
     dims <- dim(hessian)
@@ -29,13 +30,14 @@
     pdb.in <- pdb
     
     lig.inds <- atom.select(pdb.in, "ligand")
-    if(lig.inds$atom>0) {
+    if(length(lig.inds$atom)>0) {
       ligs <- paste(unique(pdb.in$atom$resid[ lig.inds$atom ]), sep=", ")
       warning(paste("ligands", ligs, "included in calculation of normal modes"))
     }
   }
     
   ## Indices for effective hessian
+  ## (selection, calphas, or all (noh) atoms)
   if(is.select(outmodes)) {
     ## since pdb.in is 'noh' (from trim.pdb above), we need to re-select
     inc.inds <- .match.sel(pdb, pdb.in, outmodes)
@@ -64,8 +66,8 @@
     stop("aanma: insufficient number of atoms")
 
   
-  ## Use atom2mass to fetch atom mass
   if (mass) {
+    ## Use atom2mass to fetch atom mass
     if(outmodes=="noh") {
       masses.in <-  atom2mass(pdb.in)
       masses.out <- masses.in[ inc.inds$atom ]
@@ -76,14 +78,12 @@
       masses.out <- do.call('aa2mass', c(list(pdb=pdb.out, inds=NULL), init$am.args))
     }
   }
-
-  ## No mass-weighting
   else {
+    ## No mass-weighting
     masses.out <- NULL;
   }
 
-  ## NMA hessian
-  ##hessian <- NULL
+  ## calculate hessian
   hessian <- .nma.hess(pdb.in$xyz, init=init,
                        hessian=hessian, inc.inds=inc.inds)
 
@@ -91,10 +91,10 @@
   if(!is.null(masses.out))
     hessian <- .nma.mwhessian(hessian, masses=masses.out)
   
-  ## diagaonalize - get eigenvectors
+  ## diagaonalize and obtain eigenvectors
   ei <- .nma.diag(hessian)
 
-  ## make a NMA object
+  ## make NMA object
   m <- .nma.finalize(ei, xyz=pdb.out$xyz, temp=temp, masses=masses.out,
                              natoms=natoms.out, keep=keep, call=cl)
   return(m)
