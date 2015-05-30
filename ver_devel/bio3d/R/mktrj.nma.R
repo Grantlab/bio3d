@@ -3,6 +3,7 @@
                         mag=10,      # magnification factor
                         step=1.25,   # step size
                         file=NULL,   # output pdb file
+                        rock=TRUE,
                         ... ) {      # args for write.pdb
 
   ## make a trjactory of atomic displacments along a given mode
@@ -15,19 +16,27 @@
   #if(nma$L[mode]<=0)
   #  stop("Mode with eigenvalue <=0 detected. Check 'mode' index.")
 
-  nma$xyz <- as.vector(nma$xyz)
+  xyz <- as.vector(nma$xyz)
   nstep <- c(seq(step, to=mag, by=step))
+  #zcoor  <- cbind(sqrt(nma$L[mode])) %*% nstep
   zcoor <- cbind(1) %*% nstep
 
   scor  <- function(x,u,m) { return(x*u+m) }
-  plus  <- sapply(c(zcoor), scor, u=nma$modes[,mode], m=nma$xyz)
-  minus <- sapply(c(-zcoor), scor, u=nma$modes[,mode], m=nma$xyz)
-
-  coor  <- t(cbind(nma$xyz,
-                   plus, plus[,rev(1:ncol(plus))],
-                   nma$xyz,
-                   minus, minus[,rev(1:ncol(minus))]))
-
+  plus  <- sapply(c(zcoor), scor, u=nma$modes[,mode], m=xyz)
+  minus <- sapply(c(-zcoor), scor, u=nma$modes[,mode], m=xyz)
+  
+  if(rock) {
+    coor  <- cbind(xyz,
+                   plus,  plus[,rev(1:ncol(plus))],
+                   xyz,
+                   minus, minus[,rev(1:ncol(minus))])
+  }
+  else {
+    coor  <- cbind(plus[,rev(1:ncol(plus))],
+                   xyz,
+                   minus)
+  }
+  coor <- as.xyz(t(coor))
   write.pdb(xyz=coor, file=file, ...)
   invisible(coor)
 }
