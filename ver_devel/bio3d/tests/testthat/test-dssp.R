@@ -3,6 +3,10 @@ context("Testing dssp()")
 test_that("SSE assignment still works", {
   skip_on_cran()
 
+  if(!check.utility('dssp')) {
+     skip('Need DSSP installed to run this test')
+  }
+
   ## Simple test with PDB ID 1HEL
   invisible(capture.output(pdb <- read.pdb("3ERJ")))
   sse <- dssp(pdb)
