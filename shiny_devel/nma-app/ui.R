@@ -1,6 +1,7 @@
 library(shiny)
 library(bio3d)
 library(shinyRGL)
+library(DT)
 
 
 ## Could open some saved results as an RData file here for first time display 

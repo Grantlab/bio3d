@@ -20,15 +20,10 @@ output$modeSummary <- renderPrint({
 ##- DCCM plot    #
 ##################
 output$dccm_plot <- renderPlot({
-  dccm_plot2()
+  make_dccm_plot()
 })
 
-dccm_plot2 <- reactive({
-  dccm_plot1()
-})
-
-
-dccm_plot1 <- function() {
+make_dccm_plot <- function() {
   pdb <- get_pdb()
   
   if(input$calc_dccm) {
@@ -77,13 +72,17 @@ dccm_plot1 <- function() {
 }
 
 
-output$plot2pdf = downloadHandler(
-  filename = 'dccm.pdf',
-  content = function(file) {
-    pdf(file, w=10, h=6)
-    dccm_plot1()
+
+output$dccmplot2pdf = downloadHandler(
+  filename = "dccm.pdf",
+  content = function(FILE=NULL) {
+    pdf(file=FILE, width=input$width2, height=input$height2)
+    make_dccm_plot()
     dev.off()
-  })
+})
+
+
+
 
 dccm_pymol <- reactive({
   pdb <- get_pdb()

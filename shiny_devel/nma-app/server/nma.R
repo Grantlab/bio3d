@@ -41,21 +41,23 @@ calcModes <- reactive({
 ##- Fluctuation plot     #
 ##########################
 output$fluct_plot <- renderPlot({
-  fluct_plot2()
+  make_fluct_plot()
 })
 
-fluct_plot2<- reactive({
-  fluct_plot1()
-})
-
-fluct_plot1 <- function() {
+make_fluct_plot <- function() {
   pdb <- get_pdb()
   modes <- calcModes()
   x <- modes$fluctuations
+
+  if(input$fluxs2 & input$fluxs3)
+    par(mar=c(5, 4, 4, 5))
+  else
+    par(mar=c(5, 4, 4, 2))
   
   if(input$fluxs3) { 
     main <- paste("NMA derived fluctuations for PDB id", input$pdbid)
     plot.bio3d(x, sse=pdb, main=main, resno=pdb,
+               xlab="Residue No.", ylab="Fluctions (Å^2)", 
                col=input$col1, type=input$typ1,
                pch=input$pch1, lty=input$lty1, cex=input$cex1, lwd=input$lwd1)
   }
@@ -63,25 +65,30 @@ fluct_plot1 <- function() {
     if(input$fluxs3) {
       par(new=TRUE)
       plot.bio3d(pdb$atom$b[ pdb$calpha ], resno=pdb, axes=F, xlab="",ylab="",
-                 pch=input$pch2, col=input$col2, typ=input$typ2, lty=input$lty2, lwd=input$lwd2)
+                 pch=input$pch2, col=input$col2, typ=input$typ2,
+                 lty=input$lty2, lwd=input$lwd2)
       axis(4, col=input$col2)
+      mtext("B-factors (Å)", side=4, line=3)
     }
     else {
       main <- paste("B-factors for PDB id", input$pdbid)
       plot.bio3d(pdb$atom$b[ pdb$calpha ], sse=pdb, main=main, resno=pdb,
+                 xlab="Residue No.", ylab="B-factors (Å)", 
                  pch=input$pch2, col=input$col2, typ=input$typ2, lty=input$lty2, cex=input$cex2,
                  lwd=input$lwd2)
     }
   }
 }
 
-output$plot1pdf = downloadHandler(
-  filename = 'fluct.pdf',
-  content = function(file) {
-    pdf(file, w=10, h=6)
-    fluct_plot1()
+
+output$fluctplot2pdf = downloadHandler(
+  filename = "nma_fluctuations.pdf",
+  content = function(FILE=NULL) {
+    pdf(file=FILE, width=input$width1, height=input$height1)
+    make_fluct_plot()
     dev.off()
-  })
+})
+
 
 
 

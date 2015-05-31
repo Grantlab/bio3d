@@ -4,8 +4,6 @@ tabPanel("NMA", icon=icon("home"),
   fluidRow(
     column(4,
            wellPanel(
-             checkboxInput('show_pdb', 'View Input PDB', value=FALSE),
-
              conditionalPanel(
                condition = "input.show_pdb == true",
                h3("Input PDB"),
@@ -46,13 +44,11 @@ tabPanel("NMA", icon=icon("home"),
           condition = "input.limit == true",
           uiOutput("chains2"),
           helpText("Note: Only selected chains will be analyzed.")
-        )
+        ),
 
-        ##-TODO Have this panel auto-update only!
-        #,actionButton("pdbaction", "Fetch PDB")
-        #,submitButton("Submit")
-        ,actionButton("reset_pdb_input", "Reset PDB input")
-      )
+        actionButton("reset_pdb_input", "Reset PDB input", icon=icon("undo")),
+        checkboxInput('show_pdb', 'View Input PDB', value=FALSE)
+        )
    ),
 
     column(4,
@@ -64,24 +60,9 @@ tabPanel("NMA", icon=icon("home"),
         
         helpText("Note: Cutoff applies only to 'ANM' and 'pfANM'. Recommended values are 15 and 50 Å, respectively."),
  
-        actionButton("reset_nma_input", "Reset NMA inputs")
+        actionButton("reset_nma_input", "Reset NMA inputs", icon=icon("undo"))
         )
     )
-    
-    #column(4,
-    #  wellPanel(
-    #    h4("3. Result Visualization"),
-    #    tags$hr(),
-    #    checkboxInput('fluxs1', 'Fluctuations', value=TRUE),
-    #    #checkboxInput('fluxs2', 'Fluctuations with B-factors', value=FALSE),
-    #    checkboxInput('cijs', 'Correlations', value=FALSE),
-    #    checkboxInput('mktrj', 'Mode Displacements Trajectory', value=FALSE),
-    #    checkboxInput('domains', 'Domain analysis', value=FALSE),
-    #    checkboxInput('log', 'Calculation Summary Log', value=TRUE),
-    #
-    #    helpText("Scroll down to see results.")
-    #  )
-    #)
   ),
 
 
@@ -122,7 +103,10 @@ tabPanel("NMA", icon=icon("home"),
              sliderInput("lty1", "Line type:",
                          min = 1, max = 6, value = 1),
              sliderInput("lwd1", "Line width:",
-                         min = 0.1, max = 2, value = 1, step=0.1)
+                         min = 0.1, max = 2, value = 1, step=0.1),
+             
+             sliderInput("height1", "PDF height:",
+                         min = 4, max = 12, value = 5, step=1)
              ),
       
       column(3,
@@ -132,7 +116,9 @@ tabPanel("NMA", icon=icon("home"),
              sliderInput("cex1", "Point size:",
                          min = 0.1, max = 2, value = 1, step=0.1),
              sliderInput("col1", "Color:",
-                         min = 1, max = 8, value = 1)
+                         min = 1, max = 8, value = 1),
+             sliderInput("width1", "PDF width:",
+                         min = 4, max = 12, value = 7, step=1)
              ),
       
       column(3,
@@ -208,6 +194,13 @@ tabPanel("NMA", icon=icon("home"),
              checkboxInput('contourplot', 'Contourplot', value=TRUE),
              checkboxInput('sse', 'Show SSE', value=TRUE),
              checkboxInput('colorkey', 'Colorkey', value=TRUE),
+
+                
+             sliderInput("height2", "PDF height:",
+                         min = 4, max = 12, value = 5, step=1),
+             sliderInput("width2", "PDF width:",
+                         min = 4, max = 12, value = 7, step=1),
+             
              downloadButton('dccm2zip', "Download PyMOL Visualization script"),
              downloadButton('dccmplot2pdf', "Download Plot PDF")
              )
@@ -224,17 +217,21 @@ tabPanel("NMA", icon=icon("home"),
     column(4,
            wellPanel(
              h4('Overlap analysis '),
-             textInput("pdbid2", "Enter PDB ID", value=""),
+             actionButton("goButton", "Go!"),
+             
+             DT::dataTableOutput('blast_table')
+             
+             #textInput("pdbid2", "Enter PDB ID", value=""),
 
              ##- Chain selection
-             h5("Detected chain IDs:"),
-             verbatimTextOutput("chains3"),
+             #h5("Detected chain IDs:"),
+             #verbatimTextOutput("chains3"),
              
-             checkboxInput("limit2", "Limit calculation to a subset of chains?"),
-             conditionalPanel(
-               condition = "input.limit2 == true",
-               uiOutput("chains4")
-               )
+             #checkboxInput("limit2", "Limit calculation to a subset of chains?"),
+             #conditionalPanel(
+             #  condition = "input.limit2 == true",
+             #  uiOutput("chains4")
+             #  )
              
              )
            ),

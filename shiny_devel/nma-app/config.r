@@ -1,19 +1,32 @@
-## NOTE: dir must exist prior to starting server!
-## check also permissions for the shiny user
 
 configuration <<- list(
-
+  
   pdbdir = list(
     archive = FALSE,
-    #rawfiles = "/media/elephant/pdb/archive2",
-    #splitfiles = "/media/elephant/pdb/archive2/split"
-    
     rawfiles = "raw_files",
     splitfiles = "split_files"
     ),
   
+  db = list(
+    use = FALSE,
+    host = "localhost",
+    dbname = "shiny",
+    username = "shiny",
+    password = ""
+    ),
+  
+  hmmer = list(
+    local = FALSE,
+    exefile = system('which phmmer', intern=TRUE),
+    pdbseq = "/path/to/pdb/seqs/pdb_seqres.txt"
+    ),
+  
+  muscle = list(
+    exefile = system('which muscle', intern=TRUE)
+    ),
+  
   user_data = list(
-    path = "/tmp/user_data"
+    path = "/tmp"
     )
   
   )

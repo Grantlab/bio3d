@@ -19,8 +19,9 @@ raw_pdb <- reactive({
     progress$set(value = 2)
     
     if(configuration$pdbdir$archive) {
-      ids <- paste0(tolower(substr(id, 1, 4)), "_", substr(id, 6, 6))
-      raw.files <- paste0(configuration$pdbdir$splitfiles, "/", substr(ids, 2, 3), "/pdb", ids, ".ent.gz")
+      id <- tolower(id)
+      raw.files <- paste0(configuration$pdbdir$rawfiles, "/", substr(ids, 2, 3),
+                          "/pdb", id, ".ent.gz")
       
       if(!file.exists(raw.files))
         stop("PDB not found")

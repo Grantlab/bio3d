@@ -359,21 +359,19 @@
 ".match.sel" <- function(a, b, inds) {
   ## a= original pdb
   ## b= trimmed pdb
-  ## inds= indices of pdb 'a' to keep
+  ## inds= atom indices of pdb 'a' to keep
   ## find corresponding atoms in b
   
-  names.a <- paste(a$atom[inds$atom, "chain"],
-                   a$atom[inds$atom, "resno"],
-                   a$atom[inds$atom, "elety"],
-                   a$atom[inds$atom, "eleno"], sep="-")
+  names.a <- paste(a$atom$chain[inds$atom],
+                   a$atom$resno[inds$atom],
+                   a$atom$elety[inds$atom],
+                   a$atom$eleno[inds$atom], sep="-")
   
-  names.b <- paste(b$atom[, "chain"],
-                   b$atom[, "resno"], 
-                   b$atom[, "elety"],
-                   b$atom[, "eleno"], sep="-")
+  names.b <- paste(b$atom$chain,
+                   b$atom$resno, 
+                   b$atom$elety,
+                   b$atom$eleno, sep="-")
   
-  inds <- which(names.b %in% names.a)
-  out <- list(atom=inds, xyz=atom2xyz(inds))
-  class(out) <- "select"
-  return(out)
+  inds <- as.select(which(names.b %in% names.a))
+  return(inds)
 }
