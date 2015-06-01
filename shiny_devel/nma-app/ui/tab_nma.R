@@ -31,21 +31,12 @@ tabPanel("NMA", icon=icon("home"),
 
         ##-PDB input (moved to server.R)
         uiOutput('resetable_pdb_input'),
-        #textInput("pdbid", label="Enter RCSB PDB code/ID:", value = "4Q21"),
 
         ##- Chain selection
-        h5("Detected chain IDs:"),
-        verbatimTextOutput("chains1"),
-        
-        checkboxInput("limit", "Limit calculation to a subset of chains?"),
-        helpText("Note: Use this option to exclude particular chains form further consideration."),
-        
-        conditionalPanel(
-          condition = "input.limit == true",
-          uiOutput("chains2"),
-          helpText("Note: Only selected chains will be analyzed.")
-        ),
+        uiOutput("chain_checks"),
 
+        ## reset PDB input
+        actionButton("do_nma", "Run NMA", icon=icon("cog")),
         actionButton("reset_pdb_input", "Reset PDB input", icon=icon("undo")),
         checkboxInput('show_pdb', 'View Input PDB', value=FALSE)
         )
@@ -171,7 +162,7 @@ tabPanel("NMA", icon=icon("home"),
                           choices=list('Black'='black', 'White'='white'),
                           selected='white'),
              br(),
-             downloadButton('nmtraj', label='Download PDB Trajectory')
+             downloadButton('trj2zip', label='Download PDB Trajectory')
              )
            ),
     
@@ -275,7 +266,7 @@ tabPanel("NMA", icon=icon("home"),
            verbatimTextOutput("pdbSummary")
            ),
     column(6,
-           h4("Calculation Summary Log"),
+           h4("NMA Summary"),
            verbatimTextOutput("modeSummary")
            )
          

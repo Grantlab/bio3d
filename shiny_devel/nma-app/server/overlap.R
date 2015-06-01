@@ -3,80 +3,6 @@
 ## Overlap analysis
 ###########################
 
-get_pdb2 <- function(acc) {
-  ## downloads and reads the raw PDB
-  id <- substr(acc, 1, 4)
-  
-  if(nchar(id)==4) {
-    progress <- shiny::Progress$new(session, min=1, max=5)
-    on.exit(progress$close())
-    
-    progress$set(message = 'Fetching PDB',
-                 detail = 'This should be quick...')
-    progress$set(value = 2)
-    
-    if(configuration$pdbdir$archive) {
-      id2 <- paste0(tolower(substr(id, 1, 4)), "_", substr(id, 6, 6))
-      raw.files <- paste0(configuration$pdbdir$rawfiles, "/", substr(id2, 2, 3), "/pdb", ids, ".ent.gz")
-      
-      if(!file.exists(raw.files))
-        stop("PDB not found")
-      
-      pdb <- read.pdb(raw.files)
-    }
-    else {
-      file <- get.pdb(id)
-    }
-    progress$set(value = 3)
-    
-    progress$set(message = 'Parsing PDB',
-                 detail = 'Please wait...')
-    pdb <- read.pdb(file, verbose=FALSE)
-    progress$set(value = 5)
-
-    return(pdb)
-  }
-  else {
-    stop("Provide a 4 character PDB code")
-  }
-}
-
-## returns the final PDB object
-#get_pdb2 <- reactive({
-#  pdb <- raw_pdb2()
-#  
-#  if(is.vector(input$chains2)) {
-#    pdb <- trim(pdb, chain=input$chains2)
-#  }
-#  
-#  return(pdb)
-#})
-
-
-
-## return chain IDs
-#chain_pdb2 <- reactive({
-#  invisible(capture.output( pdb <- raw_pdb2() ))
-#  chains <- unique(trim(pdb, "protein", elety="CA")$atom$chain)
-#  names(chains) <- chains
-#  return(chains)
-#})
-
-
-## all available chains in PDB
-#output$chains3 <- renderPrint({
-#  invisible(capture.output(  chains <- chain_pdb2() ))
-#  cat( chains, sep=", ")
-#})
-
-## checkbox 
-#output$chains4 <- renderUI({
-#  chains <- chain_pdb2()
-#  checkboxGroupInput("chains2", label = "Limit to chain IDs:", 
-#                     choices = chains, inline = TRUE)
-#})
-
-
 calc_overlap <- reactive({
   input$goButton
   
@@ -91,14 +17,11 @@ calc_overlap <- reactive({
   }
 
   pdblist <- vector("list", length(ids)+1)
-  pdblist[[1]] <- get_pdb()
+  pdblist[[1]] <- trim(final_pdb(), "calpha")
 
   for(i in 1:length(ids)) {
-    pdblist[[i+1]] <- get_pdb2(ids[i])
-  }
-
-  for(i in 1:length(pdblist)) {
-    pdblist[[i]] <- trim(pdblist[[i]], "calpha")
+    pdblist[[i+1]] <- read_pdb(ids[i])
+    pdblist[[i+1]] <- trim(pdblist[[i+1]], "calpha", chain=substr(ids[i], 6, 6))
   }
 
   ## pdb for nma

@@ -4,7 +4,7 @@
 ####################################
 
 output$nmaWebGL  <- renderWebGL({
-  pdb <- get_pdb()
+  pdb <- final_pdb()
   modes <- calcModes()
 
   trj <- mktrj(modes, mode=as.numeric(input$mode_choice), rock=FALSE)

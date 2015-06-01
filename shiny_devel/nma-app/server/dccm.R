@@ -24,7 +24,7 @@ output$dccm_plot <- renderPlot({
 })
 
 make_dccm_plot <- function() {
-  pdb <- get_pdb()
+  pdb <- final_pdb()
   
   if(input$calc_dccm) {
     
@@ -47,8 +47,8 @@ make_dccm_plot <- function() {
     progress <- shiny::Progress$new(session, min=1, max=10)
     on.exit(progress$close())
     
-    progress$set(message = 'Calculation in progress',
-                 detail = 'This may take a while...')
+    progress$set(message = 'Calculating DCCM',
+                 detail = 'Please wait')
     
     for (i in 1:5) {
       progress$set(value = i)
@@ -85,26 +85,25 @@ output$dccmplot2pdf = downloadHandler(
 
 
 dccm_pymol <- reactive({
-  pdb <- get_pdb()
+  path <- data_path()
+  pdb <- final_pdb()
+  cij <- calcDCCM()
   
   progress <- shiny::Progress$new(session, min=1, max=5)
   on.exit(progress$close())
   
-  progress$set(message = 'Calculation in progress',
-               detail = 'This may take a moment...')
+  progress$set(message = 'Running PyMOL script',
+               detail = 'Please wait')
   
   progress$set(value = 1)
-  cij <- calcDCCM()
   progress$set(value = 3)
-  view.dccm(cij, pdb, launch=FALSE)
-  files <- c("corr.py", "corr.inpcrd.pdb")
-  zip("tmp_dccm.zip", files, flags="-FS")
-  progress$set(value = 5)
-  return("tmp_dccm.zip")
+  f <- paste0(path, "/dccm.pse")
+  pymol.dccm(cij, pdb, type="session", file=f)
+  return(f)
 })
 
 output$dccm2zip = downloadHandler(
   filename = "dccm_pymol.zip",
   content = function(file) {
-    file.copy(dccm_pymol(), file)
+    zip(file, dccm_pymol(), flags="-9Xj")
   })

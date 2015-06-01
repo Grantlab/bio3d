@@ -14,7 +14,7 @@ output$resetable_nma_input <- renderUI({
 })
 
 calcModes <- reactive({
-  pdb <- get_pdb()
+  pdb <- final_pdb()
   
   if(sum(pdb$calpha)>600)
     stop("maximum 600 C-alpha atoms for NMA")
@@ -23,7 +23,7 @@ calcModes <- reactive({
   on.exit(progress$close())
   
   progress$set(message = 'Calculating normal modes',
-               detail = 'This may take while...')
+               detail = 'Please wait')
   progress$set(value = 2)
   
   if(input$forcefield %in% c("calpha", "sdenm", "reach"))
@@ -45,7 +45,7 @@ output$fluct_plot <- renderPlot({
 })
 
 make_fluct_plot <- function() {
-  pdb <- get_pdb()
+  pdb <- final_pdb()
   modes <- calcModes()
   x <- modes$fluctuations
 
@@ -95,38 +95,26 @@ output$fluctplot2pdf = downloadHandler(
 ####################
 ## Trajectory
 ###################
-mktrj2 <- reactive({
-  pdb <- get_pdb()
+trj2files <- reactive({
+  path <- data_path()
+  pdb <- final_pdb()
+  pdb <- trim(pdb, "calpha")
   modes <- calcModes()
-
-  progress <- shiny::Progress$new(session, min=1, max=input$trj_nmodes)
-  on.exit(progress$close())
   
-  progress$set(message = 'Calculation in progress',
-               detail = 'This may take a moment...')
+  i <- as.numeric(input$mode_choice)
+  f <- paste0(path, "/mode_", i, ".pdb")
+  x <- mktrj(modes, mode=i, file=f,
+             b=modes$fluctuations,
+             resno=pdb$atom$resno,
+             resid=pdb$atom$resid,
+             chain=pdb$atom$chain)
   
-  
-  files <- c()
-  for(i in 7:(6+input$trj_nmodes)) {
-    f <- paste0("mode_", i, ".pdb")
-    x <- mktrj(modes, mode=i, file=f,
-               b=modes$fluctuations,
-               resno=pdb.ca$atom$resno,
-               resid=pdb.ca$atom$resid,
-               chain=pdb.ca$atom$chain)
-    
-    files <- c(files, f)
-    progress$set(value = i)
-  }
-  print(files)
-  zip("tmp_trj.zip", files, flags="-FS")
-  return("tmp_trj.zip")
+  return(f)
 })
 
+
 output$trj2zip = downloadHandler(
-  filename = "trj.zip",
+  filename = 'traj.zip',
   content = function(file) {
-    file.copy(mktrj2(), file)
-  })
-
-
+    zip(file, files=trj2files(), flags = "-9Xj")
+})

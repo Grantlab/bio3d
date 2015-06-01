@@ -1,4 +1,12 @@
 
+## set user data to store stuff
+data_path <- reactive({
+  dir <- paste0(format(Sys.time(), "%Y-%m-%d"), "_", randstr())
+  path <- paste0(configuration$user_data, "/", dir)
+  dir.create(path)
+  return(path)
+})
+
 ##- PDB input UI that is responsive to 'reset button' below
 output$resetable_pdb_input <- renderUI({
   ## 'input$reset_pdb_input' is just used as a trigger for reset
@@ -6,22 +14,22 @@ output$resetable_pdb_input <- renderUI({
   textInput("pdbid", label="Enter RCSB PDB code/ID:", value = "4Q21") #)
 })
 
-## downloads and reads the raw PDB
-raw_pdb <- reactive({
-  id <- substr(input$pdbid, 1, 4)
+## downloads and reads a PDB
+read_pdb <- function(pdbid) {
+  pdbid <- substr(pdbid, 1, 4)
   
-  if(nchar(id)==4) {
+  if(nchar(pdbid)==4) {
     progress <- shiny::Progress$new(session, min=1, max=5)
     on.exit(progress$close())
     
     progress$set(message = 'Fetching PDB',
-                 detail = 'This should be quick...')
+                 detail = 'Please wait')
     progress$set(value = 2)
     
     if(configuration$pdbdir$archive) {
-      id <- tolower(id)
-      raw.files <- paste0(configuration$pdbdir$rawfiles, "/", substr(ids, 2, 3),
-                          "/pdb", id, ".ent.gz")
+      pdbid <- tolower(pdbid)
+      raw.files <- paste0(configuration$pdbdir$rawfiles, "/", substr(pdbid, 2, 3),
+                          "/pdb", pdbid, ".ent.gz")
       
       if(!file.exists(raw.files))
         stop("PDB not found")
@@ -29,12 +37,12 @@ raw_pdb <- reactive({
       pdb <- read.pdb(raw.files)
     }
     else {
-      file <- get.pdb(id)
+      file <- get.pdb(pdbid, path=configuration$pdbdir$rawfiles)
     }
-    progress$set(value = 3)
     
+    progress$set(value = 3)
     progress$set(message = 'Parsing PDB',
-                 detail = 'Please wait...')
+                 detail = 'Please wait')
     pdb <- read.pdb(file, verbose=FALSE)
     progress$set(value = 5)
     
@@ -43,23 +51,26 @@ raw_pdb <- reactive({
   else {
     stop("Provide a 4 character PDB code")
   }
-})
+}
 
 ## returns the final PDB object
-get_pdb <- reactive({
+raw_pdb <- reactive({
+  pdb <- read_pdb(input$pdbid)
+  return(pdb)
+})
+
+## returns the final all-atom PDB object
+final_pdb <- reactive({
   pdb <- raw_pdb()
+
+  if(!length(input$chains)>0)
+    stop()
   
   if(is.vector(input$chains)) {
     pdb <- trim(pdb, chain=input$chains)
   }
   
   return(pdb)
-})
-
-## returns the final PDB object
-get_pdbCA <- reactive({
-  pdb <- get_pdb()
-  return(trim(pdb, "calpha"))
 })
 
 ## return chain IDs
@@ -70,31 +81,24 @@ chain_pdb <- reactive({
   return(chains)
 })
 
-output$pdbSummary <- renderPrint({
-  input$pdbaction
-  invisible(capture.output( pdb <- get_pdb() ))
-  print(pdb)
-})
-
-## all available chains in PDB
-output$chains1 <- renderPrint({
-  input$pdbaction
-  
-  invisible(capture.output(  chains <- chain_pdb() ))
-  cat( chains, sep=", ")
-})
-
 ## checkbox 
-output$chains2 <- renderUI({
+output$chain_checks <- renderUI({
   input$pdbaction
   
   chains <- chain_pdb()
+  print(chains)
   checkboxGroupInput("chains", label = "Limit to chain IDs:", 
-                     choices = chains, inline = TRUE )
-  ##selected = chains[1:length(chains)])
+                     choices = chains, selected = chains, 
+                     inline = TRUE )
 })
 
 output$pdbWebGL  <- renderWebGL({
-  pdb <- get_pdb()
+  pdb <- final_pdb()
   view.pdb(pdb, as="overview", col="sse")
+})
+
+output$pdbSummary <- renderPrint({
+  input$pdbaction
+  invisible(capture.output( pdb <- final_pdb() ))
+  print(pdb)
 })

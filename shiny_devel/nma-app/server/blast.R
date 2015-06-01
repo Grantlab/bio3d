@@ -1,19 +1,11 @@
 ###########################
-##-- BLAST and PDB INPUT  #
+##-- BLAST (For overlap)  #
 ###########################
-
-## set user data to store stuff
-#data_path <- reactive({
-#  dir <- paste0(format(Sys.time(), "%Y-%m-%d"), "_", randstr())
-#  path <- paste0(configuration$user_data, "/", dir)
-#  dir.create(path)
-#  return(path)
-#})
 
 
 ### Input sequence ###
 get_sequence <- reactive({
-  pdb <- get_pdb()
+  pdb <- final_pdb()
   seq <- as.fasta(pdbseq(pdb))
   return(seq)
 })

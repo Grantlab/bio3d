@@ -3,42 +3,48 @@
 ## Geostas domain analysis
 ###########################
 geostas2 <- reactive({
-  pdb <- get_pdb()
+  pdb <- final_pdb()
   modes <- calcModes()
-  print(modes)
   
   progress <- shiny::Progress$new(session, min=1, max=5)
   on.exit(progress$close())
   
-  progress$set(message = 'Calculation in progress',
-               detail = 'This may take a moment...')
+  progress$set(message = 'Finding domains',
+               detail = 'Please wait')
   
   progress$set(value = 2)
   gs <- geostas(modes, k=input$ndomains, m.inds=seq(7, input$nmodes+6), ncore=1)
   print(gs)
   return(gs)
-  
-  ##file <- "gstrj7.pdb"
-  #  mktrj(modes, mode=7,
-  #        chain=gs$grps,
-  #        resno=pdb.ca$atom$resno,
-  #        resid=pdb.ca$atom$resid,
-  #        rock=FALSE,
-  #        file=file)
-  
-  #zip("tmp_gs.zip", file, flags="-FS")
-  #return("tmp_gs.zip")
 })
 
-  output$geostas2zip = downloadHandler(
-    filename = "domains.zip",
-    content = function(file) {
-      file.copy(geostas2(), file)
-    })
+gstrj <- reactive({
+  path <- data_path()
+  modes <- calcModes()
+  pdb <- trim(final_pdb(), "calpha")
+  gs <- geostas2()
   
+  i <- 7
+  file <- paste0(path, "/gs-mode_", i, ".pdb")
+  
+  mktrj(modes, mode=i,
+        chain=gs$grps,
+        resno=pdb$atom$resno,
+        resid=pdb$atom$resid,
+        rock=TRUE,
+        file=file)
+  return(file)
+})
+
+output$geostas2zip = downloadHandler(
+  filename = "geostas.zip",
+  content = function(file) {
+    zip(file, files=gstrj(), flags = "-9Xj")
+  })
+
 
 output$geostasWebGL  <- renderWebGL({
-  pdb <- get_pdb()
+  pdb <- final_pdb()
   modes <- calcModes()
   gs <- geostas2()
   col <- gs$grps
