@@ -1,5 +1,5 @@
 "plot.fluct" <-
-  function(x, col = NULL, signif = FALSE, p.cutoff = 0.005, 
+  function(x, col = NULL, label = rownames(x), signif = FALSE, p.cutoff = 0.005, 
            q.cutoff = 0.04, s.cutoff = 5, n.cutoff = 2, mean = FALSE, polygon = FALSE, 
            ncore = NULL, ...) {
 
@@ -121,6 +121,7 @@
        # calculate mean values and replace
        yvals = apply(x, 2, tapply, col, mean, na.rm=TRUE)
        col = unique(col)
+       if(!is.null(label)) label = unique(label)
 
        if(!is.matrix(yvals))
           yvals = matrix(yvals, nrow=1)
@@ -168,6 +169,10 @@
    
     ## Plot all lines 
     for(i in 1:nrow(yvals)) lines(yvals[i, ], col=col[i], lwd=2)
+
+    ## legend
+    if(!is.null(label))
+       legend('topright', legend=label, text.col=col, bty='n')
 
     if(signif)
        out <- list(signif=sig)

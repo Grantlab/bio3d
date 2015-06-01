@@ -47,7 +47,7 @@ filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL
       
       # convert cij to upper.tri matrix for internal use
       pcij <- apply(cij, 3, function(x) x[upper.tri(x)])
-    
+ 
       ncij <- tapply(1:dim(cij)[3L], fac, function(i) {
          
          # contact map
@@ -56,8 +56,8 @@ filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL
          else
              cm <- cmap(xyz, ...) 
    
-         cij.min = apply(abs(pcij[, i]), 1, min)
-         cij.max = apply(abs(pcij[, i]), 1, max)
+         cij.min = apply(abs(pcij[, i, drop=FALSE]), 1, min)
+         cij.max = apply(abs(pcij[, i, drop=FALSE]), 1, max)
    
          filter <- (cij.min >= cutoff.cij) | (cij.max >= cutoff.cij & cm[upper.tri(cm)]==1)
          
@@ -104,6 +104,9 @@ filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL
       ## Mask average values if below cutoff.sims
       cut.sims.inds <- (cij.sum < cutoff.sims)
       cij.ave[cut.sims.inds] = 0 ## Could use NA here
+
+      if(!is.null(extra.filter))
+         cij.ave <- cij.ave * extra.filter
     
       class(cij.ave) = c("dccm", "matrix")
       return(cij.ave)

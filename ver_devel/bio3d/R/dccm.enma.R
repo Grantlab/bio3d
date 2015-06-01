@@ -23,7 +23,7 @@
       warning(paste(dims[2], "modes used in the calculation of the DCCMs"))
   }
   
-  myCalcDCCM <- function(i, enma, na.rm=FALSE) {
+  myCalcDCCM <- function(i, enma, na.rm=FALSE, ...) {
     if(is.null(enma$full.nma)) {
       if(mass) {
         freqs <- sqrt(abs(enma$L[i,])) / (2 * pi)
@@ -51,11 +51,11 @@
       class(dummy.nma) <- "nma"
 
       invisible(capture.output(
-        cm.tmp <- dccm.nma(dummy.nma, ncore=1) ))
+        cm.tmp <- dccm.nma(dummy.nma, ncore=1, ...) ))
     }
     else {
       invisible(capture.output(
-        cm.tmp <- dccm.nma(enma$full.nma[[i]], ncore=1) ))
+        cm.tmp <- dccm.nma(enma$full.nma[[i]], ncore=1, ...) ))
     }
 
     setTxtProgressBar(pb, i)
@@ -64,7 +64,7 @@
 
   ## do the calc
   pb <- txtProgressBar(min=1, max=dims[3L], style=3)
-  all.dccm <- mylapply(1:dims[3L], myCalcDCCM, enma, na.rm=na.rm)
+  all.dccm <- mylapply(1:dims[3L], myCalcDCCM, enma, na.rm=na.rm, ...)
   close(pb)
 
   if(any(is.na(enma$U.subspace)))

@@ -7,7 +7,7 @@
 }
 \usage{
 \method{plot}{fluct}(x, 
-        col = NULL, signif = FALSE,
+        col = NULL, label = rownames(x), signif = FALSE,
         p.cutoff = 0.005, q.cutoff = 0.04,
         s.cutoff = 5, n.cutoff = 2, mean = FALSE, polygon = FALSE, 
         ncore = NULL, ...) 
@@ -18,6 +18,9 @@
   \item{col}{ a character vector of plotting colors. Used also to group
     fluctuation profiles. NA values in col will omit the corresponding fluctuation 
     profile in the plot. }
+  \item{label}{ a character vector of plotting labels with length matching 
+    \code{nrow(x)}. If \code{mean=TRUE}, the length of \code{label} can be equal to
+    the number of categories indicated by \code{col}. }
   \item{signif}{ logical, if TRUE significance of fluctuation difference is calculated
              and annotated for each atomic position. }
   \item{p.cutoff}{ Cutoff of p-value to define significance. }
