@@ -13,13 +13,13 @@ tabPanel("1. SEARCH", icon=icon("home"),
          fluidRow(
            column(4,
                   wellPanel(
-                    
+
                     conditionalPanel(
                       condition = "input.show_pdb == true",
                       h3("Input PDB"),
                       webGLOutput('pdbWebGL')
                       ),
-                    
+
                     conditionalPanel(
                       condition = "input.show_pdb == false",
                       h3("Multiple structure analysis with Bio3D"),
@@ -28,12 +28,12 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       img(src="geostas_250x182.png",
                           width=250, style="display: block; margin-left: auto; margin-right: auto;")
                       )
-             
-                  
+
+
                     )
                   ),
 
-           
+
            column(4,
                   wellPanel(
                     h4("A) Input query structure or sequence"),
@@ -71,7 +71,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     )
                   ),
 
-         
+
            column(4,
                   wellPanel(
 
@@ -121,7 +121,8 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       css.type = "text/css";
                       css.innerHTML = ".nv-y .nv-axislabel { font-size: 20px; }";
                       document.body.appendChild(css);
-                      document.getElementById("blast_plot2").focus();'
+                      document.getElementById("blast_plot").focus();
+                      '
                       ))
                     )
              )

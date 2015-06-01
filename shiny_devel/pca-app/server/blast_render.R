@@ -153,9 +153,9 @@ get_blasttable <- reactive({
     col <- sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' })
     l <- as.numeric(input$limit_hits)
     col[1:l] <- "green"
-    
+
     anno$acc <- paste0(
-      "<span style=\"color:",
+      "<span class=\"id_", col, "\" style=\"color:",
       col,
       "; font-size:large\">&#x25CF;</span>",
       "&nbsp;<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
@@ -166,28 +166,36 @@ get_blasttable <- reactive({
     anno$acc <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
                          substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   }
-  
+
   checkbox <- paste0("<input type=\"checkbox\" name=\"pdb_ids\" value=\"", hits$acc, "\" ",  checked, ">")
   anno$check <- checkbox
 
   rownames(anno) <- NULL
   show.cols <- c("acc", "compound", "source", "ligandId", "score")
   col.inds <- sapply(show.cols, grep, colnames(anno))
-  
+
   print(col.inds)
   print(head(anno[, col.inds]))
   return(anno[, col.inds])
 })
 
 output$blast_table <- renderDataTable({
-  datatable(get_blasttable(), extensions = 'Scroller', escape = FALSE,
+    DT::datatable(get_blasttable(), extensions = 'Scroller', escape = FALSE,
             colnames = c("ID", "Name", "Species", "Ligands", "Score"),
             options = list(
               deferRender = TRUE,
               dom = "frtiS",
               scrollY = 200,
               scrollCollapse = TRUE
-              ))
+              ),
+              callback = JS('
+                greens = document.getElementsByClassName("id_green");
+                for(var i = 0; i < greens.length; i++) {
+                    row = greens[i].parentNode.parentNode;
+                    row.setAttribute("class", row.getAttribute("class") + " selected");
+                }
+              ')
+    )
 })
 
 
