@@ -51,6 +51,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
              conditionalPanel(
                condition = "input.str_plot == 'heatmap'",
                plotOutput("rmsd_heatmap")
+               ##iplotCorr_output("qtl_rmsd_heatmap")
                ),
 
              conditionalPanel(

@@ -28,18 +28,16 @@ read_pdb <- function(pdbid) {
     
     if(configuration$pdbdir$archive) {
       pdbid <- tolower(pdbid)
-      raw.files <- paste0(configuration$pdbdir$rawfiles, "/", substr(pdbid, 2, 3),
+      file <- paste0(configuration$pdbdir$rawfiles, "/", substr(pdbid, 2, 3),
                           "/pdb", pdbid, ".ent.gz")
-      
-      if(!file.exists(raw.files))
+
+      if(!file.exists(file))
         stop("PDB not found")
-      
-      pdb <- read.pdb(raw.files)
     }
     else {
       file <- get.pdb(pdbid, path=configuration$pdbdir$rawfiles)
     }
-    
+
     progress$set(value = 3)
     progress$set(message = 'Parsing PDB',
                  detail = 'Please wait')

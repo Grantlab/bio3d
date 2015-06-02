@@ -73,7 +73,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
 
         conditionalPanel(
           condition = "input.plot_type == 'normal'",
-          checkboxInput("show_options", "More options", value=FALSE)
+          checkboxInput("show_options1", "More options", value=FALSE)
           ),
 
         conditionalPanel(
@@ -138,7 +138,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
 #           ),
 
   conditionalPanel(
-    condition = "input.show_options == true && input.plot_type == 'normal'",
+    condition = "input.show_options1 == true && input.plot_type == 'normal'",
       column(3,
              wellPanel(
                sliderInput("cex_points", "Point size",
@@ -213,7 +213,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
          fluidRow(
            column(12,
                   wellPanel(
-                    dataTableOutput("pdbs_table")
+                    DT::dataTableOutput("pdbs_table")
                     )
                   )
            )

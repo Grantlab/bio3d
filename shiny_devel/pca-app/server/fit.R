@@ -96,6 +96,19 @@ representatives <- reactive({
 ####################################
 ####     Plotting functions     ####
 ####################################
+
+
+#output$qtl_rmsd_heatmap <- iplotCorr_render({
+#  pdbs <- fit()
+#  rd <- rmsd1()
+#  rownames(rd) <- pdbs$lab
+#  colnames(rd) <- pdbs$lab
+#  hc <- hclust(as.dist(rd))
+#  grps <- cutree(hc, k=input$clusters)
+#  iplotCorr(rd)
+#})
+
+
 make.plot.heatmap <- function() {
   pdbs <- fit()
   rd <- rmsd1()
@@ -113,7 +126,7 @@ make.plot.heatmap <- function() {
   return(plot1)
 }
 
-output$rmsd_heatmap <- renderPlot({
+output$rmsd_heatmap2 <- renderPlot({
   print(make.plot.heatmap())
 })
 

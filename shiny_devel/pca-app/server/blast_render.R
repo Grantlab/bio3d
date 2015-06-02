@@ -36,8 +36,10 @@ output$blast_plot1 <- renderPlot({
   z <- blast$score
 
   col <- sapply(grps, function(x) if(x==1) 'red' else if(x==2) 'grey50')
-  l <- as.numeric(input$limit_hits)
-  col[1:l] <- "green"
+  #l <- as.numeric(input$limit_hits)
+  #col[1:l] <- "green"
+  col[ as.numeric(input$blast_table_rows_selected) ] <- "green"
+  
 
   plot(z, xlab="", ylab="Bitscore", bg=col, col="grey10", pch=21, cex=1.1)
   abline(v=gp, col="gray50", lty=3)

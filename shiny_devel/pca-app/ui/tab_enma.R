@@ -197,7 +197,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                   ),
 
            column(4,
-                  verbatimTextOutput("rmsip_print3")
+                  DT::dataTableOutput("rmsip_table")
                   )
            )
 

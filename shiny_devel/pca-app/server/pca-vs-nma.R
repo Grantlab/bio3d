@@ -46,11 +46,17 @@ output$rmsip_plot3 <- renderPlot({
   plot(r, xlab="PCA", ylab="NMA")
 })
 
-output$rmsip_print3 <- renderPrint({
+output$rmsip_table <- renderDataTable({
   r <- pcanma_rmsip()
   r$overlap <- round(r$overlap, 2)
-  #class(r) <- NULL
-  print(r$overlap)
+  datatable(r$overlap,
+            options = list(
+              dom = 't',
+              scrollX = TRUE,
+              ordering = FALSE, 
+              scrollCollapse = TRUE,
+              extensions = 'FixedColumns')
+            )
 })
 
 output$struct_dropdown3 <- renderUI({

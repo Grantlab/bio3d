@@ -24,6 +24,7 @@ library(reshape2)
 library(maptools)
 library(threejs)
 library(abind)
+##library(qtlcharts)
 
 if(configuration$db$use)
   library(RMySQL)

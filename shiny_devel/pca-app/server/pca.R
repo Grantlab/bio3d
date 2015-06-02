@@ -110,6 +110,13 @@ output$pca_plot1_conf <- renderPlot({
       }
     }
   }
+
+  if(!is.null(input$pdbs_table_rows_selected)) {
+    inds <- input$pdbs_table_rows_selected
+    if(length(inds)>0)
+      points(pc$z[inds, xax], pc$z[inds, yax], col=2, cex=2.5*input$cex_points)
+  }
+  
   invisible(par(op))
 
 })
@@ -354,7 +361,7 @@ observeEvent(input$viewUpdate, {
         selected='white')
 })
 
-output$pdbs_table <- renderDataTable({
+get_pdbstable <- reactive({
   pdbs <- fit()
   grps <- clustgrps()
   anno <- get_annotation(pdbs$lab)
@@ -370,20 +377,24 @@ output$pdbs_table <- renderDataTable({
   anno$cluster <- paste0("<span style=\"color:",
     cluster.colors[grps], "; font-size:large\">&#x25CF;</span>&nbsp;",
     grps)
+  
+  rownames(anno) <- NULL
+  show.cols <- c("acc", "cluster", "compound", "source", "ligandId")
+  col.inds <- sapply(show.cols, grep, colnames(anno))
+  
+  return(anno[, col.inds])
+})
 
-  table.header.org <- names(anno)
-  table.header <- c("id", "pdbId", "cluster", "compound", "source", "ligandId", "chainLength")
-  table.header.new <- c("ID", "PDB ID", "Cluster", "Compound", "Source", "Ligand ID", "Chain Length")
-  table.header.org[match(table.header, table.header.org)] <- table.header.new
-  names(anno) <- table.header.org
-  return(anno[, table.header.new])
-}, escape=FALSE#, options=list(rowCallback = I(
-#    'function(row,data) {
-#    if (data[0]==1)
-#        $("td", row).css("background","#ffa62f");
-#    }')
-#        )
-)
+output$pdbs_table <- renderDataTable({
+  datatable(get_pdbstable(), extensions = 'Scroller', escape = FALSE,
+            colnames = c("ID", "Cluster", "Name", "Species", "Ligands"),
+            options = list(
+              deferRender = TRUE,
+              dom = "frtiS",
+              scrollY = 200,
+              scrollCollapse = TRUE
+              ))
+})
 
 
 

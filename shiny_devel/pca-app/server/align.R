@@ -4,18 +4,12 @@
 
 get_acc <- reactive({
 
-  ## check first input from checkboxes
-  if(!is.null(input$pdb_ids)) {
-    ids <- input$pdb_ids
-
-    if(length(ids) > 0)
-      return(toupper(ids))
-  }
-
+  message( as.numeric(input$blast_table_rows_selected) )
+  
   if(input$input_type != "multipdb") {
     blast <- run_blast()
-    hits <- filter_hits()
-    acc <- hits$acc
+    ##hits <- filter_hits()
+    acc <- blast$acc[ as.numeric(input$blast_table_rows_selected) ]
     return(toupper(acc))
   }
   else {

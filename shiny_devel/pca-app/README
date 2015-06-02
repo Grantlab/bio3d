@@ -2,11 +2,22 @@
 # Requirements for Shiny PCA (server edition)
 
 ## R-packages
--- rCharts, RMySQL, rgl, shinyRGL, maptools, reshape2, abind
 
-### For server edition of shinyRGL: https://github.com/trestletech/shinyRGL
--- install_github("shinyRGL", "trestletech")
--- install_github("rgl", "trestletech", "js-class")
+```
+#!r
+library(devtools)
+install.packages(c("devtools", "shiny", "RMySQL", "maptools", "reshape2", "abind"), dependencies=TRUE)
+
+## special builds
+install_bitbucket("Grantlab/bio3d", subdir = "ver_devel/bio3d/", ref="feature_shiny")
+
+install_github('rCharts', 'ramnathv')
+install_github("shinyRGL", "trestletech")
+install_github("rgl", "trestletech", "js-class")
+install_github("rstudio/DT")
+
+#install_github("kbroman/qtlcharts", build_vignettes=TRUE)
+```
 
 ## Other programs
 -- MySQL database (with table "pdb_annotation")
