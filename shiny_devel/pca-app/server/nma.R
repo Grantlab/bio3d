@@ -345,34 +345,36 @@ output$nma_rmsip_heatmap2pdf = downloadHandler(
 ####     Download trajectory    ####
 ####################################
 
-trj2pdb2  <- reactive({
-    dir <- data_path()
-    pdbs <- align()
-    modes <- nma2()
-    gaps <- gap.inspect(pdbs$ali)
-    fname  <- paste0(dir, '/', 'pc', input$viewMode, '.pdb')
-    trj <- mktrj(modes, pdbs=pdbs,
-                 s.inds=as.numeric(input$viewStruct2),
-                 m.inds=as.numeric(input$viewMode),
-                 file=fname)
-                 #resno=pdbs$resno[1, gaps$f.inds],
-                 #resid=pdbs$resid[1, gaps$f.inds],
-                 #chain=pdbs$chain[1, gaps$f.inds])
-    
-    return(fname)
+nma2pdb  <- reactive({
+  path <- data_path()
+  pdbs <- align()
+  modes <- nma2()
+  gaps <- gap.inspect(pdbs$ali)
+  fname  <- paste0(path, '/', 'mode', input$viewMode, '.pdb')
+
+  trj <- mktrj(modes, pdbs=pdbs,
+               s.inds=as.numeric(input$viewStruct2),
+               m.inds=as.numeric(input$viewMode),
+               file=fname)
+  
+  ##resno=pdbs$resno[1, gaps$f.inds],
+  ##resid=pdbs$resid[1, gaps$f.inds],
+  ##chain=pdbs$chain[1, gaps$f.inds])
+  
+  return(fname)
 })
 
 output$nmtraj = downloadHandler(
-    filename=function() {
-        paste0('pc', input$viewMode, '.pdb')
-    },
-    content=function(file) {
-        # Avoid possibility of not having write permission on server
-        src  <- normalizePath('nma-traj.pdb')
-        owd <- setwd(tempdir())
-        on.exit(setwd(owd))
-        file.copy(src, 'nma-traj.pdb')
-        file.rename(trj2pdb2(), file)
-    }
-
-)
+  filename=function() {
+    paste0('mode', input$viewMode, '.pdb.zip')
+  },
+  content=function(file) {
+    ## Avoid possibility of not having write permission on server
+    #src  <- normalizePath('nma-traj.pdb')
+    #owd <- setwd(tempdir())
+    #on.exit(setwd(owd))
+    #file.copy(src, 'nma-traj.pdb')
+    #file.rename(trj2pdb2(), file)
+    zip(file, files=nma2pdb(), flags = "-9Xj")
+  }
+  )

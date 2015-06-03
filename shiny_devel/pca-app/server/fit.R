@@ -126,7 +126,7 @@ make.plot.heatmap <- function() {
   return(plot1)
 }
 
-output$rmsd_heatmap2 <- renderPlot({
+output$rmsd_heatmap <- renderPlot({
   print(make.plot.heatmap())
 })
 
@@ -183,7 +183,7 @@ output$rmsf_plot <- renderPlot({
 ####################################
 
 output$representatives <- renderPrint({
-  pdbs <- fit()
+  invisible(capture.output( pdbs <- fit() ))
   reps <- basename.pdb(representatives())
 
   cat(reps, sep="\n")
@@ -322,6 +322,12 @@ pdbs2files <- reactive({
   pdbs <- fit()
   xyz <- pdbfit(pdbs, core, outpath=path)
   files <- paste0(path, "/", pdbs$lab, ".pdb_flsq.pdb")
+  
+  ## rename files from pdb1xck_A.ent.gz to 1XCK_A
+  if(configuration$pdbdir$archive) {
+    files.from <- paste0(path, "/", basename(pdbs$id), "_flsq.pdb")
+    file.rename(files.from, files)
+  }
   return(files)
 })
 
@@ -385,6 +391,14 @@ make_pdbs_pse <- reactive({
   core <- find_core()
   pdbs <- fit()
 
+  ## rename files from pdb1xck_A.ent.gz to 1XCK_A
+  if(configuration$pdbdir$archive) {
+    files.from <- pdbs$id
+    files.to <- paste0(path, "/", pdbs$lab, ".pdb")
+    file.copy(files.from, files.to)
+    pdbs$id <- files.to
+  }
+  
   col <- switch(input$viewColor1,
                 "cluster" = cutree1(),
                 "struct" = NULL,

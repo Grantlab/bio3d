@@ -11,7 +11,7 @@ data_path <- reactive({
 output$resetable_pdb_input <- renderUI({
   ## 'input$reset_pdb_input' is just used as a trigger for reset
   reset <- input$reset_pdb_input
-  textInput("pdbid", label="Enter RCSB PDB code/ID:", value = "4Q21") #)
+  textInput("pdbid", label="Enter RCSB PDB code/ID:", value = "2LUM") #)
 })
 
 ## downloads and reads a PDB
@@ -29,7 +29,9 @@ read_pdb <- function(pdbid) {
     if(configuration$pdbdir$archive) {
       pdbid <- tolower(pdbid)
       file <- paste0(configuration$pdbdir$rawfiles, "/", substr(pdbid, 2, 3),
-                          "/pdb", pdbid, ".ent.gz")
+                     "/pdb", pdbid, ".ent.gz")
+
+      message(file)
 
       if(!file.exists(file))
         stop("PDB not found")

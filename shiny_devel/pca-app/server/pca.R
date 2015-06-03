@@ -425,30 +425,31 @@ output$pdbs_table <- renderDataTable({
 #    zip(file, files=traj2files(), flags = "-9Xj")
 #})
 
-trj2pdb  <- reactive({
-    dir <- data_path()
+pca2pdb  <- reactive({
+    path <- data_path()
     pdbs <- fit()
     gaps <- gap.inspect(pdbs$ali)
     pc <- pca1()
-    fname  <- paste0(dir, '/', 'pc', input$viewPC, '.pdb')
+    fname  <- paste0(path, '/', 'pc', input$viewPC, '.pdb')
     mktrj.pca(pca=pc, pc=as.numeric(input$viewPC), file=fname,
-          resno=pdbs$resno[1, gaps$f.inds],
-          resid=pdbs$resid[1, gaps$f.inds],
-          chain=pdbs$chain[1, gaps$f.inds])
+              resno=pdbs$resno[1, gaps$f.inds],
+              resid=pdbs$resid[1, gaps$f.inds],
+              chain=pdbs$chain[1, gaps$f.inds])
     return(fname)
 })
 
 output$pctraj = downloadHandler(
-    filename=function() {
-        paste0('pc', input$viewPC, '.pdb')
-    },
-    content=function(file) {
-        # Avoid possibility of not having write permission on server
-        src  <- normalizePath('pc-traj.pdb')
-        owd <- setwd(tempdir())
-        on.exit(setwd(owd))
-        file.copy(src, 'pc-traj.pdb')
-        file.rename(trj2pdb(), file)
+  filename=function() {
+    paste0('pc', input$viewPC, '.pdb..zip')
+  },
+  content=function(file) {
+    ## Avoid possibility of not having write permission on server
+    #src  <- normalizePath('pc-traj.pdb')
+    #owd <- setwd(tempdir())
+    #on.exit(setwd(owd))
+    #file.copy(src, 'pc-traj.pdb')
+    #file.rename(trj2pdb(), file)
+    zip(file, files=pca2pdb(), flags = "-9Xj")
     }
 
   )
@@ -463,7 +464,9 @@ make_pca_pse <- reactive({
 })
 
 output$pca2pymol = downloadHandler(
-  filename = 'pca.pse.zip',
+  filename=function() {
+    paste0('pc', input$viewPC, '.pse.zip')
+  },
   content = function(file) {
     zip(file, files=make_pca_pse(), flags = "-9Xj")
 })

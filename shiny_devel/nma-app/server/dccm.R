@@ -102,7 +102,7 @@ dccm_pymol <- reactive({
   return(f)
 })
 
-output$dccm2zip = downloadHandler(
+output$dccm2pymol = downloadHandler(
   filename = "dccm_pymol.zip",
   content = function(file) {
     zip(file, dccm_pymol(), flags="-9Xj")

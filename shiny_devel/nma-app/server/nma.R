@@ -95,26 +95,52 @@ output$fluctplot2pdf = downloadHandler(
 ####################
 ## Trajectory
 ###################
-trj2files <- reactive({
+nma2pdb <- reactive({
   path <- data_path()
   pdb <- final_pdb()
   pdb <- trim(pdb, "calpha")
   modes <- calcModes()
   
   i <- as.numeric(input$mode_choice)
-  f <- paste0(path, "/mode_", i, ".pdb")
-  x <- mktrj(modes, mode=i, file=f,
+  fname  <- paste0(path, '/', 'mode', input$mode_choice, '.pdb')
+  x <- mktrj(modes, mode=i, file=fname,
              b=modes$fluctuations,
              resno=pdb$atom$resno,
              resid=pdb$atom$resid,
              chain=pdb$atom$chain)
   
-  return(f)
+  return(fname)
 })
 
 
 output$trj2zip = downloadHandler(
-  filename = 'traj.zip',
+  filename=function() {
+    paste0('mode', input$mode_choice, '.pdb.zip')
+  },
   content = function(file) {
-    zip(file, files=trj2files(), flags = "-9Xj")
+    zip(file, files=nma2pdb(), flags = "-9Xj")
+  })
+
+####################
+## Vector field
+###################
+
+make_nma_pse <- reactive({
+  path <- data_path()
+  pdb <- final_pdb()
+  pdb <- trim(pdb, "calpha")
+  modes <- calcModes()
+  
+  outf <- paste0(path, "/mode", as.numeric(input$mode_choice), ".pse")
+  file <- pymol.modes(modes, mode=as.numeric(input$mode_choice), type="session",
+                file=outf)
+  return(outf)
+})
+
+output$nma2pymol = downloadHandler(
+  filename=function() {
+    paste0('mode', input$mode_choice, '.pse.zip')
+  },
+  content = function(file) {
+    zip(file, files=make_nma_pse(), flags = "-9Xj")
 })

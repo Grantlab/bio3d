@@ -162,7 +162,8 @@ tabPanel("NMA", icon=icon("home"),
                           choices=list('Black'='black', 'White'='white'),
                           selected='white'),
              br(),
-             downloadButton('trj2zip', label='Download PDB Trajectory')
+             downloadButton('trj2zip', label='Download PDB Trajectory'),
+             downloadButton('nma2pymol', label='Download PyMOL vector field')
              )
            ),
     
@@ -192,7 +193,8 @@ tabPanel("NMA", icon=icon("home"),
              sliderInput("width2", "PDF width:",
                          min = 4, max = 12, value = 7, step=1),
              
-             downloadButton('dccm2zip', "Download PyMOL Visualization script"),
+             ##downloadButton('dccm2py', "Download PyMOL Visualization script"),
+             downloadButton('dccm2pymol', "Download PyMOL session"),
              downloadButton('dccmplot2pdf', "Download Plot PDF")
              )
            ),
