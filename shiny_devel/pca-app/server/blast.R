@@ -1,8 +1,6 @@
-###########################
-##-- BLAST and PDB INPUT  #
-###########################
-
-## set user data to store stuff
+###################################
+##-- User path for storing stuff  #
+################################### 
 data_path <- reactive({
   dir <- paste0(format(Sys.time(), "%Y-%m-%d"), "_", randstr())
   path <- paste0(configuration$user_data, "/", dir)
@@ -11,16 +9,81 @@ data_path <- reactive({
 })
 
 
-##- PDB input UI that is responsive to 'reset button' below
-output$resetable_pdb_input <- renderUI({
-  ## 'input$reset_pdb_input' is just used as a trigger for reset
-  reset <- input$reset_pdb_input
-  textInput("pdbid", label="Enter RCSB PDB code/ID:", value = "2LUM") #)
+###########################
+##-- PDB AND BLAST INPUT  #
+###########################
+
+### set default vaules
+rv <- reactiveValues()
+rv$pdbid <- "2LUM"
+rv$chainid <- "A"
+rv$limit_hits <- 5
+rv$cutoff <- 41
+
+observeEvent(input$pdbid, {
+  rv$pdbid <- input$pdbid
 })
 
-### Input PDB object ### 
-get_pdb <- reactive({
+observeEvent(input$chainId, {
+  rv$chainid <- input$chainId
+})
+
+observeEvent(input$limit_hits, {
+  rv$limit_hits <- input$limit_hits
+})
+
+observeEvent(input$cutoff, {
+  rv$cutoff <- input$cutoff
+})
+
+observeEvent(input$reset_pdbid, {
+  updateTextInput(session, "pdbid", value = "2LUM")
+})
+
+
+## returns PDB code (4-characters)
+get_pdbid <- reactive({
+  if (is.null(rv$pdbid))
+    return()
+  else {
+    pdbid <- rv$pdbid
+    
+    if(!nchar(pdbid)==4) {
+      stop("Provide a PDB code of 4 characters")
+    }
+    
+    return(pdbid)
+  }
+})
+
+## returns the selected chain ID
+get_chainid <- reactive({
+  if (is.null(rv$chainid))
+    return()
+  else
+    return(rv$chainid)
+})
+
+## returns all chain IDs in PDB
+get_chainids <- reactive({
+  pdbid <- get_pdbid()
+  
+  if(is.null(pdbid))
+    return()
+  
   anno <- input_pdb_annotation()
+  return(anno$chainId)
+})
+
+## returns the PDB object (trimmed to chain ID)
+get_pdb <- reactive({
+  message("get_pdb called")
+  pdbid <- get_pdbid()
+  chainid <- get_chainid()
+  
+  anno <- input_pdb_annotation()
+
+  print(anno)
   if(is.vector(input$chainId)) {
     ind <- which(anno$chainId==input$chainId[1])
     anno <- anno[ind,]
@@ -40,7 +103,7 @@ get_pdb <- reactive({
     pdb <- read.pdb(raw.files)
   }
   else {
-    raw.files <- get.pdb(substr(id, 1,4), path=configuration$pdbdir$rawfiles, gzip=TRUE)
+    raw.files <- get.pdb(unique(substr(id, 1,4)), path=configuration$pdbdir$rawfiles, gzip=TRUE)
     pdb <- read.pdb(raw.files)
     pdb <- trim.pdb(pdb, chain=substr(id, 6,6))
   }
@@ -48,15 +111,21 @@ get_pdb <- reactive({
   return(pdb)
 })
 
-### Input sequence ###
+## returns the sequence (fasta object)
 get_sequence <- reactive({
+  message("get_sequence called")
+  pdbid <- get_pdbid()
+  chainid <- get_chainid()
+  
+  if(is.null(input$input_type))
+    stop("no input provided")
 
   ## option 1 - PDB code provided
   if(input$input_type == "pdb") {
     anno <- input_pdb_annotation()
 
     if(is.vector(input$chainId)) {
-      ind <- which(anno$chainId==input$chainId[1])
+      ind <- which(anno$chainId==chainid[1])
       seq <- unlist(strsplit(anno$sequence[ind], ""))
     }
     else {
@@ -68,7 +137,7 @@ get_sequence <- reactive({
   ## option 2 - sequence provided
   if(input$input_type == "sequence") {
     if(nchar(input$sequence)==0)
-      stop()
+      stop("sequence is of length 0")
 
     inp <- unlist(strsplit(input$sequence, "\n"))
     inds <- grep("^>", inp, invert=TRUE)
@@ -83,13 +152,13 @@ get_sequence <- reactive({
   return(seq)
 })
 
-### Annotate input PDB
+## returns annotation data for input PDB
 input_pdb_annotation <- reactive({
-  if(is.null(input$pdbid)) {
-    return()
-  }
-
-  if(nchar(input$pdbid)==4) {
+  message("input_pdb_annotation called")
+  
+  pdbid <- get_pdbid()
+  
+  if(nchar(pdbid)==4) {
     progress <- shiny::Progress$new(session, min=1, max=5)
     on.exit(progress$close())
 
@@ -97,9 +166,8 @@ input_pdb_annotation <- reactive({
                  detail = 'Please wait')
     progress$set(value = 3)
 
-    anno <- get_annotation(input$pdbid, use_chain=FALSE)
-    for(i in 4:5)
-      progress$set(value = i)
+    anno <- get_annotation(pdbid, use_chain=FALSE)
+    progress$set(value = 5)
 
     return(anno)
   }
@@ -108,13 +176,20 @@ input_pdb_annotation <- reactive({
   }
 })
 
-## short summary of the input PDB
+## prints a short summary of the input PDB
 output$input_pdb_summary <- renderPrint({
+  message("input_pdb_summary called")
+  pdbid <- get_pdbid()
+  chainid <- get_chainid()
+  if(is.null(pdbid)) {
+    return()
+  }
+  
   input$input_type
   anno <- input_pdb_annotation()
-
-  if(is.vector(input$chainId)) {
-    ind <- which(anno$chainId==input$chainId[1])
+  
+  if(is.vector(chainid)) {
+    ind <- which(anno$chainId==chainid[1])
     anno <- anno[ind,]
   }
   else {
@@ -126,10 +201,12 @@ output$input_pdb_summary <- renderPrint({
 
 })
 
-### Run BLAST
+## returns BLAST results
 run_blast <- reactive({
-  if(is.null(input$chainId)) {
-    stop()
+  message("run_blast called")
+  
+  if(is.null(rv$chainid)) {
+    stop("no chainId provided")
   }
 
   if(input$input_type == "multipdb") {
@@ -165,7 +242,7 @@ run_blast <- reactive({
 ## returns logical vectors of all and limited hits
 ## as well as accession ids
 filter_hits <- reactive({
-  input$input_type
+  message("filter_hits called")
 
   blast <- run_blast()
   cutoff <- set_cutoff(blast, cutoff=NULL)
@@ -174,10 +251,13 @@ filter_hits <- reactive({
 
   hits <- blast$score > cutoff
   acc <- blast$acc[hits]
-
-  limit <- as.numeric(input$limit_hits)
   hits2 <- rep(FALSE, length(hits))
-  hits2[1:limit] <- TRUE
+  
+  if(!is.null(rv$limit_hits)) {
+    limit <- as.numeric(rv$limit_hits)
+    if(limit>0)
+      hits2[1:limit] <- TRUE
+  }
   hits2 <- hits & hits2
 
   ## hits_all: logical vector of all hits
@@ -247,8 +327,8 @@ set_cutoff <- function(blast, cutoff=NULL) {
   gp.inds <- na.omit(rle2(gps)$inds)
   gp.nums <- x$mlog.evalue[gp.inds]
 
-  cat("  * Possible cutoff values:   ", floor(gp.nums), "\n",
-      "           Yielding Nhits:   ", gp.inds, "\n\n")
+  #cat("  * Possible cutoff values:   ", floor(gp.nums), "\n",
+  #    "           Yielding Nhits:   ", gp.inds, "\n\n")
 
   if( is.null(cutoff) ) {
     ## Pick a cutoff close to cut.seed

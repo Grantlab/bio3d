@@ -2,6 +2,9 @@
 ##-- BLAST (For overlap)  #
 ###########################
 
+observeEvent(input$run_blast, {
+  rv$blast <- run_blast2()
+})
 
 ### Input sequence ###
 get_sequence <- reactive({
@@ -12,8 +15,10 @@ get_sequence <- reactive({
 
 ### Annotate input PDB
 input_pdb_annotation <- reactive({
+  message("annotating")
+  pdbid <- get_pdbid()
 
-  if(nchar(input$pdbid)==4) {
+  if(nchar(pdbid)==4) {
     progress <- shiny::Progress$new(session, min=1, max=5)
     on.exit(progress$close())
 
@@ -21,11 +26,8 @@ input_pdb_annotation <- reactive({
                  detail = 'Please wait')
     progress$set(value = 3)
 
-    anno <- get_annotation(input$pdbid, use_chain=FALSE)
-
-    for(i in 4:5)
-      progress$set(value = i)
-
+    anno <- get_annotation(pdbid, use_chain=FALSE)
+    progress$set(value = 5)
     return(anno)
   }
   else {
@@ -34,7 +36,7 @@ input_pdb_annotation <- reactive({
 })
 
 ### Run BLAST
-run_blast <- reactive({
+run_blast2 <- reactive({
   message("blasting")
   input_sequence <- get_sequence()
   print(input_sequence)
@@ -56,22 +58,32 @@ run_blast <- reactive({
     stop("No BLAST hits found")
   
   progress$set(value = 5)
-  return(hmm)
+
+  cutoff <- set_cutoff(hmm, cutoff=NULL)
+  cutoff <- cutoff$cutoff
+
+  hits <- hmm$score > cutoff
+  acc <- hmm$acc[hits]
+  return(acc)
+
+  ##out <- list(blast=hmm, pdbid=get_pdbid6())
+  ##return(hmm)
 })
 
 
 ## filters the blast results based on the cutoff
 ## returns logical vectors of all and limited hits
 ## as well as accession ids
-filter_hits <- reactive({
-  blast <- run_blast()
-  cutoff <- set_cutoff(blast, cutoff=NULL)
-  cutoff <- cutoff$cutoff
-
-  hits <- blast$score > cutoff
-  acc <- blast$acc[hits]
-  return(acc)
-})
+#filter_hits <- reactive({
+  ##blast <- run_blast()
+#  blast <- rv$blast
+#  cutoff <- set_cutoff(blast, cutoff=NULL)
+#  cutoff <- cutoff$cutoff
+#
+#  hits <- blast$score > cutoff
+#  acc <- blast$acc[hits]
+#  return(acc)
+#})
 
 
 set_cutoff <- function(blast, cutoff=NULL) {

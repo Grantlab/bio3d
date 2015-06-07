@@ -3,18 +3,22 @@
 ## Overlap analysis
 ###########################
 
+observeEvent(input$run_overlap, {
+  rv$overlap <- calc_overlap()
+})
+
 calc_overlap <- reactive({
-  input$goButton
-  
-  ## get list of blast hits
-  hits <- filter_hits()
+  message("overlapping")
+  hits <- rv$blast
 
   if(length(input$blast_table_rows_selected)>0) {
-    ids <- hits[input$blast_table_rows_selected]
+    ids <- hits[as.numeric(input$blast_table_rows_selected)]
   }
   else {
-    stop("no pDBs selected")
+    return(NULL)
   }
+
+  message(ids)
 
   pdblist <- vector("list", length(ids)+1)
   pdblist[[1]] <- trim(final_pdb(), "calpha")
@@ -27,7 +31,7 @@ calc_overlap <- reactive({
   ## pdb for nma
   pdb <- pdblist[[1]]
 
-  pdbs <- pdbaln(pdblist)
+  pdbs <- pdbaln(pdblist, exefile=configuration$muscle$exefile)
   pdbs$id[1] <- input$pdbid
   pdbs$id[2:length(pdbs$id)] <- ids
   pdbs$xyz <- pdbfit(pdbs)
@@ -39,19 +43,16 @@ calc_overlap <- reactive({
   tomatch <- paste(pdbs$resno[1, gaps.res$f.inds],
                    pdbs$chain[1, gaps.res$f.inds], sep="|")
   resids <-  paste(pdb$atom$resno, pdb$atom$chain, sep="|")
-  ##print(resids %in% tomatch)
   nmainds <- as.select(resids %in% tomatch)
-  
+
   if(input$forcefield %in% c("calpha", "sdenm", "reach"))
-    modes <- nma(pdb, ff=input$forcefield, mass=FALSE, temp=300,
+    modes <- nma(pdb, ff=rv$forcefield, mass=FALSE, temp=300,
                  outmodes = nmainds)
   
   if(input$forcefield %in% c("anm", "pfanm"))
-    modes <- nma(pdb, ff=input$forcefield, cutoff=input$cutoff,
+    modes <- nma(pdb, ff=rv$forcefield, cutoff=rv$cutoff,
                  mass=FALSE, temp=NULL, outmodes = nmainds)
-
-  print(pdbs)
-  print(modes)
+  
   
   overlaps <- vector("list", length(pdbs$id)-1)
   for(i in 2:length(pdbs$id)) {
@@ -61,34 +62,98 @@ calc_overlap <- reactive({
     ov$id <- pdbs$id[i]
     overlaps[[i-1]] <- ov
   }
-  return(overlaps)
+  
+  out <- list(values=overlaps, pdbid=get_pdbid6())
+  return(out)
 })
 
 
 output$overlap_plot <- renderPlot({
-  overlap_plot2()
-})
+  ##input$run_overlap
 
-overlap_plot2 <- function() {
-  o <- calc_overlap()
-  ids <- sapply(o, function(x) x$id)
-  
-  #plot.new()
-  #plot.window(xlim = c(0,20), ylim = c(0,1))
+  ov <- rv$overlap
+  pdbid6 <- get_pdbid6()
 
-  plot(o[[1]]$overlap, type='h', ylim=c(0,1),
-       ylab="Overlap", xlab="Mode index", main="Overlap analysis")
-  points(o[[1]]$overlap)
-  
-  for(i in 1:length(o)) {
-    ov <- o[[i]]
-    lines(ov$overlap.cum, type='b', col=i+1)
+  if(!is.null(ov)) {
+    if(ov$pdbid==pdbid6)
+      overlap_plot2(ov$values)
   }
 
-  legend("bottomright", ids, col=1:length(ids)+1, lty=1)
+})
+
+overlap_plot2 <- function(o) {
+  ids <- sapply(o, function(x) x$id)
+
+  ## overlap values
+  cex3 <- as.numeric(input$cex3)
+  lty3 <- as.numeric(input$lty3)
+  lwd3 <- as.numeric(input$lwd3)
+  typ3 <- input$typ3
+
+  if(!length(typ3)>0)
+    typ3 <- "h"
+
+  ## cummulative values
+  cex4 <- as.numeric(input$cex4)
+  lty4 <- as.numeric(input$lty4)
+  lwd4 <- as.numeric(input$lwd4)
+  typ4 <- input$typ4
   
-  ##plot(o$overlap, type='h', ylim=c(0,1), ylab="Overlap", xlab="Mode index")
-  ##points(o$overlap)
-  ##lines(o$overlap.cum, type='b', col='red')
+  if(!length(typ4)>0)
+    typ4 <- "b"
+  
+  plot.new()
+  plot.window(xlim = c(1,20), ylim = c(0,1))
+
+  if(input$show_overlap) {
+    if(input$show_overlap_cum)
+      inds <- 1
+    else
+      inds <- 1:length(o)
+
+    for(i in inds) {
+      for(j in 1:length(typ3))
+        points(o[[i]]$overlap, col=i+1, lty=lty3, lwd=lwd3, cex=cex3, type=typ3[j])
+    }
+  }
+  
+  if(input$show_overlap_cum) {
+    for(i in 1:length(o)) {
+      ov <- o[[i]]
+      for(j in 1:length(typ4))
+        points(ov$overlap.cum, col=i+1, lty=lty4, lwd=lwd4, cex=cex4, type=input$typ4[j])
+    }
+  }
+
+  if(input$show_legend3)
+    legend("bottomright", ids, col=1:length(ids)+1, lty=1)
+
+
+  box()
+  axis(1)
+  axis(2)
+  mtext("Mode index", side=1, line=3)
+
+  if(input$show_overlap) {
+    mtext("Overlap", side=2, line=3)
+
+    if(input$show_overlap_cum)
+      mtext("Cumulative Overlap", side=4, line=3)
+  }
+  else {
+    if(input$show_overlap_cum)
+      mtext("Cumulative Overlap", side=2, line=3)
+  }
+  
 }
+
+
+output$overlapplot2pdf = downloadHandler(
+  filename = "overlap.pdf",
+  content = function(FILE=NULL) {
+    ov <- rv$overlap$values
+    pdf(file=FILE, width=input$width3, height=input$height3)
+    overlap_plot2(ov)
+    dev.off()
+})
 

@@ -4,10 +4,24 @@
 ####################################
 
 output$nmaWebGL  <- renderWebGL({
+  path <- data_path()
   pdb <- final_pdb()
+  pdb <- trim(pdb, "calpha")
   modes <- calcModes()
-
-  trj <- mktrj(modes, mode=as.numeric(input$mode_choice), rock=FALSE)
+  mag <- as.numeric(input$mag)
+  step <- mag/8
+  
+  i <- as.numeric(input$mode_choice)
+  fname  <- paste0(path, '/', 'mode', input$mode_choice, '.pdb')
+  trj <- mktrj(modes, mode=i, file=fname,
+             mag=mag, step=step,
+             b=modes$fluctuations,
+             resno=pdb$atom$resno,
+             resid=pdb$atom$resid,
+             chain=pdb$atom$chain,
+             rock=FALSE)
+  
+  
   n <- nrow(trj)
   
   amalcol <- function(x) {

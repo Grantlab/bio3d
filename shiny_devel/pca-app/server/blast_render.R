@@ -36,10 +36,15 @@ output$blast_plot1 <- renderPlot({
   z <- blast$score
 
   col <- sapply(grps, function(x) if(x==1) 'red' else if(x==2) 'grey50')
-  #l <- as.numeric(input$limit_hits)
-  #col[1:l] <- "green"
-  col[ as.numeric(input$blast_table_rows_selected) ] <- "green"
-  
+
+  if(!length(input$blast_table_rows_selected)>0) {
+    limit <- as.numeric(input$limit_hits)
+    if(limit > 0)
+      col[1:limit] <- "green"
+  }
+  else {
+    col[ as.numeric(input$blast_table_rows_selected) ] <- "green"
+  }  
 
   plot(z, xlab="", ylab="Bitscore", bg=col, col="grey10", pch=21, cex=1.1)
   abline(v=gp, col="gray50", lty=3)
@@ -151,10 +156,14 @@ get_blasttable <- reactive({
   anno$score <- hits$score
   anno$struct_nr <- 1:nrow(anno)
 
-  if(!is.null(grps) & !is.null(grps)) {
+  if(!is.null(grps)) {
     col <- sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' })
-    l <- as.numeric(input$limit_hits)
-    col[1:l] <- "green"
+
+    if(!is.null(input$limit_hits)) {
+      limit <- as.numeric(input$limit_hits)
+      if(limit > 0)
+        col[1:limit] <- "green"
+    }
 
     anno$acc <- paste0(
       "<span class=\"id_", col, "\" style=\"color:",
@@ -176,8 +185,8 @@ get_blasttable <- reactive({
   show.cols <- c("acc", "compound", "source", "ligandId", "score")
   col.inds <- sapply(show.cols, grep, colnames(anno))
 
-  print(col.inds)
-  print(head(anno[, col.inds]))
+  #print(col.inds)
+  #print(head(anno[, col.inds]))
   return(anno[, col.inds])
 })
 
@@ -205,10 +214,9 @@ output$blast_table <- renderDataTable({
 
 ## checkbox
 output$pdb_chains <- renderUI({
-  anno <- input_pdb_annotation()
+  chains <- get_chainids()
   radioButtons("chainId", label="Choose chain ID:",
-               choices=anno$chainId, inline=TRUE)
-
+               choices=chains, inline=TRUE)
 })
 
 
@@ -216,7 +224,7 @@ output$resetable_cutoff_slider <- renderUI({
   reset <- input$reset_cutoff
 
   blast <- run_blast()
-  cutoff <- set_cutoff(blast, input$cutoff)$cutoff
+  cutoff <- set_cutoff(blast, rv$cutoff)$cutoff
 
   sliderInput("cutoff", "Adjust cutoff:",
               min = floor(min(blast$score)), max = floor(max(blast$score)), value = cutoff)
@@ -235,7 +243,7 @@ output$resetable_cutoff_slider <- renderUI({
 
 output$hits_slider <- renderUI({
   blast <- run_blast()
-  hits <- set_cutoff(blast, cutoff=input$cutoff)
+  hits <- set_cutoff(blast, cutoff=rv$cutoff)
 
   sliderInput("limit_hits", "Limit hits:",
               min = 1, max = length(hits$inds), value = 5, step=1)

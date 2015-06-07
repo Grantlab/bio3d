@@ -15,6 +15,10 @@ configuration <<- list(
     password = ""
     ),
   
+  user_data = list(
+    path = "/tmp"
+    ),
+  
   hmmer = list(
     local = FALSE,
     exefile = system('which phmmer', intern=TRUE),
@@ -24,9 +28,9 @@ configuration <<- list(
   muscle = list(
     exefile = system('which muscle', intern=TRUE)
     ),
-  
-  user_data = list(
-    path = "/tmp"
+
+  dssp = list(
+    exefile = system('which dssp', intern=TRUE)
     )
   
   )

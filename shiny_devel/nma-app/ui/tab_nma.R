@@ -29,15 +29,14 @@ tabPanel("NMA", icon=icon("home"),
         h4("1. PDB Input Selection"),
         tags$hr(),
 
-        ##-PDB input (moved to server.R)
-        uiOutput('resetable_pdb_input'),
-
+        ##-PDB input
+        textInput("pdbid", label="Enter RCSB PDB code/ID:", value = "4Q21"),
+        
         ##- Chain selection
-        uiOutput("chain_checks"),
+        uiOutput("chain_input"),
 
         ## reset PDB input
-        actionButton("do_nma", "Run NMA", icon=icon("cog")),
-        actionButton("reset_pdb_input", "Reset PDB input", icon=icon("undo")),
+        actionButton("reset_pdbid", "Reset PDB input", icon=icon("undo")),
         checkboxInput('show_pdb', 'View Input PDB', value=FALSE)
         )
    ),
@@ -47,7 +46,11 @@ tabPanel("NMA", icon=icon("home"),
         h4("2. NMA parameters"),
         tags$hr(),
 
-        uiOutput('resetable_nma_input'),
+        selectInput("forcefield", "Choose a forcefield:",
+                    choices = c("calpha", "sdenm", "reach", "anm", "pfanm")),
+        
+        sliderInput("cutoff", "Cutoff value:",
+                    min = 7, max = 50, value = 15),
         
         helpText("Note: Cutoff applies only to 'ANM' and 'pfANM'. Recommended values are 15 and 50 Å, respectively."),
  
@@ -71,6 +74,8 @@ tabPanel("NMA", icon=icon("home"),
              h4('Residue fluctuations'),
              checkboxInput('fluxs3', 'Show mode fluctuations', value=TRUE),
              checkboxInput('fluxs2', 'Show B-factors', value=FALSE),
+             selectInput('mode_inds', 'Choose Mode indices:',
+                         choices=c("all", 7:50), selected="all", multiple=TRUE),
              checkboxInput('show_options1', 'More options', value=FALSE),
              downloadButton('fluctplot2pdf', "Download Plot PDF")
              )
@@ -149,6 +154,8 @@ tabPanel("NMA", icon=icon("home"),
              checkboxInput('show_trj2', 'Show NM Trajectory', value=FALSE),
              
              selectInput('mode_choice', 'Choose Mode:', choices=c(7:50)),
+             sliderInput("mag", "Magnification factor:",
+                         min = 1, max = 15, value = 5),
              
              radioButtons('viewColor2', label='Structure color',
                           choices=list(
@@ -181,7 +188,8 @@ tabPanel("NMA", icon=icon("home"),
     column(4,
            wellPanel(
              h4('DCCM'),
-             checkboxInput('calc_dccm', 'Calculate DCCM', value=FALSE),
+             actionButton("run_dccm", "Run DCCM", icon=icon("cog")),
+             ##checkboxInput('calc_dccm', 'Calculate DCCM', value=FALSE),
              ##checkboxInput('show_options2', 'More options', value=FALSE),
              checkboxInput('contourplot', 'Contourplot', value=TRUE),
              checkboxInput('sse', 'Show SSE', value=TRUE),
@@ -210,28 +218,71 @@ tabPanel("NMA", icon=icon("home"),
     column(4,
            wellPanel(
              h4('Overlap analysis '),
-             actionButton("goButton", "Go!"),
+             helpText("Run BLAST and then select PDB IDs for overlap analysis"),
+             actionButton("run_blast", "Run BLAST", icon=icon("cog")),
+             actionButton("run_overlap", "Run Overlap", icon=icon("cog")),
              
-             DT::dataTableOutput('blast_table')
-             
-             #textInput("pdbid2", "Enter PDB ID", value=""),
-
-             ##- Chain selection
-             #h5("Detected chain IDs:"),
-             #verbatimTextOutput("chains3"),
-             
-             #checkboxInput("limit2", "Limit calculation to a subset of chains?"),
-             #conditionalPanel(
-             #  condition = "input.limit2 == true",
-             #  uiOutput("chains4")
-             #  )
+             DT::dataTableOutput('blast_table'),
+             downloadButton('overlapplot2pdf', "Download Plot PDF"),
+             checkboxInput('show_options2', 'More options', value=FALSE)
              
              )
            ),
     column(8,
            plotOutput("overlap_plot")
            )
-    ),     
+    ),
+         
+    conditionalPanel(
+      condition = "input.show_options2 == true",
+        fluidRow(
+          column(3,
+                 h4("Plot options"),
+                 checkboxInput('show_legend3', 'Show legend', value=TRUE),
+           
+                 
+                 sliderInput("height3", "PDF height:",
+                             min = 4, max = 12, value = 5, step=1),
+                 sliderInput("width3", "PDF width:",
+                             min = 4, max = 12, value = 7, step=1)
+                 ),
+          column(3,
+                 h4("Overlap values"),
+                 checkboxInput('show_overlap', 'Plot overlap values', value=TRUE),
+                 
+                 selectInput("typ3", "Type:",
+                             choices=c(
+                               "hist" = "h",
+                               "lines" = "l",
+                               "points" = "p"
+                               ), selected=c("p", "h"), multiple=TRUE),
+                 sliderInput("cex3", "Point size:",
+                             min = 0.1, max = 2, value = 1, step=0.1),
+                 sliderInput("lty3", "Line type:",
+                             min = 1, max = 6, value = 1),
+                 sliderInput("lwd3", "Line width:",
+                             min = 0.1, max = 2, value = 1, step=0.1)
+                 ),
+          column(3,
+                 h4("Cumulative overlap values"),
+                 checkboxInput('show_overlap_cum', 'Plot cumulative values', value=TRUE),
+                 selectInput("typ4", "Type:",
+                             choices=c(
+                               "hist" = "h",
+                               "lines" = "l",
+                               "points" = "p"
+                               ), selected=c("p", "l"), multiple=TRUE),
+                 sliderInput("cex4", "Point size:",
+                             min = 0.1, max = 2, value = 1, step=0.1),
+                 sliderInput("lty4", "Line type:",
+                             min = 1, max = 6, value = 1),
+                 sliderInput("lwd4", "Line width:",
+                             min = 0.1, max = 2, value = 1, step=0.1)
+                 )
+          )
+      ),
+
+         
    br(),br(),
 
          
@@ -240,20 +291,21 @@ tabPanel("NMA", icon=icon("home"),
     column(4,
            wellPanel(
              h4('Domain analysis '),
-             checkboxInput('domains', 'Do domain analysis', value=FALSE),
+             actionButton("run_geostas", "Run Geostas", icon=icon("cog")),
+             ##checkboxInput('domains', 'Show domain analysis', value=FALSE),
              sliderInput("ndomains", "Number of domains:",
                          min = 2, max = 10, value = 3),
              sliderInput("nmodes", "Number of modes:",
-                         min = 1, max = 5, value = 5),
+                         min = 1, max = 5, value = 3),
              downloadButton('geostas2zip', "Download PDB Trajectory")
              )
            ),
 
     column(8, 
-           conditionalPanel(
-             condition = "input.domains == true",
+           #conditionalPanel(
+           #  condition = "input.domains == true",
              webGLOutput('geostasWebGL')
-             )
+           #  )
            )
     ),
   br(),br(),

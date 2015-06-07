@@ -2,73 +2,71 @@
 ######################
 ##- DCCM calculation #
 ######################
-calcDCCM <- reactive({
-  message("calculating dccm")
-  modes <- calcModes()
-  cij <- dccm(modes, ncore=1)
-  return(cij)
+
+observeEvent(input$run_dccm, {
+  rv$dccm <- calcDCCM()
 })
 
-output$modeSummary <- renderPrint({
-  input$nmaaction
+calcDCCM <- reactive({
+  message("calculating dccm")
+
+  progress <- shiny::Progress$new(session, min=1, max=5)
+  on.exit(progress$close())
   
-  invisible(capture.output( modes <- calcModes()))
-  print(modes)
+  progress$set(message = 'Calculating DCCM',
+               detail = 'Please wait')
+  
+  progress$set(value = 2)
+  modes <- calcModes()
+  cij <- dccm(modes, ncore=1)
+  out <- list(cij=cij, pdbid=get_pdbid6())
+
+  progress$set(value = 5)
+  return(out)
 })
 
 ##################
 ##- DCCM plot    #
 ##################
 output$dccm_plot <- renderPlot({
-  make_dccm_plot()
+  input$run_dccm
+  
+  pdb <- final_pdb()
+  pdbid6 <- get_pdbid6()
+  dccm <- rv$dccm
+  cij <- dccm$cij
+
+  if(!is.null(rv$dccm)) {
+    if(!is.null(dim(cij)) & dccm$pdbid==pdbid6)
+      make_dccm_plot(pdb, cij)
+  }
 })
 
-make_dccm_plot <- function() {
-  pdb <- final_pdb()
+make_dccm_plot <- function(pdb, cij) {
+  message("make_dccm_plot")
   
-  if(input$calc_dccm) {
-    
-    if(input$contourplot==FALSE) {
-      contour <- FALSE
-      cols <- bwr.colors(20)
-      at <- seq(-1, 1, 0.1)
-    }
-    else {
-      contour <- TRUE
-      cols <- NULL
-      at <- c(-1, -0.75, -0.5,  -0.25, 0.25, 0.5, 0.75, 1)
-    }
-    
-    if(input$sse)
-      sse <- pdb
-    else
-      sse <- NULL
-    
-    progress <- shiny::Progress$new(session, min=1, max=10)
-    on.exit(progress$close())
-    
-    progress$set(message = 'Calculating DCCM',
-                 detail = 'Please wait')
-    
-    for (i in 1:5) {
-      progress$set(value = i)
-      Sys.sleep(0.05)
-    }
-    
-    
-    main <- paste("DCCM, PDB id", input$pdbid)
-    cij <- calcDCCM()
-    
-    for (i in 6:10) {
-      progress$set(value = i)
-      Sys.sleep(0.05)
-    }
-    
-    
-    plot(cij, sse=sse, main=main,
-         contour=contour,
-         col.regions=cols, colorkey=input$colorkey, at=at)
+  if(input$contourplot==FALSE) {
+    contour <- FALSE
+    cols <- bwr.colors(20)
+    at <- seq(-1, 1, 0.1)
   }
+  else {
+    contour <- TRUE
+    cols <- NULL
+    at <- c(-1, -0.75, -0.5,  -0.25, 0.25, 0.5, 0.75, 1)
+  }
+  
+  if(input$sse)
+    sse <- pdb
+  else
+    sse <- NULL
+  
+  main <- paste0("DCCM, PDB id ", rv$pdbid, " (",
+                paste(rv$chainids, collapse=""), ")")
+  plot(cij, sse=sse, main=main,
+       contour=contour,
+       col.regions=cols, colorkey=input$colorkey, at=at)
+  
 }
 
 
@@ -76,8 +74,9 @@ make_dccm_plot <- function() {
 output$dccmplot2pdf = downloadHandler(
   filename = "dccm.pdf",
   content = function(FILE=NULL) {
+    pdb <- final_pdb()
     pdf(file=FILE, width=input$width2, height=input$height2)
-    make_dccm_plot()
+    make_dccm_plot(pdb, rv$dccm$cij)
     dev.off()
 })
 
@@ -87,7 +86,7 @@ output$dccmplot2pdf = downloadHandler(
 dccm_pymol <- reactive({
   path <- data_path()
   pdb <- final_pdb()
-  cij <- calcDCCM()
+  cij <- rv$dccm$cij
   
   progress <- shiny::Progress$new(session, min=1, max=5)
   on.exit(progress$close())

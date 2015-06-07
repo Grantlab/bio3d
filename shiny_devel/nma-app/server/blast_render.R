@@ -1,7 +1,11 @@
 
-get_blasttable <- reactive({
-  blast <- run_blast()
-  acc <- filter_hits()
+##get_blasttable <- reactive({
+output$blast_table <- renderDataTable({
+  message("blasttable1")
+  acc <- rv$blast
+
+  if(is.null(acc))
+    return()
   
   anno <- get_annotation(acc)
   anno$struct_nr <- 1:nrow(anno)
@@ -14,13 +18,9 @@ get_blasttable <- reactive({
   show.cols <- c("acc", "compound")
   col.inds <- sapply(show.cols, grep, colnames(anno))
   
-  print(col.inds)
-  print(head(anno[, col.inds]))
-  return(anno[, col.inds])
-})
-
-output$blast_table <- renderDataTable({
-  datatable(get_blasttable(), extensions = 'Scroller', escape = FALSE,
+  anno <- anno[, col.inds]
+  
+  datatable(anno, extensions = 'Scroller', escape = FALSE,
             colnames = c("ID", "Name"),
             options = list(
               deferRender = TRUE,

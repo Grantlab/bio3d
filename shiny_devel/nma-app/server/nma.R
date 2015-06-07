@@ -1,20 +1,11 @@
 ########################
 ##-- NMA Calculation   #
 ########################s
-output$resetable_nma_input <- renderUI({
-  ## used as a trigger for reset
-  reset <- input$reset_nma_input
-  div(
-    selectInput("forcefield", "Choose a forcefield:",
-                choices = c("calpha", "sdenm", "reach", "anm", "pfanm")),
-    
-    sliderInput("cutoff", "Cutoff value:",
-                min = 7, max = 50, value = 15)
-    )
-})
 
 calcModes <- reactive({
   pdb <- final_pdb()
+  ff <- rv$forcefield
+  cutoff <- rv$cutoff
   
   if(sum(pdb$calpha)>600)
     stop("maximum 600 C-alpha atoms for NMA")
@@ -26,11 +17,11 @@ calcModes <- reactive({
                detail = 'Please wait')
   progress$set(value = 2)
   
-  if(input$forcefield %in% c("calpha", "sdenm", "reach"))
-    modes <- nma(pdb, ff=input$forcefield, mass=TRUE, temp=300)
+  if(ff %in% c("calpha", "sdenm", "reach"))
+    modes <- nma(pdb, ff=ff, mass=TRUE, temp=300)
   
-  if(input$forcefield %in% c("anm", "pfanm"))
-    modes <- nma(pdb, ff=input$forcefield, cutoff=input$cutoff,
+  if(ff %in% c("anm", "pfanm"))
+    modes <- nma(pdb, ff=ff, cutoff=cutoff,
                   mass=FALSE, temp=NULL)
   progress$set(value = 5)
   
@@ -47,7 +38,19 @@ output$fluct_plot <- renderPlot({
 make_fluct_plot <- function() {
   pdb <- final_pdb()
   modes <- calcModes()
-  x <- modes$fluctuations
+
+  mode.inds <- input$mode_inds
+  
+  if(any(mode.inds == "all")) {
+    x <- modes$fluctuations
+    modes_str <- ""
+  }
+  else {
+    x <- fluct.nma(modes, as.numeric(mode.inds))
+    bs <- bounds(as.numeric(mode.inds))
+    modes_str <- paste(apply(bs, 1, function(x) if(x[1]==x[2]) x[1] else paste(x[1], x[2], sep="-")), collapse=", ")
+  }
+  
 
   if(input$fluxs2 & input$fluxs3)
     par(mar=c(5, 4, 4, 5))
@@ -55,11 +58,20 @@ make_fluct_plot <- function() {
     par(mar=c(5, 4, 4, 2))
   
   if(input$fluxs3) { 
-    main <- paste("NMA derived fluctuations for PDB id", input$pdbid)
+    main <- paste0("NMA derived fluctuations for PDB id ", rv$pdbid, " (",
+                  paste(rv$chainids, collapse=""), ")")
+    sub <- paste("Mode(s)", mode.inds)
     plot.bio3d(x, sse=pdb, main=main, resno=pdb,
                xlab="Residue No.", ylab="Fluctions (Å^2)", 
                col=input$col1, type=input$typ1,
                pch=input$pch1, lty=input$lty1, cex=input$cex1, lwd=input$lwd1)
+
+    if(modes_str!="") {
+      if(length(mode.inds)>1)
+        mtext(paste("Modes ", modes_str), line=.5)
+      else
+        mtext(paste("Mode ", modes_str), line=.5)
+    }
   }
   if(input$fluxs2) {
     if(input$fluxs3) {
@@ -95,15 +107,19 @@ output$fluctplot2pdf = downloadHandler(
 ####################
 ## Trajectory
 ###################
+
 nma2pdb <- reactive({
   path <- data_path()
   pdb <- final_pdb()
   pdb <- trim(pdb, "calpha")
   modes <- calcModes()
+  mag <- as.numeric(input$mag)
+  step <- mag/8
   
   i <- as.numeric(input$mode_choice)
   fname  <- paste0(path, '/', 'mode', input$mode_choice, '.pdb')
   x <- mktrj(modes, mode=i, file=fname,
+             mag=mag, step=step,
              b=modes$fluctuations,
              resno=pdb$atom$resno,
              resid=pdb$atom$resid,
@@ -130,10 +146,11 @@ make_nma_pse <- reactive({
   pdb <- final_pdb()
   pdb <- trim(pdb, "calpha")
   modes <- calcModes()
+  mag <- as.numeric(input$mag)
   
   outf <- paste0(path, "/mode", as.numeric(input$mode_choice), ".pse")
   file <- pymol.modes(modes, mode=as.numeric(input$mode_choice), type="session",
-                file=outf)
+                file=outf, scale=mag)
   return(outf)
 })
 
@@ -143,4 +160,11 @@ output$nma2pymol = downloadHandler(
   },
   content = function(file) {
     zip(file, files=make_nma_pse(), flags = "-9Xj")
+})
+
+
+## summary
+output$modeSummary <- renderPrint({
+  invisible(capture.output( modes <- calcModes()))
+  print(modes)
 })

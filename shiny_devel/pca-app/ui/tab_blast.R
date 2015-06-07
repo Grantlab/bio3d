@@ -1,5 +1,6 @@
 tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
+         ##shinyjs::useShinyjs(),
 
          ## experimental load and save results (from previous runs)
          #verbatimTextOutput("saveText"),
@@ -52,20 +53,22 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     conditionalPanel(
                       condition = "input.input_type == 'sequence'",
                       tags$textarea(id="sequence", rows=4, cols=40, "")
-                      #actionButton("action_input", "Go")
                       ),
 
                     conditionalPanel(
                       condition = "input.input_type == 'pdb'",
 
                       ##-PDB input
-                      uiOutput('resetable_pdb_input'),
-
+                      textInput("pdbid", label="Enter RCSB PDB code/ID:", value = "2LUM"),
+                      
                       ##- Chain selection
                       uiOutput("pdb_chains"),
+                      #radioButtons("chainId", label="Choose chain ID:",
+                      #             choices=anno$chainId, inline=TRUE)
                       verbatimTextOutput("input_pdb_summary"),
-
-                      actionButton("reset_pdb_input", "Reset PDB input", icon=icon("undo")),
+                      
+                      ##submitButton("Update"),
+                      actionButton("reset_pdbid", "Reset PDB input", icon=icon("undo")),
                       checkboxInput('show_pdb', 'View Input PDB', value=FALSE)
                       )
                     )

@@ -11,7 +11,7 @@ randstr <- function() {
 }
 
 
-"pdbs2sse" <- function(pdbs, ind=1, rm.gaps=FALSE) {
+"pdbs2sse" <- function(pdbs, ind=1, rm.gaps=FALSE, exefile="dssp") {
   ind <- ind[1]
   if(file.exists(pdbs$id[ind]))
     id <- pdbs$id[ind]
@@ -28,7 +28,7 @@ randstr <- function() {
 
   sse.ref <- NULL
   if(!inherits(pdb.ref, "try-error"))
-    sse.ref <- try(dssp(pdb.ref), silent=TRUE)
+    sse.ref <- try(dssp(pdb.ref, exefile=exefile), silent=TRUE)
 
   if(!inherits(sse.ref, "try-error") & !inherits(pdb.ref, "try-error")) {
     if(rm.gaps) {

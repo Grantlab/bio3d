@@ -13,7 +13,8 @@ shinyUI(
              title=img(src="bio3d_logo.png", height=35, alt="Bio3D"),
              theme = "bootstrap.css",
              position = "fixed-top",
-             
+
+             ##useShinyjs(),
              source("ui/tab_blast.R", local=TRUE)$value,
              source("ui/tab_align.R", local=TRUE)$value,
              source("ui/tab_fit.R", local=TRUE)$value,

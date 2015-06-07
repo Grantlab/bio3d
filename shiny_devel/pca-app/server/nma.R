@@ -352,6 +352,10 @@ nma2pdb  <- reactive({
   gaps <- gap.inspect(pdbs$ali)
   fname  <- paste0(path, '/', 'mode', input$viewMode, '.pdb')
 
+  print(modes)
+  print(pdbs)
+  print(pdbs$id)
+
   trj <- mktrj(modes, pdbs=pdbs,
                s.inds=as.numeric(input$viewStruct2),
                m.inds=as.numeric(input$viewMode),

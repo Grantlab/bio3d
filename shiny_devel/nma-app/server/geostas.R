@@ -2,6 +2,11 @@
 ############################
 ## Geostas domain analysis
 ###########################
+
+observeEvent(input$run_geostas, {
+  rv$gs <- geostas2()
+})
+
 geostas2 <- reactive({
   pdb <- final_pdb()
   modes <- calcModes()
@@ -13,8 +18,7 @@ geostas2 <- reactive({
                detail = 'Please wait')
   
   progress$set(value = 2)
-  gs <- geostas(modes, k=input$ndomains, m.inds=seq(7, input$nmodes+6), ncore=1)
-  print(gs)
+  gs <- geostas(modes, k=input$ndomains, m.inds=seq(7, as.numeric(input$nmodes)+6), ncore=1)
   return(gs)
 })
 
@@ -22,7 +26,7 @@ gstrj <- reactive({
   path <- data_path()
   modes <- calcModes()
   pdb <- trim(final_pdb(), "calpha")
-  gs <- geostas2()
+  gs <- rv$gs
   
   i <- 7
   file <- paste0(path, "/gs-mode_", i, ".pdb")
@@ -46,7 +50,7 @@ output$geostas2zip = downloadHandler(
 output$geostasWebGL  <- renderWebGL({
   pdb <- final_pdb()
   modes <- calcModes()
-  gs <- geostas2()
+  gs <- rv$gs
   col <- gs$grps
   view.xyz(modes$xyz, col=col, add=TRUE, type=2)
 })
