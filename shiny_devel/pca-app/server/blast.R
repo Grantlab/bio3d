@@ -83,7 +83,6 @@ get_pdb <- reactive({
   
   anno <- input_pdb_annotation()
 
-  print(anno)
   if(is.vector(input$chainId)) {
     ind <- which(anno$chainId==input$chainId[1])
     anno <- anno[ind,]

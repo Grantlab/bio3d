@@ -63,8 +63,6 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       
                       ##- Chain selection
                       uiOutput("pdb_chains"),
-                      #radioButtons("chainId", label="Choose chain ID:",
-                      #             choices=anno$chainId, inline=TRUE)
                       verbatimTextOutput("input_pdb_summary"),
                       
                       ##submitButton("Update"),

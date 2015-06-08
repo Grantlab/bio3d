@@ -10,8 +10,11 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                     checkboxInput('show_trj2', 'Show NM Trajectory', value=FALSE),
 
                     selectInput('viewMode_nma', 'Choose Mode:', choices=c(1:10)),
-                    uiOutput('struct_dropdown2'),
+                    uiOutput('struct_dropdown2'), ## viewStruct_nma
 
+                    sliderInput("mag2", "Magnification factor:",
+                                min = 1, max = 15, value = 5),
+                    
                     radioButtons('viewColor2', label='Structure color',
                                  choices=list(
                                    'Amalgam' = 'amalgam',

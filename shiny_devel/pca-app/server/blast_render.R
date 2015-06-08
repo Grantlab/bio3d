@@ -215,8 +215,12 @@ output$blast_table <- renderDataTable({
 ## checkbox
 output$pdb_chains <- renderUI({
   chains <- get_chainids()
-  radioButtons("chainId", label="Choose chain ID:",
-               choices=chains, inline=TRUE)
+  ##radioButtons("chainId", label="Choose chain ID:",
+  ##             choices=chains, inline=TRUE)
+
+  selectInput("chainId", "Limit to chain ID:",
+              choices = chains, selected = chains[1], multiple=FALSE)
+  
 })
 
 

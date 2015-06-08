@@ -130,7 +130,11 @@ output$nmaWebGL  <- renderWebGL({
   pdbs <- align()
   modes <- nma2()
 
+  mag <- as.numeric(input$mag2)
+  step <- mag/8
+  
   trj <- mktrj(modes, pdbs=pdbs,
+               mag=mag, step=step,
                s.inds=as.numeric(input$viewStruct_nma),
                m.inds=as.numeric(input$viewMode_nma),
                rock=FALSE)
@@ -350,27 +354,23 @@ nma2pdb  <- reactive({
   pdbs <- align()
   modes <- nma2()
   gaps <- gap.inspect(pdbs$ali)
-  fname  <- paste0(path, '/', 'mode', input$viewMode, '.pdb')
-
-  print(modes)
-  print(pdbs)
-  print(pdbs$id)
+  fname  <- paste0(path, '/', 'mode', input$viewMode_nma, '.pdb')
+  
+  mag <- as.numeric(input$mag2)
+  step <- mag/8
 
   trj <- mktrj(modes, pdbs=pdbs,
-               s.inds=as.numeric(input$viewStruct2),
-               m.inds=as.numeric(input$viewMode),
+               mag=mag, step=step,
+               s.inds=as.numeric(input$viewStruct_nma),
+               m.inds=as.numeric(input$viewMode_nma),
                file=fname)
-  
-  ##resno=pdbs$resno[1, gaps$f.inds],
-  ##resid=pdbs$resid[1, gaps$f.inds],
-  ##chain=pdbs$chain[1, gaps$f.inds])
-  
+    
   return(fname)
 })
 
 output$nmtraj = downloadHandler(
   filename=function() {
-    paste0('mode', input$viewMode, '.pdb.zip')
+    paste0('mode', input$viewMode_nma, '.pdb.zip')
   },
   content=function(file) {
     ## Avoid possibility of not having write permission on server
