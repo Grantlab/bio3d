@@ -16,24 +16,24 @@
   #if(nma$L[mode]<=0)
   #  stop("Mode with eigenvalue <=0 detected. Check 'mode' index.")
 
-  nma$xyz <- as.vector(nma$xyz)
+  xyz <- as.vector(nma$xyz)
   nstep <- c(seq(step, to=mag, by=step))
   #zcoor  <- cbind(sqrt(nma$L[mode])) %*% nstep
   zcoor <- cbind(1) %*% nstep
 
   scor  <- function(x,u,m) { return(x*u+m) }
-  plus  <- sapply(c(zcoor), scor, u=nma$modes[,mode], m=nma$xyz)
-  minus <- sapply(c(-zcoor), scor, u=nma$modes[,mode], m=nma$xyz)
+  plus  <- sapply(c(zcoor), scor, u=nma$modes[,mode], m=xyz)
+  minus <- sapply(c(-zcoor), scor, u=nma$modes[,mode], m=xyz)
   
   if(rock) {
-    coor  <- cbind(nma$mean,
+    coor  <- cbind(xyz,
                    plus,  plus[,rev(1:ncol(plus))],
-                   nma$mean,
+                   xyz,
                    minus, minus[,rev(1:ncol(minus))])
   }
   else {
     coor  <- cbind(plus[,rev(1:ncol(plus))],
-                   nma$mean,
+                   xyz,
                    minus)
   }
   coor <- as.xyz(t(coor))

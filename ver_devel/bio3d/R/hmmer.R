@@ -121,7 +121,8 @@
   
   
   ## Make the request to the HMMER website
-  url <- paste('http://hmmer.janelia.org/search/', type, sep="")
+  ##url <- paste('http://hmmer.janelia.org/search/', type, sep="")
+  url <- paste("http://www.ebi.ac.uk/Tools/hmmer/search/", type, sep="")
   curl.opts <- list(httpheader = "Expect:",
                     httpheader = "Accept:text/xml",
                     verbose = verbose,
@@ -133,7 +134,6 @@
                   .opts = curl.opts,
                   .contentEncodeFun=RCurl::curlPercentEncode, .checkParams=TRUE )
 
-  
   add.pdbs <- function(x, ...) {
     hit <- XML::xpathSApply(x, '@*')
     pdbs <- unique(XML::xpathSApply(x, 'pdbs', XML::xmlToList))

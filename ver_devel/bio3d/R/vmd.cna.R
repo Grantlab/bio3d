@@ -1,4 +1,4 @@
-view.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
+vmd.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
                      col.sphere=NULL, 
                      col.lines="silver",
                      weights=NULL,

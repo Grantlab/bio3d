@@ -68,7 +68,7 @@ NULL, pdb = NULL, rock=TRUE, ...)
 \seealso{
   \code{\link{pca}}, \code{\link{nma}},
   \code{\link{nma.pdbs}},
-  \code{\link{view.modes}}.
+  \code{\link{pymol.modes}}.
 }
 \examples{
 \dontrun{
