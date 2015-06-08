@@ -1,5 +1,5 @@
 "read.fasta.pdb" <-
-function(aln, pdblist=NULL, prefix="", pdbext="",
+function(aln, prefix="", pdbext="", pdblist=NULL, 
          fix.ali = FALSE, ncore=1, nseg.scale=1, progress=progress, ...) {
 
   ## Log the call
@@ -58,7 +58,7 @@ function(aln, pdblist=NULL, prefix="", pdbext="",
     if(!is.null(progress)) {
       progress$inc(1/length(aln$id)/2)
     }
-    
+
     cat(paste("pdb/seq:",i,"  name:", aln$id[i]),"\n")
 
     if(!toread[i] & is.null(pdblist)) {

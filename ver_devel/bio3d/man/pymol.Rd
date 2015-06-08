@@ -12,8 +12,8 @@
 \usage{
 pymol(\dots)
 
-\method{pymol}{pdbs}(pdbs, col=NULL, file=NULL, type="script",
-                     exefile="pymol")
+\method{pymol}{pdbs}(pdbs, col=NULL, as="ribbon", file=NULL, type="script",
+                     exefile="pymol", \dots)
 
 \method{pymol}{nma}(\dots)
 
@@ -22,9 +22,9 @@ pymol(\dots)
 \method{pymol}{modes}(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
                      type="script", exefile="pymol", \dots)
 
-\method{pymol}{dccm}(dccm, mode=NULL, file=NULL,
+\method{pymol}{dccm}(dccm, pdb, file=NULL,
                      step=0.2, omit=0.2, radius = 0.15,
-                     type="script", exefile="pymol")
+                     type="script", exefile="pymol", \dots)
 
 
 }
@@ -33,12 +33,13 @@ pymol(\dots)
     \code{\link{read.fasta.pdb}} or \code{\link{pdbaln}}. }
   \item{col}{ a single element character vector specifying the coloring
     of the structures. Options are: \sQuote{index}, \sQuote{index2},
-    \sQuote{gaps}, \sQuote{rmsf}, \sQuote{putty}.
+    \sQuote{gaps}, \sQuote{rmsf}.
 
     Special cases: Provide a \sQuote{core} object as obtained by
     \code{core.find} to color on the invariant core. Alternatively,
     provide a vector containing the color code for each structure in the
     \sQuote{pdbs} object. }
+  \item{as}{ show as \sQuote{ribbon}, \sQuote{cartoon}, \sQuote{lines}, \sQuote{putty}. }
   \item{file}{ a single element character vector specifying the file name
     of the PyMOL session/script file. }
   \item{type}{ a single element character vector specifying the output
@@ -46,9 +47,18 @@ pymol(\dots)
     generates a .pse session file; \sQuote{launch} launches pymol. }
   \item{exefile}{ file path to the \sQuote{PYMOL} program on your system (i.e.
     how is \sQuote{PYMOL} invoked). }
+  \item{modes}{ an object of class \code{nma} or \code{pca} as obtained
+    from functions \code{nma} or \code{pca.xyz}. }
+  \item{mode}{ the mode number for which the vector field should be
+    made. } 
   \item{scale}{ global scaling factor. }
   \item{dual}{ logical, if TRUE mode vectors are also drawn in both
     direction. }
+  \item{dccm}{ an object of class \code{dccm} as obtained from
+    function \code{\link{dccm}}. }
+  \item{pdb}{ an object of class \code{pdb} as obtained from
+    function \code{read.pdb} or a numerical vector of Cartesian
+    coordinates. }
   \item{step}{ binning interval of cross-correlation coefficents. }
   \item{omit}{ correlation coefficents with values (0-omit, 0+omit) will
     be omitted from visualization. }

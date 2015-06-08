@@ -7,7 +7,7 @@
 }
 \usage{
 read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
-             ncore = 1, nseg.scale = 1, ...)
+             pdblist=NULL, ncore = 1, nseg.scale = 1, ...)
 }
 \arguments{
   \item{aln}{ an alignment data structure obtained with
@@ -16,6 +16,10 @@ read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
   \item{pdbext}{ the file name extention of the PDB files. }
   \item{fix.ali}{ logical, if TRUE check consistence between \code{$ali} 
     and \code{$resno}, and correct \code{$ali} if they don't match. }
+  \item{pdblist}{ an optional list of \code{pdb} objects with sequence
+    corresponding to the alignments in \code{aln}. Primarily used
+    through function \code{pdbaln} when the PDB objects already exists
+    (avoids reading PDBs from file). }
   \item{ncore }{ number of CPU cores used to do the calculation.
     \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{nseg.scale }{ split input data into specified number of segments
@@ -57,7 +61,8 @@ read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
 }
 \seealso{
   \code{\link{read.fasta}}, \code{\link{read.pdb}},
-  \code{\link{core.find}}, \code{\link{fit.xyz}}, \code{\link{read.all}} }
+  \code{\link{core.find}}, \code{\link{fit.xyz}},
+  \code{\link{read.all}}, \code{\link{pymol.pdbs}}  }
 \examples{
 \donttest{
 # Redundant testing excluded

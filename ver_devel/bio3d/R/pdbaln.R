@@ -76,7 +76,7 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, progress=NULL, ...)
       if(!is.null(progress)) {
         progress$inc(1/length(files)/2)
       }
-      
+
       return( pdb )
     } )
   }

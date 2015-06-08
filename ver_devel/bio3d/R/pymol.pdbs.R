@@ -1,3 +1,5 @@
+## takes a vector of residue numbers and generates a string
+## e.g. (1,2,3,5,8,9) --> "1-3,5,8-9"
 .resno2str <- function(res, sep=c("+", "-")) {
   res <- res[!is.na(res)]
   if(!length(res)>0){
@@ -16,8 +18,8 @@
 pymol <- function(...)
   UseMethod("pymol")
 
-pymol.pdbs <- function(pdbs, col=NULL, file=NULL,
-                       type="script", exefile = "pymol") {
+pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
+                       type="script", exefile = "pymol", ...) {
   
   allowed <- c("session", "script", "launch")
   if(!type %in% allowed) {
@@ -25,6 +27,31 @@ pymol.pdbs <- function(pdbs, col=NULL, file=NULL,
                paste(allowed, collapse=", ")))
   }
 
+  allowed <- c("ribbon", "cartoon", "lines", "putty")
+  if(!as %in% allowed) {
+    stop(paste("input argument 'as' must be either of:",
+               paste(allowed, collapse=", ")))
+  }
+
+  if(!is.null(col) & !inherits(col, "core")) {
+    if(length(col) == 1) {
+      allowed <- c("index", "index2", "rmsf")
+      if(!col %in% allowed) {
+        stop(paste("input argument 'col' must be either of:",
+                   paste(allowed, collapse=", ")))
+      }
+    }
+    else {
+      if(!is.numeric(col)) {
+        stop("col must be a numeric vector with length equal to the number of structures in the input pdbs object")
+      }
+      
+      if(length(col) != length(pdbs$id)) {
+        stop("col must be a vector with length equal to the number of structures in input pdbs")
+      }
+    }
+  }
+  
   ## output file name
   if(is.null(file)) {
     if(type=="session")
@@ -61,12 +88,19 @@ pymol.pdbs <- function(pdbs, col=NULL, file=NULL,
 
   ## include stuff in the b-factor column
   bf <- NULL
-  if(!is.null(col)) {
-    if(col[1] == "rmsf" | col[1] == "putty") {
-      bf <- rmsf(pdbs$xyz)
-    }
-    if(col[1] == "index2") {
-      bf <- 1:ncol(pdbs$ali)/ncol(pdbs$ali)
+  if(as == "putty") {
+    bf <- rmsf(pdbs$xyz)
+  }
+  else {
+    if(!is.null(col)) {
+      ## RMSF coloring
+      if(col[1] == "rmsf") {
+        bf <- rmsf(pdbs$xyz)
+      }
+      ## color by index of pdbs$ali
+      if(col[1] == "index2") {
+        bf <- 1:ncol(pdbs$ali)/ncol(pdbs$ali)
+      }
     }
   }
   
@@ -125,6 +159,35 @@ pymol.pdbs <- function(pdbs, col=NULL, file=NULL,
 
   ## line pointer
   l <- i
+
+  
+  ## Structure representation (as)
+  if(as == "putty") {
+    lines[l+1] <- "cartoon putty"
+    lines[l+2] <- "as cartoon"
+    lines[l+3] <- "unset cartoon_smooth_loops"
+    lines[l+4] <- "unset cartoon_flat_sheets"
+    lines[l+5] <- "spectrum b, rainbow"
+    lines[l+6] <- "set cartoon_putty_radius, 0.2"
+    l <- l+6
+
+    as <- "cartoon"
+  }
+  
+  if(!allatom) {
+    if(!as %in% c("cartoon", "ribbon")) {
+      warning("'as' set to 'ribbon' for c-alpha only structures")
+      as <- "ribbon"
+    }
+
+    lines[l+1] <- paste0("set ", as, "_trace_atoms, 1")
+    l <- l+1
+  }
+  
+  lines[l+1] <- paste("as", as)
+  l <- l+1
+  ## representation ends
+  
   
   ## Coloring
   if(!is.null(col)) {
@@ -161,32 +224,27 @@ pymol.pdbs <- function(pdbs, col=NULL, file=NULL,
     }
     
     if(length(col) > 1 & is.vector(col)) {
-      if(length(col) != length(files))
-        stop("col must be a vector with length equal to the number of structures in input pdbs")
-
+      
       ## add more colors here
-      cols <- c("grey40", "red", "green", "blue", "cyan", "purple", "yellow", "grey90")
+      cols <- c("grey40", "red", "green", "blue", "cyan",
+                "purple", "yellow", "grey90", "magenta", "orange",
+                "pink", "wheat", "deepolive", "teal", "violet",
+                "limon", "slate", "density", "forest", "smudge", "salmon",
+                "brown")
+
       for(j in 1:length(files)) {
         lines[l+1] <- paste0("color ", cols[col[j]], ", ", ids[j])
         l <- l+1
       }
     }
 
-    if(col[1] == "putty") {
-      lines[l+1] <- "cartoon putty"
-      lines[l+2] <- "as cartoon"
-      lines[l+3] <- "unset cartoon_smooth_loops"
-      lines[l+4] <- "unset cartoon_flat_sheets"
-      lines[l+5] <- "spectrum b, rainbow"
-      lines[l+6] <- "set cartoon_putty_radius, 0.2"
-      l <- l+6
-    }
-    
+    ## color by RMSF
     if(col[1] == "rmsf") {
       l <- l+1
       lines[l] <- "spectrum b, rainbow"
     }
 
+    ## color by index of individual structures
     if(col[1] == "index") {
       for(i in 1:length(pdbs$id)) {
         l <- l+1
@@ -194,24 +252,22 @@ pymol.pdbs <- function(pdbs, col=NULL, file=NULL,
       }
     }
 
+    ## color by index of alignment
     if(col[1] == "index2") {
       for(i in 1:length(pdbs$id)) {
         l <- l+1
         lines[l] <- paste("spectrum b, rainbow,", ids[i])
       }
     }
-
-    
   } ## coloring ends
   
-  if(!allatom) {
-    lines[l+1] <- "as cartoon"
-    lines[l+2] <- "set cartoon_trace_atoms, 1"
-    l <- l+2
-  }
 
+  lines[l+1] <- "zoom"
+  l <- l+1
+  
   if(type == "session")
     lines[l+1] <- paste("save", psefile)
+  
   lines <- lines[!is.na(lines)]
   write.table(lines, file=pmlfile, append=FALSE, quote=FALSE, sep="\n",
               row.names=FALSE, col.names=FALSE)

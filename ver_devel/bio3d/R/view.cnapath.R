@@ -1,4 +1,4 @@
-view.cnapath <- function(x, pdb, out.prefix = "view.cnapath", spline = FALSE, 
+vmd.cnapath <- function(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE, 
         colors = c("blue", "red"), launch = FALSE, ...) {
 
    if(!inherits(x, "cnapath")) 
