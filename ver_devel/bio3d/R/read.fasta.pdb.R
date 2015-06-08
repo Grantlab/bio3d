@@ -1,5 +1,6 @@
 "read.fasta.pdb" <-
-function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...) {
+  function(aln, prefix="", pdbext="", fix.ali = FALSE, pdblist=NULL, 
+           ncore=1, nseg.scale=1, progress=progress, ...) {
 
   ## Log the call
   cl <- match.call()
@@ -18,38 +19,49 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
         nseg.scale=1
      }
   }
-
-  files  <- paste(prefix, aln$id, pdbext,sep="")
-
-  ##cat(files,sep="\n")
-  toread <- file.exists(files)
-
-  ## check for online files
-  toread[ substr(files,1,4)=="http" ] <- TRUE
-
   
-  if(all(!toread))
-    stop("No corresponding PDB files found")
+  if(is.null(pdblist)) {
+    files  <- paste(prefix, aln$id, pdbext,sep="")
+    
+    ##cat(files,sep="\n")
+    toread <- file.exists(files)
 
-  # Avoid multi-thread downloading
-  if(any(substr(files,1,4) == "http")) {
-     ncore = 1
-     options(cores = ncore)
+    ## check for online files
+    toread[ substr(files,1,4)=="http" ] <- TRUE
+    
+    if(all(!toread))
+      stop("No corresponding PDB files found")
+
+    ## Avoid multi-thread downloading
+    if(any(substr(files,1,4) == "http")) {
+      ncore = 1
+      options(cores = ncore)
+    }
   }
+  else {
+    toread <- rep(FALSE, length(pdblist))
+    files <- rep(NA, length(pdblist))
+  }
+  
 
   blank <- rep(NA, ncol(aln$ali))
  
   mylapply <- lapply
-  if(ncore > 1) mylapply <- mclapply
+  if(ncore > 1)
+    mylapply <- mclapply
 
-#  for (i in 1:length(aln$id)) {
   retval <- mylapply(1:length(aln$id), function(i) {
     coords <- NULL; res.nu <- NULL
     res.bf <- NULL; res.ch <- NULL
     res.id <- NULL; res.ss <- NULL
+
+    if(!is.null(progress)) {
+      progress$inc(1/length(aln$id)/2)
+    }
+    
     cat(paste("pdb/seq:",i,"  name:", aln$id[i]),"\n")
 
-    if(!toread[i]) {
+    if(!toread[i] & is.null(pdblist)) {
       warning(paste("No PDB file found for seq", aln$id[i],
               ": (with filename) ",files[i]), call.=FALSE)
       coords <- rbind(coords, rep(blank,3))
@@ -60,7 +72,10 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, ncore=1, nseg.scale=1, ...)
       res.ss <- rbind(res.ss, blank)
       
     } else {
-      pdb <- read.pdb( files[i], verbose=FALSE, ... )
+      if(is.null(pdblist))
+        pdb <- read.pdb( files[i], verbose=FALSE, ... )
+      else
+        pdb <- pdblist[[i]]
       ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
       pdbseq  <- aa321(pdb$atom$resid[ca.inds$atom])
       aliseq  <- toupper(aln$ali[i,])
