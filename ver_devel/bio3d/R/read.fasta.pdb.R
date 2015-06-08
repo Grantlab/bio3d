@@ -1,6 +1,6 @@
 "read.fasta.pdb" <-
-function(aln, prefix="", pdbext="", pdblist=NULL, 
-         fix.ali = FALSE, ncore=1, nseg.scale=1, progress=NULL, ...) {
+function(aln, prefix="", pdbext="", fix.ali = FALSE, pdblist=NULL, 
+         ncore=1, nseg.scale=1, progress=NULL, ...) {
 
   ## Log the call
   cl <- match.call()

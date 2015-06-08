@@ -7,7 +7,7 @@
 }
 \usage{
 pdbsplit(pdb.files, ids = NULL, path = "split_chain", overwrite=TRUE,
-         verbose = FALSE, mk4=FALSE, ncore = 1, \dots)
+         verbose = FALSE, mk4=FALSE, ncore = 1, progress = NULL, \dots)
 }
 \arguments{
   \item{pdb.files}{ a character vector of PDB file names. }

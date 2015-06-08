@@ -14,7 +14,7 @@ core.find(\dots)
 \method{core.find}{pdbs}(pdbs, shortcut = FALSE, rm.island = FALSE,
           verbose = TRUE, stop.at = 15, stop.vol = 0.5,
           write.pdbs = FALSE, outpath="core_pruned",
-          ncore = 1, nseg.scale = 1, \dots)
+          ncore = 1, nseg.scale = 1, progress = NULL, \dots)
 
 \method{core.find}{default}(xyz, \dots)
 
@@ -50,6 +50,7 @@ core.find(\dots)
     \code{xyz} component. Note that the function will attempt to
     identify C-alpha and phosphate atoms (for protein and nucleic acids,
     respectively) in which the calculation should be based. }
+  \item{progress}{ progress bar for use with shiny. }
   \item{\dots}{ arguments passed to and from functions. }
 }
 \details{
