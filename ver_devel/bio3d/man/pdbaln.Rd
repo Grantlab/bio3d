@@ -6,7 +6,8 @@
   returning aligned sequence and structure records.
 }
 \usage{
-pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...) 
+pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1,
+       nseg.scale = 1, progress = NULL, ...) 
 }
 \arguments{
   \item{files}{ a character vector of PDB file names. Alternatively, a
@@ -19,6 +20,7 @@ pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...)
     \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{nseg.scale }{ split input data into specified number of segments
     prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
+  \item{progress}{ progress bar for use with shiny. }
   \item{\dots}{ extra arguments passed to \code{seqaln} function. }
 }
 \details{
