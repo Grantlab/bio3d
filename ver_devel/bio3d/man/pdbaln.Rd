@@ -51,7 +51,8 @@ pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...)
 \seealso{
   \code{\link{read.pdb}}, \code{\link{pdbseq}}, \code{\link{seqaln}},
   \code{\link{read.fasta}},\code{\link{read.fasta.pdb}},
-  \code{\link{core.find}}, \code{\link{fit.xyz}}, \code{\link{read.all}}
+  \code{\link{core.find}}, \code{\link{fit.xyz}}, \code{\link{read.all}},
+  \code{\link{pymol.pdbs}}  }
 }
 \examples{
 \dontrun{

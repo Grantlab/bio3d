@@ -7,7 +7,7 @@
 }
 \usage{
 read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
-             ncore = 1, nseg.scale = 1, ...)
+             pdblist=NULL, ncore = 1, nseg.scale = 1, ...)
 }
 \arguments{
   \item{aln}{ an alignment data structure obtained with
@@ -61,7 +61,8 @@ read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
 }
 \seealso{
   \code{\link{read.fasta}}, \code{\link{read.pdb}},
-  \code{\link{core.find}}, \code{\link{fit.xyz}}, \code{\link{read.all}} }
+  \code{\link{core.find}}, \code{\link{fit.xyz}},
+  \code{\link{read.all}}, \code{\link{pymol.pdbs}}  }
 \examples{
 \donttest{
 # Redundant testing excluded

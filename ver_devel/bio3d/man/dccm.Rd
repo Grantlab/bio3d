@@ -33,7 +33,7 @@ dccm(x, ...)
   calculate the correlation matrices based on an ensemble of \code{nma}
   objects (as obtained from function \code{nma.pdbs}).
 
-  \code{\link{plot.dccm}} and \code{\link{view.dccm}} provides
+  \code{\link{plot.dccm}} and \code{\link{pymol.dccm}} provides
   convenient functionality to plot a correlation map, and visualize the
   correlations in the structure, respectively.
 
