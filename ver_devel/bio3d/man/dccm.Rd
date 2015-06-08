@@ -45,5 +45,5 @@ dccm(x, ...)
 \author{ Barry Grant, Lars Skjaerven }
 \seealso{ \code{\link{dccm.xyz}}, \code{\link{dccm.nma}},
   \code{\link{dccm.enma}}, \code{\link{dccm.pca}}, \code{\link{plot.dccm}},
-    \code{\link{view.dccm}}. }
+    \code{\link{pymol.dccm}}. }
 \keyword{ utilities }
