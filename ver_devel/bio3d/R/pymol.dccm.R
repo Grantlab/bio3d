@@ -1,6 +1,6 @@
 pymol.dccm <- function(dccm, pdb, file=NULL,
                        step=0.2, omit=0.2, radius = 0.15,
-                       type="script", exefile = "pymol") {
+                       type="script", exefile = "pymol", ...) {
   
   allowed <- c("session", "script", "launch", "pdb")
   if(!type %in% allowed) {
