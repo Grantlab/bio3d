@@ -35,7 +35,7 @@ pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
 
   if(!is.null(col) & !inherits(col, "core")) {
     if(length(col) == 1) {
-      allowed <- c("index", "index2", "rmsf")
+      allowed <- c("index", "index2", "rmsf", "gaps")
       if(!col %in% allowed) {
         stop(paste("input argument 'col' must be either of:",
                    paste(allowed, collapse=", ")))
