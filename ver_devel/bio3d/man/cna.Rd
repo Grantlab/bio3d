@@ -101,7 +101,7 @@
 \author{ Guido Scarabelli and Barry Grant }  
 \seealso{
    \code{\link{plot.cna}},  \code{\link{summary.cna}},
-   \code{\link{view.cna}}, \code{\link[igraph:graph.adjacency]{graph.adjacency}},
+   \code{\link{vmd.cna}}, \code{\link[igraph:graph.adjacency]{graph.adjacency}},
    \code{\link[igraph:edge.betweenness.community]{edge.betweenness.community}},
    \code{\link[igraph:walktrap.community]{walktrap.community}}, 
    \code{\link[igraph:fastgreedy.community]{fastgreedy.community}}
@@ -127,7 +127,7 @@ net <- cna(cij, cutoff.cij=0.35)
 #plot(net, pdb)
 
 ## within VMD set 'coloring method' to 'Chain' and 'Drawing method' to Tube
-#view.cna(net, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
+#vmd.cna(net, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
 
 ##-- Build a correlation network from MD results
 ## Read example trajectory file

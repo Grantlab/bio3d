@@ -1,11 +1,3 @@
-#.getverbose <- function(...) {
-#  dots <- list(...)
-#  if(length(dots[names(dots) %in% "verbose"])==0)
-#    verbose <- FALSE
-#  else
-#    verbose <- (dots[names(dots) %in% "verbose"])$verbose
-#  return(verbose)
-#}
 
 geostas <- function(...)
   UseMethod("geostas")
@@ -15,7 +7,7 @@ geostas.nma <- function(nma, m.inds=7:11, verbose=TRUE, ...) {
   
   trj <- NULL
   for(i in m.inds) {
-    trj <- rbind(trj, mktrj.nma(nma, mode=i))
+    trj <- rbind(trj, mktrj(nma, mode=i, rock=FALSE))
   }
   
   gs <- geostas.xyz(trj, verbose=verbose, ...)
@@ -30,7 +22,7 @@ geostas.enma <- function(enma, pdbs=NULL, m.inds=1:5, verbose=TRUE, ...) {
 
   if(verbose) cat("  .. generating trajectory from", length(m.inds), "modes\n")
 
-  trj <- mktrj.enma(enma, pdbs, m.inds=m.inds, rock=FALSE, ...)
+  trj <- mktrj(enma, pdbs, m.inds=m.inds, rock=FALSE, ...)
   gs <- geostas.xyz(trj, verbose=verbose, ...)
   return(gs)
 }

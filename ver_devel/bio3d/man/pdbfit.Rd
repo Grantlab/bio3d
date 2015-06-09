@@ -65,8 +65,8 @@ files <- get.pdb(c("4q21","5p21"), path=tempdir(), overwrite=TRUE)
 pdbs <- pdbaln(files)
 xyz <- pdbfit(pdbs)
 
-# Superpose again this time outputing PDBs
-#xyz <- pdbaln( files, outpath="fitted" )
+# Superpose again this time outputing all-atom PDBs to disc
+#xyz <- pdbfit( pdbs, outpath="fitted" )
 }
 }
 \keyword{ utilities }

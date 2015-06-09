@@ -2,7 +2,7 @@
 \alias{cnapath}
 \alias{summary.cnapath}
 \alias{print.cnapath}
-\alias{view.cnapath}
+\alias{vmd.cnapath}
 \title{ Suboptimal Path Analysis for Correlation Networks }
 \description{
   Find k shortest paths between a pair of nodes, source and sink, in a correlation 
@@ -13,7 +13,7 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
 \method{summary}{cnapath}(object, \dots, pdb = NULL, label = NULL, col = NULL,
    plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE, weight = FALSE)
 \method{print}{cnapath}(x, \dots)
-view.cnapath(x, pdb, out.prefix = "view.cnapath", spline = FALSE, 
+vmd.cnapath(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE, 
    colors = c("blue", "red"), launch = FALSE, \dots)
 }
 \arguments{
@@ -34,7 +34,7 @@ view.cnapath(x, pdb, out.prefix = "view.cnapath", spline = FALSE,
        comparing paths from different networks. }
   \item{pdb}{ A \sQuote{pdb} class of object obtained from \code{\link{read.pdb}} 
        and is used as the reference for node residue ids (in \code{summary.cnapath}) or 
-       for molecular visulaization with VMD (in \code{view.cnapath}). }
+       for molecular visulaization with VMD (in \code{vmd.cnapath}). }
   \item{label}{ Character, label for paths identified from different networks. }
   \item{col}{ Colors for plotting statistical results for paths identified 
        from different networks. }
@@ -49,8 +49,8 @@ view.cnapath(x, pdb, out.prefix = "view.cnapath", spline = FALSE,
        node degeneracty. }
 
   \item{x}{ A \sQuote{cnapath} class of object obtained from \code{cnapath}. }
-  \item{out.prefix}{ Prefix for the names of output files, \sQuote{view.vmd}
-       and \sQuote{view.pdb}. }
+  \item{out.prefix}{ Prefix for the names of output files, \sQuote{vmd.cnapath.vmd}
+       and \sQuote{vmd.cnapath.pdb}. }
   \item{spline}{ Logical, if TRUE all paths are displayed as spline curves. }
   \item{colors}{ Character vector or integer scalar, define path colors. If a
      character vector, passed to \code{\link{colorRamp}} function to generate the 
@@ -63,7 +63,7 @@ view.cnapath(x, pdb, out.prefix = "view.cnapath", spline = FALSE,
        the function \code{cnapath}), passed to \code{summary.cnapath} 
        (in \code{print.cnapath}), as additional paths for 
        comparison (in \code{summary.cnapath}), or passed to the function 
-       \code{\link{colorRamp}} (in \code{view.cnapath}). }
+       \code{\link{colorRamp}} (in \code{vmd.cnapath}). }
 }
 \value{
   The function \code{cnapath} returns a \sQuote{cnapath} class of list containing 
@@ -121,12 +121,12 @@ print.cnapath(pas, pdb=pdb)
 print.cnapath(pas, pdb = pdb, col=c("red", "darkgreen"), plot=TRUE)
 
 # View paths in 3D molecular graphic with VMD
-#view.cnapath(pa1, pdb, launch = TRUE)
-#view.cnapath(pa1, pdb, colors = 7, launch = TRUE)
-#view.cnapath(pa1, pdb, spline=TRUE, colors=c("pink", "red"), launch = TRUE)
+#vmd.cnapath(pa1, pdb, launch = TRUE)
+#vmd.cnapath(pa1, pdb, colors = 7, launch = TRUE)
+#vmd.cnapath(pa1, pdb, spline=TRUE, colors=c("pink", "red"), launch = TRUE)
 #pdb2 <- read.pdb("1tag")
 #pdb2 <- trim.pdb(pdb2, atom.select(pdb2, chain="A", resno=npdbs$resno[2, gaps.res$f.inds]))
-#view.cnapath(pa2, pdb2, launch = TRUE)
+#vmd.cnapath(pa2, pdb2, launch = TRUE)
 
 detach(transducin)
 }

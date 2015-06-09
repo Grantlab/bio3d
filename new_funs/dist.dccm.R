@@ -67,7 +67,10 @@ dist.dccm <- function(a, b = NULL, all.pairs = TRUE, ...) {
    }
    if(ndim.a == 2) a <- array(a, dim=c(dim(a), 1))
    if(ndim.b == 2) b <- array(b, dim=c(dim(b), 1))
-   
+  
+   names.a <- dimnames(a)[[3L]]
+   names.b <- dimnames(b)[[3L]]
+
    # check symmetry and determine dccm or vcov, based on the first matrix of a
    a.chk = a[,,1]
    lower = a.chk[lower.tri(a.chk)]
@@ -96,14 +99,23 @@ dist.dccm <- function(a, b = NULL, all.pairs = TRUE, ...) {
    else {
       if(is.null(b)) {
          out <- full.mat
-         rownames(out) <- paste("a", 1:dim(a)[3L], sep="")
+         if(is.null(names.a)) 
+            rownames(out) <- paste("a", 1:dim(a)[3L], sep="")
+         else 
+            rownames(out) <- names.a
          colnames(out) <- rownames(out)
       }
       else {
          if(all.pairs) {
             out <- full.mat[1:dim(a)[3L], (dim(a)[3L]+1):ncol(full.mat)]
-            rownames(out) <- paste("a", 1:dim(a)[3L], sep="")
-            colnames(out) <- paste("b", 1:dim(b)[3L], sep="")
+            if(is.null(names.a))
+               rownames(out) <- paste("a", 1:dim(a)[3L], sep="")
+            else 
+               rownames(out) <- names.a
+            if(is.null(names.b))
+               colnames(out) <- paste("b", 1:dim(b)[3L], sep="")
+            else 
+               colnames(out) <- names.b
          }
          else {
             inds <- cbind(1:dim(a)[3L], (dim(a)[3L]+1):ncol(full.mat))
