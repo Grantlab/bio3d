@@ -1,5 +1,6 @@
 \name{view.pdb}
 \alias{view.pdb}
+\alias{view.xyz}
 \alias{view.pdbs}
 \alias{view.character}
 \alias{vec2color}
@@ -15,27 +16,29 @@ view(...)
 
 \method{view}{pdb}(pdb, as = "all", col = "atom", add = FALSE, elety.custom = atom.index, ...)
 
-\method{view}{xyz}(x, type = 1, col = NULL, add = FALSE, ...)
+\method{view}{xyz}(xyz, col = "index", add = FALSE, elesy = NULL, elety.custom = atom.index, ...)
 
-\method{view}{pdbs}(x, type = 1, col = NULL, add = FALSE, ...)
+\method{view}{pdbs}(x, col = "index", add = FALSE, elesy=rep("C", ncol(x$xyz)/3), ...)
 
 vec2color(vec, pal = c("blue", "green", "red"), n = 30)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{pdb}{ a PDB object as obtained from read.pdb.}
+  \item{xyz}{ A numeric matrix of xyz coordinates with a frame/structure per row and a Cartesian coordinate per column.}
+  \item{x}{ a multi-structure PDBs object as obtained from read.fasta.pdb and pdbaln functions.}
   \item{as}{ View/render mode that sets what and how things are drawn. 
     Current options include 'all', 'overview', 'nwat', 'protein', 
     'calpha', 'back' and 'ligand' - see examples for details.}
   \item{col}{ A vector or matrix of colors. The single keywords 'sse', 'index',
-    'atom', 'b' and 'residue' are also valid for view.pdb. See
+    'atom', 'b' and 'residue' are also valid for view.pdb. The keywords 'index', 'atom', 'frame', 'structure', 'gaps' and 'sse' are valid for view.xyz and view.pdbs functions See
     examples. }
   \item{add}{ Logical, if TRUE the requested 3D representation will be added
     to a existing scene. Otherwise a new scene window will be created. }
   \item{elety.custom}{ Used for atom to element type mapping and to
     obtain radii and colors for non standard atoms. }  
   \item{\dots}{ Extra arguments for visualize, sse.vector and connectivity 
-    functions. These these functions for full argument list. }
+    functions. Please see these functions for full argument lists. }
   \item{vec}{ a numeric vector for color mapping. }
   \item{pal}{ color pallet specification. }
   \item{n}{ Number of desired color range mappings. }
@@ -94,18 +97,18 @@ view(pdb, "calpha", "red")
 #view(atom.select(pdb,"ligand",value=TRUE), col="atom", add=TRUE, type="ls")
 
 
-##- 2. View a structural fit from a '3dalign' class object
+##- 2. View a structural fit from a 'pdbs' class object
 data(transducin)
 attach(transducin)
 
 view(pdbs)
-view(pdbs, type=2)
+view(pdbs, col="sse")
 
 view(pdbs, col=annotation[,"color"])
 view(pdbs, col="gray")
 
 rf=vec2color(rmsf(pdbs$xyz))
-view(pdbs, col=rf, type=2)
+view(pdbs, col=rf)
 
 
 
@@ -114,13 +117,13 @@ example(pca.xyz) ## Press RTN.
 
 a <- mktrj.pca(pc.xray, pc=1, file="pc1.pdb")
 view.xyz(a, col="gray")
-view.xyz(a, col=vec2color(rmsf(a)), type=2 ) ## Cool!! 
+view.xyz(a, col=vec2color(rmsf(a)), d.cut=6) ## Cool!! 
 
 
 
 ## can add to previous view
-view.xyz(pdbs)
-view.xyz(a, col="#808080", add=T)
+view(pdbs)
+view(a, col="#808080", add=T)
 
 
 
@@ -129,7 +132,7 @@ view.xyz(a, col="#808080", add=T)
 
 modes <- nma(pdb)
 m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
-view.xyz(m7, col=vec2color(rmsf(m7)), type=2)  
+view.xyz(m7, col=vec2color(rmsf(m7)))  
 
 
 ##- 5. View the results of CNA (i.e. a 'cna' class object)
@@ -143,6 +146,7 @@ view.xyz(m7, col=vec2color(rmsf(m7)), type=2)
 ##      Ideally allowing updating of the current display with selections
 
 ## Lets color motif position
+pdb<-read.pdb("5p21")
 motif <- "G....GK[ST]"
 aa.seq <- pdbseq(pdb)
 pos <- motif.find(motif, aa.seq)
@@ -158,7 +162,7 @@ view(pdb, "calpha", col=col)
 
 ##-- Define a color scale for B-factor coloring etc!!
 v <- vec2color( pdb$atom$b )
-view.pdb(pdb, "trace", col=v)
+view.pdb(pdb, "overview", col=v)
 }
 }
 \keyword{ utilities }

@@ -21,7 +21,7 @@ connectivity.default <- function(eleno.1, eleno.2, ...){
 connectivity.connectivity <- function(x, ...)
   connectivity.default(x$eleno.1, x$eleno.2, ...)
 
-connectivity.xyz <- function(x, elesy, safety = 1.2, by.block = FALSE, ...){
+connectivity.xyz <- function(x, elesy, safety = 1.2, by.block = FALSE, ca.check=FALSE, ...){
   if(missing(elesy))
     stop("Please specify 'elesy'")
   if(!inherits(x, "xyz"))
@@ -30,8 +30,22 @@ connectivity.xyz <- function(x, elesy, safety = 1.2, by.block = FALSE, ...){
     stop("'x' must be a single row 'xyz' matrix")
   if(length(elesy) != length(x)/3)
     stop("'x' and 'elesy' must have matching lengths")
-  if(!all(are.symb(elesy) & !is.na(elesy)))
+  if(!all(are.symb(elesy) & !is.na(elesy))) {
     elesy[!are.symb(elesy) & is.na(elesy)] <- "Xx"
+  }
+
+  if(ca.check) {
+  	if(all(elesy=="C")) {
+  		## We have all C-alpha atoms here perhaps...
+#  		cat("All C-alpha atom structure detected: Using calpha.connectivity() function\n")
+
+  		##- Check for possible input 'd.cut' to be used in calpha.connectivity()
+  		d <- list(...)$d.cut
+  		if(is.null(d)) { d <- 4 }
+  		#if(d < 4) { stop("Input 'd.cut' should be 4 or more to avoid rendering errors") }
+  		return( calpha.connectivity(x, d.cut=d) )
+  	}
+  }
   
   radii <- elements[match(elesy, elements$symb), "rcov"]*safety
   x <- as.data.frame(matrix(x, ncol=3, byrow=TRUE,
