@@ -3,31 +3,39 @@
 \alias{are.symb}
 \alias{connectivity}
 \alias{connectivity.default}
+\alias{connectivity.xyz}
 \alias{connectivity.pdb}
+\alias{connectivity.connectivity}
 \title{Compute Connectivity From Coordinates}
 \description{Search the atoms at a distance lower than the bonding distance (sum of covalent radii) to define the connectivity.}
 \usage{
-are.symb(x)
-
 connectivity(...)
+
 \method{connectivity}{default}(eleno.1, eleno.2, ...)
+
 \method{connectivity}{connectivity}(x, ...)
-\method{connectivity}{xyz}(x, elesy, safety = 1.2, by.block = FALSE, \dots)
+
+\method{connectivity}{xyz}(x, elesy, safety = 1.2, by.block = FALSE, ca.check = FALSE, \dots)
+
 \method{connectivity}{pdb}(x, safety = 1.2, by.block = TRUE, \dots)
 
 connectivity(object) <- value
+
 \method{connectivity}{pdb}(object) <- value
+
+are.symb(x)
 
 }
 \arguments{
-  \item{x}{an R object used to create a connectivity object.}
-  \item{ele.symb}{a character vector containing atomic symbols used to find covalent radii.}
+  \item{x}{an R object, typically a \sQuote{pdb} object or \sQuote{xyz} coordinate vector for which connectivity is to be determined or set.}
+  \item{elesy}{a character vector containing atomic symbols used to find covalent radii.}
   \item{safety}{a numeric value used to extend the atomic radii.}
   \item{by.block}{a logical value indicating whether the connectivity has to be determine by block (see details).}
-  \item{atom.sel}{an object of class \sQuote{select} indicating the atoms for which to compute the connectivity}
-  \item{d.cut}{a numeric value. Use to compute Calpha connectivity (see \code{\link{calpha.connectivity}})}
-  \item{object}{an R object for whihc to replace the \sQuote{connectivity} component.}
+  \item{ca.check}{a logical value indicating whether to check for C-alpha atom connectivity based on supplied elesy. Used primarily for visualization purposes (see \code{\link{calpha.connectivity}})} 
+  \item{object}{an R object, typically a \sQuote{pdb} object, whose \sQuote{connectivity} component will be replaced.}
   \item{value}{an object of class \sQuote{connectivity}.}
+  \item{eleno.1}{a vector of names for connectivity elements. }
+  \item{eleno.2}{a vector of names for connectivity elements. }
   \item{\dots}{arguments passed to methods.}
 }
 \details{
@@ -41,10 +49,10 @@ For \sQuote{pdb} objects, if only Caplha are found \code{calpha.connectivity} is
 A two-columns \sQuote{connectivity} data.frame containing the indexes of bonded atoms. The column names are: \code{eleno.1} and \code{eleno.2}.
 }
 
-\author{Julien Idé}
+\author{Julien Ide}
 
 \seealso{
-\code{\link{elements}}, \code{\link{pdb}}
+\code{\link{elements}}, \code{\link{read.pdb}}
 }
 \examples{
 x <- read.pdb("1bg2")

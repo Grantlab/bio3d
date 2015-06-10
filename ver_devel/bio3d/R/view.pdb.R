@@ -31,6 +31,20 @@ vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
 ## Just colors gray - use col="atom"
 #view(pdb,"ligand", "sse")
 
+# data(transducin); attach(transducin)
+# view(pdbs$xyz, col="atom")
+# view(pdbs$xyz, col="index")
+# view(pdbs$xyz, col="frame")
+# view(pdbs$xyz, col="red")
+# view(pdbs$xyz, col="sse")
+# view(pdbs$xyz, col=vec2color(rmsf(pdbs$xyz)))
+
+# view(pdbs)
+# view(pdbs, col="sse")
+
+# pdb <- read.pdb("2MPS", multi=TRUE)
+# view(pdb$xyz, elesy=pdb$atom$elesy)
+# view(pdb)
 
 
 view <- function(...)
@@ -38,7 +52,7 @@ view <- function(...)
 
 
 view.pdb <- function(pdb, as="all", col="atom", add=FALSE, 
-                     elety.custom = atom.index, ...) {
+                     elety.custom = NULL, ...) {
 
   ##-- Wrapper for visualize() to view larger PDBs the way Barry
   ##    likes to see them most often.
@@ -152,9 +166,16 @@ view.pdb <- function(pdb, as="all", col="atom", add=FALSE,
   }
 
   ##- Atom/Element type check
-  if(!all(are.symb(pdb$atom$elesy)))
-    pdb$atom$elesy <- atom2ele(pdb$atom$elesy, elety.custom)
+  if(!all(are.symb(pdb$atom$elesy))) {
+    elety.custom <- rbind(bio3d::atom.index, elety.custom)
 
+    ## Check if elesy field is missing and infer from elety field
+    if(all(is.na(pdb$atom$elesy))) {
+      pdb$atom$elesy <- atom2ele(pdb$atom$elety, elety.custom)
+    } else {
+      pdb$atom$elesy <- atom2ele(pdb$atom$elesy, elety.custom)
+    }
+  }
 
   ## Bonds/Connectivity check
   #if(is.null(pdb$con)) {
@@ -281,130 +302,189 @@ view.character <- function(file, ...) {
 }
 
 
-view.xyz <- function(x, type=1, col=NULL, add=FALSE, ...) {
-  ##-- Wrapper to visualize() for multiple structures
+view.xyz <- function(xyz, #as="all", 
+                    col="index", add=FALSE, elesy=NULL, 
+                    elety.custom = NULL, maxframes=100, ...) {
+
+  ## Interactive 3D visualization of bio3d 'xyz' class structure objects
   ##
-  ## ToDo. 
-  ##       - Change and improve 'type' to 'as' arg
-  ##       - Incorporate best bits of view.pdb()
-  ##       - Ask user if more than 300 frames are to be drawn
-  ##       - Generally speed up - no need to re-calculate connectivity
-  ##          for xyz input (but required for 3dalign input)
-  if(!inherits(x, "xyz"))
-    stop("'x' must be an object of class 'xyz'")
+  ## UPDATE of view.xyz() to be more like new view.pdb()
+  ##
+  ## ToDo:
+  ##   - Implement more color options and checking. 
+  ##      Note if length(col) equals nrow and ncol currently we will
+  ##      color by position (col) and not structure (row).
+  ##   - Implement 'as=' option (similar to view.pdb(x, as='overview') ) 
+  ##      to further control what is actually drawn based on 'elesy'. 
+  ##      This could be based on 'elesy' optionally taking a pdb class object.
+  ##      This would be useful for traj viewing only, e.g. 
+  ##
+  ##           view.xyz(traj, elesy=ref.pdb, as="overview")
+  ##
 
-  as.xyz <- function(x, ...) {
-    #     x <- matrix(x,nrow=3)
-    x <- matrix(x[,!is.na(x[1,])], nrow=1)
-    class(x) <- "xyz"
-    return(x)
+
+  #if(!is.xyz(xyz)) { stop("Input 'xyz' should be of class 'xyz'") }
+
+
+  arg.filter <- function(new.args, FUN=NULL, dots=list(...)) {
+    ## Returns entries of 'dots' updated with those in 'new.args'
+    ##  that intersect with allowed function 'FUN' input args. 
+    ##  (see view.pdb() for details) 
+    ans <- c(dots, new.args[!names(new.args) %in% names(dots)])
+    if(!is.null(FUN)) { ans <- ans[names(ans) %in% names(formals(FUN))] }
+    return(ans)
   }
 
-  nstru <- nrow(x)
-  npos  <- ncol(x)/3
+  ##-- Filter additional args for visualize.xyz() and connectivity.xyz()
+  vis.args <- arg.filter( list(centre=FALSE), FUN=visualize.xyz )
+  con.args <- arg.filter( list(ca.check=TRUE), FUN=connectivity.xyz )
 
-  if(nstru > 300) {
-    warning( paste("Input 'x' has",nstru, "frames. Only drawing first 300") )
-    x <- x[1:300,]
-    nstru <- 300
+  ##- Check for possible input 'd.cut' to be used in calpha.connectivity()
+  d <- list(...)$d.cut
+  if(is.null(d)) { d <- 4 }
+  if(d < 4) { stop("Input 'd.cut' should be 4 or more to avoid rendering errors") }
+
+
+  ##-- Input check 'xyz' (N frames and N atoms)
+  if(is.vector(xyz)) { xyz <- as.xyz(xyz) }
+  nstru <- nrow(xyz)
+  npos  <- ncol(xyz)/3
+
+  ##-- Check 'elesy' (if not given assume C-alpha only, used for connectivity())
+  if( is.null(elesy) ) { 
+    cat("Potential all C-alpha atom structure(s) detected: Using calpha.connectivity()\n")
+    elesy=rep("C", npos) 
   }
 
-  xyz.list <- split(x, 1:nrow(x))
-  xyz.list <- lapply(xyz.list, matrix, nrow = 3)
-  are.na.list <- lapply(xyz.list, function(x) return(is.na(x[1,])))
-  xyz.list <- lapply(xyz.list, as.xyz)
-  xyz.lengths <- sapply(xyz.list, length)/3
+  ##- Atom/Element type check and custom addition of name symb pairs
+  if(!all(are.symb(elesy))) {
+    elety.custom <- rbind(bio3d::atom.index, elety.custom)
+    elesy <- atom2ele(elesy, elety.custom)
+  }
 
-  ## Compute the connectivity only once if all the xyz.models have the same number of atoms (no NA)
-  model.with.na <- sapply(are.na.list, any)
-  if(any(model.with.na)) {
-    con.list <- lapply(xyz.list, calpha.connectivity)
+  ##-- Hard Limit number of fames rendered
+  if(nstru > maxframes) {
+    warning( paste("Input 'xyz' has", nstru, "frames. Only drawing first maxframes = ", maxframes) )
+    xyz <- xyz[1:maxframes,]; nstru <- maxframes
+  }
+
+  ##-- Input 'col=' option will set how display is colored.
+  ##    Note requested 'col' may be a 'keyword' rather than a simple color.
+  ##    Later we use this to build a 'col.matrix' with dims matching xyz/3 
+  display <- NULL
+  if(length(col) == 1) {
+    display.options <- c("structure", "frame", "index", "atom", "gaps") #, "sse")
+
+    display.check <- pmatch(col, display.options, nomatch = NA)
+    if(!is.na( display.check )) {
+      display <- display.options[display.check]
+    }
+  } 
+
+  ##- Using 'display' color keyword to color by index, frame, gaps etc.
+  if( !is.null(display) ){
+    if(display=="atom") { col.matrix <- NULL }
+    if(display=="index") { col.matrix <- matrix( rep(vec2color(1:npos), times=nstru), nrow=nstru, byrow=TRUE) }
+    if(display=="frame") { col.matrix <- matrix( rep(vec2color(1:nstru), times=npos), ncol=npos) }
+    if(display=="structure") { col.matrix <- matrix( rep(vmd.colors(nstru), times=npos), ncol=npos) }
+#    if(display=="sse") {  ## need pdbs$sse!!
+#      col.matrix <- matrix("gray", nrow=nstru, ncol=npos)
+#      col.matrix[pdbs$sse == "H"] <- "purple"
+#      col.matrix[pdbs$sse == "E"] <- "yellow"
+#    }
+    if(display=="gaps") {  
+      col.matrix <- matrix("gray", nrow=nstru, ncol=npos)
+      col.gaps <- xyz2atom( which(gap.inspect(xyz)$col > 1))
+      col.matrix[ ,col.gaps ] <- "red"
+    }
+    
   } else {
-    con.list <- replicate(nstru, calpha.connectivity(xyz.list[[1]]), simplify = FALSE)
-  }
+    
+    ##-- Setup color.matrix from input col (various options based on dimensions)
+    if( length(col) == (nstru*npos) & is.matrix(col) ) { 
+      ## Use input 'col' as is (it's dims are correct) ...
+      col.matrix <- col
+      #cat("Using input col matrix as dimensions match those expected from 'xyz'\n")
 
-  ## -- The 'type' argument is for trying to sort out 'col' color specification
-  ##     for different purposes.  Note. 'col' input could be:
-  ##      1. a) single element vector to be applied to all structures,
-  ##         b) a multiple element vector with a color per structure,
-  ##      2. a) a vector with a color per atom, or
-  ##         b) a matrix with a column per atom position and row per structure
-  ##
-  ##     This is specified by 'type=1' or 'type=2'
-  ##     Eventually we want to be a bit smarter and remove the need for the 'type' argument
-
-
-  ## Sort out color options with the aid of type argument
-  if(type==1) {
-    ## Option No. #1 above
-    if( is.null(col) ) {
-      col.list <- vmd.colors(nstru)
     } else {
-      if(length(col)==1) {
-        col.list <- replicate(col, nstru, simplify = FALSE)
-      }
-      if(length(col) != nstru) {
-        stop("For type=1: Color vector should be the same length as the number of structures")
+
+      ## Simple one element color vector to replicate (no check on valid color contents!) 
+      if(length(col) == 1) { col.matrix <- matrix(col, nrow=nstru, ncol=npos) }
+
+      ##- Check on input color length vs Natom (or length vs Nstru)
+      if(length(col) == npos) {
+        col.matrix <- matrix( rep(col, times=nstru), nrow=nstru, byrow=TRUE)
       } else {
-        col.list <- as.list( col )
-      }
-    }
-  }
-  if(type==2) {
-    ## Option No. #2 above
-    if( is.null(col) ) {
-      col.list <- lapply(xyz.lengths, function(n) vec2color(1:n))
-    } else {
-      if(is.list(col)) {
-        col.lengths <- lapply(col, length)
-        if(any(col.length != xyz.lengths)) {
-          stop("When 'col' is a list, each component length must match the number of atoms/residue in each model")
-        }
-        col.list <- col
-      }
-      if( is.null(nrow(col)) ) {
-        ## We have an input 'col' vector we want to apply to all structures
-        if(length(col) == npos) {
-          #           cat("IN HERE\n\n")
-          col    <- replicate(nstru, col, simplify = FALSE)
-          col.list <- mapply(function(col, M) return(col[!M]), col, are.na.list)
-          #           cat(dim(col))
-        }
-        else {
-          stop("For type=2: Color vector should be same length as ncol of your 'xyz' object")
-          ## unclear what the user might want here...
-        }
-      } else {
-        ## we have a color matrix
-        if(dim(col) != dim(x)) {
-          stop("For type=2: Color matrix should be same dim as your 'xyz' object")
-          ## again unclear what the user might want here...
-        } else {
-          col.list <- split(col, 1:nstru)
-          col.list <- mapply(function(col, M) return(col[!M]), col.list, are.na.list, SIMPLIFY=FALSE)
-        }
+        if(length(col) == nstru) {
+          col.matrix <- matrix( rep(col, times=npos), ncol=npos)
+        }  
       }
     }
   }
 
-  elesy <- rep("C", length(xyz.list[[1]])/3)
-  visualize(xyz.list[[1]], elesy = elesy, con = con.list[[1]],
-            col = col.list[[1]], add = add, centre=FALSE, ...)
-  if(length(xyz.list) > 1) {
-    useless <- mapply(function(x, con, col){
-      elesy <- rep("C", length(x)/3)
-      visualize(x, elesy = elesy, con = con, col = col, add = TRUE, centre=FALSE, ...)
-    }, xyz.list, con.list, col.list)
+  ##- Exit or warn if color setup was unsuccessful 
+  if(!exists("col.matrix")) {
+    if(length(col) != (nstru*npos)) {
+      stop("Dimensions of input color matrix do not match input xyz requirements")
+    } else {
+      warning("valid color options could not be determined")
+      col.matrix <- NULL
+    }
+  }
+
+
+  ##-- If gaps are present we need to update connectivity etc. for each frame
+  ##    Otherwise we take connectivity from first frame
+  gaps <- gap.inspect(xyz)$bin
+  inds2update <- sum(gaps) > 0
+  if(!inds2update) { 
+    ele <- elesy
+#    con <- connectivity.xyz(as.xyz(xyz[1,]), ca.check=TRUE, d.cut=d, elesy=ele)
+    con <- do.call('connectivity.xyz', c(list(x=as.xyz(xyz[1,]), elesy = ele, d.cut=d), con.args) )
+  }
+
+
+  for(i in 1:nstru) {
+    if(inds2update) { ## Updating frame connectivity etc.
+      inds.xyz <- which(!gaps[i,])
+      inds.atom <- xyz2atom( inds.xyz )
+      x  <- as.xyz(xyz[i, inds.xyz])
+      ele <- elesy[inds.atom]
+#      con <- connectivity.xyz(x, ca.check=TRUE, d.cut=d, elesy=ele)
+      con <- do.call('connectivity.xyz', c(list(x=x, elesy = ele, d.cut=d), con.args) )
+      cn  <- col.matrix[i, inds.atom]
+    } else {
+      x  <- as.xyz(xyz[i,])
+      cn <- col.matrix[i,]
+    }
+#    visualize(x, elesy = ele, con=con, centre=FALSE, add=add, col=cn, ...)
+    do.call('visualize.xyz', c(list(xyz=x, elesy = ele, con=con, col=cn, add=add), vis.args) )
+
+    add <- TRUE
   }
 }
 
-view.pdbs <- function(x, type=1, col=NULL, add=FALSE, ...) {
-  ##-- Wrapper to visualize() for multiple structures
+
+view.pdbs <- function(x, col="index", add=FALSE, elesy=rep("C", ncol(x$xyz)/3), ...) {
+  ##-- Wrapper to view.xyz() and visualize.xyz() for 'pdbs' objects 
   ##
-  ## ToDo.   Combine/merge with view.xyz() below and then simply
+  ## ToDo.   Combine/merge with view.xyz() above and then simply
   ##          call view.xyz() within view.pdbs() view.nma()
   ##          view.pca(), view.cna() etc.
   if(!inherits(x, "pdbs"))
     stop("'x', must be an object of class 'pdbs' as obtained from read.fasta.pdb()")
-  view.xyz(x$xyz, type = type, col = col, add = add, ...)
+
+  if(length(col) == 1) {
+    if(col=="sse") {
+      nstru <- nrow(x$xyz)
+      npos  <- ncol(x$xyz)/3
+      col <- matrix("gray", nrow=nstru, ncol=npos)
+      col[x$sse == "H"] <- "purple"
+      col[x$sse == "E"] <- "yellow"
+    }
+  }
+
+  view.xyz(x$xyz, col = col, add = add, elesy=elesy, ...)
 }
+
+view.default <- view.xyz

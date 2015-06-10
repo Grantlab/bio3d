@@ -32,11 +32,6 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, progress=NULL, ...)
      }
   }
   
-  if(ncore > 1)
-    mylapply <- mclapply
-  else
-    mylapply <- lapply
-  
   if(!is.list(files)) {
     ## Check if input PDB files exist localy or online
     toread.local <- file.exists(files)
@@ -61,11 +56,11 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, progress=NULL, ...)
     ## Avoid multi-thread downloading
     if(any(toread.online | toread.id)) {
       ncore = 1
-      options(cores = ncore)
+#      options(cores = ncore)
     }
     cat("Reading PDB files:",files, sep="\n")
     
-    pdb.list <- mylapply(1:length(files), function(i) {
+    pdb.list <- mclapply(1:length(files), function(i) {
       if(pqr) {
         pdb <- read.pqr(files[i])
       } else {
@@ -78,7 +73,7 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, progress=NULL, ...)
       }
 
       return( pdb )
-    } )
+    } , mc.cores = ncore)
   }
   else {
     if(!all(sapply(files, is.pdb)))
@@ -89,7 +84,7 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, progress=NULL, ...)
   }
 
   cat("\n\nExtracting sequences\n")
-  s <- mylapply(pdb.list, pdbseq)
+  s <- mclapply(pdb.list, pdbseq, mc.cores=ncore)
 
   ## check for NULL in pdbseq output
   ## (this would indicate no amino acid sequence in PDB)

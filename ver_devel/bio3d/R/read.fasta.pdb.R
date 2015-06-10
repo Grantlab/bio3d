@@ -35,7 +35,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, pdblist=NULL,
     ## Avoid multi-thread downloading
     if(any(substr(files,1,4) == "http")) {
       ncore = 1
-      options(cores = ncore)
+#      options(cores = ncore)
     }
   }
   else {
@@ -46,11 +46,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, pdblist=NULL,
 
   blank <- rep(NA, ncol(aln$ali))
  
-  mylapply <- lapply
-  if(ncore > 1)
-    mylapply <- mclapply
-
-  retval <- mylapply(1:length(aln$id), function(i) {
+  retval <- mclapply(1:length(aln$id), function(i) {
     coords <- NULL; res.nu <- NULL
     res.bf <- NULL; res.ch <- NULL
     res.id <- NULL; res.ss <- NULL
@@ -149,7 +145,7 @@ function(aln, prefix="", pdbext="", fix.ali = FALSE, pdblist=NULL,
       res.ss <- rbind(res.ss, sse[nseq])
     } ## end else for (non)missing PDB file
     return (list(coords=coords, res.nu=res.nu, res.bf=res.bf, res.ch=res.ch, res.id=res.id, res.ss=res.ss))
-  } ) ## end mylapply
+  } , mc.cores=ncore) ## end mylapply
 
   retval <- do.call(rbind, retval)
   coords <- matrix(unlist(retval[, "coords"]), nrow=length(aln$id), byrow=TRUE)

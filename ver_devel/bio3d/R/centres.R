@@ -36,8 +36,8 @@ centres.xyz <- function(x, w = NULL, factor = NULL, unsplit = FALSE, ...){
   x2.mean <- unlist(x2.mean)
   x3.mean <- unlist(x3.mean)
 
-  x <- c(rbind(x1.mean, x2.mean, x3.mean))
-  attr(x, "class") <- c("numeric", "xyz")
+  x <- as.xyz( c(rbind(x1.mean, x2.mean, x3.mean)) )
+  #attr(x, "class") <- c("numeric", "xyz")
   
   return(x)
 }

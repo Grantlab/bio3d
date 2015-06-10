@@ -99,7 +99,7 @@ pymol(\dots)
 }
 \author{ Lars Skjaerven }
 \seealso{
-  \code{\link{view}}
+  \code{\link{view.pdb}}, \code{\link{view.xyz}}, \code{\link{view.pdbs}}
 }
 \examples{
 \dontrun{
