@@ -4,12 +4,12 @@
 \alias{view.pdbs}
 \alias{view.character}
 \alias{vec2color}
-\alias{sse.color}
 \title{
-    View Molecular Structures 
+  View Molecular Structures 
 }
 \description{
-    Interactive 3D visualization of biomolecular structures from various sources within the Bio3D package. 
+  Interactive 3D visualization of biomolecular structures from various sources 
+  within the Bio3D package. 
 }
 \usage{
 view(...)
@@ -22,52 +22,47 @@ view(...)
 
 vec2color(vec, pal = c("blue", "green", "red"), n = 30)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{pdb}{ a PDB object as obtained from read.pdb.}
-  \item{xyz}{ A numeric matrix of xyz coordinates with a frame/structure per row and a Cartesian coordinate per column.}
-  \item{x}{ a multi-structure PDBs object as obtained from read.fasta.pdb and pdbaln functions.}
-  \item{as}{ View/render mode that sets what and how things are drawn. 
-    Current options include 'all', 'overview', 'nwat', 'protein', 
-    'calpha', 'back' and 'ligand' - see examples for details.}
-  \item{col}{ A vector or matrix of colors. The single keywords 'sse', 'index',
-    'atom', 'b' and 'residue' are also valid for view.pdb. The keywords 'index', 'atom', 'frame', 'structure', 'gaps' and 'sse' are valid for view.xyz and view.pdbs functions See
-    examples. }
+  \item{pdb}{ A PDB object as obtained from function read.pdb.}
+  \item{xyz}{ A numeric matrix of xyz coordinates with a frame/structure per row 
+    and a Cartesian coordinate per column.}
+  \item{x}{ A multi-structure PDBs object as obtained from a number of functions 
+    including read.fasta.pdb and pdbaln functions.}
+  \item{as}{ A single element character vector that sets the view/render mode 
+    determining what and how things are drawn. 
+    Current options include \sQuote{all}, \sQuote{overview}, \sQuote{nwat}, \sQuote{protein}, 
+    \sQuote{calpha}, \sQuote{back} and \sQuote{ligand} - see examples below for details.}
+  \item{col}{ A vector or matrix of colors. The single keywords \sQuote{sse}, \sQuote{index},
+    \sQuote{atom}, \sQuote{b} and \sQuote{residue} are also valid for \code{\link{view.pdb}}. The keywords \sQuote{index}, 
+    \sQuote{atom}, \sQuote{frame}, \sQuote{structure}, \sQuote{gaps} and \sQuote{sse} are valid for \code{\link{view.xyz}} and 
+    \code{\link{view.pdbs}} functions. }
   \item{add}{ Logical, if TRUE the requested 3D representation will be added
     to a existing scene. Otherwise a new scene window will be created. }
   \item{elety.custom}{ Used for atom to element type mapping and to
     obtain radii and colors for non standard atoms. }  
-  \item{\dots}{ Extra arguments for visualize, sse.vector and connectivity 
+  \item{\dots}{ Extra arguments for \code{\link{visualize}}, \code{\link{sse.vector}} and \code{\link{connectivity}} 
     functions. Please see these functions for full argument lists. }
-  \item{vec}{ a numeric vector for color mapping. }
-  \item{pal}{ color pallet specification. }
+  \item{vec}{ A numeric vector for color mapping. }
+  \item{pal}{ A vector of three colors for color pallet specification. }
   \item{n}{ Number of desired color range mappings. }
-  \item{x}{ a numeric coordinate matrix or 3dalign object of pdbs. }
-  \item{type}{ A single element numeric vector with values of 1 or 2
-  that specifies the Color type rendering for multi-structure viewing 
-  - see examples. ToDo: Add option for rmsf coloring and impliment in
-  col argument to be consistant with view.pdb also. }
 }
 \details{
-    The view.pdb and view.xyz functions are wrappers for the visualize function.
-Basically, they attempt to view larger PDBs in a useful way (i.e. the way we like to see them most often). 
-To Do
- - make consistent mode, type and col options across functions. 
- - Write this man page. 
- - Add details of the extensive customization that is possible with visualize.
- - Check validity of "col" input "keywords" for color types
- - Add more input args, e.g. lwd=NULL, lwd.ca=3, lwd.nca=1 etc.
- - Add cna code.
- - Merge view.pdbs and view.xyz codes so only one is needed
- - Add an 'add=FALSE/TRUE' input option so we can add to an existing display.
- 
-N.B. In general this is still a quick and dirty prototype with 
-no consideration of efficiency and little error checking. 
+  The view() family of functions generate interactive 3D visualizations of 
+  biomolecular structure and dynamics data from various sources within the Bio3D 
+  package.  The main functions \sQuote{view.pdb} and \sQuote{view.xyz} are wrappers for the 
+  \sQuote{visualize.xyz} function. Extensive customization are possible, including 
+  standard graphical parameters such as \sQuote{lwd} and more advanced representation 
+  styles and colors with the \sQuote{as} and \sQuote{col} keyword options. Full details of these customizations will be added here as these functions mature. For now please see 
+  below examples for further details as well as the documentation for \sQuote{visualize.xyz'.
 
-More details to appear here later....
+  Current \sQuote{as} options include: \sQuote{all}, \sQuote{overview}, \sQuote{nwat}, \sQuote{protein}, \sQuote{calpha}, 
+  \sQuote{back} and \sQuote{ligand'.
+
+  Current \sQuote{col} keyword options for \sQuote{view.pdb} include: \sQuote{sse}, \sQuote{index}, \sQuote{atom}, 
+  \sQuote{b} and \sQuote{residue'.  The keywords \sQuote{index}, \sQuote{atom}, \sQuote{frame}, \sQuote{structure}, \sQuote{gaps} and \sQuote{sse} are valid for view.pdbs and view.xyz functions. 
 }
 \value{
-Called for their effect.
+  Called for their effect.
 }
 
 \examples{
@@ -97,7 +92,7 @@ view(pdb, "calpha", "red")
 #view(atom.select(pdb,"ligand",value=TRUE), col="atom", add=TRUE, type="ls")
 
 
-##- 2. View a structural fit from a 'pdbs' class object
+##- 2. View a structural fit from a \sQuote{pdbs} class object
 data(transducin)
 attach(transducin)
 
@@ -112,7 +107,7 @@ view(pdbs, col=rf)
 
 
 
-##- 3. View the results of PCA on this structure set (i.e. a 'xyz' class object)
+##- 3. View the results of PCA on this structure set (i.e. a \sQuote{xyz} class object)
 example(pca.xyz) ## Press RTN.
 
 a <- mktrj.pca(pc.xray, pc=1, file="pc1.pdb")
@@ -127,7 +122,7 @@ view(a, col="#808080", add=T)
 
 
 
-##- 4. View the results of NMA (i.e. a 'xyz' class object)
+##- 4. View the results of NMA (i.e. a \sQuote{xyz} class object)
 #pdb <- read.pdb("1hel")
 
 modes <- nma(pdb)
@@ -135,7 +130,7 @@ m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
 view.xyz(m7, col=vec2color(rmsf(m7)))  
 
 
-##- 5. View the results of CNA (i.e. a 'cna' class object)
+##- 5. View the results of CNA (i.e. a \sQuote{cna} class object)
 #example(plot.cna)
 #visualize.cna(net, pdb, xyz.axes=F) ##=> cant turn axis off??? View is offset from center??
 ## Need to think more about what is most useful here.

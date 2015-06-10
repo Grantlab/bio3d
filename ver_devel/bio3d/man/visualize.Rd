@@ -14,14 +14,14 @@ visualize(...)
 xyz, elesy = NULL, con = NULL, cell = NULL, type = "l",
   xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
   lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
-  cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "black",
+  cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rvdw", bg.col = "black",
   add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
 
 \method{visualize}{pdb}(
   pdb, cell = NULL, type = "l", con = TRUE,
   xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
   lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
-  cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rcov", bg.col = "black",
+  cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rvdw", bg.col = "black",
   add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
   
 \method{visualize}{character}(
