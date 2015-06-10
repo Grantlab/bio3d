@@ -29,24 +29,47 @@ output$blast_plot <- renderUI({
 ### Blast plot on front page
 output$blast_plot1 <- renderPlot({
   blast <- run_blast()
-  hits <- set_cutoff(blast, input$cutoff)
-  cutoff <- hits$cutoff
-  gp <- hits$gp.inds
-  grps <- hits$grps
+  cut <- set_cutoff(blast, rv$cutoff)
+
+  gp <- cut$gp.inds
+  cutoff <- cut$cutoff
+  grps <- cut$grps
   z <- blast$score
 
   col <- sapply(grps, function(x) if(x==1) 'red' else if(x==2) 'grey50')
-
-  if(!length(input$blast_table_rows_selected)>0) {
-    limit <- as.numeric(input$limit_hits)
+  if(length(input$selected_pdbids)>0) {
+    inds <- unlist(lapply(input$selected_pdbids, grep, blast$acc))
+    col[inds] <- "green"
+  }
+  else {
+    limit <- as.numeric(rv$limit_hits)
     if(limit > 0)
       col[1:limit] <- "green"
   }
-  else {
-    col[ as.numeric(input$blast_table_rows_selected) ] <- "green"
-  }  
+  
+  ##if(!length(input$blast_table_rows_selected)>0) {
+  #if(!length(input$hits_in)>0) {
+  #  limit <- as.numeric(rv$limit_hits)
+  #  if(limit > 0)
+  #    col[1:limit] <- "green"
+  #}
+  #else {
+  #  col[ as.numeric(input$hits_in) ] <- "green"
+  #}  
 
-  plot(z, xlab="", ylab="Bitscore", bg=col, col="grey10", pch=21, cex=1.1)
+  if(length(blast$acc) < 650) {
+    pch <- 21
+    bg <- col
+    col <- "grey10"
+  }
+  else {
+    pch <- 1
+    bg <- NULL
+    col <- col
+  }
+    
+  par(mar=c(6, 4, 0, 0))
+  plot(z, xlab="", ylab="Bitscore", bg=bg, col=col, pch=pch, cex=1.1)
   abline(v=gp, col="gray50", lty=3)
   abline(h=cutoff, col="red", lty=2)
 
@@ -63,19 +86,20 @@ output$blast_plot1 <- renderPlot({
 
 output$blast_plot2 <- renderChart2({
   blast <- run_blast()
-  hits <- set_cutoff(blast, input$cutoff)
+  cut <- set_cutoff(blast, rv$cutoff)
   blast$mlog.evalue <- blast$score
-
-  cutoff <- hits$cutoff
-  gp <- hits$gp.hits
-  gps <- hits$grps
+  
+  gp <- cut$gp.inds
+  cutoff <- cut$cutoff
+  grps <- cut$grps
   z <- blast$score
+  
 
   ## generate a dataframe: pc$z + pdbids + group
   data <- data.frame(
     Bitscore = z,
     id = blast$acc,
-    group = sapply(gps, function(x) if(x==1) "Above" else "Below cutoff"),
+    group = sapply(grps, function(x) if(x==1) "Above" else "Below cutoff"),
     Hits = 1:length(z),
     desc = blast$desc
     )
@@ -113,29 +137,16 @@ output$blast_plot2 <- renderChart2({
 
 
 get_blasttable <- reactive({
+  message("fetching blast table")
+  
   if(input$input_type != "multipdb") {
     blast <- run_blast()
-    hits <- filter_hits()
-    grps <- set_cutoff(blast, cutoff=input$cutoff)$grps
+    ##hits <- filter_hits()
+    grps <- set_cutoff(blast, cutoff=rv$cutoff)$grps
 
-    ## provide additional 5 non-checked table rows
-    checked.inds <- which(hits$hits)
-    unchecked.inds <- which(!hits$hits)
-
-    n <- length(blast$acc)
-    m <- n - sum(hits$hits)
-    #if (m > 5)
-    #  m <- 5
-
-    unchecked.inds <- unchecked.inds[1:m]
-    show.inds <- c(checked.inds, unchecked.inds)
-
-    hits <- blast[show.inds,, drop=FALSE]
-    acc <- hits$acc
+    acc <- blast$acc
     anno <- get_annotation(acc)
-
-    checked <- rep("CHECKED", length(acc))
-    checked[unchecked.inds] <- ""
+    anno$score <- blast$score
   }
   else {
     acc <- toupper(unique(trim(unlist(strsplit(input$pdb_codes, ",")))))
@@ -144,26 +155,27 @@ get_blasttable <- reactive({
     inds <- unlist(sapply(acc, grep, anno$acc))
     anno <- anno[inds, ]
     acc <- anno$acc
-
+    anno$score <- rep(0, length(acc))
+    
     hits <- NULL
     grps <- NULL
-    hits$acc <- acc
-
-    hits$score <- rep(0, length(acc))
-    checked <- rep("CHECKED", length(acc))
   }
 
-  anno$score <- hits$score
   anno$struct_nr <- 1:nrow(anno)
 
   if(!is.null(grps)) {
     col <- sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' })
 
-    if(!is.null(input$limit_hits)) {
-      limit <- as.numeric(input$limit_hits)
-      if(limit > 0)
-        col[1:limit] <- "green"
+    if(length(input$selected_pdbids)>0) {
+      inds <- unlist(lapply(input$selected_pdbids, grep, anno$acc))
+      col[inds] <- "green"
     }
+    
+    #if(!is.null(rv$limit_hits)) {
+    #  limit <- as.numeric(rv$limit_hits)
+    #  if(limit > 0)
+    #    col[1:limit] <- "green"
+    #}
 
     anno$acc <- paste0(
       "<span class=\"id_", col, "\" style=\"color:",
@@ -178,15 +190,15 @@ get_blasttable <- reactive({
                          substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   }
 
-  checkbox <- paste0("<input type=\"checkbox\" name=\"pdb_ids\" value=\"", hits$acc, "\" ",  checked, ">")
-  anno$check <- checkbox
+  #checkbox <- paste0("<input type=\"checkbox\" name=\"pdb_ids\" value=\"", hits$acc, "\" ",  checked, ">")
+  #anno$check <- checkbox
 
+  ##print(head(anno))
+  
   rownames(anno) <- NULL
   show.cols <- c("acc", "compound", "source", "ligandId", "score")
   col.inds <- sapply(show.cols, grep, colnames(anno))
 
-  #print(col.inds)
-  #print(head(anno[, col.inds]))
   return(anno[, col.inds])
 })
 
@@ -215,8 +227,6 @@ output$blast_table <- renderDataTable({
 ## checkbox
 output$pdb_chains <- renderUI({
   chains <- get_chainids()
-  ##radioButtons("chainId", label="Choose chain ID:",
-  ##             choices=chains, inline=TRUE)
 
   selectInput("chainId", "Limit to chain ID:",
               choices = chains, selected = chains[1], multiple=FALSE)
@@ -224,32 +234,19 @@ output$pdb_chains <- renderUI({
 })
 
 
-output$resetable_cutoff_slider <- renderUI({
-  reset <- input$reset_cutoff
 
+output$cutoff_slider <- renderUI({
   blast <- run_blast()
-  cutoff <- set_cutoff(blast, rv$cutoff)$cutoff
-
-  sliderInput("cutoff", "Adjust cutoff:",
-              min = floor(min(blast$score)), max = floor(max(blast$score)), value = cutoff)
-})
-
-output$resetable_cutoff_slider <- renderUI({
-  reset <- input$reset_cutoff
-
-  blast <- run_blast()
-  hits <- set_cutoff(blast, cutoff=NULL)
-  cutoff <- hits$cutoff
+  cutoff <- rv$cutoff
 
   sliderInput("cutoff", "Adjust cutoff:",
               min = floor(min(blast$score)), max = floor(max(blast$score)), value = cutoff)
 })
 
 output$hits_slider <- renderUI({
-  blast <- run_blast()
-  hits <- set_cutoff(blast, cutoff=rv$cutoff)
+  hits <- filter_hits()
 
   sliderInput("limit_hits", "Limit hits:",
-              min = 1, max = length(hits$inds), value = 5, step=1)
+              min = 1, max = length(hits$hits), value = rv$limit_hits, step=1)
 })
 

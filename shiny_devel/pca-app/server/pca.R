@@ -65,7 +65,7 @@ output$pca_plot1_conf <- renderPlot({
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
   col <- 1
-  if(input$nclust>1)
+  if(as.numeric(input$nclust) > 1)
     col <- clustgrps()
 
   op <- par(pty="s")
@@ -83,12 +83,12 @@ output$pca_plot1_conf <- renderPlot({
     cluster.colors <- col2hex(rainbow(input$nclust))[col]
   }
 
-  xlim <- range(pc$z[, xax]) * input$inner_margin
-  ylim <- range(pc$z[, yax]) * input$inner_margin
+  xlim <- range(pc$z[, xax]) * as.numeric(input$inner_margin)
+  ylim <- range(pc$z[, yax]) * as.numeric(input$inner_margin)
 
   plot(pc$z[, xax], pc$z[, yax], xlab=p[1], ylab=p[2],
        bg=cluster.colors, pch=21,
-       cex=input$cex_points, col='grey50',
+       cex=as.numeric(input$cex_points), col='grey50',
        xlim=xlim, ylim=ylim)
 
   abline(h = 0, col = "gray", lty = 2)
@@ -101,20 +101,21 @@ output$pca_plot1_conf <- renderPlot({
       if(input$distribute_labels) {
         pointLabel(pc$z[inds, xax], pc$z[inds, yax],
                    labels=pdbs$lab[inds],
-                   pos=1, offset=input$offset, cex=input$cex_labels)
+                   pos=1, offset=as.numeric(input$offset),
+                   cex=as.numeric(input$cex_labels))
       }
       else {
         text(pc$z[inds, xax], pc$z[inds, yax],
              labels=pdbs$lab[inds],
-             pos=1, offset=input$offset, cex=input$cex_labels)
+             pos=1, offset=input$offset, cex=as.numeric(input$cex_labels))
       }
     }
   }
 
   if(!is.null(input$pdbs_table_rows_selected)) {
-    inds <- input$pdbs_table_rows_selected
+    inds <- as.numeric(input$pdbs_table_rows_selected)
     if(length(inds)>0)
-      points(pc$z[inds, xax], pc$z[inds, yax], col=2, cex=2.5*input$cex_points)
+      points(pc$z[inds, xax], pc$z[inds, yax], col=2, cex=2.5*as.numeric(input$cex_points))
   }
   
   invisible(par(op))

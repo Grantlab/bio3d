@@ -21,7 +21,14 @@ rv$limit_hits <- 5
 rv$cutoff <- 41
 
 observeEvent(input$pdbid, {
-  rv$pdbid <- input$pdbid
+  if(nchar(input$pdbid)>3) {
+    rv$pdbid <- substr(input$pdbid, 1, 4)
+    
+    blast <- run_blast()
+    cut <- set_cutoff(blast, cutoff=NULL)
+    rv$cutoff <- cut$cutoff
+    rv$limit_hits <- 5
+  }
 })
 
 observeEvent(input$chainId, {
@@ -29,11 +36,19 @@ observeEvent(input$chainId, {
 })
 
 observeEvent(input$limit_hits, {
-  rv$limit_hits <- input$limit_hits
+  rv$limit_hits <- as.numeric(input$limit_hits)
 })
 
 observeEvent(input$cutoff, {
-  rv$cutoff <- input$cutoff
+  rv$cutoff <- as.numeric(input$cutoff)
+})
+
+observeEvent(input$reset_cutoff, {
+  blast <- run_blast()
+  cut <- set_cutoff(blast, cutoff=NULL)
+  
+  updateSliderInput(session, "cutoff", value = cut$cutoff)
+  updateSliderInput(session, "limit_hits", value = 5)
 })
 
 observeEvent(input$reset_pdbid, {
@@ -49,7 +64,8 @@ get_pdbid <- reactive({
     pdbid <- rv$pdbid
     
     if(!nchar(pdbid)==4) {
-      stop("Provide a PDB code of 4 characters")
+      ##stop("Provide a PDB code of 4 characters")
+      return()
     }
     
     return(pdbid)
@@ -194,13 +210,14 @@ output$input_pdb_summary <- renderPrint({
   else {
     anno <- anno[1,]
   }
-
-  cat(" Protein: ", anno$compound[1], "\n",
-      "Species: ", anno$source[1], "\n")
+  
+  cat(anno$compound[1], "\n",
+      "(", anno$source[1], ")")
 
 })
 
-## returns BLAST results
+## Returns HMMER results
+## dataframe with columns: acc, evalue, score, desc
 run_blast <- reactive({
   message("run_blast called")
   
@@ -231,6 +248,9 @@ run_blast <- reactive({
     if(!nrow(hmm) > 0)
       stop("No BLAST hits found")
 
+    ## to uppercase_untouched
+    hmm$acc <- format_pdbids(hmm$acc)
+    
     progress$set(value = 5)
     return(hmm)
   }
@@ -244,27 +264,26 @@ filter_hits <- reactive({
   message("filter_hits called")
 
   blast <- run_blast()
-  cutoff <- set_cutoff(blast, cutoff=NULL)
-  grps <- cutoff$grps
-  cutoff <- cutoff$cutoff
+  cutoff <- rv$cutoff
 
-  hits <- blast$score > cutoff
-  acc <- blast$acc[hits]
-  hits2 <- rep(FALSE, length(hits))
-  
-  if(!is.null(rv$limit_hits)) {
-    limit <- as.numeric(rv$limit_hits)
-    if(limit>0)
-      hits2[1:limit] <- TRUE
+  ## logical vector 
+  inds <- blast$score > cutoff
+
+  ## limited by input$limit_hits
+  limit <- rv$limit_hits
+  inds2 <- inds
+  if(limit > 0 & limit < sum(inds)) {
+    inds2[(limit+1):length(inds2)] <- FALSE
   }
-  hits2 <- hits & hits2
 
-  ## hits_all: logical vector of all hits
-  ## hits: logical vector of limited hits
-  ## acc: character vector of PDB ids
-  out <- list(hits=hits2, hits_all=hits,
-              acc=acc[hits2], acc_all=acc[hits], grps=grps)
-
+  ## accession ids above cutoff
+  hits <- blast$acc[inds]
+  hits2 <- blast$acc[inds2]
+  
+  out <- list(hits=hits, inds=inds,
+              hits_limited=hits2, inds_limited=inds2,
+              cutoff=cutoff)
+  
   return(out)
 })
 
@@ -272,12 +291,12 @@ filter_hits <- reactive({
 set_cutoff <- function(blast, cutoff=NULL) {
 
   x <- blast
-  cluster <- TRUE
+  cluster <- FALSE
   cut.seed <- NULL
 
   if(is.null(x$evalue))
     stop("missing evalues")
-
+  
   x$mlog.evalue <- x$score
 
   ##- Find the point pair with largest diff evalue
@@ -339,7 +358,6 @@ set_cutoff <- function(blast, cutoff=NULL) {
   cat("  * Chosen cutoff value of:   ", cutoff, "\n",
       "           Yielding Nhits:   ", sum(inds), "\n")
 
-  out <- list(inds=which(inds), gp.inds=gp.inds, grps=gps, cutoff=cutoff)
+  out <- list(inds=inds, gp.inds=gp.inds, grps=gps, cutoff=cutoff)
   return(out)
-
 }

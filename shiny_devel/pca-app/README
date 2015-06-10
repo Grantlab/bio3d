@@ -30,7 +30,7 @@ install_github("rstudio/DT")
 ## Database table "pdb_annotation"
 CREATE TABLE IF NOT EXISTS `pdb_annotation` (
   `id` int(10) unsigned NOT NULL COMMENT 'Primary Key',
-  `acc` varchar(6) NOT NULL,
+  `acc` varchar(12) NOT NULL,
   `structureId` varchar(4) NOT NULL,
   `chainId` varchar(1) NOT NULL,
   `source` varchar(30) NOT NULL,

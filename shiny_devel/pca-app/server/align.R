@@ -2,15 +2,41 @@
 ##-- Align
 ####################
 
+
+output$include_hits <- renderUI({
+  blast <- run_blast()
+  hits <- filter_hits()
+  
+  all_acc <- blast$acc
+  names(all_acc) <- all_acc
+  
+  sel <- hits$hits_limited
+  names(sel) <- sel
+
+  if(input$filter_sorting == "pdbid") {
+    all_acc <- sort(all_acc)
+    sel <- sort(sel)
+  }
+
+  selectInput("selected_pdbids", "Select / remove hits",
+              choices = all_acc, selected = sel, multiple=TRUE)
+              
+})
+
+
+
 get_acc <- reactive({
 
-  message( as.numeric(input$blast_table_rows_selected) )
+  ##message( as.numeric(input$blast_table_rows_selected) )
   
   if(input$input_type != "multipdb") {
-    blast <- run_blast()
-    ##hits <- filter_hits()
-    acc <- blast$acc[ as.numeric(input$blast_table_rows_selected) ]
-    return(toupper(acc))
+    #blast <- run_blast()
+    #hits <- filter_hits()$hits
+    ##acc <- blast$acc[ as.numeric(input$blast_table_rows_selected) ]
+    ##acc <- hits$acc
+    
+    acc <- input$selected_pdbids
+    return(acc)
   }
   else {
     acc <- toupper(unique(trim(unlist(strsplit(input$pdb_codes, ",")))))
@@ -20,7 +46,7 @@ get_acc <- reactive({
     inds <- unlist(sapply(acc, grep, anno$acc))
     anno <- anno[inds, ]
     acc <- anno$acc
-    return(toupper(acc))
+    return(acc)
    }
 })
 

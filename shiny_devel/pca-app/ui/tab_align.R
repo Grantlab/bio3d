@@ -54,6 +54,22 @@ tabPanel("2. ALIGN",
                   )
            ),
 
+
+         #hr(),
+         #fluidRow(
+         #  column(6,
+         #         wellPanel(
+         #           uiOutput("include_hits")
+         #           )
+         #         )),
+           #column(6,
+           #       wellPanel(
+           #         uiOutput("exclude_hits")
+           #         )
+           #       )
+           #),
+           
+
          hr(),
          fluidRow(
            column(12,

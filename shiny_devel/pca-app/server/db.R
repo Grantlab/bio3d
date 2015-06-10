@@ -21,10 +21,26 @@ db_connect <- function() {
 db_disconnect <- function(con)
   dbDisconnect(con)
 
-get_annotation <- function(acc, use_chain=TRUE) {
-  acc <- toupper(acc)
-  unq <- unique(substr(acc, 1, 4))
+format_pdbids <- function(acc) {
+  
+  ## first 4 chars should be upper
+  ## any chainId should remain untouched - see e.g. PDB ID 3R1C
+  mysplit <- function(x) {
+    str <- unlist(strsplit(x, "_"))
+    if(length(str)>1)
+      paste(toupper(str[1]), "_", str[2], sep="")
+    else
+      toupper(str[1])
+  }
 
+  out <- unlist(lapply(acc, mysplit))
+  return(out)
+}
+
+get_annotation <- function(acc, use_chain=TRUE) {
+  acc <- format_pdbids(acc)
+  unq <- unique(substr(acc, 1, 4))
+  
   if(!use_chain) {
     acc <- unq
   }
@@ -47,7 +63,7 @@ get_annotation <- function(acc, use_chain=TRUE) {
 
   missing_inds <- c()
   for(i in 1:length(unq)) {
-    query <- paste0("SELECT acc FROM pdb_annotation WHERE structureId='", toupper(unq[i]), "'")
+    query <- paste0("SELECT acc FROM pdb_annotation WHERE structureId='", unq[i], "'")
     res <- dbGetQuery(con, query)
 
     if(!nrow(res)>0)
@@ -61,7 +77,7 @@ get_annotation <- function(acc, use_chain=TRUE) {
     where <- paste0("WHERE acc IN ('", paste(acc, collapse="', '"), "')")
   }
   else {
-    where <- paste0("WHERE structureId IN ('", paste(acc, collapse="', '"), "')")
+    where <- paste0("WHERE structureId IN ('", paste(unq, collapse="', '"), "')")
   }
   query <- paste("SELECT acc, structureId, chainId, compound, source, ligandId, chainLength, sequence FROM pdb_annotation", where, "ORDER BY acc")
 
@@ -77,9 +93,10 @@ get_annotation <- function(acc, use_chain=TRUE) {
 }
 
 db_add_annotation <- function(acc, con=NULL) {
-  anno <- pdb.annotate(substr(acc, 1, 4))
-  anno$acc <- toupper(rownames(anno))
-
+  unq <- unique(substr(acc, 1, 4))
+  anno <- pdb.annotate(unq)
+  anno$acc <- row.names(anno)
+  
   close <- FALSE
   if(is.null(con)) {
     con <- db_connect()
