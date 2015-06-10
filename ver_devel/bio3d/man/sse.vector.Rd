@@ -16,7 +16,7 @@
   \item{coil}{ a single element vector for representing non helix and sheet regions. }
   \item{helix}{ a single element vector for representing alpha helices. }
   \item{sheet}{ a single element vector for representing beta strands. }
-  \item{sheet}{ logical, if TRUE a per-residue (calpha atom) vector will be returned. If FALSE a per atom vector will be returned. See examples section for details. }  
+  \item{calpha}{ logical, if TRUE a per-residue (calpha atom) vector will be returned. If FALSE a per atom vector will be returned. See examples section for details. } 
 }
 \details{
     Can be used to output a per-residue secondary structure sequence vector or a per-atom color vector for visualization. See examples section.

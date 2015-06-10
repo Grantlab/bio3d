@@ -2,9 +2,9 @@
 \name{visualize}
 \alias{visualize}
 \alias{visualize.default}
+\alias{visualize.xyz}
 \alias{visualize.pdb}
 \alias{visualize.character}
-\alias{visualize.cna}
 \title{Visualize a Molecular Structure}
 \description{Use the rgl library to visualize in 3D a molecular structure.}
 \usage{
@@ -35,7 +35,6 @@ xyz, elesy = NULL, con = NULL, cell = NULL, type = "l",
 \arguments{
   \item{pdb}{an object of class \sQuote{pdb} containing the molecular structure to visualize.}
   \item{xyz}{a numeric vector of Cartesian coordinates like the \code{xyz} component of objects of class \sQuote{pdb}.}
-  \item{cna}{an object of class \sQuote{cna}.}
   \item{elesy}{a character vector containing atomic symbols (If \code{length(ele.symb)!=length(xyz)/3} \code{elesy} is recycled).}
   \item{con}{an object of class \sQuote{connectivity} or a logical value indicating if the connectivity has to be calculated}
   \item{cell}{a length 6 numeric vector containing the a, b, c, alpha, beta and gamma lattice parameters.}
@@ -82,7 +81,7 @@ and type indicators of the objects added to the scene.
 \author{Julien Idé}
 
 \seealso{
-\code{\link{addXYZ}}, \code{\link{addABC}}, \code{\link{addPBCBox}}, \code{rgl.pop}, \code{rgl.cur}, \code{par3d}
+\code{\link{read.pdb}}, \code{\link{pymol}},\code{rgl.pop}, \code{rgl.cur}, \code{par3d}
 }
 \examples{
 ## Read a PDB file from the RCSB online database

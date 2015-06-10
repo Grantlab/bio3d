@@ -1,8 +1,8 @@
 \name{calpha.connectivity}
 \alias{calpha.connectivity}
 \alias{calpha.connectivity.xyz}
-\alias{calpha.connectivit.pdb}
-\title{Compute Calpha Connectivity From Coordinates}
+\alias{calpha.connectivity.pdb}
+\title{Compute Calpha Atom Connectivity From Coordinates}
 \description{Connects consecutive Calpha atoms at a distance lower than a given cutoff distance}
 \usage{
 calpha.connectivity(...)
@@ -15,13 +15,15 @@ calpha.connectivity(...)
   \item{\dots}{arguments passed to methods.}
 }
 \details{
-\code{calpha.connectivity} first call \code{dist.xyz} to compute inter-atomic distances between consecutive atoms and then determine if they are connected (d < d.cut).
+This function is primarily used for visualization purposes in the \sQuote{view} family of functions when dealing with C-alpha only structures or rendering chain traces. 
+
+Operation wise, \code{calpha.connectivity} first calls \code{dist.xyz} to compute inter-atomic distances between consecutive atoms and then determines if they are connected (d < d.cut). Increasing d.cut will retain more connections when viewing interpolations and displacements from PCA and NMA for example.
 }
 \value{
 A two-columns \sQuote{connectivity} data.frame containing the indexes of bonded atoms. The column names are: \code{eleno.1} and \code{eleno.2}.
 }
 
-\author{Julien Idé}
+\author{Julien Ide and Barry Grant}
 
 \seealso{
 \code{\link{connectivity}}

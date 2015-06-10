@@ -6,7 +6,7 @@ addPBCBox <- function(x, lwd = 2, col = "white"){
   
   cell <- cell.coords(x)
   
-  seg.id <- segments3d(
+  seg.id <- rgl::segments3d(
     rbind(
       c(0,0,0)                  , cell[,1],
       c(0,0,0)                  , cell[,2],

@@ -52,7 +52,7 @@ view <- function(...)
 
 
 view.pdb <- function(pdb, as="all", col="atom", add=FALSE, 
-                     elety.custom = atom.index, ...) {
+                     elety.custom = NULL, ...) {
 
   ##-- Wrapper for visualize() to view larger PDBs the way Barry
   ##    likes to see them most often.
@@ -166,9 +166,16 @@ view.pdb <- function(pdb, as="all", col="atom", add=FALSE,
   }
 
   ##- Atom/Element type check
-  if(!all(are.symb(pdb$atom$elesy)))
-    pdb$atom$elesy <- atom2ele(pdb$atom$elesy, elety.custom)
+  if(!all(are.symb(pdb$atom$elesy))) {
+    elety.custom <- rbind(bio3d::atom.index, elety.custom)
 
+    ## Check if elesy field is missing and infer from elety field
+    if(all(is.na(pdb$atom$elesy))) {
+      pdb$atom$elesy <- atom2ele(pdb$atom$elety, elety.custom)
+    } else {
+      pdb$atom$elesy <- atom2ele(pdb$atom$elesy, elety.custom)
+    }
+  }
 
   ## Bonds/Connectivity check
   #if(is.null(pdb$con)) {
@@ -297,7 +304,7 @@ view.character <- function(file, ...) {
 
 view.xyz <- function(xyz, #as="all", 
                     col="index", add=FALSE, elesy=NULL, 
-                    elety.custom = atom.index, ...) {
+                    elety.custom = NULL, maxframes=100, ...) {
 
   ## Interactive 3D visualization of bio3d 'xyz' class structure objects
   ##
@@ -339,6 +346,7 @@ view.xyz <- function(xyz, #as="all",
 
 
   ##-- Input check 'xyz' (N frames and N atoms)
+  if(is.vector(xyz)) { xyz <- as.xyz(xyz) }
   nstru <- nrow(xyz)
   npos  <- ncol(xyz)/3
 
@@ -348,15 +356,16 @@ view.xyz <- function(xyz, #as="all",
     elesy=rep("C", npos) 
   }
 
-  ##- Atom/Element type check
-  if(!all(are.symb(elesy)))
+  ##- Atom/Element type check and custom addition of name symb pairs
+  if(!all(are.symb(elesy))) {
+    elety.custom <- rbind(bio3d::atom.index, elety.custom)
     elesy <- atom2ele(elesy, elety.custom)
+  }
 
-
-  ## Limit number of fames rendered
-  if(nstru > 100) {
-    warning( paste("Input 'xyz' has", nstru, "frames. Only drawing first 100") )
-    xyz <- xyz[1:100,]; nstru <- 100
+  ##-- Hard Limit number of fames rendered
+  if(nstru > maxframes) {
+    warning( paste("Input 'xyz' has", nstru, "frames. Only drawing first maxframes = ", maxframes) )
+    xyz <- xyz[1:maxframes,]; nstru <- maxframes
   }
 
   ##-- Input 'col=' option will set how display is colored.
@@ -470,10 +479,12 @@ view.pdbs <- function(x, col="index", add=FALSE, elesy=rep("C", ncol(x$xyz)/3), 
       nstru <- nrow(x$xyz)
       npos  <- ncol(x$xyz)/3
       col <- matrix("gray", nrow=nstru, ncol=npos)
-      col[pdbs$sse == "H"] <- "purple"
-      col[pdbs$sse == "E"] <- "yellow"
+      col[x$sse == "H"] <- "purple"
+      col[x$sse == "E"] <- "yellow"
     }
   }
 
   view.xyz(x$xyz, col = col, add = add, elesy=elesy, ...)
 }
+
+view.default <- view.xyz

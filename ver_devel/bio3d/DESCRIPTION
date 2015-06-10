@@ -13,6 +13,7 @@ Suggests:
     ncdf,
     igraph,
     bigmemory,
+    rgl,
     knitr,
     testthat (>= 0.9.1)
 Depends:

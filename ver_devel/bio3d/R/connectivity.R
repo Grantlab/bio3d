@@ -1,5 +1,5 @@
 are.symb <- function(x) {
-  to.return <- (x %in% elements$symb)
+  to.return <- (x %in% bio3d::elements$symb)
 #   to.return[is.na(x)] <- NA
   return(to.return)
 }
@@ -47,7 +47,7 @@ connectivity.xyz <- function(x, elesy, safety = 1.2, by.block = FALSE, ca.check=
   	}
   }
   
-  radii <- elements[match(elesy, elements$symb), "rcov"]*safety
+  radii <- bio3d::elements[match(elesy, bio3d::elements$symb), "rcov"]*safety
   x <- as.data.frame(matrix(x, ncol=3, byrow=TRUE,
                             dimnames = list(NULL, c("x1","x2","x3"))))
   data <- cbind(x, radii)

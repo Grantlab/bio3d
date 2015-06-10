@@ -53,14 +53,14 @@ visualize.xyz <- function(
   #   on.exit(par3d(par.save))
 
   if(!add){
-    open3d()
-    par3d(windowRect = windowRect, userMatrix=userMatrix, FOV = FOV, ...)
-    bg3d(color=bg.col)
+    rgl::open3d()
+    rgl::par3d(windowRect = windowRect, userMatrix=userMatrix, FOV = FOV, ...)
+    rgl::bg3d(color=bg.col)
   }
-  ids <- rgl.ids()
+  ids <- rgl::rgl.ids()
   
   if(xyz.axes) ids <- rbind(ids, addXYZ(lwd = lwd.xyz, cex = cex.xyz))
-  if(abc.axes) ids <- rbind(ids, addABC(cell, lwd = lwd.abc, cex = cex.abc))
+  if(abc.axes) ids <- rbind(ids, addABC(cell, lwd = lwd.abc, cex = cex.abc)) ## <-- MISSING FUN!!
   if(pbc.box ) ids <- rbind(ids, addPBCBox(cell, lwd = lwd.pbc.box))
   
   if(nchar(type)>1)
@@ -75,7 +75,7 @@ visualize.xyz <- function(
     }
     if(!is.null(con)){
       ind <- t(con)
-      seg.id <- segments3d(
+      seg.id <- rgl::segments3d(
         xyz[seq(1,ncol(xyz),3)][ind],
         xyz[seq(2,ncol(xyz),3)][ind],
         xyz[seq(3,ncol(xyz),3)][ind],
@@ -95,7 +95,7 @@ visualize.xyz <- function(
       radii <- elements[M,radii[1]]*
         ifelse(radii[1] == "rcov" & "l" %in% type, 0.5, 1)
     }
-    sph.id <- spheres3d(
+    sph.id <- rgl::spheres3d(
       xyz[seq(1,length(xyz),3)],
       xyz[seq(2,length(xyz),3)],
       xyz[seq(3,length(xyz),3)],
@@ -104,7 +104,7 @@ visualize.xyz <- function(
     ids <- rbind(ids, sph.id)
   }
   if("p" %in% type) {
-    pts.id <- points3d(
+    pts.id <- rgl::points3d(
       xyz[seq(1,length(xyz),3)],
       xyz[seq(2,length(xyz),3)],
       xyz[seq(3,length(xyz),3)],
@@ -114,8 +114,8 @@ visualize.xyz <- function(
   }
   if(centre) {
     cent <- centres(xyz, w=rep(1, length(xyz)/3))
-    userMatrix <- t(translationMatrix(x = -cent[1], y = -cent[2], z = -cent[3]))
-    par3d(userMatrix=userMatrix)
+    userMatrix <- t(rgl::translationMatrix(x = -cent[1], y = -cent[2], z = -cent[3]))
+    rgl::par3d(userMatrix=userMatrix)
   }
   invisible(ids)
 }
@@ -179,7 +179,7 @@ visualize.character <- function(
 #   com.net.weight <- E(net$community.network)$weight
 #   membership.centres <- centres(ca.pdb, factor = cna$communities$membership)
 #   membership.centres <- matrix(membership.centres, ncol=3, byrow=TRUE)
-#   spheres3d(membership.centres, col = com.net.vertex.color, radius = radii, alpha = 0.5)
+#   rgl::spheres3d(membership.centres, col = com.net.vertex.color, radius = radii, alpha = 0.5)
 #   
 #   com.net.con <- apply(get.edgelist(net$community.network), 2, as.integer)
 #   cyls <- apply(com.net.con, 1,

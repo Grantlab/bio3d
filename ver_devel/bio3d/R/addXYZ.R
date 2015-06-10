@@ -4,7 +4,7 @@ addXYZ <- function(lwd = 2, labels= TRUE, cex = 2, col = "white"){
   if(!oops)
     stop("Please install the rgl package from CRAN")
   
-  seg.id <- segments3d(
+  seg.id <- rgl::segments3d(
     rbind(
       c(0,0,0), c(5,0,0),
       c(0,0,0), c(0,5,0),
@@ -16,7 +16,7 @@ addXYZ <- function(lwd = 2, labels= TRUE, cex = 2, col = "white"){
 
   lab.id <- NULL
   if(labels){
-    lab.id <- text3d(
+    lab.id <- rgl::text3d(
       rbind(
         c(0,0,0) + c(5.0+1.0,0.0    ,0.0    ),
         c(0,0,0) + c(0.0    ,5.0+1.0,0.0    ),

@@ -3,7 +3,9 @@
 \alias{are.symb}
 \alias{connectivity}
 \alias{connectivity.default}
+\alias{connectivity.xyz}
 \alias{connectivity.pdb}
+\alias{connectivity.connectivity}
 \title{Compute Connectivity From Coordinates}
 \description{Search the atoms at a distance lower than the bonding distance (sum of covalent radii) to define the connectivity.}
 \usage{
@@ -47,10 +49,10 @@ For \sQuote{pdb} objects, if only Caplha are found \code{calpha.connectivity} is
 A two-columns \sQuote{connectivity} data.frame containing the indexes of bonded atoms. The column names are: \code{eleno.1} and \code{eleno.2}.
 }
 
-\author{Julien Idé}
+\author{Julien Ide}
 
 \seealso{
-\code{\link{elements}}, \code{\link{pdb}}
+\code{\link{elements}}, \code{\link{read.pdb}}
 }
 \examples{
 x <- read.pdb("1bg2")
