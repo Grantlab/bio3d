@@ -34,10 +34,8 @@ output$blast_plot1 <- renderPlot({
   gp <- hits$gp.inds
   grps <- hits$grps
   z <- blast$score
-  print(paste0("dimZ: ",dim(z)))
 
   col.bg <- sapply(grps, function(x) if(x==1) 'red3' else if(x==2) 'grey50')
-
   pch = rep(19, length(col.bg))
   pch[col.bg=='grey50'] <- 21
   col.pch = rep('red3', length(pch))
@@ -45,7 +43,6 @@ output$blast_plot1 <- renderPlot({
   plot(z, xlab="", ylab="Bitscore", bg=col.bg, col=col.pch, pch=pch, cex=1.1)
   abline(v=gp, col="gray50", lty=3)
   abline(h=cutoff, col="red", lty=2)
-  print(as.numeric(input$blast_table_rows_selected))
   if(!length(input$blast_table_rows_selected)>0) {
     limit <- sort(as.numeric(input$limit_hits))
     if(limit > 0) {
@@ -206,6 +203,8 @@ output$blast_table <- renderDataTable({
               dom = "frtiS",
               scrollY = 400,
               scrollCollapse = TRUE,
+              autoWidth = FALSE,
+              columnDefs = list(list(width = '40%', targets = c(list(2)))),
               initComplete = JS(
                 'function(settings, json) {',
                 '//var table = $("#DataTables_Table_1").dataTable();',

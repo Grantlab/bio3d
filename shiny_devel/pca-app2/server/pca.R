@@ -387,7 +387,9 @@ output$pdbs_table <- renderDataTable({
               deferRender = TRUE,
               dom = "frtiS",
               scrollY = 200,
-              scrollCollapse = TRUE
+              scrollCollapse = TRUE,
+              autoWidth = FALSE,
+              columnDefs = list(list(width = '40%', targets = c(list(3))))
               ))
 })
 
