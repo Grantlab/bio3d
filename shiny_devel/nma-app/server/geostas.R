@@ -52,5 +52,5 @@ output$geostasWebGL  <- renderWebGL({
   modes <- calcModes()
   gs <- rv$gs
   col <- gs$grps
-  view.xyz(modes$xyz, col=col, add=TRUE, type=2)
+  view.xyz(modes$xyz, col=col, bg.col="white")
 })

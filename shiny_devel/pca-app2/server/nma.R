@@ -159,13 +159,7 @@ output$nmaWebGL  <- renderWebGL({
                 'default' = colorRampPalette(c('blue', 'gray', 'red'))(n)
                 )
   
-  typ <- switch(input$viewColor2,
-                'mag' = 2,
-                'amalgam' = 1,
-                'default' = 1
-                )
-  
-    view.xyz(trj, bg.col=input$viewBGcolor2, col=col, add=TRUE, type=typ)
+    view.xyz(trj, bg.col=input$viewBGcolor2, col=col, d.cut=8)
 })
 
 

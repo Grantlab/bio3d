@@ -336,13 +336,7 @@ output$pcaWebGL  <- renderWebGL({
                   'default' = colorRampPalette(c('blue', 'gray', 'red'))(n)
                  )
 
-    typ <- switch(input$viewColor,
-                  'mag' = 2,
-                  'amalgam' = 1,
-                  'default' = 1
-                 )
-
-    view.xyz(trj, bg.col=input$viewBGcolor, col=col, add=FALSE, type=typ)
+    view.xyz(trj, bg.col=input$viewBGcolor, col=col)
     #proc.time()
     #cat(proc.time() - ptm)
 })

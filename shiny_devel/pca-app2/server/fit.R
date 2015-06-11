@@ -269,13 +269,7 @@ output$pdbsWebGL  <- renderWebGL({
                 'gaps' = gapscol()
                 )
 
-  typ <- switch(input$viewColor1,
-                'struct' = 1,
-                'cluster' = 1,
-                'core' = 2,
-                'gaps' = 2)
-
-  view.xyz(xyz, bg.col=input$viewBGcolor1, col=col, type=typ, add=FALSE)
+  view.xyz(xyz, bg.col=input$viewBGcolor1, col=col)
 })
 
 observeEvent(input$viewUpdate1, {
