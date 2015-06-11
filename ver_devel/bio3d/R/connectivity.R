@@ -124,8 +124,8 @@ connectivity.pdb <- function(x, safety = 1.2, by.block = TRUE, ...) {
 }
 
 ## Setter
-"connectivity<-" <- function(object, value)
-  UseMethod("connectivity<-", object)
+"connectivity<-" <- function(x, value)
+  UseMethod("connectivity<-")
 
 # Setter for object of class pdb
 # Set the connectivity component of an object of class pdb
@@ -133,8 +133,8 @@ connectivity.pdb <- function(x, safety = 1.2, by.block = TRUE, ...) {
 # However, the syntaxe "x$con <- value" will completly remove the cell component
 # if value is NULL. This is not really a probleme as x$con will still return NULL 
 # if this component is removed. To avoid this, we define a setter function
-"connectivity<-.pdb" <- function(object, value, ...) {
-  object["con"] <- list(value)
-  return(object)
+"connectivity<-.pdb" <- function(x, value) {
+  x["con"] <- list(value)
+  return(x)
 }  
 

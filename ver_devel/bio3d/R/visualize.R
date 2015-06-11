@@ -15,11 +15,7 @@ visualize.xyz <- function(
   
   if(nrow(xyz) != 1)
     stop("'x' must be a single row 'xyz' matrix")
-  
-  oops <- require(rgl)
-  if(!oops)
-    stop("Please install the rgl package from CRAN")
-  
+    
   if(is.null(elesy)) {
     warning("'elesy' is not defined. All atoms have been considered as dummy atoms")
     elesy <- rep("Xx", length(xyz)/3)
@@ -27,6 +23,9 @@ visualize.xyz <- function(
     
   if(length(elesy) != length(xyz)/3)
     stop("'xyz' and 'elesy' must have matching lengths")
+  
+  data("elements", package = "bio3d", envir=environment()) 
+  elements <- get("elements", envir=environment()) 
   
   M <- match(elesy,elements[,"symb"])
   M[is.na(M)] <- 1 # Unrecognized elements are considered as dummy atoms    
@@ -52,76 +51,80 @@ visualize.xyz <- function(
   #   par.save <- par3d(skipRedraw=TRUE)
   #   on.exit(par3d(par.save))
 
-  if(!add){
-    rgl::open3d()
-    rgl::par3d(windowRect = windowRect, userMatrix=userMatrix, FOV = FOV, ...)
-    rgl::bg3d(color=bg.col)
-  }
-  ids <- rgl::rgl.ids()
-  
-  if(xyz.axes) ids <- rbind(ids, addXYZ(lwd = lwd.xyz, cex = cex.xyz))
-  if(abc.axes) ids <- rbind(ids, addABC(cell, lwd = lwd.abc, cex = cex.abc)) ## <-- MISSING FUN!!
-  if(pbc.box ) ids <- rbind(ids, addPBCBox(cell, lwd = lwd.pbc.box))
-  
-  if(nchar(type)>1)
-    type <- strsplit(type, "")[[1]]
-  if(!all(type %in% c("l","s","p")))
-    stop("Unrecognized 'type'")
-  
-  if("l" %in% type) {
-    if(is.null(con)) {
-      warning("Unspecifyed connectivity: Computing connectivity from coordinates...")
-      con <- connectivity.xyz(x = xyz, elesy = elesy, by.block = TRUE)
+  if(requireNamespace(package = "rgl", quietly = TRUE)){
+    if(!add){
+      rgl::open3d()
+      rgl::par3d(windowRect = windowRect, userMatrix=userMatrix, FOV = FOV, ...)
+      rgl::bg3d(color=bg.col)
     }
-    if(!is.null(con)){
-      ind <- t(con)
-      seg.id <- rgl::segments3d(
-        xyz[seq(1,ncol(xyz),3)][ind],
-        xyz[seq(2,ncol(xyz),3)][ind],
-        xyz[seq(3,ncol(xyz),3)][ind],
-        color = col[ind], lwd=lwd, ...)
-      
-      seg.id <- data.frame(id = seg.id, type = "atom.seg")
-      ids <- rbind(ids, seg.id)
-    } else{
-      warning("'con' is empty: 'type' has been set to 'p'.")
-      type <- "p"
+    ids <- rgl::rgl.ids()
+    
+    if(xyz.axes) ids <- rbind(ids, addXYZ(lwd = lwd.xyz, cex = cex.xyz))
+    if(abc.axes) ids <- rbind(ids, addABC(cell, lwd = lwd.abc, cex = cex.abc)) ## <-- MISSING FUN!!
+    if(pbc.box ) ids <- rbind(ids, addPBCBox(cell, lwd = lwd.pbc.box))
+    
+    if(nchar(type)>1)
+      type <- strsplit(type, "")[[1]]
+    if(!all(type %in% c("l","s","p")))
+      stop("Unrecognized 'type'")
+    
+    if("l" %in% type) {
+      if(is.null(con)) {
+        warning("Unspecifyed connectivity: Computing connectivity from coordinates...")
+        con <- connectivity.xyz(x = xyz, elesy = elesy, by.block = TRUE)
+      }
+      if(!is.null(con)){
+        ind <- t(con)
+        seg.id <- rgl::segments3d(
+          xyz[seq(1,ncol(xyz),3)][ind],
+          xyz[seq(2,ncol(xyz),3)][ind],
+          xyz[seq(3,ncol(xyz),3)][ind],
+          color = col[ind], lwd=lwd, ...)
+        
+        seg.id <- data.frame(id = seg.id, type = "atom.seg")
+        ids <- rbind(ids, seg.id)
+      } else{
+        warning("'con' is empty: 'type' has been set to 'p'.")
+        type <- "p"
+      }
     }
-  }
-  if("s" %in% type) {
-    if(is.character(radii[1])){
-      if(! radii[1] %in% c("rcov", "rvdw") )
-        stop("'radii' must be one of 'rcov', 'rvdw' or a numerical vector")
-      radii <- elements[M,radii[1]]*
-        ifelse(radii[1] == "rcov" & "l" %in% type, 0.5, 1)
+    if("s" %in% type) {
+      if(is.character(radii[1])){
+        if(! radii[1] %in% c("rcov", "rvdw") )
+          stop("'radii' must be one of 'rcov', 'rvdw' or a numerical vector")
+        radii <- elements[M,radii[1]]*
+          ifelse(radii[1] == "rcov" & "l" %in% type, 0.5, 1)
+      }
+      sph.id <- rgl::spheres3d(
+        xyz[seq(1,length(xyz),3)],
+        xyz[seq(2,length(xyz),3)],
+        xyz[seq(3,length(xyz),3)],
+        color = col, radius = radii, ...)
+      sph.id <- data.frame(id = sph.id, type= "atom.sph")
+      ids <- rbind(ids, sph.id)
     }
-    sph.id <- rgl::spheres3d(
-      xyz[seq(1,length(xyz),3)],
-      xyz[seq(2,length(xyz),3)],
-      xyz[seq(3,length(xyz),3)],
-      color = col, radius = radii, ...)
-    sph.id <- data.frame(id = sph.id, type= "atom.sph")
-    ids <- rbind(ids, sph.id)
+    if("p" %in% type) {
+      pts.id <- rgl::points3d(
+        xyz[seq(1,length(xyz),3)],
+        xyz[seq(2,length(xyz),3)],
+        xyz[seq(3,length(xyz),3)],
+        color = col, ...)
+      pts.id <- data.frame(id = pts.id, type = "atom.pts")
+      ids <- rbind(ids, pts.id)
+    }
+    if(centre) {
+      cent <- centres(xyz, w=rep(1, length(xyz)/3))
+      userMatrix <- t(rgl::translationMatrix(x = -cent[1], y = -cent[2], z = -cent[3]))
+      rgl::par3d(userMatrix=userMatrix)
+    }
+    invisible(ids)
+  } else {
+    stop("Please install the rgl package from CRAN")
   }
-  if("p" %in% type) {
-    pts.id <- rgl::points3d(
-      xyz[seq(1,length(xyz),3)],
-      xyz[seq(2,length(xyz),3)],
-      xyz[seq(3,length(xyz),3)],
-      color = col, ...)
-    pts.id <- data.frame(id = pts.id, type = "atom.pts")
-    ids <- rbind(ids, pts.id)
-  }
-  if(centre) {
-    cent <- centres(xyz, w=rep(1, length(xyz)/3))
-    userMatrix <- t(rgl::translationMatrix(x = -cent[1], y = -cent[2], z = -cent[3]))
-    rgl::par3d(userMatrix=userMatrix)
-  }
-  invisible(ids)
 }
 
 visualize.pdb <- function(
-  pdb, cell = NULL, type = "l", con = TRUE,
+  pdb, cell = pdb$cell, type = "l", con = TRUE,
   xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
   lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
   cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rvdw", bg.col = "black",
@@ -130,8 +133,8 @@ visualize.pdb <- function(
   if(!is.pdb(pdb))
     stop("'pdb' must be an object of class pdb. See read.pdb")
   
-  if(any(!are.symb(pdb$atom$elesy) & is.na(pdb$atom$elesy)))
-    stop("'pdb' contains unvalid 'elesy'")
+#   if(any(!are.symb(pdb$atom$elesy) & is.na(pdb$atom$elesy)))
+#     stop("'pdb' contains unvalid 'elesy'")
   
   if(grepl("l", type) & (is.null(pdb$con) | con)) {
     cat("Computing connectivity from coordinates...\n")
@@ -154,6 +157,8 @@ visualize.character <- function(
   add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...) {
   
   x <- read.pdb(file)
+  if(is.null(cell))
+    cell <- x$cell
   visualize.pdb(
     x, cell, type, con, xyz.axes, abc.axes, pbc.box, centre,
     lwd, lwd.xyz, lwd.abc, lwd.pbc.box, cex.xyz, cex.abc, col,

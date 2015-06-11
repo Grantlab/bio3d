@@ -59,6 +59,7 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
     ATOM and HETATM coordinate data. }
   \item{calpha }{ logical vector with length equal to \code{nrow(atom)}
     with TRUE values indicating a C-alpha \dQuote{elety}. }
+  \item{cell}{an object of class \sQuote{cell} containing lattice parameters.}
   \item{remark }{ a list object containing information taken from 'REMARK'
     records of a \code{"pdb"}. It can be used for building biological units
     (See \code{\link{biounit}}). }

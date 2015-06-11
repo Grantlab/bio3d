@@ -86,6 +86,23 @@ function (file, maxlines=-1, multi=FALSE,
   type <- substring(raw.lines, first["type"], last["type"])
 
 
+  ##- Read lattice parameters
+  cell <-raw.lines[grepl("^CRYST1", raw.lines)]
+  if(length(cell)){
+    cell <- cell[1]
+    cell <- cell.default(
+      abc = c(a = as.numeric(substr(cell,  7, 15)),
+              b = as.numeric(substr(cell, 16, 24)),
+              c = as.numeric(substr(cell, 25, 33))),
+      abg = c(alpha = as.numeric(substr(cell, 34, 40)),
+              beta  = as.numeric(substr(cell, 41, 47)),
+              gamma = as.numeric(substr(cell, 48, 54))),
+      orient = "cbzy",
+      sgroup = as.character(substr(cell, 55, 66)) )
+  } else {
+    cell <- NULL
+  }
+  
   ##- Check number of END/ENDMDL records
   raw.end <- sort(c(which(type == "END"),
                     which(type == "ENDMDL")))
@@ -247,7 +264,8 @@ function (file, maxlines=-1, multi=FALSE,
                sheet=sheet,
                seqres=seqres,
                xyz=as.xyz(xyz.models),
-               calpha = NULL, remark = remark, call=cl)
+               calpha = NULL, cell = cell,
+               remark = remark, call=cl)
 
   class(output) <- c("pdb", "sse")  
   ca.inds <-  atom.select.pdb(output, string="calpha", verbose=FALSE)
