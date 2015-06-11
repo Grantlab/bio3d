@@ -314,7 +314,12 @@ output$pcaWebGL  <- renderWebGL({
     #ptm <- proc.time()
     #pdbs <- fit()
     pc <- pca1()
-    trj <- mktrj(pc, pc=as.numeric(input$viewPC), rock=FALSE)
+    
+    mag <- as.numeric(input$mag1)
+    step <- mag/8
+    
+    trj <- mktrj(pc, pc=as.numeric(input$viewPC), rock=FALSE,
+                 mag=mag, step=step)
     n <- nrow(trj)
 
     amalcol <- function(x) {
@@ -336,7 +341,7 @@ output$pcaWebGL  <- renderWebGL({
                   'default' = colorRampPalette(c('blue', 'gray', 'red'))(n)
                  )
 
-    view.xyz(trj, bg.col=input$viewBGcolor, col=col)
+    view.xyz(trj, bg.col=input$viewBGcolor, col=col, d.cut=6)
     #proc.time()
     #cat(proc.time() - ptm)
 })

@@ -1,6 +1,6 @@
 output$pdbWebGL  <- renderWebGL({
   pdb <- get_pdb()
-  view.pdb(pdb, as="overview", col="sse")
+  view.pdb(pdb, as=input$view_inpdb_as, col=input$view_inpdb_col)
 })
 
 output$blast_plot <- renderUI({
@@ -141,20 +141,38 @@ get_blasttable <- reactive({
   
   if(input$input_type != "multipdb") {
     blast <- run_blast()
-    ##hits <- filter_hits()
     grps <- set_cutoff(blast, cutoff=rv$cutoff)$grps
 
     acc <- blast$acc
     anno <- get_annotation(acc)
+
+    ## clean up if length does not correspond
+    if(length(acc) != length(anno$acc)) {
+      print(paste("blast: ", length(acc)))
+      print(paste("anno: ", length(anno$acc)))
+      
+      if(length(acc) > length(anno$acc)) {
+        inds <- acc %in% anno$acc
+        blast <- blast[inds,, drop=FALSE]
+      }
+    }
+    
     anno$score <- blast$score
   }
   else {
-    acc <- toupper(unique(trim(unlist(strsplit(input$pdb_codes, ",")))))
+    acc <- unique(trim(unlist(strsplit(input$pdb_codes, ","))))
     acc <- acc[acc!=""]
+
+    if(!length(acc) > 0)
+      return()
+
+    acc <- format_pdbids(acc)
     anno <- get_annotation(acc, use_chain=FALSE)
+    
     inds <- unlist(sapply(acc, grep, anno$acc))
     anno <- anno[inds, ]
     acc <- anno$acc
+
     anno$score <- rep(0, length(acc))
     
     hits <- NULL

@@ -8,6 +8,10 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
              checkboxInput('show_trj', 'Show PC Trajectory', value=FALSE),
 
              selectInput('viewPC', 'Choose Principal Component:', choices=c(1:10)),
+
+             sliderInput("mag1", "Magnification factor:",
+                         min = 1, max = 10, value = 1),
+             
              radioButtons('viewColor', label='Structure color',
                           choices=list(
                             'Amalgam' = 'amalgam',

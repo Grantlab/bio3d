@@ -13,7 +13,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                     uiOutput('struct_dropdown2'), ## viewStruct_nma
 
                     sliderInput("mag2", "Magnification factor:",
-                                min = 1, max = 15, value = 5),
+                                min = 1, max = 20, value = 5),
                     
                     radioButtons('viewColor2', label='Structure color',
                                  choices=list(

@@ -19,17 +19,33 @@ rv$pdbid <- "2LUM"
 rv$chainid <- "A"
 rv$limit_hits <- 5
 rv$cutoff <- 41
+rv$sequence <- "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE"
 
 observeEvent(input$pdbid, {
   if(nchar(input$pdbid)>3) {
-    rv$pdbid <- substr(input$pdbid, 1, 4)
-    
-    blast <- run_blast()
-    cut <- set_cutoff(blast, cutoff=NULL)
-    rv$cutoff <- cut$cutoff
-    rv$limit_hits <- 5
+    if(input$input_type == "pdb") {
+      rv$pdbid <- substr(input$pdbid, 1, 4)
+      blast <- run_blast()
+      cut <- set_cutoff(blast, cutoff=NULL)
+      rv$cutoff <- cut$cutoff
+      rv$limit_hits <- 5
+    }
   }
 })
+
+observeEvent(input$sequence, {
+  if(nchar(input$sequence)>10) {
+    if(input$input_type == "sequence") {
+      rv$sequence <- input$sequence
+      blast <- run_blast()
+      cut <- set_cutoff(blast, cutoff=NULL)
+      rv$cutoff <- cut$cutoff
+      rv$limit_hits <- 5
+    }
+  }
+})
+
+
 
 observeEvent(input$chainId, {
   rv$chainid <- input$chainId
@@ -44,11 +60,13 @@ observeEvent(input$cutoff, {
 })
 
 observeEvent(input$reset_cutoff, {
-  blast <- run_blast()
-  cut <- set_cutoff(blast, cutoff=NULL)
-  
-  updateSliderInput(session, "cutoff", value = cut$cutoff)
-  updateSliderInput(session, "limit_hits", value = 5)
+  if(input$input_type != "multipdb") {
+    blast <- run_blast()
+    cut <- set_cutoff(blast, cutoff=NULL)
+    
+    updateSliderInput(session, "cutoff", value = cut$cutoff)
+    updateSliderInput(session, "limit_hits", value = 5)
+  }
 })
 
 observeEvent(input$reset_pdbid, {
@@ -129,14 +147,15 @@ get_pdb <- reactive({
 ## returns the sequence (fasta object)
 get_sequence <- reactive({
   message("get_sequence called")
-  pdbid <- get_pdbid()
-  chainid <- get_chainid()
   
-  if(is.null(input$input_type))
-    stop("no input provided")
-
+  #if(is.null(input$input_type))
+  #  return()
+  
   ## option 1 - PDB code provided
   if(input$input_type == "pdb") {
+    pdbid <- get_pdbid()
+    chainid <- get_chainid()
+ 
     anno <- input_pdb_annotation()
 
     if(is.vector(input$chainId)) {
@@ -151,10 +170,13 @@ get_sequence <- reactive({
 
   ## option 2 - sequence provided
   if(input$input_type == "sequence") {
-    if(nchar(input$sequence)==0)
-      stop("sequence is of length 0")
+    message(rv$sequence)
+    
+    if(nchar(rv$sequence)==0)
+      return()
+      ##stop("sequence is of length 0")
 
-    inp <- unlist(strsplit(input$sequence, "\n"))
+    inp <- unlist(strsplit(rv$sequence, "\n"))
     inds <- grep("^>", inp, invert=TRUE)
 
     if(!length(inds)>0)
@@ -162,6 +184,7 @@ get_sequence <- reactive({
 
     inp <- toupper(paste(inp[inds], collapse=""))
     seq <- as.fasta(unlist(strsplit(inp, "")))
+
   }
 
   return(seq)
@@ -221,16 +244,21 @@ output$input_pdb_summary <- renderPrint({
 run_blast <- reactive({
   message("run_blast called")
   
-  if(is.null(rv$chainid)) {
-    stop("no chainId provided")
-  }
-
-  if(input$input_type == "multipdb") {
-    stop(" no need to blast when input is multipdb")
-  }
-  else {
+  if(input$input_type != "multipdb") {
     message("blasting")
+
+    if(input$input_type == "pdb") 
+      if(is.null(rv$chainid)) 
+        return(NULL)
+    
+    if(input$input_type == "sequence") 
+      if(!nchar(rv$sequence) > 10)
+        return(NULL)
+    
     input_sequence <- get_sequence()
+
+    if(is.null(input_sequence))
+      return(NULL)
 
     progress <- shiny::Progress$new(session, min=1, max=5)
     on.exit(progress$close())
@@ -253,6 +281,9 @@ run_blast <- reactive({
     
     progress$set(value = 5)
     return(hmm)
+  }
+  else {
+    return()
   }
 })
 
@@ -290,6 +321,9 @@ filter_hits <- reactive({
 
 set_cutoff <- function(blast, cutoff=NULL) {
 
+  if(is.null(blast))
+    return(NULL)
+  
   x <- blast
   cluster <- FALSE
   cut.seed <- NULL

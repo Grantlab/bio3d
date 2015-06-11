@@ -25,7 +25,8 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     
                     conditionalPanel(
                       condition = "input.input_type == 'sequence'",
-                      tags$textarea(id="sequence", rows=4, cols=40, "")
+                      tags$textarea(id="sequence", rows=4, cols=40,
+                                    "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE")
                       ),
                     
                     conditionalPanel(
@@ -86,7 +87,16 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     conditionalPanel(
                       condition = "input.show_pdb == true",
                       h3("Input PDB"),
-                      webGLOutput('pdbWebGL')
+                      webGLOutput('pdbWebGL'),
+                      radioButtons("view_inpdb_as", "View as",
+                                   c("Overview" = "overview",
+                                     "Calpha trace" = "calpha"),
+                                   inline=TRUE),
+                      radioButtons("view_inpdb_col", "Color by",
+                                   c("SSE" = "sse",
+                                     "Index" = "index"),
+                                   inline=TRUE)
+                      
                       ),
 
                     conditionalPanel(
@@ -160,31 +170,25 @@ tabPanel("1. SEARCH", icon=icon("home"),
              )
            ),
 
-         conditionalPanel(
-           condition = "input.input_type != 'multipdb'",
-           hr(),
-           fluidRow(
-             column(12,
-                    wellPanel(
-                      h4("Manual hit filtering"),
-                      uiOutput("include_hits"),
-                      radioButtons("filter_sorting", "Order by",
-                                   c("BLAST score" = "blast",
-                                     "PDB ID" = "pdbid"),
-                                   inline=TRUE)
-                      )
+         hr(),
+         fluidRow(
+           column(12,
+                  wellPanel(
+                    h4("Manual hit filtering"),
+                    uiOutput("include_hits"),
+                    radioButtons("filter_sorting", "Order by",
+                                 c("BLAST score" = "blast",
+                                   "PDB ID" = "pdbid"),
+                                 inline=TRUE)
                     ))
            ),
-
-         conditionalPanel(
-           condition = "input.input_type != 'multipdb'",
-           hr(),
-           fluidRow(
-             column(12,
-                    wellPanel(
-                      h4("BLAST annotation of hits"),
-                      DT::dataTableOutput('blast_table')
-                      )
+         
+         hr(),
+         fluidRow(
+           column(12,
+                  wellPanel(
+                    h4("BLAST annotation of hits"),
+                    DT::dataTableOutput('blast_table')
                     )
              
              )

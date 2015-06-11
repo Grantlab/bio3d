@@ -269,7 +269,12 @@ output$pdbsWebGL  <- renderWebGL({
                 'gaps' = gapscol()
                 )
 
-  view.xyz(xyz, bg.col=input$viewBGcolor1, col=col)
+  bg <- input$viewBGcolor1
+  if(bg == "black") {
+    col[ col==1 ] <- "grey90"
+  }
+  
+  view.xyz(xyz, bg.col=bg, col=col)
 })
 
 observeEvent(input$viewUpdate1, {

@@ -159,7 +159,7 @@ output$nmaWebGL  <- renderWebGL({
                 'default' = colorRampPalette(c('blue', 'gray', 'red'))(n)
                 )
   
-    view.xyz(trj, bg.col=input$viewBGcolor2, col=col)
+    view.xyz(trj, bg.col=input$viewBGcolor2, col=col, d.cut=6)
 })
 
 
