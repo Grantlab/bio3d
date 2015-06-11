@@ -18,7 +18,7 @@ xyz, elesy = NULL, con = NULL, cell = NULL, type = "l",
   add = FALSE, windowRect = c(0,0,800,600), userMatrix=diag(4), FOV = 0, ...)
 
 \method{visualize}{pdb}(
-  pdb, cell = NULL, type = "l", con = TRUE,
+  pdb, cell = pdb$cell, type = "l", con = TRUE,
   xyz.axes = FALSE, abc.axes = FALSE, pbc.box = FALSE, centre = TRUE,
   lwd = 2, lwd.xyz = lwd, lwd.abc = lwd, lwd.pbc.box = lwd,
   cex.xyz = 2, cex.abc = 2, col = NULL, radii = "rvdw", bg.col = "black",
@@ -84,11 +84,13 @@ and type indicators of the objects added to the scene.
 \code{\link{read.pdb}}, \code{\link{pymol}},\code{rgl.pop}, \code{rgl.cur}, \code{par3d}
 }
 \examples{
+\dontrun{
 ## Read a PDB file from the RCSB online database
 pdb <- read.pdb("1bg2")
 visualize(pdb, type = "p" , windowRect=c(0  ,0  ,400,400))
 visualize(pdb, type = "l" , windowRect=c(400,0  ,800,400))
 visualize(pdb, type = "s" , windowRect=c(0  ,400,400,800), radii = "rvdw")
 visualize(pdb, type = "ls", windowRect=c(400,400,800,800))
+}
 }
 \keyword{ dynamic }
