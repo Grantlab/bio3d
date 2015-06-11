@@ -82,10 +82,12 @@
   \code{\link{read.pdb}}, \code{\link{visualize}}
 }
 \examples{
+  \dontrun{
   x <- read.pdb("1bg2")
   is.cell(x$cell)
   cellCoords(x)
   cellVolume(x)
   cellDensity(x)
+  }
 }
 \keyword{ classes }
