@@ -9,7 +9,8 @@
 pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...) 
 }
 \arguments{
-  \item{files}{ a character vector of PDB file names. }
+  \item{files}{ a character vector of PDB file names. Alternatively, a
+    list of \code{pdb} objects can be provided. }
   \item{fit}{ logical, if TRUE coordinate superposition is performed on
     the input structures. }
   \item{pqr}{ logical, if TRUE the input structures are assumed to be in
@@ -50,13 +51,21 @@ pdbaln(files, fit = FALSE, pqr = FALSE, ncore = 1, nseg.scale = 1,  ...)
 \seealso{
   \code{\link{read.pdb}}, \code{\link{pdbseq}}, \code{\link{seqaln}},
   \code{\link{read.fasta}},\code{\link{read.fasta.pdb}},
-  \code{\link{core.find}}, \code{\link{fit.xyz}}, \code{\link{read.all}}
+  \code{\link{core.find}}, \code{\link{fit.xyz}}, \code{\link{read.all}},
+  \code{\link{pymol.pdbs}}
 }
 \examples{
 \dontrun{
+##- Align PDBs (from vector of filenames)
 #files <- get.pdb(c("4q21","5p21"), URLonly=TRUE)
 files <- get.pdb(c("4q21","5p21"), path=tempdir(), overwrite=TRUE)
 pdbaln(files)
+
+
+##- Align PDBs (from list of existing PDB objects)
+pdblist <- list(read.pdb(files[1]), read.pdb(files[2]))
+pdbaln(pdblist)
+
 }
 }
 \keyword{ utilities }

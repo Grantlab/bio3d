@@ -43,9 +43,9 @@ Perform normal mode analysis (\code{\link{nma}}, \code{\link{build.hessian}}), e
 mode analysis (\code{\link{nma.pdbs}}), mode comparison
 (\code{\link{rmsip}}) and (\code{\link{overlap}}), atomic fluctuation
 prediction (\code{\link{fluct.nma}}), cross-correlation analysis
-(\code{\link{dccm.nma}}), cross-correlation visualization (\code{\link{view.dccm}}),
+(\code{\link{dccm.nma}}), cross-correlation visualization (\code{\link{pymol.dccm}}),
 deformation analysis (\code{\link{deformation.nma}}), and mode visualization
-(\code{\link{view.modes}}, \code{\link{mktrj.nma}}).
+(\code{\link{pymol.modes}}, \code{\link{mktrj.nma}}).
 
 In addition, various utility functions are provided to facilitate
 manipulation and analysis of biological sequence and structural data
