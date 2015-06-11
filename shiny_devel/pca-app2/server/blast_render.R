@@ -190,21 +190,27 @@ get_blasttable <- reactive({
   show.cols <- c("acc", "compound", "source", "ligandId", "score")
   col.inds <- sapply(show.cols, grep, colnames(anno))
 
-  #print(col.inds)
-  #print(head(anno[, col.inds]))
-  return(anno[, col.inds])
+  # re-ordering changed below to ID, Score .. for datatable
+  return(anno[, col.inds[c(1,5,2,3,4)]])
 })
 
 output$blast_table <- renderDataTable({
-    DT::datatable(get_blasttable(), extensions = 'Scroller', escape = FALSE,
-            colnames = c("ID", "Name", "Species", "Ligands", "Score"),
+    x <- get_blasttable()
+    DT::datatable(x, extensions = 'Scroller', escape = FALSE,
+            colnames = c("ID", "Score", "Name", "Species", "Ligands"),
             options = list(
               deferRender = TRUE,
               dom = "frtiS",
               scrollY = 400,
               scrollCollapse = TRUE,
               autoWidth = FALSE,
-              columnDefs = list(list(width = '40%', targets = c(list(2)))),
+              columnDefs = list(
+                list( width = '5%', targets = c(0) ),
+                list( width = '10%', targets = c(1, 2) ),
+                list( width = '40%', targets = c(3) ),
+                list( width = '20%', targets = c(4) ),
+                list( width = '15%', targets = c(5) )
+              ),
               initComplete = JS(
                 'function(settings, json) {',
                 '//var table = $("#DataTables_Table_1").dataTable();',
