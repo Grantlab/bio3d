@@ -6,7 +6,7 @@
 ```
 #!r
 library(devtools)
-install.packages(c("devtools", "shiny", "RMySQL", "maptools", "reshape2", "abind"), dependencies=TRUE)
+install.packages(c("devtools", "shiny", "RMySQL", "maptools", "reshape2", "abind", "threejs", dependencies=TRUE)
 
 ## special builds
 install_bitbucket("Grantlab/bio3d", subdir = "ver_devel/bio3d/", ref="feature_shiny")
