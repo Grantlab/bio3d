@@ -196,8 +196,12 @@ get_blasttable <- reactive({
 
 output$blast_table <- renderDataTable({
     x <- get_blasttable()
+    limit <- as.numeric(input$limit_hits)
+    print(rownames(x)[c(1,2,3)])
     DT::datatable(x, extensions = 'Scroller', escape = FALSE,
             colnames = c("ID", "Score", "Name", "Species", "Ligands"),
+            selection = list(mode='multiple',
+                             selected = if(limit == 0) as.character(1:5) else as.character(1:limit)),
             options = list(
               deferRender = TRUE,
               dom = "frtiS",
@@ -210,17 +214,6 @@ output$blast_table <- renderDataTable({
                 list( width = '40%', targets = c(3) ),
                 list( width = '20%', targets = c(4) ),
                 list( width = '15%', targets = c(5) )
-              ),
-              initComplete = JS(
-                'function(settings, json) {',
-                '//var table = $("#DataTables_Table_1").dataTable();',
-                'var nodes = this.fnGetNodes(); //fnGetDisplayNodes',
-                paste0('for(var i =0; i < ', if(length(input$limit_hits)==0) 5 else as.numeric(input$limit_hits), '; i++) {'),
-                '$(nodes[i]).addClass("selected");',
-                '}',
-                '$(nodes[0]).click();',
-                '$(nodes[0]).click();',
-                '}'
               )
            )
     )
@@ -237,7 +230,6 @@ output$pdb_chains <- renderUI({
 
   selectInput("chainId", "Limit to chain ID:",
               choices = chains, selected = chains[1], multiple=FALSE)
-  
 })
 
 
