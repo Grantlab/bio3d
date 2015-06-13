@@ -136,6 +136,8 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
          fluidRow(
            column(4,
                   wellPanel(
+                    style="background: #FFFFFF;",
+
                     h4("Summary of invariant core"),
                     dataTableOutput("print_core")
                     )
@@ -143,6 +145,8 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
 
            column(4,
                   wellPanel(
+                    style="background: #FFFFFF;",
+
                     h4("RMSD summary"),
                     uiOutput("reference_selector"),
                     dataTableOutput("rmsd_table")
@@ -151,6 +155,8 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
 
            column(4,
                   wellPanel(
+                    style="background: #FFFFFF;",
+                    
                     h4("Cluster representatives"),
                     verbatimTextOutput("representatives")
                     )

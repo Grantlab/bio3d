@@ -69,7 +69,7 @@ output$blast_plot1 <- renderPlot({
   }
     
   par(mar=c(6, 4, 0, 0))
-  plot(z, xlab="", ylab="Bitscore", bg=bg, col=col, pch=pch, cex=1.1)
+  plot(z, xlab="", ylab="Bitscore of Alignment to Input", bg=bg, col=col, pch=pch, cex=1.1)
   abline(v=gp, col="gray50", lty=3)
   abline(h=cutoff, col="red", lty=2)
 
@@ -257,14 +257,14 @@ output$cutoff_slider <- renderUI({
   blast <- run_blast()
   cutoff <- rv$cutoff
 
-  sliderInput("cutoff", "Adjust cutoff:",
+  sliderInput("cutoff", "Adjust inclusion bitscore cutoff:",
               min = floor(min(blast$score)), max = floor(max(blast$score)), value = cutoff)
 })
 
 output$hits_slider <- renderUI({
   hits <- filter_hits()
 
-  sliderInput("limit_hits", "Limit hits:",
+  sliderInput("limit_hits", "Limit total number of included structures:",
               min = 1, max = length(hits$hits), value = rv$limit_hits, step=1)
 })
 

@@ -41,6 +41,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
   fluidRow(
     column(4,
       wellPanel(
+        ##-- !! This needs to come just before the table that allows structure selection !! --##
         h4("Conformer plot"),
         helpText("Two dimensional representation of conformational variability described by the two principal components ..."),
 
