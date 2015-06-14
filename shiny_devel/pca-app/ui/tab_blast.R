@@ -1,3 +1,10 @@
+
+actionButton3 <- function (inputId, label, icon = NULL, cl="btn btn-default action-button",...)
+{
+    tags$button(id = inputId, type = "button", class = cl, list(icon, label), ...)
+} 
+
+
 tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
          ##shinyjs::useShinyjs(),
@@ -36,7 +43,8 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       textInput("pdbid", label="Enter a 4 character RCSB PDB code/ID:", value = "2LUM")
                       ),
 
-                    actionButton("reset_pdbid", "Reset PDB input", icon=icon("undo"))
+                    actionButton3("page1_hits", "Next (Hit selection)", icon=icon("arrow-down"), cl="btn btn-primary action-button"),
+                    actionButton("reset_pdbid", "Reset PDB", icon=icon("undo"))
                     )
                   ),
            
@@ -146,6 +154,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                         uiOutput("cutoff_slider"),
                         
                         uiOutput("hits_slider"),
+                        actionButton3("page1_table", "Next (Further selection)", icon=icon("arrow-down"), cl="btn btn-primary action-button"),
                         actionButton("reset_cutoff", "Reset cutoff", icon=icon("undo"))
                         ),
                       
@@ -193,9 +202,10 @@ tabPanel("1. SEARCH", icon=icon("home"),
            column(12,
                   wellPanel(
                     h4("C) Optional filtering of related structures for further analysis"),
-                    helpText("Select structures by clicking their entries in the below table."),
+                    helpText("Optionaly select or de-select structures by clicking their entries in the below table."),
                      
                     DT::dataTableOutput('blast_table')
+                    #actionButton3("page2", "Next (Alignment)", icon=icon("arrow-right"), cl="btn btn-primary action-button")
                     )
              
              )
