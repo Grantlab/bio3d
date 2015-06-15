@@ -122,7 +122,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       css.type = "text/css";
                       css.innerHTML = ".nv-y .nv-axislabel { font-size: 20px; }";
                       document.body.appendChild(css);
-                      document.getElementById("blast_plot").focus();
+                      document.getElementById("blast_plot").scrollIntoView();
                       '
                       ))
                     )

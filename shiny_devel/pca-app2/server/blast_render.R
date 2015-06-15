@@ -197,11 +197,10 @@ get_blasttable <- reactive({
 output$blast_table <- renderDataTable({
     x <- get_blasttable()
     limit <- as.numeric(input$limit_hits)
-    print(rownames(x)[c(1,2,3)])
     DT::datatable(x, extensions = 'Scroller', escape = FALSE,
             colnames = c("ID", "Score", "Name", "Species", "Ligands"),
-            selection = list(mode='multiple',
-                             selected = if(limit == 0) as.character(1:5) else as.character(1:limit)),
+            selection = list(mode = 'multiple',
+                             selected = if(length(limit) == 0) as.character(1:5) else as.character(1:limit)),
             options = list(
               deferRender = TRUE,
               dom = "frtiS",
@@ -214,6 +213,12 @@ output$blast_table <- renderDataTable({
                 list( width = '40%', targets = c(3) ),
                 list( width = '20%', targets = c(4) ),
                 list( width = '15%', targets = c(5) )
+              ),
+              initComplete = JS(
+              'function(settings) {',
+              'document.getElementById("blast_plot").scrollIntoView();',
+              'console.log("initComplete complete");',
+              '}'
               )
            )
     )

@@ -2,68 +2,71 @@
 ##-- Align
 ####################
 
-
-output$include_hits <- renderUI({
-
-  if(input$input_type != "multipdb") {
-    blast <- run_blast()
-    hits <- filter_hits()
-    
-    all_acc <- blast$acc
-    names(all_acc) <- all_acc
-    
-    sel <- hits$hits_limited
-    names(sel) <- sel
-  }
-  else {
-    acc <- unique(trim(unlist(strsplit(input$pdb_codes, ","))))
-    acc <- acc[acc!=""]
-
-    if(!length(acc) > 0)
-      return()
-    
-    acc <- format_pdbids(acc)
-    anno <- get_annotation(acc, use_chain=FALSE)
-    
-    inds <- unlist(sapply(acc, grep, anno$acc))
-    anno <- anno[inds, ]
-    acc <- anno$acc
-
-    all_acc <- anno$acc
-    names(all_acc) <- all_acc
-    
-    sel <- acc
-    names(sel) <- sel
-  }
-  
-  if(input$filter_sorting == "pdbid") {
-    all_acc <- sort(all_acc)
-    sel <- sort(sel)
-  }
-  
-  selectInput("selected_pdbids", "Select / remove hits",
-              choices = all_acc, selected = sel, multiple=TRUE)
-              
-})
-
-
+#output$include_hits <- renderUI({
+#
+#  if(input$input_type != "multipdb") {
+#    blast <- run_blast()
+#    hits <- filter_hits()
+#
+#    all_acc <- blast$acc
+#    names(all_acc) <- all_acc
+#
+#    sel <- hits$hits_limited
+#    names(sel) <- sel
+#  }
+#  else {
+#    acc <- unique(trim(unlist(strsplit(input$pdb_codes, ","))))
+#    acc <- acc[acc!=""]
+#
+#    if(!length(acc) > 0)
+#      return()
+#
+#    acc <- format_pdbids(acc)
+#    anno <- get_annotation(acc, use_chain=FALSE)
+#
+#    inds <- unlist(sapply(acc, grep, anno$acc))
+#    anno <- anno[inds, ]
+#    acc <- anno$acc
+#
+#    all_acc <- anno$acc
+#    names(all_acc) <- all_acc
+#
+#    sel <- acc
+#    names(sel) <- sel
+#  }
+#
+#  if(input$filter_sorting == "pdbid") {
+#    all_acc <- sort(all_acc)
+#    sel <- sort(sel)
+#  }
+#
+#  selectInput("selected_pdbids", "Select / remove hits",
+#              choices = all_acc, selected = sel, multiple=TRUE)
+#
+#})
 
 get_acc <- reactive({
 
-  ##message( as.numeric(input$blast_table_rows_selected) )
-  
+  message( as.numeric(input$blast_table_rows_selected) )
+
   if(input$input_type != "multipdb") {
-    #blast <- run_blast()
+    blast <- run_blast()
     #hits <- filter_hits()$hits
-    ##acc <- blast$acc[ as.numeric(input$blast_table_rows_selected) ]
-    ##acc <- hits$acc
-    
-    acc <- input$selected_pdbids
-    return(acc)
+    acc <- blast$acc[ as.numeric(input$blast_table_rows_selected) ]
+    #acc <- hits$acc
+
+    #acc <- input$selected_pdbids
+    return(toupper(acc))
   }
   else {
-    acc <- input$selected_pdbids
-    return(acc)
+    #acc <- input$selected_pdbids
+    acc <- toupper(unique(trim(unlist(strsplit(input$pdb_codes, ",")))))
+    acc <- acc[acc!=""]
+    anno <- get_annotation(acc, use_chain=FALSE)
+    inds <- unlist(sapply(acc, grep, anno$acc))
+    anno <- anno[inds, ]
+    acc <- anno$acc
+    return(toupper(acc))
    }
 })
 

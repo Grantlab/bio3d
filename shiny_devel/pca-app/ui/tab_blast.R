@@ -2,43 +2,41 @@
 actionButton3 <- function (inputId, label, icon = NULL, cl="btn btn-default action-button",...)
 {
     tags$button(id = inputId, type = "button", class = cl, list(icon, label), ...)
-} 
+}
 
 
 tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
          ##shinyjs::useShinyjs(),
 
-         
-         
          fluidRow(
            column(4,
                   wellPanel(
 
                     h4("A)  Input Structure(s) or Sequence"),
                     helpText("Please enter either a single PDB code of interest, multiple related PDB codes or a single protein sequence (see the help page for more details)."),
-                    
+
                     radioButtons("input_type", "",
                                  c("Enter a single PDB code" = "pdb",
                                    "Paste a single sequence" = "sequence",
                                    "Enter mutliple PDB codes" = "multipdb"),
                                  inline=FALSE),
-                    
+
                     conditionalPanel(
                       condition = "input.input_type == 'multipdb'",
                       tags$textarea(id="pdb_codes", rows=4, cols=40, ""),
                       helpText("Separate PDB ids (4 character codes) with a comma ','")
                       ),
-                    
+
                     conditionalPanel(
                       condition = "input.input_type == 'sequence'",
                       tags$textarea(id="sequence", rows=4, cols=40,
                                     "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE")
                       ),
-                    
+
                     conditionalPanel(
                       condition = "input.input_type == 'pdb'",
-                      
+
                       ##-PDB input
                       textInput("pdbid", label="Enter a 4 character RCSB PDB code/ID:", value = "2LUM")
                       ),
@@ -47,8 +45,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     actionButton("reset_pdbid", "Reset PDB", icon=icon("undo"))
                     )
                   ),
-           
-           
+
            column(4,
                   wellPanel(
                     style="background: #FFFFFF;",
@@ -60,38 +57,37 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       #tags$textarea(id="pdb_codes", rows=4, cols=40, ""),
                       #helpText("Seperate PDB ids with ','")
                       ),
-                    
+
                     conditionalPanel(
                       condition = "input.input_type == 'sequence'",
                       h4("Protein Sequence Summary"),
                       helpText("Report on whether sequence was acceptable (protein, no strange characters, sufficient length, top PDB hit id and link for visualization option?).")
                       #tags$textarea(id="sequence", rows=4, cols=40, "")
                       ),
-                    
+
                     conditionalPanel(
                       condition = "input.input_type == 'pdb'",
                       h4("Structure Summary and Visualization"),
 
                       ##-PDB input
                       #textInput("pdbid", label="Enter RCSB PDB code/ID:", value = "2LUM"),
-                                            
+
                       ##- PDB summary
                       tags$label("PDB Summary:"),
                       verbatimTextOutput("input_pdb_summary"),
-                      
+
                       ##- Chain selection
                       uiOutput("pdb_chains"),
-                      
+
                       ##submitButton("Update"),
                       checkboxInput('show_pdb', 'View Input PDB', value=FALSE),
 
                       checkboxInput('show_pdblog', 'View PDB Read Log', value=FALSE)
                       )
-                    
+
                     )
                   ),
-           
-           
+
            column(4,
                   wellPanel(
                     style="background: #FFFFFF;",
@@ -108,7 +104,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                                    c("SSE" = "sse",
                                      "Index" = "index"),
                                    inline=TRUE)
-                      
+
                       ),
 
                     conditionalPanel(
@@ -125,8 +121,6 @@ tabPanel("1. SEARCH", icon=icon("home"),
                   )
            ),
 
-
-         
          #########################
          ##-- Results Section --##
          #########################
@@ -136,35 +130,35 @@ tabPanel("1. SEARCH", icon=icon("home"),
            #  ##h2("Blast results")
            #  ),
            hr(),
-           
+
            ##-A. blast panel
            conditionalPanel(
              condition = "input.input_type != 'multipdb'",
-             
+
              column(4,
                     wellPanel(
-                      
+
                       conditionalPanel(
                         condition = "input.input_type != 'multipdb'",
-                        
+
                         h4("B) Hit selection for further analysis"),
                         helpText("Optional refinement (via exclusion and selection) of related structures. The final selected set of structures will from the ensemble for analysis in subsequent steps."),
 
                         ##tags$hr(),
                         uiOutput("cutoff_slider"),
-                        
+
                         uiOutput("hits_slider"),
                         actionButton3("page1_table", "Next (Further selection)", icon=icon("arrow-down"), cl="btn btn-primary action-button"),
                         actionButton("reset_cutoff", "Reset cutoff", icon=icon("undo"))
                         ),
-                      
+
                       conditionalPanel(
                         condition = "input.input_type == 'multipdb'",
                         h4("BLAST options not available for multiple PDB input")
                         )
                       )
                     ),
-             
+
              column(8,
                     uiOutput("blast_plot"),
 
@@ -184,30 +178,16 @@ tabPanel("1. SEARCH", icon=icon("home"),
              )
            ),
 
-         hr(),
-         fluidRow(
-           column(12,
-                  wellPanel(
-                    h4("Manual hit filtering"),
-                    uiOutput("include_hits"),
-                    radioButtons("filter_sorting", "Order by",
-                                 c("BLAST score" = "blast",
-                                   "PDB ID" = "pdbid"),
-                                 inline=TRUE)
-                    ))
-           ),
-         
-         hr(),
          fluidRow(
            column(12,
                   wellPanel(
                     h4("C) Optional filtering of related structures for further analysis"),
                     helpText("Optionaly select or de-select structures by clicking their entries in the below table."),
-                     
+
                     DT::dataTableOutput('blast_table')
                     #actionButton3("page2", "Next (Alignment)", icon=icon("arrow-right"), cl="btn btn-primary action-button")
                     )
-             
+
              )
            )
 

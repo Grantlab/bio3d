@@ -36,17 +36,17 @@ output$blast_plot1 <- renderPlot({
   grps <- cut$grps
   z <- blast$score
 
-  col <- sapply(grps, function(x) if(x==1) 'red' else if(x==2) 'grey50')
-  if(length(input$selected_pdbids)>0) {
-    inds <- unlist(lapply(input$selected_pdbids, grep, blast$acc))
-    col[inds] <- "green"
-  }
-  else {
-    limit <- as.numeric(rv$limit_hits)
-    if(limit > 0)
-      col[1:limit] <- "green"
-  }
-  
+  #col <- sapply(grps, function(x) if(x==1) 'red' else if(x==2) 'grey50')
+  #if(length(input$selected_pdbids)>0) {
+  #  inds <- unlist(lapply(input$selected_pdbids, grep, blast$acc))
+  #  col[inds] <- "green"
+  #}
+  #else {
+  #  limit <- as.numeric(rv$limit_hits)
+  #  if(limit > 0)
+  #    col[1:limit] <- "green"
+  #}
+
   ##if(!length(input$blast_table_rows_selected)>0) {
   #if(!length(input$hits_in)>0) {
   #  limit <- as.numeric(rv$limit_hits)
@@ -55,7 +55,7 @@ output$blast_plot1 <- renderPlot({
   #}
   #else {
   #  col[ as.numeric(input$hits_in) ] <- "green"
-  #}  
+  #}
 
   if(length(blast$acc) < 650) {
     pch <- 21
@@ -67,11 +67,28 @@ output$blast_plot1 <- renderPlot({
     bg <- NULL
     col <- col
   }
-    
+
+  col.bg <- sapply(grps, function(x) if(x==1) 'red3' else if(x==2) 'grey50')
+  pch = rep(19, length(col.bg))
+  pch[col.bg=='grey50'] <- 21
+  col.pch = rep('red3', length(pch))
+  col.pch[pch==21] <- 'black'
+
   par(mar=c(6, 4, 0, 0))
-  plot(z, xlab="", ylab="Bitscore of Alignment to Input", bg=bg, col=col, pch=pch, cex=1.1)
+  plot(z, xlab="", ylab="Bitscore of Alignment to Input", bg=col.bg, col=col.pch, pch=pch, cex=1.1)
   abline(v=gp, col="gray50", lty=3)
   abline(h=cutoff, col="red", lty=2)
+  if(!length(input$blast_table_rows_selected)>0) {
+    limit <- sort(as.numeric(rv$limit_hits))
+    if(limit > 0) {
+      points(z[1:limit], col='navyblue', pch=1, cex=2.25)
+    }
+  }
+  else {
+    x = sort(as.numeric(input$blast_table_rows_selected))
+    y = z[ x ]
+    points(x, y, col='navyblue', pch=1, cex=2.25)
+  }
 
   pos <- c(rep(3, length(gp))[-length(gp)],2)
   text(gp, z[gp],
@@ -88,12 +105,11 @@ output$blast_plot2 <- renderChart2({
   blast <- run_blast()
   cut <- set_cutoff(blast, rv$cutoff)
   blast$mlog.evalue <- blast$score
-  
+
   gp <- cut$gp.inds
   cutoff <- cut$cutoff
   grps <- cut$grps
   z <- blast$score
-  
 
   ## generate a dataframe: pc$z + pdbids + group
   data <- data.frame(
@@ -138,7 +154,7 @@ output$blast_plot2 <- renderChart2({
 
 get_blasttable <- reactive({
   message("fetching blast table")
-  
+
   if(input$input_type != "multipdb") {
     blast <- run_blast()
     grps <- set_cutoff(blast, cutoff=rv$cutoff)$grps
@@ -150,13 +166,13 @@ get_blasttable <- reactive({
     if(length(acc) != length(anno$acc)) {
       print(paste("blast: ", length(acc)))
       print(paste("anno: ", length(anno$acc)))
-      
+
       if(length(acc) > length(anno$acc)) {
         inds <- acc %in% anno$acc
         blast <- blast[inds,, drop=FALSE]
       }
     }
-    
+
     anno$score <- blast$score
   }
   else {
@@ -168,13 +184,13 @@ get_blasttable <- reactive({
 
     acc <- format_pdbids(acc)
     anno <- get_annotation(acc, use_chain=FALSE)
-    
+
     inds <- unlist(sapply(acc, grep, anno$acc))
     anno <- anno[inds, ]
     acc <- anno$acc
 
     anno$score <- rep(0, length(acc))
-    
+
     hits <- NULL
     grps <- NULL
   }
@@ -188,7 +204,7 @@ get_blasttable <- reactive({
       inds <- unlist(lapply(input$selected_pdbids, grep, anno$acc))
       col[inds] <- "green"
     }
-    
+
     #if(!is.null(rv$limit_hits)) {
     #  limit <- as.numeric(rv$limit_hits)
     #  if(limit > 0)
@@ -208,39 +224,44 @@ get_blasttable <- reactive({
                          substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   }
 
-  #checkbox <- paste0("<input type=\"checkbox\" name=\"pdb_ids\" value=\"", hits$acc, "\" ",  checked, ">")
-  #anno$check <- checkbox
-
-  ##print(head(anno))
-  
   rownames(anno) <- NULL
   show.cols <- c("acc", "compound", "source", "ligandId", "score")
   col.inds <- sapply(show.cols, grep, colnames(anno))
 
-  return(anno[, col.inds])
-})
-
-output$blast_table <- renderDataTable({
-    DT::datatable(get_blasttable(), extensions = 'Scroller', escape = FALSE,
-            colnames = c("ID", "Name", "Species", "Ligands", "Score"),
-            options = list(
-              deferRender = TRUE,
-              dom = "frtiS",
-              scrollY = 200,
-              scrollCollapse = TRUE
-              ),
-              callback = JS('
-                greens = document.getElementsByClassName("id_green");
-                for(var i = 0; i < greens.length; i++) {
-                    row = greens[i].parentNode.parentNode;
-                    row.setAttribute("class", row.getAttribute("class") + " selected");
-                }
-              ')
-    )
+  # re-ordering changed below to ID, Score .. for datatable
+  return(anno[, col.inds[c(1,5,2,3,4)]])
 })
 
 
-
+  output$blast_table <- renderDataTable({
+      x <- get_blasttable()
+      limit <- as.numeric(input$limit_hits)
+      DT::datatable(x, extensions = 'Scroller', escape = FALSE,
+              colnames = c("ID", "Score", "Name", "Species", "Ligands"),
+              selection = list(mode = 'multiple',
+                               selected = if(length(limit) == 0) as.character(1:5) else as.character(1:limit)),
+              options = list(
+                deferRender = TRUE,
+                dom = "frtiS",
+                scrollY = 400,
+                scrollCollapse = TRUE,
+                autoWidth = FALSE,
+                columnDefs = list(
+                  list( width = '5%', targets = c(0) ),
+                  list( width = '10%', targets = c(1, 2) ),
+                  list( width = '40%', targets = c(3) ),
+                  list( width = '20%', targets = c(4) ),
+                  list( width = '15%', targets = c(5) )
+                ),
+                initComplete = JS(
+                'function(settings) {',
+                'document.getElementById("blast_plot").scrollIntoView();',
+                'console.log("initComplete complete");',
+                '}'
+                )
+             )
+      )
+  })
 
 ## checkbox
 output$pdb_chains <- renderUI({
@@ -248,10 +269,7 @@ output$pdb_chains <- renderUI({
 
   selectInput("chainId", "Limit to chain ID:",
               choices = chains, selected = chains[1], multiple=FALSE)
-  
 })
-
-
 
 output$cutoff_slider <- renderUI({
   blast <- run_blast()
