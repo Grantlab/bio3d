@@ -239,6 +239,25 @@ output$input_pdb_summary <- renderPrint({
 
 })
 
+##-- PFAM annotation of single or multiple PDBs
+output$pfam_table <- renderDataTable({
+  message("input_pdb_pfam called")
+  pdbid <- get_pdbid()
+  #chainid <- get_chainid()
+  if(is.null(pdbid)) {
+    return()
+  }
+
+  pfam <- pdb.pfam(pdbid)
+  colnames(pfam)=c("ID", "Name", "Description","eValue")
+  return(pfam)
+}, options = list(searching=FALSE, lengthChange=FALSE, paging=FALSE))
+##To Do: Remove rownames display, 
+##       Rm '1 of 1' at bottom of table 
+##       Add PFAM URL link to Name. paste0("http://pfam.sanger.ac.uk/family/",acc)
+##       Add this to multiple PDB IDs well/div also.
+
+
 ## Returns HMMER results
 ## dataframe with columns: acc, evalue, score, desc
 run_blast <- reactive({

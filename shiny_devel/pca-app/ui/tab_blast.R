@@ -56,6 +56,9 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       helpText("Annotation table of requested PDBs.")
                       #tags$textarea(id="pdb_codes", rows=4, cols=40, ""),
                       #helpText("Seperate PDB ids with ','")
+                                            ##- pfam_table (To be beautified!!)
+                      ,tags$label("PFAM Annotation:")
+                      #dataTableOutput("pfam_table")
                       ),
 
                     conditionalPanel(
@@ -78,6 +81,10 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
                       ##- Chain selection
                       uiOutput("pdb_chains"),
+
+                      ##- pfam_table (To be beautified!!)
+                      tags$label("PFAM chain annotation:"),
+                      dataTableOutput("pfam_table"),
 
                       ##submitButton("Update"),
                       checkboxInput('show_pdb', 'View Input PDB', value=FALSE),
