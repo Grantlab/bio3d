@@ -43,7 +43,10 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
                     actionButton3("page1_hits", "Next (Hit selection)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
                    tags$script(HTML(
-                       '$(".btn-input").click(function(){document.getElementById("blast_plot").scrollIntoView();});'
+                       '$(".btn-input").click(function(){',
+                       'document.getElementById("blast_plot").scrollIntoView({block: "start", behavior: "smooth"});',
+                       'window.scrollBy(0,-100);',
+                       '});'
                                     )),
                     actionButton("reset_pdbid", "Reset PDB", icon=icon("undo"))
                     )
@@ -162,6 +165,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                         tags$script(HTML(
                        '$(".btn-hits").click(function(){',
                        'document.getElementById("blast_table").scrollIntoView();',
+                       'window.scrollBy(0,-50);',
                        '$("#blast_table").addClass("show-border");',
                        'window.setTimeout(function(){',
                        '$("#blast_table").removeClass("show-border");',

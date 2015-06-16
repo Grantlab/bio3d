@@ -234,22 +234,22 @@ get_blasttable <- reactive({
 
 
   output$blast_table <- renderDataTable({
-      x <- get_blasttable()
       limit <- as.numeric(input$limit_hits)
-      DT::datatable(x, extensions = 'Scroller', escape = FALSE,
+      DT::datatable(get_blasttable(), extensions = 'Scroller', escape = FALSE,
               colnames = c("ID", "Score", "Name", "Species", "Ligands"),
-              selection = list(mode = 'multiple',
-                               selected =
-                               if(input$input_type != "multipdb") {
-                                   if(length(limit) == 0) {
-                                       as.character(1:5)
-                                   } else {
-                                       as.character(1:limit)
-                                   }
-                               } else {
-                                   as.character(1:length(x[,1]))
-                               }
-                          ),
+              selection =
+                  if(input$input_type != 'multipdb') {
+                      list(mode = 'multiple',
+                          selected =
+                              if(length(limit) == 0) {
+                                  as.character(1:5)
+                              } else {
+                                  as.character(1:limit)
+                              }
+                      )
+                  } else {
+                      "none"
+                  },
               options = list(
                 deferRender = TRUE,
                 dom = "frtiS",
@@ -265,7 +265,6 @@ get_blasttable <- reactive({
                 ),
                 initComplete = JS(
                 'function(settings) {',
-                '//document.getElementById("blast_plot").scrollIntoView();',
                 'console.log("search datatable loaded");',
                 '}'
                 )

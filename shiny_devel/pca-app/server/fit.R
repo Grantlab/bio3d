@@ -190,7 +190,7 @@ output$representatives <- renderPrint({
 
 })
 
-output$print_core <- renderDataTable({
+output$print_core <- DT::renderDataTable({
   pdbs <- fit()
   core <- find_core()
   gaps <- gap.inspect(pdbs$ali)
@@ -208,9 +208,15 @@ output$print_core <- renderDataTable({
   end <- paste0(resid[resid.inds], bds[, "end"])
 
   out <- data.frame(start, end, length=bds[, "length"])
-  return(out)
-
-}, options = list(searching=FALSE, lengthChange=FALSE, paging=FALSE))
+  DT::datatable(out, extensions = 'Scroller', escape = TRUE,
+      selection = 'none',
+      options = list(
+                deferRender = FALSE,
+                dom = "frtiS",
+                scrollY = 200,
+                scrollCollapse = TRUE)
+  )
+})
 
 output$reference_selector <- renderUI({
   pdbs <- fit()
@@ -219,7 +225,7 @@ output$reference_selector <- renderUI({
   selectInput("reference_id", "Reference PDB id:", ids)
 })
 
-output$rmsd_table <- renderDataTable({
+output$rmsd_table <- DT::renderDataTable({
   pdbs <- fit()
   rd <- rmsd1()
   hc <- hclust1()
@@ -236,8 +242,16 @@ output$rmsd_table <- renderDataTable({
              fit = TRUE)
   names(rd) <- pdbs$lab
 
-  return(data.frame(ids=names(rd), rmsd=round(rd,1), "cluster"=grps))
-}, options = list(searching=FALSE, lengthChange=FALSE, paging=TRUE))
+  x <- data.frame(ids=names(rd), rmsd=round(rd,1), "cluster"=grps)
+  DT::datatable(x, extensions = 'Scroller', escape = TRUE,
+      selection = 'none',
+      options = list(
+                     deferRender = FALSE,
+                     dom = 'frtiS',
+                     scrollY = 250,
+                     scrollCollapse = TRUE)
+      )
+})
 
 
 output$pdbsWebGL  <- renderWebGL({

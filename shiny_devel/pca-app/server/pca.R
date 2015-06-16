@@ -388,11 +388,14 @@ get_pdbstable <- reactive({
 output$pdbs_table <- renderDataTable({
   datatable(get_pdbstable(), extensions = 'Scroller', escape = FALSE,
             colnames = c("ID", "Cluster", "Name", "Species", "Ligands"),
+            selection = "none",
             options = list(
               deferRender = TRUE,
               dom = "frtiS",
               scrollY = 200,
-              scrollCollapse = TRUE
+              scrollCollapse = TRUE,
+              autoWidth = FALSE,
+              columnDefs = list(list(width = '40%', targets = c(list(3))))
               ))
 })
 

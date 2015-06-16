@@ -180,12 +180,20 @@ table tr td {
 
 #blast_table {
     outline-color: transparent;
-    transition: outline-color 1s ease;
+    -webkit-transition: outline-color 1s ease;
+       -moz-transition: outline-color 1s ease;
+        -ms-transition: outline-color 1s ease;
+         -o-transition: outline-color 1s ease;
+            transition: outline-color 1s ease;
 }
 
 #blast_table.show-border {
     outline-color: #FF851B;
-    outline-width: 2.5px;
+    outline-width: 3px;
     outline-style: dashed;
-    transition: outline-color 1s ease-in-out;
+    -webkit-transition: outline-color 1s ease-in-out;
+       -moz-transition: outline-color 1s ease-in-out;
+        -ms-transition: outline-color 1s ease-in-out;
+         -o-transition: outline-color 1s ease-in-out;
+            transition: outline-color 1s ease-in-out;
 }

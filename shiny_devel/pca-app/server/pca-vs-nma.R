@@ -50,10 +50,11 @@ output$rmsip_table <- renderDataTable({
   r <- pcanma_rmsip()
   r$overlap <- round(r$overlap, 2)
   datatable(r$overlap,
+            selection = 'none',
             options = list(
               dom = 't',
               scrollX = TRUE,
-              ordering = FALSE, 
+              ordering = FALSE,
               scrollCollapse = TRUE,
               extensions = 'FixedColumns')
             )

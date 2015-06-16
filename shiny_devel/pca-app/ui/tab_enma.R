@@ -14,7 +14,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
 
                     sliderInput("mag2", "Magnification factor:",
                                 min = 1, max = 20, value = 5),
-                    
+
                     radioButtons('viewColor2', label='Structure color',
                                  choices=list(
                                    'Amalgam' = 'amalgam',
