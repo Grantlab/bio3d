@@ -177,3 +177,15 @@ table tr td {
     padding-right: 10px;
     padding-bottom: none;
 }
+
+#blast_table {
+    outline-color: transparent;
+    transition: outline-color 1s ease;
+}
+
+#blast_table.show-border {
+    outline-color: #FF851B;
+    outline-width: 2.5px;
+    outline-style: dashed;
+    transition: outline-color 1s ease-in-out;
+}

@@ -41,7 +41,10 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       textInput("pdbid", label="Enter a 4 character RCSB PDB code/ID:", value = "2LUM")
                       ),
 
-                    actionButton3("page1_hits", "Next (Hit selection)", icon=icon("arrow-down"), cl="btn btn-primary action-button"),
+                    actionButton3("page1_hits", "Next (Hit selection)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
+                   tags$script(HTML(
+                       '$(".btn-input").click(function(){document.getElementById("blast_plot").scrollIntoView();});'
+                                    )),
                     actionButton("reset_pdbid", "Reset PDB", icon=icon("undo"))
                     )
                   ),
@@ -155,7 +158,16 @@ tabPanel("1. SEARCH", icon=icon("home"),
                         uiOutput("cutoff_slider"),
 
                         uiOutput("hits_slider"),
-                        actionButton3("page1_table", "Next (Further selection)", icon=icon("arrow-down"), cl="btn btn-primary action-button"),
+                        actionButton3("page1_table", "Next (Further selection)", icon=icon("arrow-down"), cl="btn btn-primary btn-hits action-button"),
+                        tags$script(HTML(
+                       '$(".btn-hits").click(function(){',
+                       'document.getElementById("blast_table").scrollIntoView();',
+                       '$("#blast_table").addClass("show-border");',
+                       'window.setTimeout(function(){',
+                       '$("#blast_table").removeClass("show-border");',
+                       '}, 2500);',
+                       '});'
+                                    )),
                         actionButton("reset_cutoff", "Reset cutoff", icon=icon("undo"))
                         ),
 
@@ -191,8 +203,15 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     h4("C) Optional filtering of related structures for further analysis"),
                     helpText("Optionaly select or de-select structures by clicking their entries in the below table."),
 
-                    DT::dataTableOutput('blast_table')
-                    #actionButton3("page2", "Next (Alignment)", icon=icon("arrow-right"), cl="btn btn-primary action-button")
+                    DT::dataTableOutput('blast_table'),
+                    hr(),
+                    actionButton3("page2", "Next (Alignment)", icon=icon("arrow-right"), cl="btn btn-primary btn-next-blast action-button"),
+                    tags$script(HTML(
+                       '$(".btn-next-blast").click(function(){',
+                       'tabs = $(".nav.navbar-nav li");',
+                       'tabs[1].childNodes[1].click()',
+                       '});'
+                    ))
                     )
 
              )

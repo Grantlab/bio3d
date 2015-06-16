@@ -239,7 +239,17 @@ get_blasttable <- reactive({
       DT::datatable(x, extensions = 'Scroller', escape = FALSE,
               colnames = c("ID", "Score", "Name", "Species", "Ligands"),
               selection = list(mode = 'multiple',
-                               selected = if(length(limit) == 0) as.character(1:5) else as.character(1:limit)),
+                               selected =
+                               if(input$input_type != "multipdb") {
+                                   if(length(limit) == 0) {
+                                       as.character(1:5)
+                                   } else {
+                                       as.character(1:limit)
+                                   }
+                               } else {
+                                   as.character(1:length(x[,1]))
+                               }
+                          ),
               options = list(
                 deferRender = TRUE,
                 dom = "frtiS",
@@ -255,8 +265,8 @@ get_blasttable <- reactive({
                 ),
                 initComplete = JS(
                 'function(settings) {',
-                'document.getElementById("blast_plot").scrollIntoView();',
-                'console.log("initComplete complete");',
+                '//document.getElementById("blast_plot").scrollIntoView();',
+                'console.log("search datatable loaded");',
                 '}'
                 )
              )
