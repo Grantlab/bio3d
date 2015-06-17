@@ -4,6 +4,15 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
          fluidRow(
            column(4,
                   wellPanel(
+                    dialogBox(id = 3, icon = "question-circle",
+                              style = "position: absolute; right: 25px; top: 5px;",
+                              title = "Initial structure analysis",
+                              p("In this tab the collected structures are superimposed on each other either based on the identified invariant core, or on all C-alpha atoms. The invariant core is the region ..."),
+
+                              p("In this panel you can perform simple structure analysis such as calculating all pair-wise RMSD values ... ")
+                              
+                              ),
+                    
                     h4("Initial structure analysis"),
 
                     radioButtons("fit_type", "Superimpose to",
@@ -98,6 +107,14 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
          fluidRow(
            column(4,
                   wellPanel(
+
+                    dialogBox(id = 4, icon = "question-circle",
+                              style = "position: absolute; right: 25px; top: 5px;",
+                              title = "PDB Viewing options", 
+                              p("This panel controls various options for the visualization of the aligned PDB structures... ")
+                              
+                              ),
+                    
                     h4('PDBs Viewing Options'),
                     checkboxInput('show_pdbs', 'Show PDBs', value=FALSE),
 

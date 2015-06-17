@@ -33,20 +33,17 @@ tabPanel("1. SEARCH", icon=icon("home"),
            column(4,
                   wellPanel(
                     
-                    dialogBox(id = 1, icon = "question-circle",
-                              style = "position: absolute; right: 25px; top: 5px;",
-                              title = "My nice helper",
-                              p("This could work perhaps")
-                               ),
-
-                    ##tags$div(title="In this panel ... input an RCSB PDB code",
-                    ##         icon("question-circle"),
-                    ##         style = "position: absolute; right: 25px; top: 5px;",
-                    ##         onclick="alert('In this panel ... input an RCSB PDB code')"
-                    ##         ),
+                    #dialogBox(id = 1, icon = "question-circle",
+                    #          style = "position: absolute; right: 25px; top: 5px;",
+                    #          title = "My nice helper",
+                    #          p("This could work perhaps")
+                    #           ),
                     
-                    h4("A)  Input Structure(s) or Sequence"),
-                     
+                    tags$div(title="How can I have this for the radio buttons below?",
+                             icon("question-circle")
+                             ),
+                    
+                    h4("A)  Input Structure(s) or Sequence"),           
                                           
                     helpText("Please enter either a single PDB code of interest, multiple related PDB codes or a single protein sequence (see the help page for more details)."),
 
@@ -89,13 +86,6 @@ tabPanel("1. SEARCH", icon=icon("home"),
            column(4,
                   wellPanel(
                     style="background: #FFFFFF;",
-
-                     dialogBox(id = 2, icon = "question-circle",
-                              style = "position: absolute; right: 25px; top: 5px;",
-                              title = "Helper 2",
-                               p("Here we can have text"),
-                               p("And all kind of other stuff perhaps ?")
-                               ),
 
                     conditionalPanel(
                       condition = "input.input_type == 'multipdb'",
