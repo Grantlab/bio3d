@@ -1,19 +1,53 @@
 
-actionButton3 <- function (inputId, label, icon = NULL, cl="btn btn-default action-button",...)
-{
-    tags$button(id = inputId, type = "button", class = cl, list(icon, label), ...)
+### These two functions should be moved somewhere
+actionButton3 <- function (inputId, label, icon = NULL, cl="btn btn-default action-button",...) {
+  tags$button(id = inputId, type = "button", class = cl, list(icon, label), ...)
+}
+
+dialogBox <- function(id = 1, icon = "question-circle", title = NULL, style = NULL, ... ) {
+
+  ## CSS for this stuff is in www/css/jquery-ui.css
+  ido <- paste0("opener", id)
+  idd <- paste0("dialog", id)
+  
+  script <- sprintf(
+    '$(function() {$( "#%s" ).dialog({autoOpen: false, width: 600, modal: true, show: {effect: "fade", duration: 500}}); $( "#%s" ).click(function() { $( "#%s" ).dialog( "open" ); });  });',
+    idd, ido, idd
+    )
+
+  tags$div(
+    tags$div(id=ido, icon(icon), style = style),
+    tags$div(id=idd, title = title, ...),
+
+    tags$script(
+      script
+      )
+    )
 }
 
 
 tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
-         ##shinyjs::useShinyjs(),
-
+               
          fluidRow(
            column(4,
                   wellPanel(
+                    
+                    dialogBox(id = 1, icon = "question-circle",
+                              style = "position: absolute; right: 25px; top: 5px;",
+                              title = "My nice helper",
+                              p("This could work perhaps")
+                               ),
 
+                    ##tags$div(title="In this panel ... input an RCSB PDB code",
+                    ##         icon("question-circle"),
+                    ##         style = "position: absolute; right: 25px; top: 5px;",
+                    ##         onclick="alert('In this panel ... input an RCSB PDB code')"
+                    ##         ),
+                    
                     h4("A)  Input Structure(s) or Sequence"),
+                     
+                                          
                     helpText("Please enter either a single PDB code of interest, multiple related PDB codes or a single protein sequence (see the help page for more details)."),
 
                     radioButtons("input_type", "",
@@ -55,6 +89,13 @@ tabPanel("1. SEARCH", icon=icon("home"),
            column(4,
                   wellPanel(
                     style="background: #FFFFFF;",
+
+                     dialogBox(id = 2, icon = "question-circle",
+                              style = "position: absolute; right: 25px; top: 5px;",
+                              title = "Helper 2",
+                               p("Here we can have text"),
+                               p("And all kind of other stuff perhaps ?")
+                               ),
 
                     conditionalPanel(
                       condition = "input.input_type == 'multipdb'",
