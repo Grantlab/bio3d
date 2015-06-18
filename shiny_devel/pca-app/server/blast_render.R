@@ -36,27 +36,6 @@ output$blast_plot1 <- renderPlot({
   grps <- cut$grps
   z <- blast$score
 
-  #col <- sapply(grps, function(x) if(x==1) 'red' else if(x==2) 'grey50')
-  #if(length(input$selected_pdbids)>0) {
-  #  inds <- unlist(lapply(input$selected_pdbids, grep, blast$acc))
-  #  col[inds] <- "green"
-  #}
-  #else {
-  #  limit <- as.numeric(rv$limit_hits)
-  #  if(limit > 0)
-  #    col[1:limit] <- "green"
-  #}
-
-  ##if(!length(input$blast_table_rows_selected)>0) {
-  #if(!length(input$hits_in)>0) {
-  #  limit <- as.numeric(rv$limit_hits)
-  #  if(limit > 0)
-  #    col[1:limit] <- "green"
-  #}
-  #else {
-  #  col[ as.numeric(input$hits_in) ] <- "green"
-  #}
-
   if(length(blast$acc) < 650) {
     pch <- 21
     bg <- col
@@ -75,7 +54,8 @@ output$blast_plot1 <- renderPlot({
   col.pch[pch==21] <- 'black'
 
   par(mar=c(6, 4, 0, 0))
-  plot(z, xlab="", ylab="Bitscore of Alignment to Input", bg=col.bg, col=col.pch, pch=pch, cex=1.1)
+  plot(z, xlab="", ylab="Bitscore of Alignment to Input", bg=col.bg, col=col.pch, pch=pch, cex=1.1, xaxt='n', cex.axis=1.2)
+  axis(1, at=if(length(z) > 20 ) c(1, seq(20, length(z), 20), if(length(z)%%20 > 9) length(z) else NA) else seq(1,20,2), cex.axis=1.2)
   abline(v=gp, col="gray50", lty=3)
   abline(h=cutoff, col="red", lty=2)
   if(!length(input$blast_table_rows_selected)>0) {

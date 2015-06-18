@@ -9,7 +9,7 @@ dialogBox <- function(id = 1, icon = "question-circle", title = NULL, style = NU
   ## CSS for this stuff is in www/css/jquery-ui.css
   ido <- paste0("opener", id)
   idd <- paste0("dialog", id)
-  
+
   script <- sprintf(
     '$(function() {$( "#%s" ).dialog({autoOpen: false, width: 600, modal: true, show: {effect: "fade", duration: 500}}); $( "#%s" ).click(function() { $( "#%s" ).dialog( "open" ); });  });',
     idd, ido, idd
@@ -28,23 +28,23 @@ dialogBox <- function(id = 1, icon = "question-circle", title = NULL, style = NU
 
 tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
-               
+
          fluidRow(
            column(4,
                   wellPanel(
-                    
+
                     #dialogBox(id = 1, icon = "question-circle",
                     #          style = "position: absolute; right: 25px; top: 5px;",
                     #          title = "My nice helper",
                     #          p("This could work perhaps")
                     #           ),
-                    
+
                     tags$div(title="How can I have this for the radio buttons below?",
                              icon("question-circle")
                              ),
-                    
-                    h4("A)  Input Structure(s) or Sequence"),           
-                                          
+
+                    h4("A)  Input Structure(s) or Sequence"),
+
                     helpText("Please enter either a single PDB code of interest, multiple related PDB codes or a single protein sequence (see the help page for more details)."),
 
                     radioButtons("input_type", "",
@@ -77,6 +77,10 @@ tabPanel("1. SEARCH", icon=icon("home"),
                        '$(".btn-input").click(function(){',
                        'document.getElementById("blast_plot").scrollIntoView({block: "start", behavior: "smooth"});',
                        'window.scrollBy(0,-100);',
+                       '$("#blast_plot").parent().siblings().find(".well").addClass("show-border");',
+                       'window.setTimeout(function(){',
+                       '$("#blast_plot").parent().siblings().find(".well").removeClass("show-border");',
+                       '}, 2500);',
                        '});'
                                     )),
                     actionButton("reset_pdbid", "Reset PDB", icon=icon("undo"))
@@ -195,11 +199,11 @@ tabPanel("1. SEARCH", icon=icon("home"),
                         actionButton3("page1_table", "Next (Further selection)", icon=icon("arrow-down"), cl="btn btn-primary btn-hits action-button"),
                         tags$script(HTML(
                        '$(".btn-hits").click(function(){',
-                       'document.getElementById("blast_table").scrollIntoView();',
-                       'window.scrollBy(0,-50);',
-                       '$("#blast_table").addClass("show-border");',
+                       '$("#blast_table").parent()[0].scrollIntoView(false);',
+                       #'window.scrollBy(0,-50);',
+                       '$("#blast_table").parent().addClass("show-border");',
                        'window.setTimeout(function(){',
-                       '$("#blast_table").removeClass("show-border");',
+                       '$("#blast_table").parent().removeClass("show-border");',
                        '}, 2500);',
                        '});'
                                     )),

@@ -178,22 +178,18 @@ table tr td {
     padding-bottom: none;
 }
 
-#blast_table {
-    outline-color: transparent;
-    -webkit-transition: outline-color 1s ease;
-       -moz-transition: outline-color 1s ease;
-        -ms-transition: outline-color 1s ease;
-         -o-transition: outline-color 1s ease;
-            transition: outline-color 1s ease;
+div[class^="well"] {
+    border: 2px solid #e3e3e3
+    border-radius: 4px;
+    -webkit-transition: border-color ease-in-out 0.5s;
+       -moz-transition: border-color ease-in-out 0.5s;
+        -ms-transition: border-color ease-in-out 0.5s;
+         -o-transition: border-color ease-in-out 0.5s;
+            transition: border-color ease-in-out 0.5s;
 }
 
-#blast_table.show-border {
-    outline-color: #FF851B;
-    outline-width: 3px;
-    outline-style: dashed;
-    -webkit-transition: outline-color 1s ease-in-out;
-       -moz-transition: outline-color 1s ease-in-out;
-        -ms-transition: outline-color 1s ease-in-out;
-         -o-transition: outline-color 1s ease-in-out;
-            transition: outline-color 1s ease-in-out;
+div[class^="well"].show-border {
+    border-color: #66afe9;
+    outline: 0;
 }
+
