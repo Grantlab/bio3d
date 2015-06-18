@@ -9,6 +9,7 @@ tabPanel("2. ALIGN",
                     tags$hr(),
 
                     verbatimTextOutput("alignment_summary"),
+                    verbatimTextOutput("missres_summary"),
 
                     checkboxInput("omit_missing",
                                   "Omit PDBs with missing in-structure residues",
@@ -19,7 +20,7 @@ tabPanel("2. ALIGN",
 
            column(7,
                   wellPanel(style="overflow: auto;",
-
+                            
                             h4("B) Edit alignment (optional)"),
                             hr(),
 
@@ -55,20 +56,6 @@ tabPanel("2. ALIGN",
            ),
 
 
-         #hr(),
-         #fluidRow(
-         #  column(6,
-         #         wellPanel(
-         #           uiOutput("include_hits")
-         #           )
-         #         )),
-           #column(6,
-           #       wellPanel(
-           #         uiOutput("exclude_hits")
-           #         )
-           #       )
-           #),
-           
 
          hr(),
          fluidRow(
@@ -91,6 +78,76 @@ tabPanel("2. ALIGN",
                       });
                       ')))
                   )
+           ),
+         
+          fluidRow(
+           column(4,
+                  wellPanel(
+                    
+                    h4("Sequence analysis"),
+
+                    radioButtons("seq_plot", "Plot options",
+                                 c("Heatmap" = "heatmap",
+                                   "Dendrogram" = "dendrogram"),
+                                 inline=TRUE),
+
+                    sliderInput("clusters_seq", "Cluster by pairwise sequence identity",
+                                min = 1, max = 10, value = 3, step=1),
+                    
+                    checkboxInput('show_options0', 'More options', value=FALSE),
+                    
+                    conditionalPanel(
+                      condition = "input.seq_plot == 'heatmap'",
+                      downloadButton('seqide_heatmap2pdf', "Download PDF")
+                      ),
+
+                    conditionalPanel(
+                      condition = "input.seq_plot == 'dendrogram'",
+                      downloadButton('seqide_dendrogram2pdf', "Download PDF")
+                      ),
+
+                    downloadButton('seqideZIP', "Download Seq ide matrix")
+                    )
+                  ),
+
+           column(8,
+
+             conditionalPanel(
+               condition = "input.seq_plot == 'heatmap'",
+               plotOutput("seqide_heatmap")
+               ),
+
+             conditionalPanel(
+               condition = "input.seq_plot == 'dendrogram'",
+               plotOutput("seqide_dendrogram")
+               )
+
+             )
+           ),
+
+         conditionalPanel(
+           condition = "input.show_options0 == true",
+           fluidRow(
+             column(4,
+                    wellPanel(
+                    sliderInput("cex0", "Label size",
+                                min = 0.1, max = 3, value = 1, step=0.1),
+                    sliderInput("margins0", "Plot margins",
+                                min = 3, max = 10, value = 5, step=1)
+                    )
+                    ),
+             column(4,
+                    wellPanel(
+                    sliderInput("width0", "width",
+                                min = 4, max = 12, value = 7, step=0.5),
+                    sliderInput("height0", "height",
+                                min = 4, max = 12, value = 7, step=0.5)
+                    )
+                    )
+             )
            )
+
+
+         
          )
 

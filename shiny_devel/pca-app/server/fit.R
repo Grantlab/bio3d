@@ -364,7 +364,7 @@ rmsd2files <- reactive({
 output$rmsdZIP = downloadHandler(
   filename = 'rmsd-mat.zip',
   content = function(file) {
-    zip(file, files=rmsd2files())
+    zip(file, files=rmsd2files(), flags = "-9Xj")
 })
 
 output$rmsd_heatmap2pdf = downloadHandler(

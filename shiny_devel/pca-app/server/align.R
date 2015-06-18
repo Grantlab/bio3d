@@ -2,49 +2,6 @@
 ##-- Align
 ####################
 
-#output$include_hits <- renderUI({
-#
-#  if(input$input_type != "multipdb") {
-#    blast <- run_blast()
-#    hits <- filter_hits()
-#
-#    all_acc <- blast$acc
-#    names(all_acc) <- all_acc
-#
-#    sel <- hits$hits_limited
-#    names(sel) <- sel
-#  }
-#  else {
-#    acc <- unique(trim(unlist(strsplit(input$pdb_codes, ","))))
-#    acc <- acc[acc!=""]
-#
-#    if(!length(acc) > 0)
-#      return()
-#
-#    acc <- format_pdbids(acc)
-#    anno <- get_annotation(acc, use_chain=FALSE)
-#
-#    inds <- unlist(sapply(acc, grep, anno$acc))
-#    anno <- anno[inds, ]
-#    acc <- anno$acc
-#
-#    all_acc <- anno$acc
-#    names(all_acc) <- all_acc
-#
-#    sel <- acc
-#    names(sel) <- sel
-#  }
-#
-#  if(input$filter_sorting == "pdbid") {
-#    all_acc <- sort(all_acc)
-#    sel <- sort(sel)
-#  }
-#
-#  selectInput("selected_pdbids", "Select / remove hits",
-#              choices = all_acc, selected = sel, multiple=TRUE)
-#
-#})
-
 get_acc <- reactive({
 
   message( as.numeric(input$blast_table_rows_selected) )
@@ -174,6 +131,14 @@ align <- reactive({
   return(pdbs)
 })
 
+seqide <- reactive({
+  pdbs <- align()
+  ide <- seqidentity(pdbs)
+  rownames(ide) <- pdbs$lab
+  colnames(ide) <- pdbs$lab
+  return(ide)
+})
+
 ####################################
 ####   Alignment output         ####
 ####################################
@@ -207,6 +172,30 @@ output$alignment_summary <- renderPrint({
   cat("\n")
 
 })
+
+
+output$missres_summary <- renderPrint({
+  invisible(capture.output( pdbs <- align() ))
+  check_aln()
+
+  ids <- pdbs$lab
+  nstructs <- length(ids)
+
+  conn <- inspect.connectivity(pdbs)
+  if(sum(!conn) > 0) {
+    inds <- which(!conn)
+
+    cat(sum(!conn), "PDBs with missing in-structure residues:\n")
+    cat("  ", paste(ids[!conn], collapse=", "))
+    cat("\n")
+  }
+  else {
+    cat("No PDBs with missing in-structure residues\n")
+  }
+  
+  
+})
+
 
 output$alignment <- renderUI({
   invisible(capture.output( aln <- align() ))
@@ -364,6 +353,52 @@ output$alignment <- renderUI({
     return(list(tmp=tmp, j=j))
 }
 
+
+
+####################################
+####     Plotting functions     ####
+####################################
+
+make.plot.seqide.heatmap <- function() {
+  pdbs <- align()
+  ide <- seqide()
+  rownames(ide) <- pdbs$lab
+  colnames(ide) <- pdbs$lab
+  
+  hc <- hclust(as.dist(1-ide))
+  grps <- cutree(hc, k=input$clusters_seq)
+  mar <- as.numeric(c(input$margins0, input$margins0))
+  plot1 <- heatmap(1-ide, distfun=as.dist, symm=TRUE,
+          ColSideColors=as.character(grps),
+          RowSideColors=as.character(grps),
+          cexRow=input$cex0, cexCol=input$cex0,
+          margins=mar
+          )
+  return(plot1)
+}
+
+output$seqide_heatmap <- renderPlot({
+  print(make.plot.seqide.heatmap())
+})
+
+make.plot.seqide.dendrogram <- function() {
+  pdbs <- align()
+  ide <- seqide()
+  
+  hc <- hclust(as.dist(1-ide))
+  mar <- c(input$margins0, 5, 3, 1)
+    
+  plot3 <- hclustplot(hc, k=input$clusters_seq, labels=pdbs$lab, cex=input$cex0,
+                      ylab="Identity distance", main="Sequence identity",
+                      fillbox=FALSE, mar = mar)
+  return(plot3)
+}
+
+output$seqide_dendrogram <- renderPlot({
+  print(make.plot.seqide.dendrogram())
+})
+
+
 ####################################
 ####     Download functions     ####
 ####################################
@@ -379,3 +414,35 @@ output$fastafile = downloadHandler(
   content = function(file) {
     aln2file()
   })
+
+seqide2txt <- reactive({
+  path <- data_path()
+  pdbs <- align()
+  ide <- round(seqide(), 2)
+
+  file <- paste0(path, "/", "seqide.dat")
+  write.table(ide, file=file, quote=FALSE)
+  return(file)
+})
+
+output$seqideZIP = downloadHandler(
+  filename = 'seqide.zip',
+  content = function(file) {
+    zip(file, files=seqide2txt(), flags = "-9Xj")
+  })
+
+output$seqide_heatmap2pdf = downloadHandler(
+  filename = "ide_heatmap.pdf",
+  content = function(FILE=NULL) {
+    pdf(file=FILE, onefile=T, width=input$width0, height=input$height0)
+    print(make.plot.seqide.heatmap())
+    dev.off()
+})
+
+output$seqide_dendrogram2pdf = downloadHandler(
+  filename = "seqide_dendrogram.pdf",
+  content = function(FILE=NULL) {
+    pdf(file=FILE, onefile=T, width=input$width0, height=input$height0)
+    print(make.plot.seqide.dendrogram())
+    dev.off()
+})

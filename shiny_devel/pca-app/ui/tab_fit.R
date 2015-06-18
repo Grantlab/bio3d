@@ -4,14 +4,17 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
          fluidRow(
            column(4,
                   wellPanel(
-                    dialogBox(id = 3, icon = "question-circle",
-                              style = "position: absolute; right: 25px; top: 5px;",
-                              title = "Initial structure analysis",
-                              p("In this tab the collected structures are superimposed on each other either based on the identified invariant core, or on all C-alpha atoms. The invariant core is the region ..."),
+                    
+                    modalBox(id="1", button_label = "Help",
+                             heading="Initial structure analysis",
+                             content = tags$div(
+                               HTML("<p>In this tab the collected structures are superimposed on each other either based on the <strong>identified invariant core</strong>, or on all C-alpha atoms. The invariant core is the region ...</p>"),
 
-                              p("In this panel you can perform simple structure analysis such as calculating all pair-wise RMSD values ... ")
-                              
-                              ),
+                               p("In this panel you can perform simple structure analysis such as calculating all pair-wise RMSD values ... ")
+                               )
+                             ),
+                    
+                    
                     
                     h4("Initial structure analysis"),
 
