@@ -249,8 +249,14 @@ output$pfam_table <- DT::renderDataTable({
   }
 
   pfam <- pdb.pfam(pdbid)
+  pfam['PFAM'] <- lapply(pfam['PFAM'], function(x) {
+      pfid <- regmatches(x, gregexpr("(?<=\\().*?(?=\\))", x, perl=T))[[1]]
+      link <- gsub(pfid,
+                   tags$a(href=paste0("http://pfam.xfam.org/family/",pfid), target="_blank", pfid),
+                   x)
+  })
   colnames(pfam)=c("ID", "Name", "Description","eValue")
-  DT::datatable(pfam, escape = TRUE, selection = "none",
+  DT::datatable(pfam, escape = FALSE, selection = "none",
     rownames = FALSE,
     options = list(
         dom = "t",
