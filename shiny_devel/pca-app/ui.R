@@ -7,6 +7,7 @@ library(rCharts)
 library(threejs)
 ##library(qtlcharts)
 
+source('ui/ui_utils.R')
 
 shinyUI(
    

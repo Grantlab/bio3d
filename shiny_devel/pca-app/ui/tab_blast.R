@@ -1,79 +1,5 @@
 
-### These two functions should be moved somewhere
-actionButton3 <- function (inputId, label, icon = NULL, cl="btn btn-default action-button",...) {
-  tags$button(id = inputId, type = "button", class = cl, list(icon, label), ...)
-}
-
-dialogBox <- function(id = 1, icon = "question-circle", title = NULL, style = NULL, ... ) {
-
-  ## CSS for this stuff is in www/css/jquery-ui.css
-  ido <- paste0("opener", id)
-  idd <- paste0("dialog", id)
-
-  script <- sprintf(
-    '$(function() {$( "#%s" ).dialog({autoOpen: false, width: 600, modal: true, show: {effect: "fade", duration: 500}}); $( "#%s" ).click(function() { $( "#%s" ).dialog( "open" ); });  });',
-    idd, ido, idd
-    )
-
-  tags$div(
-    tags$div(id=ido, icon(icon), style = style),
-    tags$div(id=idd, title = title, ...),
-
-    tags$script(
-      script
-      )
-    )
-}
-
-modalBox <- function(id, button_label = "", heading = NULL,
-                     icon = NULL, content = NULL, 
-                     cl = "btn btn-primary btn-input action-button",
-                     ...) {
-
-  idm1 <- paste0("myModal", id)
-  idm2 <- paste0("#", idm1)
-  
-  tags$div(
-    tags$button(type="button", class=cl, 
-                "data-toggle"="modal", "data-target"=idm2,
-                style = "float: right",
-                list(icon("question"), button_label)
-                ),
-  
-  tags$div(
-    class="modal fade", id=idm1, tabindex="-1", role="dialog",
-    "aria-labelledby"="myModalLabel",
-    
-
-    tags$div(
-      class="modal-dialog", role="document",
-      
-      tags$div(
-        class="modal-content",
-        
-        tags$div(class="modal-header", 
-                 tags$button(
-                   type="button", class="close",
-                   "data-dismiss"="modal",
-                   "aria-label"="Close",
-                   tags$span("aria-hidden"="true", "Close")
-                   ),
-                 h4(heading, class="modal-title", id="myModalLabel")
-                 ),
-        
-        tags$div(
-          class="modal-body",
-          content
-          )
-        )
-      )
-    )
-    )
-}
-
-
-
-
+### The js functions have been moved have been moved to ui/ui_utils.R
 
 tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
@@ -81,21 +7,20 @@ tabPanel("1. SEARCH", icon=icon("home"),
          fluidRow(
            column(4,
                   wellPanel(
-                    
-                    tags$div(
-                      title="How can I have this for the radio buttons below?",
-                      icon("question-circle")
-                      ),
+                    popoverQuestion(id="popQues1", content="test", trigger="focus",
+                                    data_toggle = "pop_blast_input"),
 
                     h4("A)  Input Structure(s) or Sequence"),
 
                     helpText("Please enter either a single PDB code of interest, multiple related PDB codes or a single protein sequence (see the help page for more details)."),
 
-                    radioButtons("input_type", "",
-                                 c("Enter a single PDB code" = "pdb",
+                    popRadioButtons(inputId = "input_type", label = "",
+                                 choices = c("Enter a single PDB code" = "pdb",
                                    "Paste a single sequence" = "sequence",
                                    "Enter mutliple PDB codes" = "multipdb"),
-                                 inline=FALSE),
+                                 selected = NULL,inline=FALSE,
+                                 placement = "right", data_toggle = "pop_blast_input",
+                                 title = "Structure or sequence input"),
 
                     conditionalPanel(
                       condition = "input.input_type == 'multipdb'",
@@ -113,7 +38,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       condition = "input.input_type == 'pdb'",
 
                       ##-PDB input
-                      textInput("pdbid", label="Enter a 4 character RCSB PDB code/ID:", value = "2LUM")
+                      popTextInput("pdbid", label="Enter a 4 character RCSB PDB code/ID:", value = "2LUM", data_toggle = "pop_blast_input", title = "RCSB PDB ID", content = "Please enter a four letter PDB code. We parse the first four characters only.")
                       ),
 
                     actionButton3("page1_hits", "Next (Hit selection)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
