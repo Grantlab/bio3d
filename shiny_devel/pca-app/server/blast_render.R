@@ -241,7 +241,8 @@ get_blasttable <- reactive({
                   list( width = '10%', targets = c(1, 2) ),
                   list( width = '40%', targets = c(3) ),
                   list( width = '20%', targets = c(4) ),
-                  list( width = '15%', targets = c(5) )
+                  list( width = '15%', targets = c(5) ),
+                  list( orderable = 'false', targets = c(0) )
                 ),
                 initComplete = JS(
                 'function(settings) {',

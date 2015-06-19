@@ -1,6 +1,6 @@
 ###################################
 ##-- User path for storing stuff  #
-################################### 
+###################################
 data_path <- reactive({
   dir <- paste0(format(Sys.time(), "%Y-%m-%d"), "_", randstr())
   path <- paste0(configuration$user_data, "/", dir)
@@ -63,7 +63,7 @@ observeEvent(input$reset_cutoff, {
   if(input$input_type != "multipdb") {
     blast <- run_blast()
     cut <- set_cutoff(blast, cutoff=NULL)
-    
+
     updateSliderInput(session, "cutoff", value = cut$cutoff)
     updateSliderInput(session, "limit_hits", value = 5)
   }
@@ -80,12 +80,12 @@ get_pdbid <- reactive({
     return()
   else {
     pdbid <- rv$pdbid
-    
+
     if(!nchar(pdbid)==4) {
       ##stop("Provide a PDB code of 4 characters")
       return()
     }
-    
+
     return(pdbid)
   }
 })
@@ -101,10 +101,10 @@ get_chainid <- reactive({
 ## returns all chain IDs in PDB
 get_chainids <- reactive({
   pdbid <- get_pdbid()
-  
+
   if(is.null(pdbid))
     return()
-  
+
   anno <- input_pdb_annotation()
   return(anno$chainId)
 })
@@ -114,7 +114,7 @@ get_pdb <- reactive({
   message("get_pdb called")
   pdbid <- get_pdbid()
   chainid <- get_chainid()
-  
+
   anno <- input_pdb_annotation()
 
   if(is.vector(input$chainId)) {
@@ -129,10 +129,10 @@ get_pdb <- reactive({
   if(configuration$pdbdir$archive) {
     ids <- paste0(tolower(substr(id, 1, 4)), "_", substr(id, 6, 6))
     raw.files <- paste0(configuration$pdbdir$splitfiles, "/", substr(ids, 2, 3), "/pdb", ids, ".ent.gz")
-    
+
     if(!file.exists(raw.files))
       stop("PDB not found")
-    
+
     pdb <- read.pdb(raw.files)
   }
   else {
@@ -140,22 +140,22 @@ get_pdb <- reactive({
     pdb <- read.pdb(raw.files)
     pdb <- trim.pdb(pdb, chain=substr(id, 6,6))
   }
-  
+
   return(pdb)
 })
 
 ## returns the sequence (fasta object)
 get_sequence <- reactive({
   message("get_sequence called")
-  
+
   #if(is.null(input$input_type))
   #  return()
-  
+
   ## option 1 - PDB code provided
   if(input$input_type == "pdb") {
     pdbid <- get_pdbid()
     chainid <- get_chainid()
- 
+
     anno <- input_pdb_annotation()
 
     if(is.vector(input$chainId)) {
@@ -171,7 +171,7 @@ get_sequence <- reactive({
   ## option 2 - sequence provided
   if(input$input_type == "sequence") {
     message(rv$sequence)
-    
+
     if(nchar(rv$sequence)==0)
       return()
       ##stop("sequence is of length 0")
@@ -193,9 +193,9 @@ get_sequence <- reactive({
 ## returns annotation data for input PDB
 input_pdb_annotation <- reactive({
   message("input_pdb_annotation called")
-  
+
   pdbid <- get_pdbid()
-  
+
   if(nchar(pdbid)==4) {
     progress <- shiny::Progress$new(session, min=1, max=5)
     on.exit(progress$close())
@@ -222,10 +222,10 @@ output$input_pdb_summary <- renderPrint({
   if(is.null(pdbid)) {
     return()
   }
-  
+
   input$input_type
   anno <- input_pdb_annotation()
-  
+
   if(is.vector(chainid)) {
     ind <- which(anno$chainId==chainid[1])
     anno <- anno[ind,]
@@ -233,14 +233,14 @@ output$input_pdb_summary <- renderPrint({
   else {
     anno <- anno[1,]
   }
-  
+
   cat(anno$compound[1], "\n",
       "(", anno$source[1], ")")
 
 })
 
 ##-- PFAM annotation of single or multiple PDBs
-output$pfam_table <- renderDataTable({
+output$pfam_table <- DT::renderDataTable({
   message("input_pdb_pfam called")
   pdbid <- get_pdbid()
   #chainid <- get_chainid()
@@ -250,10 +250,24 @@ output$pfam_table <- renderDataTable({
 
   pfam <- pdb.pfam(pdbid)
   colnames(pfam)=c("ID", "Name", "Description","eValue")
-  return(pfam)
-}, options = list(searching=FALSE, lengthChange=FALSE, paging=FALSE))
-##To Do: Remove rownames display, 
-##       Rm '1 of 1' at bottom of table 
+  DT::datatable(pfam, escape = TRUE, selection = "none",
+    rownames = FALSE,
+    options = list(
+        dom = "t",
+        autoWidth = TRUE,
+        columnDefs = list(
+            list( orderable = 'false', targets = c(0,1,2) )
+        ),
+    initComplete = JS(
+    "function(settings, json) {",
+    '$(this.api().table().header()).find("th").removeClass("sorting");',
+    '$(this.api().table().header()).find("th").prop("onclick",null).off("click");',
+    "}")
+    )
+  )
+})
+##To Do:
+##       Rm '1 of 1' at bottom of table
 ##       Add PFAM URL link to Name. paste0("http://pfam.sanger.ac.uk/family/",acc)
 ##       Add this to multiple PDB IDs well/div also.
 
@@ -262,18 +276,18 @@ output$pfam_table <- renderDataTable({
 ## dataframe with columns: acc, evalue, score, desc
 run_blast <- reactive({
   message("run_blast called")
-  
+
   if(input$input_type != "multipdb") {
     message("blasting")
 
-    if(input$input_type == "pdb") 
-      if(is.null(rv$chainid)) 
+    if(input$input_type == "pdb")
+      if(is.null(rv$chainid))
         return(NULL)
-    
-    if(input$input_type == "sequence") 
+
+    if(input$input_type == "sequence")
       if(!nchar(rv$sequence) > 10)
         return(NULL)
-    
+
     input_sequence <- get_sequence()
 
     if(is.null(input_sequence))
@@ -297,7 +311,7 @@ run_blast <- reactive({
 
     ## to uppercase_untouched
     hmm$acc <- format_pdbids(hmm$acc)
-    
+
     progress$set(value = 5)
     return(hmm)
   }
@@ -316,7 +330,7 @@ filter_hits <- reactive({
   blast <- run_blast()
   cutoff <- rv$cutoff
 
-  ## logical vector 
+  ## logical vector
   inds <- blast$score > cutoff
 
   ## limited by input$limit_hits
@@ -329,11 +343,11 @@ filter_hits <- reactive({
   ## accession ids above cutoff
   hits <- blast$acc[inds]
   hits2 <- blast$acc[inds2]
-  
+
   out <- list(hits=hits, inds=inds,
               hits_limited=hits2, inds_limited=inds2,
               cutoff=cutoff)
-  
+
   return(out)
 })
 
@@ -342,14 +356,14 @@ set_cutoff <- function(blast, cutoff=NULL) {
 
   if(is.null(blast))
     return(NULL)
-  
+
   x <- blast
   cluster <- FALSE
   cut.seed <- NULL
 
   if(is.null(x$evalue))
     stop("missing evalues")
-  
+
   x$mlog.evalue <- x$score
 
   ##- Find the point pair with largest diff evalue
