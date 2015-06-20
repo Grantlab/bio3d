@@ -20,6 +20,7 @@ rv$chainid <- "A"
 rv$limit_hits <- 5
 rv$cutoff <- 41
 rv$sequence <- "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE"
+rv$pdb_codes <- "1TND, 1KJY"
 
 observeEvent(input$pdbid, {
   if(nchar(input$pdbid)>3) {

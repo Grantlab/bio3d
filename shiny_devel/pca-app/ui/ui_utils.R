@@ -36,6 +36,12 @@ popoverQuestion <- function(id = 'popQues1', icon = 'question-circle', title = '
          placement: "auto %s"
          });
          $("#%s").click(function(e){
+         if($("input:radio[name=input_type]:checked").val() == "pdb"){
+             $("#pop-pdbid").popover("enable");
+         } else {
+             console.log("conditions for sequence and multipdb will be added")
+             $("#pop-pdbid").popover("disable");
+         }
          $("[data-toggle=\'%s\']").popover("show");
          });
          $(document).click(function (e) {

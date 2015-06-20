@@ -24,7 +24,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
                     conditionalPanel(
                       condition = "input.input_type == 'multipdb'",
-                      tags$textarea(id="pdb_codes", rows=4, cols=40, ""),
+                      tags$textarea(id="pdb_codes", rows=4, cols=40, "1TND, 1KJY"),
                       helpText("Separate PDB ids (4 character codes) with a comma ','")
                       ),
 
@@ -110,7 +110,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     style="background: #FFFFFF;",
 
                     conditionalPanel(
-                      condition = "input.show_pdb == true",
+                      condition = "input.show_pdb == true & input.input_type == 'pdb'",
                       h4("Input Structure Visualization"),
                       webGLOutput('pdbWebGL'),
                       radioButtons("view_inpdb_as", "View as",
@@ -125,7 +125,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       ),
 
                     conditionalPanel(
-                      condition = "input.show_pdb == false",
+                      condition = "input.show_pdb == false | input.input_type != 'pdb'",
                       h4("Bio3D PCA/eNMA WebApp"),
                       p("This Bio3D WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with principal component analysis (PCA) and ensemble normal mode analysis (eNMA)."),
                       p("Start by entering a PDB code of interest then proceed by navigating through the above tabs."),
