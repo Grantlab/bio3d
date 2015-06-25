@@ -1,20 +1,19 @@
 tabPanel("3. FIT", icon=icon("arrow-right"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
 
+         modalBox(id="2", button_label = "Help ", icon = "question",
+                  heading="Initial structure analysis",
+                  content = tags$div(
+                    HTML("<p>In this tab the collected structures are superimposed on each other either based on the <strong>identified invariant core</strong>, or on all C-alpha atoms. The invariant core is the region ...</p>"),
+
+                    p("In this panel you can perform simple structure analysis such as calculating all pair-wise RMSD values ... ")
+                    )
+                  ),
+         
+         
          fluidRow(
            column(4,
                   wellPanel(
-                    
-                    modalBox(id="1", button_label = "Help",
-                             heading="Initial structure analysis",
-                             content = tags$div(
-                               HTML("<p>In this tab the collected structures are superimposed on each other either based on the <strong>identified invariant core</strong>, or on all C-alpha atoms. The invariant core is the region ...</p>"),
-
-                               p("In this panel you can perform simple structure analysis such as calculating all pair-wise RMSD values ... ")
-                               )
-                             ),
-                    
-                    
                     
                     h4("Initial structure analysis"),
 
@@ -111,13 +110,6 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
            column(4,
                   wellPanel(
 
-                    dialogBox(id = 4, icon = "question-circle",
-                              style = "position: absolute; right: 25px; top: 5px;",
-                              title = "PDB Viewing options", 
-                              p("This panel controls various options for the visualization of the aligned PDB structures... ")
-                              
-                              ),
-                    
                     h4('PDBs Viewing Options'),
                     checkboxInput('show_pdbs', 'Show PDBs', value=FALSE),
 
@@ -157,6 +149,15 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
            column(4,
                   wellPanel(
                     style="background: #FFFFFF;",
+                    uiOutput("reference_selector")
+                    )
+                  )
+           ),
+         
+         fluidRow(
+           column(4,
+                  wellPanel(
+                    style="background: #FFFFFF;",
 
                     h4("Summary of invariant core"),
                     dataTableOutput("print_core")
@@ -168,7 +169,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     style="background: #FFFFFF;",
 
                     h4("RMSD summary"),
-                    uiOutput("reference_selector"),
+                    ##uiOutput("reference_selector"),
                     dataTableOutput("rmsd_table")
                     )
                   ),

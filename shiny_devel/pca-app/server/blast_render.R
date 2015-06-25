@@ -1,16 +1,33 @@
 output$pdbWebGL  <- renderWebGL({
   pdb <- get_pdb()
-  view.pdb(pdb, as=input$view_inpdb_as, col=input$view_inpdb_col)
+
+  as <- input$view_inpdb_as
+  bg <- "white"
+  
+  if("calpha" %in% as) {
+    view.pdb(pdb, as="calpha", col=input$view_inpdb_col, bg.col=bg)
+  }
+
+  if("overview" %in% as) {
+    ##view.pdb(pdb, as="overview") ##col=input$view_inpdb_col)
+
+    view.pdb(pdb, as="calpha", col=input$view_inpdb_col, lwd=5, bg.col=bg)
+    view.pdb(pdb, as="all", col="atom", add=TRUE)
+    
+  }
+  
 })
 
 output$blast_plot <- renderUI({
-  blast <- run_blast()
-
-  if(length(blast$acc) > 100) {
-    plotOutput("blast_plot1")
-  }
-  else {
-    showOutput("blast_plot2", "nvd3")
+  ##blast <- run_blast()
+  blast <- rv$blast
+  plotOutput("blast_plot1")
+  
+  #if(length(blast$acc) > 100) {
+  #  plotOutput("blast_plot1")
+  #}
+  #else {
+  #  showOutput("blast_plot2", "nvd3")
 
     #tags$script(HTML(
     #  'var css = document.createElement("style");
@@ -22,13 +39,14 @@ output$blast_plot <- renderUI({
     #                  css.innerHTML = ".nv-y .nv-axislabel { font-size: 20px; }";
     #                  document.body.appendChild(css);'
     #  ))
-  }
+  #}
 
 })
 
 ### Blast plot on front page
 output$blast_plot1 <- renderPlot({
-  blast <- run_blast()
+  ##blast <- run_blast()
+  blast <- rv$blast
   cut <- set_cutoff(blast, rv$cutoff)
 
   gp <- cut$gp.inds
@@ -48,7 +66,7 @@ output$blast_plot1 <- renderPlot({
   }
 
   col.bg <- sapply(grps, function(x) if(x==1) 'red3' else if(x==2) 'grey50')
-  pch = rep(19, length(col.bg))
+  pch = rep(21, length(col.bg))
   pch[col.bg=='grey50'] <- 21
   col.pch = rep('red3', length(pch))
   col.pch[pch==21] <- 'black'
@@ -76,13 +94,14 @@ output$blast_plot1 <- renderPlot({
        col="black", pos=3, cex=1)
 
   legend("bottomleft", c("Selected hits", "Above cutoff", "Below cutoff", "Cutoff"),
-         pt.bg = c("green", "red", "grey50", "red"), col=c(rep("grey10", 3), "red"), bg="grey90", lty=c(0, 0, 0, 2), pch=c(21,21,21,NA))
+         pt.bg = c("blue", "red", "grey50", "red"), col=c("blue", rep("grey10", 2), "red"), bg="grey90", lty=c(0, 0, 0, 2), pch=c(1,21,21,NA))
 
 })
 
-
+## Currently not used
 output$blast_plot2 <- renderChart2({
-  blast <- run_blast()
+  ##blast <- run_blast()
+  blast <- rv$blast
   cut <- set_cutoff(blast, rv$cutoff)
   blast$mlog.evalue <- blast$score
 
@@ -136,7 +155,8 @@ get_blasttable <- reactive({
   message("fetching blast table")
 
   if(input$input_type != "multipdb") {
-    blast <- run_blast()
+    ##blast <- run_blast()
+    blast <- rv$blast
     grps <- set_cutoff(blast, cutoff=rv$cutoff)$grps
 
     acc <- blast$acc
@@ -262,7 +282,8 @@ output$pdb_chains <- renderUI({
 })
 
 output$cutoff_slider <- renderUI({
-  blast <- run_blast()
+  ##blast <- run_blast()
+  blast <- rv$blast
   cutoff <- rv$cutoff
 
   sliderInput("cutoff", "Adjust inclusion bitscore cutoff:",

@@ -1,6 +1,4 @@
 
-### The js functions have been moved have been moved to ui/ui_utils.R
-
 tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
 
@@ -97,9 +95,10 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       dataTableOutput("pfam_table"),
 
                       ##submitButton("Update"),
-                      checkboxInput('show_pdb', 'View Input PDB', value=FALSE),
-
-                      checkboxInput('show_pdblog', 'View PDB Read Log', value=FALSE)
+                      radioButtons("logviewer", "PDB Log:",
+                                   c("About Bio3D" = "bio3d",
+                                     "View structure" = "pdb",
+                                     "PDB Read Log" = "pdblog"), inline=TRUE)
                       )
 
                     )
@@ -110,22 +109,31 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     style="background: #FFFFFF;",
 
                     conditionalPanel(
-                      condition = "input.show_pdb == true & input.input_type == 'pdb'",
+                      condition = "input.logviewer == 'pdb'",
                       h4("Input Structure Visualization"),
                       webGLOutput('pdbWebGL'),
-                      radioButtons("view_inpdb_as", "View as",
-                                   c("Overview" = "overview",
-                                     "Calpha trace" = "calpha"),
-                                   inline=TRUE),
-                      radioButtons("view_inpdb_col", "Color by",
-                                   c("SSE" = "sse",
-                                     "Index" = "index"),
-                                   inline=TRUE)
+
+                      selectInput("view_inpdb_as", "View mode",
+                                  c("C-alpha Trace" = "calpha",
+                                    "Overview" = "overview"),
+                                  selected = "calpha",
+                                  multiple = FALSE), 
+                      
+                      selectInput("view_inpdb_col", "Color C-alpha trace by",
+                                   c("Secondary structure elemets" = "sse",
+                                     "Residue Index" = "index"),
+                                  multiple=FALSE)
 
                       ),
 
                     conditionalPanel(
-                      condition = "input.show_pdb == false | input.input_type != 'pdb'",
+                      condition = "input.logviewer == 'pdblog'",
+                      h4("Input PDB Read Log"),
+                      verbatimTextOutput('pdb_log')
+                      ),
+
+                    conditionalPanel(
+                      condition = "input.logviewer == 'bio3d'",
                       h4("Bio3D PCA/eNMA WebApp"),
                       p("This Bio3D WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with principal component analysis (PCA) and ensemble normal mode analysis (eNMA)."),
                       p("Start by entering a PDB code of interest then proceed by navigating through the above tabs."),
@@ -206,6 +214,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
            ),
 
          fluidRow(
+           hr(),
            column(12,
                   wellPanel(
                     h4("C) Optional filtering of related structures for further analysis"),

@@ -2,64 +2,91 @@ tabPanel("2. ALIGN",
          icon=icon("arrow-right"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
 
+         
          fluidRow(
            column(5,
                   wellPanel(
                     h4("A) Alignment summary"),
-                    tags$hr(),
-
+                    
                     verbatimTextOutput("alignment_summary"),
-                    verbatimTextOutput("missres_summary"),
-
-                    checkboxInput("omit_missing",
-                                  "Omit PDBs with missing in-structure residues",
-                                  value=FALSE)
-
+                    verbatimTextOutput("missres_summary")
+                  
                     )
                   ),
 
            column(7,
-                  wellPanel(style="overflow: auto;",
+                  wellPanel(
+                    style="overflow: auto; background: #FFFFFF;",
+
                             
-                            h4("B) Edit alignment (optional)"),
-                            hr(),
-
-                            div(
-                              div(style="float: left; width: 45%;
+                    modalBox(id="1", button_label = "Help ", icon = "question",
+                             heading="Sequence and structure alignment",
+                             content = tags$div(
+                               HTML("<p>In this tab the collected structures are superimposed on each other either based on the <strong>identified invariant core</strong>, or on all C-alpha atoms. The invariant core is the region ...</p>"),
+                               
+                               p("In this panel you can perform simple structure analysis such as calculating all pair-wise RMSD values ... ")
+                               )
+                             ),
+                    
+                    
+                    h4("B) Edit alignment (optional)"),
+                    
+                    radioButtons("toggle_editing", "Action",
+                                 c("Filter structures" = "filter",
+                                   "Upload alignment" = "upload"),
+                                 inline = TRUE),
+                    
+                    conditionalPanel(
+                      condition = "input.toggle_editing == 'filter'",
+                      uiOutput("include_hits"),
+                      
+                      checkboxInput("omit_missing",
+                                    "Omit PDBs with missing in-structure residues",
+                                    value=FALSE)
+                      ),
+                    
+                    conditionalPanel(
+                      condition = "input.toggle_editing == 'upload'",
+                      
+                      div(
+                        div(style="float: left; width: 45%;
                                          padding: 10px;",
-
-                                  strong("Download FASTA file"),
-                                  helpText("To edit the alignment, download the FASTA alignment file,
+                            
+                            strong("Download FASTA file"),
+                            helpText("To edit the alignment, download the FASTA alignment file,
                                             and upload in the box to the right. "),
-
-                                  br(),
-                                  downloadButton('fastafile', "Download FASTA alignment file"),
-                                  actionButton("reset_fasta", "Reset alignment", icon=icon("undo"))
-
-                                  ),
-
-                              div(style="float: right; width: 45%;
+                            
+                            br(),
+                            downloadButton('fastafile', "Download FASTA alignment file")
+                            ),
+                        
+                        div(style="float: right; width: 45%;
                                          padding: 10px; margin-left: 5px;",
-
-                                  strong("Upload FASTA file"),
-                                  helpText(strong("Important:"), "when editing the FASTA file, do not edit the
+                            
+                            strong("Upload FASTA file"),
+                            helpText(strong("Important:"), "when editing the FASTA file, do not edit the
                                             sequence identifiers, and do preserve the amino acid sequences."),
-
-                                  fileInput('fastafile_upload', '',
-                                            accept=c('text/fasta', 'text/plain', '.fasta'))
-
-
-                                  )
-                              )
+                            
+                            fileInput('fastafile_upload', '',
+                                      accept=c('text/fasta', 'text/plain', '.fasta'))
+                            
                             )
+                        
+                        )
+                      ),
+                    
+                    actionButton("reset_fasta", "Reset alignment", icon=icon("undo"))
+                    )
                   )
            ),
-
-
-
+         
+         
+         
+         
          hr(),
          fluidRow(
            column(12,
+                  
                   h2("Final alignment"),
                   p("(slow for large aligments)"),
                   uiOutput("alignment"),
@@ -83,6 +110,7 @@ tabPanel("2. ALIGN",
           fluidRow(
            column(4,
                   wellPanel(
+                    style="overflow: auto;",
                     
                     h4("Sequence analysis"),
 

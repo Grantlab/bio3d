@@ -21,22 +21,6 @@ db_connect <- function() {
 db_disconnect <- function(con)
   dbDisconnect(con)
 
-format_pdbids <- function(acc) {
-  
-  ## first 4 chars should be upper
-  ## any chainId should remain untouched - see e.g. PDB ID 3R1C
-  mysplit <- function(x) {
-    str <- unlist(strsplit(x, "_"))
-    if(length(str)>1)
-      paste(toupper(str[1]), "_", str[2], sep="")
-    else
-      toupper(str[1])
-  }
-
-  out <- unlist(lapply(acc, mysplit))
-  return(out)
-}
-
 get_annotation <- function(acc, use_chain=TRUE) {
   acc <- format_pdbids(acc)
   unq <- unique(substr(acc, 1, 4))

@@ -51,7 +51,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                     checkboxInput('spread', 'Spread lines', value=FALSE),
                     checkboxInput('seqide', 'Sequence identity', value=FALSE),
                     ##checkboxInput('signif', 'Show fluct signif', value=FALSE),
-                    checkboxInput('rm.gaps', 'Omit gap regions', value=TRUE),
+                    checkboxInput('rm_gaps', 'Omit gap regions', value=TRUE),
 
                     checkboxInput('cluster', 'Color by clustering', value=TRUE),
                     radioButtons("group_by2", "Cluster by",
@@ -63,7 +63,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                                  inline=TRUE),
                     sliderInput("nclusts", "N clusters:",
                                 min = 1, max = 10, value = 3),
-                    checkboxInput('show_options1', 'More options', value=FALSE),
+                    checkboxInput('show_options3', 'More options', value=FALSE),
                     downloadButton('nmaplot2pdf', "Download Plot PDF")
                     )
                   ),
@@ -73,7 +73,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
            ),
 
          conditionalPanel(
-           condition = "input.show_options1 == true",
+           condition = "input.show_options3 == true",
            fluidRow(
              column(3,
                     wellPanel(
@@ -96,8 +96,11 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
          ### Heatmaps
          fluidRow(
            column(6,
-                  h4("RMSIP heatmap"),
-                  plotOutput("rmsip_heatmap2")
+                  conditionalPanel(
+                    condition = "input.rm_gaps == true",
+                    h4("RMSIP heatmap"),
+                    plotOutput("rmsip_heatmap2")
+                    )
                   ),
            column(6,
                   h4("RMSD heatmap"),
@@ -107,7 +110,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
 
          fluidRow(
            column(3,
-                  checkboxInput('show_options3', 'More options', value=FALSE)
+                  checkboxInput('show_options4', 'More options', value=FALSE)
                   ),
            column(3,
                   downloadButton('nma_rmsip_heatmap2pdf', "Download Plot PDF")
@@ -119,7 +122,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
            ),
 
          conditionalPanel(
-           condition = "input.show_options3 == true",
+           condition = "input.show_options4== true",
            fluidRow(
              column(3,
                     wellPanel(
@@ -143,7 +146,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
                   wellPanel(
                     h4('Cluster dendrogram'),
                     checkboxInput('show_confplot2', 'Show PC conformer plot', value=FALSE),
-                    checkboxInput('show_options2', 'More options', value=FALSE),
+                    checkboxInput('show_options5', 'More options', value=FALSE),
 
                     #radioButtons("group_by", "Cluster by",
                     #             c("RMSD" = "rmsd",
@@ -162,7 +165,7 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
            ),
 
          conditionalPanel(
-           condition = "input.show_options2 == true",
+           condition = "input.show_options5 == true",
            fluidRow(
              column(3,
                     wellPanel(

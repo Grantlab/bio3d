@@ -2,32 +2,100 @@
 ##-- Align
 ####################
 
+## selected accession ids
+rv$selacc <- NULL
+
+observeEvent(input$selected_pdbids, {
+
+  if(!length(input$selected_pdbids) > 0) {
+    rv$selacc <- get_acc()
+  }
+  
+  if(!all(rv$selacc %in% input$selected_pdbids))
+    rv$selacc <- input$selected_pdbids
+  
+  if(!all(input$selected_pdbids %in% rv$selacc))
+    rv$selacc <- input$selected_pdbids
+  
+})
+
+
+observeEvent(input$omit_missing, {
+
+  allacc <- get_acc()
+
+  if(input$omit_missing) {
+    pdbs <- align_pdbs()
+    conn <- inspect.connectivity(pdbs, cut=4.05)
+
+    if(!all(conn)) {
+
+      selacc <- rv$selacc[ rv$selacc %in% pdbs$lab[conn] ]
+      rv$selacc <- selacc
+      
+      updateSelectInput(session, "selected_pdbids", 
+                        choices = allacc, selected = selacc)
+    }
+  }
+  else {
+    rv$selacc <- allacc
+    updateSelectInput(session, "selected_pdbids", 
+                      choices = allacc, selected = allacc)
+      
+  }
+  
+})
+  
+
+observeEvent(input$reset_fasta, {
+
+  rv$selacc <- get_acc()
+  acc <- rv$selacc
+  updateSelectInput(session, "selected_pdbids", 
+                    choices = acc, selected = acc)
+  
+  updateCheckboxInput(session, "omit_missing", value = FALSE)
+})
+
+output$include_hits <- renderUI({
+
+  acc <- get_acc()
+  names(acc) <- acc
+  
+  selectInput("selected_pdbids", "Include / exclude hits",
+              choices = acc, selected = acc, multiple=TRUE)
+
+})
+
+## returns the accession IDs of selected hits (from the SEARCH tab)
 get_acc <- reactive({
 
   message( as.numeric(input$blast_table_rows_selected) )
-
+  
   if(input$input_type != "multipdb") {
-    blast <- run_blast()
-    #hits <- filter_hits()$hits
+    blast <- rv$blast
     acc <- blast$acc[ as.numeric(input$blast_table_rows_selected) ]
-    #acc <- hits$acc
 
-    #acc <- input$selected_pdbids
-    return(toupper(acc))
   }
   else {
-    #acc <- input$selected_pdbids
-    acc <- toupper(unique(trim(unlist(strsplit(input$pdb_codes, ",")))))
+    acc <- unique(trim(unlist(strsplit(input$pdb_codes, ","))))
     acc <- acc[acc!=""]
     anno <- get_annotation(acc, use_chain=FALSE)
     inds <- unlist(sapply(acc, grep, anno$acc))
     anno <- anno[inds, ]
     acc <- anno$acc
-    return(toupper(acc))
-   }
+  }
+  
+  acc <- format_pdbids(acc)
+  rv$selacc <- acc
+  
+  return(acc)
 })
 
-fetch_pdbs <- reactive({
+
+
+## returns the filenames of splitted PDBs
+split_pdbs <- reactive({
   ids <- get_acc()
   unq <- unique(substr(ids, 1,4))
 
@@ -85,9 +153,9 @@ fetch_pdbs <- reactive({
   return(files)
 })
 
-
-align <- reactive({
-  files <- fetch_pdbs()
+## performs the actual alignment of the PDBs
+align_pdbs <- reactive({
+  files <- split_pdbs()
 
   progress <- shiny::Progress$new()
   on.exit(progress$close())
@@ -114,20 +182,47 @@ align <- reactive({
                    progress=progress)
   }
 
-  pdbs$lab <- toupper(basename.pdb(pdbs$id))
+  pdbs$lab <- format_pdbids(basename.pdb(pdbs$id))
+  
   if(configuration$pdbdir$archive) {
-    pdbs$lab <- toupper(substr(pdbs$lab, 4, 9))
+    pdbs$lab <- format_pdbids(substr(pdbs$lab, 4, 9))
+  }
+ 
+ rownames(pdbs$ali) <- pdbs$lab
+ progress$close()
+ 
+ gc()
+ return(pdbs)
+})
+
+## filters the existing alignment obtained by align_pdbs()
+## misleading name, but provides the final alignment 
+align <- reactive({
+  pdbs <- align_pdbs()
+
+  #if(input$omit_missing) {
+  #  conn <- inspect.connectivity(pdbs, cut=4.05)
+  #  if(!all(conn)) {
+  #    labs <- pdbs$lab
+  #    pdbs <- trim(pdbs, row.inds=which(conn))
+  #    pdbs$lab <- labs[conn]
+  #  }
+  #}
+  
+  if(length(rv$selacc) > 0) {
+    if(length(rv$selacc) != length(pdbs$lab)) {
+      ids <- rv$selacc
+      labs <- pdbs$lab
+      
+      inds <- which(pdbs$lab %in% ids)
+      if(length(inds) > 0) {
+       pdbs <- trim(pdbs, row.inds = inds)
+        pdbs$lab <- labs[inds]
+      }
+    }
   }
 
-  if(input$omit_missing) {
-    conn <- inspect.connectivity(pdbs, cut=4.05)
-    pdbs <- trim.pdbs(pdbs, row.inds=which(conn))
-  }
-
-  rownames(pdbs$ali) <- basename.pdb(rownames(pdbs$ali))
-  progress$close()
   gc()
-  ##save(pdbs, file="pdbs.RData")
   return(pdbs)
 })
 
@@ -198,6 +293,7 @@ output$missres_summary <- renderPrint({
 
 
 output$alignment <- renderUI({
+  message("generating HTML")
   invisible(capture.output( aln <- align() ))
 
   ali <- aln$ali
@@ -404,15 +500,17 @@ output$seqide_dendrogram <- renderPlot({
 ####################################
 
 aln2file <- reactive({
-  fn <- paste0(data_path(), '/aln.fasta')
-  write.fasta(align(), file=fn)
+  path <- data_path()
+  aln <- align()
+  fn <- paste0(path, '/aln.fasta')
+  write.fasta(aln, file=fn)
   return(fn)
 })
 
 output$fastafile = downloadHandler(
-  filename = 'aln.fasta',
+  filename = 'aln.fasta.zip',
   content = function(file) {
-    aln2file()
+    zip(file, files=aln2file(), flags = "-9Xj")
   })
 
 seqide2txt <- reactive({

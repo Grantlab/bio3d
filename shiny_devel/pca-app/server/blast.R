@@ -17,6 +17,8 @@ data_path <- reactive({
 rv <- reactiveValues()
 rv$pdbid <- "2LUM"
 rv$chainid <- "A"
+rv$blast <- readRDS("2LUM_blast.RDS")
+rv$pfam <- readRDS("2LUM_pfam.RDS")
 rv$limit_hits <- 5
 rv$cutoff <- 41
 rv$sequence <- "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE"
@@ -26,7 +28,16 @@ observeEvent(input$pdbid, {
   if(nchar(input$pdbid)>3) {
     if(input$input_type == "pdb") {
       rv$pdbid <- substr(input$pdbid, 1, 4)
-      blast <- run_blast()
+      
+      if(rv$pdbid == "2LUM") {
+        blast <- rv$blast
+      }
+      else {
+        blast <- run_blast()
+        rv$blast <- blast
+        rv$pfam <- pdb.pfam(rv$pdbid)
+      }
+      
       cut <- set_cutoff(blast, cutoff=NULL)
       rv$cutoff <- cut$cutoff
       rv$limit_hits <- 5
@@ -39,6 +50,7 @@ observeEvent(input$sequence, {
     if(input$input_type == "sequence") {
       rv$sequence <- input$sequence
       blast <- run_blast()
+      rv$blast <- blast
       cut <- set_cutoff(blast, cutoff=NULL)
       rv$cutoff <- cut$cutoff
       rv$limit_hits <- 5
@@ -62,7 +74,7 @@ observeEvent(input$cutoff, {
 
 observeEvent(input$reset_cutoff, {
   if(input$input_type != "multipdb") {
-    blast <- run_blast()
+    blast <- rv$blast
     cut <- set_cutoff(blast, cutoff=NULL)
 
     updateSliderInput(session, "cutoff", value = cut$cutoff)
@@ -240,6 +252,16 @@ output$input_pdb_summary <- renderPrint({
 
 })
 
+## prints a longer log of the input PDB
+output$pdb_log <- renderPrint({
+  pdbid <- get_pdbid()
+  chainid <- get_chainid()
+  invisible(capture.output( pdb <- get_pdb() ))
+
+  pdbsum(pdb, pdbid=pdbid, chainid=chainid)
+    
+})
+
 ##-- PFAM annotation of single or multiple PDBs
 output$pfam_table <- DT::renderDataTable({
   message("input_pdb_pfam called")
@@ -249,7 +271,8 @@ output$pfam_table <- DT::renderDataTable({
     return()
   }
 
-  pfam <- pdb.pfam(pdbid)
+  ##pfam <- pdb.pfam(pdbid)
+  pfam <- rv$pfam
   pfam['PFAM'] <- lapply(pfam['PFAM'], function(x) {
       pfid <- regmatches(x, gregexpr("(?<=\\().*?(?=\\))", x, perl=T))[[1]]
       link <- gsub(pfid,
@@ -318,6 +341,8 @@ run_blast <- reactive({
 
     ## to uppercase_untouched
     hmm$acc <- format_pdbids(hmm$acc)
+    ##blast <- hmm
+    ##saveRDS(blast, file="2LUM_blast.RDS")
 
     progress$set(value = 5)
     return(hmm)
@@ -334,7 +359,8 @@ run_blast <- reactive({
 filter_hits <- reactive({
   message("filter_hits called")
 
-  blast <- run_blast()
+  ##blast <- run_blast()
+  blast <- rv$blast
   cutoff <- rv$cutoff
 
   ## logical vector

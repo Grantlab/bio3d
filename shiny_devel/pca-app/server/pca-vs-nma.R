@@ -12,7 +12,7 @@ pca3 <- reactive({
 })
 
 nma3 <- reactive({
-  if(input$rm.gaps == TRUE) {
+  if(input$rm_gaps == TRUE) {
     modes <- nma2()
   }
   else {

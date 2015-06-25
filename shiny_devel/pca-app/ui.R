@@ -24,10 +24,7 @@ shinyUI(
              source("ui/tab_enma.R", local=TRUE)$value,             
              source("ui/tab_help.R", local=TRUE)$value,
 
-             includeCSS("www/styles.css"),
-             includeCSS("www/css/jquery-ui.css"),  
-             includeScript("www/js/jquery-ui.js"),
-             includeScript("www/js/scripts.js")
+             includeCSS("www/styles.css")
              
              )
   )

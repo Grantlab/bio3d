@@ -15,8 +15,8 @@ nma2 <- reactive({
                value = 0)
 
   rm.gaps <- TRUE
-  if(is.logical(input$rm.gaps)) {
-    rm.gaps <- input$rm.gaps
+  if(is.logical(input$rm_gaps)) {
+    rm.gaps <- input$rm_gaps
   }
   else {
     rm.gaps <- TRUE
@@ -32,7 +32,7 @@ nma2 <- reactive({
 })
 
 rmsip2 <- reactive({
-  if(input$rm.gaps) {
+  if(input$rm_gaps) {
     pdbs <- align()
     modes <- nma2()
     rownames(modes$rmsip) <- pdbs$lab
@@ -64,7 +64,7 @@ hclust_rmsd2 <- reactive({
 })
 
 bhat2 <- reactive({
-  if(input$rm.gaps) {
+  if(input$rm_gaps) {
     ## Bhattacharyya coefficient
     pdbs <- align()
     modes <- nma2()

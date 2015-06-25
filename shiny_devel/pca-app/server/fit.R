@@ -36,9 +36,9 @@ fit <- reactive({
     init_show_pdbs <<- FALSE
   }
 
-  pdbs$lab <- toupper(basename.pdb(pdbs$id))
+  pdbs$lab <- format_pdbids(basename.pdb(pdbs$id))
   if(configuration$pdbdir$archive) {
-    pdbs$lab <- toupper(substr(pdbs$lab, 4, 9))
+    pdbs$lab <- format_pdbids(substr(pdbs$lab, 4, 9))
   }
   
   return(pdbs)
@@ -195,8 +195,11 @@ output$print_core <- DT::renderDataTable({
   core <- find_core()
   gaps <- gap.inspect(pdbs$ali)
 
-  ##ind <- grep(input$reference_id, pdbs$id)
-  ind <- 1
+  if(!is.null(input$reference_id))
+    ind <- grep(input$reference_id, pdbs$lab)
+  else
+    ind <- 1
+  
   resid <- pdbs$resid[ind, core$atom]
   resno <- pdbs$resno[ind, core$atom]
   bds <- bounds(resno)
@@ -224,6 +227,8 @@ output$reference_selector <- renderUI({
   names(ids) <- ids
   selectInput("reference_id", "Reference PDB id:", ids)
 })
+
+
 
 output$rmsd_table <- DT::renderDataTable({
   pdbs <- fit()

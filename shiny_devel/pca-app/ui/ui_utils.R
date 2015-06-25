@@ -2,27 +2,6 @@ actionButton3 <- function (inputId, label, icon = NULL, cl="btn btn-default acti
   tags$button(id = inputId, type = "button", class = cl, list(icon, label), ...)
 }
 
-dialogBox <- function(id = 1, icon = "question-circle", title = NULL, style = NULL, ... ) {
-
-  ## CSS for this stuff is in www/css/jquery-ui.css
-  ido <- paste0("opener", id)
-  idd <- paste0("dialog", id)
-
-  script <- sprintf(
-    '$(function() {$( "#%s" ).dialog({autoOpen: false, width: 600, modal: true, show: {effect: "fade", duration: 500}}); $( "#%s" ).click(function() { $( "#%s" ).dialog( "open" ); });  });',
-    idd, ido, idd
-    )
-
-  tags$div(
-    tags$div(id=ido, icon(icon), style = style),
-    tags$div(id=idd, title = title, ...),
-
-    tags$script(
-      script
-      )
-    )
-}
-
 popoverQuestion <- function(id = 'popQues1', icon = 'question-circle', title = 'Title',
                       content = '', trigger = 'hover', style = "position: absolute; right: 25px; top: 5px;",
                       placement = 'right', data_toggle = "pop-box", ...) {
@@ -83,18 +62,21 @@ popTextInput <- function(inputId, label, value = "",
 }
 
 modalBox <- function(id, button_label = "", heading = NULL,
-                     icon = NULL, content = NULL,
+                     icon = 'question', content = NULL,
                      cl = "btn btn-primary btn-input action-button",
                      ...) {
 
   idm1 <- paste0("myModal", id)
   idm2 <- paste0("#", idm1)
 
+  if(!is.null(icon))
+    icon <- icon(icon)
+
   tags$div(
     tags$button(type="button", class=cl,
                 "data-toggle"="modal", "data-target"=idm2,
                 style = "float: right",
-                list(icon("question"), button_label)
+                list(icon, button_label)
                 ),
 
   tags$div(
