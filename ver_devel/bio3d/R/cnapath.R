@@ -92,7 +92,7 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
 
   # does a list contain this path?
   contains.path <- function(variants, variant){
-     return( any( unlist( lapply( variants, function(x){ identical(x$path, variant) } ) ) ) )
+     return( any( unlist( lapply( variants, function(x){ isTRUE(all.equal(x$path, variant)) } ) ) ) )
   }
 
   # first shortest path
@@ -138,7 +138,7 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
        # those shortest paths stored in A that share the same root path here
        g <- graph
        for(j in 1:length(A)) {
-          if(length(A[[j]]$path) > i && identical(rootPath, A[[j]]$path[1:i])) {
+          if(length(A[[j]]$path) > i && isTRUE(all.equal(rootPath, A[[j]]$path[1:i]))) {
              nn = A[[j]]$path[i+1]
              ee = igraph::E(g)[igraph::'%--%'(spurNode, nn)]
              if(length(ee)>0) g <- igraph::delete.edges(g, ee)
