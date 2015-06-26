@@ -5,38 +5,46 @@ tabPanel("1. SEARCH", icon=icon("home"),
          fluidRow(
            column(4,
                   wellPanel(
-                    popoverQuestion(id="popQues1", content="test", trigger="focus",
+                    popoverQuestion(id="popQues1", content="For both <b>single structure</b> and <b>single sequence</b> options a search will be performed to find related PDB structures upon which subsequent analysis will be based. The results of this search will be presented below along with options to restrict subsequent analysis to certain chains. </br></br>With <b>multiple structure</b> input, analysis will be confined to the specified structures and only their annotation will be displayed below. </br></br>To continue analysis proceed by navigating through the <b>NEXT</b> buttons. </br>Please refer to the main <a href='http://thegrantlab.org'>Help</a> page for further details.", trigger="focus",
                                     data_toggle = "pop_blast_input"),
 
                     h4("A)  Input Structure(s) or Sequence"),
 
-                    helpText("Please enter either a single PDB code of interest, multiple related PDB codes or a single protein sequence (see the help page for more details)."),
+                    helpText("Please enter either a single PDB code of interest, a single protein sequence, or multiple related PDB codes (see the ",
+                    a(href="http://thegrantlab.org", target="_blank", "Help"), " page for more details)."),
 
                     popRadioButtons(inputId = "input_type", label = "",
-                                 choices = c("Enter a single PDB code" = "pdb",
-                                   "Paste a single sequence" = "sequence",
-                                   "Enter mutliple PDB codes" = "multipdb"),
+                                 choices = c("Enter a single PDB structure code" = "pdb",
+                                   "Paste a single protein sequence" = "sequence",
+                                   "Enter multiple PDB structure codes" = "multipdb"),
                                  selected = NULL,inline=FALSE,
                                  placement = "right", data_toggle = "pop_blast_input",
-                                 title = "Structure or sequence input"),
+                                 title = "Select your input data type"),# 
+                                 #content = "For both single structure and single sequence options ...<BROKEN! WHY DO I NEED TO PUT THIS TEXT ABOVE RATHER THAN HERE?>"
+
+                    br(),
 
                     conditionalPanel(
                       condition = "input.input_type == 'multipdb'",
-                      tags$textarea(id="pdb_codes", rows=4, cols=40, "1TND, 1KJY"),
-                      helpText("Separate PDB ids (4 character codes) with a comma ','")
+                      tags$textarea(id="pdb_codes", rows=4, cols=40, "1TND, 1KJY_A"),
+                      helpText("Enter multiple comma ',' separated PDB IDs (4 character RCSB PDB codes with optional underscore chain, e.g. '1KJY_A')")
                       ),
 
                     conditionalPanel(
                       condition = "input.input_type == 'sequence'",
                       tags$textarea(id="sequence", rows=4, cols=40,
-                                    "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE")
+                                    "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE"),
+                      helpText("Paste a protein sequence with no identifiers or FASTA headers.")
+          
                       ),
 
                     conditionalPanel(
                       condition = "input.input_type == 'pdb'",
 
                       ##-PDB input
-                      popTextInput("pdbid", label="Enter a 4 character RCSB PDB code/ID:", value = "2LUM", data_toggle = "pop_blast_input", title = "RCSB PDB ID", content = "Please enter a four letter PDB code. We parse the first four characters only.")
+                      popTextInput("pdbid", label="Enter a 4 character RCSB PDB code/ID:", value = "2LUM")
+                       #data_toggle = "pop_blast_input", title = "RCSB PDB ID", 
+                       #content = "Please type a four letter PDB code (e.g. 2LUM). <THIS IS REDUNDENT INFO!>")
                       ),
 
                     actionButton3("page1_hits", "Next (Hit selection)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
@@ -80,8 +88,6 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       condition = "input.input_type == 'pdb'",
                       h4("Structure Summary and Visualization"),
 
-                      ##-PDB input
-                      #textInput("pdbid", label="Enter RCSB PDB code/ID:", value = "2LUM"),
 
                       ##- PDB summary
                       tags$label("PDB Summary:"),
@@ -98,7 +104,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       radioButtons("logviewer", "PDB Log:",
                                    c("About Bio3D" = "bio3d",
                                      "View structure" = "pdb",
-                                     "PDB Read Log" = "pdblog"), inline=TRUE)
+                                     "PDB processing log" = "pdblog"), inline=TRUE)
                       )
 
                     )
