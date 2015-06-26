@@ -1,13 +1,13 @@
 
 tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
-
+         
          fluidRow(
            column(4,
                   wellPanel(
                     popoverQuestion(id="popQues1", content="For both <b>single structure</b> and <b>single sequence</b> options a search will be performed to find related PDB structures upon which subsequent analysis will be based. The results of this search will be presented below along with options to restrict subsequent analysis to certain chains. </br></br>With <b>multiple structure</b> input, analysis will be confined to the specified structures and only their annotation will be displayed below. </br></br>To continue analysis proceed by navigating through the <b>NEXT</b> buttons. </br>Please refer to the main <a href='http://thegrantlab.org'>Help</a> page for further details.", trigger="focus",
                                     data_toggle = "pop_blast_input"),
-
+                    
                     h4("A)  Input Structure(s) or Sequence"),
 
                     helpText("Please enter either a single PDB code of interest, a single protein sequence, or multiple related PDB codes (see the ",
@@ -115,7 +115,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     style="background: #FFFFFF;",
 
                     conditionalPanel(
-                      condition = "input.logviewer == 'pdb'",
+                      condition = "input.logviewer == 'pdb' && input.input_type == 'pdb'",
                       h4("Input Structure Visualization"),
                       webGLOutput('pdbWebGL'),
 
@@ -133,13 +133,13 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       ),
 
                     conditionalPanel(
-                      condition = "input.logviewer == 'pdblog'",
+                      condition = "input.logviewer == 'pdblog' && input.input_type == 'pdb'",
                       h4("Input PDB Read Log"),
                       verbatimTextOutput('pdb_log')
                       ),
 
                     conditionalPanel(
-                      condition = "input.logviewer == 'bio3d'",
+                      condition = "input.logviewer == 'bio3d' || input.input_type != 'pdb'",
                       h4("Bio3D PCA/eNMA WebApp"),
                       p("This Bio3D WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with principal component analysis (PCA) and ensemble normal mode analysis (eNMA)."),
                       p("Start by entering a PDB code of interest then proceed by navigating through the above tabs."),

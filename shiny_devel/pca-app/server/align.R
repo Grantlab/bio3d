@@ -495,6 +495,23 @@ output$seqide_dendrogram <- renderPlot({
 })
 
 
+make.plot.entropy <- function() {
+  pdbs <- align()
+  ent <- entropy(pdbs)
+
+  ##mar <- as.numeric(c(input$margins0, input$margins0))
+  p1 <- plot.bio3d(ent$H.norm, 
+             ylab="Entropy", xlab="Alignment Index",
+             cex=input$cex0)
+  
+  return(p1)
+}
+
+output$entropy <- renderPlot({
+  print(make.plot.entropy())
+})
+
+
 ####################################
 ####     Download functions     ####
 ####################################
@@ -542,5 +559,13 @@ output$seqide_dendrogram2pdf = downloadHandler(
   content = function(FILE=NULL) {
     pdf(file=FILE, onefile=T, width=input$width0, height=input$height0)
     print(make.plot.seqide.dendrogram())
+    dev.off()
+  })
+
+output$entropy2pdf = downloadHandler(
+  filename = "entropy.pdf",
+  content = function(FILE=NULL) {
+    pdf(file=FILE, onefile=T, width=input$width0, height=input$height0)
+    print(make.plot.entropy())
     dev.off()
 })
