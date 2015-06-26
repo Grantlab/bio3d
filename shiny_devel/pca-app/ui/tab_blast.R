@@ -1,17 +1,17 @@
 
 tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
-
+         
          fluidRow(
            column(4,
                   wellPanel(
                     popoverQuestion(id="popQues1", content="test", trigger="focus",
                                     data_toggle = "pop_blast_input"),
-
+                    
                     h4("A)  Input Structure(s) or Sequence"),
-
+                    
                     helpText("Please enter either a single PDB code of interest, multiple related PDB codes or a single protein sequence (see the help page for more details)."),
-
+                    
                     popRadioButtons(inputId = "input_type", label = "",
                                  choices = c("Enter a single PDB code" = "pdb",
                                    "Paste a single sequence" = "sequence",
@@ -109,7 +109,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     style="background: #FFFFFF;",
 
                     conditionalPanel(
-                      condition = "input.logviewer == 'pdb'",
+                      condition = "input.logviewer == 'pdb' && input.input_type == 'pdb'",
                       h4("Input Structure Visualization"),
                       webGLOutput('pdbWebGL'),
 
@@ -127,13 +127,13 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       ),
 
                     conditionalPanel(
-                      condition = "input.logviewer == 'pdblog'",
+                      condition = "input.logviewer == 'pdblog' && input.input_type == 'pdb'",
                       h4("Input PDB Read Log"),
                       verbatimTextOutput('pdb_log')
                       ),
 
                     conditionalPanel(
-                      condition = "input.logviewer == 'bio3d'",
+                      condition = "input.logviewer == 'bio3d' || input.input_type != 'pdb'",
                       h4("Bio3D PCA/eNMA WebApp"),
                       p("This Bio3D WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with principal component analysis (PCA) and ensemble normal mode analysis (eNMA)."),
                       p("Start by entering a PDB code of interest then proceed by navigating through the above tabs."),

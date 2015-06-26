@@ -116,7 +116,8 @@ tabPanel("2. ALIGN",
 
                     radioButtons("seq_plot", "Plot options",
                                  c("Heatmap" = "heatmap",
-                                   "Dendrogram" = "dendrogram"),
+                                   "Dendrogram" = "dendrogram",
+                                   "Entropy" = "entropy"),
                                  inline=TRUE),
 
                     sliderInput("clusters_seq", "Cluster by pairwise sequence identity",
@@ -134,25 +135,35 @@ tabPanel("2. ALIGN",
                       downloadButton('seqide_dendrogram2pdf', "Download PDF")
                       ),
 
+                    conditionalPanel(
+                      condition = "input.seq_plot == 'entropy'",
+                      downloadButton('entropy2pdf', "Download PDF")
+                      ),
+                    
                     downloadButton('seqideZIP', "Download Seq ide matrix")
                     )
                   ),
 
-           column(8,
-
-             conditionalPanel(
-               condition = "input.seq_plot == 'heatmap'",
-               plotOutput("seqide_heatmap")
-               ),
-
-             conditionalPanel(
-               condition = "input.seq_plot == 'dendrogram'",
-               plotOutput("seqide_dendrogram")
-               )
-
-             )
-           ),
-
+            column(8,
+                   
+                   conditionalPanel(
+                     condition = "input.seq_plot == 'heatmap'",
+                     plotOutput("seqide_heatmap")
+                     ),
+                   
+                   conditionalPanel(
+                    condition = "input.seq_plot == 'dendrogram'",
+                     plotOutput("seqide_dendrogram")
+                     ),
+                   
+                   conditionalPanel(
+                     condition = "input.seq_plot == 'entropy'",
+                     plotOutput("entropy")
+                     )
+                   
+                   )
+            ),
+         
          conditionalPanel(
            condition = "input.show_options0 == true",
            fluidRow(

@@ -200,10 +200,10 @@ get_blasttable <- reactive({
   if(!is.null(grps)) {
     col <- sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' })
 
-    if(length(input$selected_pdbids)>0) {
-      inds <- unlist(lapply(input$selected_pdbids, grep, anno$acc))
-      col[inds] <- "green"
-    }
+    #if(length(input$selected_pdbids)>0) {
+    #  inds <- unlist(lapply(input$selected_pdbids, grep, anno$acc))
+    #  col[inds] <- "green"
+    #}
 
     #if(!is.null(rv$limit_hits)) {
     #  limit <- as.numeric(rv$limit_hits)

@@ -1,18 +1,19 @@
-tabPanel("4. PCA", icon=icon("arrow-right"),
+tabPanel(
+  "4. PCA", icon=icon("arrow-right"),
   tags$style(type="text/css", "body {padding-top: 80px;}"),
 
-         
-         modalBox(id="3", button_label = "Help ", icon = "question",
-                  heading="Principal component analysis",
-                  content = tags$div(
-                    HTML("<p>In this tab the collected structures are superimposed on each other either based on the <strong>identified invariant core</strong>, or on all C-alpha atoms. The invariant core is the region ...</p>"),
+  
+  modalBox(id="3", button_label = "Help ", icon = "question",
+           heading="Principal component analysis",
+           content = tags$div(
+             HTML("<p>In this tab the collected structures are superimposed on each other either based on the <strong>identified invariant core</strong>, or on all C-alpha atoms. The invariant core is the region ...</p>"),
+             
+             p("In this panel you can perform simple structure analysis such as calculating all pair-wise RMSD values ... ")
+             )
+           ),
+  
 
-                    p("In this panel you can perform simple structure analysis such as calculating all pair-wise RMSD values ... ")
-                    )
-                  ),
-         
-
-         
+  ##- PC Visualization 
   fluidRow(
     column(4,
            wellPanel(
@@ -50,6 +51,8 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
            )
   ),
 
+
+  ##- Conformer plots
   fluidRow(
     column(4,
       wellPanel(
@@ -69,7 +72,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
 
         radioButtons('cluster_by', label='Cluster by',
                           choices=list('RMSD'='rmsd', 'PC subspace'='pc_space'),
-                     selected='rmsd'),
+                     selected='rmsd', inline=TRUE),
 
         conditionalPanel(
           condition = "input.cluster_by == 'pc_space'",
@@ -81,11 +84,11 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
           min = 1, max = 10, value = 3),
 
         radioButtons("plot_type", "",
-                   c("2D scatter" = "normal",
-                     "3D scatter (rgl)" = "3dscatter1",
-                     "3D scatter (three-js)" = "3dscatter2",
-                     "Interactive" = "fancy"
-                     ),
+                     c("2D scatter" = "normal",
+                       "3D scatter" = "3dscatter1",
+                       "Interactive" = "fancy"
+                       ##"3D scatter (three-js)" = "3dscatter2",
+                       ),
                      inline=TRUE),
 
         conditionalPanel(
@@ -101,7 +104,7 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
           checkboxInput("grid", label = "Grid", value = TRUE)
           )
         )
-    ),
+           ),
 
     conditionalPanel(
       condition = "input.plot_type == '3dscatter1'",
@@ -143,18 +146,17 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
                )
              )
       )
+
     ),
 
-  fluidRow(
-#    column(3,
-#           wellPanel(
-#             h4("Trajectory download"),
-#             helpText("Trajectories of the first 5 principal components can be downloaded and visualized in your favorite visualization program (e.g. PyMOL or VMD)."),
-#             downloadButton('pctrajZIP', "Download")
-#             )
-#           ),
+ 
+    
 
-  conditionalPanel(
+
+
+  ##- Additional plotting options for conformer plot
+  fluidRow(
+    conditionalPanel(
     condition = "input.show_options1 == true && input.plot_type == 'normal'",
       column(3,
              wellPanel(
@@ -195,43 +197,60 @@ tabPanel("4. PCA", icon=icon("arrow-right"),
     )
     ),
 
-         fluidRow(
-           column(4,
-                  wellPanel(
-                    h4('Residue contributions'),
-                    selectInput('loadings_pc', 'Choose Principal Component:',
-                                choices=c(1:10), selected=1, multiple=TRUE),
-                    checkboxInput("toggle_rmsf1", "Show RMSF", TRUE),
-                    downloadButton('pcloadings2pdf', label='Download PDF'),
-                    checkboxInput("show_options2", "More options", value=FALSE)
-                    )
-                  ),
+  fluidRow(
+    column(12,
+           wellPanel(
+             h4("Hits annotation"),
+             helpText("Highlight structures in conformer plot by clicking their entries in the below table (only for plot type '2D Scatter'."),
+             DT::dataTableOutput("pdbs_table")
+             )
+           )
+    ),
+           
 
-           column(8,
-                  plotOutput("loadings_plot")
-                  )
-           ),
-
-         conditionalPanel(
-           condition = "input.show_options2 == true",
-
-           fluidRow(
-             column(4,
-                    wellPanel(
-                      sliderInput("width-pcload", "Width",
-                                  min = 4, max = 12, value = 7, step=0.5),
-                      sliderInput("height-pcload", "Height",
-                                  min = 4, max = 12, value = 7, step=0.5)
-                      )
-                    )
+  
+  ##- PC Loadings - fluctuations
+  fluidRow(
+    column(4,
+           wellPanel(
+             h4('Residue contributions'),
+             selectInput('loadings_pc', 'Choose Principal Component:',
+                         choices=c(1:10), selected=1, multiple=TRUE),
+             ##checkboxInput("toggle_rmsf1", "Show RMSF", TRUE),
+             checkboxInput("toggle_rmsf1", "Show RMSF", TRUE),
+             checkboxInput("multiplot", "Multiline plot", FALSE),
+             checkboxInput("spread_pcload", "Spread lines", FALSE),
+             downloadButton('pcloadings2pdf', label='Download PDF'),
+             checkboxInput("show_options2", "More options", value=FALSE)
              )
            ),
-
-         fluidRow(
-           column(12,
-                  wellPanel(
-                    DT::dataTableOutput("pdbs_table")
-                    )
-                  )
+    
+    column(8,
+           plotOutput("loadings_plot")
            )
-         )
+    ),
+  
+  conditionalPanel(
+    condition = "input.show_options2 == true",
+    
+    fluidRow(
+      column(4,
+             wellPanel(
+               sliderInput("width_pcload", "Width",
+                           min = 4, max = 12, value = 8, step=0.5),
+               sliderInput("height_pcload", "Height",
+                           min = 4, max = 12, value = 5, step=0.5)
+               )
+             )
+      )
+    )
+
+  ##- Annotation datatable
+  #fluidRow(
+  #  column(12,
+  #         wellPanel(
+  #           DT::dataTableOutput("pdbs_table")
+  #           )
+  #         )
+  #  )
+  )

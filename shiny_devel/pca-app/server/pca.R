@@ -281,29 +281,56 @@ make.plot.loadings <- function(){
 
   pcs <- as.numeric(input$loadings_pc)
 
-  if(length(pcs)>1)
-    par(mfrow=c(length(pcs), 1))
   if(length(pcs)==0)
     pcs <- 1
+  
+  au <- t(pc$au[, pcs, drop=FALSE])
 
-  if(input$toggle_rmsf1)
-    par(mar=c(5, 4, 4, 5))
-  else
-    par(mar=c(5, 4, 4, 2))
 
-  for(i in pcs) {
-    plot4 <- plot.bio3d(pc$au[, i], resno=resno, sse=sse,
-                        ylab=paste0("PC-", i, " (Å)"), xlab="Residue No.")
+  if( input$multiplot ) {
+    if(!input$spread_pcload | length(pcs) < 2) {
+      plot.fluct(au, resno=resno, sse=sse,
+                 ylab=paste0("PCs", " (Å)"), xlab="Residue No.")
+    }
+    else {
+      maxval <- max(au)
+      for(i in 2:nrow(au)) {
+        au[i, ] <- au[i,] + ((i-1)*maxval)
+      }
 
-    if(input$toggle_rmsf1) {
-      par(new=TRUE)
-      plot5 <- plot.bio3d(rf, resno=resno, sse=sse, axes=FALSE, col=2, type="l", xlab="", ylab="")
-      axis(4, col=2)
-      mtext("RMSF (Å)", side=4, line=3)
+      plot.fluct(au, resno=resno, sse=sse, axes=FALSE,
+                 ylab="", xlab="Residue No.")
+
+      at <- axTicks(1); at[1] = 1
+      labels <- resno[at]
+      labels[is.na(labels)] <- "" # for gaps, no label
+      axis(1, at=at, labels=labels)
+      box()
     }
   }
-
-  return(plot4)
+  else {
+    if(input$toggle_rmsf1)
+      par(mar=c(5, 4, 4, 5))
+    else
+      par(mar=c(5, 4, 4, 2))
+    
+    if(length(pcs)>1)
+      par(mfrow=c(length(pcs), 1))
+    
+    for(i in pcs) {
+      plot4 <- plot.bio3d(au, resno=resno, sse=sse,
+                          ylab=paste0("PC-", i, " (Å)"), xlab="Residue No.")
+      
+      if(input$toggle_rmsf1) {
+        par(new=TRUE)
+        plot5 <- plot.bio3d(rf, resno=resno, sse=sse, axes=FALSE, col=2, type="l", xlab="", ylab="")
+        axis(4, col=2)
+        mtext("RMSF (Å)", side=4, line=3)
+      }
+    }
+  }
+    
+  ##return(plot4)
 }
 
 output$loadings_plot <- renderPlot({
@@ -388,7 +415,7 @@ get_pdbstable <- reactive({
 output$pdbs_table <- renderDataTable({
   datatable(get_pdbstable(), extensions = 'Scroller', escape = FALSE,
             colnames = c("ID", "Cluster", "Name", "Species", "Ligands"),
-            selection = "none",
+            ##selection = "none",
             options = list(
               deferRender = TRUE,
               dom = "frtiS",
@@ -478,7 +505,7 @@ output$pca2pymol = downloadHandler(
 output$pcloadings2pdf = downloadHandler(
   filename = "pc_loadings.pdf",
   content = function(FILE=NULL) {
-    pdf(file=FILE, width=input$width2, height=input$height2)
+    pdf(file=FILE, width=input$width_pcload, height=input$height_pcload)
     make.plot.loadings()
     dev.off()
 })
