@@ -224,6 +224,21 @@ get_blasttable <- reactive({
                          substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   }
 
+  
+  ## http://xray.bmc.uu.se/hicup/ATP/
+  anno$ligandId <- unlist(lapply(anno$ligandId,
+         function(x) {
+           spl <- unlist(strsplit(x, ","))
+           return(paste(paste0("<a href=\"", "http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId=",
+                               
+                               spl, "\" target=\"_blank\">", spl, "</a>"),
+                        collapse=","))
+         }))
+  
+  
+  #anno$ligandId <- paste0("<a href=\"", "http://xray.bmc.uu.se/hicup/",
+  #                        anno$ligandId, "\" target=\"_blank\">", anno$ligandId, "</a>")
+
   rownames(anno) <- NULL
   show.cols <- c("acc", "compound", "source", "ligandId", "score")
   col.inds <- sapply(show.cols, grep, colnames(anno))
