@@ -25,6 +25,7 @@ library(maptools)
 library(threejs)
 library(abind)
 ##library(qtlcharts)
+library(shinyBS)
 
 if(configuration$db$use)
   library(RMySQL)

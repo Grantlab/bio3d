@@ -5,13 +5,13 @@ output$pdbWebGL  <- renderWebGL({
   bg <- "white"
   
   if("calpha" %in% as) {
-    view.pdb(pdb, as="calpha", col=input$view_inpdb_col, bg.col=bg)
+    view.pdb(pdb, as="calpha", col=input$view_inpdb_col, bg.col=bg, sheet="blue")
   }
 
   if("overview" %in% as) {
     ##view.pdb(pdb, as="overview") ##col=input$view_inpdb_col)
 
-    view.pdb(pdb, as="calpha", col=input$view_inpdb_col, lwd=5, bg.col=bg)
+    view.pdb(pdb, as="calpha", col=input$view_inpdb_col, lwd=5, bg.col=bg, sheet="blue")
     view.pdb(pdb, as="all", col="atom", add=TRUE)
     
   }

@@ -245,3 +245,33 @@ pdbsum <- function(object, printseq=FALSE, pdbid = NULL, chainid = NULL, ...) {
 
 
 }
+
+
+mk.pfam.tbl <- function(aa1) {
+  ##-- Annotate a sequence with PFAM (online)
+  ##    Used for single sequence input annotation.
+  ##
+  ## pdb <- read.pdb('5p21')
+  ## aa <- pdbseq(pdb)
+  ## mk.pfam.tbl(aa)
+
+  ##- Check for invalid residue types
+  aa.protein <- c("-", "X", "A", "C", "D", "E", "F", "G", "H", "I", "K", 
+                  "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y")
+  aa1.match <- aa1 %in% aa.protein
+  aa1.valid <- ifelse(all(aa1.match), "YES", "NO")
+
+  ##- Report on top PFAM match (with link)
+  fam <- hmmer(seq=aa1, type="hmmscan", db="pfam")
+  fam.txt <- paste0(fam[1,"name"], " (acc: ", fam[1,"acc"],")")
+  fam.url <- paste0("http://pfam.sanger.ac.uk/family/",fam[1,"acc"])
+
+  ##- Simple length check and exclusionn of long sequences
+  aa1.len <- length(aa1)
+  #if(aa1.len > 500) { stop("Sequence length beyond our limts!") }
+
+  return( c("length"=aa1.len, "valid"=aa1.valid, "pfam"=fam.txt, 
+    "pfam.url"=fam.url, "pfam.e"=fam[1,"evalue"]) )
+}
+
+
