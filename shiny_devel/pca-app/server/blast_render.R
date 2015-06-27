@@ -250,7 +250,8 @@ get_blasttable <- reactive({
 
   output$blast_table <- renderDataTable({
       limit <- as.numeric(input$limit_hits)
-      DT::datatable(get_blasttable(), extensions = 'Scroller', escape = FALSE,
+      DT::datatable(get_blasttable(), extensions = c('Scroller'),## 'TableTools'), 
+              escape = FALSE,
               colnames = c("ID", "Score", "Name", "Species", "Ligands"),
               selection =
                   if(input$input_type != 'multipdb') {
@@ -268,6 +269,8 @@ get_blasttable <- reactive({
               options = list(
                 deferRender = TRUE,
                 dom = "frtiS",
+                ##                dom = 'T<"clear">lfrtip',
+                ##                tableTools = list(sSwfPath = copySWF()),
                 scrollY = 400,
                 scrollCollapse = TRUE,
                 autoWidth = FALSE,
@@ -292,7 +295,7 @@ get_blasttable <- reactive({
 output$pdb_chains <- renderUI({
   chains <- get_chainids()
 
-  selectInput("chainId", "Limit to chain ID:",
+  selectInput("chainId", "Limit to chain id:",
               choices = chains, selected = chains[1], multiple=FALSE)
 })
 
