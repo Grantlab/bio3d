@@ -105,12 +105,17 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       tags$label("PDB Summary:"),
                       verbatimTextOutput("input_pdb_summary"),
 
-                      ##- Chain selection
-                      uiOutput("pdb_chains"),
+                      br(),
 
                       ##- pfam_table (To be beautified!!)
-                      tags$label("PFAM chain annotation:"),
-                      dataTableOutput("pfam_table"),
+                      ##tags$label("PFAM chain annotation:"),
+                      #dataTableOutput("pfam_table"),
+                      DT::dataTableOutput('pfam_table'),
+
+                      br(),br(),
+
+                      ##- Chain selection
+                      uiOutput("pdb_chains"),
 
                       br(),
 
@@ -127,9 +132,10 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
 
                       popRadioButtons("logviewer", "View:",
-                                    c("App Info" = "bio3d",
-                                      "3D structure" = "pdb",
-                                      "PDB processing log" = "pdblog"), 
+                                    c("3D structure" = "pdb",
+                                      "PDB processing log" = "pdblog",
+                                      "App Info" = "bio3d"),
+                                      selected="bio3d",   ##<--- Change to "pdb" ???
                                      inline=TRUE,
                                      placement = "right", 
                                      data_toggle = "pop_summary_input",
@@ -174,8 +180,8 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     conditionalPanel(
                       condition = "input.logviewer == 'bio3d' || input.input_type != 'pdb'",
                       h4("Bio3D PCA/eNMA WebApp"),
-                      p("This Bio3D WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with principal component analysis (PCA) and ensemble normal mode analysis (eNMA)."),
-                      p("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons."),
+                      p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with <a href=\"http://thegrantlab.org/bio3d/tutorials/principal-component-analysis\">principal component analysis</a> (PCA) and <a href=\"http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1\">ensemble normal mode analysis</a> (eNMA).")),
+                      p(HTML("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons.")),##<font color=\"red\">NEXT</font> buttons.")),
                       img(src="geostas_250x182.png",
                           width=250, style="display: block; margin-left: auto; margin-right: auto;")
                       )
@@ -276,7 +282,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
                   wellPanel(
                     h4("C) Optional filtering of related structures for further analysis"),
-                    helpText("Optionally select (or de-select) structures by <b>clicking to highlight</b> their entries in the below table. This allows for finer grained selection than the sliders in panel B above."),
+                    helpText(HTML("Optionally select (or de-select) structures by <b>clicking to highlight</b> their entries in the below table. This allows for finer grained selection than the sliders in panel B above.")),
 
                     DT::dataTableOutput('blast_table'),
                     hr(),
