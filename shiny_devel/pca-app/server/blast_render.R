@@ -228,11 +228,19 @@ get_blasttable <- reactive({
   ## http://xray.bmc.uu.se/hicup/ATP/
   anno$ligandId <- unlist(lapply(anno$ligandId,
          function(x) {
+           if(is.na(x))
+             return("")
+           
            spl <- unlist(strsplit(x, ","))
-           return(paste(paste0("<a href=\"", "http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId=",
-                               
-                               spl, "\" target=\"_blank\">", spl, "</a>"),
-                        collapse=","))
+           if(length(spl) > 0) {
+             return(paste(paste0("<a href=\"", "http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId=",
+                                 spl, "\" target=\"_blank\">", spl, "</a>"),
+                          collapse=","))
+           }
+           else {
+             return("")
+           }
+           
          }))
   
   
