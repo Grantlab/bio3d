@@ -22,7 +22,7 @@ rv$pfam <- readRDS("2LUM_pfam.RDS")
 rv$limit_hits <- 5
 rv$cutoff <- 41
 rv$sequence <- "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE"
-rv$pdb_codes <- "1TND, 1KJY"
+rv$pdb_codes <- "1TND, 1KJY_A"
 
 observeEvent(input$pdbid, {
   if(nchar(input$pdbid)>3) {
@@ -279,14 +279,13 @@ output$pfam_table <- DT::renderDataTable({
                    tags$a(href=paste0("http://pfam.xfam.org/family/",pfid), target="_blank", pfid),
                    x)
   })
-  colnames(pfam)=c("ID", "Name", "Description","eValue")
-  DT::datatable(pfam, escape = FALSE, selection = "none",
-    rownames = FALSE,
-    options = list(
-        dom = "t",
-        autoWidth = TRUE,
-        columnDefs = list(
-            list( orderable = 'false', targets = c(0,1,2) )
+  colnames(pfam)=c("Chain", "PFAM", "Annotation","eValue")
+  DT::datatable(pfam, escape = FALSE,
+                class = 'compact row-border',
+                selection = "none", rownames = FALSE,
+                options = list( dom = "t", autoWidth = TRUE,
+                    columnDefs = list( 
+                      list( orderable = 'false', targets = c(0,1,2) )
         ),
     initComplete = JS(
     "function(settings, json) {",
@@ -297,8 +296,6 @@ output$pfam_table <- DT::renderDataTable({
   )
 })
 ##To Do:
-##       Rm '1 of 1' at bottom of table
-##       Add PFAM URL link to Name. paste0("http://pfam.sanger.ac.uk/family/",acc)
 ##       Add this to multiple PDB IDs well/div also.
 
 
