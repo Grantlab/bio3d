@@ -180,13 +180,13 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       h4("Input Structure Visualization"),
                       webGLOutput('pdbWebGL'),
 
-                      selectInput("view_inpdb_as", "View mode",
+                      selectInput("view_inpdb_as", "Display options:",
                                   c("C-alpha Trace" = "calpha",
                                     "Overview" = "overview"),
                                   selected = "calpha",
                                   multiple = FALSE), 
                       
-                      selectInput("view_inpdb_col", "Color C-alpha trace by",
+                      selectInput("view_inpdb_col", "Color options:",
                                    c("Secondary structure elements" = "sse",
                                      "Residue Index" = "index"),
                                   multiple=FALSE)
@@ -213,7 +213,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                           width=250, style="display: block; margin-left: auto; margin-right: auto;")
                       )
 ###
-                      ,popRadioButtons("logviewer", "View:",
+                      ,popRadioButtons("logviewer", "View options:",
                                     c("3D structure" = "pdb",
                                       "PDB processing log" = "pdblog",
                                       "App Info" = "bio3d"),
