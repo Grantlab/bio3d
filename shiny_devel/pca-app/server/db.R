@@ -63,7 +63,7 @@ get_annotation <- function(acc, use_chain=TRUE) {
   else {
     where <- paste0("WHERE structureId IN ('", paste(unq, collapse="', '"), "')")
   }
-  query <- paste("SELECT acc, structureId, chainId, compound, source, ligandId, chainLength, sequence FROM pdb_annotation", where, "ORDER BY acc")
+  query <- paste("SELECT acc, structureId, chainId, compound, source, ligandId, ligandName, chainLength, experimentalTechnique, resolution, sequence FROM pdb_annotation", where, "ORDER BY acc")
 
   res <- dbGetQuery(con, query)
 
