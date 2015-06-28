@@ -58,7 +58,25 @@ tabPanel("1. SEARCH", icon=icon("home"),
                        '}, 2500);',
                        '});'
                                     )),
-                    actionButton("reset_pdbid", "Reset PDB", icon=icon("undo"))
+                    actionButton("reset_pdbid", "Reset", icon=icon("undo")),
+
+                    ## Modal button placeholder
+                    actionButton3("help_pdbid", "ABOUT", icon=icon("comment"), cl="btn btn-warn btn-input action-button")
+
+                  ##- ** Poorely aligned Modal button (Uncoment to demo)** 
+#                  ,modalBox(id="1", button_label = "ABOUT ", icon = "comment",
+##                    cl = "btn btn-warn btn-large outline",
+#                      cl="btn btn-warn btn-input action-button",
+#                      content = tags$div(
+#                        h3("Bio3D PCA/eNMA WebApp"),
+#                        p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with <a href=\"http://thegrantlab.org/bio3d/tutorials/principal-component-analysis\">principal component analysis</a> (PCA) and <a href=\"http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1\">ensemble normal mode analysis</a> (eNMA).")),
+#                        p(HTML("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons.")),##<font color=\"red\">NEXT</font> buttons.")),
+#                        img(src="geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")                      
+#                    )
+#                  )
+
+
+                    ##
                     )
                   ),
 
@@ -201,7 +219,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
            #  ),
            hr(),
 
-           ##-A. blast panel
+           ##-- B. blast panel
            conditionalPanel(
              condition = "input.input_type != 'multipdb'",
 

@@ -248,19 +248,25 @@ get_blasttable <- reactive({
   #                        anno$ligandId, "\" target=\"_blank\">", anno$ligandId, "</a>")
 
   rownames(anno) <- NULL
-  show.cols <- c("acc", "compound", "source", "ligandId", "score")
+
+  show.cols <- c("acc", "compound", "source", "ligandId", "score", "experimentalTechnique", "resolution", "ligandName")
+
   col.inds <- sapply(show.cols, grep, colnames(anno))
 
   # re-ordering changed below to ID, Score .. for datatable
-  return(anno[, col.inds[c(1,5,2,3,4)]])
+  return(anno[, col.inds[c(1,5,2,3,4, 6:8)]])
 })
 
 
   output$blast_table <- renderDataTable({
       limit <- as.numeric(input$limit_hits)
-      DT::datatable(get_blasttable(), extensions = c('Scroller'),## 'TableTools'), 
+      DT::datatable(get_blasttable(), extensions = c('Scroller', 'ColVis'),## 'TableTools'),
+              class = 'compact stripe cell-border',   ## Remove 'compact' to add padding
               escape = FALSE,
-              colnames = c("ID", "Score", "Name", "Species", "Ligands"),
+              ##- Note. Should have 'PFAM' and 'Authors' here also...
+              colnames = c("ID", "BitScore", "Name (PDB Title)", "Species", 
+                           "Ligands", "Method", "Resolution (A)", "Ligand Names"),
+
               selection =
                   if(input$input_type != 'multipdb') {
                       list(mode = 'multiple',
@@ -274,30 +280,41 @@ get_blasttable <- reactive({
                   } else {
                       "none"
                   },
-              options = list(
-                deferRender = TRUE,
-                dom = "frtiS",
-                ##                dom = 'T<"clear">lfrtip',
-                ##                tableTools = list(sSwfPath = copySWF()),
-                scrollY = 400,
+
+              options = 
+                list(dom='C<"clear">frtiS', ##-- with ColVis 'C' and Scroler 'S' options
+                colVis = list(exclude = c(0, 1), activate = 'click', buttonText="Show/Hide Columns"),
+
+                ##dom = "frtiS",               ##--- ORIG
+                ##   dom = 'T<"clear">lfrtip', ##-- with tableTools option
+                ##   tableTools = list(sSwfPath = copySWF()),
+ 
+                scrollY = 400,                 ##---- Scroler options (height)
                 scrollCollapse = TRUE,
-                autoWidth = FALSE,
-                columnDefs = list(
-                  list( width = '5%', targets = c(0) ),
-                  list( width = '10%', targets = c(1, 2) ),
-                  list( width = '40%', targets = c(3) ),
-                  list( width = '20%', targets = c(4) ),
-                  list( width = '15%', targets = c(5) ),
-                  list( orderable = 'false', targets = c(0) )
+                deferRender = TRUE,
+
+                autoWidth = TRUE,
+
+                columnDefs = list(                          ##-  Set cols behavior
+                  list( width = '5%', targets = c(0) ),     ## nums
+                  list( width = '10%', targets = c(1, 2) ), ## ID and BitScore
+                  list( width = '40%', targets = c(3) ),    ## Name
+                  list( width = '20%', targets = c(4) ),    ## Species
+                  list( width = '15%', targets = c(5) ),    ## Ligands
+
+                  list( visible=FALSE, targets = c(6,7,8) ), ## Others.. R-free, Authors, PubMed...
+                  list( orderable = 'false', targets = c(0,8) )
                 ),
+
                 initComplete = JS(
                 'function(settings) {',
                 'console.log("search datatable loaded");',
                 '}'
                 )
-             )
+              )
       )
-  })
+  }) ## End renderDT
+
 
 ## checkbox
 output$pdb_chains <- renderUI({
@@ -312,7 +329,7 @@ output$cutoff_slider <- renderUI({
   blast <- rv$blast
   cutoff <- rv$cutoff
 
-  sliderInput("cutoff", "Adjust inclusion bitscore cutoff:",
+  sliderInput("cutoff", "Adjust inclusion BitScore cutoff:",
               min = floor(min(blast$score)), max = floor(max(blast$score)), value = cutoff)
 })
 
