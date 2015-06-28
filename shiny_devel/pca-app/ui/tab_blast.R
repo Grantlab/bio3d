@@ -58,7 +58,8 @@ tabPanel("1. SEARCH", icon=icon("home"),
                        '}, 2500);',
                        '});'
                                     )),
-                    actionButton("reset_pdbid", "Reset", icon=icon("undo")),
+                    #actionButton("reset_pdbid", "Reset", icon=icon("undo")),
+                    actionButton3("reset_pdbid", HTML("<b>Reset</b>"), icon=icon("undo"), cl="btn btn-link btn-input action-button"),
 
                     ## Modal button placeholder
                     actionButton3("help_pdbid", "ABOUT", icon=icon("comment"), cl="btn btn-warn btn-input action-button")
@@ -74,7 +75,14 @@ tabPanel("1. SEARCH", icon=icon("home"),
 #                        img(src="geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")                      
 #                    )
 #                  )
-
+                    ,bsModal("modalExample", "About the Bio3D PCA/eNMA WebApp", "help_pdbid"  , size = "large", 
+                      content=tags$div(
+                        h3("Bio3D PCA/eNMA WebApp"),
+                        p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with <a href=\"http://thegrantlab.org/bio3d/tutorials/principal-component-analysis\">principal component analysis</a> (PCA) and <a href=\"http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1\">ensemble normal mode analysis</a> (eNMA).")),
+                        p(HTML("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons.")),##<font color=\"red\">NEXT</font> buttons.")),
+                        img(src="geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")                      
+                      ) 
+                    )
 
                     ##
                     )
@@ -133,9 +141,9 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       br(),br(),
 
                       ##- Chain selection
-                      uiOutput("pdb_chains"),
+                      uiOutput("pdb_chains")
 
-                      br(),
+                      #,br()
 
                       # radioButtons("logviewer", "PDB Log:",
                       #              c("App Info" = "bio3d",
@@ -149,15 +157,15 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       #            placement = "right")
 
 
-                      popRadioButtons("logviewer", "View:",
-                                    c("3D structure" = "pdb",
-                                      "PDB processing log" = "pdblog",
-                                      "App Info" = "bio3d"),
-                                      selected="bio3d",   ##<--- Change to "pdb" ???
-                                     inline=TRUE,
-                                     placement = "right", 
-                                     data_toggle = "pop_summary_input",
-                                     title = "Chain selection, annotation and visualization options")
+                      #popRadioButtons("logviewer2", "View:",
+                      #              c("3D structure" = "pdb",
+                      #                "PDB processing log" = "pdblog",
+                      #                "App Info" = "bio3d"),
+                      #                selected="pdb",   ##<--- Change to "pdb"/"bio3d" ???
+                      #               inline=TRUE,
+                      #               placement = "right", 
+                      #               data_toggle = "pop_summary_input",
+                      #               title = "Chain selection, annotation and visualization options")
                       
                     )
                   )
@@ -187,6 +195,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                                   title="Change the structure view and coloring options. </br></br>Click and drag on the display to rotate, middle mouse button to zoom.",
                                   placement = "left", options = list(container = "body"))
 
+
                       ),
 
                     conditionalPanel(
@@ -203,7 +212,18 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       img(src="geostas_250x182.png",
                           width=250, style="display: block; margin-left: auto; margin-right: auto;")
                       )
+###
+                      ,popRadioButtons("logviewer", "View:",
+                                    c("3D structure" = "pdb",
+                                      "PDB processing log" = "pdblog",
+                                      "App Info" = "bio3d"),
+                                      selected="pdb",   ##<--- Change to "pdb"/"bio3d" ???
+                                     inline=TRUE,
+                                     placement = "right", 
+                                     data_toggle = "pop_summary_input",
+                                     title = "Chain selection, annotation and visualization options")
 
+###
 
                     )
                   )
@@ -261,7 +281,9 @@ tabPanel("1. SEARCH", icon=icon("home"),
                        '}, 2500);',
                        '});'
                                     )),
-                        actionButton("reset_cutoff", "Reset cutoff", icon=icon("undo"))
+##                        actionButton("reset_cutoff", "Reset cutoff", icon=icon("undo"))
+                        actionButton3("reset_cutoff", HTML("<b>Reset</b>"), icon=icon("undo"), cl="btn btn-link btn-input action-button")
+
 
                         ),
 
