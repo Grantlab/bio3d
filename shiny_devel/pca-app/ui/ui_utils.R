@@ -71,8 +71,15 @@ modalBox <- function(id, button_label = "", heading = NULL,
 
   if(!is.null(icon))
     icon <- icon(icon)
-
+  
   tags$div(
+    style = "width: 100%; height: 50px;",
+
+    div(
+      style = "width: 50%; height: 50px; float: left;",
+      h4(heading, style="font-weight: 750; font-size: 22px")
+      ),
+    
     tags$button(type="button", class=cl,
                 "data-toggle"="modal", "data-target"=idm2,
                 style = "float: right",

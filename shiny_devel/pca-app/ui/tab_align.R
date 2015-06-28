@@ -2,6 +2,15 @@ tabPanel("2. ALIGN",
          icon=icon("arrow-right"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
 
+                  
+         modalBox(id="1", button_label = "Help ", icon = "question",
+                  heading="Sequence and structure alignment",
+                  content = tags$div(
+                    HTML("<p>In this tab the collected structures are superimposed on each other either based on the <strong>identified invariant core</strong>, or on all C-alpha atoms. The invariant core is the region ...</p>"),
+                    
+                    p("In this panel you can perform simple structure analysis such as calculating all pair-wise RMSD values ... ")
+                    )
+                  ),
          
          fluidRow(
            column(5,
@@ -18,16 +27,7 @@ tabPanel("2. ALIGN",
                   wellPanel(
                     style="overflow: auto; background: #FFFFFF;",
 
-                            
-                    modalBox(id="1", button_label = "Help ", icon = "question",
-                             heading="Sequence and structure alignment",
-                             content = tags$div(
-                               HTML("<p>In this tab the collected structures are superimposed on each other either based on the <strong>identified invariant core</strong>, or on all C-alpha atoms. The invariant core is the region ...</p>"),
-                               
-                               p("In this panel you can perform simple structure analysis such as calculating all pair-wise RMSD values ... ")
-                               )
-                             ),
-                    
+                   
                     
                     h4("B) Edit alignment (optional)"),
                     
