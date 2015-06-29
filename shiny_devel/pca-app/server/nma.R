@@ -137,7 +137,8 @@ output$nmaWebGL  <- renderWebGL({
                mag=mag, step=step,
                s.inds=as.numeric(input$viewStruct_nma),
                m.inds=as.numeric(input$viewMode_nma),
-               rock=FALSE)
+               rock=FALSE,
+               file = paste0(data_path(), '/mode_', input$viewMode_nma, '.pdb'))
   n <- nrow(trj)
   
   amalcol <- function(x) {

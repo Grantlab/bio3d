@@ -346,7 +346,8 @@ output$pcaWebGL  <- renderWebGL({
     step <- mag/8
     
     trj <- mktrj(pc, pc=as.numeric(input$viewPC), rock=FALSE,
-                 mag=mag, step=step)
+                 mag=mag, step=step,
+                 file = paste0(data_path(), '/pc_', input$viewPC, '.pdb'))
     n <- nrow(trj)
 
     amalcol <- function(x) {
