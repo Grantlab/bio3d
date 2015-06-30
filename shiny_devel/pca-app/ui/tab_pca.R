@@ -3,14 +3,17 @@ tabPanel(
   tags$style(type="text/css", "body {padding-top: 80px;}"),
 
   
-  modalBox(id="3", button_label = "Help ", icon = "question",
-           heading="Principal component analysis",
-           content = tags$div(
-             HTML("<p>In this tab the collected structures are superimposed on each other either based on the <strong>identified invariant core</strong>, or on all C-alpha atoms. The invariant core is the region ...</p>"),
-             
-             p("In this panel you can perform simple structure analysis such as calculating all pair-wise RMSD values ... ")
-             )
-           ),
+  actionButton3("about_pcatab", "About this tab", icon=icon("comment"), cl="btn btn-warn btn-input action-button", style = "position: fixed; top: 14px; right: 16px; z-index: 2000;"),
+  
+  bsModal("modal_pca", "Principal Component Analysis", "about_pcatab", size = "large", 
+          content=tags$div(
+            
+            p(HTML("In the PCA tab, a principal component analysis (PCA) is performed based on the coordinates of the structural superposition of structures in the FIT tab. The motions described by the principal components (PCs) can be visualized either in the browser, or by downloading either a PDB trajectory file or a PyMOL session (.pse) containing a vector field representation. ")),
+            
+            p(HTML("")),
+            img(src="./images/aaah-pc1.gif", width=500, style="display: block; margin-left: auto; margin-right: auto;")                      
+            ) 
+          ),
   
 
   ##- PC Visualization 

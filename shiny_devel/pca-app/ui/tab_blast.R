@@ -1,6 +1,19 @@
 
 tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
+
+         actionButton3("about_blasttab", "About this tab", icon=icon("comment"), cl="btn btn-warn btn-input action-button", style = "position: fixed; top: 14px; right: 16px; z-index: 2000;"),
+         
+         bsModal("modal_blast", "About the Bio3D PCA/eNMA WebApp", "about_blasttab", size = "large", 
+                 content=tags$div(
+                   h3("Bio3D PCA/eNMA WebApp"),
+                   p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with <a href=\"http://thegrantlab.org/bio3d/tutorials/principal-component-analysis\">principal component analysis</a> (PCA) and <a href=\"http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1\">ensemble normal mode analysis</a> (eNMA).")),
+                   p(HTML("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons.")),
+                   img(src="./images/geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")                      
+                   ) 
+                 ),
+
+         
          
          fluidRow(
            column(4,
@@ -80,7 +93,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                         h3("Bio3D PCA/eNMA WebApp"),
                         p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with <a href=\"http://thegrantlab.org/bio3d/tutorials/principal-component-analysis\">principal component analysis</a> (PCA) and <a href=\"http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1\">ensemble normal mode analysis</a> (eNMA).")),
                         p(HTML("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons.")),##<font color=\"red\">NEXT</font> buttons.")),
-                        img(src="geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")                      
+                        img(src="./images/geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")                      
                       ) 
                     )
 
@@ -209,7 +222,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       h4("Bio3D PCA/eNMA WebApp"),
                       p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with <a href=\"http://thegrantlab.org/bio3d/tutorials/principal-component-analysis\">principal component analysis</a> (PCA) and <a href=\"http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1\">ensemble normal mode analysis</a> (eNMA).")),
                       p(HTML("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons.")),##<font color=\"red\">NEXT</font> buttons.")),
-                      img(src="geostas_250x182.png",
+                      img(src="./images/geostas_250x182.png",
                           width=250, style="display: block; margin-left: auto; margin-right: auto;")
                       )
 ###

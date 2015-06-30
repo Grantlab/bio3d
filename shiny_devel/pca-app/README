@@ -5,20 +5,21 @@
 
 ```
 #!r
-library(devtools)
 install.packages(c("devtools", "shiny", "RMySQL", "maptools",
-                   "reshape2", "abind", "threejs", "rjson"),
+                   "reshape2", "abind", "threejs", "rjson", "shinyBS"),
 		  dependencies=TRUE)
 
 ## special builds
+library(devtools)
 install_bitbucket("Grantlab/bio3d", subdir = "ver_devel/bio3d/", ref="feature_shiny")
 
 install_github('rCharts', 'ramnathv')
 install_github("shinyRGL", "trestletech")
-install_github("rgl", "trestletech", "js-class")
 install_github("rstudio/DT")
 
-#install_github("kbroman/qtlcharts", build_vignettes=TRUE)
+
+##install_github("rgl", "trestletech", "js-class")
+##install_github("kbroman/qtlcharts", build_vignettes=TRUE)
 ```
 
 ## Other programs

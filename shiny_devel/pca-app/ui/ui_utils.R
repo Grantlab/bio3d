@@ -62,8 +62,8 @@ popTextInput <- function(inputId, label, value = "",
 }
 
 modalBox <- function(id, button_label = "", heading = NULL,
-                     icon = 'question', content = NULL,
-                     cl = "btn btn-primary btn-input action-button",
+                     icon = 'comment', content = NULL,
+                     cl = "btn btn-warn btn-input action-button",
                      ...) {
 
   idm1 <- paste0("myModal", id)
@@ -73,16 +73,11 @@ modalBox <- function(id, button_label = "", heading = NULL,
     icon <- icon(icon)
   
   tags$div(
-    style = "width: 100%; height: 50px;",
-
-    div(
-      style = "width: 50%; height: 50px; float: left;",
-      h4(heading, style="font-weight: 750; font-size: 22px")
-      ),
-    
     tags$button(type="button", class=cl,
                 "data-toggle"="modal", "data-target"=idm2,
-                style = "float: right",
+                style = "position: fixed; top: 16px; right: 16px; z-index: 2000;",
+                #style = "float: right",
+                
                 list(icon, button_label)
                 ),
 

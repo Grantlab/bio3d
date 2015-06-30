@@ -1,14 +1,19 @@
 tabPanel("3. FIT", icon=icon("arrow-right"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
 
-         modalBox(id="2", button_label = "Help ", icon = "question",
-                  heading="Initial structure analysis",
-                  content = tags$div(
-                    HTML("<p>In this tab the collected structures are superimposed on each other either based on the <strong>identified invariant core</strong>, or on all C-alpha atoms. The invariant core is the region ...</p>"),
-                    
-                    p("In this panel you can perform simple structure analysis such as calculating all pair-wise RMSD values ... ")
-                    )
-                  ),
+         actionButton3("about_fittab", "About this tab", icon=icon("comment"), cl="btn btn-warn btn-input action-button", style = "position: fixed; top: 14px; right: 16px; z-index: 2000;"),
+         
+         bsModal("modal_fit", "Structure superposition", "about_fittab", size = "large", 
+                 content=tags$div(
+                   p(HTML("In the FIT tab all structures are superimposed based on the sequence alignment in the ALIGN tab. The algorithm performs iterated rounds of structural superposition to identify the most invariant region in an aligned set of protein structures. Basic structural analysis in this tab entails pair-wise structural deviations (RMSD), fluctuation analysis (RMSF), and structure visualization.")),
+
+                   img(src="./images/4q21-core.png", width=400, style="display: block; margin-left: auto; margin-right: auto;"), 
+                   
+                   p(HTML("The fitting algorithm attempts to iteratively refine the initial structural superposition determined from the multiple alignment. This involves iterated rounds of superposition, where at each round the position(s) displaying the largest differences is(are) excluded from the dataset. The identified core can be visualized either in the browser, or in PyMOL by downloading the PyMOL state (.pse) file. A summary of the core can be found in the bottom of the page."))
+                   
+                                    
+                   ) 
+                 ),
          
          
          fluidRow(

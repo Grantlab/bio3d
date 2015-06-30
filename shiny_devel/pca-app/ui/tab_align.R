@@ -2,15 +2,26 @@ tabPanel("2. ALIGN",
          icon=icon("arrow-right"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
 
-                  
-         modalBox(id="1", button_label = "Help ", icon = "question",
-                  heading="Sequence and structure alignment",
-                  content = tags$div(
-                    HTML("<p>In this tab the collected structures are superimposed on each other either based on the <strong>identified invariant core</strong>, or on all C-alpha atoms. The invariant core is the region ...</p>"),
-                    
-                    p("In this panel you can perform simple structure analysis such as calculating all pair-wise RMSD values ... ")
-                    )
-                  ),
+         
+         actionButton3("about_aligntab", "About this tab",
+                       icon=icon("comment"),
+                       cl="btn btn-warn btn-input action-button",
+                       style = "position: fixed; top: 14px; right: 16px; z-index: 2000;"),
+         
+         bsModal("modal_align", "Sequence Alignment and Analysis", "about_aligntab", size = "large", 
+                 content=tags$div(
+                   p(HTML("In this tab all PDB structures selected in the previous (SEARCH) tab are parsed and their sequences aligned. The tab displays the final alignment of the selected PDB structures, as well as basic analysis of sequence identity.")),
+
+                   p(HTML("You can optionally exclude structures, either manually (see 'Exlcude / include hits'), or automatically omit structures with missing in-structure residues. Functionality for uploading a corrected / revised sequence alignment (FASTA format) is also provided."))
+                   ),
+                 
+                 p(HTML("The final alignment is shown... ")), 
+                 img(src="./images/alignment.png", width=700, style="display: block; margin-left: auto; margin-right: auto;"),
+                   
+                 p(HTML("Basic analysis of sequence identity ... ")), 
+                 img(src="./images/seqide_heatmap.png", width=600, style="display: block; margin-left: auto; margin-right: auto;")
+                 
+                 ),
          
          fluidRow(
            column(5,
@@ -19,7 +30,7 @@ tabPanel("2. ALIGN",
                     
                     verbatimTextOutput("alignment_summary"),
                     verbatimTextOutput("missres_summary")
-                  
+
                     )
                   ),
 
@@ -87,7 +98,7 @@ tabPanel("2. ALIGN",
          fluidRow(
            column(12,
                   
-                  h2("Final alignment"),
+                  h3("Final alignment"),
                   p("(slow for large aligments)"),
                   uiOutput("alignment"),
                   tags$head(tags$script(src='tooltip.js')),

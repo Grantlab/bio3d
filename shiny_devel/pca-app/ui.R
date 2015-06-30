@@ -13,7 +13,7 @@ source('ui/ui_utils.R')
 shinyUI(
    
   navbarPage(windowTitle="Bio3D PCA App",
-             title=img(src="bio3d_logo.png", height=35, alt="Bio3D"),
+             title=img(src="./images/bio3d_logo.png", height=35, alt="Bio3D"),
              theme = "bootstrap.css",
              position = "fixed-top",
 
