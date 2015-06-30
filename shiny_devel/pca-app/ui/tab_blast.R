@@ -104,7 +104,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       #helpText("Seperate PDB ids with ','")
                                             ##- pfam_table (To be beautified!!)
                       ,tags$label("PFAM Annotation:")
-                      #dataTableOutput("pfam_table")
+                      ,dataTableOutput("pfam_table_multi")
 
                       ##-- ToDo:
                       ## Need a table here PFAM annotations

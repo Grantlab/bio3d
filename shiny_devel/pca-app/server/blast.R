@@ -58,8 +58,6 @@ observeEvent(input$sequence, {
   }
 })
 
-
-
 observeEvent(input$chainId, {
   rv$chainid <- input$chainId
 })
@@ -270,9 +268,26 @@ output$pfam_table <- DT::renderDataTable({
   if(is.null(pdbid)) {
     return()
   }
+  get_pfam_table()
 
+})
+
+output$pfam_table_multi <- DT::renderDataTable({
+  message("pdb_pfam_multi called")
+  if(is.null(input$pdb_codes)) {
+    return()
+  }
+  get_pfam_table()
+
+})
+
+get_pfam_table <- reactive({
   ##pfam <- pdb.pfam(pdbid)
-  pfam <- rv$pfam
+  if(input$input_type == 'multipdb') {
+    pfam <- pdb.pfam(strsplit(gsub("[[:space:]]", "", input$pdb_codes), split=',')[[1]])
+  } else {
+    pfam <- rv$pfam
+  }
   pfam['PFAM'] <- lapply(pfam['PFAM'], function(x) {
       pfid <- regmatches(x, gregexpr("(?<=\\().*?(?=\\))", x, perl=T))[[1]]
       link <- gsub(pfid,
