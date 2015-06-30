@@ -28,7 +28,7 @@ observeEvent(input$pdbid, {
   if(nchar(input$pdbid)>3) {
     if(input$input_type == "pdb") {
       rv$pdbid <- substr(input$pdbid, 1, 4)
-      
+
       if(rv$pdbid == "2LUM") {
         blast <- rv$blast
       }
@@ -38,7 +38,7 @@ observeEvent(input$pdbid, {
         ##rv$pfam <- pdb.pfam(rv$pdbid)
         ##rv$pfam <- get_pfam_annotation()
       }
-      
+
       cut <- set_cutoff(blast, cutoff=NULL)
       rv$cutoff <- cut$cutoff
       rv$limit_hits <- 5
@@ -252,7 +252,7 @@ output$blast_plot <- renderUI({
   ##blast <- run_blast()
   blast <- rv$blast
   plotOutput("blast_plot1")
-  
+
   #if(length(blast$acc) > 100) {
   #  plotOutput("blast_plot1")
   #}
@@ -440,7 +440,6 @@ get_blasttable <- reactive({
     #  if(limit > 0)
     #    col[1:limit] <- "green"
     #}
-
     anno$acc <- paste0(
       "<span class=\"id_", col, "\" style=\"color:",
       col,
@@ -450,30 +449,32 @@ get_blasttable <- reactive({
       )
   }
   else {
-    anno$acc <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
-                         substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
+#    anno$acc <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
+#                         substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
+    anno$acc <- sapply(anno$acc, function(x) { as.character(tags$a(href = paste0('http://pdb.org/pdb/explore/explore.do?structureId=', substr(x, 1, 4)), target = '_blank', x)) })
+    print(anno$acc)
   }
 
-  
+
   ## http://xray.bmc.uu.se/hicup/ATP/
   anno$ligandId <- unlist(lapply(anno$ligandId,
          function(x) {
            if(is.na(x))
              return("")
-           
+
            spl <- unlist(strsplit(x, ","))
            if(length(spl) > 0) {
-             return(paste(paste0("<a href=\"", "http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId=",
-                                 spl, "\" target=\"_blank\">", spl, "</a>"),
-                          collapse=","))
+             return(paste(
+                         sapply(spl, function(x) { as.character(tags$a(href = paste0("http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId=", x), target = '_blank', x))}),
+                          collapse=", "))
            }
            else {
              return("")
            }
-           
+
          }))
-  
-  
+
+
   #anno$ligandId <- paste0("<a href=\"", "http://xray.bmc.uu.se/hicup/",
   #                        anno$ligandId, "\" target=\"_blank\">", anno$ligandId, "</a>")
 
@@ -494,7 +495,7 @@ get_blasttable <- reactive({
               class = 'compact stripe cell-border',   ## Remove 'compact' to add padding
               escape = FALSE,
               ##- Note. Should have 'PFAM' and 'Authors' here also...
-              colnames = c("ID", "BitScore", "Name (PDB Title)", "Species", 
+              colnames = c("ID", "BitScore", "Name (PDB Title)", "Species",
                            "Ligands", "Method", "Resolution (A)", "Ligand Names"),
 
               selection =
@@ -511,19 +512,21 @@ get_blasttable <- reactive({
                       "none"
                   },
 
-              options = 
+              options =
                 list(dom='C<"clear">frtiS', ##-- with ColVis 'C' and Scroler 'S' options
                 colVis = list(exclude = c(0, 1), activate = 'click', buttonText="Show/Hide Columns"),
 
                 ##dom = "frtiS",               ##--- ORIG
                 ##   dom = 'T<"clear">lfrtip', ##-- with tableTools option
                 ##   tableTools = list(sSwfPath = copySWF()),
- 
+
                 scrollY = 400,                 ##---- Scroler options (height)
+                scrollX = '100%',
+                scrollXInner = '100%',
                 scrollCollapse = TRUE,
                 deferRender = TRUE,
 
-                autoWidth = TRUE,
+                autoWidth = FALSE,
 
                 columnDefs = list(                          ##-  Set cols behavior
                   list( width = '5%', targets = c(0) ),     ## nums
