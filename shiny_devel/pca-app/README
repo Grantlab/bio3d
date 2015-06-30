@@ -62,8 +62,8 @@ CREATE TABLE IF NOT EXISTS `pfam` (
   `pdbResNumEnd` int(10) NOT NULL,
   `pfamAcc` varchar(30) NOT NULL,
   `pfamName` varchar(30) NOT NULL,
-  `pfamDesc"` varchar(50) NOT NULL,
-  `eValue"` varchar(10) NOT NULL
+  `pfamDesc` varchar(50) NOT NULL,
+  `eValue` varchar(10) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 ALTER TABLE `pfam`
