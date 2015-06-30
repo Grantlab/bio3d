@@ -18,7 +18,7 @@ rv <- reactiveValues()
 rv$pdbid <- "2LUM"
 rv$chainid <- "A"
 rv$blast <- readRDS("2LUM_blast.RDS")
-rv$pfam <- readRDS("2LUM_pfam.RDS")
+##rv$pfam <- readRDS("2LUM_pfam.RDS")
 rv$limit_hits <- 5
 rv$cutoff <- 41
 rv$sequence <- "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE"
@@ -35,7 +35,8 @@ observeEvent(input$pdbid, {
       else {
         blast <- run_blast()
         rv$blast <- blast
-        rv$pfam <- pdb.pfam(rv$pdbid)
+        ##rv$pfam <- pdb.pfam(rv$pdbid)
+        ##rv$pfam <- get_pfam_annotation()
       }
       
       cut <- set_cutoff(blast, cutoff=NULL)
@@ -83,235 +84,6 @@ observeEvent(input$reset_cutoff, {
 observeEvent(input$reset_pdbid, {
   updateTextInput(session, "pdbid", value = "2LUM")
 })
-
-
-## returns PDB code (4-characters)
-get_pdbid <- reactive({
-  if (is.null(rv$pdbid))
-    return()
-  else {
-    pdbid <- rv$pdbid
-
-    if(!nchar(pdbid)==4) {
-      ##stop("Provide a PDB code of 4 characters")
-      return()
-    }
-
-    return(pdbid)
-  }
-})
-
-## returns the selected chain ID
-get_chainid <- reactive({
-  if (is.null(rv$chainid))
-    return()
-  else
-    return(rv$chainid)
-})
-
-## returns all chain IDs in PDB
-get_chainids <- reactive({
-  pdbid <- get_pdbid()
-
-  if(is.null(pdbid))
-    return()
-
-  anno <- input_pdb_annotation()
-  return(anno$chainId)
-})
-
-## returns the PDB object (trimmed to chain ID)
-get_pdb <- reactive({
-  message("get_pdb called")
-  pdbid <- get_pdbid()
-  chainid <- get_chainid()
-
-  anno <- input_pdb_annotation()
-
-  if(is.vector(input$chainId)) {
-    ind <- which(anno$chainId==input$chainId[1])
-    anno <- anno[ind,]
-  }
-  else {
-    anno <- anno[1,]
-  }
-
-  id <- anno$acc
-  if(configuration$pdbdir$archive) {
-    ids <- paste0(tolower(substr(id, 1, 4)), "_", substr(id, 6, 6))
-    raw.files <- paste0(configuration$pdbdir$splitfiles, "/", substr(ids, 2, 3), "/pdb", ids, ".ent.gz")
-
-    if(!file.exists(raw.files))
-      stop("PDB not found")
-
-    pdb <- read.pdb(raw.files)
-  }
-  else {
-    raw.files <- get.pdb(unique(substr(id, 1,4)), path=configuration$pdbdir$rawfiles, gzip=TRUE)
-    pdb <- read.pdb(raw.files)
-    pdb <- trim.pdb(pdb, chain=substr(id, 6,6))
-  }
-
-  return(pdb)
-})
-
-## returns the sequence (fasta object)
-get_sequence <- reactive({
-  message("get_sequence called")
-
-  #if(is.null(input$input_type))
-  #  return()
-
-  ## option 1 - PDB code provided
-  if(input$input_type == "pdb") {
-    pdbid <- get_pdbid()
-    chainid <- get_chainid()
-
-    anno <- input_pdb_annotation()
-
-    if(is.vector(input$chainId)) {
-      ind <- which(anno$chainId==chainid[1])
-      seq <- unlist(strsplit(anno$sequence[ind], ""))
-    }
-    else {
-      seq <- unlist(strsplit(anno$sequence[1], ""))
-    }
-    seq <- as.fasta(seq)
-  }
-
-  ## option 2 - sequence provided
-  if(input$input_type == "sequence") {
-    message(rv$sequence)
-
-    if(nchar(rv$sequence)==0)
-      return()
-      ##stop("sequence is of length 0")
-
-    inp <- unlist(strsplit(rv$sequence, "\n"))
-    inds <- grep("^>", inp, invert=TRUE)
-
-    if(!length(inds)>0)
-      stop("Error reading input sequence")
-
-    inp <- toupper(paste(inp[inds], collapse=""))
-    seq <- as.fasta(unlist(strsplit(inp, "")))
-
-  }
-
-  return(seq)
-})
-
-## returns annotation data for input PDB
-input_pdb_annotation <- reactive({
-  message("input_pdb_annotation called")
-
-  pdbid <- get_pdbid()
-
-  if(nchar(pdbid)==4) {
-    progress <- shiny::Progress$new(session, min=1, max=5)
-    on.exit(progress$close())
-
-    progress$set(message = 'Fetching PDB data',
-                 detail = 'Please wait')
-    progress$set(value = 3)
-
-    anno <- get_annotation(pdbid, use_chain=FALSE)
-    progress$set(value = 5)
-
-    return(anno)
-  }
-  else {
-    stop("Provide a 4 character PDB code")
-  }
-})
-
-## prints a short summary of the input PDB
-output$input_pdb_summary <- renderPrint({
-  message("input_pdb_summary called")
-  pdbid <- get_pdbid()
-  chainid <- get_chainid()
-  if(is.null(pdbid)) {
-    return()
-  }
-
-  input$input_type
-  anno <- input_pdb_annotation()
-
-  if(is.vector(chainid)) {
-    ind <- which(anno$chainId==chainid[1])
-    anno <- anno[ind,]
-  }
-  else {
-    anno <- anno[1,]
-  }
-
-  cat(anno$compound[1], "\n",
-      "(", anno$source[1], ")")
-
-})
-
-## prints a longer log of the input PDB
-output$pdb_log <- renderPrint({
-  pdbid <- get_pdbid()
-  chainid <- get_chainid()
-  invisible(capture.output( pdb <- get_pdb() ))
-
-  pdbsum(pdb, pdbid=pdbid, chainid=chainid)
-    
-})
-
-##-- PFAM annotation of single or multiple PDBs
-output$pfam_table <- DT::renderDataTable({
-  message("input_pdb_pfam called")
-  pdbid <- get_pdbid()
-  #chainid <- get_chainid()
-  if(is.null(pdbid)) {
-    return()
-  }
-  get_pfam_table()
-
-})
-
-output$pfam_table_multi <- DT::renderDataTable({
-  message("pdb_pfam_multi called")
-  if(is.null(input$pdb_codes)) {
-    return()
-  }
-  get_pfam_table()
-
-})
-
-get_pfam_table <- reactive({
-  ##pfam <- pdb.pfam(pdbid)
-  if(input$input_type == 'multipdb') {
-    pfam <- pdb.pfam(strsplit(gsub("[[:space:]]", "", input$pdb_codes), split=',')[[1]])
-  } else {
-    pfam <- rv$pfam
-  }
-  pfam['PFAM'] <- lapply(pfam['PFAM'], function(x) {
-      pfid <- regmatches(x, gregexpr("(?<=\\().*?(?=\\))", x, perl=T))[[1]]
-      link <- gsub(pfid,
-                   tags$a(href=paste0("http://pfam.xfam.org/family/",pfid), target="_blank", pfid),
-                   x)
-  })
-  colnames(pfam)=c("Chain", "PFAM", "Annotation","eValue")
-  DT::datatable(pfam, escape = FALSE,
-                class = 'compact row-border',
-                selection = "none", rownames = FALSE,
-                options = list( dom = "t", autoWidth = TRUE,
-                    columnDefs = list( 
-                      list( orderable = 'false', targets = c(0,1,2) )
-        ),
-    initComplete = JS(
-    "function(settings, json) {",
-    '$(this.api().table().header()).find("th").removeClass("sorting");',
-    '$(this.api().table().header()).find("th").prop("onclick",null).off("click");',
-    "}")
-    )
-  )
-})
-##To Do:
-##       Add this to multiple PDB IDs well/div also.
 
 
 ## Returns HMMER results
@@ -473,3 +245,320 @@ set_cutoff <- function(blast, cutoff=NULL) {
   out <- list(inds=inds, gp.inds=gp.inds, grps=gps, cutoff=cutoff)
   return(out)
 }
+
+
+
+output$blast_plot <- renderUI({
+  ##blast <- run_blast()
+  blast <- rv$blast
+  plotOutput("blast_plot1")
+  
+  #if(length(blast$acc) > 100) {
+  #  plotOutput("blast_plot1")
+  #}
+  #else {
+  #  showOutput("blast_plot2", "nvd3")
+
+    #tags$script(HTML(
+    #  'var css = document.createElement("style");
+    #                  css.type = "text/css";
+    #                  css.innerHTML = ".nv-x .nv-axislabel { font-size: 20px; }";
+    #                  document.body.appendChild(css);
+    #                  css = document.createElement("style");
+    #                  css.type = "text/css";
+    #                  css.innerHTML = ".nv-y .nv-axislabel { font-size: 20px; }";
+    #                  document.body.appendChild(css);'
+    #  ))
+  #}
+
+})
+
+### Blast plot on front page
+output$blast_plot1 <- renderPlot({
+  ##blast <- run_blast()
+  blast <- rv$blast
+  cut <- set_cutoff(blast, rv$cutoff)
+
+  gp <- cut$gp.inds
+  cutoff <- cut$cutoff
+  grps <- cut$grps
+  z <- blast$score
+
+  if(length(blast$acc) < 650) {
+    pch <- 21
+    bg <- col
+    col <- "grey10"
+  }
+  else {
+    pch <- 1
+    bg <- NULL
+    col <- col
+  }
+
+  col.bg <- sapply(grps, function(x) if(x==1) 'red3' else if(x==2) 'grey50')
+  pch = rep(21, length(col.bg))
+  pch[col.bg=='grey50'] <- 21
+  col.pch = rep('red3', length(pch))
+  col.pch[pch==21] <- 'black'
+
+  par(mar=c(6, 4, 0, 0))
+  plot(z, xlab="", ylab="Bitscore of Alignment to Input", bg=col.bg, col=col.pch, pch=pch, cex=1.1, xaxt='n', cex.axis=1.2)
+  axis(1, at=if(length(z) > 20 ) c(1, seq(20, length(z), 20), if(length(z)%%20 > 9) length(z) else NA) else seq(1,20,2), cex.axis=1.2)
+  abline(v=gp, col="gray50", lty=3)
+  abline(h=cutoff, col="red", lty=2)
+  if(!length(input$blast_table_rows_selected)>0) {
+    limit <- sort(as.numeric(rv$limit_hits))
+    if(limit > 0) {
+      points(z[1:limit], col='navyblue', pch=1, cex=2.25)
+    }
+  }
+  else {
+    x = sort(as.numeric(input$blast_table_rows_selected))
+    y = z[ x ]
+    points(x, y, col='navyblue', pch=1, cex=2.25)
+  }
+
+  pos <- c(rep(3, length(gp))[-length(gp)],2)
+  text(gp, z[gp],
+       labels=paste0("Nhit=", gp, ", cutoff=", round(z[gp])),
+       col="black", pos=3, cex=1)
+
+  legend("bottomleft", c("Selected hits", "Above cutoff", "Below cutoff", "Cutoff"),
+         pt.bg = c("blue", "red", "grey50", "red"), col=c("blue", rep("grey10", 2), "red"), bg="grey90", lty=c(0, 0, 0, 2), pch=c(1,21,21,NA))
+
+})
+
+## Currently not used
+output$blast_plot2 <- renderChart2({
+  ##blast <- run_blast()
+  blast <- rv$blast
+  cut <- set_cutoff(blast, rv$cutoff)
+  blast$mlog.evalue <- blast$score
+
+  gp <- cut$gp.inds
+  cutoff <- cut$cutoff
+  grps <- cut$grps
+  z <- blast$score
+
+  ## generate a dataframe: pc$z + pdbids + group
+  data <- data.frame(
+    Bitscore = z,
+    id = blast$acc,
+    group = sapply(grps, function(x) if(x==1) "Above" else "Below cutoff"),
+    Hits = 1:length(z),
+    desc = blast$desc
+    )
+
+  p1 <- nPlot(
+    x = "Hits", y = "Bitscore",
+    group = "group",
+    data = data,
+    type="scatterChart"
+    )
+  p1$chart( color = c("red","black") )
+  p1$xAxis( axisLabel = "Hits" )
+  p1$yAxis( axisLabel = "Bitscore", width=50 )
+
+
+  p1$chart( forceY = if( !(min(data$Bitscore)<0) && min(data$Bitscore)-20 < 0  )
+           c(0,max(data$Bitscore)+20) else range(data$Bitscore) + c(-20, 20) )
+  p1$chart(tooltipContent = "#! function(key, x, y, e){
+      return '<b>pdb:</b> ' + e.point.id + '</br>' + e.point.desc
+    } !#")
+    p1$setTemplate(afterScript = '<script>
+      var css = document.createElement("style");
+      css.type = "text/css";
+      css.innerHTML = ".nv-x .nv-axislabel { font-size: 20px; }";
+      document.body.appendChild(css);
+      css = document.createElement("style");
+      css.innerHTML = ".nv-y .nv-axislabel { font-size: 20px; }";
+      document.body.appendChild(css);
+      document.getElementById("blast_plot2").focus();
+    </script>'
+                   )
+
+  return(p1)
+})
+
+
+get_blasttable <- reactive({
+  message("fetching blast table")
+
+  if(input$input_type != "multipdb") {
+    ##blast <- run_blast()
+    blast <- rv$blast
+    grps <- set_cutoff(blast, cutoff=rv$cutoff)$grps
+
+    acc <- blast$acc
+    anno <- get_annotation(acc)
+
+    ## clean up if length does not correspond
+    if(length(acc) != length(anno$acc)) {
+      print(paste("blast: ", length(acc)))
+      print(paste("anno: ", length(anno$acc)))
+
+      if(length(acc) > length(anno$acc)) {
+        inds <- acc %in% anno$acc
+        blast <- blast[inds,, drop=FALSE]
+      }
+    }
+
+    anno$score <- blast$score
+  }
+  else {
+    acc <- unique(trim(unlist(strsplit(input$pdb_codes, ","))))
+    acc <- acc[acc!=""]
+
+    if(!length(acc) > 0)
+      return()
+
+    acc <- format_pdbids(acc)
+    anno <- get_annotation(acc, use_chain=FALSE)
+
+    inds <- unlist(sapply(acc, grep, anno$acc))
+    anno <- anno[inds, ]
+    acc <- anno$acc
+
+    anno$score <- rep(0, length(acc))
+
+    hits <- NULL
+    grps <- NULL
+  }
+
+  anno$struct_nr <- 1:nrow(anno)
+
+  if(!is.null(grps)) {
+    col <- sapply(grps[1:nrow(anno)], function(x) { if(x==1) 'red' else 'black' })
+
+    #if(length(input$selected_pdbids)>0) {
+    #  inds <- unlist(lapply(input$selected_pdbids, grep, anno$acc))
+    #  col[inds] <- "green"
+    #}
+
+    #if(!is.null(rv$limit_hits)) {
+    #  limit <- as.numeric(rv$limit_hits)
+    #  if(limit > 0)
+    #    col[1:limit] <- "green"
+    #}
+
+    anno$acc <- paste0(
+      "<span class=\"id_", col, "\" style=\"color:",
+      col,
+      "; font-size:large\">&#x25CF;</span>",
+      "&nbsp;<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
+      substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>"
+      )
+  }
+  else {
+    anno$acc <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
+                         substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
+  }
+
+  
+  ## http://xray.bmc.uu.se/hicup/ATP/
+  anno$ligandId <- unlist(lapply(anno$ligandId,
+         function(x) {
+           if(is.na(x))
+             return("")
+           
+           spl <- unlist(strsplit(x, ","))
+           if(length(spl) > 0) {
+             return(paste(paste0("<a href=\"", "http://www.rcsb.org/pdb/ligand/ligandsummary.do?hetId=",
+                                 spl, "\" target=\"_blank\">", spl, "</a>"),
+                          collapse=","))
+           }
+           else {
+             return("")
+           }
+           
+         }))
+  
+  
+  #anno$ligandId <- paste0("<a href=\"", "http://xray.bmc.uu.se/hicup/",
+  #                        anno$ligandId, "\" target=\"_blank\">", anno$ligandId, "</a>")
+
+  rownames(anno) <- NULL
+
+  show.cols <- c("acc", "compound", "source", "ligandId", "score", "experimentalTechnique", "resolution", "ligandName")
+
+  col.inds <- sapply(show.cols, grep, colnames(anno))
+
+  # re-ordering changed below to ID, Score .. for datatable
+  return(anno[, col.inds[c(1,5,2,3,4, 6:8)]])
+})
+
+
+  output$blast_table <- renderDataTable({
+      limit <- as.numeric(input$limit_hits)
+      DT::datatable(get_blasttable(), extensions = c('Scroller', 'ColVis'),## 'TableTools'),
+              class = 'compact stripe cell-border',   ## Remove 'compact' to add padding
+              escape = FALSE,
+              ##- Note. Should have 'PFAM' and 'Authors' here also...
+              colnames = c("ID", "BitScore", "Name (PDB Title)", "Species", 
+                           "Ligands", "Method", "Resolution (A)", "Ligand Names"),
+
+              selection =
+                  if(input$input_type != 'multipdb') {
+                      list(mode = 'multiple',
+                          selected =
+                              if(length(limit) == 0) {
+                                  as.character(1:5)
+                              } else {
+                                  as.character(1:limit)
+                              }
+                      )
+                  } else {
+                      "none"
+                  },
+
+              options = 
+                list(dom='C<"clear">frtiS', ##-- with ColVis 'C' and Scroler 'S' options
+                colVis = list(exclude = c(0, 1), activate = 'click', buttonText="Show/Hide Columns"),
+
+                ##dom = "frtiS",               ##--- ORIG
+                ##   dom = 'T<"clear">lfrtip', ##-- with tableTools option
+                ##   tableTools = list(sSwfPath = copySWF()),
+ 
+                scrollY = 400,                 ##---- Scroler options (height)
+                scrollCollapse = TRUE,
+                deferRender = TRUE,
+
+                autoWidth = TRUE,
+
+                columnDefs = list(                          ##-  Set cols behavior
+                  list( width = '5%', targets = c(0) ),     ## nums
+                  list( width = '10%', targets = c(1, 2) ), ## ID and BitScore
+                  list( width = '40%', targets = c(3) ),    ## Name
+                  list( width = '20%', targets = c(4) ),    ## Species
+                  list( width = '15%', targets = c(5) ),    ## Ligands
+
+                  list( visible=FALSE, targets = c(6,7,8) ), ## Others.. R-free, Authors, PubMed...
+                  list( orderable = 'false', targets = c(0,8) )
+                ),
+
+                initComplete = JS(
+                'function(settings) {',
+                'console.log("search datatable loaded");',
+                '}'
+                )
+              )
+      )
+  }) ## End renderDT
+
+
+output$cutoff_slider <- renderUI({
+  ##blast <- run_blast()
+  blast <- rv$blast
+  cutoff <- rv$cutoff
+
+  sliderInput("cutoff", "Adjust inclusion BitScore cutoff:",
+              min = floor(min(blast$score)), max = floor(max(blast$score)), value = cutoff)
+})
+
+output$hits_slider <- renderUI({
+  hits <- filter_hits()
+
+  sliderInput("limit_hits", "Limit total number of included structures:",
+              min = 1, max = length(hits$hits), value = rv$limit_hits, step=1)
+})
+

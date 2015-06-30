@@ -75,15 +75,9 @@ get_acc <- reactive({
   if(input$input_type != "multipdb") {
     blast <- rv$blast
     acc <- blast$acc[ as.numeric(input$blast_table_rows_selected) ]
-
   }
   else {
-    acc <- unique(trim(unlist(strsplit(input$pdb_codes, ","))))
-    acc <- acc[acc!=""]
-    anno <- get_annotation(acc, use_chain=FALSE)
-    inds <- unlist(sapply(acc, grep, anno$acc))
-    anno <- anno[inds, ]
-    acc <- anno$acc
+    acc <- get_multipdbids()
   }
   
   acc <- format_pdbids(acc)

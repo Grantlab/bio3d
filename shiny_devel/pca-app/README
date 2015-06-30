@@ -14,11 +14,10 @@ library(devtools)
 install_bitbucket("Grantlab/bio3d", subdir = "ver_devel/bio3d/", ref="feature_shiny")
 
 install_github('rCharts', 'ramnathv')
+install_github("rgl", "trestletech", "js-class")
 install_github("shinyRGL", "trestletech")
 install_github("rstudio/DT")
 
-
-##install_github("rgl", "trestletech", "js-class")
 ##install_github("kbroman/qtlcharts", build_vignettes=TRUE)
 ```
 
@@ -51,6 +50,26 @@ ALTER TABLE `pdb_annotation`
   ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `pdb_annotation`
+  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary Key',AUTO_INCREMENT=1;
+
+
+CREATE TABLE IF NOT EXISTS `pfam` (
+  `id` int(10) unsigned NOT NULL COMMENT 'Primary Key',
+  `acc` varchar(12) NOT NULL,
+  `structureId` varchar(4) NOT NULL,
+  `chainId` varchar(1) NOT NULL,
+  `pdbResNumStart` int(10) NOT NULL,
+  `pdbResNumEnd` int(10) NOT NULL,
+  `pfamAcc` varchar(30) NOT NULL,
+  `pfamName` varchar(30) NOT NULL,
+  `pfamDesc"` varchar(50) NOT NULL,
+  `eValue"` varchar(10) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+ALTER TABLE `pfam`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `pfam`
   MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary Key',AUTO_INCREMENT=1;
 
 

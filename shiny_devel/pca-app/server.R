@@ -33,9 +33,10 @@ if(configuration$db$use)
 
 shinyServer(function(input, output, session) {
 
-  
   source("server/blast.R", local=TRUE)$value
-  source("server/blast_render.R", local=TRUE)$value
+  source("server/pdb.R", local=TRUE)$value
+  source("server/pfam.R", local=TRUE)$value
+
   source("server/align.R", local=TRUE)$value
   source("server/fit.R", local=TRUE)$value
   source("server/pca.R", local=TRUE)$value
