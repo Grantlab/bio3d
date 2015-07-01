@@ -114,8 +114,9 @@ get_pfam <- function(acc) {
   
   if(!inherits(con, "MySQLConnection")) {
     warning("could not connect to database :(")
-    pf <- pdb.pfam(unq, compact = FALSE)
-    return(pf)
+    pfam <- pdb.pfam(unq, compact = FALSE)
+    pfam$acc <- paste(pfam$structureId, pfam$chainId, sep = "_")
+    return(pfam)
   }
 
   missing_inds <- c()
