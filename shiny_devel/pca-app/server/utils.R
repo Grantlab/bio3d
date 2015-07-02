@@ -1,34 +1,46 @@
 
-
-format_pdbids <- function(acc) {
-  
-  ## first 4 chars should be upper
-  ## any chainId should remain untouched - see e.g. PDB ID 3R1C
+## first 4 chars should be upper
+## any chainId should remain untouched - see e.g. PDB ID 3R1C
+format_pdbids <- function(acc, casefmt=toupper) {
   mysplit <- function(x) {
     str <- unlist(strsplit(x, "_"))
     if(length(str)>1)
-      paste(toupper(str[1]), "_", str[2], sep="")
+      paste(casefmt(str[1]), "_", str[2], sep="")
     else
-      toupper(str[1])
+      casefmt(str[1])
   }
 
   out <- unlist(lapply(acc, mysplit))
   return(out)
 }
 
+## pdb2lum_A.ent.gz --> 2lum_A
+## note that chain ID could be longer than 1 char
+pdbfilename2label <- function(fn) {
+  fn <- basename(fn)
+  parsefn <- function(x) {
+    a <- unlist(strsplit(x, "_"))
+    b <- unlist(strsplit(a, "\\."))
+    paste(substr(a[1], 4, 7), b[2], sep="_")
+  }
+  return(unlist(lapply(fn, parsefn)))
+}
+
+##- Remove leading and trailing spaces from character strings
 trim.character <- function(s) {
-  ##- Remove leading and trailing spaces from character strings
   s <- sub("^ +", "", s)
   s <- sub(" +$", "", s)
   s[(s=="")]<-""
   return(s)
 }
 
+##- generates a random string, e.g. 11ca4f6ea112
 randstr <- function() {
   return(basename(tempfile(pattern="")))
 }
 
-
+## should be moved to bio3d
+## determines SSE data for a pdbs object
 "pdbs2sse" <- function(pdbs, ind=1, rm.gaps=FALSE, exefile="dssp") {
   ind <- ind[1]
   if(file.exists(pdbs$id[ind]))

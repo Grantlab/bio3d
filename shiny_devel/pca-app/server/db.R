@@ -22,9 +22,25 @@ db_disconnect <- function(con)
   dbDisconnect(con)
 
 
+get_annotation_from_pdb <- function(acc) {
+  anno <- pdb.annotate(acc, anno.terms=c(
+                              "structureId", "chainId",
+                              "source", "compound",
+                              "experimentalTechnique", "resolution",
+                              "ligandId", "ligandName",
+                              "chainLength", "db_id", "sequence"
+                              )
+                       )
+  anno$acc <- rownames(anno)
+  return(anno)
+}
+
 get_annotation <- function(acc, use_chain=TRUE) {
   acc <- format_pdbids(acc)
   unq <- unique(substr(acc, 1, 4))
+
+  if(all(nchar(acc)==4))
+    use_chain <- FALSE
   
   if(!use_chain) {
     acc <- unq
@@ -34,29 +50,8 @@ get_annotation <- function(acc, use_chain=TRUE) {
 
   if(!inherits(con, "MySQLConnection")) {
     warning("could not connect to database :(")
-    anno <- pdb.annotate(acc, anno.terms=c(
-                                "structureId", "chainId",
-                                "source", "compound",
-                                "experimentalTechnique", "resolution",
-                                "ligandId", "ligandName",
-                                "chainLength", "sequence"
-                                )
-                         )
-    anno$acc <- rownames(anno)
-    return(anno)
+    return(get_annotation_from_pdb(acc))
   }
-
-  missing_inds <- c()
-  for(i in 1:length(unq)) {
-    query <- paste0("SELECT acc FROM pdb_annotation WHERE structureId='", unq[i], "'")
-    res <- dbGetQuery(con, query)
-
-    if(!nrow(res)>0)
-      missing_inds <- c(missing_inds, i)
-  }
-
-  if(length(missing_inds) > 0)
-    res <- db_add_annotation(unq[missing_inds], con=con)
 
   if(use_chain) {
     where <- paste0("WHERE acc IN ('", paste(acc, collapse="', '"), "')")
@@ -64,23 +59,51 @@ get_annotation <- function(acc, use_chain=TRUE) {
   else {
     where <- paste0("WHERE structureId IN ('", paste(unq, collapse="', '"), "')")
   }
+  
   query <- paste("SELECT acc, structureId, chainId, compound, source, ligandId, ligandName, chainLength, experimentalTechnique, resolution, sequence FROM pdb_annotation", where, "ORDER BY acc")
 
   res <- dbGetQuery(con, query)
+ 
+  if(nrow(res) > 0) {
+    if(use_chain) {
+      rownames(res) <- res$acc
+      res <- res[acc, ]
+    }
 
-  if(use_chain) {
-    rownames(res) <- res$acc
-    res <- res[acc, ]
+    missing_inds <- !(unq %in% unique(res$structureId))
+  }
+  else {
+    missing_inds <- rep(TRUE, length(unq))
+  }
+
+  if(any(missing_inds)) {
+
+    print("missing in db:")
+    print(unq[missing_inds])
+    
+    ## add missing to SQL db
+    res <- db_add_annotation(unq[missing_inds], con=con)
+
+    ## fetch again from SQL db
+    res <- dbGetQuery(con, query)
   }
 
   db_disconnect(con)
-  return(res)
+  if(use_chain) {
+    inds <- res$acc %in% acc
+    return(res[inds,, drop=FALSE])
+  }
+  else {
+    inds <- res$structureId %in% unq
+    return(res[inds,, drop=FALSE])
+  }
+
 }
 
 db_add_annotation <- function(acc, con=NULL) {
   unq <- unique(substr(acc, 1, 4))
-  anno <- pdb.annotate(unq)
-  anno$acc <- row.names(anno)
+  anno <- get_annotation_from_pdb(unq)
+  ##print(head(anno))
   
   close <- FALSE
   if(is.null(con)) {

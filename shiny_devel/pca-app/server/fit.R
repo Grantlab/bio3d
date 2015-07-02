@@ -36,10 +36,13 @@ fit <- reactive({
     init_show_pdbs <<- FALSE
   }
 
-  pdbs$lab <- format_pdbids(basename.pdb(pdbs$id))
   if(configuration$pdbdir$archive) {
-    pdbs$lab <- format_pdbids(substr(pdbs$lab, 4, 9))
+    pdbs$lab <- pdbfilename2label(pdbs$id)
   }
+  else {
+    pdbs$lab <- basename.pdb(pdbs$id)
+  }
+  pdbs$lab <- format_pdbids(pdbs$lab)
   
   return(pdbs)
 })

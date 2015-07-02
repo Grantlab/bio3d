@@ -95,11 +95,20 @@ split_pdbs <- reactive({
 
   ## archive mode - pre splitted PDBs
   if(configuration$pdbdir$archive) {
-    ids <- paste0(tolower(substr(ids, 1, 4)), "_", substr(ids, 6, 6))
-    files <- paste0(configuration$pdbdir$splitfiles, "/", substr(ids, 2, 3), "/pdb", ids, ".ent.gz")
+    
+    ## file names are in lower case except from chain ID
+    ## e.g. pdb2lum_A.ent.gz
+    ids <- format_pdbids(ids, casefmt=tolower)
+    
+    files <- paste0(configuration$pdbdir$splitfiles, "/",
+                    substr(ids, 2, 3), "/pdb", ids, ".ent.gz")
 
     if(any(!file.exists(files))) {
-      missing <- paste(files[ !file.exists(files) ], collapse=", ")
+      ## pdb2lum_A.ent.gz --> 2lum_A
+      missing_ids <- pdbfilename2label(
+        files[ !file.exists(files) ]
+        )
+      missing <- paste(missing_ids, collapse=", ")
       stop(paste("PDB file(s) missing:", missing))
     }
   }
@@ -176,12 +185,16 @@ align_pdbs <- reactive({
                    progress=progress)
   }
 
-  pdbs$lab <- format_pdbids(basename.pdb(pdbs$id))
   
   if(configuration$pdbdir$archive) {
-    pdbs$lab <- format_pdbids(substr(pdbs$lab, 4, 9))
+    ## pdb2lum_A.ent.gz --> 2lum_A
+    pdbs$lab <- pdbfilename2label(pdbs$id)
   }
- 
+  else {
+    pdbs$lab <- basename.pdb(pdbs$id)
+  }
+  pdbs$lab <- format_pdbids(pdbs$lab)
+  
  rownames(pdbs$ali) <- pdbs$lab
  progress$close()
  

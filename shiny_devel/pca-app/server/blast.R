@@ -90,7 +90,9 @@ observeEvent(input$reset_pdbid, {
 ## dataframe with columns: acc, evalue, score, desc
 run_blast <- reactive({
   message("run_blast called")
+  ptm <- proc.time()
 
+  
   if(input$input_type != "multipdb") {
     message("blasting")
 
@@ -129,6 +131,9 @@ run_blast <- reactive({
     ##saveRDS(blast, file="2LUM_blast.RDS")
 
     progress$set(value = 5)
+    progress$close()
+    message("time used for blasting")
+    print(proc.time() - ptm)
     return(hmm)
   }
   else {
@@ -275,6 +280,9 @@ output$blast_plot <- renderUI({
 
 ### Blast plot on front page
 output$blast_plot1 <- renderPlot({
+  ptm <- proc.time()
+
+  
   ##blast <- run_blast()
   blast <- rv$blast
   cut <- set_cutoff(blast, rv$cutoff)
@@ -325,6 +333,7 @@ output$blast_plot1 <- renderPlot({
 
   legend("bottomleft", c("Selected hits", "Above cutoff", "Below cutoff", "Cutoff"),
          pt.bg = c("blue", "red", "grey50", "red"), col=c("blue", rep("grey10", 2), "red"), bg="grey90", lty=c(0, 0, 0, 2), pch=c(1,21,21,NA))
+
 
 })
 
@@ -384,13 +393,21 @@ output$blast_plot2 <- renderChart2({
 get_blasttable <- reactive({
   message("fetching blast table")
 
+  progress <- shiny::Progress$new(session, min=1, max=5)
+  progress$set(message = 'Annotating results',
+               detail = 'Please wait ...')
+  progress$set(value = 1)
+  
+  ptm <- proc.time()
+
   if(input$input_type != "multipdb") {
-    ##blast <- run_blast()
+
     blast <- rv$blast
     grps <- set_cutoff(blast, cutoff=rv$cutoff)$grps
 
     acc <- blast$acc
     anno <- get_annotation(acc)
+    progress$set(value = 2)
 
     ## clean up if length does not correspond
     if(length(acc) != length(anno$acc)) {
@@ -399,7 +416,15 @@ get_blasttable <- reactive({
 
       if(length(acc) > length(anno$acc)) {
         inds <- acc %in% anno$acc
+        missed <- blast$acc[!inds]
         blast <- blast[inds,, drop=FALSE]
+
+        print("could not find annotation for pdb ids")
+        print(missed)
+
+        print(paste("corrected blast: ", length(blast$acc)))
+        print(paste("anno: ", length(anno$acc)))
+        acc <- blast$acc
       }
     }
 
@@ -423,6 +448,7 @@ get_blasttable <- reactive({
 
     hits <- NULL
     grps <- NULL
+    progress$set(value = 2)
   }
 
   anno$struct_nr <- 1:nrow(anno)
@@ -452,9 +478,9 @@ get_blasttable <- reactive({
 #    anno$acc <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=",
 #                         substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
     anno$acc <- sapply(anno$acc, function(x) { as.character(tags$a(href = paste0('http://pdb.org/pdb/explore/explore.do?structureId=', substr(x, 1, 4)), target = '_blank', x)) })
-    print(anno$acc)
   }
 
+  progress$set(value = 3)
 
   ## http://xray.bmc.uu.se/hicup/ATP/
   anno$ligandId <- unlist(lapply(anno$ligandId,
@@ -474,16 +500,20 @@ get_blasttable <- reactive({
 
          }))
 
-
-  #anno$ligandId <- paste0("<a href=\"", "http://xray.bmc.uu.se/hicup/",
-  #                        anno$ligandId, "\" target=\"_blank\">", anno$ligandId, "</a>")
-
+  progress$set(value = 4)
   rownames(anno) <- NULL
 
   show.cols <- c("acc", "compound", "source", "ligandId", "score", "experimentalTechnique", "resolution", "ligandName")
 
   col.inds <- sapply(show.cols, grep, colnames(anno))
 
+  message("time used for fetching blast table:")
+  print(proc.time() - ptm)
+  progress$set(value = 5)
+
+  gc()
+  progress$close()
+  
   # re-ordering changed below to ID, Score .. for datatable
   return(anno[, col.inds[c(1,5,2,3,4, 6:8)]])
 })
