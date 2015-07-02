@@ -3,26 +3,24 @@ tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
 
          actionButton3("about_blasttab", "About this tab", icon=icon("comment"), cl="btn btn-warn btn-input action-button", style = "position: fixed; top: 14px; right: 16px; z-index: 2000;"),
-         
-         bsModal("modal_blast", "About the Bio3D PCA/eNMA WebApp", "about_blasttab", size = "large", 
+
+         bsModal("modal_blast", "About the Bio3D PCA/eNMA WebApp", "about_blasttab", size = "large",
                  content=tags$div(
                    h3("Bio3D PCA/eNMA WebApp"),
                    p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with <a href=\"http://thegrantlab.org/bio3d/tutorials/principal-component-analysis\">principal component analysis</a> (PCA) and <a href=\"http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1\">ensemble normal mode analysis</a> (eNMA).")),
                    p(HTML("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons.")),
-                   img(src="./images/geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")                      
-                   ) 
+                   img(src="./images/geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")
+                   )
                  ),
 
-         
-         
          fluidRow(
            column(4,
                   wellPanel(
-                    popoverQuestion(id="popQues1", 
-                                    content="For both <b>single structure</b> and <b>single sequence</b> options a search will be performed to find related PDB structures upon which subsequent analysis will be based. The results of this search will be presented below along with options to restrict subsequent analysis to certain chains. </br></br>With <b>multiple structure</b> input, analysis will be confined to the specified structures and only their annotation will be displayed below. </br></br>To continue analysis proceed by navigating through the <b>NEXT</b> buttons. </br>Please refer to the main <a href='http://thegrantlab.org'>Help</a> page for further details.", 
+                    popoverQuestion(id="popQues1",
+                                    content="For both <b>single structure</b> and <b>single sequence</b> options a search will be performed to find related PDB structures upon which subsequent analysis will be based. The results of this search will be presented below along with options to restrict subsequent analysis to certain chains. </br></br>With <b>multiple structure</b> input, analysis will be confined to the specified structures and only their annotation will be displayed below. </br></br>To continue analysis proceed by navigating through the <b>NEXT</b> buttons. </br>Please refer to the main <a href='http://thegrantlab.org'>Help</a> page for further details.",
                                     trigger="focus",
                                     data_toggle = "pop_blast_input"),
-                    
+
                     h4("A)  Input Structure(s) or Sequence"),
 
                     helpText("Please enter either a single PDB code of interest, a single protein sequence, or multiple related PDB codes (see the ",
@@ -34,7 +32,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                                    "Enter multiple PDB structure codes" = "multipdb"),
                                  selected = NULL, inline=FALSE,
                                  placement = "right", data_toggle = "pop_blast_input",
-                                 title = "Select your input data type"),##-- SEE popQues1 above for content... 
+                                 title = "Select your input data type"),##-- SEE popQues1 above for content...
 
                     br(),
 
@@ -49,7 +47,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       tags$textarea(id="sequence", rows=4, cols=40,
                                     "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE"),
                       helpText("Paste a protein sequence with no identifiers or FASTA headers.")
-          
+
                       ),
 
                     conditionalPanel(
@@ -63,8 +61,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     actionButton3("page1_hits", "Next (Hit selection)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
                    tags$script(HTML(
                        '$(".btn-input").click(function(){',
-                       'document.getElementById("blast_plot").scrollIntoView({block: "start", behavior: "smooth"});',
-                       'window.scrollBy(0,-100);',
+                       '$("html, body").animate({scrollTop:$("#blast_row").position().top - (0.1 * $(window).height())}, "smooth");',
                        '$("#blast_plot").parent().siblings().find(".well").addClass("show-border");',
                        'window.setTimeout(function(){',
                        '$("#blast_plot").parent().siblings().find(".well").removeClass("show-border");',
@@ -77,7 +74,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     ## Modal button placeholder
                     actionButton3("help_pdbid", "ABOUT", icon=icon("comment"), cl="btn btn-warn btn-input action-button")
 
-                  ##- ** Poorely aligned Modal button (Uncoment to demo)** 
+                  ##- ** Poorely aligned Modal button (Uncoment to demo)**
 #                  ,modalBox(id="1", button_label = "ABOUT ", icon = "comment",
 ##                    cl = "btn btn-warn btn-large outline",
 #                      cl="btn btn-warn btn-input action-button",
@@ -85,16 +82,16 @@ tabPanel("1. SEARCH", icon=icon("home"),
 #                        h3("Bio3D PCA/eNMA WebApp"),
 #                        p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with <a href=\"http://thegrantlab.org/bio3d/tutorials/principal-component-analysis\">principal component analysis</a> (PCA) and <a href=\"http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1\">ensemble normal mode analysis</a> (eNMA).")),
 #                        p(HTML("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons.")),##<font color=\"red\">NEXT</font> buttons.")),
-#                        img(src="geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")                      
+#                        img(src="geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")
 #                    )
 #                  )
-                    ,bsModal("modalExample", "About the Bio3D PCA/eNMA WebApp", "help_pdbid"  , size = "large", 
+                    ,bsModal("modalExample", "About the Bio3D PCA/eNMA WebApp", "help_pdbid"  , size = "large",
                       content=tags$div(
                         h3("Bio3D PCA/eNMA WebApp"),
                         p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with <a href=\"http://thegrantlab.org/bio3d/tutorials/principal-component-analysis\">principal component analysis</a> (PCA) and <a href=\"http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1\">ensemble normal mode analysis</a> (eNMA).")),
                         p(HTML("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons.")),##<font color=\"red\">NEXT</font> buttons.")),
-                        img(src="./images/geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")                      
-                      ) 
+                        img(src="./images/geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")
+                      )
                     )
 
                     ##
@@ -105,7 +102,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                   wellPanel(
                     style="background: #FFFFFF;",
 
-                    popoverQuestion(id="popQues2", 
+                    popoverQuestion(id="popQues2",
                                     content="This panel presents summary information about your input specified in panel <b>A</b> to the left. </br></br> Options here allow you to limit further analysis to a certain chain as well as <b>View</b> the <b>3D structure</b> of each chain and inspect their <b>PFAM chain annotations</b>. </br></br>To continue analysis proceed by navigating through the <b>NEXT</b> buttons.", trigger="focus",
                                     data_toggle = "pop_summary_input"),
 
@@ -176,10 +173,10 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       #                "App Info" = "bio3d"),
                       #                selected="pdb",   ##<--- Change to "pdb"/"bio3d" ???
                       #               inline=TRUE,
-                      #               placement = "right", 
+                      #               placement = "right",
                       #               data_toggle = "pop_summary_input",
                       #               title = "Chain selection, annotation and visualization options")
-                      
+
                     )
                   )
                  ),
@@ -197,14 +194,14 @@ tabPanel("1. SEARCH", icon=icon("home"),
                                   c("C-alpha Trace" = "calpha",
                                     "Overview" = "overview"),
                                   selected = "calpha",
-                                  multiple = FALSE), 
-                      
+                                  multiple = FALSE),
+
                       selectInput("view_inpdb_col", "Color options:",
                                    c("Secondary structure elements" = "sse",
                                      "Residue Index" = "index"),
                                   multiple=FALSE)
 
-                      ,bsTooltip("view_inpdb_as", 
+                      ,bsTooltip("view_inpdb_as",
                                   title="Change the structure view and coloring options. </br></br>Click and drag on the display to rotate, middle mouse button to zoom.",
                                   placement = "left", options = list(container = "body"))
 
@@ -232,7 +229,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                                       "App Info" = "bio3d"),
                                       selected="pdb",   ##<--- Change to "pdb"/"bio3d" ???
                                      inline=TRUE,
-                                     placement = "right", 
+                                     placement = "right",
                                      data_toggle = "pop_summary_input",
                                      title = "Chain selection, annotation and visualization options")
 
@@ -246,6 +243,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
          ##-- Results Section --##
          #########################
          fluidRow(
+           id = 'blast_row',
            #conditionalPanel(
            #  condition = "input.input_type != 'multipdb'",
            #  ##h2("Blast results")
@@ -274,11 +272,11 @@ tabPanel("1. SEARCH", icon=icon("home"),
                         uiOutput("hits_slider"),
 
                         ##- Slider ToolTips
-                        bsTooltip("cutoff_slider", 
+                        bsTooltip("cutoff_slider",
                                   title="Sets the bitscore similarity threshold. Structures above this similarity threshold may be subject to further analysis and are indicated in red in the plot to the right and with a red icon in the table below.",
                                   placement = "right", options = list(container = "body")),
 
-                        bsTooltip("hits_slider", 
+                        bsTooltip("hits_slider",
                                   title="Sets the maximum number of structures to be used for further analysis. </br></br>The maximum permitted value is dependent on the bitscore cutoff chosen above. </br></br>Note that selected structures are indicated in blue in the plot to the right and also highlighted in the table below.",
                                   placement = "right", options = list(container = "body")),
 
@@ -286,7 +284,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                         actionButton3("page1_table", "Next (Further selection)", icon=icon("arrow-down"), cl="btn btn-primary btn-hits action-button"),
                         tags$script(HTML(
                        '$(".btn-hits").click(function(){',
-                       '$("#blast_table").parent()[0].scrollIntoView(false);',
+                       '$("#blast_table").parent()[0].scrollIntoView({block: "end", behavior: "smooth"});',
                        #'window.scrollBy(0,-50);',
                        '$("#blast_table").parent().addClass("show-border");',
                        'window.setTimeout(function(){',
@@ -330,7 +328,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
            hr(),
            column(12,
                 ## PopOver probably not needed...?...
-                #popoverQuestion(id="popQues4", content="This table provides annotation of identified structures and allows for selection (and de-selection) via <b>clicking to highlight</b> individual rows. This allows finer grained selection than the sliders in panel B above.", 
+                #popoverQuestion(id="popQues4", content="This table provides annotation of identified structures and allows for selection (and de-selection) via <b>clicking to highlight</b> individual rows. This allows finer grained selection than the sliders in panel B above.",
                 #                data_toggle = "blast_table"),
 
                   wellPanel(
