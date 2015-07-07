@@ -118,7 +118,7 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
 
   # All shortest paths are stored in container A in order
   dist = sum(igraph::E(graph)$weight[k0$epath[[1]]])
-  A <- list(list(path=k0$vpath[[1]], epath=k0$epath[[1]], dist=dist))
+  A <- list(list(path=as.integer(k0$vpath[[1]]), epath=as.integer(k0$epath[[1]]), dist=dist))
 
   # All candidates are stored in container B
   B <- list()
@@ -156,9 +156,9 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
        spurPath <- suppressWarnings(igraph::get.shortest.paths(g, spurNode, to, output='both'), ...)
 
        if(length(spurPath$vpath[[1]]) > 0 ) {
-          vpath = c(rootPath, spurPath$vpath[[1]][-1])
+          vpath = c(rootPath, as.integer(spurPath$vpath[[1]][-1]))
           if(!contains.path(B, vpath)) {
-             spurPath$epath <- as.numeric(igraph::E(graph, path=spurPath$vpath[[1]]))
+             spurPath$epath <- as.integer(igraph::E(graph, path=as.integer(spurPath$vpath[[1]])))
              epath = c(rootePath, spurPath$epath)
              return (list(path=vpath, epath = epath, dist = sum(igraph::E(graph)$weight[epath])) )
           }
