@@ -15,10 +15,12 @@ tabPanel("2. ALIGN",
                    p(HTML("You can optionally exclude structures, either manually (see 'Exlcude / include hits'), or automatically omit structures with missing in-structure residues. Functionality for uploading a corrected / revised sequence alignment (FASTA format) is also provided."))
                    ),
                  
-                 p(HTML("The final alignment is shown... ")), 
+                 p(HTML("The sequence alignment is performed with MUSCLE and is displayed in blocks of up to 80 columns with a row per PDB structure. Conserved columns are annotated with an asterisk (*) while columns containing similar amino acids are depicted with a hat (^). Detailed information (including PDB residue number, and position in alignment) on each residue in the alignment can be obtained by hovering over the the residue. ")), 
+
+
                  img(src="./images/alignment.png", width=700, style="display: block; margin-left: auto; margin-right: auto;"),
                    
-                 p(HTML("Basic analysis of sequence identity ... ")), 
+                 p(HTML("Basic analyses of sequence identity entails clustering analysis, as well as entropy and sequence conservation. These analyses are available as plot dendrograms, heatmap and histogram plot. ")), 
                  img(src="./images/seqide_heatmap.png", width=600, style="display: block; margin-left: auto; margin-right: auto;")
                  
                  ),
@@ -122,6 +124,18 @@ tabPanel("2. ALIGN",
            column(4,
                   wellPanel(
                     style="overflow: auto;",
+                    
+                    bsPopover("popalign2",
+                              "Sequence analysis",
+                              "Basis sequence analysis entails clustering of the selected PDB structures based on their pair-wise sequence similarity, which can be visualized as a <b>dendrogram</b>, alternatively in combination with a <b>heatmap</b>. The sequence <b>entropy</b> uses the 10-letter alphabet and conserved (low entropy) columns score 1 and diverse (high entropy) columns score 0.",
+                              placement = "right", trigger = "hover",
+                              options = list(container = "body")),
+                    
+                    tags$div(id = "popalign2", icon("question-circle"),
+                             style = "position: absolute; right: 25px; top: 5px;"
+                             ),
+                    
+                    
                     
                     h4("Sequence analysis"),
 

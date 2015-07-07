@@ -6,7 +6,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
          bsModal("modal_blast", "About the Bio3D PCA/eNMA WebApp", "about_blasttab", size = "large",
                  content=tags$div(
-                   h3("Bio3D PCA/eNMA WebApp"),
+                   ##h3("Bio3D PCA/eNMA WebApp"),
                    p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with <a href=\"http://thegrantlab.org/bio3d/tutorials/principal-component-analysis\">principal component analysis</a> (PCA) and <a href=\"http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1\">ensemble normal mode analysis</a> (eNMA).")),
                    p(HTML("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons.")),
                    img(src="./images/geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")
@@ -16,24 +16,25 @@ tabPanel("1. SEARCH", icon=icon("home"),
          fluidRow(
            column(4,
                   wellPanel(
-                    popoverQuestion(id="popQues1",
-                                    content="For both <b>single structure</b> and <b>single sequence</b> options a search will be performed to find related PDB structures upon which subsequent analysis will be based. The results of this search will be presented below along with options to restrict subsequent analysis to certain chains. </br></br>With <b>multiple structure</b> input, analysis will be confined to the specified structures and only their annotation will be displayed below. </br></br>To continue analysis proceed by navigating through the <b>NEXT</b> buttons. </br>Please refer to the main <a href='http://thegrantlab.org'>Help</a> page for further details.",
-                                    trigger="focus",
-                                    data_toggle = "pop_blast_input"),
+                    bsPopover("popblast1",
+                              "Select your input data type",
+                              "For both <b>single structure</b> and <b>single sequence</b> options a search will be performed to find related PDB structures upon which subsequent analysis will be based. The results of this search will be presented below along with options to restrict subsequent analysis to certain chains. </br></br>With <b>multiple structure</b> input, analysis will be confined to the specified structures and only their annotation will be displayed below. </br></br>To continue analysis proceed by navigating through the <b>NEXT</b> buttons.", 
+                              placement = "right", trigger = "hover",
+                              options = list(container = "body")),
+                    
+                    tags$div(id = "popblast1", icon("question-circle"),
+                             style = "position: absolute; right: 25px; top: 5px;"
+                             ),
 
                     h4("A)  Input Structure(s) or Sequence"),
-
                     helpText("Please enter either a single PDB code of interest, a single protein sequence, or multiple related PDB codes (see the ",
-                    a(href="http://thegrantlab.org", target="_blank", "Help"), " page for more details)."),
-
-                    popRadioButtons(inputId = "input_type", label = "",
+                             a(href="http://thegrantlab.org/bio3d", target="_blank", "Help"), " page for more details)."),
+                    
+                    radioButtons(inputId = "input_type", label = "",
                                  choices = c("Enter a single PDB structure code" = "pdb",
                                    "Paste a single protein sequence" = "sequence",
                                    "Enter multiple PDB structure codes" = "multipdb"),
-                                 selected = NULL, inline=FALSE,
-                                 placement = "right", data_toggle = "pop_blast_input",
-                                 title = "Select your input data type"),##-- SEE popQues1 above for content...
-
+                                 selected = NULL, inline=FALSE),
                     br(),
 
                     conditionalPanel(
@@ -69,32 +70,8 @@ tabPanel("1. SEARCH", icon=icon("home"),
                        '});'
                                     )),
                     #actionButton("reset_pdbid", "Reset", icon=icon("undo")),
-                    actionButton3("reset_pdbid", HTML("<b>Reset</b>"), icon=icon("undo"), cl="btn btn-link btn-input action-button"),
+                    actionButton3("reset_pdbid", HTML("<b>Reset</b>"), icon=icon("undo"), cl="btn btn-link btn-input action-button")
 
-                    ## Modal button placeholder
-                    actionButton3("help_pdbid", "ABOUT", icon=icon("comment"), cl="btn btn-warn btn-input action-button")
-
-                  ##- ** Poorely aligned Modal button (Uncoment to demo)**
-#                  ,modalBox(id="1", button_label = "ABOUT ", icon = "comment",
-##                    cl = "btn btn-warn btn-large outline",
-#                      cl="btn btn-warn btn-input action-button",
-#                      content = tags$div(
-#                        h3("Bio3D PCA/eNMA WebApp"),
-#                        p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with <a href=\"http://thegrantlab.org/bio3d/tutorials/principal-component-analysis\">principal component analysis</a> (PCA) and <a href=\"http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1\">ensemble normal mode analysis</a> (eNMA).")),
-#                        p(HTML("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons.")),##<font color=\"red\">NEXT</font> buttons.")),
-#                        img(src="geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")
-#                    )
-#                  )
-                    ,bsModal("modalExample", "About the Bio3D PCA/eNMA WebApp", "help_pdbid"  , size = "large",
-                      content=tags$div(
-                        h3("Bio3D PCA/eNMA WebApp"),
-                        p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with <a href=\"http://thegrantlab.org/bio3d/tutorials/principal-component-analysis\">principal component analysis</a> (PCA) and <a href=\"http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1\">ensemble normal mode analysis</a> (eNMA).")),
-                        p(HTML("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons.")),##<font color=\"red\">NEXT</font> buttons.")),
-                        img(src="./images/geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")
-                      )
-                    )
-
-                    ##
                     )
                   ),
 
@@ -102,9 +79,15 @@ tabPanel("1. SEARCH", icon=icon("home"),
                   wellPanel(
                     style="background: #FFFFFF;",
 
-                    popoverQuestion(id="popQues2",
-                                    content="This panel presents summary information about your input specified in panel <b>A</b> to the left. </br></br> Options here allow you to limit further analysis to a certain chain as well as <b>View</b> the <b>3D structure</b> of each chain and inspect their <b>PFAM chain annotations</b>. </br></br>To continue analysis proceed by navigating through the <b>NEXT</b> buttons.", trigger="focus",
-                                    data_toggle = "pop_summary_input"),
+                    bsPopover("popblast2", 
+                              "Chain selection, annotation and visualization options",
+                              "This panel presents summary information about your input specified in panel <b>A</b> to the left. <br><br> Options here allow you to limit further analysis to a certain chain as well as <b>View</b> the <b>3D structure</b> of each chain and inspect their <b>PFAM chain annotations</b>. <br><br>To continue analysis proceed by navigating through the <b>NEXT</b> buttons.",
+                              placement = "right", trigger = "hover",
+                              options = list(container = "body")),
+                    
+                    tags$div(id = "popblast2", icon("question-circle"),
+                             style = "position: absolute; right: 25px; top: 5px;"
+                             ),
 
                     conditionalPanel(
                       condition = "input.input_type == 'multipdb'",
@@ -223,15 +206,13 @@ tabPanel("1. SEARCH", icon=icon("home"),
                           width=250, style="display: block; margin-left: auto; margin-right: auto;")
                       )
 ###
-                      ,popRadioButtons("logviewer", "View options:",
+                    ,radioButtons("logviewer", "View options:",
                                     c("3D structure" = "pdb",
                                       "PDB processing log" = "pdblog",
                                       "App Info" = "bio3d"),
                                       selected="pdb",   ##<--- Change to "pdb"/"bio3d" ???
-                                     inline=TRUE,
-                                     placement = "right",
-                                     data_toggle = "pop_summary_input",
-                                     title = "Chain selection, annotation and visualization options")
+                                     inline=TRUE)
+                    
 
 ###
 
@@ -259,6 +240,17 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
                       conditionalPanel(
                         condition = "input.input_type != 'multipdb'",
+
+                        bsPopover("popblast3", 
+                                  "Hit selection", 
+                                  "The plot on the right shows a representation of the hits in the PDB identified in the search. Each point represent a hit - or a PDB structure. All points above the red cutoff line can be chosen for further analysis. Note that only those marked with a blue circle is currently chosen. ",
+                                  placement = "right", trigger = "hover",
+                                  options = list(container = "body")),
+                        
+                        tags$div(id = "popblast3", icon("question-circle"),
+                                 style = "position: absolute; right: 25px; top: 5px;"
+                                 ),
+                        
 
                         h4("B) Hit selection for further analysis"),
                         helpText("Optional filtering and refinement (via similarity threshold specification) of related structures for further analysis."),

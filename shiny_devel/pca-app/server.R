@@ -10,9 +10,6 @@ source("server/utils.R")
 
 ## load packages
 library(bio3d)
-#library(devtools)
-#load_all("~/workspace/bio3d/ver_devel/bio3d")
-
 
 library(DT)
 library(lattice)
@@ -24,11 +21,14 @@ library(reshape2)
 library(maptools)
 library(threejs)
 library(abind)
-##library(qtlcharts)
 library(shinyBS)
 
 if(configuration$db$use)
   library(RMySQL)
+
+## system check
+source("server/syscheck.R")
+system_check()
 
 
 shinyServer(function(input, output, session) {

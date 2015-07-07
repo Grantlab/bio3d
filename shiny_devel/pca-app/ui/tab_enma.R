@@ -1,14 +1,46 @@
-tabPanel("5. eNMA", icon=icon("arrow-right"),
-         tags$style(type="text/css", "body {padding-top: 80px;}"),
+tabPanel(
+  "5. eNMA", icon=icon("arrow-right"),
+  tags$style(type="text/css", "body {padding-top: 80px;}"),
+  
+  
+  actionButton3("about_nmatab", "About this tab", icon=icon("comment"), cl="btn btn-warn btn-input action-button", style = "position: fixed; top: 14px; right: 16px; z-index: 2000;"),
+  
+  bsModal("modal_nma", "Ensemble Normal Mode Analysis", "about_nmatab", size = "large", 
+          content=tags$div(
+            
+            p(HTML("In the NMA tab, normal mode analysis (NMA) for each individual structure in the ensemble is performed. The motions described by each normal mode can be visualized either in the browser, or by downloading a PDB trajectory file or a PyMOL session (.pse) containing a vector field representation. ")),
 
+            p(HTML("The analyses of the resulting modes allows for direct comparison of predicted fluctuations,")),
+            
+            img(src="./images/enma-fluctuations.png", style="display: block; margin-left: auto; margin-right: auto;"),
+            
+            p(HTML("as well as clustering based on the similarity of the described motions.")),
 
-         ### WebGL visualization
-         fluidRow(
+          img(src="./images/enma-clustering.png", style="display: block; margin-left: auto; margin-right: auto;")
+            )
+          
+          
+          ),
+  
+  
+### WebGL visualization
+  fluidRow(
            column(4,
                   wellPanel(
+                    bsPopover("popnma1",
+                              "Normal mode visualization",
+                              "Visualize the normal modes by toggeling the the <b>Show NM Trajectory</b> checkbox. <br><br>Download buttons enable visualization of the motions described by the principal component in external viewers such as PyMOL or VMD.",
+                              placement = "right", trigger = "hover",
+                              options = list(container = "body")),
+                    
+                    tags$div(id = "popnma1", icon("question-circle"),
+                             style = "position: absolute; right: 25px; top: 5px;"
+                             ),
+                    
+                    
                     h4('Normal Modes Visualization'),
                     checkboxInput('show_trj2', 'Show NM Trajectory', value=FALSE),
-
+                    
                     selectInput('viewMode_nma', 'Choose Mode:', choices=c(1:10)),
                     uiOutput('struct_dropdown2'), ## viewStruct_nma
 
@@ -44,10 +76,20 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
          fluidRow(
            column(4,
                   wellPanel(
+                    bsPopover("popnma2",
+                              "Residue fluctuations",
+                              "The fluctuations are calculated based on all 3N-6 normal modes (where N is the number of atoms). Magnitudes should be used by care as normal mode vectors are by definition without magnitude. <br><br>Use the option <b>Spread lines</b> provides fluctuation profiles not in top of eachother.",
+                              placement = "right", trigger = "hover",
+                              options = list(container = "body")),
+                    
+                    tags$div(id = "popnma2", icon("question-circle"),
+                             style = "position: absolute; right: 25px; top: 5px;"
+                             ),
+                    
+                    
+                    
                     h4('Residue fluctuations'),
-                    ##selectInput('', 'Choose Mode #:', choices=c("all", 1:10)),
-                    ##checkboxInput("toggle_rmsf2", "Show RMSF", FALSE)
-
+                    
                     checkboxInput('spread', 'Spread lines', value=FALSE),
                     checkboxInput('seqide', 'Sequence identity', value=FALSE),
                     ##checkboxInput('signif', 'Show fluct signif', value=FALSE),
@@ -193,6 +235,16 @@ tabPanel("5. eNMA", icon=icon("arrow-right"),
          fluidRow(
            column(4,
                   wellPanel(
+                    bsPopover("popnma4",
+                              "Comparison with PCA", 
+                              "The normal mode vectors from one PDB structure can be compared with the eigenvectors obtained from principal component analysis (from the PCA tab). The values provided in the table to the right correspond to the overlap (i.e. the dot product) between the mode vectors. The RMSIP value provides an overall score for the similarity between the principal components and the normal mode vectors. Orthogonal vectors give the score of 0, while identical vectors give a score of 1. ", 
+                              placement = "right", trigger = "hover",
+                              options = list(container = "body")),
+                    
+                    tags$div(id = "popnma4", icon("question-circle"),
+                             style = "position: absolute; right: 25px; top: 5px;"
+                             ),
+                    
                     h4('PCA vs NMA comparison'),
                     uiOutput('struct_dropdown3')
                     )

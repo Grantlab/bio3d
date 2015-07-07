@@ -5,12 +5,14 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
          
          bsModal("modal_fit", "Structure superposition", "about_fittab", size = "large", 
                  content=tags$div(
-                   p(HTML("In the FIT tab all structures are superimposed based on the sequence alignment in the ALIGN tab. The algorithm performs iterated rounds of structural superposition to identify the most invariant region in an aligned set of protein structures. Basic structural analysis in this tab entails pair-wise structural deviations (RMSD), fluctuation analysis (RMSF), and structure visualization.")),
+                   p(HTML("In the FIT tab all structures are superimposed based on the sequence alignment obtained in the ALIGN tab. By default, the structures are superimposed on the identified <i>invariant core</i>. Alternatively, a conventional superposition based on all protein residues can be performed.")),
 
-                   img(src="./images/4q21-core.png", width=400, style="display: block; margin-left: auto; margin-right: auto;"), 
+                   p(HTML("Basic structural analysis in this tab entails the calculation of all pair-wise structural deviations (RMSD), fluctuation analysis (RMSF), and structure visualization. Based on the pair-wise RMSD values the structures can be clustered into groups of similar conformations. The results of the RMSD and clustering analyses are available as a heatmap, clustering dendrogram, and RMSD histogram.")),
                    
-                   p(HTML("The fitting algorithm attempts to iteratively refine the initial structural superposition determined from the multiple alignment. This involves iterated rounds of superposition, where at each round the position(s) displaying the largest differences is(are) excluded from the dataset. The identified core can be visualized either in the browser, or in PyMOL by downloading the PyMOL state (.pse) file. A summary of the core can be found in the bottom of the page."))
+                   p(HTML("The algorithm for identifying the invariant core attempts to iteratively refine the initial structural superposition determined from the multiple alignment. This involves iterated rounds of superposition, where at each round the position(s) displaying the largest differences is(are) excluded from the dataset. The identified core can be visualized either in the browser, or in PyMOL by downloading the PyMOL state (.pse) file. A summary of the core can be found in the bottom of the page.")),
                    
+                   img(src="./images/4q21-core.png", width=400, style="display: block; margin-left: auto; margin-right: auto;")
+
                                     
                    ) 
                  ),
@@ -19,6 +21,17 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
          fluidRow(
            column(4,
                   wellPanel(
+                    bsPopover("popfit1",
+                              "Structure analysis",
+                              "All structures are (by default) superimposed on the <b>invariant core</b> - a region with low structural variability within the ensemble. </br></br>A hierarchical cluster analysis is performed on all pair-wise root mean square deviation (RMSD) values. Results can be visualized as a clustering <b>dendrogram</b>, alternatively in combination with a <b>heatmap</b>. </br></br><b>RMSF</b>: plot the residue-wise root mean square fluctuations (RMSF). </br></br> <b>RMSD histogram</b>: display the histogram of the pair-wise RMSD values.",
+                              placement = "right", trigger = "hover",
+                              options = list(container = "body")),
+                    
+                    tags$div(id = "popfit1", icon("question-circle"),
+                             style = "position: absolute; right: 25px; top: 5px;"
+                             ),
+                    
+
                     
                     h4("Initial structure analysis"),
 
@@ -32,8 +45,8 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                                    "Dendrogram" = "dendrogram",
                                    "RMSF" = "rmsf",
                                    "RMSD Histogram" = "hist"),
-                                 inline=TRUE),
-
+                                    inline=TRUE),
+                    
                     sliderInput("clusters", "Cluster by pairwise RMSD",
                                 min = 1, max = 10, value = 3, step=1),
 
@@ -114,7 +127,16 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
          fluidRow(
            column(4,
                   wellPanel(
-
+                    bsPopover("popfit2",
+                              "Viewing options",
+                              "Visualize the superimposed PDB structures by toggeling the <b>Show PDBs</b> checkbox. The <i>Download</i> buttons allow visualizing the structures in an external program such as PyMOL or VMD. <br><br>Coloring options include <b>Cluster ID</b>: colors the structures according to their cluster membership; <b>Invariant core</b>: by the region with low structural variation within the ensemble; and <b>Gap regions</b>: residues belonging to columns in the alignment (see ALIGN tab) which contain one or more gaps. ",
+                              placement = "right", trigger = "hover",
+                              options = list(container = "body")),
+                    
+                    tags$div(id = "popfit2", icon("question-circle"),
+                             style = "position: absolute; right: 25px; top: 5px;"
+                             ),
+                    
                     h4('PDBs Viewing Options'),
                     checkboxInput('show_pdbs', 'Show PDBs', value=FALSE),
 
@@ -164,6 +186,17 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                   wellPanel(
                     style="background: #FFFFFF;",
 
+                    bsPopover("popfit3",
+                              "Invariant core",
+                              "This panel provides a summary of which amino acid residues belongs to the <i>invariant core</i>. The residue numbering correspond to the PDB ID chosen in the <b>Reference PDB id</b> drop down menu.",
+                              placement = "right", trigger = "hover",
+                              options = list(container = "body")),
+                    
+                    tags$div(id = "popfit3", icon("question-circle"),
+                             style = "position: absolute; right: 25px; top: 5px;"
+                             ),
+                    
+
                     h4("Summary of invariant core"),
                     dataTableOutput("print_core")
                     )
@@ -173,6 +206,17 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                   wellPanel(
                     style="background: #FFFFFF;",
 
+                    bsPopover("popfit4",
+                              "RMSD",
+                              "Structural deviation (root mean square deviation; RMSD) between a chosen PDB structure (see drop down meny <b>Reference PDB id</b>), and all other PDBs in the ensemble. The RMSD values are calculated based on all C-alpha atoms in the two proteins.",
+                              placement = "right", trigger = "hover",
+                              options = list(container = "body")),
+                    
+                    tags$div(id = "popfit4", icon("question-circle"),
+                             style = "position: absolute; right: 25px; top: 5px;"
+                             ),
+                    
+                    
                     h4("RMSD summary"),
                     ##uiOutput("reference_selector"),
                     dataTableOutput("rmsd_table")
@@ -182,9 +226,19 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
            column(4,
                   wellPanel(
                     style="background: #FFFFFF;",
+
+                    bsPopover("popfit5",
+                              "Cluster representatives",
+                              "One structure from each cluster with the minimal distance to all the other cluster members is defined to be the <i>cluster representative</i>.",
+                              placement = "left", trigger = "hover",
+                              options = list(container = "body")),
+                    
+                    tags$div(id = "popfit5", icon("question-circle"),
+                             style = "position: absolute; right: 25px; top: 5px;"
+                             ),
                     
                     h4("Cluster representatives"),
-                    verbatimTextOutput("representatives")
+                    dataTableOutput("representatives")
                     )
                   )
            )

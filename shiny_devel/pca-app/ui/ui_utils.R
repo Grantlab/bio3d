@@ -42,24 +42,42 @@ popoverQuestion <- function(id = 'popQues1', icon = 'question-circle', title = '
 
 }
 
-popRadioButtons <- function(inputId, label, choices, selected = NULL, inline = FALSE,
+popRadioButtons <- function(inputId, label, choices,
+                            selected = NULL, inline = FALSE,
                             title = 'Title', content = '' , placement = 'right',
                             data_toggle = 'pop-box', ...) {
-        tags$div(id = paste0("pop-", inputId), "data-toggle" = data_toggle,
-            "data-trigger" = "manual", "data-original-title" = title, ...,
-            radioButtons(inputId, label, choices, selected, inline)
-        )
+  
+  tags$div(id = paste0("pop-", inputId), "data-toggle" = data_toggle,
+           "data-trigger" = "manual", "data-original-title" = title, ...,
+           radioButtons(inputId, label, choices, selected, inline)
+           )
 }
 
 popTextInput <- function(inputId, label, value = "",
                          title = 'Title', content = '', placement = 'right',
                          data_toggle = "pop-box", ...) {
-    tags$div(id = paste0('pop-', inputId), "data-toggle" = data_toggle,
-             "data-trigger" = "manual", "data-original-title" = title,
-             "data-content" = content, ...,
-             textInput(inputId, label, value)
-    )
+  
+  tags$div(id = paste0('pop-', inputId), "data-toggle" = data_toggle,
+           "data-trigger" = "manual", "data-original-title" = title,
+           "data-content" = content, ...,
+           textInput(inputId, label, value)
+           )
 }
+
+popSelectInput <- function(inputId, label, choices, selected = NULL,
+                           multiple = FALSE, selectize = TRUE,
+                           width = NULL, size = NULL,
+                           title = 'Title', content = '' , placement = 'right',
+                           data_toggle = 'pop-box', ...) {
+  
+  tags$div(id = paste0('pop-', inputId), "data-toggle" = data_toggle,
+           "data-trigger" = "manual", "data-original-title" = title,
+           "data-content" = content, ...,
+           selectInput(inputId, label, choices, selected, multiple,
+                       selectize = selectize, width = width, size = size)
+           )
+}
+
 
 modalBox <- function(id, button_label = "", heading = NULL,
                      icon = 'comment', content = NULL,

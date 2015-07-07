@@ -49,8 +49,16 @@ fit <- reactive({
 
 rmsd1 <- reactive({
   pdbs <- fit()
-  rd <- rmsd(pdbs)
 
+  progress <- shiny::Progress$new()
+  on.exit(progress$close())
+  
+  progress$set(message = 'Calculating RMSD',
+               detail = 'Please wait ...',
+               value = 0)
+  rd <- rmsd(pdbs, fit=TRUE)
+  progress$close()
+  
   return(rd)
 })
 
@@ -93,7 +101,7 @@ representatives <- reactive({
     rep.inds[i] <- rep.ind
   }
 
-  return(pdbs$lab[rep.inds])
+  return(data.frame(pdbid=pdbs$lab[rep.inds], clusterid=grps[rep.inds]))
 })
 
 ####################################
@@ -185,13 +193,23 @@ output$rmsf_plot <- renderPlot({
 ####     Data summary           ####
 ####################################
 
-output$representatives <- renderPrint({
-  invisible(capture.output( pdbs <- fit() ))
-  reps <- basename.pdb(representatives())
 
-  cat(reps, sep="\n")
-
+output$representatives <- DT::renderDataTable({
+  pdbs <- fit()
+  reps <- representatives()
+  
+  DT::datatable(reps, extensions = 'Scroller', escape = TRUE,
+                selection = 'none', 
+                options = list(
+                  deferRender = FALSE,
+                  dom = "frtiS",
+                  scrollY = 200,
+                  scrollCollapse = TRUE)
+                )
 })
+
+
+
 
 output$print_core <- DT::renderDataTable({
   pdbs <- fit()
@@ -252,12 +270,13 @@ output$rmsd_table <- DT::renderDataTable({
 
   x <- data.frame(ids=names(rd), rmsd=round(rd,1), "cluster"=grps)
   DT::datatable(x, extensions = 'Scroller', escape = TRUE,
-      selection = 'none',
+      selection = 'none', rownames = FALSE,
       options = list(
-                     deferRender = FALSE,
-                     dom = 'frtiS',
-                     scrollY = 250,
-                     scrollCollapse = TRUE)
+        deferRender = FALSE,
+        dom = 'frtiS',
+        scrollY = 250,
+        scrollCollapse = TRUE
+        )
       )
 })
 

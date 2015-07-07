@@ -8,11 +8,17 @@ tabPanel(
   bsModal("modal_pca", "Principal Component Analysis", "about_pcatab", size = "large", 
           content=tags$div(
             
-            p(HTML("In the PCA tab, a principal component analysis (PCA) is performed based on the coordinates of the structural superposition of structures in the FIT tab. The motions described by the principal components (PCs) can be visualized either in the browser, or by downloading either a PDB trajectory file or a PyMOL session (.pse) containing a vector field representation. ")),
+            p(HTML("In the PCA tab, a principal component analysis (PCA) is performed based on the coordinates of the superimposed structures in the FIT tab. PCA is an effective approach to capture and characterize inter-conformer relationships. The motions described by the principal components (PCs) can be visualized either in the browser, or by downloading a PDB trajectory file or a PyMOL session (.pse) containing a vector field representation.  ")),
             
-            p(HTML("")),
             img(src="./images/aaah-pc1.gif", width=500, style="display: block; margin-left: auto; margin-right: auto;")                      
-            ) 
+            ),
+          
+          p(HTML("The figure above shows the first principal component obtained from the 32 PDB structures of the enzyme family <i>aromatic amino acid hydroxylases</i>. The analysis reveals the presence of a sub-domain within the catalytic domain which obtains a more compact conformation upon substrate binding.")),
+
+          br(),
+          img(src="./images/pca-conformerplot.png", style="display: block; margin-left: auto; margin-right: auto;"),
+          
+          p(HTML("The figure above shows the conformer plot of 90 <i>E. coli</i> DHFR structures. The PCA reveals that the ensemble can be divided into three major groups along their first two principal components. These conformers display either a closed, occluded,oranopenconformationof two active site loops. The conformer plot displays a low-dimensional representation of conformational variability described by two selected PCs (typically PC-1 and PC-2). "))
           ),
   
 
@@ -20,6 +26,17 @@ tabPanel(
   fluidRow(
     column(4,
            wellPanel(
+             bsPopover("poppca1",
+                       "Visualization",
+                       "Visualize the motions described by the individual principal components by toggeling the the <b>Show PC Trajectory</b> checkbox. <br><br>Download buttons enable visualization of the motions described by the principal component in external viewers such as PyMOL or VMD.",
+                       placement = "right", trigger = "hover",
+                       options = list(container = "body")),
+             
+             tags$div(id = "poppca1", icon("question-circle"),
+                      style = "position: absolute; right: 25px; top: 5px;"
+                      ),
+             
+             
              h4('Principal Component Visualization'),
              checkboxInput('show_trj', 'Show PC Trajectory', value=FALSE),
 
@@ -29,12 +46,14 @@ tabPanel(
                          min = 1, max = 10, value = 1),
              
              radioButtons('viewColor', label='Structure color',
-                          choices=list(
-                            'Amalgam' = 'amalgam',
-                            'Magnitude'='mag',
-                            'By Frame (blue->gray->red)'='default'
-                            ),
-                          selected='amalgam'),
+                             choices=list(
+                               'Amalgam' = 'amalgam',
+                               'Magnitude'='mag',
+                               'By Frame (blue->gray->red)'='default'
+                               ),
+                             selected='amalgam'
+                          ),
+             
              radioButtons('viewBGcolor', label='Background color',
                           choices=list('Black'='black', 'White'='white'),
                           selected='white'),
@@ -58,14 +77,20 @@ tabPanel(
   ##- Conformer plots
   fluidRow(
     column(4,
-      wellPanel(
-        ##-- !! This needs to come just before the table that allows structure selection !! --##
+           wellPanel(
+             bsPopover("poppca2",
+                       "Conformer plot",
+                       "A conformer plot is a low-dimensional representation of the conformational variability within the ensemble of PDB structures. The plot is obtained by projecting individual structures onto two or three selected principal components. ",
+                       placement = "right", trigger = "hover",
+                       options = list(container = "body")),
+             
+             tags$div(id = "poppca2", icon("question-circle"),
+                      style = "position: absolute; right: 25px; top: 5px;"
+                      ),
+                    
+                     
         h4("Conformer plot"),
-        helpText("Two dimensional representation of conformational variability described by the two principal components ..."),
-
-        ##textInput("pcx", "PC on X-axis", value=1),
-        ##textInput("pcy", "PC on Y-axis", value=2),
-        selectInput('pcx', 'PC on X-axis:', choices=c(1:10), selected=1),
+             popSelectInput('pcx', 'PC on X-axis:', choices=c(1:10), selected=1),
         selectInput('pcy', 'PC on Y-axis:', choices=c(1:10), selected=2),
 
         conditionalPanel(
@@ -204,7 +229,7 @@ tabPanel(
     column(12,
            wellPanel(
              h4("Hits annotation"),
-             helpText("Highlight structures in conformer plot by clicking their entries in the below table (only for plot type '2D Scatter'."),
+             helpText("Highlight structures in conformer plot by clicking their entries in the below table (only for plot type '2D Scatter')."),
              DT::dataTableOutput("pdbs_table")
              )
            )
@@ -216,6 +241,17 @@ tabPanel(
   fluidRow(
     column(4,
            wellPanel(
+             bsPopover("poppca3",
+                       "Residue contributions",
+                       "Residue-wise contributions to the chosen principal component.",
+                       placement = "right", trigger = "hover",
+                       options = list(container = "body")),
+             
+             tags$div(id = "poppca3", icon("question-circle"),
+                      style = "position: absolute; right: 25px; top: 5px;"
+                      ),
+
+             
              h4('Residue contributions'),
              selectInput('loadings_pc', 'Choose Principal Component:',
                          choices=c(1:10), selected=1, multiple=TRUE),
