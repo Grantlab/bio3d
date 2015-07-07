@@ -43,7 +43,6 @@ fit <- reactive({
     pdbs$lab <- basename.pdb(pdbs$id)
   }
   pdbs$lab <- format_pdbids(pdbs$lab)
-  
   return(pdbs)
 })
 
@@ -100,8 +99,9 @@ representatives <- reactive({
 
     rep.inds[i] <- rep.ind
   }
-
-  return(data.frame(pdbid=pdbs$lab[rep.inds], clusterid=grps[rep.inds]))
+  out <- data.frame(pdbid=pdbs$lab[rep.inds], clusterid=grps[rep.inds])
+  rownames(out) <- NULL
+  return(out)
 })
 
 ####################################
@@ -197,9 +197,13 @@ output$rmsf_plot <- renderPlot({
 output$representatives <- DT::renderDataTable({
   pdbs <- fit()
   reps <- representatives()
+
+  print(reps)
   
   DT::datatable(reps, extensions = 'Scroller', escape = TRUE,
-                selection = 'none', 
+                selection = 'none',
+                colnames = c("ID", "Cluster ID"),
+                
                 options = list(
                   deferRender = FALSE,
                   dom = "frtiS",
@@ -233,7 +237,9 @@ output$print_core <- DT::renderDataTable({
 
   out <- data.frame(start, end, length=bds[, "length"])
   DT::datatable(out, extensions = 'Scroller', escape = TRUE,
-      selection = 'none',
+                selection = 'none',
+                colnames = c("Start", "End", "Length"),
+                
       options = list(
                 deferRender = FALSE,
                 dom = "frtiS",
@@ -270,7 +276,9 @@ output$rmsd_table <- DT::renderDataTable({
 
   x <- data.frame(ids=names(rd), rmsd=round(rd,1), "cluster"=grps)
   DT::datatable(x, extensions = 'Scroller', escape = TRUE,
-      selection = 'none', rownames = FALSE,
+                selection = 'none', rownames = FALSE,
+                colnames = c("ID", "RMSD", "Cluster ID"),
+                  
       options = list(
         deferRender = FALSE,
         dom = 'frtiS',
