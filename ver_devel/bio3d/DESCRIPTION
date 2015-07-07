@@ -5,7 +5,11 @@ Author: Barry Grant, Xin-Qiu Yao, Lars Skjaerven, Julien Ide
 VignetteBuilder: knitr
 Imports:
     parallel,
-    grid
+    grid,
+    graphics,
+    grDevices,
+    stats,
+    utils
 Suggests:
     XML,
     RCurl,
