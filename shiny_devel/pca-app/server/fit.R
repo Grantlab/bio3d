@@ -198,8 +198,6 @@ output$representatives <- DT::renderDataTable({
   pdbs <- fit()
   reps <- representatives()
 
-  print(reps)
-  
   DT::datatable(reps, extensions = 'Scroller', escape = TRUE,
                 selection = 'none',
                 colnames = c("ID", "Cluster ID"),
