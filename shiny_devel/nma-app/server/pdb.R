@@ -10,22 +10,91 @@ data_path <- reactive({
 
 
 ###########################
-##-- PDB AND BLAST INPUT  #
+##-- Reactive values
 ###########################
 
 ### set default vaules
 rv <- reactiveValues()
 rv$pdbid <- "4Q21"
-rv$chainids <- "A"
+rv$chains_all <- "A"
+rv$chains_selected <- "A"
+
 rv$forcefield <- "calpha"
 rv$cutoff <- 7
 
+rv$dccm <- NULL
+rv$blast <- NULL
+rv$overlap <- NULL
+
+rv$modes <- readRDS("4q21_modes.RDS")
+rv$raw_pdb <- readRDS("4q21_pdb.RDS")
+rv$final_pdb <- readRDS("4q21_pdb.RDS")
+
+
 observeEvent(input$pdbid, {
-  rv$pdbid <- input$pdbid
+  if(nchar(input$pdbid)>3) {
+    rv$pdbid <- substr(input$pdbid, 1, 4)
+
+    
+    updateButton(session, "run_dccm", disabled = FALSE)
+    updateButton(session, "run_blast", disabled = FALSE)
+    updateButton(session, "run_overlap", disabled = TRUE,
+                 icon = icon("gears")) ##, label = " Calculate overlap")
+    
+    rv$dccm <- NULL
+    rv$blast <- NULL
+    rv$overlap <- NULL
+
+    if(rv$pdbid == "4Q21") {
+      rv$raw_pdb <- readRDS("4q21_pdb.RDS")
+      rv$final_pdb <- readRDS("4q21_pdb.RDS")
+      rv$modes <- readRDS("4q21_modes.RDS")
+
+      rv$chains_all <- "A"
+      rv$chains_selected <- "A"
+    }
+    else {
+      rv$raw_pdb <- raw_pdb()
+
+      chains <- chain_pdb()
+      rv$chains_all <- chains
+      rv$chains_selected <- chains[1]
+      
+      rv$final_pdb <- final_pdb()
+
+      if(!pdb_isok1()) {
+        updateButton(session, "run_dccm", disabled = TRUE)
+        updateButton(session, "run_blast", disabled = TRUE)
+        updateButton(session, "run_overlap", disabled = TRUE)
+      }
+      else {
+        rv$modes <- calcModes()
+      }
+    }
+  }
 })
 
 observeEvent(input$pdb_chains, {
-  rv$chainids <- input$pdb_chains
+  if(length(input$pdb_chains) > 0) {
+    rv$chains_selected <- input$pdb_chains
+    message(rv$chains_selected)
+
+    if(rv$pdbid == "4Q21") {
+      rv$modes <- readRDS("4q21_modes.RDS")
+    }
+    else {
+      rv$final_pdb <- final_pdb()
+      
+      if(!pdb_isok1()) {
+        updateButton(session, "run_dccm", disabled = TRUE)
+        updateButton(session, "run_blast", disabled = TRUE)
+        updateButton(session, "run_overlap", disabled = TRUE)
+      }
+      else {
+        rv$modes <- calcModes()
+      }
+    }
+  }
 })
 
 observeEvent(input$cutoff, {
@@ -41,9 +110,62 @@ observeEvent(input$reset_pdbid, {
 })
 
 observeEvent(input$reset_nma_input, {
-  updateSelectInput(session, "forcefield", value = "calpha")
-  updateSelectInput(session, "cutoff", value = 7)
+  updateSelectInput(session, "forcefield", selected = "calpha")
+  updateSliderInput(session, "cutoff", value = 15)
 })
+
+observeEvent(input$run_dccm, {
+  updateButton(session, "run_dccm", disabled = TRUE)
+})
+
+observeEvent(input$run_blast, {
+  updateButton(session, "run_blast", disabled = TRUE)
+  updateButton(session, "run_overlap", disabled = FALSE)
+})
+
+observeEvent(input$run_overlap, {
+  updateButton(session, "run_overlap", disabled = FALSE,
+               icon = icon("refresh")) ##, label = " Re-calculate overlap")
+})
+
+output$dccm_isdone <- reactive({
+  return(!is.null(rv$dccm))
+})
+outputOptions(output, 'dccm_isdone', suspendWhenHidden=FALSE)
+
+output$blast_isdone <- reactive({
+  return(!is.null(rv$blast))
+})
+outputOptions(output, 'blast_isdone', suspendWhenHidden=FALSE)
+
+output$overlap_isdone <- reactive({
+  return(!is.null(rv$overlap))
+})
+outputOptions(output, 'overlap_isdone', suspendWhenHidden=FALSE)
+
+## check if PDB is ok
+pdb_isok1 <- reactive({
+  pdb <- rv$final_pdb
+
+  message(sum(pdb$calpha))
+
+  if(sum(pdb$calpha) > 600 | sum(pdb$calpha) < 10)
+    return(FALSE)
+  else
+    return(TRUE)
+})
+
+output$pdb_isok <- reactive({
+  pdb_isok1()
+})
+outputOptions(output, 'pdb_isok', suspendWhenHidden=FALSE)
+
+
+###########################
+##-- PDB AND BLAST INPUT  #
+###########################
+
+
 
 ## downloads and reads a PDB
 read_pdb <- function(pdbid) {
@@ -58,18 +180,19 @@ read_pdb <- function(pdbid) {
     progress$set(value = 2)
     
     if(configuration$pdbdir$archive) {
-      pdbid <- tolower(pdbid)
+      pdbid <- format_pdbids(pdbid, casefmt=tolower)
+
       file <- paste0(configuration$pdbdir$rawfiles, "/", substr(pdbid, 2, 3),
                      "/pdb", pdbid, ".ent.gz")
+      
 
-      message(file)
-
-      if(!file.exists(file))
-        stop("PDB not found")
     }
     else {
       file <- get.pdb(pdbid, path=configuration$pdbdir$rawfiles)
     }
+
+    if(!file.exists(file))
+      return(NULL)
 
     progress$set(value = 3)
     progress$set(message = 'Parsing PDB',
@@ -80,85 +203,95 @@ read_pdb <- function(pdbid) {
     return(pdb)
   }
   else {
-    stop("Provide a 4 character PDB code")
+    return(NULL)
   }
 }
 
 ## returns PDB code (4-characters)
 get_pdbid <- reactive({
-  if (is.null(rv$pdbid))
-    return()
+  if(is.null(rv$pdbid))
+    return(NULL)
   else {
     pdbid <- rv$pdbid
-    
-    if(!nchar(pdbid)==4) {
-      stop("Provide a PDB code of 4 characters")
-    }
-    
     return(pdbid)
   }
 })
 
 get_pdbid6 <- reactive({
-  return(paste(rv$pdbid, paste(rv$pdb_chains, collapse=""), sep="_"))
-})
-
-## returns a vector of selected chain IDs
-get_chainids <- reactive({
-  if (is.null(rv$chainids))
-    return()
-  else
-    return(unlist(strsplit(rv$chainids, "")))
+  return(paste(rv$pdbid, paste(rv$chains_selected, collapse=""), sep="_"))
 })
 
 ## returns the final PDB object
 raw_pdb <- reactive({
-  pdbid <- get_pdbid()
+  pdbid <- rv$pdbid
   pdb <- read_pdb(pdbid)
+  ##saveRDS(pdb, file="4q21_pdb.RDS")
   return(pdb)
 })
 
 ## returns the final all-atom PDB object
 final_pdb <- reactive({
-  pdb <- raw_pdb()
-  chainids <- get_chainids()
+  message("final_pdb")
+  pdb <- rv$raw_pdb
   
-  if(is.vector(chainids)) {
-    pdb <- trim(pdb, chain=chainids)
+  if(is.pdb(pdb)){
+    if(is.vector(rv$chains_selected)) {
+      if(length(rv$chains_selected)>0)
+        pdb <- trim(pdb, chain=rv$chains_selected)
+    }
   }
-  
+
+  ##rv$final_pdb <- pdb
   return(pdb)
 })
 
-## return chain IDs
+## return all chain IDs
 chain_pdb <- reactive({
-  invisible(capture.output( pdb <- raw_pdb() ))
-  chains <- unique(trim(pdb, "protein", elety="CA")$atom$chain)
-  names(chains) <- chains
-  return(chains)
+  if(is.pdb(rv$raw_pdb)){
+    chains <- unique(trim(rv$raw_pdb, "protein", elety="CA")$atom$chain)
+    names(chains) <- chains
+    rv$chains_all <- chains
+    return(chains)
+  }
+  else {
+    return(NULL)
+  }
 })
 
 ## checkbox 
 output$chain_input <- renderUI({
-  input$pdbaction
-  
-  chains <- chain_pdb()
-
-  #checkboxGroupInput("pdb_chains", label = "Limit to chain IDs:", 
-  #                   choices = chains, selected = chains, 
-  #                   inline = TRUE )
-
   selectInput("pdb_chains", "Limit to chain IDs:",
-              choices = chains, selected = chains[1], multiple=TRUE)
+              choices = rv$chains_all,
+              selected = rv$chains_selected,
+              multiple=TRUE)
 })
 
+
+##init_show_pdbs <- TRUE
 output$pdbWebGL  <- renderWebGL({
-  pdb <- final_pdb()
-  view.pdb(pdb, as="overview", col="sse")
+  pdb <- rv$final_pdb
+
+  as <- input$view_inpdb_as
+  bg <- "white"
+  
+  if("calpha" %in% as) {
+    view.pdb(pdb, as="calpha", col=input$view_inpdb_col, bg.col=bg, sheet="blue")
+  }
+
+  if("overview" %in% as) {
+    view.pdb(pdb, as="calpha", col=input$view_inpdb_col, lwd=5, bg.col=bg, sheet="blue")
+    view.pdb(pdb, as="all", col="atom", add=TRUE)
+  }
 })
 
-output$pdbSummary <- renderPrint({
-  input$pdbaction
-  invisible(capture.output( pdb <- final_pdb() ))
-  print(pdb)
+
+## prints a longer log of the input PDB
+output$pdb_log <- renderPrint({
+  pdbsum(rv$final_pdb, pdbid=rv$pdbid, chainid=rv$chains_selected)
 })
+
+#output$pdbSummary <- renderPrint({
+#  input$pdbaction
+#  invisible(capture.output( pdb <- final_pdb() ))
+#  print(pdb)
+#})

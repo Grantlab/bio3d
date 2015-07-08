@@ -3,19 +3,24 @@
 ########################s
 
 calcModes <- reactive({
-  pdb <- final_pdb()
+  pdb <- rv$final_pdb
   ff <- rv$forcefield
   cutoff <- rv$cutoff
+
+  if(sum(pdb$calpha) > 600) {
+    return()
+  }
   
-  if(sum(pdb$calpha)>600)
-    stop("maximum 600 C-alpha atoms for NMA")
+  #validate(
+  #  need(sum(pdb$calpha) < 601, "More than 600 atoms not allowed")
+  #  )
   
   progress <- shiny::Progress$new(session, min=1, max=5)
   on.exit(progress$close())
   
   progress$set(message = 'Calculating normal modes',
                detail = 'Please wait')
-  progress$set(value = 2)
+  progress$set(value = 3)
   
   if(ff %in% c("calpha", "sdenm", "reach"))
     modes <- nma(pdb, ff=ff, mass=TRUE, temp=300)
@@ -25,6 +30,8 @@ calcModes <- reactive({
                   mass=FALSE, temp=NULL)
   progress$set(value = 5)
   
+  
+  ##saveRDS(modes, file="4q21_modes.RDS")
   return(modes)
 })
 
@@ -32,12 +39,13 @@ calcModes <- reactive({
 ##- Fluctuation plot     #
 ##########################
 output$fluct_plot <- renderPlot({
-  make_fluct_plot()
+  if(pdb_isok1())
+    make_fluct_plot()
 })
 
 make_fluct_plot <- function() {
-  pdb <- final_pdb()
-  modes <- calcModes()
+  pdb <- rv$final_pdb
+  modes <- rv$modes
 
   mode.inds <- input$mode_inds
   
@@ -59,7 +67,7 @@ make_fluct_plot <- function() {
   
   if(input$fluxs3) { 
     main <- paste0("NMA derived fluctuations for PDB id ", rv$pdbid, " (",
-                  paste(rv$chainids, collapse=""), ")")
+                  paste(rv$chains_selected, collapse=""), ")")
     sub <- paste("Mode(s)", mode.inds)
     plot.bio3d(x, sse=pdb, main=main, resno=pdb,
                xlab="Residue No.", ylab="Fluctions (Å^2)", 
@@ -110,9 +118,9 @@ output$fluctplot2pdf = downloadHandler(
 
 nma2pdb <- reactive({
   path <- data_path()
-  pdb <- final_pdb()
+  pdb <- rv$final_pdb
   pdb <- trim(pdb, "calpha")
-  modes <- calcModes()
+  modes <- rv$modes
   mag <- as.numeric(input$mag)
   step <- mag/8
   
@@ -143,9 +151,9 @@ output$trj2zip = downloadHandler(
 
 make_nma_pse <- reactive({
   path <- data_path()
-  pdb <- final_pdb()
+  pdb <- rv$final_pdb
   pdb <- trim(pdb, "calpha")
-  modes <- calcModes()
+  modes <- rv$modes
   mag <- as.numeric(input$mag)
   
   outf <- paste0(path, "/mode", as.numeric(input$mode_choice), ".pse")
@@ -165,6 +173,6 @@ output$nma2pymol = downloadHandler(
 
 ## summary
 output$modeSummary <- renderPrint({
-  invisible(capture.output( modes <- calcModes()))
+  invisible(capture.output( modes <- rv$modes))
   print(modes)
 })

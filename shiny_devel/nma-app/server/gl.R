@@ -5,9 +5,9 @@
 
 output$nmaWebGL  <- renderWebGL({
   path <- data_path()
-  pdb <- final_pdb()
+  pdb <- rv$final_pdb
   pdb <- trim(pdb, "calpha")
-  modes <- calcModes()
+  modes <- rv$modes
   mag <- as.numeric(input$mag)
   step <- mag/8
   

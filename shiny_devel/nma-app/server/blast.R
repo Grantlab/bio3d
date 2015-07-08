@@ -46,7 +46,7 @@ run_blast2 <- reactive({
   
   progress$set(message = 'Blasting',
                detail = 'Please wait')
-  progress$set(value = 2)
+  progress$set(value = 3)
 
   ## use local version if possible
   if(configuration$hmmer$local)
@@ -64,6 +64,8 @@ run_blast2 <- reactive({
 
   hits <- hmm$score > cutoff
   acc <- hmm$acc[hits]
+
+  rv$blast <- acc
   return(acc)
 
   ##out <- list(blast=hmm, pdbid=get_pdbid6())

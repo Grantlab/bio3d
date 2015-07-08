@@ -21,7 +21,7 @@ calc_overlap <- reactive({
   message(ids)
 
   pdblist <- vector("list", length(ids)+1)
-  pdblist[[1]] <- trim(final_pdb(), "calpha")
+  pdblist[[1]] <- trim(rv$final_pdb, "calpha")
 
   for(i in 1:length(ids)) {
     pdblist[[i+1]] <- read_pdb(ids[i])
@@ -45,6 +45,15 @@ calc_overlap <- reactive({
   resids <-  paste(pdb$atom$resno, pdb$atom$chain, sep="|")
   nmainds <- as.select(resids %in% tomatch)
 
+
+  ## re-calculate normal modes
+  progress <- shiny::Progress$new(session, min=1, max=5)
+  on.exit(progress$close())
+  
+  progress$set(message = 'Calculating normal modes',
+               detail = 'Please wait')
+  progress$set(value = 3)
+  
   if(input$forcefield %in% c("calpha", "sdenm", "reach"))
     modes <- nma(pdb, ff=rv$forcefield, mass=FALSE, temp=300,
                  outmodes = nmainds)
@@ -52,8 +61,17 @@ calc_overlap <- reactive({
   if(input$forcefield %in% c("anm", "pfanm"))
     modes <- nma(pdb, ff=rv$forcefield, cutoff=rv$cutoff,
                  mass=FALSE, temp=NULL, outmodes = nmainds)
+
+  progress$set(value = 5)
+  progress$close()
   
   
+  ## calculate overlap
+  progress <- shiny::Progress$new(session, min=1, max=length(pdbs$id))
+  on.exit(progress$close())
+  progress$set(message = 'Calculating overlap',
+               detail = 'Please wait')
+
   overlaps <- vector("list", length(pdbs$id)-1)
   for(i in 2:length(pdbs$id)) {
     inds <- c(1, i)
@@ -61,9 +79,13 @@ calc_overlap <- reactive({
     ov <- overlap(modes=modes, dv=dv)
     ov$id <- pdbs$id[i]
     overlaps[[i-1]] <- ov
+    progress$set(value = i)
   }
-  
+  progress$close()
+
+  rv$overlap <- overlaps
   out <- list(values=overlaps, pdbid=get_pdbid6())
+  
   return(out)
 })
 

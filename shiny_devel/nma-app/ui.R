@@ -3,6 +3,10 @@ options(rgl.useNULL=TRUE)
 library(shiny)
 library(shinyRGL)
 library(DT)
+library(shinyBS)
+
+source('ui/ui_utils.R')
+
 
 ## Could open some saved results as an RData file here for first time display 
 ## Calculations would then only run once single SUBMIT button was pressed.
@@ -10,7 +14,7 @@ library(DT)
 ##shinyUI(fluidPage(
 shinyUI(
   navbarPage(windowTitle="Bio3D NMA",
-             title=img(src="bio3d_logo.png", height=35, alt="Bio3D"),
+             title=img(src="./images/bio3d_logo.png", height=35, alt="Bio3D"),
              theme = "bootstrap.css",
              position = "fixed-top",
              

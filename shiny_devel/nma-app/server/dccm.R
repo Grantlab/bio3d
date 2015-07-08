@@ -17,11 +17,12 @@ calcDCCM <- reactive({
                detail = 'Please wait')
   
   progress$set(value = 2)
-  modes <- calcModes()
+  modes <- rv$modes
   cij <- dccm(modes, ncore=1)
   out <- list(cij=cij, pdbid=get_pdbid6())
 
   progress$set(value = 5)
+  rv$dccm <- cij
   return(out)
 })
 
@@ -30,8 +31,8 @@ calcDCCM <- reactive({
 ##################
 output$dccm_plot <- renderPlot({
   input$run_dccm
-  
-  pdb <- final_pdb()
+  pdb <- rv$final_pdb
+ 
   pdbid6 <- get_pdbid6()
   dccm <- rv$dccm
   cij <- dccm$cij
@@ -62,7 +63,7 @@ make_dccm_plot <- function(pdb, cij) {
     sse <- NULL
   
   main <- paste0("DCCM, PDB id ", rv$pdbid, " (",
-                paste(rv$chainids, collapse=""), ")")
+                paste(rv$chains_selected, collapse=""), ")")
   plot(cij, sse=sse, main=main,
        contour=contour,
        col.regions=cols, colorkey=input$colorkey, at=at)
@@ -74,7 +75,7 @@ make_dccm_plot <- function(pdb, cij) {
 output$dccmplot2pdf = downloadHandler(
   filename = "dccm.pdf",
   content = function(FILE=NULL) {
-    pdb <- final_pdb()
+    pdb <- rv$final_pdb
     pdf(file=FILE, width=input$width2, height=input$height2)
     make_dccm_plot(pdb, rv$dccm$cij)
     dev.off()
