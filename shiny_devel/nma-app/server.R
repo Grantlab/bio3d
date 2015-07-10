@@ -6,6 +6,7 @@ source("config.r")
 source("server/hmmer.R")
 source("server/utils.R")
 source("server/db.R")
+source("server/utils.R")
 
 
 library(bio3d)
@@ -14,6 +15,16 @@ library(shiny)
 library(rgl)
 library(shinyRGL)
 library(DT)
+library(threejs)
+
+
+if(configuration$db$use)
+  library(RMySQL)
+
+## system check
+source("server/syscheck.R")
+system_check()
+
 
 shinyServer(function(input, output, session) {
 

@@ -127,18 +127,13 @@ overlap_plot2 <- function(o) {
   plot.new()
   plot.window(xlim = c(1,20), ylim = c(0,1))
 
-  if(input$show_overlap) {
-    if(input$show_overlap_cum)
-      inds <- 1
-    else
-      inds <- 1:length(o)
-
-    for(i in inds) {
-      for(j in 1:length(typ3))
-        points(o[[i]]$overlap, col=i+1, lty=lty3, lwd=lwd3, cex=cex3, type=typ3[j])
-    }
+  ## show only overlap values for one structure
+  if(input$show_overlap & !length(ids) > 1) {
+    for(j in 1:length(typ3))
+      points(o[[1]]$overlap, col=1, lty=lty3, lwd=lwd3, cex=cex3, type=typ3[j])
   }
-  
+
+  ## multiple cumulative values allowd
   if(input$show_overlap_cum) {
     for(i in 1:length(o)) {
       ov <- o[[i]]
@@ -147,8 +142,14 @@ overlap_plot2 <- function(o) {
     }
   }
 
-  if(input$show_legend3)
+  if(input$show_legend3 & length(ids) > 1)
     legend("bottomright", ids, col=1:length(ids)+1, lty=1)
+
+  if(input$show_legend3 & length(ids) == 1 &
+     input$show_overlap & input$show_overlap_cum) {
+    legend("bottomright", c("overlap", "cumulative overlap"),
+           col=c(1,2), lty=1)
+  }
 
 
   box()
@@ -156,17 +157,20 @@ overlap_plot2 <- function(o) {
   axis(2)
   mtext("Mode index", side=1, line=3)
 
-  if(input$show_overlap) {
-    mtext("Overlap", side=2, line=3)
-
-    if(input$show_overlap_cum)
-      mtext("Cumulative Overlap", side=4, line=3)
+  if(length(ids) > 1 | !input$show_overlap) {
+    mtext("Cumulative Overlap", side=2, line=3)
   }
   else {
-    if(input$show_overlap_cum)
-      mtext("Cumulative Overlap", side=2, line=3)
+    mtext("Overlap", side=2, line=3)
   }
+
+  main <- paste0("Overlap analysis for PDB ID ",  rv$pdbid, " (",
+                 paste(rv$chains_selected, collapse=""), ")")
+  sub <- paste("Difference vector(s) calculated from PDB IDs",
+               paste(ids, collapse=", "))
   
+  title(main)
+  mtext(sub, line=.5)
 }
 
 

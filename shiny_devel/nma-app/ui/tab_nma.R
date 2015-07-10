@@ -8,9 +8,10 @@ tabPanel("NMA", icon=icon("home"),
          
          bsModal("modal_blast", "About the Bio3D NMA WebApp", "about_app", size = "large",
                  content=tags$div(
+
+                   p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for normal mode analysis of protein structures. Options include multiple popular elastic network models (ENMs), as well as enhanced analyses including residue fluctuations, mode visualization, dynamic cross-correlations, and overlap analysis.")),
+                   p(HTML("Start by entering a PDB code of interest then proceed by navigating through following the <b>NEXT</b> buttons.")),
                    
-                   p(HTML("This <a href=\"http://thegrantlab.org/bio3d/index.php\">Bio3D</a> WebApp provides a rapid and rigorous tool for comparative structure analysis of protein families. Methods include inter-conformer characterization with <a href=\"http://thegrantlab.org/bio3d/tutorials/principal-component-analysis\">principal component analysis</a> (PCA) and <a href=\"http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1\">ensemble normal mode analysis</a> (eNMA).")),
-                   p(HTML("Start by entering a PDB code of interest then proceed by navigating through the above tabs or following the <b>NEXT</b> buttons.")),
                    img(src="./images/geostas_250x182.png", width=250, style="display: block; margin-left: auto; margin-right: auto;")
                    )
                  ),
@@ -552,10 +553,10 @@ tabPanel("NMA", icon=icon("home"),
                              min = 0.1, max = 2, value = 1, step=0.1)
                  )
           )
-      )
+      ),
 
          
-   ##br(),br(),
+         br(),br(),
 
          
   ##-F. Domain analysis
@@ -580,4 +581,31 @@ tabPanel("NMA", icon=icon("home"),
   #         #  )
   #         )
   #  )
-)
+
+
+    ## References
+   fluidRow(
+     column(12,
+
+            h2("References"),
+            hr(),
+            
+            h4("Force fields"),
+            p(strong("calpha:"),
+              "Hinsen, K. et al. (2000)", tags$i("Chemical Physics"),  tags$b("261"), "25-37"),
+            p(strong("anm:"),
+              "Atilgan, A.R. et al. (2001)", tags$i("Biophysical Journal"), tags$b("80"), "505-515."),
+            p(strong("sdenm:"),
+              "Dehouck Y. & Mikhailov A.S. (2013)", tags$i("PLoS Comput Biol"), tags$b("9"), ":e1003209."), 
+            p(strong("reach:"), 
+              "Moritsugu K. & Smith J.C. (2008)", tags$i("Biophysical Journal"), tags$b("95"), "1639-1648."), 
+            p(strong("pfanm:"),
+              "Yang, L. et al. (2009)", tags$i("PNAS"), tags$b("104"), ".")
+            )
+     )
+         
+              
+
+         
+
+ )
