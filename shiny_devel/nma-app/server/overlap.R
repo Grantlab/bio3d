@@ -31,7 +31,8 @@ calc_overlap <- reactive({
   ## pdb for nma
   pdb <- pdblist[[1]]
 
-  pdbs <- pdbaln(pdblist, exefile=configuration$muscle$exefile)
+  pdbs <- pdbaln(pdblist, exefile=configuration$muscle$exefile,
+                 outfile=tempfile(pattern="aln", fileext=".fasta"))
   pdbs$id[1] <- input$pdbid
   pdbs$id[2:length(pdbs$id)] <- ids
   pdbs$xyz <- pdbfit(pdbs)
