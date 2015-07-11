@@ -11,10 +11,6 @@ calcModes <- reactive({
     return()
   }
   
-  #validate(
-  #  need(sum(pdb$calpha) < 601, "More than 600 atoms not allowed")
-  #  )
-  
   progress <- shiny::Progress$new(session, min=1, max=5)
   on.exit(progress$close())
   
@@ -29,9 +25,7 @@ calcModes <- reactive({
     modes <- nma(pdb, ff=ff, cutoff=cutoff,
                   mass=FALSE, temp=NULL)
   progress$set(value = 5)
-  
-  
-  ##saveRDS(modes, file="4q21_modes.RDS")
+
   return(modes)
 })
 
@@ -65,12 +59,17 @@ make_fluct_plot <- function() {
   else
     par(mar=c(5, 4, 4, 2))
   
-  if(input$fluxs3) { 
+  if(input$fluxs3) {
+    if(rv$forcefield %in% c("calpha", "sdenm", "reach"))
+      ylab <- "Fluctuations (Å^2)"
+    else
+      ylab <- "Fluctuations (a.u.)"
+    
     main <- paste0("NMA derived fluctuations for PDB id ", rv$pdbid, " (",
                   paste(rv$chains_selected, collapse=""), ")")
     sub <- paste("Mode(s)", mode.inds)
     plot.bio3d(x, sse=pdb, main=main, resno=pdb,
-               xlab="Residue No.", ylab="Fluctions (Å^2)", 
+               xlab="Residue No.", ylab=ylab,
                col=input$col1, type=input$typ1,
                pch=input$pch1, lty=input$lty1, cex=input$cex1, lwd=input$lwd1)
 

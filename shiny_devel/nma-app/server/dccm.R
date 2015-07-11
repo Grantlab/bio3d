@@ -10,18 +10,18 @@ observeEvent(input$run_dccm, {
 calcDCCM <- reactive({
   message("calculating dccm")
 
-  progress <- shiny::Progress$new(session, min=1, max=5)
+  progress <- shiny::Progress$new()
   on.exit(progress$close())
-  
-  progress$set(message = 'Calculating DCCM',
-               detail = 'Please wait')
-  
-  progress$set(value = 2)
-  modes <- rv$modes
-  cij <- dccm(modes, ncore=1)
-  out <- list(cij=cij, pdbid=get_pdbid6())
 
-  progress$set(value = 5)
+  progress$set(message = 'Calculating DCCM',
+               detail = 'Please wait ...',
+               value = 0)
+  
+  modes <- rv$modes
+  cij <- dccm(modes, ncore=1, progress=progress)
+  progress$close()
+  
+  out <- list(cij=cij, pdbid=get_pdbid6())
   rv$dccm <- cij
   return(out)
 })

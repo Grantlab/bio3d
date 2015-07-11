@@ -45,7 +45,8 @@ observeEvent(input$pdbid, {
     rv$blast <- NULL
     rv$overlap <- NULL
 
-    if(rv$pdbid == "4Q21") {
+    if(toupper(rv$pdbid) == "4Q21") {
+      message("ID is 4q21 - loading data")
       rv$raw_pdb <- readRDS("4q21_pdb.RDS")
       rv$final_pdb <- readRDS("4q21_pdb.RDS")
       rv$modes <- readRDS("4q21_modes.RDS")
@@ -74,12 +75,12 @@ observeEvent(input$pdbid, {
   }
 })
 
-observeEvent(input$pdb_chains, {
-  if(length(input$pdb_chains) > 0) {
-    rv$chains_selected <- input$pdb_chains
+observeEvent(input$chainid, {
+  if(length(input$chainid) > 0) {
+    rv$chains_selected <- input$chainid
     message(rv$chains_selected)
 
-    if(rv$pdbid == "4Q21") {
+    if(toupper(rv$pdbid) == "4Q21") {
       rv$modes <- readRDS("4q21_modes.RDS")
     }
     else {
@@ -94,6 +95,16 @@ observeEvent(input$pdb_chains, {
         rv$modes <- calcModes()
       }
     }
+  }
+})
+
+observeEvent(input$forcefield, {
+  rv$forcefield <- input$forcefield
+  if(toupper(rv$pdbid) == "4Q21" & input$forcefield == "calpha") {
+    rv$modes <- readRDS("4q21_modes.RDS")
+  }
+  else {
+    rv$modes <- calcModes()
   }
 })
 
@@ -225,7 +236,6 @@ get_pdbid6 <- reactive({
 raw_pdb <- reactive({
   pdbid <- rv$pdbid
   pdb <- read_pdb(pdbid)
-  ##saveRDS(pdb, file="4q21_pdb.RDS")
   return(pdb)
 })
 
@@ -260,7 +270,7 @@ chain_pdb <- reactive({
 
 ## checkbox 
 output$chain_input <- renderUI({
-  selectInput("pdb_chains", "Limit to chain IDs:",
+  selectInput("chainid", "Limit to chain IDs:",
               choices = rv$chains_all,
               selected = rv$chains_selected,
               multiple=TRUE)
