@@ -109,7 +109,20 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
     files <- NULL
   }
   else {
-    s <- seqaln(s, id=NULL, ...)
+    id <- unlist(lapply(files, function(x) {
+      if(!is.null(x$call$file))
+        x$call$file
+      else
+        NA
+    }))
+    
+    nams <- paste("seq", 1:length(id), sep="")
+    id[is.na(id)] <- nams[is.na(id)]
+    
+    if(any(duplicated(id)))
+      id <- NULL
+    
+    s <- seqaln(s, id=id, ...)
   }
 
   cat("\n")
