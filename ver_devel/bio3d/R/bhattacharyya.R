@@ -40,12 +40,18 @@ bhattacharyya.matrix <- function(a, b, q=90, n=NULL, ...) {
     n <- which(cumv>q)[1]
   }
 
-  ca <- det((t(ei$vectors[,1:n]) %*% a) %*% ei$vectors[,1:n])
-  cb <- det((t(ei$vectors[,1:n]) %*% b) %*% ei$vectors[,1:n])
+#  ca <- det((t(ei$vectors[,1:n]) %*% a) %*% ei$vectors[,1:n])
+#  cb <- det((t(ei$vectors[,1:n]) %*% b) %*% ei$vectors[,1:n])
 
-  d <- prod(ei$values[1:n])
+#  d <- prod(ei$values[1:n])
+
+  ## use logarithm to avoid numerical underflow 
+  log.ca <- determinant((t(ei$vectors[,1:n]) %*% a) %*% ei$vectors[,1:n])$modulus
+  log.cb <- determinant((t(ei$vectors[,1:n]) %*% b) %*% ei$vectors[,1:n])$modulus
+  log.d <- sum(log(ei$values[1:n]))
   
-  ndb <- (1/(2*n)) * log( d / sqrt(ca*cb) )
+#  ndb <- (1/(2*n)) * log( d / sqrt(ca*cb) )
+  ndb <- (1/(2*n)) * ( log.d - 0.5 * (log.ca + log.cb) )
   bc <- exp( -ndb )
   return(bc)
 }
