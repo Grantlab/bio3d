@@ -58,7 +58,7 @@ tabPanel("NMA", icon=icon("home"),
         actionButton3("next-btn-1", "Next (Results)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
         
         tags$script(HTML(
-          '$(".btn-input").click(function(){',
+          '$("#next-btn-1").click(function(){',
           '$("html, body").animate({scrollTop:$("#resultsdiv").position().top - (0.1 * $(window).height())}, "smooth");',
 
           

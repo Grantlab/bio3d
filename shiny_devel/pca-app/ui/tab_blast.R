@@ -61,7 +61,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
                     actionButton3("page1_hits", "Next (Hit selection)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
                    tags$script(HTML(
-                       '$(".btn-input").click(function(){',
+                       '$("#page1_hits").click(function(){',
                        '$("html, body").animate({scrollTop:$("#blast_row").position().top - (0.1 * $(window).height())}, "smooth");',
                        '$("#blast_plot").parent().siblings().find(".well").addClass("show-border");',
                        'window.setTimeout(function(){',
