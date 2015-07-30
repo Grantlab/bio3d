@@ -48,6 +48,7 @@ bhattacharyya.matrix <- function(a, b, q=90, n=NULL, ...) {
   ## use logarithm to avoid numerical underflow 
   log.ca <- determinant((t(ei$vectors[,1:n]) %*% a) %*% ei$vectors[,1:n])$modulus
   log.cb <- determinant((t(ei$vectors[,1:n]) %*% b) %*% ei$vectors[,1:n])$modulus
+  log.ca <- as.numeric(log.ca); log.cb <- as.numeric(log.cb)
   log.d <- sum(log(ei$values[1:n]))
   
 #  ndb <- (1/(2*n)) * log( d / sqrt(ca*cb) )
