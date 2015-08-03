@@ -16,6 +16,73 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                                     
                    ) 
                  ),
+
+         
+         fluidRow(
+           column(4,
+                  wellPanel(
+                    bsPopover("popfit2",
+                              "Viewing options",
+                              "Visualize the superimposed PDB structures by toggeling the <b>Show PDBs</b> checkbox. The <i>Download</i> buttons allow visualizing the structures in an external program such as PyMOL or VMD. <br><br>Coloring options include <b>Cluster ID</b>: colors the structures according to their cluster membership; <b>Invariant core</b>: by the region with low structural variation within the ensemble; and <b>Gap regions</b>: residues belonging to columns in the alignment (see ALIGN tab) which contain one or more gaps. ",
+                              placement = "right", trigger = "hover",
+                              options = list(container = "body")),
+                    
+                    tags$div(id = "popfit2", icon("question-circle"),
+                             style = "position: absolute; right: 25px; top: 5px;"
+                             ),
+                    
+                    h4('PDBs Viewing Options'),
+                    checkboxInput('show_pdbs', 'Show PDBs', value=FALSE),
+
+                    radioButtons("fit_type", "Superimpose to",
+                                 c("Invariant core" = "core",
+                                   "All c-alpha atoms" = "full"),
+                                 inline=TRUE),
+
+
+                    radioButtons('viewColor1', label='Structure color',
+                                 choices=list(
+                                   'By cluster ID'='cluster',
+                                   'By structure ID'='struct',
+                                   'Invariant core'='core',
+                                   'Gap regions'='gaps'
+                                   ),
+                                 selected='cluster'),
+
+                    radioButtons('viewBGcolor1', label='Background color',
+                                 choices=list('Black'='black', 'White'='white'),
+                                 selected='white'),
+
+                    checkboxInput('show_options_idsel', 'More options', value=FALSE),
+                    br(),
+                    actionButton('viewUpdate1', label='Refresh', icon=icon('undo')),
+                    br(),
+                    ##downloadButton('pdbsRData', "Download PDBs RData"),
+                    downloadButton('pdbsZIP', "Download Aligned PDBs"),
+                    downloadButton('pdbs2pymol', "Download PyMOL session file")
+                    )
+                  ),
+
+           column(8,
+                  conditionalPanel(
+                    condition='input.show_pdbs == true',
+                    webGLOutput('pdbsWebGL')
+                    )
+                  )
+           ),
+
+         conditionalPanel(
+           condition='input.show_options_idsel == true',
+           fluidRow(
+             column(12,
+                    wellPanel(
+                      helpText("Select a PDB ID to visualize. Deselect all to show all PDBs."),
+                      DT::dataTableOutput("pdbs_table1")
+                      ##uiOutput("show_structs")
+                      )
+                    )
+             )
+           ),
          
          
          fluidRow(
@@ -35,21 +102,22 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     
                     h4("Initial structure analysis"),
 
-                    radioButtons("fit_type", "Superimpose to",
-                                 c("Invariant core" = "core",
-                                   "All c-alpha atoms" = "full"),
-                                 inline=TRUE),
-
                     radioButtons("str_plot", "Plot options",
-                                 c("Heatmap" = "heatmap",
-                                   "Dendrogram" = "dendrogram",
-                                   "RMSF" = "rmsf",
-                                   "RMSD Histogram" = "hist"),
-                                    inline=TRUE),
-                    
+                                 c("RMSD Heatmap" = "heatmap",
+                                   "RMSD Dendrogram" = "dendrogram",
+                                   "RMSD Histogram" = "hist",
+                                   "RMSF" = "rmsf"),
+                                 inline=FALSE),
+
                     sliderInput("clusters", "Cluster by pairwise RMSD",
                                 min = 1, max = 10, value = 3, step=1),
 
+                    conditionalPanel(
+                      condition = "input.str_plot == 'heatmap'",
+                      checkboxInput('rowcol_seqide', 'Row side color by sequence identity clusters',
+                                    value=FALSE)
+                      ),
+                    
                     checkboxInput('show_options', 'More options', value=FALSE),
 
                     conditionalPanel(
@@ -119,56 +187,13 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                                 min = 4, max = 12, value = 7, step=0.5)
                     )
                     )
+             #column(4,
+             #       wellPanel(
+             #         checkboxInput('rowcol_seqide', 'Color ', value=FALSE)
+             #         )
+             #       )
              )
            ),
-
-
-         br(),
-         fluidRow(
-           column(4,
-                  wellPanel(
-                    bsPopover("popfit2",
-                              "Viewing options",
-                              "Visualize the superimposed PDB structures by toggeling the <b>Show PDBs</b> checkbox. The <i>Download</i> buttons allow visualizing the structures in an external program such as PyMOL or VMD. <br><br>Coloring options include <b>Cluster ID</b>: colors the structures according to their cluster membership; <b>Invariant core</b>: by the region with low structural variation within the ensemble; and <b>Gap regions</b>: residues belonging to columns in the alignment (see ALIGN tab) which contain one or more gaps. ",
-                              placement = "right", trigger = "hover",
-                              options = list(container = "body")),
-                    
-                    tags$div(id = "popfit2", icon("question-circle"),
-                             style = "position: absolute; right: 25px; top: 5px;"
-                             ),
-                    
-                    h4('PDBs Viewing Options'),
-                    checkboxInput('show_pdbs', 'Show PDBs', value=FALSE),
-
-                    radioButtons('viewColor1', label='Structure color',
-                                 choices=list(
-                                   'By cluster ID'='cluster',
-                                   'By structure ID'='struct',
-                                   'Invariant core'='core',
-                                   'Gap regions'='gaps'
-                                   ),
-                                 selected='cluster'),
-
-                    radioButtons('viewBGcolor1', label='Background color',
-                                 choices=list('Black'='black', 'White'='white'),
-                                 selected='white'),
-                    br(),
-                    actionButton('viewUpdate1', label='Refresh', icon=icon('undo')),
-                    br(),
-                    ##downloadButton('pdbsRData', "Download PDBs RData"),
-                    downloadButton('pdbsZIP', "Download Aligned PDBs"),
-                    downloadButton('pdbs2pymol', "Download PyMOL session file")
-                    )
-                  ),
-
-           column(8,
-                  conditionalPanel(
-                    condition='input.show_pdbs == true',
-                    webGLOutput('pdbsWebGL')
-                    )
-                  )
-           ),
-
 
          hr(),
 

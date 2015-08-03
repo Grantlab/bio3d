@@ -70,11 +70,13 @@ output$include_hits <- renderUI({
 ## returns the accession IDs of selected hits (from the SEARCH tab)
 get_acc <- reactive({
 
-  message( as.numeric(input$blast_table_rows_selected) )
+  row.inds <- sort(as.numeric(input$blast_table_rows_selected))
+  
+  message( paste(row.inds, collapse=" ") ) 
   
   if(input$input_type != "multipdb") {
     blast <- rv$blast
-    acc <- blast$acc[ as.numeric(input$blast_table_rows_selected) ]
+    acc <- blast$acc[ row.inds ]
   }
   else {
     acc <- get_multipdbids()
@@ -239,6 +241,11 @@ seqide <- reactive({
   rownames(ide) <- pdbs$lab
   colnames(ide) <- pdbs$lab
   return(ide)
+})
+
+seqconserv <- reactive({
+  pdbs <- align()
+  return(conserv(pdbs$ali, method=input$conserv_method))
 })
 
 ####################################
@@ -502,20 +509,22 @@ output$seqide_dendrogram <- renderPlot({
 })
 
 
-make.plot.entropy <- function() {
+make.plot.conservation <- function() {
   pdbs <- align()
-  ent <- entropy(pdbs)
+  sse <- pdbs2sse(pdbs, ind=1, rm.gaps=FALSE, exefile=configuration$dssp$exefile)
+  x <- seqconserv()
+  ylab <- paste("Sequence", input$conserv_method)
 
   ##mar <- as.numeric(c(input$margins0, input$margins0))
-  p1 <- plot.bio3d(ent$H.norm, 
-             ylab="Entropy", xlab="Alignment Index",
-             cex=input$cex0)
+  p1 <- plot.bio3d(x, sse = sse,
+                   ylab=ylab, xlab="Alignment Index",
+                   cex=input$cex0)
   
   return(p1)
 }
 
-output$entropy <- renderPlot({
-  print(make.plot.entropy())
+output$conservation <- renderPlot({
+  print(make.plot.conservation())
 })
 
 
@@ -569,10 +578,10 @@ output$seqide_dendrogram2pdf = downloadHandler(
     dev.off()
   })
 
-output$entropy2pdf = downloadHandler(
-  filename = "entropy.pdf",
+output$conservation2pdf = downloadHandler(
+  filename = "seqconserv.pdf",
   content = function(FILE=NULL) {
     pdf(file=FILE, onefile=T, width=input$width0, height=input$height0)
-    print(make.plot.entropy())
+    print(make.plot.conservation())
     dev.off()
 })

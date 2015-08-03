@@ -175,7 +175,8 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
                       selectInput("view_inpdb_as", "Display options:",
                                   c("C-alpha Trace" = "calpha",
-                                    "Overview" = "overview"),
+                                    "Ligands" = "ligands",
+                                    "All atoms" = "allatoms"),
                                   selected = "calpha",
                                   multiple = FALSE),
 

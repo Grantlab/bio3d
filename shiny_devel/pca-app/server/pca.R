@@ -27,6 +27,12 @@ clust <- reactive({
   if(input$cluster_by == "pc_space") {
     hc <- hclust(dist(pc$z[,1:as.numeric(input$clust_npcs)]))
   }
+
+  if(input$cluster_by == "sequence") {
+    ide <- seqide()
+    hc <- hclust(as.dist(1-ide))
+  }
+  
   return(hc)
 })
 
@@ -64,6 +70,7 @@ output$checkboxgroup_label_ids <- renderUI({
 output$pca_plot1_conf <- renderPlot({
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
+  
   col <- 1
   if(as.numeric(input$nclust) > 1)
     col <- clustgrps()
@@ -276,7 +283,7 @@ make.plot.loadings <- function(){
   gaps.pos <- gap.inspect(pdbs$xyz)
 
   resno <- pdbs$resno[1, gaps.res$f.inds]
-  sse <- pdbs2sse(pdbs, ind=1, rm.gaps=TRUE)
+  sse <- pdbs2sse(pdbs, ind=1, rm.gaps=TRUE, exefile=configuration$dssp$exefile)
   rf <- rmsf(pdbs$xyz[, gaps.pos$f.inds])
 
   pcs <- as.numeric(input$loadings_pc)
@@ -286,7 +293,7 @@ make.plot.loadings <- function(){
   
   au <- t(pc$au[, pcs, drop=FALSE])
 
-
+  ## plots multiple lines in the same plot
   if( input$multiplot ) {
     if(!input$spread_pcload | length(pcs) < 2) {
       plot.fluct(au, resno=resno, sse=sse,
@@ -308,17 +315,19 @@ make.plot.loadings <- function(){
       box()
     }
   }
+
+  ## makes independent plots using mfrow
   else {
     if(input$toggle_rmsf1)
       par(mar=c(5, 4, 4, 5))
     else
       par(mar=c(5, 4, 4, 2))
     
-    if(length(pcs)>1)
+    if(length(pcs) > 1)
       par(mfrow=c(length(pcs), 1))
     
     for(i in pcs) {
-      plot4 <- plot.bio3d(au, resno=resno, sse=sse,
+      plot4 <- plot.bio3d(au[i,], resno=resno, sse=sse,
                           ylab=paste0("PC-", i, " (Å)"), xlab="Residue No.")
       
       if(input$toggle_rmsf1) {
@@ -405,9 +414,11 @@ get_pdbstable <- reactive({
   anno$cluster <- paste0("<span style=\"color:",
     cluster.colors[grps], "; font-size:large\">&#x25CF;</span>&nbsp;",
     grps)
+
+  anno$numres <- apply(pdbs$ali, 1, function(x) sum(!is.gap(x)))
   
   rownames(anno) <- NULL
-  show.cols <- c("acc", "cluster", "compound", "source", "ligandId")
+  show.cols <- c("acc", "cluster", "numres", "compound", "source", "ligandId")
   col.inds <- sapply(show.cols, grep, colnames(anno))
   
   return(anno[, col.inds])
@@ -415,7 +426,7 @@ get_pdbstable <- reactive({
 
 output$pdbs_table <- renderDataTable({
   datatable(get_pdbstable(), extensions = 'Scroller', escape = FALSE,
-            colnames = c("ID", "Cluster", "Name", "Species", "Ligands"),
+            colnames = c("ID", "Cluster", "Length", "Name", "Species", "Ligands"),
             ##selection = "none",
             options = list(
               deferRender = TRUE,

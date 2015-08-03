@@ -31,7 +31,24 @@ tabPanel("2. ALIGN",
                     h4("A) Alignment summary"),
                     
                     verbatimTextOutput("alignment_summary"),
-                    verbatimTextOutput("missres_summary")
+                    verbatimTextOutput("missres_summary"),
+
+                    
+                    actionButton3("next-btn-align1", "Next (Analysis)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
+        
+                    tags$script(HTML(
+                      '$("#next-btn-align1").click(function(){',
+                      '$("html, body").animate({scrollTop:$("#seqanalysis_row").position().top - (0.1 * $(window).height())}, "smooth");',
+
+                      
+                      '$("#fluct_plot").parent().siblings().find(".well").addClass("show-border");',
+                      'window.setTimeout(function(){',
+                      '$("#fluct_plot").parent().siblings().find(".well").removeClass("show-border");',
+                      '}, 2500);',
+                      '});'
+                      
+                      ))
+
 
                     )
                   ),
@@ -92,35 +109,10 @@ tabPanel("2. ALIGN",
                     )
                   )
            ),
+
          
-         
-         
-         
-         hr(),
          fluidRow(
-           column(12,
-                  
-                  h3("Final alignment"),
-                  p("(slow for large aligments)"),
-                  uiOutput("alignment"),
-                  tags$head(tags$script(src='tooltip.js')),
-                  tags$head(tags$script(src='popover.js')),
-                  tags$head(tags$script(HTML('$(document).ready(function(){
-                      $("body")
-                      .popover({html: true,
-                      selector: "[data-toggle=\'popover\']",
-                      container: "body",
-                      title: "Residue info",
-                      trigger: "hover",
-                      delay: { "show": 200, "hide": 40 },
-                      placement: "auto bottom"
-                      });
-                      });
-                      ')))
-                  )
-           ),
-         
-          fluidRow(
+           id = "seqanalysis_row",
            column(4,
                   wellPanel(
                     style="overflow: auto;",
@@ -142,8 +134,19 @@ tabPanel("2. ALIGN",
                     radioButtons("seq_plot", "Plot options",
                                  c("Heatmap" = "heatmap",
                                    "Dendrogram" = "dendrogram",
-                                   "Entropy" = "entropy"),
+                                   "Conservation" = "conservation"),
                                  inline=TRUE),
+
+                    conditionalPanel(
+                      condition = "input.seq_plot == 'conservation'",
+                      radioButtons("conserv_method", "Method",
+                                 c("Similarity" = "similarity",
+                                   "Identity" = "identity", 
+                                   "Entropy 22" = "entropy22",
+                                   "Entropy 10" = "entropy10"),
+                                 inline=TRUE)
+                      ),
+                    
 
                     sliderInput("clusters_seq", "Cluster by pairwise sequence identity",
                                 min = 1, max = 10, value = 3, step=1),
@@ -161,14 +164,31 @@ tabPanel("2. ALIGN",
                       ),
 
                     conditionalPanel(
-                      condition = "input.seq_plot == 'entropy'",
-                      downloadButton('entropy2pdf', "Download PDF")
+                      condition = "input.seq_plot == 'conservation'",
+                      downloadButton('conservation2pdf', "Download PDF")
                       ),
                     
-                    downloadButton('seqideZIP', "Download Seq ide matrix")
+                    downloadButton('seqideZIP', "Download Seq ide matrix"),
+
+
+                    br(),  
+                    actionButton3("next-btn-align2", "Next (Alignment)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
+        
+                    tags$script(HTML(
+                      '$("#next-btn-align2").click(function(){',
+                      '$("html, body").animate({scrollTop:$("#alignment_row").position().top - (0.1 * $(window).height())}, "smooth");',
+
+                      
+                      '$("#fluct_plot").parent().siblings().find(".well").addClass("show-border");',
+                      'window.setTimeout(function(){',
+                      '$("#fluct_plot").parent().siblings().find(".well").removeClass("show-border");',
+                      '}, 2500);',
+                      '});'
+                      
+                      ))
                     )
                   ),
-
+            
             column(8,
                    
                    conditionalPanel(
@@ -182,8 +202,8 @@ tabPanel("2. ALIGN",
                      ),
                    
                    conditionalPanel(
-                     condition = "input.seq_plot == 'entropy'",
-                     plotOutput("entropy")
+                     condition = "input.seq_plot == 'conservation'",
+                     plotOutput("conservation")
                      )
                    
                    )
@@ -209,8 +229,36 @@ tabPanel("2. ALIGN",
                     )
                     )
              )
-           )
+           ),
+         
+         
+         
+         
+         hr(),
 
+         fluidRow(
+           id = "alignment_row",
+           column(12,
+                  
+                  h3("Final alignment"),
+                  p("(slow for large aligments)"),
+                  uiOutput("alignment"),
+                  tags$head(tags$script(src='tooltip.js')),
+                  tags$head(tags$script(src='popover.js')),
+                  tags$head(tags$script(HTML('$(document).ready(function(){
+                      $("body")
+                      .popover({html: true,
+                      selector: "[data-toggle=\'popover\']",
+                      container: "body",
+                      title: "Residue info",
+                      trigger: "hover",
+                      delay: { "show": 200, "hide": 40 },
+                      placement: "auto bottom"
+                      });
+                      });
+                      ')))
+                  )
+           )
 
          
          )

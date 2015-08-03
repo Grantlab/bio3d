@@ -99,7 +99,11 @@ tabPanel(
           ),
 
         radioButtons('cluster_by', label='Cluster by',
-                          choices=list('RMSD'='rmsd', 'PC subspace'='pc_space'),
+                     choices=list(
+                       'RMSD' = 'rmsd',
+                       'PC subspace' = 'pc_space',
+                       'Sequence' = 'sequence'
+                       ),
                      selected='rmsd', inline=TRUE),
 
         conditionalPanel(

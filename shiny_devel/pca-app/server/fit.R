@@ -104,6 +104,7 @@ representatives <- reactive({
   return(out)
 })
 
+
 ####################################
 ####     Plotting functions     ####
 ####################################
@@ -126,11 +127,23 @@ make.plot.heatmap <- function() {
   rownames(rd) <- pdbs$lab
   colnames(rd) <- pdbs$lab
   hc <- hclust(as.dist(rd))
-  grps <- cutree(hc, k=input$clusters)
+  grps1 <- cutree(hc, k=input$clusters)
+  grps2 <- grps1
+
+  ## cluster by seq ide
+  if(input$rowcol_seqide) {
+    ide <- seqide()
+    rownames(ide) <- pdbs$lab
+    colnames(ide) <- pdbs$lab
+    hc2 <- hclust(as.dist(1-ide))
+    grps2 <- cutree(hc2, k=input$clusters)
+  }
+
+  ## plot it
   mar <- as.numeric(c(input$margins, input$margins))
   plot1 <- heatmap(rd, distfun=as.dist, symm=TRUE,
-          ColSideColors=as.character(grps),
-          RowSideColors=as.character(grps),
+          ColSideColors=as.character(grps1),
+          RowSideColors=as.character(grps2),
           cexRow=input$cex, cexCol=input$cex,
           margins=mar
           )
@@ -176,7 +189,7 @@ make.plot.rmsf <- function(){
   gaps.pos <- gap.inspect(pdbs$xyz)
 
   resno <- pdbs$resno[1, gaps.res$f.inds]
-  sse <- pdbs2sse(pdbs, ind=1, rm.gaps=TRUE)
+  sse <- pdbs2sse(pdbs, ind=1, rm.gaps=TRUE, exefile=configuration$dssp$exefile)
 
   rf <- rmsf(pdbs$xyz[, gaps.pos$f.inds])
   plot4 <- plot.bio3d(rf, resno=resno, sse=sse,
@@ -287,11 +300,51 @@ output$rmsd_table <- DT::renderDataTable({
 })
 
 
+####################################
+####     Web GL                 ####
+####################################
+
+output$show_structs <- renderUI({
+
+  acc <- get_acc()
+  names(acc) <- acc
+  
+  selectInput("show_pdbids", "Visualize PDB IDs",
+              choices = acc, selected = acc, multiple=TRUE)
+
+})
+
+
+output$pdbs_table1 <- renderDataTable({
+  datatable(get_pdbstable(), extensions = 'Scroller', escape = FALSE,
+            colnames = c("ID", "Cluster", "Length", "Name", "Species", "Ligands"),
+            ##selection = "none",
+            options = list(
+              deferRender = TRUE,
+              dom = "frtiS",
+              scrollY = 200,
+              scrollCollapse = TRUE,
+              autoWidth = FALSE,
+              columnDefs = list(list(width = '40%', targets = c(list(3))))
+              ))
+})
+
+
+
 output$pdbsWebGL  <- renderWebGL({
   pdbs <- fit()
+  
+  if(!is.null(input$pdbs_table1_rows_selected)) {
+    inds <- as.numeric(input$pdbs_table1_rows_selected)
+    pdbs <- trim(pdbs, row.inds=inds)
+  }
+  else {
+    inds <- 1:length(pdbs$id)
+  }
+  
   xyz <- pdbs$xyz
   n <- nrow(xyz)
-  grps <- cutree1()
+  grps <- cutree1()[inds]
   core <- find_core()
   dims <- dim(pdbs$ali)
   gaps <- gap.inspect(pdbs$ali)
