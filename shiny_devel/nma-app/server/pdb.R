@@ -283,15 +283,24 @@ output$pdbWebGL  <- renderWebGL({
 
   as <- input$view_inpdb_as
   bg <- "white"
-  
-  if("calpha" %in% as) {
+
+   if("calpha" %in% as) {
     view.pdb(pdb, as="calpha", col=input$view_inpdb_col, bg.col=bg, sheet="blue")
   }
-
-  if("overview" %in% as) {
-    view.pdb(pdb, as="calpha", col=input$view_inpdb_col, lwd=5, bg.col=bg, sheet="blue")
-    view.pdb(pdb, as="all", col="atom", add=TRUE)
+  
+  if("ligands" %in% as) {
+    view.pdb(pdb, as="calpha", col=input$view_inpdb_col,
+             bg.col=bg, sheet="blue")
+    view.pdb(pdb, as="ligand", col="atom", add=TRUE)
   }
+  
+  if("allatoms" %in% as) {
+    view.pdb(pdb, as="calpha", col=input$view_inpdb_col,
+             lwd=5, bg.col=bg, sheet="blue")
+    view.pdb(pdb, as="ligand", col="atom", add=TRUE)
+    view.pdb(pdb, as="protein", col="atom", add=TRUE)
+  }
+
 })
 
 
