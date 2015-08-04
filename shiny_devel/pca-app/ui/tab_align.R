@@ -118,8 +118,8 @@ tabPanel("2. ALIGN",
                     style="overflow: auto;",
                     
                     bsPopover("popalign2",
-                              "Sequence analysis",
-                              "Basis sequence analysis entails clustering of the selected PDB structures based on their pair-wise sequence similarity, which can be visualized as a <b>dendrogram</b>, alternatively in combination with a <b>heatmap</b>. The sequence <b>entropy</b> uses the 10-letter alphabet and conserved (low entropy) columns score 1 and diverse (high entropy) columns score 0.",
+                              "Sequence alignment analysis",
+                              "Basic sequence analysis entails clustering of the selected PDB structures based on their pair-wise sequence similarity, which can be visualized as a <b>dendrogram</b>, alternatively in combination with a <b>heatmap</b>. The sequence <b>entropy</b> uses the 10-letter alphabet and conserved (low entropy) columns score 1 and diverse (high entropy) columns score 0.",
                               placement = "right", trigger = "hover",
                               options = list(container = "body")),
                     
@@ -129,9 +129,9 @@ tabPanel("2. ALIGN",
                     
                     
                     
-                    h4("Sequence analysis"),
+                    h4("Sequence alignment analysis"),
 
-                    radioButtons("seq_plot", "Plot options",
+                    radioButtons("seq_plot", "Alignment overview plot options",
                                  c("Heatmap" = "heatmap",
                                    "Dendrogram" = "dendrogram",
                                    "Conservation" = "conservation"),
@@ -149,29 +149,30 @@ tabPanel("2. ALIGN",
                     
 
                     sliderInput("clusters_seq", "Cluster by pairwise sequence identity",
-                                min = 1, max = 10, value = 3, step=1),
+                                min = 1, max = 10, value = 2, step=1),
                     
                     checkboxInput('show_options0', 'More options', value=FALSE),
                     
                     conditionalPanel(
                       condition = "input.seq_plot == 'heatmap'",
-                      downloadButton('seqide_heatmap2pdf', "Download PDF")
+                      downloadButton('seqide_heatmap2pdf', "Download Figure (PDF)")
                       ),
 
                     conditionalPanel(
                       condition = "input.seq_plot == 'dendrogram'",
-                      downloadButton('seqide_dendrogram2pdf', "Download PDF")
+                      downloadButton('seqide_dendrogram2pdf', "Download Figure (PDF)")
                       ),
 
                     conditionalPanel(
                       condition = "input.seq_plot == 'conservation'",
-                      downloadButton('conservation2pdf', "Download PDF")
+                      downloadButton('conservation2pdf', "Download Figure (PDF)")
                       ),
                     
-                    downloadButton('seqideZIP', "Download Seq ide matrix"),
+                    downloadButton('seqideZIP', "Sequence identity matrix"),
 
 
-                    br(),  
+                    br(), 
+                    br(), 
                     actionButton3("next-btn-align2", "Next (Alignment)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
         
                     tags$script(HTML(
@@ -222,12 +223,25 @@ tabPanel("2. ALIGN",
                     ),
              column(4,
                     wellPanel(
-                    sliderInput("width0", "width",
+                    sliderInput("width0", "width (PDF output only)",
                                 min = 4, max = 12, value = 7, step=0.5),
-                    sliderInput("height0", "height",
+                    sliderInput("height0", "height (PDF output only)",
                                 min = 4, max = 12, value = 7, step=0.5)
                     )
                     )
+             # ###
+             # ,column(4,
+             #        wellPanel(
+				 #			 h4("Download options"),
+             #        downloadButton('seqide_heatmap2pdf', "Download Figure (PDF)"),
+             #        downloadButton('seqide_dendrogram2pdf', "Download Figure (PDF)"),
+             #        downloadButton('conservation2pdf', "Download Figure (PDF)"),
+             #        downloadButton('seqideZIP', "Sequence identity matrix")
+
+             #        )
+             #        )
+
+             ###
              )
            ),
          
@@ -241,7 +255,7 @@ tabPanel("2. ALIGN",
            column(12,
                   
                   h3("Final alignment"),
-                  p("(slow for large aligments)"),
+                  p("(slow to render for large alignments)"),
                   uiOutput("alignment"),
                   tags$head(tags$script(src='tooltip.js')),
                   tags$head(tags$script(src='popover.js')),

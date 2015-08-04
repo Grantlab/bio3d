@@ -309,8 +309,10 @@ output$blast_plot1 <- renderPlot({
   col.pch = rep('red3', length(pch))
   col.pch[pch==21] <- 'black'
 
+
   par(mar=c(6, 4, 0, 0))
-  plot(z, xlab="", ylab="Bitscore of Alignment to Input", bg=col.bg, col=col.pch, pch=pch, cex=1.1, xaxt='n', cex.axis=1.2)
+  plot(z, xlab="", ylab="Bitscore of Alignment to Input Structure", bg=col.bg, col=col.bg,#col=col.pch, 
+    pch=pch, cex=1.1, xaxt='n', cex.axis=1.2)
   axis(1, at=if(length(z) > 20 ) c(1, seq(20, length(z), 20), if(length(z)%%20 > 9) length(z) else NA) else seq(1,20,2), cex.axis=1.2)
   abline(v=gp, col="gray50", lty=3)
   abline(h=cutoff, col="red", lty=2)
