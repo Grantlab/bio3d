@@ -23,16 +23,27 @@ db_disconnect <- function(con)
 
 
 get_annotation_from_pdb <- function(acc) {
-  anno <- pdb.annotate(acc, anno.terms=c(
-                              "structureId", "chainId",
-                              "source", "compound",
-                              "experimentalTechnique", "resolution",
-                              "ligandId", "ligandName",
-                              "chainLength", "db_id", "sequence"
-                              )
-                       )
-  anno$acc <- rownames(anno)
-  return(anno)
+  res <- tryCatch(
+    {
+      pdb.annotate(acc, anno.terms=c(
+                          "structureId", "chainId",
+                          "source", "compound",
+                          "experimentalTechnique", "resolution",
+                          "ligandId", "ligandName",
+                          "chainLength", "db_id", "sequence"
+                          )
+                   )
+      
+    },
+    error = function(e) {
+      FALSE
+    })
+  
+  if(!is.logical(res)) {
+    res$acc <- rownames(res)
+  }
+  
+  return(res)
 }
 
 get_annotation <- function(acc, use_chain=TRUE) {
@@ -179,6 +190,10 @@ get_pfam <- function(acc) {
 db_add_pfam <- function(acc, con=NULL) {
   unq <- unique(substr(acc, 1, 4))
   pfam <- pdb.pfam(unq, compact=FALSE)
+
+  if(is.null(pfam))
+    return(data.frame(NULL))
+  
   pfam$acc <- paste(pfam$structureId, pfam$chainId, sep = "_")
   
   close <- FALSE

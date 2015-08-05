@@ -38,6 +38,16 @@ output$pfam_table_multi <- DT::renderDataTable({
 
 get_pfam_table <- reactive({
   pfam <- get_pfam_annotation()
+
+  if(!nrow(pfam) > 0) {
+    return(DT::datatable(data.frame("Pfam data not found"),
+                         class = 'compact row-border',
+                         selection = "none",
+                         rownames = FALSE, colnames = FALSE,
+                         options = list( dom = "t", autoWidth = TRUE)
+                         )
+           )
+  }
   
   pfam$ID <- paste(pfam$structureId, pfam$chainId, sep = "_")
   pfam$PFAM <- paste0(pfam$pfamName, " (", pfam$pfamAcc, ")")

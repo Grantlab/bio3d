@@ -27,8 +27,12 @@ rv$pdb_codes <- "1TND, 1KJY_A"
 observeEvent(input$pdbid, {
   if(nchar(input$pdbid)>3) {
     if(input$input_type == "pdb") {
-      rv$pdbid <- substr(input$pdbid, 1, 4)
-
+      pdbid <- trim(input$pdbid)
+      rv$pdbid <- substr(pdbid, 1, 4)
+      
+      chains <- get_chainids()
+      rv$chainid <- chains[1]
+      
       if(rv$pdbid == "2LUM") {
         blast <- rv$blast
       }

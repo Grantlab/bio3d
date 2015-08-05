@@ -111,7 +111,13 @@ split_pdbs <- reactive({
         files[ !file.exists(files) ]
         )
       missing <- paste(missing_ids, collapse=", ")
-      stop(paste("PDB file(s) missing:", missing))
+      ##stop(paste("PDB file(s) missing:", missing))
+      warning(paste("PDB file(s) missing:", missing))
+
+      files <- files[ file.exists(files) ]
+
+      if(!length(files) > 0)
+        stop("PDB files not found")
     }
   }
 
@@ -257,7 +263,7 @@ check_aln <- reactive({
   gaps <- gap.inspect(aln$ali)
 
   ## hard-coded limit here -- matches stop.at argument in core.find()
-  if(!length(gaps$f.inds) > 15) {
+  if(!length(gaps$f.inds) > 5) {
     stop("Insufficient non-gap regions in alignment to proceed")
   }
 })
@@ -280,6 +286,14 @@ output$alignment_summary <- renderPrint({
       "  ", dims[2L], " position columns ", "(", dims.nongap[2L], " non-gap, ", dims.gap[2L], " gap) ", "\n", sep = "")
   cat("\n")
 
+
+  wanted <- get_acc()
+  
+  missing <- !wanted %in% aln$lab
+  if(any(missing))
+    cat("Omitted PDBs:", paste(sort(wanted[missing]), collapse=", "))
+        
+  
 })
 
 
@@ -290,7 +304,7 @@ output$missres_summary <- renderPrint({
   ids <- pdbs$lab
   nstructs <- length(ids)
 
-  conn <- inspect.connectivity(pdbs)
+  conn <- inspect.connectivity(pdbs, cut=4.05)
   if(sum(!conn) > 0) {
     inds <- which(!conn)
 
@@ -301,9 +315,9 @@ output$missres_summary <- renderPrint({
   else {
     cat("No PDBs with missing in-structure residues\n")
   }
-  
-  
 })
+
+
 
 
 output$alignment <- renderUI({

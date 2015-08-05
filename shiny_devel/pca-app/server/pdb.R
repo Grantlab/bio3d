@@ -53,8 +53,11 @@ get_pdb <- reactive({
 
   anno <- input_pdb_annotation()
 
-  if(is.vector(input$chainId)) {
-    ind <- which(anno$chainId==input$chainId[1])
+  if(!nrow(anno) > 0)
+    stop("no annotation data found")
+
+  if(is.vector(rv$chainId)) {
+    ind <- which(anno$chainId == rv$chainid)
     anno <- anno[ind,]
   }
   else {
@@ -101,6 +104,10 @@ get_sequence <- reactive({
     else {
       seq <- unlist(strsplit(anno$sequence[1], ""))
     }
+
+    if(!length(seq) > 10)
+      warning(paste("sequence is of length", nchar(seq)))
+    
     seq <- as.fasta(seq)
   }
 

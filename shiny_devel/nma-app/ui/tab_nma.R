@@ -35,7 +35,7 @@ tabPanel("NMA", icon=icon("home"),
         h4("A) PDB Input Selection"),
         tags$hr(),
 
-        helpText("Please enter either a single PDB code of interest, a single protein sequence, or multiple related PDB codes (see the ",
+        helpText("Please enter either a single PDB code of interest (see the ",
                  a(href="http://thegrantlab.org/bio3d", target="_blank", "Help"), " page for more details)."),
         
         ##-PDB input

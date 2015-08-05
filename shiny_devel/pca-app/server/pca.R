@@ -20,7 +20,7 @@ clust <- reactive({
   pc <- pca1()
 
   if(input$cluster_by == "rmsd") {
-    rd <- rmsd(pdbs)
+    rd <- rmsd1()
     hc <- hclust(as.dist(rd))
   }
 

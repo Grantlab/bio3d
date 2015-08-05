@@ -255,11 +255,21 @@ tabPanel("2. ALIGN",
            column(12,
                   
                   h3("Final alignment"),
-                  p("(slow to render for large alignments)"),
-                  uiOutput("alignment"),
-                  tags$head(tags$script(src='tooltip.js')),
-                  tags$head(tags$script(src='popover.js')),
-                  tags$head(tags$script(HTML('$(document).ready(function(){
+                  helpText("Rendering the alignment might be time consuming for large data sets (e.g. > 50 PDB IDs depending on the sequence lengths)."),
+                  
+                  radioButtons("show_alignment", "Show alignment",
+                               c("Show" = "yes",
+                                  "Hide" = "no"),
+                               selected = "no",
+                               inline = TRUE),
+                  
+                  conditionalPanel(
+                    condition = "input.show_alignment == 'yes'",
+                    
+                    uiOutput("alignment"),
+                    tags$head(tags$script(src='tooltip.js')),
+                    tags$head(tags$script(src='popover.js')),
+                    tags$head(tags$script(HTML('$(document).ready(function(){
                       $("body")
                       .popover({html: true,
                       selector: "[data-toggle=\'popover\']",
@@ -271,6 +281,7 @@ tabPanel("2. ALIGN",
                       });
                       });
                       ')))
+                    )
                   )
            )
 

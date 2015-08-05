@@ -192,6 +192,8 @@ make.plot.nma <- function() {
   pdbs <- align()
   modes <- nma2()
 
+  sse <- pdbs2sse(pdbs, ind=1, rm.gaps=TRUE, exefile=configuration$dssp$exefile)
+
   signif <- FALSE
   if(input$cluster) {
     col <- cutree2()
@@ -210,7 +212,7 @@ make.plot.nma <- function() {
     col[!show] <- NA
   }
 
-  plot(modes, pdbs, col=col, signif=signif,
+  plot(modes, pdbs, sse=sse, col=col, signif=signif,
        spread=input$spread, conservation=input$seqide)
 
   #if(input$toggle_rmsf2) {

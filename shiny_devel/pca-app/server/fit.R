@@ -6,6 +6,11 @@ find_core <- reactive({
   pdbs <- align()
   check_aln()
 
+  if(ncol(pdbs$ali) <= 15)
+    stop.at <- ncol(pdbs$ali)-1
+  else
+    stop.at <- 15
+
   progress <- shiny::Progress$new()
   on.exit(progress$close())
 
@@ -13,7 +18,7 @@ find_core <- reactive({
                detail = 'Please wait ...',
                value = 0)
 
-  core <- core.find(pdbs, progress=progress)
+  core <- core.find(pdbs, stop.at=stop.at, progress=progress)
   progress$close()
   return(core)
 })
