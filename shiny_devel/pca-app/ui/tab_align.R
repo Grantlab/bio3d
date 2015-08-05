@@ -132,8 +132,8 @@ tabPanel("2. ALIGN",
                     h4("Sequence alignment analysis"),
 
                     radioButtons("seq_plot", "Alignment overview plot options",
-                                 c("Heatmap" = "heatmap",
-                                   "Dendrogram" = "dendrogram",
+                                 c("Dendrogram" = "dendrogram",
+                                   "Heatmap" = "heatmap",
                                    "Conservation" = "conservation"),
                                  inline=TRUE),
 
@@ -148,9 +148,7 @@ tabPanel("2. ALIGN",
                       ),
                     
 
-                    sliderInput("clusters_seq", "Cluster by pairwise sequence identity",
-                                min = 1, max = 10, value = 2, step=1),
-                    
+                   
                     checkboxInput('show_options0', 'More options', value=FALSE),
                     
                     conditionalPanel(
@@ -213,6 +211,28 @@ tabPanel("2. ALIGN",
          conditionalPanel(
            condition = "input.show_options0 == true",
            fluidRow(
+
+             column(4,
+                    wellPanel(
+                      selectInput("hclustMethod", label="Clustering method", 
+                                  choices=list(
+                                    "single"="single","complete"="complete","average"="average",
+                                    "mcquitty"="mcquitty","median"="median","centroid"="centroid",
+                                    "ward.D"="ward.D","ward.D2"="ward.D2"
+                                    ),selected="single"), 
+                      
+                      numericInput("minDistance","Minimum branching gap", value = 0.1, step = 0.05),
+                      
+                      sliderInput("splitTreeK", "Split tree into K groups",
+                                  min = 0, max = 10, value = 0, step=1),
+
+                      helpText("When slider is set to 0, the number of clusters is automatically calculated")
+                      
+                      #numericInput("splitTreeAt","Or split tree at height",value="",min=0,max=100,step=1),
+                      #numericInput("splitTreeK","Or split tree into K groups (not implimented!)", value="", min=1, max=100, step=1)
+                      )
+                    ),
+             
              column(4,
                     wellPanel(
                     sliderInput("cex0", "Label size",
@@ -221,6 +241,7 @@ tabPanel("2. ALIGN",
                                 min = 3, max = 10, value = 5, step=1)
                     )
                     ),
+             
              column(4,
                     wellPanel(
                     sliderInput("width0", "width (PDF output only)",
@@ -229,6 +250,8 @@ tabPanel("2. ALIGN",
                                 min = 4, max = 12, value = 7, step=0.5)
                     )
                     )
+            
+                      
              # ###
              # ,column(4,
              #        wellPanel(

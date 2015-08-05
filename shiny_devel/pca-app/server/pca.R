@@ -15,36 +15,56 @@ pca1 <- reactive({
   return(pc)
 })
 
-clust <- reactive({
+
+####################################
+####   Clustering functions     ####
+####################################
+
+hclust_pca <- reactive({
   pdbs <- fit()
   pc <- pca1()
 
   if(input$cluster_by == "rmsd") {
-    rd <- rmsd1()
-    hc <- hclust(as.dist(rd))
+    hc <- hclust_rmsd()
   }
 
   if(input$cluster_by == "pc_space") {
-    hc <- hclust(dist(pc$z[,1:as.numeric(input$clust_npcs)]))
+    hc <- hclust(dist(pc$z[,1:as.numeric(input$clust_npcs)]),
+                 method=input$hclustMethod_pca)
   }
 
   if(input$cluster_by == "sequence") {
-    ide <- seqide()
-    hc <- hclust(as.dist(1-ide))
+    hc <- hclust_seqide()
   }
   
   return(hc)
 })
 
-clustgrps <- reactive({
-  hc <- clust()
-  grps <- cutree(hc, k=input$nclust)
-  return(grps)
+
+cutree_pca <- reactive({
+  
+  if(input$cluster_by == "rmsd") {
+    cut <- cutree_rmsd()
+  }
+
+  if(input$cluster_by == "pc_space") {
+    hc <- hclust_pca()
+    cut <- cutreeBio3d(hc, minDistance=input$minDistance_pca,
+                       k=as.numeric(input$splitTreeK_pca))
+  }
+
+  if(input$cluster_by == "sequence") {
+    cut <- cutree_seqide()
+  }
+ 
+  return(cut)
 })
+
+
 
 output$checkboxgroup_label_ids <- renderUI({
   pdbs <- fit()
-  grps <- clustgrps()
+  grps <- cutree_pca()$grps
   ids <- pdbs$lab[order(grps)]
   names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
 
@@ -59,8 +79,8 @@ output$checkboxgroup_label_ids <- renderUI({
     ##})
   }
   else {
-        checkboxGroupInput(inputId="label_ids", label="PDB IDs:",
-                           choices=ids, selected=c(), inline=TRUE)
+    checkboxGroupInput(inputId="label_ids", label="PDB IDs:",
+                       choices=ids, selected=c(), inline=TRUE)
   }
 })
 
@@ -70,10 +90,8 @@ output$checkboxgroup_label_ids <- renderUI({
 output$pca_plot1_conf <- renderPlot({
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
-  
-  col <- 1
-  if(as.numeric(input$nclust) > 1)
-    col <- clustgrps()
+  col <- cutree_pca()$grps
+  k <- length(unique(col))
 
   op <- par(pty="s")
 
@@ -83,11 +101,11 @@ output$pca_plot1_conf <- renderPlot({
   p <- paste0("PC", c(xax, yax),
               " (", round((pc$L[c(xax, yax)]/sum(pc$L)) *
                           100, 2), "%)")
-  if(input$nclust < 9) {
+  if(k < 9) {
     cluster.colors <- col2hex(palette())[col]
   }
   else {
-    cluster.colors <- col2hex(rainbow(input$nclust))[col]
+    cluster.colors <- col2hex(rainbow(k))[col]
   }
 
   xlim <- range(pc$z[, xax]) * as.numeric(input$inner_margin)
@@ -140,10 +158,11 @@ output$pca_plot1_scree <- renderPlot({
 output$scatterplot3d_webgl <- renderWebGL({
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
-  col <- 1
-  if(input$nclust>1)
-    col <- clustgrps()
-
+  ##col <- 1
+  ##if(input$nclust>1)
+  col <- cutree_pca()$grps
+  k <- length(unique(col))
+  
   op <- par(pty="s")
 
   xax <- as.numeric(input$pcx)
@@ -153,11 +172,11 @@ output$scatterplot3d_webgl <- renderWebGL({
   p <- paste0("PC", c(xax, yax, zax),
               " (", round((pc$L[c(xax, yax, zax)]/sum(pc$L)) *
                           100, 2), "%)")
-  if(input$nclust < 9) {
+  if(k < 9) {
     cluster.colors <- col2hex(palette())[col]
   }
   else {
-    cluster.colors <- col2hex(rainbow(input$nclust))[col]
+    cluster.colors <- col2hex(rainbow(k))[col]
   }
 
   points3d(pc$z[, xax], pc$z[, yax], pc$z[, zax], col=cluster.colors, size=5)
@@ -169,24 +188,25 @@ output$scatterplot3d_rthreejs <- renderScatterplotThree({
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
 
-  col <- 1
-  if(input$nclust>1)
-    col <- clustgrps()
-
+  #col <- 1
+  #if(input$nclust>1)
+  col <- cutree_pca()$grps
+  k <- length(unique(col))
+  
   op <- par(pty="s")
 
   xax <- as.numeric(input$pcx)
   yax <- as.numeric(input$pcy)
   zax <- as.numeric(input$pcz)
-
+  
   p <- paste0("PC", c(xax, yax, zax),
               " (", round((pc$L[c(xax, yax, zax)]/sum(pc$L)) *
                           100, 2), "%)")
-  if(input$nclust < 9) {
+  if(k < 9) {
     cluster.colors <- col2hex(palette())[col]
   }
   else {
-    cluster.colors <- col2hex(rainbow(input$nclust))[col]
+    cluster.colors <- col2hex(rainbow(k))[col]
   }
 
   labs <- pdbs$lab
@@ -208,10 +228,12 @@ output$pca_plot2_conf <- renderChart2({
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
 
-  col <- 1
-  if(input$nclust>1)
-    col <- clustgrps()
-
+  #col <- 1
+  #if(input$nclust>1)
+  ##  col <- clustgrps()
+  col <- cutree_pca()$grps
+  k <- length(unique(col))
+  
   xax <- as.numeric(input$pcx)
   yax <- as.numeric(input$pcy)
 
@@ -224,10 +246,10 @@ output$pca_plot2_conf <- renderChart2({
   colnames(x)[c(xax,yax,dim(pc$z)[2]+1, dim(pc$z)[2]+2)] <- c(p,"id","cluster")
 
   ## use rainbow palette for more than 8 clusters
-  if(as.numeric(input$nclust) < 9) {
-      cluster.colors <- col2hex(palette())
+  if(as.numeric(k) < 9) {
+    cluster.colors <- col2hex(palette())
   } else {
-      cluster.colors <- col2hex(rainbow(input$nclust))
+    cluster.colors <- col2hex(rainbow(k))
   }
 
   ## use dPlot() to generate the interactive plot
@@ -242,7 +264,7 @@ output$pca_plot2_conf <- renderChart2({
   )
 
   p1$colorAxis(type = "addColorAxis", colorSeries = "cluster",
-               palette = if(input$nclust==1) rep('black',3) else cluster.colors[1:input$nclust] )
+               palette = if(k==1) rep('black',3) else cluster.colors[1:k] )
   p1$xAxis(type = "addMeasureAxis")
   return(p1)
 })
@@ -400,16 +422,17 @@ observeEvent(input$viewUpdate, {
 
 get_pdbstable <- reactive({
   pdbs <- fit()
-  grps <- clustgrps()
+  grps <- cutree_pca()$grps
+  k <- length(unique(grps))
   anno <- get_annotation(pdbs$lab)
 
   pdbId <- paste0("<a href=\"", "http://pdb.org/pdb/explore/explore.do?structureId=", substr(anno$acc, 1, 4), "\" target=\"_blank\">", anno$acc, "</a>")
   anno <- cbind(anno, pdbId)
   anno <- cbind(anno, id=1:nrow(anno))
-  if(input$nclust < 9) {
+  if(k < 9) {
       cluster.colors <- col2hex(palette())
   } else {
-      cluster.colors <- col2hex(rainbow(input$nclust))
+    cluster.colors <- col2hex(rainbow(k))
   }
   anno$cluster <- paste0("<span style=\"color:",
     cluster.colors[grps], "; font-size:large\">&#x25CF;</span>&nbsp;",

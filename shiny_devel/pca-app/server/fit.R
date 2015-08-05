@@ -66,22 +66,44 @@ rmsd1 <- reactive({
   return(rd)
 })
 
-hclust1 <- reactive({
+
+####################################
+####   Clustering functions     ####
+####################################
+
+hclust_rmsd <- reactive({
+  pdbs <- fit()
   rd <- rmsd1()
-  hc <- hclust(as.dist(rd))
+  d <- as.dist(rd)
+  h <- hclust(d, method=input$hclustMethod_rmsd)
+  
+  h$labels <- pdbs$lab
+  return(h)
 })
 
-cutree1 <- reactive({
-  hc <- hclust1()
-  grps <- cutree(hc, k=input$clusters)
+cutree_rmsd <- reactive({
+  hc <- hclust_rmsd()
+  cut <- cutreeBio3d(hc, minDistance=input$minDistance_rmsd,
+                 k=as.numeric(input$splitTreeK_rmsd))
+  return(cut)
 })
+
+#hclust1 <- reactive({
+#  rd <- rmsd1()
+#  hc <- hclust(as.dist(rd))
+#})
+
+#cutree1 <- reactive({
+#  hc <- hclust1()
+#  grps <- cutree(hc, k=input$clusters)
+#})
 
 
 representatives <- reactive({
   pdbs <- fit()
   rd <- rmsd1()
-  hc <- hclust1()
-  grps <- cutree1()
+  hc <- hclust_rmsd()
+  grps <- cutree_rmsd()$grps
 
   unq <- unique(grps)
   all.inds <- seq(1, length(grps))
@@ -131,27 +153,30 @@ make.plot.heatmap <- function() {
   rd <- rmsd1()
   rownames(rd) <- pdbs$lab
   colnames(rd) <- pdbs$lab
-  hc <- hclust(as.dist(rd))
-  grps1 <- cutree(hc, k=input$clusters)
+
+  hc <- hclust_rmsd()
+  cut <- cutree_rmsd()
+
+  grps1 <- cut$grps
   grps2 <- grps1
 
   ## cluster by seq ide
   if(input$rowcol_seqide) {
-    ide <- seqide()
-    rownames(ide) <- pdbs$lab
-    colnames(ide) <- pdbs$lab
-    hc2 <- hclust(as.dist(1-ide))
-    grps2 <- cutree(hc2, k=input$clusters)
+    grps2 <- cutree_seqide()$grps
   }
 
   ## plot it
   mar <- as.numeric(c(input$margins, input$margins))
-  plot1 <- heatmap(rd, distfun=as.dist, symm=TRUE,
-          ColSideColors=as.character(grps1),
-          RowSideColors=as.character(grps2),
-          cexRow=input$cex, cexCol=input$cex,
-          margins=mar
-          )
+  plot1 <- heatmap(rd,
+                   hclustfun = function(x) {
+                     hclust(x, method=input$hclustMethod)
+                   }, 
+                   distfun=as.dist, symm=TRUE,
+                   ColSideColors=as.character(grps1),
+                   RowSideColors=as.character(grps2),
+                   cexRow=input$cex, cexCol=input$cex,
+                   margins=mar
+                   )
   return(plot1)
 }
 
@@ -176,12 +201,25 @@ output$rmsd_hist <- renderPlot({
 make.plot.rmsd.dendogram <- function() {
   pdbs <- fit()
   rd <- rmsd1()
-  hc <- hclust(as.dist(rd))
+
   mar <- c(input$margins, 5, 3, 1)
-  plot3 <- hclustplot(hc, k=input$clusters, labels=pdbs$lab, cex=input$cex,
-             ylab="RMSD (Å)", main="RMSD Cluster Dendrogram", fillbox=FALSE,
-             mar = mar)
-  return(plot3)
+  hc <- hclust_rmsd()
+  cut <- cutree_rmsd()
+  
+  if(vec_is_sorted(hc$height)) {
+    max_branch_gap <- max(diff(hc$height))
+    k <- length(unique(cut$grps))
+    
+    hclustplot(hc, k=k, labels=pdbs$lab, cex=input$cex,
+               ylab="RMSD (Å)", main="RMSD Cluster Dendrogram", fillbox=FALSE,
+               mar = mar)
+    
+    if(max_branch_gap >= input$minDistance_rmsd && as.numeric(input$splitTreeK_rmsd) == 0) {
+      abline(h = cut$split_height, col="red", lty=2)
+    }
+  } else {
+    plot(hc, main="", xlab="", sub="")
+  }
 }
 
 output$rmsd_dendrogram <- renderPlot({
@@ -276,8 +314,9 @@ output$reference_selector <- renderUI({
 output$rmsd_table <- DT::renderDataTable({
   pdbs <- fit()
   rd <- rmsd1()
-  hc <- hclust1()
-  grps <- cutree1()
+  
+  hc <- hclust_rmsd()
+  grps <- cutree_rmsd()$grps
 
   if(!is.null(input$reference_id))
     ind <- grep(input$reference_id, pdbs$lab)
@@ -349,7 +388,7 @@ output$pdbsWebGL  <- renderWebGL({
   
   xyz <- pdbs$xyz
   n <- nrow(xyz)
-  grps <- cutree1()[inds]
+  grps <- cutree_rmsd()$grps[inds]
   core <- find_core()
   dims <- dim(pdbs$ali)
   gaps <- gap.inspect(pdbs$ali)
@@ -504,7 +543,7 @@ make_pdbs_pse <- reactive({
   }
   
   col <- switch(input$viewColor1,
-                "cluster" = cutree1(),
+                "cluster" = cutree_rmsd()$grps,
                 "struct" = NULL,
                 "core" = core,
                 "gaps" = "gaps")

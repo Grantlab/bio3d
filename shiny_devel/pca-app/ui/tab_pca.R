@@ -112,10 +112,7 @@ tabPanel(
                       min = 1, max = 10, value = 2)
           ),
 
-        sliderInput("nclust", "Clusters",
-          min = 1, max = 10, value = 3),
-
-        radioButtons("plot_type", "",
+        radioButtons("plot_type", "Plot type",
                      c("2D scatter" = "normal",
                        "3D scatter" = "3dscatter1",
                        "Interactive" = "fancy"
@@ -189,6 +186,27 @@ tabPanel(
   ##- Additional plotting options for conformer plot
   fluidRow(
     conditionalPanel(
+      condition = "input.show_options1 == true",
+      column(3,
+             wellPanel(
+               selectInput("hclustMethod_pca", label="Clustering method", 
+                           choices=list(
+                             "single"="single","complete"="complete","average"="average",
+                             "mcquitty"="mcquitty","median"="median","centroid"="centroid",
+                             "ward.D"="ward.D","ward.D2"="ward.D2"
+                             ),selected="single"), 
+               
+               numericInput("minDistance_pca","Minimum branching gap", value = 0.5, step = 0.5),
+               
+               sliderInput("splitTreeK_pca", "Split tree into K groups",
+                           min = 0, max = 10, value = 0, step=1),
+               
+               helpText("When slider is set to 0, the number of clusters is automatically calculated")
+               )
+             )
+      ),
+    
+    conditionalPanel(
     condition = "input.show_options1 == true && input.plot_type == 'normal'",
       column(3,
              wellPanel(
@@ -216,7 +234,7 @@ tabPanel(
                )
              ),
 
-      column(6,
+      column(3,
              wellPanel(
                conditionalPanel(
                  condition = "input.labelplot == true",

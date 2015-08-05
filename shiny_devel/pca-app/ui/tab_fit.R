@@ -103,14 +103,14 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     h4("Initial structure analysis"),
 
                     radioButtons("str_plot", "Plot options",
-                                 c("RMSD Heatmap" = "heatmap",
-                                   "RMSD Dendrogram" = "dendrogram",
+                                 c("RMSD Dendrogram" = "dendrogram",
+                                   "RMSD Heatmap" = "heatmap",
                                    "RMSD Histogram" = "hist",
                                    "RMSF" = "rmsf"),
                                  inline=FALSE),
 
-                    sliderInput("clusters", "Cluster by pairwise RMSD",
-                                min = 1, max = 10, value = 3, step=1),
+                    #sliderInput("clusters", "Cluster by pairwise RMSD",
+                    #            min = 1, max = 10, value = 3, step=1),
 
                     conditionalPanel(
                       condition = "input.str_plot == 'heatmap'",
@@ -171,6 +171,24 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
          conditionalPanel(
            condition = "input.show_options == true",
            fluidRow(
+             column(4,
+                    wellPanel(
+                      selectInput("hclustMethod_rmsd", label="Clustering method", 
+                                  choices=list(
+                                    "single"="single","complete"="complete","average"="average",
+                                    "mcquitty"="mcquitty","median"="median","centroid"="centroid",
+                                    "ward.D"="ward.D","ward.D2"="ward.D2"
+                                    ),selected="single"), 
+                      
+                      numericInput("minDistance_rmsd","Minimum branching gap", value = 0.1, step = 0.2),
+                      
+                      sliderInput("splitTreeK_rmsd", "Split tree into K groups",
+                                  min = 0, max = 10, value = 0, step=1),
+                      
+                      helpText("When slider is set to 0, the number of clusters is automatically calculated")
+                      )
+                    ),
+               
              column(4,
                     wellPanel(
                     sliderInput("cex", "Label size",

@@ -23,6 +23,9 @@ library(threejs)
 library(abind)
 library(shinyBS)
 
+##library(dendextend)
+##library(dynamicTreeCut)
+
 if(configuration$db$use)
   library(RMySQL)
 

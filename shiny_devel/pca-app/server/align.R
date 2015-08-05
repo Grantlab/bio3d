@@ -92,6 +92,8 @@ get_acc <- reactive({
 
 ## returns the filenames of splitted PDBs
 split_pdbs <- reactive({
+  message("split__pdbs called")
+  
   ids <- get_acc()
   unq <- unique(substr(ids, 1,4))
 
@@ -153,10 +155,15 @@ split_pdbs <- reactive({
       files <- tryfiles
     }
     else {
+      message("before pdbspit")
       files <- pdbsplit(pdb.files=raw.files, ids=ids, overwrite=FALSE,
                         path=configuration$pdbdir$splitfiles,
                         progress=progress)
+      message(paste(files, sep="\n"))
     }
+
+    message("done splitting")
+    
     gc()
     progress$close()
   }
@@ -478,6 +485,29 @@ output$alignment <- renderUI({
 }
 
 
+####################################
+####   Clustering functions     ####
+####################################
+
+hclust_seqide <- reactive({
+  pdbs <- align()
+  ide <- seqide()
+  rownames(ide) <- pdbs$lab
+  colnames(ide) <- pdbs$lab
+  
+  d <- as.dist(1-ide)
+  h <- hclust(d, method=input$hclustMethod)
+  
+  h$labels <- pdbs$lab
+  return(h)
+})
+
+cutree_seqide <- reactive({
+  hc <- hclust_seqide()
+  cut <- cutreeBio3d(hc, minDistance=input$minDistance,
+                 k=as.numeric(input$splitTreeK))
+  return(cut)
+})
 
 ####################################
 ####     Plotting functions     ####
@@ -489,10 +519,15 @@ make.plot.seqide.heatmap <- function() {
   rownames(ide) <- pdbs$lab
   colnames(ide) <- pdbs$lab
   
-  hc <- hclust(as.dist(1-ide))
-  grps <- cutree(hc, k=input$clusters_seq)
+  hc <- hclust_seqide()
+  grps <- cutree_seqide()$grps
+  
   mar <- as.numeric(c(input$margins0, input$margins0))
-  plot1 <- heatmap(1-ide, distfun=as.dist, symm=TRUE,
+  plot1 <- heatmap(1-ide,
+                   hclustfun = function(x) {
+                     hclust(x, method=input$hclustMethod)
+                   }, 
+                   distfun=as.dist, symm=TRUE,
           ColSideColors=as.character(grps),
           RowSideColors=as.character(grps),
           cexRow=input$cex0, cexCol=input$cex0,
@@ -508,14 +543,25 @@ output$seqide_heatmap <- renderPlot({
 make.plot.seqide.dendrogram <- function() {
   pdbs <- align()
   ide <- seqide()
-  
-  hc <- hclust(as.dist(1-ide))
+
   mar <- c(input$margins0, 5, 3, 1)
+  hc <- hclust_seqide()
+  cut <- cutree_seqide()
+  
+  if(vec_is_sorted(hc$height)) {
+    max_branch_gap <- max(diff(hc$height))
+    k <- length(unique(cut$grps))
     
-  plot3 <- hclustplot(hc, k=input$clusters_seq, labels=pdbs$lab, cex=input$cex0,
-                      ylab="Identity distance", main="Sequence identity clustering",
-                      fillbox=FALSE, mar = mar)
-  return(plot3)
+    hclustplot(hc, k=k, labels=pdbs$lab, cex=input$cex0,
+               ylab="Identity distance", main="Sequence identity clustering",
+               fillbox=FALSE, mar = mar)
+    
+    if(max_branch_gap >= input$minDistance && as.numeric(input$splitTreeK) == 0) {
+      abline(h = cut$split_height, col="red", lty=2)
+    }
+  } else {
+    plot(hc, main="", xlab="", sub="")
+  }
 }
 
 output$seqide_dendrogram <- renderPlot({

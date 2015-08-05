@@ -287,3 +287,31 @@ mk.pfam.tbl <- function(aa1) {
 }
 
 
+vec_is_sorted <- function(v) {
+  return(sum(sort(v) == v) == length(v))
+}
+
+split_height <- function(hc) {
+  i <- which.max(diff(hc$height))
+  split_height <- (hc$height[i] * 0.7 + hc$height[i+1] * 0.3)
+  return(split_height)
+}
+
+cutreeBio3d <- function(hc, minDistance=0.1, k=0) {
+  sh <- split_height(hc)
+  
+  if(vec_is_sorted(hc$height) && max(diff(hc$height)) >= minDistance) {
+    c <- stats::cutree(hc, h=sh)
+  }
+  else {
+    c <- rep(1, length(hc$order))
+  }
+  
+  if(k > 0) {
+    c <- stats::cutree(hc, k=k)
+    sh <- NULL
+  }
+  
+  return(list(grps=c, split_height=sh))
+}
+
