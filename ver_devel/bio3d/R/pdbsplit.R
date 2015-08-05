@@ -116,18 +116,23 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
               new.name <- file.path(path, new.name)
               
               xyz <- pdb$xyz[k, sel$xyz]
-              write.pdb(new.pdb, file = new.name, xyz=xyz, sse=TRUE)
-              out <- c(out, new.name)
+
+              if(length(new.pdb$xyz) > 0) {
+                write.pdb(new.pdb, file = new.name, xyz=xyz, sse=TRUE)
+                out <- c(out, new.name)
+              }
             }
           }
           else {
             new.name <- paste0(basename.pdb(pdb.files[i], mk4=mk4), "_", chains[j], ".pdb") 
             new.name <- file.path(path, new.name)
 
-            if(!file.exists(new.name) || overwrite)
-              write.pdb(new.pdb, file = new.name, sse=TRUE)
-
-            out <- c(out, new.name)
+            if(length(new.pdb$xyz) > 0) {
+              if(!file.exists(new.name) | overwrite )
+                write.pdb(new.pdb, file = new.name, sse=TRUE)
+              
+              out <- c(out, new.name)
+            }
           }
         ##}
       }
