@@ -137,6 +137,12 @@ tabPanel("2. ALIGN",
                                    "Conservation" = "conservation"),
                                  inline=TRUE),
 
+                    ## K-selecter
+                    uiOutput("kslider"),
+                    actionButton("setk", "Set number of clusters",
+                                 icon=icon("cogs")),
+
+
                     conditionalPanel(
                       condition = "input.seq_plot == 'conservation'",
                       radioButtons("conserv_method", "Method",
@@ -151,26 +157,23 @@ tabPanel("2. ALIGN",
                    
                     checkboxInput('show_options0', 'More options', value=FALSE),
                     
-                    conditionalPanel(
-                      condition = "input.seq_plot == 'heatmap'",
-                      downloadButton('seqide_heatmap2pdf', "Download Figure (PDF)")
-                      ),
+                    #conditionalPanel(
+                    #  condition = "input.seq_plot == 'heatmap'",
+                    #  downloadButton('seqide_heatmap2pdf', "Download Figure (PDF)")
+                     # ),
 
-                    conditionalPanel(
-                      condition = "input.seq_plot == 'dendrogram'",
-                      downloadButton('seqide_dendrogram2pdf', "Download Figure (PDF)")
-                      ),
+                    #conditionalPanel(
+                    #  condition = "input.seq_plot == 'dendrogram'",
+                    #  downloadButton('seqide_dendrogram2pdf', "Download Figure (PDF)")
+                    #  ),
 
-                    conditionalPanel(
-                      condition = "input.seq_plot == 'conservation'",
-                      downloadButton('conservation2pdf', "Download Figure (PDF)")
-                      ),
+                    #conditionalPanel(
+                    #  condition = "input.seq_plot == 'conservation'",
+                    #  downloadButton('conservation2pdf', "Download Figure (PDF)")
+                    #  ),
                     
-                    downloadButton('seqideZIP', "Sequence identity matrix"),
+                    #downloadButton('seqideZIP', "Sequence identity matrix"),
 
-
-                    br(), 
-                    br(), 
                     actionButton3("next-btn-align2", "Next (Alignment)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
         
                     tags$script(HTML(
@@ -212,7 +215,7 @@ tabPanel("2. ALIGN",
            condition = "input.show_options0 == true",
            fluidRow(
 
-             column(4,
+             column(3,
                     wellPanel(
                       selectInput("hclustMethod", label="Clustering method", 
                                   choices=list(
@@ -221,19 +224,14 @@ tabPanel("2. ALIGN",
                                     "ward.D"="ward.D","ward.D2"="ward.D2"
                                     ),selected="single"), 
                       
-                      numericInput("minDistance","Minimum branching gap", value = 0.1, step = 0.05),
-                      
-                      sliderInput("splitTreeK", "Split tree into K groups",
-                                  min = 0, max = 10, value = 0, step=1),
-
-                      helpText("When slider is set to 0, the number of clusters is automatically calculated")
+                      numericInput("minDistance","Minimum branching gap", value = 0.1, step = 0.05)
                       
                       #numericInput("splitTreeAt","Or split tree at height",value="",min=0,max=100,step=1),
                       #numericInput("splitTreeK","Or split tree into K groups (not implimented!)", value="", min=1, max=100, step=1)
                       )
                     ),
              
-             column(4,
+             column(3,
                     wellPanel(
                     sliderInput("cex0", "Label size",
                                 min = 0.1, max = 3, value = 1, step=0.1),
@@ -242,27 +240,29 @@ tabPanel("2. ALIGN",
                     )
                     ),
              
-             column(4,
+             column(3,
                     wellPanel(
                     sliderInput("width0", "width (PDF output only)",
                                 min = 4, max = 12, value = 7, step=0.5),
                     sliderInput("height0", "height (PDF output only)",
                                 min = 4, max = 12, value = 7, step=0.5)
                     )
-                    )
+                    ),
             
                       
-             # ###
-             # ,column(4,
-             #        wellPanel(
-				 #			 h4("Download options"),
-             #        downloadButton('seqide_heatmap2pdf', "Download Figure (PDF)"),
-             #        downloadButton('seqide_dendrogram2pdf', "Download Figure (PDF)"),
-             #        downloadButton('conservation2pdf', "Download Figure (PDF)"),
-             #        downloadButton('seqideZIP', "Sequence identity matrix")
+                                        # ###
+             column(3,
+                    wellPanel(
+                      
+                      h4("Download PDF Figures"),
+                      downloadButton('seqide_dendrogram2pdf', "Dendrogram (PDF)"),
+                      downloadButton('seqide_heatmap2pdf', "Heatmap (PDF)"),
+                      
+                      downloadButton('conservation2pdf', "Conservation (PDF)"),
+                      downloadButton('seqideZIP', "Sequence identity matrix")
 
-             #        )
-             #        )
+                      )
+                    )
 
              ###
              )

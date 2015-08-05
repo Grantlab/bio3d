@@ -155,15 +155,10 @@ split_pdbs <- reactive({
       files <- tryfiles
     }
     else {
-      message("before pdbspit")
       files <- pdbsplit(pdb.files=raw.files, ids=ids, overwrite=FALSE,
                         path=configuration$pdbdir$splitfiles,
                         progress=progress)
-      message(paste(files, sep="\n"))
     }
-
-    message("done splitting")
-    
     gc()
     progress$close()
   }
@@ -504,10 +499,32 @@ hclust_seqide <- reactive({
 
 cutree_seqide <- reactive({
   hc <- hclust_seqide()
-  cut <- cutreeBio3d(hc, minDistance=input$minDistance,
-                 k=as.numeric(input$splitTreeK))
+
+  if(is.null(input$splitTreeK))
+    k <- 0
+  else
+    k <- as.numeric(input$splitTreeK)
+  
+  cut <- cutreeBio3d(hc, minDistance=input$minDistance, k=k)
   return(cut)
 })
+
+observeEvent(input$setk, {
+  hc <- hclust_seqide()
+  cut <- cutreeBio3d(hc, minDistance=input$minDistance, k=0)
+  k <- length(unique(cut$grps))
+  updateSliderInput(session, "splitTreeK", value = k)
+})
+
+
+output$kslider <- renderUI({
+  cut <- cutree_seqide()
+  k <- length(unique(cut$grps))
+  
+  sliderInput("splitTreeK", "Split tree into K groups",
+              min = 1, max = 10, value = k, step=1)
+})
+                    
 
 ####################################
 ####     Plotting functions     ####
