@@ -181,7 +181,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                                   multiple = FALSE),
 
                       selectInput("view_inpdb_col", "Color options:",
-                                   c("Secondary structure elements" = "sse",
+                                   c("Secondary structure" = "sse",
                                      "Residue Index" = "index"),
                                   multiple=FALSE)
 

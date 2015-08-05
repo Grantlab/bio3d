@@ -258,7 +258,7 @@ check_aln <- reactive({
 
   ## hard-coded limit here -- matches stop.at argument in core.find()
   if(!length(gaps$f.inds) > 15) {
-    stop("Insufficent non-gap regions in alignment to proceed")
+    stop("Insufficient non-gap regions in alignment to proceed")
   }
 })
 
@@ -499,7 +499,7 @@ make.plot.seqide.dendrogram <- function() {
   mar <- c(input$margins0, 5, 3, 1)
     
   plot3 <- hclustplot(hc, k=input$clusters_seq, labels=pdbs$lab, cex=input$cex0,
-                      ylab="Identity distance", main="Sequence identity",
+                      ylab="Identity distance", main="Sequence identity clustering",
                       fillbox=FALSE, mar = mar)
   return(plot3)
 }
@@ -517,7 +517,7 @@ make.plot.conservation <- function() {
 
   ##mar <- as.numeric(c(input$margins0, input$margins0))
   p1 <- plot.bio3d(x, sse = sse,
-                   ylab=ylab, xlab="Alignment Index",
+                   ylab=ylab, xlab="Alignment Position",
                    cex=input$cex0)
   
   return(p1)
