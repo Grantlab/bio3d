@@ -416,7 +416,8 @@ output$pdbsWebGL  <- renderWebGL({
   }
 
   col <- switch(input$viewColor1,
-                'struct' = vec2color(1:n),
+                'index' = 'index',
+                'struct' = 'frame',
                 'cluster' = grps,
                 'core' = corecol(),
                 'gaps' = gapscol()
@@ -427,7 +428,7 @@ output$pdbsWebGL  <- renderWebGL({
     col[ col==1 ] <- "grey90"
   }
   
-  view.xyz(xyz, bg.col=bg, col=col)
+  view.xyz(xyz, bg.col=bg, col=col, maxframes=500)
 })
 
 observeEvent(input$viewUpdate1, {

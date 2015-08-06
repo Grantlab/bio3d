@@ -23,7 +23,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                   wellPanel(
                     bsPopover("popfit2",
                               "Viewing options",
-                              "Visualize the superimposed PDB structures by toggeling the <b>Show PDBs</b> checkbox. The <i>Download</i> buttons allow visualizing the structures in an external program such as PyMOL or VMD. <br><br>Coloring options include <b>Cluster ID</b>: colors the structures according to their cluster membership; <b>Invariant core</b>: by the region with low structural variation within the ensemble; and <b>Gap regions</b>: residues belonging to columns in the alignment (see ALIGN tab) which contain one or more gaps. ",
+                              "Visualize the superimposed PDB structures by toggling the <b>Show PDBs</b> checkbox. The <i>Download</i> buttons allow visualizing the structures in an external program such as PyMOL or VMD. <br><br>Coloring options include <b>Cluster ID</b>: colors the structures according to their cluster membership; <b>Invariant core</b>: by the region with low structural variation within the ensemble; and <b>Gap regions</b>: residues belonging to columns in the alignment (see ALIGN tab) which contain one or more gaps. ",
                               placement = "right", trigger = "hover",
                               options = list(container = "body")),
                     
@@ -31,21 +31,22 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                              style = "position: absolute; right: 25px; top: 5px;"
                              ),
                     
-                    h4('PDBs Viewing Options'),
+                    h4('Superposed PDB Viewing Options'),
                     checkboxInput('show_pdbs', 'Show PDBs', value=FALSE),
 
                     radioButtons("fit_type", "Superimpose to",
                                  c("Invariant core" = "core",
-                                   "All c-alpha atoms" = "full"),
+                                   "All C-alpha atoms" = "full"),
                                  inline=TRUE),
 
 
                     radioButtons('viewColor1', label='Structure color',
                                  choices=list(
-                                   'By cluster ID'='cluster',
-                                   'By structure ID'='struct',
-                                   'Invariant core'='core',
-                                   'Gap regions'='gaps'
+                                   'By index    (aligned position)' = 'index',
+                                   'By cluster   (RMSD cluster ID)'='cluster',
+                                   'By structure  (different PDBs)'='struct',
+                                   'By core     (invariant region)'='core',
+                                   'Gap regions (missing residues)'='gaps'
                                    ),
                                  selected='cluster'),
 
