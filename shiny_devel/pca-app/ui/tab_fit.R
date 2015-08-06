@@ -40,27 +40,42 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                                  inline=TRUE),
 
 
-                    radioButtons('viewColor1', label='Structure color',
-                                 choices=list(
-                                   'By index    (aligned position)' = 'index',
-                                   'By cluster   (RMSD cluster ID)'='cluster',
-                                   'By structure  (different PDBs)'='struct',
-                                   'By core     (invariant region)'='core',
-                                   'Gap regions (missing residues)'='gaps'
-                                   ),
-                                 selected='cluster'),
+                    # radioButtons('viewColor1', label='Structure color',
+                    #              choices=list(
+                    #                'By index    (aligned position)' = 'index',
+                    #                'By cluster   (RMSD cluster ID)'='cluster',
+                    #                'By structure  (different PDBs)'='struct',
+                    #                'By core     (invariant region)'='core',
+                    #                'Gap regions (missing residues)'='gaps'
+                    #                ),
+                    #              selected='cluster'),
 
-                    radioButtons('viewBGcolor1', label='Background color',
-                                 choices=list('Black'='black', 'White'='white'),
-                                 selected='white'),
+                    selectInput("viewColor1", "Color options:",
+                                 c("Residue Index" = "index",
+                                   "RMSD Cluster" = "cluster",
+                                   "PDB Structure" = "frame",
+                                   "Invariant Core" = "core",
+                                   "RMSF/Variability" = "rmsf",
+                                   "Gap/Aligned Regions" = "gaps",
+                                   "Secondary Structure" = "sse"),
+                                  multiple=FALSE),
 
-                    checkboxInput('show_options_idsel', 'Filter PDBs', value=FALSE),
+
+                    # radioButtons('viewBGcolor1', label='Background color',
+                    #              choices=list('Black'='black', 'White'='white'),
+                    #              selected='white'),
+
+                    selectInput("viewBGcolor1", "Background color:",
+                                 c('White'='white', 'Black'='black'),
+                                  multiple=FALSE),
+
+                    checkboxInput('show_options_idsel', 'Filter/toggle displayed PDBs', value=FALSE),
                     ##br(),
                     ##actionButton('viewUpdate1', label='Refresh', icon=icon('undo')),
                     ##br(),
                     ##downloadButton('pdbsRData', "Download PDBs RData"),
                     downloadButton('pdbsZIP', "Download Aligned PDBs"),
-                    downloadButton('pdbs2pymol', "Download PyMOL session file")
+                    downloadButton('pdbs2pymol', "PyMOL Session File")
                     )
                   ),
 
@@ -107,12 +122,12 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                                  c("RMSD Dendrogram" = "dendrogram",
                                    "RMSD Heatmap" = "heatmap",
                                    "RMSD Histogram" = "hist",
-                                   "RMSF" = "rmsf"),
+                                   "RMSF Profile" = "rmsf"),
                                  inline=FALSE),
 
                     ## K-selecter
                     uiOutput("kslider_rmsd"),
-                    actionButton("setk_rmsd", "Auto set number of K groups",
+                    actionButton("setk_rmsd", "Auto-set number of K groups",
                                  icon=icon("cogs")),
                     
 

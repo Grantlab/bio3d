@@ -383,7 +383,9 @@ output$pdbs_table1 <- renderDataTable({
 })
 
 
-
+##
+##-- PDBs Viewing Tab
+##
 output$pdbsWebGL  <- renderWebGL({
   pdbs <- fit()
   
@@ -395,8 +397,8 @@ output$pdbsWebGL  <- renderWebGL({
     inds <- 1:length(pdbs$id)
   }
   
-  xyz <- pdbs$xyz
-  n <- nrow(xyz)
+
+  n <- nrow(pdbs$xyz)
   grps <- cutree_rmsd()$grps[inds]
   core <- find_core()
   dims <- dim(pdbs$ali)
@@ -415,12 +417,19 @@ output$pdbsWebGL  <- renderWebGL({
     return(col)
   }
 
+  rmsfcol <- function() {
+    col <- vec2color(rmsf(pdbs$xyz))
+    return(col)
+  }
+
   col <- switch(input$viewColor1,
                 'index' = 'index',
-                'struct' = 'frame',
+                'frame' = 'frame',
+                'sse'   = 'sse',
                 'cluster' = grps,
-                'core' = corecol(),
-                'gaps' = gapscol()
+                'core'  = corecol(),
+                'gaps'  = gapscol(),
+                'rmsf'  = rmsfcol()
                 )
 
   bg <- input$viewBGcolor1
@@ -428,23 +437,23 @@ output$pdbsWebGL  <- renderWebGL({
     col[ col==1 ] <- "grey90"
   }
   
-  view.xyz(xyz, bg.col=bg, col=col, maxframes=500)
+  view(pdbs, bg.col=bg, col=col, maxframes=500, sheet="blue")
 })
 
-observeEvent(input$viewUpdate1, {
-  updateRadioButtons(session, 'viewColor1', label='Structure color',
-                     choices=list(
-                       'By cluster ID'='cluster',
-                       'By structure ID'='struct',
-                       'Invariant core'='core',
-                       'Gap regions'='gaps'
-                       ),
-                     selected='cluster')
+# observeEvent(input$viewUpdate1, {
+#   updateRadioButtons(session, 'viewColor1', label='Structure color',
+#                      choices=list(
+#                        'By cluster ID'='cluster',
+#                        'By structure ID'='struct',
+#                        'Invariant core'='core',
+#                        'Gap regions'='gaps'
+#                        ),
+#                      selected='cluster')
 
-  updateRadioButtons(session, 'viewBGcolor1', label='Background color',
-                     choices=list('Black'='black', 'White'='white'),
-                     selected='white')
-})
+#   updateRadioButtons(session, 'viewBGcolor1', label='Background color',
+#                      choices=list('Black'='black', 'White'='white'),
+#                      selected='white')
+# })
 
 
 
