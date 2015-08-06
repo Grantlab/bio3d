@@ -178,9 +178,9 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     ),
              column(3,
                     wellPanel(
-                    sliderInput("width", "width (PDF only)",
+                    sliderInput("width", "Figure width (PDF only)",
                                 min = 4, max = 12, value = 7, step=0.5),
-                    sliderInput("height", "height (PDF only)",
+                    sliderInput("height", "Figure height (PDF only)",
                                 min = 4, max = 12, value = 7, step=0.5)
                     )
                     ),

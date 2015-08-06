@@ -242,9 +242,9 @@ tabPanel("2. ALIGN",
              
              column(3,
                     wellPanel(
-                    sliderInput("width0", "width (PDF output only)",
+                    sliderInput("width0", "Figure width (PDF output only)",
                                 min = 4, max = 12, value = 7, step=0.5),
-                    sliderInput("height0", "height (PDF output only)",
+                    sliderInput("height0", "Figure height (PDF output only)",
                                 min = 4, max = 12, value = 7, step=0.5)
                     )
                     ),
