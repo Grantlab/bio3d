@@ -25,26 +25,34 @@ tabPanel(
   
   
 ### Filter structures
-#  fluidRow(
-#    column(4,
-#           wellPanel(
-#             h4("Filter structures"),
-#             
-#             numericInput("filter_rmsd","RMSD Cutoff", value = 1.0, step = 0.25),
-#             
-#             actionButton("run_nma", "Run Ensemble NMA", icon=icon("gears"),
-#                          style = "display: block; margin-left: auto; margin-right: auto;", 
-#                          class = "btn btn-success")
-#             )
-#           ),
+  fluidRow(
+    column(4,
+           wellPanel(
+             h4("Filter structures"),
+             helpText("Filter similar structures (by RMSD) to reduce the computational load for NMA. PDB IDs colored red in the dendrogram will be omitted from the calculation."), 
+             
+             ##numericInput("filter_rmsd","RMSD Cutoff", value = 1.0, step = 0.25),
+             uiOutput("filter_rmsd"),
 
-#    column(8,
-#           plotOutput("rmsd_dendrogram2")
-#           )
-#    ),
-   
-  
+             verbatimTextOutput("filter_summary"),
+             
+             actionButton("run_nma", "Run Ensemble NMA", icon=icon("gears"),
+                          style = "display: block; margin-left: auto; margin-right: auto;", 
+                          class = "btn btn-success")
+
+             )
+           ),
+
+    column(8,
+           plotOutput("rmsd_dendrogram2")
+           )
+    ),
+                     
+
+
+    
 ### WebGL visualization
+  hr(),
   fluidRow(
            column(4,
                   wellPanel(
@@ -87,11 +95,11 @@ tabPanel(
 
            column(8,
                   conditionalPanel(
-                    condition='input.show_trj2 == true',
+                    condition='input.show_trj2 == true && output.nmaIsDone',
                     webGLOutput('nmaWebGL')
                     )
                   )
-           ),
+    ),
 
          ### Fluctuation plot
          fluidRow(
@@ -118,8 +126,8 @@ tabPanel(
 
                     checkboxInput('cluster', 'Color by clustering', value=TRUE),
                     radioButtons("cluster_by2", "Cluster by",
-                                 c("RMSD" = "rmsd",
-                                   "RMSIP" = "rmsip",
+                                 c("RMSIP" = "rmsip",
+                                   "RMSD" = "rmsd",
                                    "PC subspace" = "pc_space",
                                    "Sequence" = "sequence"
                                    ),
@@ -140,7 +148,10 @@ tabPanel(
                     )
                   ),
            column(8,
-                  plotOutput("nma_fluctplot")
+                  conditionalPanel(
+                    condition='output.nmaIsDone',
+                    plotOutput("nma_fluctplot")
+                    )
                   )
            ),
 
@@ -184,28 +195,34 @@ tabPanel(
            hr(),
            column(6,
                   conditionalPanel(
-                    condition = "input.rm_gaps == true",
+                    condition = "input.rm_gaps == true && output.nmaIsDone",
                     h4("RMSIP heatmap"),
                     plotOutput("rmsip_heatmap2")
                     )
                   ),
            column(6,
-                  h4("RMSD heatmap"),
-                  plotOutput("rmsd_heatmap2")
+                  conditionalPanel(
+                    condition = "output.nmaIsDone",
+                    h4("RMSD heatmap"),
+                    plotOutput("rmsd_heatmap2")
+                    )
                   )
            ),
 
-         fluidRow(
-           column(3,
-                  checkboxInput('show_options4', 'More options', value=FALSE)
-                  ),
-           column(3,
-                  downloadButton('nma_rmsip_heatmap2pdf', "Download Plot PDF")
-                  ),
-           column(3),
-           column(3,
-                  downloadButton('nma_rmsd_heatmap2pdf', "Download Plot PDF")
-                  )
+          fluidRow(
+            conditionalPanel(
+              condition = "output.nmaIsDone",
+              column(3,
+                     checkboxInput('show_options4', 'More options', value=FALSE)
+                     ),
+              column(3,
+                     downloadButton('nma_rmsip_heatmap2pdf', "Download Plot PDF")
+                     ),
+              column(3),
+              column(3,
+                     downloadButton('nma_rmsd_heatmap2pdf', "Download Plot PDF")
+                     )
+              )
            ),
 
          conditionalPanel(
@@ -248,7 +265,10 @@ tabPanel(
                     )
                   ),
            column(8,
-                  plotOutput("dendrogram2")
+                  conditionalPanel(
+                    condition = "output.nmaIsDone",
+                    plotOutput("dendrogram2")
+                    )
                   )
            ),
 
@@ -274,36 +294,43 @@ tabPanel(
                       )
                     )
              )
-           ),
+           )
   
   
          ### PCA vs NMA (RMSIP)
-         fluidRow(
-           hr(),
-           column(4,
-                  wellPanel(
-                    bsPopover("popnma4",
-                              "Comparison with PCA", 
-                              "The normal mode vectors from one PDB structure can be compared with the eigenvectors obtained from principal component analysis (from the PCA tab). The values provided in the table to the right correspond to the overlap (i.e. the dot product) between the mode vectors. The RMSIP value provides an overall score for the similarity between the principal components and the normal mode vectors. Orthogonal vectors give the score of 0, while identical vectors give a score of 1. ", 
-                              placement = "right", trigger = "hover",
-                              options = list(container = "body")),
+  #fluidRow(
+  #         hr(),
+  #         column(4,
+  #                wellPanel(
+  #                  bsPopover("popnma4",
+  #                            "Comparison with PCA", 
+  #                            "The normal mode vectors from one PDB structure can be compared with the eigenvectors obtained from principal component analysis (from the PCA tab). The values provided in the table to the right correspond to the overlap (i.e. the dot product) between the mode vectors. The RMSIP value provides an overall score for the similarity between the principal components and the normal mode vectors. Orthogonal vectors give the score of 0, while identical vectors give a score of 1. ", 
+  #                            placement = "right", trigger = "hover",
+  #                            options = list(container = "body")),
                     
-                    tags$div(id = "popnma4", icon("question-circle"),
-                             style = "position: absolute; right: 25px; top: 5px;"
-                             ),
+  #                  tags$div(id = "popnma4", icon("question-circle"),
+  #                           style = "position: absolute; right: 25px; top: 5px;"
+  #                           ),
                     
-                    h4('PCA vs NMA comparison'),
-                    uiOutput('struct_dropdown3')
-                    )
-                  ),
+  #                  h4('PCA vs NMA comparison'),
+  #                  uiOutput('struct_dropdown3')
+  #                  )
+  #                )
 
-           column(4,
-                  plotOutput("rmsip_plot3")
-                  ),
+           #column(4,
+                  #conditionalPanel(
+                  #  condition = "output.nmaIsDone",
+                  #  plotOutput("rmsip_plot3")
+                  #  )
+           #       ),
 
-           column(4,
-                  DT::dataTableOutput("rmsip_table")
-                  )
-           )
+           #column(4,
+                  #conditionalPanel(
+                  #  condition = "output.nmaIsDone",
+                  #  DT::dataTableOutput("rmsip_table")
+                  #  )
+           #       )
+   #        )
+
 
          )

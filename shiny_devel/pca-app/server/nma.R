@@ -1,12 +1,28 @@
+### reactive stuff
+init_show_trj_nma <- TRUE
+
+rv$modes <- NULL
+output$nmaIsDone <- reactive({
+  return(!is.null(rv$modes))
+})
+outputOptions(output, 'nmaIsDone', suspendWhenHidden=FALSE)
+
+observeEvent(input$run_nma, {
+  rv$modes <- nma2()
+})
+
+observeEvent(input$filter_rmsd, {
+  rv$modes <- NULL
+})
+
 ############
 ## NMA
 ###########
-init_show_trj_nma <- TRUE
+
 
 nma2 <- reactive({
-  pdbs <- align()
-  ##pdbs <- pdbs4nma()
-  check_aln()
+  ##pdbs <- align()
+  pdbs <- pdbs4nma()
     
   progress <- shiny::Progress$new()
   on.exit(progress$close())
@@ -51,7 +67,9 @@ pdbs4nma <- reactive({
   pdbs1 <- align()
   inds <- filter_by_rmsd()
   pdbs2 <- trim.pdbs(pdbs1, row.inds=inds)
-  
+  pdbs2$lab <- pdbs1$lab[inds]
+
+  message(pdbs2$lab)
   return(pdbs2)
 })
 
@@ -70,10 +88,30 @@ output$rmsd_dendrogram2 <- renderPlot({
   
   col <- rep(2, length(hc$order))
   col[inds] <- 1
-  
-  hclustplot(hc, k=1, col=col)
+
+  mar <- c(input$margins, 5, 3, 1)
+  hclustplot(hc, k=1, col=col, main="RMSD Cluster Dendrogram")
   
 })
+
+output$filter_summary <- renderPrint({
+  pdbs1 <- align()
+  inds <- filter_by_rmsd()
+
+  cat("Structures included:", length(inds), "\n")
+  cat("Structures excluded:", length(pdbs1$id) - length(inds), "\n")
+  
+  
+})
+
+
+output$filter_rmsd <- renderUI({
+  cut <- cutree_rmsd()
+  numericInput("filter_rmsd","RMSD Cutoff", value = round(cut$h, 2), step = 0.25)
+})
+
+
+
 
 ####################################
 ####   similarity measures     ####
@@ -81,8 +119,10 @@ output$rmsd_dendrogram2 <- renderPlot({
 
 rmsip2 <- reactive({
   if(input$rm_gaps) {
-    pdbs <- align()
-    modes <- nma2()
+    ##pdbs <- align()
+    pdbs <- pdbs4nma()
+    ##modes <- nma2()
+    modes <- rv$modes
     rownames(modes$rmsip) <- pdbs$lab
     colnames(modes$rmsip) <- pdbs$lab
     return(modes$rmsip)
@@ -97,7 +137,8 @@ bhat <- reactive({
   if(input$rm_gaps) {
     ## Bhattacharyya coefficient
     pdbs <- align()
-    modes <- nma2()
+    ##modes <- nma2()
+    modes <- rv$modes
     covs <- cov.enma(modes)
     bc <- bhattacharyya(modes, covs=covs)
     rownames(bc) <- pdbs$lab
@@ -159,13 +200,16 @@ cutree_rmsip <- reactive({
 
 
 cutree_nma <- reactive({
-  
+  inds <- filter_by_rmsd()
+    
   if(input$cluster_by2 == "rmsd") {
     cut <- cutree_rmsd()
+    cut$grps <- cut$grps[inds]
   }
 
   if(input$cluster_by2 == "pc_space") {
     cut <- cutree_pca()
+    cut$grps <- cut$grps[inds]
   }
 
   if(input$cluster_by2 == "rmsip") {
@@ -174,6 +218,7 @@ cutree_nma <- reactive({
   
   if(input$cluster_by2 == "sequence") {
     cut <- cutree_seqide()
+    cut$grps <- cut$grps[inds]
   }
  
   return(cut)
@@ -200,7 +245,8 @@ output$kslider_rmsip <- renderUI({
 ####################################
 
 output$struct_dropdown2 <- renderUI({
-  pdbs <- align()
+  ##pdbs <- align()
+  pdbs <- pdbs4nma()
   ids <- 1:length(pdbs$id)
   names(ids) <-  pdbs$lab
   selectInput('viewStruct_nma', 'Show NMs for structure:',
@@ -208,8 +254,11 @@ output$struct_dropdown2 <- renderUI({
 })
   
 output$nmaWebGL  <- renderWebGL({
-  pdbs <- align()
-  modes <- nma2()
+  pdbs <- pdbs4nma()
+  modes <- rv$modes
+
+  if(!inherits(modes, "enma"))
+    return(NULL)
 
   mag <- as.numeric(input$mag2)
   step <- mag/8
@@ -251,9 +300,10 @@ output$nmaWebGL  <- renderWebGL({
 ####################################
 
 output$checkboxgroup_label_ids2 <- renderUI({
-  pdbs <- align()
-  grps <- cutree_nma()
-  ids <- pdbs$lab[order(grps)]
+  ##pdbs <- align()
+  pdbs <- pdbs4nma()
+  grps <- cutree_nma()$grps
+  ids <- pdbs$lab
   names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
 
   checkboxInput("toggle_all2", "Toggle all", TRUE)
@@ -269,9 +319,12 @@ output$checkboxgroup_label_ids2 <- renderUI({
 })
 
 
+## Fluctuation plot
 make.plot.nma <- function() {
-  pdbs <- align()
-  modes <- nma2()
+  ##pdbs_all <- align()
+  pdbs <- pdbs4nma()
+  ##modes <- nma2()
+  modes <- rv$modes
 
   sse <- pdbs2sse(pdbs, ind=1, rm.gaps=TRUE, exefile=configuration$dssp$exefile)
 
@@ -316,14 +369,17 @@ output$nma_fluctplot <- renderPlot({
 
 
 make.plot.heatmap_rmsd2 <- function() {
+  inds <- filter_by_rmsd()
+  
   pdbs <- fit()
   rd <- rmsd1()
   rownames(rd) <- pdbs$lab
   colnames(rd) <- pdbs$lab
-  
+
   hc <- hclust_rmsd()
   cut <- cutree_rmsd()
-  grps <- cut$grps
+  grps <- cut$grps[inds]
+  rd <- rd[inds, inds]
   
   mar <- as.numeric(c(input$margins3, input$margins3))
   heatmap(rd,
@@ -372,7 +428,8 @@ output$bhat_heatmap2 <- renderPlot({
 
 
 make.plot.dendrogram2 <- function() {
-  pdbs <- align()
+  ##pdbs <- align()
+  pdbs <- pdbs4nma()
   pc <- pca1()
 
   hc <- hclust_rmsip()
@@ -387,6 +444,9 @@ make.plot.dendrogram2 <- function() {
              main=main, fillbox=FALSE, mar=mar)
 
   if(input$show_confplot2) {
+    ### colored by RMSD here
+    grps <- cutree_rmsd()$grps
+      
     xlim <- range(pc$z[,1])
     ylim <- range(pc$z[,2])
 
@@ -449,7 +509,8 @@ output$nma_rmsip_heatmap2pdf = downloadHandler(
 nma2pdb  <- reactive({
   path <- data_path()
   pdbs <- align()
-  modes <- nma2()
+  ##modes <- nma2()
+  modes <- rv$modes
   gaps <- gap.inspect(pdbs$ali)
   fname  <- paste0(path, '/', 'mode', input$viewMode_nma, '.pdb')
   

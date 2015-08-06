@@ -46,6 +46,7 @@ observeEvent(input$pdbid, {
       cut <- set_cutoff(blast, cutoff=NULL)
       rv$cutoff <- cut$cutoff
       rv$limit_hits <- 5
+      rv$modes <- NULL
     }
   }
 })
@@ -59,6 +60,7 @@ observeEvent(input$sequence, {
       cut <- set_cutoff(blast, cutoff=NULL)
       rv$cutoff <- cut$cutoff
       rv$limit_hits <- 5
+      rv$modes <- NULL
     }
   }
 })
