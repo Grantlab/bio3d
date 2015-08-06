@@ -108,6 +108,13 @@ tabPanel(
 
         conditionalPanel(
           condition = "input.cluster_by == 'pc_space'",
+          
+          ## K-selecter
+          uiOutput("kslider_pca"),
+          actionButton("setk_pca", "Auto set number of K groups",
+                       icon=icon("cogs")),
+
+          br(),br(),
           sliderInput("clust_npcs", "PCs in subspace",
                       min = 1, max = 10, value = 2)
           ),
@@ -122,7 +129,7 @@ tabPanel(
 
         conditionalPanel(
           condition = "input.plot_type == 'normal'",
-          checkboxInput("show_options1", "More options", value=FALSE)
+          checkboxInput("show_options1", "More clustering and output options", value=FALSE)
           ),
 
         conditionalPanel(
@@ -194,14 +201,9 @@ tabPanel(
                              "single"="single","complete"="complete","average"="average",
                              "mcquitty"="mcquitty","median"="median","centroid"="centroid",
                              "ward.D"="ward.D","ward.D2"="ward.D2"
-                             ),selected="single"), 
+                             ),selected="ward.D2"), 
                
-               numericInput("minDistance_pca","Minimum branching gap", value = 0.5, step = 0.5),
-               
-               sliderInput("splitTreeK_pca", "Split tree into K groups",
-                           min = 0, max = 10, value = 0, step=1),
-               
-               helpText("When slider is set to 0, the number of clusters is automatically calculated")
+               numericInput("minDistance_pca","Minimum branching gap", value = 0.5, step = 0.5)
                )
              )
       ),
@@ -248,13 +250,16 @@ tabPanel(
     ),
 
   fluidRow(
-    column(12,
-           wellPanel(
-             h4("Hits annotation"),
-             helpText("Highlight structures in conformer plot by clicking their entries in the below table (only for plot type '2D Scatter')."),
-             DT::dataTableOutput("pdbs_table")
+    conditionalPanel(
+      condition = "input.plot_type == 'normal'",
+      column(12,
+             wellPanel(
+               h4("Hits annotation"),
+               helpText("Highlight structures in conformer plot by clicking their entries in the below table (only for plot type '2D Scatter')."),
+               DT::dataTableOutput("pdbs_table")
+               )
              )
-           )
+      )
     ),
            
 

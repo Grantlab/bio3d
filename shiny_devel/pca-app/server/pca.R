@@ -19,6 +19,14 @@ pca1 <- reactive({
 ####################################
 ####   Clustering functions     ####
 ####################################
+hclust_pcspace <- reactive({
+  pdbs <- fit()
+  pc <- pca1()
+  hc <- hclust(dist(pc$z[,1:as.numeric(input$clust_npcs)]),
+               method=input$hclustMethod_pca)
+  return(hc)
+})
+  
 
 hclust_pca <- reactive({
   pdbs <- fit()
@@ -29,8 +37,7 @@ hclust_pca <- reactive({
   }
 
   if(input$cluster_by == "pc_space") {
-    hc <- hclust(dist(pc$z[,1:as.numeric(input$clust_npcs)]),
-                 method=input$hclustMethod_pca)
+    hc <- hclust_pcspace()
   }
 
   if(input$cluster_by == "sequence") {
@@ -49,10 +56,15 @@ cutree_pca <- reactive({
 
   if(input$cluster_by == "pc_space") {
     hc <- hclust_pca()
-    cut <- cutreeBio3d(hc, minDistance=input$minDistance_pca,
-                       k=as.numeric(input$splitTreeK_pca))
-  }
 
+    if(is.null(input$splitTreeK_pca))
+      k <- NA
+    else
+      k <- as.numeric(input$splitTreeK_pca)
+    
+    cut <- cutreeBio3d(hc, minDistance=input$minDistance_pca, k=k)
+  }
+  
   if(input$cluster_by == "sequence") {
     cut <- cutree_seqide()
   }
@@ -60,6 +72,19 @@ cutree_pca <- reactive({
   return(cut)
 })
 
+
+observeEvent(input$setk_pca, {
+  hc <- hclust_pca()
+  cut <- cutreeBio3d(hc, minDistance=input$minDistance_pca, k=NA)
+  updateSliderInput(session, "splitTreeK_pca", value = cut$autok)
+})
+
+
+output$kslider_pca <- renderUI({
+  cut <- cutree_pca()
+  sliderInput("splitTreeK_pca", "Cluster/partition into K groups:",
+              min = 1, max = 10, value = cut$k, step=1)
+})
 
 
 output$checkboxgroup_label_ids <- renderUI({
@@ -90,8 +115,9 @@ output$checkboxgroup_label_ids <- renderUI({
 output$pca_plot1_conf <- renderPlot({
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
-  col <- cutree_pca()$grps
-  k <- length(unique(col))
+  cut <- cutree_pca()
+  col <- cut$grps
+  k <- cut$k
 
   op <- par(pty="s")
 
@@ -158,13 +184,12 @@ output$pca_plot1_scree <- renderPlot({
 output$scatterplot3d_webgl <- renderWebGL({
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
-  ##col <- 1
-  ##if(input$nclust>1)
-  col <- cutree_pca()$grps
-  k <- length(unique(col))
+  
+  cut <- cutree_pca()
+  col <- cut$grps
+  k <- cut$k
   
   op <- par(pty="s")
-
   xax <- as.numeric(input$pcx)
   yax <- as.numeric(input$pcy)
   zax <- as.numeric(input$pcz)
@@ -188,13 +213,11 @@ output$scatterplot3d_rthreejs <- renderScatterplotThree({
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
 
-  #col <- 1
-  #if(input$nclust>1)
-  col <- cutree_pca()$grps
-  k <- length(unique(col))
+  cut <- cutree_pca()
+  col <- cut$grps
+  k <- cut$k
   
   op <- par(pty="s")
-
   xax <- as.numeric(input$pcx)
   yax <- as.numeric(input$pcy)
   zax <- as.numeric(input$pcz)

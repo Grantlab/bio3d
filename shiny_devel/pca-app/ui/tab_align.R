@@ -139,7 +139,7 @@ tabPanel("2. ALIGN",
 
                     ## K-selecter
                     uiOutput("kslider"),
-                    actionButton("setk", "Set number of clusters",
+                    actionButton("setk", "Auto set number of K groups",
                                  icon=icon("cogs")),
 
 
@@ -155,7 +155,7 @@ tabPanel("2. ALIGN",
                     
 
                    
-                    checkboxInput('show_options0', 'More options', value=FALSE),
+                    checkboxInput('show_options0', 'More clustering and output options', value=FALSE),
                     
                     #conditionalPanel(
                     #  condition = "input.seq_plot == 'heatmap'",
@@ -222,7 +222,7 @@ tabPanel("2. ALIGN",
                                     "single"="single","complete"="complete","average"="average",
                                     "mcquitty"="mcquitty","median"="median","centroid"="centroid",
                                     "ward.D"="ward.D","ward.D2"="ward.D2"
-                                    ),selected="single"), 
+                                    ),selected="ward.D2"), 
                       
                       numericInput("minDistance","Minimum branching gap", value = 0.1, step = 0.05)
                       

@@ -5,6 +5,7 @@ init_show_trj_nma <- TRUE
 
 nma2 <- reactive({
   pdbs <- align()
+  ##pdbs <- pdbs4nma()
   check_aln()
     
   progress <- shiny::Progress$new()
@@ -31,6 +32,53 @@ nma2 <- reactive({
   return(modes)
 })
 
+
+
+####################################
+####   Filtering structures #######
+####################################
+
+
+filter_by_rmsd <- reactive({
+  pdbs <- align()
+  rd <- rmsd1()
+  
+  inds <- filter.rmsd(pdbs$xyz, rmsd.mat = rd, cutoff=input$filter_rmsd, fit=FALSE)$ind
+  return(inds)
+})
+
+pdbs4nma <- reactive({
+  pdbs1 <- align()
+  inds <- filter_by_rmsd()
+  pdbs2 <- trim.pdbs(pdbs1, row.inds=inds)
+  
+  return(pdbs2)
+})
+
+output$rmsd_dendrogram2 <- renderPlot({
+  ##pdbs <- pdbs_nma()
+  pdbs <- align()
+  rd <- rmsd1()
+  rownames(rd) <- pdbs$lab
+  colnames(rd) <- pdbs$lab
+  
+  d <- as.dist(rd)
+  hc <- hclust(d)
+
+  inds <- filter_by_rmsd()
+  message(inds)
+  
+  col <- rep(2, length(hc$order))
+  col[inds] <- 1
+  
+  hclustplot(hc, k=1, col=col)
+  
+})
+
+####################################
+####   similarity measures     ####
+####################################
+
 rmsip2 <- reactive({
   if(input$rm_gaps) {
     pdbs <- align()
@@ -44,26 +92,8 @@ rmsip2 <- reactive({
   }
 })
 
-hclust_rmsip2 <- reactive({
-  rd <- rmsip2()
-  return(hclust(as.dist(1-rd)))
-})
 
-
-rmsd2 <- reactive({
-  pdbs <- align()
-  rd <- rmsd(pdbs, fit=TRUE)
-  rownames(rd) <- pdbs$lab
-  colnames(rd) <- pdbs$lab
-  return(rd)
-})
-
-hclust_rmsd2 <- reactive({
-  rd <- rmsd2()
-  return(hclust(as.dist(rd)))
-})
-
-bhat2 <- reactive({
+bhat <- reactive({
   if(input$rm_gaps) {
     ## Bhattacharyya coefficient
     pdbs <- align()
@@ -79,37 +109,88 @@ bhat2 <- reactive({
   }
 })
 
+####################################
+####   Clustering functions     ####
+####################################
+
+hclust_rmsip <- reactive({
+  rd <- rmsip2()
+  return(hclust(as.dist(1-rd),
+         method=input$hclustMethod_rmsip))
+})
+
 hclust_bhat2 <- reactive({
   rd <- bhat2()
   return(hclust(as.dist(1-rd)))
 })
 
-
 hclust2 <- reactive({
   if(input$group_by2 == "rmsd") {
-    hc <- hclust_rmsd2()
+    hc <- hclust_rmsd()
   }
   
   if(input$group_by2 == "rmsip") {
-    hc <- hclust_rmsip2()
+    hc <- hclust_rmsip()
   }
 
   if(input$group_by2 == "bhat") {
-    hc <- hclust_bhat2()
+    hc <- hclust_bhat()
   }
 
   if(input$group_by2 == "pc_space") {
-    pc <- pca1()
-    hc <- hclust(dist(pc$z[,1:2]))
+    hc <- hclust_pcspace()
   }
   
   return(hc)
 })
 
-cutree2 <- reactive({
-  hc <- hclust2()
-  grps <- cutree(hc, k=input$nclusts)
-  return(grps)
+
+cutree_rmsip <- reactive({
+  hc <- hclust_rmsip()
+  
+  if(is.null(input$splitTreeK_rmsip))
+    k <- NA
+  else
+    k <- as.numeric(input$splitTreeK_rmsip)
+  
+  cut <- cutreeBio3d(hc, minDistance=input$minDistance_rmsip, k=k)
+  return(cut)
+})
+
+
+cutree_nma <- reactive({
+  
+  if(input$cluster_by2 == "rmsd") {
+    cut <- cutree_rmsd()
+  }
+
+  if(input$cluster_by2 == "pc_space") {
+    cut <- cutree_pca()
+  }
+
+  if(input$cluster_by2 == "rmsip") {
+    cut <- cutree_rmsip()
+  }
+  
+  if(input$cluster_by2 == "sequence") {
+    cut <- cutree_seqide()
+  }
+ 
+  return(cut)
+})
+
+
+observeEvent(input$setk_rmsip, {
+  hc <- hclust_pca()
+  cut <- cutreeBio3d(hc, minDistance=input$minDistance_rmsip, k=NA)
+  updateSliderInput(session, "splitTreeK_rmsip", value = cut$autok)
+})
+
+
+output$kslider_rmsip <- renderUI({
+  cut <- cutree_pca()
+  sliderInput("splitTreeK_rmsip", "Cluster/partition into K groups:",
+              min = 1, max = 10, value = cut$k, step=1)
 })
 
 
@@ -171,7 +252,7 @@ output$nmaWebGL  <- renderWebGL({
 
 output$checkboxgroup_label_ids2 <- renderUI({
   pdbs <- align()
-  grps <- cutree2()
+  grps <- cutree_nma()
   ids <- pdbs$lab[order(grps)]
   names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
 
@@ -196,7 +277,7 @@ make.plot.nma <- function() {
 
   signif <- FALSE
   if(input$cluster) {
-    col <- cutree2()
+    col <- cutree_nma()$grps
 
     #if(input$signif)
     #  signif <- TRUE
@@ -235,15 +316,26 @@ output$nma_fluctplot <- renderPlot({
 
 
 make.plot.heatmap_rmsd2 <- function() {
-  rd <- rmsd2()
-  hc <- hclust_rmsd2()
-  grps <- cutree(hc, k=input$nclusts)
+  pdbs <- fit()
+  rd <- rmsd1()
+  rownames(rd) <- pdbs$lab
+  colnames(rd) <- pdbs$lab
+  
+  hc <- hclust_rmsd()
+  cut <- cutree_rmsd()
+  grps <- cut$grps
+  
   mar <- as.numeric(c(input$margins3, input$margins3))
-  heatmap(rd, distfun=as.dist, symm=TRUE,
+  heatmap(rd,
+          hclustfun = function(x) {
+            hclust(x, method=input$hclustMethod_rmsd)
+          }, 
+          distfun=as.dist, symm=TRUE,
           ColSideColors=as.character(grps),
           RowSideColors=as.character(grps),
           cexRow=input$cex3, cexCol=input$cex3,
-          margins=mar)
+          margins=mar
+          )
 }
 
 output$rmsd_heatmap2 <- renderPlot({
@@ -252,10 +344,16 @@ output$rmsd_heatmap2 <- renderPlot({
 
 make.plot.heatmap_rmsip2 <- function() {
   rp <- rmsip2()
-  hc <- hclust_rmsip2()
-  grps <- cutree(hc, k=input$nclusts)
+  hc <- hclust_rmsip()
+  cut <- cutree_rmsip()
+  grps <- cut$grps
+  
   mar <- as.numeric(c(input$margins3, input$margins3))
-  heatmap(1-rp, distfun=as.dist, symm=TRUE,
+  heatmap(1-rp,
+          hclustfun = function(x) {
+            hclust(x, method=input$hclustMethod_rmsip)
+          }, 
+          distfun=as.dist, symm=TRUE,
           ColSideColors=as.character(grps),
           RowSideColors=as.character(grps),
           cexRow=input$cex3, cexCol=input$cex3,
@@ -277,13 +375,15 @@ make.plot.dendrogram2 <- function() {
   pdbs <- align()
   pc <- pca1()
 
-  hc <- hclust2()
-  grps <- cutree2()
+  hc <- hclust_rmsip()
+  cut <- cutree_rmsip()
+  grps <- cut$grps
+  k <- cut$k
   ids <- pdbs$lab
 
   mar <- c(input$margins2, 5, 3, 1)
   main <- paste(toupper(input$group_by2), "dendrogram")
-  hclustplot(hc, k=input$nclusts, colors=grps, labels=ids, cex=input$cex2,
+  hclustplot(hc, k=k, colors=grps, labels=ids, cex=input$cex2,
              main=main, fillbox=FALSE, mar=mar)
 
   if(input$show_confplot2) {

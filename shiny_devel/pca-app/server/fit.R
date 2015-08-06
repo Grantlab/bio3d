@@ -5,9 +5,10 @@ init_show_pdbs <- TRUE
 find_core <- reactive({
   pdbs <- align()
   check_aln()
+  gaps <- gap.inspect(pdbs$ali)
 
-  if(ncol(pdbs$ali) <= 15)
-    stop.at <- ncol(pdbs$ali)-1
+  if(length(gaps$f.inds) <= 15)
+    stop.at <- length(gaps$f.inds)-1
   else
     stop.at <- 15
 
@@ -83,20 +84,28 @@ hclust_rmsd <- reactive({
 
 cutree_rmsd <- reactive({
   hc <- hclust_rmsd()
-  cut <- cutreeBio3d(hc, minDistance=input$minDistance_rmsd,
-                 k=as.numeric(input$splitTreeK_rmsd))
+
+  if(is.null(input$splitTreeK_rmsd))
+    k <- NA
+  else
+    k <- as.numeric(input$splitTreeK_rmsd)
+  
+  cut <- cutreeBio3d(hc, minDistance=input$minDistance_rmsd, k=k)
   return(cut)
 })
 
-#hclust1 <- reactive({
-#  rd <- rmsd1()
-#  hc <- hclust(as.dist(rd))
-#})
+observeEvent(input$setk_rmsd, {
+  hc <- hclust_rmsd()
+  cut <- cutreeBio3d(hc, minDistance=input$minDistance_rmsd, k=NA)
+  updateSliderInput(session, "splitTreeK_rmsd", value = cut$autok)
+})
 
-#cutree1 <- reactive({
-#  hc <- hclust1()
-#  grps <- cutree(hc, k=input$clusters)
-#})
+
+output$kslider_rmsd <- renderUI({
+  cut <- cutree_rmsd()
+  sliderInput("splitTreeK_rmsd", "Cluster/partition into K groups:",
+              min = 1, max = 10, value = cut$k, step=1)
+})
 
 
 representatives <- reactive({
@@ -169,7 +178,7 @@ make.plot.heatmap <- function() {
   mar <- as.numeric(c(input$margins, input$margins))
   plot1 <- heatmap(rd,
                    hclustfun = function(x) {
-                     hclust(x, method=input$hclustMethod)
+                     hclust(x, method=input$hclustMethod_rmsd)
                    }, 
                    distfun=as.dist, symm=TRUE,
                    ColSideColors=as.character(grps1),
@@ -208,14 +217,14 @@ make.plot.rmsd.dendogram <- function() {
   
   if(vec_is_sorted(hc$height)) {
     max_branch_gap <- max(diff(hc$height))
-    k <- length(unique(cut$grps))
+    k <- cut$k
     
     hclustplot(hc, k=k, labels=pdbs$lab, cex=input$cex,
                ylab="RMSD (Å)", main="RMSD Cluster Dendrogram", fillbox=FALSE,
                mar = mar)
     
-    if(max_branch_gap >= input$minDistance_rmsd && as.numeric(input$splitTreeK_rmsd) == 0) {
-      abline(h = cut$split_height, col="red", lty=2)
+    if(max_branch_gap >= input$minDistance_rmsd && cut$k == cut$autok) {
+      abline(h = cut$h, col="red", lty=2)
     }
   } else {
     plot(hc, main="", xlab="", sub="")

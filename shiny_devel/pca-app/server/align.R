@@ -264,7 +264,6 @@ check_aln <- reactive({
   aln <- align()
   gaps <- gap.inspect(aln$ali)
 
-  ## hard-coded limit here -- matches stop.at argument in core.find()
   if(!length(gaps$f.inds) > 5) {
     stop("Insufficient non-gap regions in alignment to proceed")
   }
@@ -501,7 +500,7 @@ cutree_seqide <- reactive({
   hc <- hclust_seqide()
 
   if(is.null(input$splitTreeK))
-    k <- 0
+    k <- NA
   else
     k <- as.numeric(input$splitTreeK)
   
@@ -511,18 +510,15 @@ cutree_seqide <- reactive({
 
 observeEvent(input$setk, {
   hc <- hclust_seqide()
-  cut <- cutreeBio3d(hc, minDistance=input$minDistance, k=0)
-  k <- length(unique(cut$grps))
-  updateSliderInput(session, "splitTreeK", value = k)
+  cut <- cutreeBio3d(hc, minDistance=input$minDistance, k=NA)
+  updateSliderInput(session, "splitTreeK", value = cut$autok)
 })
 
 
 output$kslider <- renderUI({
   cut <- cutree_seqide()
-  k <- length(unique(cut$grps))
-  
-  sliderInput("splitTreeK", "Split tree into K groups",
-              min = 1, max = 10, value = k, step=1)
+  sliderInput("splitTreeK", "Cluster/partition into K groups:",
+              min = 1, max = 10, value = cut$k, step=1)
 })
                     
 
@@ -572,9 +568,13 @@ make.plot.seqide.dendrogram <- function() {
     hclustplot(hc, k=k, labels=pdbs$lab, cex=input$cex0,
                ylab="Identity distance", main="Sequence identity clustering",
                fillbox=FALSE, mar = mar)
-    
-    if(max_branch_gap >= input$minDistance && as.numeric(input$splitTreeK) == 0) {
-      abline(h = cut$split_height, col="red", lty=2)
+
+    #par("lty" = 2); par("lwd" = 2); 
+    #rect.hclust(hc, k=k, cluster = cut$grps, border = "grey50")
+
+    ## red line only if auto k 
+    if(max_branch_gap >= input$minDistance & cut$autok == cut$k ) {
+      abline(h = cut$h, col="red", lty=2)
     }
   } else {
     plot(hc, main="", xlab="", sub="")

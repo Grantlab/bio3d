@@ -297,8 +297,10 @@ split_height <- function(hc) {
   return(split_height)
 }
 
-cutreeBio3d <- function(hc, minDistance=0.1, k=0) {
+cutreeBio3d <- function(hc, minDistance=0.1, k=NA) {
   sh <- split_height(hc)
+
+  message(paste("k is", k))
   
   if(vec_is_sorted(hc$height) && max(diff(hc$height)) >= minDistance) {
     c <- stats::cutree(hc, h=sh)
@@ -306,12 +308,16 @@ cutreeBio3d <- function(hc, minDistance=0.1, k=0) {
   else {
     c <- rep(1, length(hc$order))
   }
+
+  autok <- length(unique(c))
   
-  if(k > 0) {
+  if(!is.na(k)) {
     c <- stats::cutree(hc, k=k)
-    sh <- NULL
   }
   
-  return(list(grps=c, split_height=sh))
+  k <- length(unique(c))
+  
+  return(list(grps=c, h=sh, k=k, autok=autok))
 }
+
 

@@ -53,10 +53,10 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                                  choices=list('Black'='black', 'White'='white'),
                                  selected='white'),
 
-                    checkboxInput('show_options_idsel', 'More options', value=FALSE),
-                    br(),
-                    actionButton('viewUpdate1', label='Refresh', icon=icon('undo')),
-                    br(),
+                    checkboxInput('show_options_idsel', 'Filter PDBs', value=FALSE),
+                    ##br(),
+                    ##actionButton('viewUpdate1', label='Refresh', icon=icon('undo')),
+                    ##br(),
                     ##downloadButton('pdbsRData', "Download PDBs RData"),
                     downloadButton('pdbsZIP', "Download Aligned PDBs"),
                     downloadButton('pdbs2pymol', "Download PyMOL session file")
@@ -109,8 +109,11 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                                    "RMSF" = "rmsf"),
                                  inline=FALSE),
 
-                    #sliderInput("clusters", "Cluster by pairwise RMSD",
-                    #            min = 1, max = 10, value = 3, step=1),
+                    ## K-selecter
+                    uiOutput("kslider_rmsd"),
+                    actionButton("setk_rmsd", "Auto set number of K groups",
+                                 icon=icon("cogs")),
+                    
 
                     conditionalPanel(
                       condition = "input.str_plot == 'heatmap'",
@@ -118,28 +121,8 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                                     value=FALSE)
                       ),
                     
-                    checkboxInput('show_options', 'More options', value=FALSE),
-
-                    conditionalPanel(
-                      condition = "input.str_plot == 'heatmap'",
-                      downloadButton('rmsd_heatmap2pdf', "Download PDF")
-                      ),
-
-                    conditionalPanel(
-                      condition = "input.str_plot == 'dendrogram'",
-                      downloadButton('rmsd_dendrogram2pdf', "Download PDF")
-                      ),
-
-                    conditionalPanel(
-                      condition = "input.str_plot == 'rmsf'",
-                      downloadButton('rmsf2pdf', "Download PDF")
-                      ),
-
-                    conditionalPanel(
-                      condition = "input.str_plot == 'hist'",
-                      downloadButton('rmsd_hist2pdf', "Download PDF")
-                      ),
-                    downloadButton('rmsdZIP', "Download RMSD matrix")
+                    checkboxInput('show_options', 'More clustering and output options', value=FALSE)
+                    
                     )
                   ),
 
@@ -171,25 +154,21 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
          conditionalPanel(
            condition = "input.show_options == true",
            fluidRow(
-             column(4,
+             column(3,
                     wellPanel(
                       selectInput("hclustMethod_rmsd", label="Clustering method", 
                                   choices=list(
                                     "single"="single","complete"="complete","average"="average",
                                     "mcquitty"="mcquitty","median"="median","centroid"="centroid",
                                     "ward.D"="ward.D","ward.D2"="ward.D2"
-                                    ),selected="single"), 
+                                    ),selected="ward.D2"), 
                       
-                      numericInput("minDistance_rmsd","Minimum branching gap", value = 0.1, step = 0.2),
+                      numericInput("minDistance_rmsd","Minimum branching gap", value = 0.1, step = 0.2)
                       
-                      sliderInput("splitTreeK_rmsd", "Split tree into K groups",
-                                  min = 0, max = 10, value = 0, step=1),
-                      
-                      helpText("When slider is set to 0, the number of clusters is automatically calculated")
                       )
                     ),
                
-             column(4,
+             column(3,
                     wellPanel(
                     sliderInput("cex", "Label size",
                                 min = 0.1, max = 3, value = 1, step=0.1),
@@ -197,21 +176,26 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                                 min = 3, max = 10, value = 5, step=1)
                     )
                     ),
-             column(4,
+             column(3,
                     wellPanel(
-                    sliderInput("width", "width",
+                    sliderInput("width", "width (PDF only)",
                                 min = 4, max = 12, value = 7, step=0.5),
-                    sliderInput("height", "height",
+                    sliderInput("height", "height (PDF only)",
                                 min = 4, max = 12, value = 7, step=0.5)
                     )
+                    ),
+             column(3,
+                    wellPanel(
+                      h4("Download PDF Figures"),
+                      downloadButton('rmsd_heatmap2pdf', "Heatmap (PDF)"),
+                      downloadButton('rmsd_dendrogram2pdf', "Dengrogram (PDF)"),
+                      downloadButton('rmsf2pdf', "RMSF (PDF)"),
+                      downloadButton('rmsd_hist2pdf', "RMSD Histogram (PDF)"),
+                      downloadButton('rmsdZIP', "RMSD matrix (TXT)")
+                      )
                     )
-             #column(4,
-             #       wellPanel(
-             #         checkboxInput('rowcol_seqide', 'Color ', value=FALSE)
-             #         )
-             #       )
              )
-           ),
+             ),
 
          hr(),
 
@@ -286,3 +270,4 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                   )
            )
          )
+         

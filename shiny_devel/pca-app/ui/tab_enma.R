@@ -21,7 +21,28 @@ tabPanel(
           
           
           ),
+
   
+  
+### Filter structures
+#  fluidRow(
+#    column(4,
+#           wellPanel(
+#             h4("Filter structures"),
+#             
+#             numericInput("filter_rmsd","RMSD Cutoff", value = 1.0, step = 0.25),
+#             
+#             actionButton("run_nma", "Run Ensemble NMA", icon=icon("gears"),
+#                          style = "display: block; margin-left: auto; margin-right: auto;", 
+#                          class = "btn btn-success")
+#             )
+#           ),
+
+#    column(8,
+#           plotOutput("rmsd_dendrogram2")
+#           )
+#    ),
+   
   
 ### WebGL visualization
   fluidRow(
@@ -96,15 +117,24 @@ tabPanel(
                     checkboxInput('rm_gaps', 'Omit gap regions', value=TRUE),
 
                     checkboxInput('cluster', 'Color by clustering', value=TRUE),
-                    radioButtons("group_by2", "Cluster by",
+                    radioButtons("cluster_by2", "Cluster by",
                                  c("RMSD" = "rmsd",
                                    "RMSIP" = "rmsip",
-                                   "PC subspace" = "pc_space"
+                                   "PC subspace" = "pc_space",
+                                   "Sequence" = "sequence"
                                    ),
                                  ##"bhat" = "bhat"),
                                  inline=TRUE),
-                    sliderInput("nclusts", "N clusters:",
-                                min = 1, max = 10, value = 3),
+
+                    conditionalPanel(
+                      condition = "input.cluster_by2 == 'rmsip'",
+                      
+                      ## K-selecter
+                      uiOutput("kslider_rmsip"),
+                      actionButton("setk_rmsip", "Auto set number of K groups",
+                                   icon=icon("cogs"))
+                      ),
+                    
                     checkboxInput('show_options3', 'More options', value=FALSE),
                     downloadButton('nmaplot2pdf', "Download Plot PDF")
                     )
@@ -117,6 +147,20 @@ tabPanel(
          conditionalPanel(
            condition = "input.show_options3 == true",
            fluidRow(
+             column(3,
+                    wellPanel(
+                      selectInput("hclustMethod_rmsip", label="Clustering method", 
+                                  choices=list(
+                                    "single"="single","complete"="complete","average"="average",
+                                    "mcquitty"="mcquitty","median"="median","centroid"="centroid",
+                                    "ward.D"="ward.D","ward.D2"="ward.D2"
+                                    ),selected="ward.D2"), 
+                      
+                      numericInput("minDistance_rmsip","Minimum branching gap", value = 0.1, step = 0.2)
+                      
+                      )
+                    ),
+             
              column(3,
                     wellPanel(
                       sliderInput("width1", "width",
@@ -137,6 +181,7 @@ tabPanel(
 
          ### Heatmaps
          fluidRow(
+           hr(),
            column(6,
                   conditionalPanel(
                     condition = "input.rm_gaps == true",
@@ -184,6 +229,7 @@ tabPanel(
            ),
          ## Cluster dendrogram
          fluidRow(
+           hr(),
            column(4,
                   wellPanel(
                     h4('Cluster dendrogram'),
@@ -229,10 +275,11 @@ tabPanel(
                     )
              )
            ),
-
-
+  
+  
          ### PCA vs NMA (RMSIP)
          fluidRow(
+           hr(),
            column(4,
                   wellPanel(
                     bsPopover("popnma4",
