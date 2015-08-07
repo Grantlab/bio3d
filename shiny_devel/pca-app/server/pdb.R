@@ -194,6 +194,9 @@ output$pdb_log <- renderPrint({
     
 })
 
+##
+##-- Structure Viewer tab
+##
 output$pdbWebGL  <- renderWebGL({
   pdb <- get_pdb()
 

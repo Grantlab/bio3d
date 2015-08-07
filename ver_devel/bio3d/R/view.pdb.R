@@ -1,7 +1,16 @@
 
 vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
+
+  ## For single element (or zero length) vector return first (or no) col 
+  if(length(vec) < 2) { return( colorRampPalette(pal)(length(vec)) ) }
+
   col <- colorRampPalette(pal)(n)
-  vec.cut <- cut(vec, seq(min(vec), max(vec), length.out=n), include.lowest = TRUE)
+
+  breaks <- seq(min(vec), max(vec), length.out=n)
+  ## For constant vector rtn first color
+  if( length(unique(breaks)) < 2 ) { breaks <- c(0,1)}
+
+  vec.cut <- cut(vec, breaks, include.lowest = TRUE)
   levels(vec.cut) <- 1:length(col)
   return(col[vec.cut])
 }

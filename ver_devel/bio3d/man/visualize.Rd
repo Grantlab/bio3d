@@ -81,7 +81,7 @@ and type indicators of the objects added to the scene.
 \author{Julien Idé}
 
 \seealso{
-\code{\link{read.pdb}}, \code{\link{pymol}},\code{rgl.pop}, \code{rgl.cur}, \code{par3d}
+\code{\link{view}}, \code{\link{read.pdb}}, \code{\link{pymol}},\code{rgl.pop}, \code{rgl.cur}, \code{par3d}
 }
 \examples{
 \dontrun{
