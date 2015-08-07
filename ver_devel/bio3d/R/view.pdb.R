@@ -1,5 +1,7 @@
 
 vec2color <- function(vec, pal=c("blue", "green", "red"), n=30) {
+  if(length(vec) < 2){ return( colorRampPalette(pal)(length(vec)) ) }
+
   col <- colorRampPalette(pal)(n)
   vec.cut <- cut(vec, seq(min(vec), max(vec), length.out=n), include.lowest = TRUE)
   levels(vec.cut) <- 1:length(col)

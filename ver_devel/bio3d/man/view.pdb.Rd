@@ -32,21 +32,26 @@ vec2color(vec, pal = c("blue", "green", "red"), n = 30)
     including read.fasta.pdb and pdbaln functions.}
   \item{as}{ A single element character vector that sets the view/render mode 
     determining what and how things are drawn. 
-    Current options include \sQuote{all}, \sQuote{overview}, \sQuote{nwat}, \sQuote{protein}, 
-    \sQuote{calpha}, \sQuote{back} and \sQuote{ligand} - see examples below for details.}
-  \item{col}{ A vector or matrix of colors. The single keywords \sQuote{sse}, \sQuote{index},
-    \sQuote{atom}, \sQuote{b} and \sQuote{residue} are also valid for \code{\link{view.pdb}}. The keywords \sQuote{index}, 
-    \sQuote{atom}, \sQuote{frame}, \sQuote{structure}, \sQuote{gaps} and \sQuote{sse} are valid for \code{\link{view.xyz}} and 
-    \code{\link{view.pdbs}} functions. }
+    Current options include \sQuote{all}, \sQuote{overview}, \sQuote{nwat}, 
+    \sQuote{protein}, \sQuote{calpha}, \sQuote{back} and \sQuote{ligand} - see 
+    examples below for details.}
+  \item{col}{ A vector or matrix of colors. The single keywords \sQuote{sse}, 
+    \sQuote{index}, \sQuote{atom}, \sQuote{b} and \sQuote{residue} are also valid 
+    for \code{\link{view.pdb}}. The keywords \sQuote{index}, \sQuote{atom}, 
+    \sQuote{frame}, \sQuote{structure}, \sQuote{gaps} and \sQuote{sse} are valid 
+    for \code{\link{view.xyz}} and \code{\link{view.pdbs}} functions. }
   \item{add}{ Logical, if TRUE the requested 3D representation will be added
     to a existing scene. Otherwise a new scene window will be created. }
   \item{elety.custom}{ Used for atom to element type mapping and to
     obtain radii and colors for non standard atoms. }  
   \item{elesy}{ A character vector containing atomic symbols for atoms. }
-  \item{maxframes}{ A single element numeric vector specifying the maximum number of 
-    frames to be rendered. Note that rendering large trajectories is not the purpose of this function. Rather users should consider VMD and PyMOL for these purposes. } 
-  \item{\dots}{ Extra arguments for \code{\link{visualize}}, \code{\link{sse.vector}} and \code{\link{connectivity}} 
-    functions. Please see these functions for full argument lists. }
+  \item{maxframes}{ A single element numeric vector specifying the maximum number  
+    of frames to be rendered. Note that rendering large trajectories is not the 
+    purpose of this function. Rather users should consider VMD and PyMOL for these 
+    purposes. } 
+  \item{\dots}{ Extra arguments for \code{\link{visualize}}, \code{\link{sse.vector}} 
+    and \code{\link{connectivity}} functions. Please see these functions for full 
+    argument lists. }
   \item{vec}{ A numeric vector for color mapping. }
   \item{pal}{ A vector of three colors for color pallet specification. }
   \item{n}{ Number of desired color range mappings. }
@@ -54,25 +59,50 @@ vec2color(vec, pal = c("blue", "green", "red"), n = 30)
 \details{
   The view family of functions generate interactive 3D visualizations of 
   biomolecular structure and dynamics data from various sources within the Bio3D 
-  package.  The main functions \sQuote{view.pdb} and \sQuote{view.xyz} are wrappers for the 
-  \sQuote{visualize.xyz} function. Extensive customization are possible, including 
-  standard graphical parameters such as \sQuote{lwd} and more advanced representation 
-  styles and colors with the \sQuote{as} and \sQuote{col} keyword options.
+  package.  
 
-  Current \sQuote{as} options include: \sQuote{all}, \sQuote{overview}, \sQuote{nwat}, \sQuote{protein}, \sQuote{calpha}, 
-  \sQuote{back} and \sQuote{ligand}.
+  The main functions \sQuote{view.pdb} and \sQuote{view.xyz} are wrappers 
+  for the \sQuote{visualize.xyz} function. Specialized methods for \sQuote{NMA} 
+  and \sQuote{PCA} result visualization are also available along with extensive 
+  customization options. 
 
-  Current \sQuote{col} keyword options for \sQuote{view.pdb} include: \sQuote{sse}, \sQuote{index}, \sQuote{atom}, 
-  \sQuote{b} and \sQuote{residue}.  The keywords \sQuote{index}, \sQuote{atom}, \sQuote{frame}, \sQuote{structure}, \sQuote{gaps} and \sQuote{sse} are valid for \sQuote{view.pdbs} and \sQuote{view.xyz} functions. 
+  Customization options include the ability to set standard graphical parameters 
+  such as \sQuote{lwd} for line widths, \sQuote{radii} for atom sphere radii and 
+  \sQuote{type} for rendering as points, lines or spheres.
 
-   Full details of these options and additional customizations will be added here as these functions mature. For now please see the
-  below examples for further details as well as the documentation for\code{\link{visualize.xyz}}.
+  Extensive \sQuote{col} coloring options are also available. These include coloring 
+  by secondary structure (\code{col="sse"}), atom type (\code{col="atom"}), B-factor 
+  (\code{col="b"}), residue type (\code{col="residue"}), frame number 
+  (\code{col="frame"}), and structure or model number (\code{col="structure"}).
+
+  A matrix or vector of colors matching the input number of atoms and frames can 
+  also be used for coloring. Note that for multi-frame input to \sQuote{view.xyz} 
+  one can still provide a simple vector of colors but its length should match 
+  either the number of atoms (i.e. \code{ncol(xyz)/3}) for atom specific coloring) 
+  or number of frames (i.e. \code{nrow(xyz)} for frame specific coloring).
+
+  The \sQuote{as} keyword input argument to \sQuote{view.pdb} currently implements 
+  a number of useful representation styles. Current options include: 
+  \code{as="all"}, \code{as="overview"}, \code{as="nwat"}, \code{as="protein"}, 
+  \code{as="calpha"}, \code{as="back"} and \sQuote{as="ligand"}. See the examples 
+  below for details.
+
+  For details of additional settings and options please see the documentation 
+  for \code{\link{visualize.xyz}}, \code{\link{connectivity}}, \code{\link{sse.vector}},
+  \code{rgl} and \code{par3d}.
 }
 \value{
   Called for their effect.
 }
-\author{ Barry Grant }
+\references{
+  Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
+  Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
+}
+\author{ Barry Grant and Julien Ide }
 \seealso{
+  \code{\link{visualize}}, \code{\link{pymol}}, 
+  \code{rgl.cur}, \code{par3d}, \code{\link{atom.select}},
+  \code{\link{vmd.cna}}, \code{\link{vmd.colors}},
   \code{\link{read.pdb}}, \code{\link{write.pdb}},
   \code{\link{trim.pdb}}, \code{\link{cat.pdb}}, 
   \code{\link{read.fasta.pdb}}, \code{\link{as.pdb}},
@@ -81,6 +111,8 @@ vec2color(vec, pal = c("blue", "green", "red"), n = 30)
   \code{\link{mktrj.nma}}
 }
 \examples{
+
+\dontrun{
 ##
 ##- 1. Read and view a PDB file in a useful way 
 ##
@@ -88,9 +120,7 @@ pdb=read.pdb("4q21")
 
 view.pdb(pdb)
 
-\dontrun{
-
-# 1. view.pdb examples
+## 1. view.pdb examples
 view(pdb, "overview")
 
 view(pdb, "calpha", col="sse")
@@ -112,6 +142,7 @@ view(pdbs, col="sse")
 view(pdbs, col=annotation[,"color"])
 view(pdbs, col="gray")
 
+## define a color scale for RMSF vector
 rf=vec2color(rmsf(pdbs$xyz))
 view(pdbs, col=rf)
 
