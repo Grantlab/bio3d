@@ -1,5 +1,5 @@
 filter.rmsd <- function(xyz=NULL, rmsd.mat=NULL, cutoff=0.5, fit=TRUE, verbose=TRUE,
-                        inds=NULL, method="complete") {
+                        inds=NULL, method="complete", ...) {
 
   # k<-filter.rmsd(xyz=pdbs$xyz, cutoff=0.5)
   # k<-filter.rmsd(rmsd.mat=k$rmsd.mat, cutoff=2.0)
