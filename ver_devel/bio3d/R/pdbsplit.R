@@ -121,6 +121,9 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
                 write.pdb(new.pdb, file = new.name, xyz=xyz, sse=TRUE)
                 out <- c(out, new.name)
               }
+              else {
+                warning(paste0(basename(new.name), " has 'xyz' of length zero"))
+              }
             }
           }
           else {
@@ -132,6 +135,9 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
                 write.pdb(new.pdb, file = new.name, sse=TRUE)
               
               out <- c(out, new.name)
+            }
+            else {
+              warning(paste0(basename(new.name), " has 'xyz' of length zero"))
             }
           }
         ##}
