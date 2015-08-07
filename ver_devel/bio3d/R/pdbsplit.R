@@ -1,5 +1,5 @@
 `pdbsplit` <-
-function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE, mk4=FALSE, ncore=1, progress=NULL, ...) {
+function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE, mk4=FALSE, ncore=1, ...) {
   
   toread <- file.exists(pdb.files)
   toread[substr(pdb.files, 1, 4) == "http"] <- TRUE
@@ -40,10 +40,6 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
   
   "splitOnePdb" <- function(i, pdb.files, ids, path, overwrite, verbose, ...) {
 
-    if(!is.null(progress)) {
-      progress$inc(1/length(pdb.files))
-    }
-    
     out <- c(); skipped <- c(); unused <- NULL;
     if(!overwrite && !verbose) {
       chains <- quickscan(pdb.files[i])
