@@ -118,12 +118,11 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     
                     h4("Initial structure analysis"),
 
-                    radioButtons("str_plot", "Plot options",
+                    selectInput("str_plot", "Plot options",
                                  c("RMSD Dendrogram" = "dendrogram",
                                    "RMSD Heatmap" = "heatmap",
                                    "RMSD Histogram" = "hist",
-                                   "RMSF Profile" = "rmsf"),
-                                 inline=FALSE),
+                                   "RMSF Profile" = "rmsf")),
 
                     ## K-selecter
                     uiOutput("kslider_rmsd"),

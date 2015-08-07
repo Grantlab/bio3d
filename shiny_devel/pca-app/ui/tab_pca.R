@@ -45,7 +45,7 @@ tabPanel(
              sliderInput("mag1", "Magnification factor:",
                          min = 1, max = 10, value = 1),
              
-             radioButtons('viewColor', label='Structure color',
+             selectInput('viewColor', 'Color options',
                              choices=list(
                                'Amalgam' = 'amalgam',
                                'Magnitude'='mag',
@@ -54,9 +54,14 @@ tabPanel(
                              selected='amalgam'
                           ),
              
-             radioButtons('viewBGcolor', label='Background color',
-                          choices=list('Black'='black', 'White'='white'),
-                          selected='white'),
+             #radioButtons('viewBGcolor', label='Background color',
+             #             choices=list('Black'='black', 'White'='white'),
+             #             selected='white'),
+             
+             selectInput("viewBGcolor", "Background color:",
+                         c('White'='white', 'Black'='black'),
+                         multiple=FALSE),
+             
              br(),
              actionButton('viewUpdate', label='Refresh', icon=icon('undo')),
              downloadButton('pctraj', label='Download PDB Trajectory'),

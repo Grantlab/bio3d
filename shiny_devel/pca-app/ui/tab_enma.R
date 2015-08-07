@@ -69,24 +69,27 @@ tabPanel(
                     
                     h4('Normal Modes Visualization'),
                     checkboxInput('show_trj2', 'Show NM Trajectory', value=FALSE),
-                    
-                    selectInput('viewMode_nma', 'Choose Mode:', choices=c(1:10)),
+
                     uiOutput('struct_dropdown2'), ## viewStruct_nma
+                    selectInput('viewMode_nma', 'Choose Mode:', choices=c(1:10)),
+
 
                     sliderInput("mag2", "Magnification factor:",
                                 min = 1, max = 20, value = 5),
 
-                    radioButtons('viewColor2', label='Structure color',
-                                 choices=list(
-                                   'Amalgam' = 'amalgam',
-                                   'Magnitude'='mag',
-                                   'By Frame (blue->gray->red)'='default'
-                                   ),
-                                 selected='amalgam'),
-
-                    radioButtons('viewBGcolor2', label='Background color',
-                                 choices=list('Black'='black', 'White'='white'),
-                                 selected='white'),
+                     selectInput('viewColor2', 'Color options',
+                             choices=list(
+                               'Amalgam' = 'amalgam',
+                               'Magnitude'='mag',
+                               'By Frame (blue->gray->red)'='default'
+                               ),
+                             selected='amalgam'
+                          ),
+             
+                    selectInput("viewBGcolor2", "Background color:",
+                                c('White'='white', 'Black'='black'),
+                                multiple=FALSE),
+                    
                     br(),
                     ##actionButton('viewUpdate2', label='Refresh', icon=icon('undo')),
                     downloadButton('nmtraj', label='Download PDB Trajectory')
