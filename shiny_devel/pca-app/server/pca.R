@@ -19,11 +19,19 @@ pca1 <- reactive({
 ####################################
 ####   Clustering functions     ####
 ####################################
-hclust_pcspace <- reactive({
-  pdbs <- fit()
+
+pc_dist <- reactive({
   pc <- pca1()
-  hc <- hclust(dist(pc$z[,1:as.numeric(input$clust_npcs)]),
-               method=input$hclustMethod_pca)
+  pcs <- as.numeric(input$clust_npcs)
+  if(is.null(pcs))
+    pcs <- 2
+  d <- dist(pc$z[,1:pcs])
+  return(d)
+})
+
+
+hclust_pcspace <- reactive({
+  hc <- hclust(pc_dist(), method=input$hclustMethod_pca)
   return(hc)
 })
   
@@ -48,6 +56,21 @@ hclust_pca <- reactive({
 })
 
 
+
+
+cutree_pca2 <- reactive({
+  hc <- hclust_pca()
+
+  if(is.null(input$splitTreeK_pca))
+    k <- NA
+  else
+    k <- as.numeric(input$splitTreeK_pca)
+  
+  cut <- cutreeBio3d(hc, minDistance=input$minDistance_pca, k=k)
+  return(cut)
+})
+
+
 cutree_pca <- reactive({
   
   if(input$cluster_by == "rmsd") {
@@ -55,14 +78,7 @@ cutree_pca <- reactive({
   }
 
   if(input$cluster_by == "pc_space") {
-    hc <- hclust_pca()
-
-    if(is.null(input$splitTreeK_pca))
-      k <- NA
-    else
-      k <- as.numeric(input$splitTreeK_pca)
-    
-    cut <- cutreeBio3d(hc, minDistance=input$minDistance_pca, k=k)
+    cut <- cutree_pca2()
   }
   
   if(input$cluster_by == "sequence") {

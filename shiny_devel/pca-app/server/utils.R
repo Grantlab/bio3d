@@ -321,3 +321,31 @@ cutreeBio3d <- function(hc, minDistance=0.1, k=NA) {
 }
 
 
+## revised version of filter.rmsd()
+filter.mat <- function(mat, dist.fun=as.dist, cutoff = 0.5, method = "complete") {
+
+  dist <- dist.fun(mat)
+  tree <- hclust(dist, method = method)
+  
+  h <- cutoff
+  n <- nrow(tree$merge) + 1
+  k <- integer(length(h))
+  k <- n + 1 - apply(outer(c(tree$height, Inf), h, ">"), 2, 
+                     which.max)
+  
+  ans <- as.vector(cutree(tree, k))
+  cluster.rep <- NULL
+  for (i in 1:k) {
+    ind <- which(ans == i)
+    if (length(ind) == 1) {
+      cluster.rep <- c(cluster.rep, ind)
+    }
+    else {
+      cluster.rep <- c(cluster.rep,
+                       ind[which.min(colSums(mat[ind, ind]))])
+    }
+  }
+  return(list(ind = cluster.rep, tree = tree))
+  
+}
+

@@ -4,6 +4,7 @@
 
 ## selected accession ids
 rv$selacc <- NULL
+rv$aligned <- FALSE
 
 observeEvent(input$selected_pdbids, {
 
@@ -209,6 +210,7 @@ align_pdbs <- reactive({
  progress$close()
  
  gc()
+ rv$aligned <- TRUE
  return(pdbs)
 })
 

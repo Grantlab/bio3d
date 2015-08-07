@@ -307,9 +307,9 @@ tabPanel(
     fluidRow(
       column(4,
              wellPanel(
-               sliderInput("width_pcload", "Width",
+               sliderInput("width_pcload", "Figure width (PDF only)",
                            min = 4, max = 12, value = 8, step=0.5),
-               sliderInput("height_pcload", "Height",
+               sliderInput("height_pcload", "Figure height (PDF only)",
                            min = 4, max = 12, value = 5, step=0.5)
                )
              )

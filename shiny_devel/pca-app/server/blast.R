@@ -47,6 +47,8 @@ observeEvent(input$pdbid, {
       rv$cutoff <- cut$cutoff
       rv$limit_hits <- 5
       rv$modes <- NULL
+      rv$aligned <- FALSE
+      rv$fitted <- FALSE
     }
   }
 })
@@ -61,6 +63,8 @@ observeEvent(input$sequence, {
       rv$cutoff <- cut$cutoff
       rv$limit_hits <- 5
       rv$modes <- NULL
+      rv$aligned <- FALSE
+      rv$fitted <- FALSE
     }
   }
 })
@@ -71,10 +75,16 @@ observeEvent(input$chainId, {
 
 observeEvent(input$limit_hits, {
   rv$limit_hits <- as.numeric(input$limit_hits)
+  rv$modes <- NULL
+  rv$aligned <- FALSE
+  rv$fitted <- FALSE
 })
 
 observeEvent(input$cutoff, {
   rv$cutoff <- as.numeric(input$cutoff)
+  rv$modes <- NULL
+  rv$aligned <- FALSE
+  rv$fitted <- FALSE
 })
 
 observeEvent(input$reset_cutoff, {
@@ -84,6 +94,10 @@ observeEvent(input$reset_cutoff, {
 
     updateSliderInput(session, "cutoff", value = cut$cutoff)
     updateSliderInput(session, "limit_hits", value = 5)
+    
+    rv$modes <- NULL
+    rv$aligned <- FALSE
+    rv$fitted <- FALSE
   }
 })
 

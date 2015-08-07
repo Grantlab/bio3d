@@ -11,9 +11,24 @@ observeEvent(input$run_nma, {
   rv$modes <- nma2()
 })
 
-observeEvent(input$filter_rmsd, {
+#observeEvent(input$filter_rmsd, {
+#  rv$modes <- NULL
+#})
+
+observeEvent(input$rmsd_filter, {
   rv$modes <- NULL
+  
+  if(nma_allowed())
+    rv$nma_allowed2 <- TRUE
+  else
+    rv$nma_allowed2 <- FALSE
 })
+
+output$nma_allowed2 <- reactive({
+  nma_allowed()
+})
+outputOptions(output, 'nma_allowed2', suspendWhenHidden=FALSE)
+
 
 ############
 ## NMA
@@ -21,7 +36,10 @@ observeEvent(input$filter_rmsd, {
 
 
 nma2 <- reactive({
-  ##pdbs <- align()
+
+  if(!nma_allowed())
+    return(NULL)
+  
   pdbs <- pdbs4nma()
     
   progress <- shiny::Progress$new()
@@ -54,14 +72,55 @@ nma2 <- reactive({
 ####   Filtering structures #######
 ####################################
 
+nma_allowed <- reactive({
+  if(!rv$aligned | !rv$fitted)
+    return(NULL)
+  
+  pdbs <- pdbs4nma()
+  gaps <- gap.inspect(pdbs$ali)
+
+  lens <- ncol(pdbs$ali)-gaps$row
+  size <- sum(lens)
+  
+  if(size > 5000)
+    return(FALSE)
+  else
+    return(TRUE)
+})
+
+
 
 filter_by_rmsd <- reactive({
   pdbs <- align()
   rd <- rmsd1()
-  
-  inds <- filter.rmsd(pdbs$xyz, rmsd.mat = rd,
-                      cutoff=input$filter_rmsd, fit=FALSE,
-                      method = input$hclustMethod_rmsd)$ind
+
+  cut <- input$filter_rmsd
+  if(is.null(cut)) {
+    cut <- 1
+  }
+
+  if(input$filter_clusterBy == "rmsd") {
+    inds <- filter.rmsd(pdbs$xyz, rmsd.mat = rd,
+                        cutoff=cut, fit=FALSE,
+                        method = input$hclustMethod_rmsd)$ind
+  }
+
+  if(input$filter_clusterBy == "pca") {
+    rd <- pc_dist()
+    inds <- filter.mat(as.matrix(rd), dist.fun=as.dist,
+                       cutoff=cut, 
+                       method = input$hclustMethod_pca)$ind
+  }
+
+  if(input$filter_clusterBy == "seqide") {
+    ide <- seqide()
+    rownames(ide) <- pdbs$lab
+    colnames(ide) <- pdbs$lab
+    
+    inds <- filter.mat(1-ide, dist.fun=as.dist, 
+                       cutoff=cut, 
+                       method = input$hclustMethod)$ind
+  }
   
   return(inds)
 })
@@ -94,25 +153,56 @@ output$rmsd_dendrogram2 <- renderPlot({
   col[inds] <- 1
 
   mar <- c(input$margins, 5, 3, 1)
-  hclustplot(hc, k=1, col=col, main="RMSD Cluster Dendrogram")
+  hclustplot(hc, k=1, col=col, main="Cluster Dendrogram")
   
 })
 
 output$filter_summary <- renderPrint({
-  pdbs1 <- align()
-  inds <- filter_by_rmsd()
+  invisible(capture.output(pdbs1 <- align()))
+  invisible(capture.output(inds <- filter_by_rmsd()))
 
-  cat("Structures included:", length(inds), "\n")
-  cat("Structures excluded:", length(pdbs1$id) - length(inds), "\n")
-  
-  
+  cat("Structures included:", length(inds), "/", length(pdbs1$id))
+
+  if(!nma_allowed())
+    cat("\n\nEnsemble too large for NMA. Please reduce size by filtering similar structures\n")
+  #else
+  #  cat("\n\nEnsemble is good for NMA \n")
 })
 
 
-output$filter_rmsd <- renderUI({
-  cut <- cutree_rmsd()
-  numericInput("filter_rmsd","RMSD Cutoff", value = round(cut$h, 2), step = 0.25)
+output$filter_rmsdInput <- renderUI({
+  #cut <- cutree_rmsd()
+  lab <- "RMSD Cutoff"
+  numericInput("filter_rmsd", lab, value = 1, step = 0.25)
 })
+
+
+observeEvent(input$filter_clusterBy, {
+
+  if(!is.null(input$filter_rmsd)) {
+    #cut <- cutree_rmsd()
+    cut <- 1
+    lab <- "RMSD Cutoff"
+    step <- 0.25
+
+    if(input$filter_clusterBy == "pca") {
+      #cut <- cutree_pca2()
+      cut <- 1
+      lab <- "PC Cutoff"
+      step <- 0.5
+    }
+    
+    if(input$filter_clusterBy == "seqide") {
+      #cut <- cutree_seqide()
+      cut <- 0.1
+      lab <- "Identity Cutoff"
+      step <- 0.1
+    }
+    
+    updateNumericInput(session, "filter_rmsd", lab, value = cut, step = step)
+  }
+})
+
 
 
 
@@ -443,7 +533,7 @@ make.plot.dendrogram2 <- function() {
   ids <- pdbs$lab
 
   mar <- c(input$margins2, 5, 3, 1)
-  main <- paste(toupper(input$group_by2), "dendrogram")
+  main <- paste(toupper(input$group_by2), "RMSIP Cluster Dendrogram")
   hclustplot(hc, k=k, colors=grps, labels=ids, cex=input$cex2,
              main=main, fillbox=FALSE, mar=mar)
 

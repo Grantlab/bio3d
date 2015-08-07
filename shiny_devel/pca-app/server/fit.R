@@ -1,6 +1,8 @@
 #####################
 ##-- Superimpose and RMSD stuff
 ####################
+
+rv$fitted <- FALSE
 init_show_pdbs <- TRUE
 find_core <- reactive({
   pdbs <- align()
@@ -49,6 +51,7 @@ fit <- reactive({
     pdbs$lab <- basename.pdb(pdbs$id)
   }
   pdbs$lab <- format_pdbids(pdbs$lab)
+  rv$fitted <- TRUE
   return(pdbs)
 })
 

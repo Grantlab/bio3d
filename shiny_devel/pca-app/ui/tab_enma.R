@@ -31,14 +31,31 @@ tabPanel(
              h4("Filter structures"),
              helpText("Filter similar structures (by RMSD) to reduce the computational load for NMA. PDB IDs colored red in the dendrogram will be omitted from the calculation."), 
              
+             selectInput('filter_clusterBy', 'Filter by',
+                         choices=list(
+                           "RMSD Clustering" = "rmsd", 
+                           "PCA Clustering" = "pca",
+                           "Sequence Clustering" = "seqide")),
+
              ##numericInput("filter_rmsd","RMSD Cutoff", value = 1.0, step = 0.25),
-             uiOutput("filter_rmsd"),
+             uiOutput("filter_rmsdInput"),
+             
 
              verbatimTextOutput("filter_summary"),
              
-             actionButton("run_nma", "Run Ensemble NMA", icon=icon("gears"),
-                          style = "display: block; margin-left: auto; margin-right: auto;", 
-                          class = "btn btn-success")
+             conditionalPanel(
+               condition = "output.nma_allowed2 == true",
+               actionButton("run_nma", "Run Ensemble NMA", icon=icon("gears"),
+                            style = "display: block; margin-left: auto; margin-right: auto;", 
+                            class = "btn btn-success")
+               ),
+
+             conditionalPanel(
+               condition = "output.nma_allowed2 == false",
+               actionButton("run_nma", "Ensemble too large for NMA", icon=icon("gears"),
+                            style = "display: block; margin-left: auto; margin-right: auto;", 
+                            class = "btn btn-error", disabled=TRUE)
+               )
 
              )
            ),
@@ -177,9 +194,9 @@ tabPanel(
              
              column(3,
                     wellPanel(
-                      sliderInput("width1", "width",
+                      sliderInput("width1", "Figure width (PDF only)",
                                   min = 4, max = 12, value = 7, step=0.5),
-                      sliderInput("height1", "height",
+                      sliderInput("height1", "Figure height (PDF only)",
                                   min = 4, max = 12, value = 7, step=0.5)
                       )
                     ),
@@ -241,7 +258,7 @@ tabPanel(
                     ),
              column(3,
                     wellPanel(
-                      sliderInput("width3", "Width and height",
+                      sliderInput("width3", "Figure width and height (PDF only)",
                                   min = 4, max = 12, value = 7, step=0.5)
                       )
                     )
@@ -290,9 +307,9 @@ tabPanel(
 
              column(3,
                     wellPanel(
-                      sliderInput("width-pcload", "Width",
+                      sliderInput("width-pcload", "Figure width (PDF only)",
                                   min = 4, max = 12, value = 7, step=0.5),
-                      sliderInput("height-pcload", "Height",
+                      sliderInput("height-pcload", "Figure height (PDF only)",
                                   min = 4, max = 12, value = 7, step=0.5)
                       )
                     )
