@@ -24,11 +24,12 @@ filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL
       else cmap = TRUE
    }
 
-   if(cmap) {
+   ## Check dimension if cmap is matrix
+   if(is.matrix(cmap) && !all.equal(dim(cmap), dim(cij)[1L:2L]))
+      stop("Input 'cmap' does not match x")
 
-      # Inspect cij values with respect to cutoff.cij and contact map
-
-      if(is.null(xyz)) stop("xyz coordinates or a 'pdbs' object must be provided")
+   ## Inspect cij values with respect to cutoff.cij and contact map
+   if(is.matrix(cmap) || isTRUE(cmap)) {
 
       # check factor vector for multiple networks construction
       if(!is.null(fac)) {
@@ -36,26 +37,35 @@ filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL
       } else {
          fac = factor(rep("a", dim(cij)[3L])) 
       } 
-
-      # check xyz for contact map calculation
-      if(inherits(xyz, "pdbs")) {
-         gaps.pos <- gap.inspect(xyz$xyz)
-         xyz <- xyz$xyz[, gaps.pos$f.inds]
+  
+      # check for calculating cmap 
+      if(isTRUE(cmap)) {
+         if(is.null(xyz))
+            stop("xyz coordinates or a 'pdbs' object must be provided for contact map calculation")
+         if(inherits(xyz, "pdbs")) {
+            gaps.pos <- gap.inspect(xyz$xyz)
+            xyz <- xyz$xyz[, gaps.pos$f.inds]
+         }
+         if(nrow(xyz) != dim(cij)[3L] && nlevels(fac) > 1)
+            stop(paste("Input 'xyz' doesn't match 'x'", 
+              "\tSet fac=NULL for single network construction", sep='\n'))
       }
-      if(nrow(xyz) != dim(cij)[3L] && nlevels(fac) > 1)
-         stop("xyz matrix doesn't match x. Set fac=NULL for single network construction")
-      
+
       # convert cij to upper.tri matrix for internal use
       pcij <- apply(cij, 3, function(x) x[upper.tri(x)])
  
       ncij <- tapply(1:dim(cij)[3L], fac, function(i) {
-         
+        
          # contact map
-         if(nlevels(fac) > 1)
-             cm <- cmap(xyz[i, ], ...) 
-         else
-             cm <- cmap(xyz, ...) 
-   
+         if(isTRUE(cmap)) { 
+            if(nlevels(fac) > 1)
+                cm <- cmap(xyz[i, ], ...) 
+            else
+                cm <- cmap(xyz, ...) 
+         } else {
+            cm <- cmap
+         }
+ 
          cij.min = apply(abs(pcij[, i, drop=FALSE]), 1, min)
          cij.max = apply(abs(pcij[, i, drop=FALSE]), 1, max)
    

@@ -17,7 +17,9 @@
     function in bio3d package for further details. }
   \item{cutoff.cij}{ Threshold for each individual correlation value. 
     See below for details. }
-  \item{cmap}{ logical, if TRUE both correlation values and contact map are inspected. } 
+  \item{cmap}{ logical or numerical matrix indicating the contact map.
+    If logical and TRUE, contact map will be calculated with input
+    \code{xyz}. } 
   \item{xyz}{ XYZ coordinates for distance matrix calculation. }
   \item{fac}{ factor indicating distinct categories of input correlation matrices. }
   \item{cutoff.sims}{ Threshold for the number of simulations with observed correlation
@@ -34,14 +36,17 @@
 }
 \author{ Xin-Qiu Yao, Guido Scarabelli & Barry Grant }
 \details{ 
-     If cmap=TRUE, the function inspects a set of cross-correlation matrices, or DCCM, and 
-     decides edges for correlation network analysis based on:
-        1. min(abs(cij)) >= cutoff.cij, or
-        2. max(abs(cij)) >= cutoff.cij && residues contact each other based on results
-           from \code{cmap}.
+     If cmap is TRUE or provided a numerical matrix, the function inspects
+     a set of cross-correlation matrices, or DCCM, and decides edges for 
+     correlation network analysis based on:
 
-     If cmap=FALSE, the function filters DCCMs with \code{cutoff.cij} and return the mean 
-     of correlations present in at least \code{cutoff.sims} calculated matrices. 
+        1. min(abs(cij)) >= cutoff.cij, or
+        2. max(abs(cij)) >= cutoff.cij && residues contact each other 
+           based on results from \code{cmap}.
+
+     Otherwise, the function filters DCCMs with \code{cutoff.cij} and 
+     return the mean of correlations present in at least 
+     \code{cutoff.sims} calculated matrices. 
 }
 \seealso{
    \code{\link{cna}}, \code{\link{dccm}}, \code{\link{dccm.nma}}, \code{\link{dccm.xyz}},
