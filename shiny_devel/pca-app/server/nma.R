@@ -59,7 +59,10 @@ filter_by_rmsd <- reactive({
   pdbs <- align()
   rd <- rmsd1()
   
-  inds <- filter.rmsd(pdbs$xyz, rmsd.mat = rd, cutoff=input$filter_rmsd, fit=FALSE)$ind
+  inds <- filter.rmsd(pdbs$xyz, rmsd.mat = rd,
+                      cutoff=input$filter_rmsd, fit=FALSE,
+                      method = input$hclustMethod_rmsd)$ind
+  
   return(inds)
 })
 
@@ -79,9 +82,10 @@ output$rmsd_dendrogram2 <- renderPlot({
   rd <- rmsd1()
   rownames(rd) <- pdbs$lab
   colnames(rd) <- pdbs$lab
-  
-  d <- as.dist(rd)
-  hc <- hclust(d)
+
+  hc <- hclust_rmsd()
+  #d <- as.dist(rd)
+  #hc <- hclust(d)
 
   inds <- filter_by_rmsd()
   message(inds)
