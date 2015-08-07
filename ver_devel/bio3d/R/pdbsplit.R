@@ -1,5 +1,5 @@
 `pdbsplit` <-
-function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE, mk4=FALSE, ncore=1, ...) {
+function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE, mk4=FALSE, ncore=1, progress=NULL, ...) {
   
   toread <- file.exists(pdb.files)
   toread[substr(pdb.files, 1, 4) == "http"] <- TRUE
@@ -39,6 +39,11 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
      dir.create(path)
   
   "splitOnePdb" <- function(i, pdb.files, ids, path, overwrite, verbose, ...) {
+
+    if(!is.null(progress)) {
+      progress$inc(1/length(pdb.files))
+    }
+    
     out <- c(); skipped <- c(); unused <- NULL;
     if(!overwrite && !verbose) {
       chains <- quickscan(pdb.files[i])
@@ -111,25 +116,31 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
               new.name <- file.path(path, new.name)
               
               xyz <- pdb$xyz[k, sel$xyz]
-              write.pdb(new.pdb, file = new.name, xyz=xyz, sse=TRUE)
-              out <- c(out, new.name)
+
+              if(length(new.pdb$xyz) > 0) {
+                write.pdb(new.pdb, file = new.name, xyz=xyz, sse=TRUE)
+                out <- c(out, new.name)
+              }
             }
           }
           else {
             new.name <- paste0(basename.pdb(pdb.files[i], mk4=mk4), "_", chains[j], ".pdb") 
             new.name <- file.path(path, new.name)
 
-            if(!file.exists(new.name) || overwrite)
-              write.pdb(new.pdb, file = new.name, sse=TRUE)
-
-            out <- c(out, new.name)
+            if(length(new.pdb$xyz) > 0) {
+              if(!file.exists(new.name) | overwrite )
+                write.pdb(new.pdb, file = new.name, sse=TRUE)
+              
+              out <- c(out, new.name)
+            }
           }
         ##}
       }
     }
     if(!verbose)
       setTxtProgressBar(pb, i)
-    
+
+    gc()
     return( list(out=out, unused=unused, skipped=skipped) )
   }
   
