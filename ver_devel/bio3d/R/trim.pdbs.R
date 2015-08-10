@@ -28,6 +28,7 @@ trim.pdbs <- function(pdbs, row.inds=NULL, col.inds=NULL, ...) {
   new$chain =pdbs$chain[row.inds, col.inds, drop=FALSE]
   new$ali   =pdbs$ali[row.inds, col.inds, drop=FALSE]
   new$resid =pdbs$resid[row.inds, col.inds, drop=FALSE]
+  new$sse   =pdbs$sse[row.inds, col.inds, drop=FALSE]
   new$call  =cl
  
   class(new) <- c("pdbs", "fasta")
