@@ -1,181 +1,18 @@
 ### reactive stuff
 init_show_trj_nma <- TRUE
 
-rv$modes <- NULL
-output$nmaIsDone <- reactive({
-  return(!is.null(rv$modes))
-})
-outputOptions(output, 'nmaIsDone', suspendWhenHidden=FALSE)
-
+rv$pdbs4nma <- NULL
 observeEvent(input$run_nma, {
+  rv$pdbs4nma <- pdbs4nma()
   rv$modes <- nma2()
 })
 
-#observeEvent(input$filter_rmsd, {
-#  rv$modes <- NULL
-#})
-
-observeEvent(input$rmsd_filter, {
-  rv$modes <- NULL
-  
+observeEvent(input$filter_rmsd, {
   if(nma_allowed())
     rv$nma_allowed2 <- TRUE
   else
     rv$nma_allowed2 <- FALSE
 })
-
-output$nma_allowed2 <- reactive({
-  nma_allowed()
-})
-outputOptions(output, 'nma_allowed2', suspendWhenHidden=FALSE)
-
-
-############
-## NMA
-###########
-
-
-nma2 <- reactive({
-
-  if(!nma_allowed())
-    return(NULL)
-  
-  pdbs <- pdbs4nma()
-    
-  progress <- shiny::Progress$new()
-  on.exit(progress$close())
-  
-  progress$set(message = 'Calculating normal modes',
-               detail = 'Please wait',
-               value = 0)
-
-  rm.gaps <- TRUE
-  if(is.logical(input$rm_gaps)) {
-    rm.gaps <- input$rm_gaps
-  }
-  else {
-    rm.gaps <- TRUE
-  }
-    
-  modes <- nma(pdbs, fit=TRUE, rm.gaps=rm.gaps, progress=progress)
-  
-  if(init_show_trj_nma) {
-    updateCheckboxInput(session, 'show_trj2', 'Show NM Trajectory', value=TRUE)
-    init_show_trj_nma <<- FALSE
-  }
-  return(modes)
-})
-
-
-
-####################################
-####   Filtering structures #######
-####################################
-
-nma_allowed <- reactive({
-  if(!rv$aligned | !rv$fitted)
-    return(NULL)
-  
-  pdbs <- pdbs4nma()
-  gaps <- gap.inspect(pdbs$ali)
-
-  lens <- ncol(pdbs$ali)-gaps$row
-  size <- sum(lens)
-  
-  if(size > 5000)
-    return(FALSE)
-  else
-    return(TRUE)
-})
-
-
-
-filter_by_rmsd <- reactive({
-  pdbs <- align()
-  rd <- rmsd1()
-
-  cut <- input$filter_rmsd
-  if(is.null(cut)) {
-    cut <- 1
-  }
-
-  if(input$filter_clusterBy == "rmsd") {
-    inds <- filter.rmsd(pdbs$xyz, rmsd.mat = rd,
-                        cutoff=cut, fit=FALSE,
-                        method = input$hclustMethod_rmsd)$ind
-  }
-
-  if(input$filter_clusterBy == "pca") {
-    rd <- pc_dist()
-    inds <- filter.mat(as.matrix(rd), dist.fun=as.dist,
-                       cutoff=cut, 
-                       method = input$hclustMethod_pca)$ind
-  }
-
-  if(input$filter_clusterBy == "seqide") {
-    ide <- seqide()
-    rownames(ide) <- pdbs$lab
-    colnames(ide) <- pdbs$lab
-    
-    inds <- filter.mat(1-ide, dist.fun=as.dist, 
-                       cutoff=cut, 
-                       method = input$hclustMethod)$ind
-  }
-  
-  return(inds)
-})
-
-pdbs4nma <- reactive({
-  pdbs1 <- align()
-  inds <- filter_by_rmsd()
-  pdbs2 <- trim.pdbs(pdbs1, row.inds=inds)
-  pdbs2$lab <- pdbs1$lab[inds]
-
-  message(pdbs2$lab)
-  return(pdbs2)
-})
-
-output$rmsd_dendrogram2 <- renderPlot({
-  ##pdbs <- pdbs_nma()
-  pdbs <- align()
-  rd <- rmsd1()
-  rownames(rd) <- pdbs$lab
-  colnames(rd) <- pdbs$lab
-
-  hc <- hclust_rmsd()
-  #d <- as.dist(rd)
-  #hc <- hclust(d)
-
-  inds <- filter_by_rmsd()
-  message(inds)
-  
-  col <- rep(2, length(hc$order))
-  col[inds] <- 1
-
-  mar <- c(input$margins, 5, 3, 1)
-  hclustplot(hc, k=1, col=col, main="Cluster Dendrogram")
-  
-})
-
-output$filter_summary <- renderPrint({
-  invisible(capture.output(pdbs1 <- align()))
-  invisible(capture.output(inds <- filter_by_rmsd()))
-
-  cat("Structures included:", length(inds), "/", length(pdbs1$id))
-
-  if(!nma_allowed())
-    cat("\n\nEnsemble too large for NMA. Please reduce size by filtering similar structures\n")
-  #else
-  #  cat("\n\nEnsemble is good for NMA \n")
-})
-
-
-output$filter_rmsdInput <- renderUI({
-  #cut <- cutree_rmsd()
-  lab <- "RMSD Cutoff"
-  numericInput("filter_rmsd", lab, value = 1, step = 0.25)
-})
-
 
 observeEvent(input$filter_clusterBy, {
 
@@ -204,6 +41,172 @@ observeEvent(input$filter_clusterBy, {
 })
 
 
+output$nma_allowed2 <- reactive({
+  nma_allowed()
+})
+outputOptions(output, 'nma_allowed2', suspendWhenHidden=FALSE)
+
+output$nmaIsDone <- reactive({
+  return(!is.null(rv$modes))
+})
+outputOptions(output, 'nmaIsDone', suspendWhenHidden=FALSE)
+
+############
+## NMA
+###########
+
+
+nma2 <- reactive({
+
+  if(!nma_allowed())
+    return(NULL)
+  
+  pdbs <- rv$pdbs4nma
+    
+  progress <- shiny::Progress$new()
+  on.exit(progress$close())
+  
+  progress$set(message = 'Calculating normal modes',
+               detail = 'Please wait',
+               value = 0)
+
+  rm.gaps <- TRUE
+  if(is.logical(input$rm_gaps)) {
+    rm.gaps <- input$rm_gaps
+  }
+  else {
+    rm.gaps <- TRUE
+  }
+    
+  modes <- nma(pdbs, fit=TRUE, rm.gaps=rm.gaps, progress=progress)
+  
+  if(init_show_trj_nma) {
+    updateCheckboxInput(session, 'show_trj2', 'Show NM Trajectory', value=TRUE)
+    init_show_trj_nma <<- FALSE
+  }
+  
+  return(modes)
+})
+
+
+
+####################################
+####   Filtering structures #######
+####################################
+
+nma_allowed <- reactive({
+  if(!rv$aligned | !rv$fitted)
+    return(FALSE)
+  
+  pdbs <- align()
+  inds <- filter_pdbs()
+  pdbs <- trim.pdbs(pdbs, row.inds=inds)
+  gaps <- gap.inspect(pdbs$ali)
+
+  lens <- ncol(pdbs$ali) - gaps$row
+  size <- sum(lens)
+  
+  if(size > 5000)
+    return(FALSE)
+  else
+    return(TRUE)
+})
+
+## returns indices for filtering
+filter_pdbs <- reactive({
+  pdbs <- align()
+  rd <- rmsd1()
+
+  cut <- input$filter_rmsd
+  if(is.null(cut)) {
+    cut <- 1
+  }
+
+  if(input$filter_clusterBy == "rmsd") {
+    message("filter by rmsd")
+    inds <- filter.rmsd(pdbs$xyz, rmsd.mat = rd,
+                        cutoff=cut, fit=FALSE,
+                        method = input$hclustMethod_rmsd)$ind
+  }
+
+  if(input$filter_clusterBy == "pca") {
+    message("filter by pca")
+    rd <- pc_dist()
+    inds <- filter.mat(as.matrix(rd), dist.fun=as.dist,
+                       cutoff=cut, 
+                       method = input$hclustMethod_pca)$ind
+  }
+
+  if(input$filter_clusterBy == "seqide") {
+    message("filter by seqide")
+    ide <- seqide()
+    rownames(ide) <- pdbs$lab
+    colnames(ide) <- pdbs$lab
+    
+    inds <- filter.mat(1-ide, dist.fun=as.dist, 
+                       cutoff=cut, 
+                       method = input$hclustMethod)$ind
+  }
+
+  message("inds by function filter_pdbs():")
+  message(paste(inds, sep=" "))
+  message(paste(pdbs$lab[inds], sep=" "))
+  
+  return(inds)
+})
+
+## returns a new pdbs object for NMA
+pdbs4nma <- reactive({
+  message("pdbs4nma()")
+  
+  pdbs1 <- align()
+  inds <- filter_pdbs()
+  pdbs2 <- trim.pdbs(pdbs1, row.inds=inds)
+  pdbs2$lab <- pdbs1$lab[inds]
+
+  message(paste(pdbs2$lab, sep=" "))
+  return(pdbs2)
+})
+
+## dendrogram for the top row (filtering structures)
+output$rmsd_dendrogram2 <- renderPlot({
+  pdbs <- fit()
+  rd <- rmsd1()
+  rownames(rd) <- pdbs$lab
+  colnames(rd) <- pdbs$lab
+
+  hc <- hclust_rmsd()
+  inds <- filter_pdbs()
+  
+  col <- rep(2, length(hc$order))
+  col[inds] <- 1
+
+  mar <- c(input$margins, 5, 3, 1)
+  hclustplot(hc, k=1, col=col, main="Cluster Dendrogram")
+  
+})
+
+
+output$filter_summary <- renderUI({
+  invisible(capture.output(pdbs1 <- align()))
+  invisible(capture.output(inds <- filter_pdbs()))
+
+  str <- paste("<strong>Structures included</strong>:", length(inds), "/", length(pdbs1$id))
+
+  if(!nma_allowed())
+    str <- c(str, "<br><br><strong style='color: red;'>Ensemble too large for NMA</strong>. <br>Please reduce size by filtering similar structures.")
+
+  HTML(paste(str, collapse=" "))
+})
+
+
+output$filter_rmsdInput <- renderUI({
+  #cut <- cutree_rmsd()
+  lab <- "RMSD Cutoff"
+  numericInput("filter_rmsd", lab, value = 1, step = 0.25)
+})
+
+
 
 
 
@@ -211,11 +214,11 @@ observeEvent(input$filter_clusterBy, {
 ####   similarity measures     ####
 ####################################
 
+
+## RMSIP
 rmsip2 <- reactive({
   if(input$rm_gaps) {
-    ##pdbs <- align()
-    pdbs <- pdbs4nma()
-    ##modes <- nma2()
+    pdbs <- rv$pdbs4nma
     modes <- rv$modes
     rownames(modes$rmsip) <- pdbs$lab
     colnames(modes$rmsip) <- pdbs$lab
@@ -227,11 +230,10 @@ rmsip2 <- reactive({
 })
 
 
+## Bhattacharyya coefficient
 bhat <- reactive({
   if(input$rm_gaps) {
-    ## Bhattacharyya coefficient
-    pdbs <- align()
-    ##modes <- nma2()
+    pdbs <- rv$pdbs4nma
     modes <- rv$modes
     covs <- cov.enma(modes)
     bc <- bhattacharyya(modes, covs=covs)
@@ -249,6 +251,8 @@ bhat <- reactive({
 ####################################
 
 hclust_rmsip <- reactive({
+  message("hclust_rmsip")
+  
   rd <- rmsip2()
   return(hclust(as.dist(1-rd),
          method=input$hclustMethod_rmsip))
@@ -260,6 +264,8 @@ hclust_bhat2 <- reactive({
 })
 
 hclust2 <- reactive({
+  message("hclust2")
+  
   if(input$group_by2 == "rmsd") {
     hc <- hclust_rmsd()
   }
@@ -281,6 +287,7 @@ hclust2 <- reactive({
 
 
 cutree_rmsip <- reactive({
+  message("cutree_rmsip")
   hc <- hclust_rmsip()
   
   if(is.null(input$splitTreeK_rmsip))
@@ -294,7 +301,8 @@ cutree_rmsip <- reactive({
 
 
 cutree_nma <- reactive({
-  inds <- filter_by_rmsd()
+  message("cutree_nma")
+  inds <- filter_pdbs()
     
   if(input$cluster_by2 == "rmsd") {
     cut <- cutree_rmsd()
@@ -314,7 +322,9 @@ cutree_nma <- reactive({
     cut <- cutree_seqide()
     cut$grps <- cut$grps[inds]
   }
- 
+
+  print(cut$grps)
+  
   return(cut)
 })
 
@@ -340,31 +350,61 @@ output$kslider_rmsip <- renderUI({
 
 output$struct_dropdown2 <- renderUI({
   ##pdbs <- align()
-  pdbs <- pdbs4nma()
+  pdbs <- rv$pdbs4nma
   ids <- 1:length(pdbs$id)
   names(ids) <-  pdbs$lab
   selectInput('viewStruct_nma', 'Show NMs for structure:',
               choices=ids)
 })
+
+
+## this is to avoid calling RGL functions twice
+## needed after hiding control panel before the the NMA calc is done
+rv$viewStruct_nma <- 1
+rv$viewMode_nma <- 1
+rv$mag2 <- 5
+rv$viewColor2 <- "amalgam"
+rv$viewBGColor2 <- "white"
+
+observeEvent(input$viewStruct_nma, {
+  rv$viewStruct_nma <- as.numeric(input$viewStruct_nma)
+})
+
+observeEvent(input$viewMode_nma, {
+  rv$viewMode_nma <- as.numeric(input$viewMode_nma)
+})
+
+observeEvent(input$viewColor2, {
+  rv$viewColor2 <- input$viewColor2
+})
+
+observeEvent(input$viewBGColor2, {
+  rv$viewBGColor2 <- input$viewBGColor2
+})
+
+observeEvent(input$mag2, {
+  rv$mag2 <- as.numeric(input$mag2)
+})
   
 output$nmaWebGL  <- renderWebGL({
-  pdbs <- pdbs4nma()
+  message("nmaWebGL called")
+  pdbs <- rv$pdbs4nma
   modes <- rv$modes
 
-  if(!inherits(modes, "enma"))
+  if(!inherits(modes, "enma") | !inherits(pdbs, "pdbs"))
     return(NULL)
-
-  mag <- as.numeric(input$mag2)
+  
+  mag <- as.numeric(rv$mag2)
   step <- mag/8
   
   trj <- mktrj(modes, pdbs=pdbs,
                mag=mag, step=step,
-               s.inds=as.numeric(input$viewStruct_nma),
-               m.inds=as.numeric(input$viewMode_nma),
+               s.inds=rv$viewStruct_nma,
+               m.inds=rv$viewMode_nma,
                rock=FALSE,
-               file = paste0(data_path(), '/mode_', input$viewMode_nma, '.pdb'))
+               file = paste0(data_path(), '/mode_', rv$viewMode_nma, '.pdb'))
   n <- nrow(trj)
-  
+
   amalcol <- function(x) {
     col <- rep("grey50", length(x))
     col[1] <- "blue"
@@ -376,15 +416,15 @@ output$nmaWebGL  <- renderWebGL({
     rf <- rmsf(trj)
     return(t(replicate(n, vec2color(rf, c('blue', 'red')),simplify=TRUE)))
   }
-
+  
   class(trj)  <- 'xyz'
-  col <- switch(input$viewColor2,
+  col <- switch(rv$viewColor2,
                 'mag' = magcol(), # vec2color(rmsf(m)), #!! col=col, type=2
                 'amalgam' = amalcol(1:n),
                 'default' = colorRampPalette(c('blue', 'gray', 'red'))(n)
                 )
-  
-    view.xyz(trj, bg.col=input$viewBGcolor2, col=col, d.cut=6)
+
+  view.xyz(trj, bg.col=rv$viewBGColor2, col=col, d.cut=6)
 })
 
 
@@ -393,12 +433,20 @@ output$nmaWebGL  <- renderWebGL({
 ####     Plotting functions     ####
 ####################################
 
+## checkbox labels for filtering structures in fluctuation plot
 output$checkboxgroup_label_ids2 <- renderUI({
-  ##pdbs <- align()
-  pdbs <- pdbs4nma()
+  pdbs <- rv$pdbs4nma
   grps <- cutree_nma()$grps
+
+  message(grps)
+  
   ids <- pdbs$lab
-  names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
+  message(ids)
+  
+  ##names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
+  names(ids) <- paste(ids, " (c", grps, ")", sep="")
+  ids <- ids[ order(grps) ]
+  print(ids)
 
   checkboxInput("toggle_all2", "Toggle all", TRUE)
   
@@ -415,9 +463,7 @@ output$checkboxgroup_label_ids2 <- renderUI({
 
 ## Fluctuation plot
 make.plot.nma <- function() {
-  ##pdbs_all <- align()
-  pdbs <- pdbs4nma()
-  ##modes <- nma2()
+  pdbs <- rv$pdbs4nma
   modes <- rv$modes
 
   sse <- pdbs2sse(pdbs, ind=1, rm.gaps=TRUE, exefile=configuration$dssp$exefile)
@@ -463,7 +509,7 @@ output$nma_fluctplot <- renderPlot({
 
 
 make.plot.heatmap_rmsd2 <- function() {
-  inds <- filter_by_rmsd()
+  inds <- filter_pdbs()
   
   pdbs <- fit()
   rd <- rmsd1()
@@ -522,8 +568,7 @@ output$bhat_heatmap2 <- renderPlot({
 
 
 make.plot.dendrogram2 <- function() {
-  ##pdbs <- align()
-  pdbs <- pdbs4nma()
+  pdbs <- rv$pdbs4nma
   pc <- pca1()
 
   hc <- hclust_rmsip()
@@ -634,3 +679,4 @@ output$nmtraj = downloadHandler(
     zip(file, files=nma2pdb(), flags = "-9Xj")
   }
   )
+

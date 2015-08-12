@@ -2,7 +2,6 @@
 ##-- Superimpose and RMSD stuff
 ####################
 
-rv$fitted <- FALSE
 init_show_pdbs <- TRUE
 find_core <- reactive({
   pdbs <- align()
@@ -390,44 +389,112 @@ output$pdbs_table1 <- renderDataTable({
 ##-- PDBs Viewing Tab
 ##
 output$pdbsWebGL  <- renderWebGL({
-  pdbs <- fit()
+  pdbs <- fit() ## always used for visualization (can be trimmed)
+  
+  col.inds <- NULL  ## only set when pdbs object is trimmed
+  pdbs.full <- NULL ## only set when a trimmed version occupies the pdbs object
   
   if(!is.null(input$pdbs_table1_rows_selected)) {
     inds <- as.numeric(input$pdbs_table1_rows_selected)
+    
+    gaps <- gap.inspect(pdbs$resno[inds, , drop = FALSE])
+    col.inds <- which(gaps$col < dim(pdbs$resno[inds, , drop = FALSE])[1L])
+
+    pdbs.full <- pdbs ## original pdbs object
     pdbs <- trim(pdbs, row.inds=inds)
   }
   else {
-    inds <- 1:length(pdbs$id)
+    inds <- 1:length(pdbs$id)  
   }
-  
 
   n <- nrow(pdbs$xyz)
   grps <- cutree_rmsd()$grps[inds]
   core <- find_core()
-  dims <- dim(pdbs$ali)
-  gaps <- gap.inspect(pdbs$ali)
-
+  
+  ## dims and gaps always refer to the full matrix
+  if(!is.null(pdbs.full)) {
+    gaps <- gap.inspect(pdbs.full$ali)
+    dims <- dim(pdbs.full$ali)
+  }
+  else {
+    gaps <- gap.inspect(pdbs$ali)
+    dims <- dim(pdbs$ali)
+  }
+  
+  
   corecol <- function() {
     col <- matrix(1, nrow=dims[1], ncol=dims[2])
     col[, core$atom] <- 2
+    
+    if(!is.null(pdbs.full)) 
+      col <- col[, col.inds, drop=FALSE]
+    
+    col <- col[inds, , drop=FALSE]
     return(col)
   }
-
+  
   gapscol <- function() {
     col <- matrix(1, nrow=dims[1], ncol=dims[2])
     if(length(gaps$t.inds)>0)
       col[, gaps$t.inds] <- 2
+    
+    if(!is.null(pdbs.full)) 
+      col <- col[, col.inds, drop=FALSE]
+
+    col <- col[inds, , drop=FALSE]
     return(col)
   }
-
+  
   rmsfcol <- function() {
-    col <- vec2color(rmsf(pdbs$xyz))
+    if(n==1 & input$color_recalc)
+      return(rep("#808080", ncol(pdbs$ali)))
+    
+    rf <- rmsf(pdbs$xyz)
+
+    ## trimmed ensemble - do not recalc
+    if(!input$color_recalc & !is.null(pdbs.full)) {
+      rf <- rmsf(pdbs.full$xyz)[ col.inds ]
+    }
+    
+    return(vec2color(rf))
+  }
+
+  framecol <- function() {
+    if(!input$color_recalc & !is.null(pdbs.full)) {
+      nstru <- nrow(pdbs.full$xyz)
+      npos  <- ncol(pdbs.full$xyz)/3
+      
+      col <- matrix( rep(vec2color(1:nstru), times=npos), ncol=npos)
+      col <- col[inds, col.inds, drop=FALSE]
+    }
+    else {
+      nstru <- nrow(pdbs$xyz)
+      npos  <- ncol(pdbs$xyz)/3
+
+      if(nstru == 1)
+        return("#0000FF")
+      else
+        col <- matrix( rep(vec2color(1:nstru), times=npos), ncol=npos)
+    }
+
     return(col)
   }
 
+  indexcol <- function() {
+    if(!input$color_recalc & !is.null(pdbs.full)) {
+      nstru <- nrow(pdbs.full$xyz)
+      npos  <- ncol(pdbs.full$xyz)/3
+      col <- matrix( rep(vec2color(1:npos), times=nstru), nrow=nstru, byrow=TRUE)
+      col <- col[inds, col.inds, drop=FALSE]
+    }
+    else {
+      return("index")
+    }
+  }
+    
   col <- switch(input$viewColor1,
-                'index' = 'index',
-                'frame' = 'frame',
+                'index' = indexcol(),
+                'frame' = framecol(),
                 'sse'   = 'sse',
                 'cluster' = grps,
                 'core'  = corecol(),

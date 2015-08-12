@@ -41,7 +41,9 @@ tabPanel(
              uiOutput("filter_rmsdInput"),
              
 
-             verbatimTextOutput("filter_summary"),
+             ##verbatimTextOutput("filter_summary"),
+             htmlOutput("filter_summary"),
+             br(),
              
              conditionalPanel(
                condition = "output.nma_allowed2 == true",
@@ -52,7 +54,7 @@ tabPanel(
 
              conditionalPanel(
                condition = "output.nma_allowed2 == false",
-               actionButton("run_nma", "Ensemble too large for NMA", icon=icon("gears"),
+               actionButton("run_nma", "Run Ensemble NMA", icon=icon("gears"),
                             style = "display: block; margin-left: auto; margin-right: auto;", 
                             class = "btn btn-error", disabled=TRUE)
                )
@@ -68,8 +70,14 @@ tabPanel(
 
 
     
-### WebGL visualization
+
   hr(),
+  ## Hide everything below unless normal modes are calculated
+  conditionalPanel(
+    condition = "output.nmaIsDone",
+
+    
+  ### WebGL visualization    
   fluidRow(
            column(4,
                   wellPanel(
@@ -115,7 +123,7 @@ tabPanel(
 
            column(8,
                   conditionalPanel(
-                    condition='input.show_trj2 == true && output.nmaIsDone',
+                    condition='input.show_trj2 == true',
                     webGLOutput('nmaWebGL')
                     )
                   )
@@ -146,8 +154,8 @@ tabPanel(
 
                     checkboxInput('cluster', 'Color by clustering', value=TRUE),
                     radioButtons("cluster_by2", "Cluster by",
-                                 c("RMSIP" = "rmsip",
-                                   "RMSD" = "rmsd",
+                                 c("RMSD" = "rmsd",
+                                   "RMSIP" = "rmsip",
                                    "PC subspace" = "pc_space",
                                    "Sequence" = "sequence"
                                    ),
@@ -168,10 +176,7 @@ tabPanel(
                     )
                   ),
            column(8,
-                  conditionalPanel(
-                    condition='output.nmaIsDone',
                     plotOutput("nma_fluctplot")
-                    )
                   )
            ),
 
@@ -215,35 +220,29 @@ tabPanel(
            hr(),
            column(6,
                   conditionalPanel(
-                    condition = "input.rm_gaps == true && output.nmaIsDone",
+                    condition = "input.rm_gaps == true",
                     h4("RMSIP heatmap"),
                     plotOutput("rmsip_heatmap2")
                     )
                   ),
            column(6,
-                  conditionalPanel(
-                    condition = "output.nmaIsDone",
                     h4("RMSD heatmap"),
                     plotOutput("rmsd_heatmap2")
-                    )
                   )
            ),
 
           fluidRow(
-            conditionalPanel(
-              condition = "output.nmaIsDone",
-              column(3,
-                     checkboxInput('show_options4', 'More options', value=FALSE)
-                     ),
-              column(3,
-                     downloadButton('nma_rmsip_heatmap2pdf', "Download Plot PDF")
-                     ),
-              column(3),
-              column(3,
-                     downloadButton('nma_rmsd_heatmap2pdf', "Download Plot PDF")
-                     )
-              )
-           ),
+            column(3,
+                   checkboxInput('show_options4', 'More options', value=FALSE)
+                   ),
+            column(3,
+                   downloadButton('nma_rmsip_heatmap2pdf', "Download Plot PDF")
+                   ),
+            column(3),
+            column(3,
+                   downloadButton('nma_rmsd_heatmap2pdf', "Download Plot PDF")
+                   )
+            ),
 
          conditionalPanel(
            condition = "input.show_options4== true",
@@ -285,10 +284,7 @@ tabPanel(
                     )
                   ),
            column(8,
-                  conditionalPanel(
-                    condition = "output.nmaIsDone",
                     plotOutput("dendrogram2")
-                    )
                   )
            ),
 
@@ -352,5 +348,5 @@ tabPanel(
            #       )
    #        )
 
-
+)
          )

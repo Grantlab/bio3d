@@ -23,7 +23,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                   wellPanel(
                     bsPopover("popfit2",
                               "Viewing options",
-                              "Visualize the superimposed PDB structures by toggling the <b>Show PDBs</b> checkbox. The <i>Download</i> buttons allow visualizing the structures in an external program such as PyMOL or VMD. <br><br>Coloring options include <b>Cluster ID</b>: colors the structures according to their cluster membership; <b>Invariant core</b>: by the region with low structural variation within the ensemble; and <b>Gap regions</b>: residues belonging to columns in the alignment (see ALIGN tab) which contain one or more gaps. ",
+                              "Visualize the superimposed PDB structures by toggling the <b>Show PDBs</b> checkbox. The <i>Download</i> buttons allow visualizing the structures in an external program such as PyMOL or VMD. <br><br>Coloring options include <b>Residue index</b>: colors the structures by the alignment position; <b>RMSD Cluster</b>: colors the structures according to their cluster membership; <b>PDB Structure</b>: colors by structure number/ID;<b>Invariant core</b>: by the region with low structural variation within the ensemble; <b>RMSF</b>: colors the structures based on the fluctuations in the ensemble; and <b>Gap regions</b>: residues belonging to columns in the alignment (see ALIGN tab) which contain one or more gaps. ",
                               placement = "right", trigger = "hover",
                               options = list(container = "body")),
                     
@@ -39,17 +39,6 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                                    "All C-alpha atoms" = "full"),
                                  inline=TRUE),
 
-
-                    # radioButtons('viewColor1', label='Structure color',
-                    #              choices=list(
-                    #                'By index    (aligned position)' = 'index',
-                    #                'By cluster   (RMSD cluster ID)'='cluster',
-                    #                'By structure  (different PDBs)'='struct',
-                    #                'By core     (invariant region)'='core',
-                    #                'Gap regions (missing residues)'='gaps'
-                    #                ),
-                    #              selected='cluster'),
-
                     selectInput("viewColor1", "Color options:",
                                  c("Residue Index" = "index",
                                    "RMSD Cluster" = "cluster",
@@ -61,19 +50,12 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                                   multiple=FALSE),
 
 
-                    # radioButtons('viewBGcolor1', label='Background color',
-                    #              choices=list('Black'='black', 'White'='white'),
-                    #              selected='white'),
-
                     selectInput("viewBGcolor1", "Background color:",
                                  c('White'='white', 'Black'='black'),
                                   multiple=FALSE),
 
                     checkboxInput('show_options_idsel', 'Filter/toggle displayed PDBs', value=FALSE),
-                    ##br(),
-                    ##actionButton('viewUpdate1', label='Refresh', icon=icon('undo')),
-                    ##br(),
-                    ##downloadButton('pdbsRData', "Download PDBs RData"),
+                    
                     downloadButton('pdbsZIP', "Download Aligned PDBs"),
                     downloadButton('pdbs2pymol', "PyMOL Session File")
                     )
@@ -92,9 +74,10 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
            fluidRow(
              column(12,
                     wellPanel(
-                      helpText("Select a PDB ID to visualize. Deselect all to show all PDBs."),
+                      h4("Filter displayed PDBs"),
+                      helpText("Select one or more PDB ID(s) to visualize. Deselect all to show all PDBs."),
+                      checkboxInput('color_recalc', 'Color based on trimmed ensemble', value=TRUE),
                       DT::dataTableOutput("pdbs_table1")
-                      ##uiOutput("show_structs")
                       )
                     )
              )

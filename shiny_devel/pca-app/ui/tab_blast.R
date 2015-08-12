@@ -40,6 +40,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     conditionalPanel(
                       condition = "input.input_type == 'multipdb'",
                       tags$textarea(id="pdb_codes", rows=4, cols=40, "1TND, 1KJY_A"),
+                      ##textInput("pdb_codes", label = "hei", value = "1TND, 1KJY_A"),
                       helpText("Enter multiple comma ',' separated PDB IDs (4 character RCSB PDB codes with optional underscore chain, e.g. '1KJY_A')")
                       ),
 
@@ -117,7 +118,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
                     conditionalPanel(
                       condition = "input.input_type == 'pdb'",
-                      h4("Structure Summary and Visualization"),
+                      h4("Structure Summary"),
 
 
                       ##- PDB summary
@@ -174,10 +175,10 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       webGLOutput('pdbWebGL'),
 
                       selectInput("view_inpdb_as", "Display options:",
-                                  c("C-alpha Trace" = "calpha",
-                                    "Ligands" = "ligands",
+                                  c("Overview" = "overview",
+                                    "C-alpha Trace" = "calpha",
                                     "All atoms" = "allatoms"),
-                                  selected = "calpha",
+                                  selected = "overview",
                                   multiple = FALSE),
 
                       selectInput("view_inpdb_col", "Color options:",

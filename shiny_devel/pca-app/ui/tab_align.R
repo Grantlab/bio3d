@@ -26,13 +26,34 @@ tabPanel("2. ALIGN",
                  ),
          
          fluidRow(
-           column(5,
+           column(4,
                   wellPanel(
-                    h4("A) Alignment summary"),
+                    bsPopover("popalign3",
+                              "Alignment summary", 
+                              "Grey bars in the schematic alignment represents non-gap positions. Red bar above the alignment denote sequence conservation (white to red scale). The sequences are grouped/clustered (dendrogram on the left) based on their pair-wise sequence identities. ", 
+                              placement = "right", trigger = "hover",
+                              options = list(container = "body")),
                     
-                    verbatimTextOutput("alignment_summary"),
-                    verbatimTextOutput("missres_summary"),
+                    tags$div(id = "popalign3", icon("question-circle"),
+                             style = "position: absolute; right: 25px; top: 5px;"
+                             ),
+                    
+                    
+                    h4("Alignment summary"),
 
+                    htmlOutput("alignment_summary"),
+                    checkboxInput('cluster_alignment', "Alignment overview clustering", value=TRUE),
+                    htmlOutput("omitted_pdbs_summary"),
+                    htmlOutput("missres_summary"),
+
+                    conditionalPanel(
+                      condition = "output.npdbs_with_missres > 0 || input.omit_missing == true",
+                      checkboxInput("omit_missing", "Omit PDBs with missing in-structure residues",
+                                    value=FALSE)
+                      ),
+
+                    hr(),
+                    checkboxInput('show_alignment_edit', 'Filter/edit alignment', value=FALSE),
                     
                     actionButton3("next-btn-align1", "Next (Analysis)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
         
@@ -53,61 +74,71 @@ tabPanel("2. ALIGN",
                     )
                   ),
 
-           column(7,
-                  wellPanel(
-                    style="overflow: auto; background: #FFFFFF;",
-
-                   
-                    
-                    h4("B) Edit alignment (optional)"),
-                    
-                    radioButtons("toggle_editing", "Action",
-                                 c("Filter structures" = "filter",
-                                   "Upload alignment" = "upload"),
-                                 inline = TRUE),
-                    
-                    conditionalPanel(
-                      condition = "input.toggle_editing == 'filter'",
-                      uiOutput("include_hits"),
-                      
-                      checkboxInput("omit_missing",
-                                    "Omit PDBs with missing in-structure residues",
-                                    value=FALSE)
-                      ),
-                    
-                    conditionalPanel(
-                      condition = "input.toggle_editing == 'upload'",
-                      
-                      div(
-                        div(style="float: left; width: 45%;
-                                         padding: 10px;",
-                            
-                            strong("Download FASTA file"),
-                            helpText("To edit the alignment, download the FASTA alignment file,
-                                            and upload in the box to the right. "),
-                            
-                            br(),
-                            downloadButton('fastafile', "Download FASTA alignment file")
-                            ),
-                        
-                        div(style="float: right; width: 45%;
-                                         padding: 10px; margin-left: 5px;",
-                            
-                            strong("Upload FASTA file"),
-                            helpText(strong("Important:"), "when editing the FASTA file, do not edit the
-                                            sequence identifiers, and do preserve the amino acid sequences."),
-                            
-                            fileInput('fastafile_upload', '',
-                                      accept=c('text/fasta', 'text/plain', '.fasta'))
-                            
-                            )
-                        
-                        )
-                      ),
-                    
-                    actionButton("reset_fasta", "Reset alignment", icon=icon("undo"))
-                    )
+           column(8,
+                  plotOutput("schematic_alignment")
                   )
+           ),
+
+
+         conditionalPanel(
+           condition = "input.show_alignment_edit == true",
+           
+           fluidRow(
+             column(12,
+                    wellPanel(
+                      style="overflow: auto; background: #FFFFFF;",
+                      
+                      
+                      h4("Edit alignment"),
+                    
+                      radioButtons("toggle_editing", "Action",
+                                   c("Filter structures" = "filter",
+                                     "Upload alignment" = "upload"),
+                                   inline = TRUE),
+                      
+                      conditionalPanel(
+                        condition = "input.toggle_editing == 'filter'",
+                        uiOutput("include_hits")
+                        
+                        #checkboxInput("omit_missing",
+                        #            "Omit PDBs with missing in-structure residues",
+                        #              value=FALSE)
+                        ),
+                      
+                      conditionalPanel(
+                        condition = "input.toggle_editing == 'upload'",
+                        
+                        div(
+                          div(style="float: left; width: 45%;
+                                         padding: 10px;",
+                              
+                              strong("Download FASTA file"),
+                              helpText("To edit the alignment, download the FASTA alignment file,
+                                            and upload in the box to the right. "),
+                              
+                              br(),
+                              downloadButton('fastafile', "Download FASTA alignment file")
+                              ),
+                          
+                          div(style="float: right; width: 45%;
+                                         padding: 10px; margin-left: 5px;",
+                              
+                              strong("Upload FASTA file"),
+                              helpText(strong("Important:"), "when editing the FASTA file, do not edit the
+                                            sequence identifiers, and do preserve the amino acid sequences."),
+                              
+                              fileInput('fastafile_upload', '',
+                                        accept=c('text/fasta', 'text/plain', '.fasta'))
+                              
+                            )
+                          
+                          )
+                        ),
+                      
+                      actionButton("reset_fasta", "Reset alignment", icon=icon("undo"))
+                      )
+                    )
+             )
            ),
 
          
@@ -276,8 +307,7 @@ tabPanel("2. ALIGN",
          fluidRow(
            id = "alignment_row",
            column(12,
-                  
-                  h3("Final alignment"),
+                  h3("Sequence alignment"),
                   helpText("Rendering the alignment might be time consuming for large data sets (e.g. > 50 PDB IDs depending on the sequence lengths)."),
                   
                   radioButtons("show_alignment", "Show alignment",
@@ -305,7 +335,7 @@ tabPanel("2. ALIGN",
                       });
                       ')))
                     )
-                  )
+                    )
            )
 
          
