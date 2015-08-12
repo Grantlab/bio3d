@@ -8,7 +8,7 @@ observeEvent(input$run_nma, {
 })
 
 observeEvent(input$filter_rmsd, {
-  if(nma_allowed())
+  if(nma_allowed()$value)
     rv$nma_allowed2 <- TRUE
   else
     rv$nma_allowed2 <- FALSE
@@ -42,7 +42,7 @@ observeEvent(input$filter_clusterBy, {
 
 
 output$nma_allowed2 <- reactive({
-  nma_allowed()
+  nma_allowed()$value
 })
 outputOptions(output, 'nma_allowed2', suspendWhenHidden=FALSE)
 
@@ -58,7 +58,7 @@ outputOptions(output, 'nmaIsDone', suspendWhenHidden=FALSE)
 
 nma2 <- reactive({
 
-  if(!nma_allowed())
+  if(!nma_allowed()$value)
     return(NULL)
   
   pdbs <- rv$pdbs4nma
@@ -95,8 +95,9 @@ nma2 <- reactive({
 ####################################
 
 nma_allowed <- reactive({
-  if(!rv$aligned | !rv$fitted)
-    return(FALSE)
+  if(!rv$aligned | !rv$fitted) {
+    return(list(value=FALSE, msg="<strong style='color: red;'>Unfinshed required calculations</strong>. Please go back to the ALIGN and/or FIT tabs. "))
+  }
   
   pdbs <- align()
   inds <- filter_pdbs()
@@ -105,11 +106,15 @@ nma_allowed <- reactive({
 
   lens <- ncol(pdbs$ali) - gaps$row
   size <- sum(lens)
+
+  if(!length(inds)>1){
+    return(list(value=FALSE, msg="<strong style='color: red;'>> 1 structure needed for esemble NMA</strong>. Decrease cutoff value for filtering. "))
+  }
   
   if(size > 5000)
-    return(FALSE)
+    return(list(value=FALSE, msg="<strong style='color: red;'>Ensemble too large for NMA</strong>. Increase cutoff value for filtering. "))
   else
-    return(TRUE)
+    return(list(value=TRUE, msg=""))
 })
 
 ## returns indices for filtering
@@ -193,10 +198,10 @@ output$filter_summary <- renderUI({
 
   str <- paste("<strong>Structures included</strong>:", length(inds), "/", length(pdbs1$id))
 
-  if(!nma_allowed())
-    str <- c(str, "<br><br><strong style='color: red;'>Ensemble too large for NMA</strong>. <br>Please reduce size by filtering similar structures.")
+  if(!nma_allowed()$value)
+    str <- c(str, nma_allowed()$msg)
 
-  HTML(paste(str, collapse=" "))
+  HTML(paste(str, collapse="<br>"))
 })
 
 
