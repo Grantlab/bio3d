@@ -6,7 +6,7 @@
 rv$selacc <- NULL
 
 observeEvent(input$selected_pdbids, {
-
+  rv$fitted <- FALSE
   if(!length(input$selected_pdbids) > 0) {
     rv$selacc <- get_acc()
   }
@@ -21,7 +21,7 @@ observeEvent(input$selected_pdbids, {
 
 
 observeEvent(input$omit_missing, {
-
+  rv$fitted <- FALSE
   allacc <- get_acc()
 
   if(input$omit_missing) {
@@ -48,13 +48,14 @@ observeEvent(input$omit_missing, {
   
 
 observeEvent(input$reset_fasta, {
-
+  rv$fitted <- FALSE
   rv$selacc <- get_acc()
   acc <- rv$selacc
   updateSelectInput(session, "selected_pdbids", 
                     choices = acc, selected = acc)
   
   updateCheckboxInput(session, "omit_missing", value = FALSE)
+
 })
 
 output$include_hits <- renderUI({
@@ -565,13 +566,13 @@ output$schematic_alignment <- renderPlot({
 
   if(input$cluster_alignment) {
     layout(matrix(c(4,2,3,1), ncol=2),
-           heights = c(.05, 1),
+           heights = c(.1, 1),
            widths = c(0.3, 1))
     par(mar=c(4, 0.1, 0.1, 4))
   }
   else {
     layout(matrix(c(2, 1), nrow=2),
-           heights = c(.05, 1))
+           heights = c(.1, 1))
     par(mar=c(4, 2, 0.1, 4))
   }
   
@@ -619,7 +620,7 @@ output$schematic_alignment <- renderPlot({
     labs <- labs[hc$order]
   
   mtext(labs, side=4, line=2-1.25, at=at, cex=0.8, las=2)
-  ##title(main="Alignment Overview")
+
 
 
   ## cluster dendrogram
@@ -637,24 +638,23 @@ output$schematic_alignment <- renderPlot({
  
 
   if(input$cluster_alignment)
-    par(mar=c(.1, 0.1, .1, 4))
+    par(mar=c(.1, 0.1, 2, 4))
   else
-    par(mar=c(.1, 2, .1, 4))
+    par(mar=c(.1, 2, 2, 4))
 
-  if(all(c(0,1) %in% cons))
-    col <- c("#FFFFFF", "#FF0000")
-  else 
-    col <- colorRampPalette(c("white", "red"))( 10 )
+  #if(all(c(0,1) %in% cons))
+  #  col <- c("#FFFFFF", "#FF0000")
+  #else 
+  col <- colorRampPalette(c("white", "red"))( 10 )
 
-  #if(all(unique(cons) == 1))
-  #  col <- "#FF0000"
-  #if(all(unique(cons) == 0))
-  #  col <- "#FFFFFF"
-
-  #toprow <- rbind(cons, ng)
-  #image(t(toprow), col = col, axes = FALSE) 
   image(as.matrix(cons), col = col, axes=FALSE)
+
+  if(input$cluster_alignment)
+    at <- 0.4
+  else
+    at <- NA
   
+  mtext(quote(bold("Sequence Alignment Overview")), side = 3, line = 0.5, cex = 1.25, at=at)
 })
 
 

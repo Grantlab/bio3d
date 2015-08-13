@@ -123,7 +123,7 @@ filter_pdbs <- reactive({
   rd <- rmsd1()
 
   cut <- input$filter_rmsd
-  if(is.null(cut)) {
+  if(is.null(cut) | is.na(cut)) {
     cut <- 1
   }
 
@@ -470,13 +470,17 @@ output$checkboxgroup_label_ids2 <- renderUI({
 make.plot.nma <- function() {
   pdbs <- rv$pdbs4nma
   modes <- rv$modes
-
+  
+  gaps.res <- gap.inspect(pdbs$ali)
+  ##gaps.pos <- gap.inspect(pdbs$xyz)
+  
+  resno <- pdbs$resno[1, gaps.res$f.inds]
   sse <- pdbs2sse(pdbs, ind=1, rm.gaps=TRUE, exefile=configuration$dssp$exefile)
 
   signif <- FALSE
   if(input$cluster) {
     col <- cutree_nma()$grps
-
+    
     #if(input$signif)
     #  signif <- TRUE
   }
@@ -491,8 +495,10 @@ make.plot.nma <- function() {
     col[!show] <- NA
   }
 
+  par(mar=c(4, 5, 4, 2))
   plot(modes, pdbs, sse=sse, col=col, signif=signif,
-       spread=input$spread, conservation=input$seqide)
+       spread=input$spread, conservation=input$seqide, resno=resno,
+       main = "NMA derived fluctuations")
 
   #if(input$toggle_rmsf2) {
   #  gaps.res <- gap.inspect(pdbs$ali)
@@ -652,8 +658,7 @@ output$nma_rmsip_heatmap2pdf = downloadHandler(
 
 nma2pdb  <- reactive({
   path <- data_path()
-  pdbs <- align()
-  ##modes <- nma2()
+  pdbs <- rv$pdbs4nma
   modes <- rv$modes
   gaps <- gap.inspect(pdbs$ali)
   fname  <- paste0(path, '/', 'mode', input$viewMode_nma, '.pdb')

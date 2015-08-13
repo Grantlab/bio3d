@@ -1,6 +1,10 @@
 
 tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
+         div(
+           h3("Structure Search", style="border: 1px solid #e3e3e3; border-radius: 4px; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; margin-top: -10px; background-color: white;")
+           ),
+
 
          actionButton3("about_blasttab", "About this tab", icon=icon("comment"), cl="btn btn-warn btn-input action-button", style = "position: fixed; top: 14px; right: 16px; z-index: 2000;"),
 
