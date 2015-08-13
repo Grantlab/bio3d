@@ -64,11 +64,9 @@ tabPanel("2. ALIGN",
                     tags$script(HTML(
                       '$("#next-btn-align1").click(function(){',
                       '$("html, body").animate({scrollTop:$("#seqanalysis_row").position().top - (0.1 * $(window).height())}, "smooth");',
-
-                      
-                      '$("#fluct_plot").parent().siblings().find(".well").addClass("show-border");',
+                      '$("#seqanalysis_row").children().find(".well").addClass("show-border");',
                       'window.setTimeout(function(){',
-                      '$("#fluct_plot").parent().siblings().find(".well").removeClass("show-border");',
+                      '$("#seqanalysis_row").children().find(".well").removeClass("show-border");',
                       '}, 2500);',
                       '});'
                       
@@ -216,9 +214,9 @@ tabPanel("2. ALIGN",
                       '$("html, body").animate({scrollTop:$("#alignment_row").position().top - (0.1 * $(window).height())}, "smooth");',
 
                       
-                      '$("#fluct_plot").parent().siblings().find(".well").addClass("show-border");',
+                      '$("#alignment").addClass("show-border");',
                       'window.setTimeout(function(){',
-                      '$("#fluct_plot").parent().siblings().find(".well").removeClass("show-border");',
+                      '$("#alignment").removeClass("show-border");',
                       '}, 2500);',
                       '});'
                       

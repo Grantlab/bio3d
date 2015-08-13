@@ -292,7 +292,11 @@ output$alignment_summary <- renderUI({
                paste0("<li>", dims[2L], " position columns</li>"),
                paste0("<li>(", dims.nongap[2L], " non-gap, ", dims.gap[2L], " gap)</li></ul>"),
                sep = "")
-  
+  if(dims[1L] <= 15) {
+      updateRadioButtons(session, inputId = 'show_alignment', label = 'Show alignment',
+                        choices = c('Show' = 'yes', 'Hide' = 'no'),
+                        selected = 'yes', inline = TRUE)
+  }
   HTML(str)
 })
 
@@ -472,7 +476,7 @@ output$alignment <- renderUI({
 ####################################
 
 `prep.seq.row` <- function(tmp, i, x, x.mat, ids, buf.inds1, buf.inds2, aln.inds, width){
-    if( length(ids)<25 ) {
+    if( length(ids)<50 ) {
         for(j in 1:nrow(x)) {
           tmp[[j+1]] <- span(
             span(ids[j], class="aln_id"),
