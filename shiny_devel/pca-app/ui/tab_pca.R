@@ -62,7 +62,7 @@ tabPanel(
              
              selectInput("viewBGcolor", "Background color:",
                          c('White'='white', 'Black'='black'),
-                         multiple=FALSE),
+                         selected = 'white'),
              
              br(),
              actionButton('viewUpdate', label='Refresh', icon=icon('undo')),

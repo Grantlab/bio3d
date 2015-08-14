@@ -34,7 +34,7 @@ hclust_pcspace <- reactive({
   hc <- hclust(pc_dist(), method=input$hclustMethod_pca)
   return(hc)
 })
-  
+
 
 hclust_pca <- reactive({
   pdbs <- fit()
@@ -51,7 +51,7 @@ hclust_pca <- reactive({
   if(input$cluster_by == "sequence") {
     hc <- hclust_seqide()
   }
-  
+
   return(hc)
 })
 
@@ -65,14 +65,14 @@ cutree_pca2 <- reactive({
     k <- NA
   else
     k <- as.numeric(input$splitTreeK_pca)
-  
+
   cut <- cutreeBio3d(hc, minDistance=input$minDistance_pca, k=k)
   return(cut)
 })
 
 
 cutree_pca <- reactive({
-  
+
   if(input$cluster_by == "rmsd") {
     cut <- cutree_rmsd()
   }
@@ -80,11 +80,11 @@ cutree_pca <- reactive({
   if(input$cluster_by == "pc_space") {
     cut <- cutree_pca2()
   }
-  
+
   if(input$cluster_by == "sequence") {
     cut <- cutree_seqide()
   }
- 
+
   return(cut)
 })
 
@@ -185,7 +185,7 @@ output$pca_plot1_conf <- renderPlot({
     if(length(inds)>0)
       points(pc$z[inds, xax], pc$z[inds, yax], col=2, cex=2.5*as.numeric(input$cex_points))
   }
-  
+
   invisible(par(op))
 
 })
@@ -201,11 +201,11 @@ output$pca_plot1_scree <- renderPlot({
 output$scatterplot3d_webgl <- renderWebGL({
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
-  
+
   cut <- cutree_pca()
   col <- cut$grps
   k <- cut$k
-  
+
   op <- par(pty="s")
   xax <- as.numeric(input$pcx)
   yax <- as.numeric(input$pcy)
@@ -233,12 +233,12 @@ output$scatterplot3d_rthreejs <- renderScatterplotThree({
   cut <- cutree_pca()
   col <- cut$grps
   k <- cut$k
-  
+
   op <- par(pty="s")
   xax <- as.numeric(input$pcx)
   yax <- as.numeric(input$pcy)
   zax <- as.numeric(input$pcz)
-  
+
   p <- paste0("PC", c(xax, yax, zax),
               " (", round((pc$L[c(xax, yax, zax)]/sum(pc$L)) *
                           100, 2), "%)")
@@ -273,7 +273,7 @@ output$pca_plot2_conf <- renderChart2({
   ##  col <- clustgrps()
   col <- cutree_pca()$grps
   k <- length(unique(col))
-  
+
   xax <- as.numeric(input$pcx)
   yax <- as.numeric(input$pcy)
 
@@ -352,7 +352,7 @@ make.plot.loadings <- function(){
 
   if(length(pcs)==0)
     pcs <- 1
-  
+
   au <- t(pc$au[, pcs, drop=FALSE])
 
   ## plots multiple lines in the same plot
@@ -384,14 +384,14 @@ make.plot.loadings <- function(){
       par(mar=c(5, 4, 4, 5))
     else
       par(mar=c(5, 4, 4, 2))
-    
+
     if(length(pcs) > 1)
       par(mfrow=c(length(pcs), 1))
-    
+
     for(i in pcs) {
       plot4 <- plot.bio3d(au[i,], resno=resno, sse=sse,
                           ylab=paste0("PC-", i, " (Å)"), xlab="Residue No.")
-      
+
       if(input$toggle_rmsf1) {
         par(new=TRUE)
         plot5 <- plot.bio3d(rf, resno=resno, sse=sse, axes=FALSE, col=2, type="l", xlab="", ylab="")
@@ -400,7 +400,7 @@ make.plot.loadings <- function(){
       }
     }
   }
-    
+
   ##return(plot4)
 }
 
@@ -412,10 +412,10 @@ output$pcaWebGL  <- renderWebGL({
     #ptm <- proc.time()
     #pdbs <- fit()
     pc <- pca1()
-    
+
     mag <- as.numeric(input$mag1)
     step <- mag/8
-    
+
     trj <- mktrj(pc, pc=as.numeric(input$viewPC), rock=FALSE,
                  mag=mag, step=step,
                  file = paste0(data_path(), '/pc_', input$viewPC, '.pdb'))
@@ -448,16 +448,18 @@ output$pcaWebGL  <- renderWebGL({
 observeEvent(input$viewUpdate, {
     updateSelectInput(session, 'viewPC', label='Choose Principal Component:',
         choices=c(1:10))
-    updateRadioButtons(session, 'viewColor', label='Structure color',
-        choices=list(
+    updateSliderInput(session, 'mag1', 'Magnification factor:',
+        min = 1, max = 10, value = 1)
+    updateSelectInput(session, 'viewColor', label = 'Color options',
+        choices = list(
           'Amalgam' = 'amalgam',
-          'Magnitude'='mag',
-          'By Frame (blue->gray->red)'='default'
+          'Magnitude' = 'mag',
+          'By Frame (blue->gray->red)' = 'default'
           ),
-        selected='amalgam')
-    updateRadioButtons(session, 'viewBGcolor', label='Background color',
-        choices=list('Black'='black', 'White'='white'),
-        selected='white')
+        selected ='amalgam')
+    updateSelectInput(session, 'viewBGcolor', 'Background color:',
+        c('White' = 'white', 'Black' = 'black'),
+        selected = 'white')
 })
 
 get_pdbstable <- reactive({
@@ -479,11 +481,11 @@ get_pdbstable <- reactive({
     grps)
 
   anno$numres <- apply(pdbs$ali, 1, function(x) sum(!is.gap(x)))
-  
+
   rownames(anno) <- NULL
   show.cols <- c("acc", "cluster", "numres", "compound", "source", "ligandId")
   col.inds <- sapply(show.cols, grep, colnames(anno))
-  
+
   return(anno[, col.inds])
 })
 
