@@ -1,6 +1,10 @@
 
 tabPanel("1. SEARCH", icon=icon("home"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
+         div(
+           h3("Structure Search", style="border: 1px solid #e3e3e3; border-radius: 4px; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; margin-top: -10px; background-color: white;")
+           ),
+
 
          actionButton3("about_blasttab", "About this tab", icon=icon("comment"), cl="btn btn-warn btn-input action-button", style = "position: fixed; top: 14px; right: 16px; z-index: 2000;"),
 
@@ -18,10 +22,10 @@ tabPanel("1. SEARCH", icon=icon("home"),
                   wellPanel(
                     bsPopover("popblast1",
                               "Select your input data type",
-                              "For both <b>single structure</b> and <b>single sequence</b> options a search will be performed to find related PDB structures upon which subsequent analysis will be based. The results of this search will be presented below along with options to restrict subsequent analysis to certain chains. </br></br>With <b>multiple structure</b> input, analysis will be confined to the specified structures and only their annotation will be displayed below. </br></br>To continue analysis proceed by navigating through the <b>NEXT</b> buttons.", 
+                              "For both <b>single structure</b> and <b>single sequence</b> options a search will be performed to find related PDB structures upon which subsequent analysis will be based. The results of this search will be presented below along with options to restrict subsequent analysis to certain chains. </br></br>With <b>multiple structure</b> input, analysis will be confined to the specified structures and only their annotation will be displayed below. </br></br>To continue analysis proceed by navigating through the <b>NEXT</b> buttons.",
                               placement = "right", trigger = "hover",
                               options = list(container = "body")),
-                    
+
                     tags$div(id = "popblast1", icon("question-circle"),
                              style = "position: absolute; right: 25px; top: 5px;"
                              ),
@@ -29,7 +33,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     h4("A)  Input Structure(s) or Sequence"),
                     helpText("Please enter either a single PDB code of interest, a single protein sequence, or multiple related PDB codes (see the ",
                              a(href="http://thegrantlab.org/bio3d", target="_blank", "Help"), " page for more details)."),
-                    
+
                     radioButtons(inputId = "input_type", label = "",
                                  choices = c("Enter a single PDB structure code" = "pdb",
                                    "Paste a single protein sequence" = "sequence",
@@ -40,6 +44,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     conditionalPanel(
                       condition = "input.input_type == 'multipdb'",
                       tags$textarea(id="pdb_codes", rows=4, cols=40, "1TND, 1KJY_A"),
+                      ##textInput("pdb_codes", label = "hei", value = "1TND, 1KJY_A"),
                       helpText("Enter multiple comma ',' separated PDB IDs (4 character RCSB PDB codes with optional underscore chain, e.g. '1KJY_A')")
                       ),
 
@@ -62,7 +67,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     actionButton3("page1_hits", "Next (Hit selection)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
                    tags$script(HTML(
                        '$("#page1_hits").click(function(){',
-                       '$("html, body").animate({scrollTop:$("#blast_row").position().top - (0.1 * $(window).height())}, "smooth");',
+                       '$("html, body").animate({scrollTop:$("#blast_row_plot").position().top - (0.1 * $(window).height())}, "smooth");',
                        '$("#blast_plot").parent().siblings().find(".well").addClass("show-border");',
                        'window.setTimeout(function(){',
                        '$("#blast_plot").parent().siblings().find(".well").removeClass("show-border");',
@@ -79,12 +84,12 @@ tabPanel("1. SEARCH", icon=icon("home"),
                   wellPanel(
                     style="background: #FFFFFF;",
 
-                    bsPopover("popblast2", 
+                    bsPopover("popblast2",
                               "Chain selection, annotation and visualization options",
                               "This panel presents summary information about your input specified in panel <b>A</b> to the left. <br><br> Options here allow you to limit further analysis to a certain chain as well as <b>View</b> the <b>3D structure</b> of each chain and inspect their <b>PFAM chain annotations</b>. <br><br>To continue analysis proceed by navigating through the <b>NEXT</b> buttons.",
                               placement = "right", trigger = "hover",
                               options = list(container = "body")),
-                    
+
                     tags$div(id = "popblast2", icon("question-circle"),
                              style = "position: absolute; right: 25px; top: 5px;"
                              ),
@@ -117,7 +122,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
 
                     conditionalPanel(
                       condition = "input.input_type == 'pdb'",
-                      h4("Structure Summary and Visualization"),
+                      h4("Structure Summary"),
 
 
                       ##- PDB summary
@@ -174,10 +179,10 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       webGLOutput('pdbWebGL'),
 
                       selectInput("view_inpdb_as", "Display options:",
-                                  c("C-alpha Trace" = "calpha",
-                                    "Ligands" = "ligands",
+                                  c("Overview" = "overview",
+                                    "C-alpha Trace" = "calpha",
                                     "All atoms" = "allatoms"),
-                                  selected = "calpha",
+                                  selected = "overview",
                                   multiple = FALSE),
 
                       selectInput("view_inpdb_col", "Color options:",
@@ -207,13 +212,16 @@ tabPanel("1. SEARCH", icon=icon("home"),
                           width=250, style="display: block; margin-left: auto; margin-right: auto;")
                       )
 ###
-                    ,radioButtons("logviewer", "View options:",
+                    ,conditionalPanel(
+                                      condition = "input.input_type == 'pdb'",
+                                      radioButtons("logviewer", "View options:",
                                     c("3D structure" = "pdb",
                                       "PDB processing log" = "pdblog",
                                       "App Info" = "bio3d"),
                                       selected="pdb",   ##<--- Change to "pdb"/"bio3d" ???
                                      inline=TRUE)
-                    
+                    )
+
 
 ###
 
@@ -225,7 +233,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
          ##-- Results Section --##
          #########################
          fluidRow(
-           id = 'blast_row',
+           id = 'blast_row_plot',
            #conditionalPanel(
            #  condition = "input.input_type != 'multipdb'",
            #  ##h2("Blast results")
@@ -242,16 +250,16 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       conditionalPanel(
                         condition = "input.input_type != 'multipdb'",
 
-                        bsPopover("popblast3", 
-                                  "Hit selection", 
+                        bsPopover("popblast3",
+                                  "Hit selection",
                                   "The plot on the right shows a representation of the hits in the PDB identified in the search. Each point represent a hit - or a PDB structure. All points above the red cutoff line can be chosen for further analysis. Note that only those marked with a blue circle is currently chosen. ",
                                   placement = "right", trigger = "hover",
                                   options = list(container = "body")),
-                        
+
                         tags$div(id = "popblast3", icon("question-circle"),
                                  style = "position: absolute; right: 25px; top: 5px;"
                                  ),
-                        
+
 
                         h4("B) Hit selection for further analysis"),
                         helpText("Optional filtering and refinement (via similarity threshold specification) of related structures for further analysis."),
@@ -277,7 +285,8 @@ tabPanel("1. SEARCH", icon=icon("home"),
                         actionButton3("page1_table", "Next (Further selection)", icon=icon("arrow-down"), cl="btn btn-primary btn-hits action-button"),
                         tags$script(HTML(
                        '$(".btn-hits").click(function(){',
-                       '$("#blast_table").parent()[0].scrollIntoView({block: "end", behavior: "smooth"});',
+                       '$("html, body").animate({scrollTop:$("#blast_row_table").position().top }, "smooth");',
+                       #'$("#blast_table").parent()[0].scrollIntoView({block: "end", behavior: "smooth"});',
                        #'window.scrollBy(0,-50);',
                        '$("#blast_table").parent().addClass("show-border");',
                        'window.setTimeout(function(){',
@@ -318,6 +327,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
            ),
 
          fluidRow(
+           id = 'blast_row_table',
            hr(),
            column(12,
                 ## PopOver probably not needed...?...

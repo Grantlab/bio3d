@@ -207,7 +207,7 @@ output$pdbWebGL  <- renderWebGL({
     view.pdb(pdb, as="calpha", col=input$view_inpdb_col, bg.col=bg, sheet="blue")
   }
   
-  if("ligands" %in% as) {
+  if("overview" %in% as) {
     view.pdb(pdb, as="calpha", col=input$view_inpdb_col,
              bg.col=bg, sheet="blue")
     view.pdb(pdb, as="ligand", col="atom", add=TRUE)

@@ -4,10 +4,9 @@
 
 ## selected accession ids
 rv$selacc <- NULL
-rv$aligned <- FALSE
 
 observeEvent(input$selected_pdbids, {
-
+  rv$fitted <- FALSE
   if(!length(input$selected_pdbids) > 0) {
     rv$selacc <- get_acc()
   }
@@ -22,7 +21,7 @@ observeEvent(input$selected_pdbids, {
 
 
 observeEvent(input$omit_missing, {
-
+  rv$fitted <- FALSE
   allacc <- get_acc()
 
   if(input$omit_missing) {
@@ -49,13 +48,14 @@ observeEvent(input$omit_missing, {
   
 
 observeEvent(input$reset_fasta, {
-
+  rv$fitted <- FALSE
   rv$selacc <- get_acc()
   acc <- rv$selacc
   updateSelectInput(session, "selected_pdbids", 
                     choices = acc, selected = acc)
   
   updateCheckboxInput(session, "omit_missing", value = FALSE)
+
 })
 
 output$include_hits <- renderUI({
@@ -269,9 +269,12 @@ check_aln <- reactive({
   if(!length(gaps$f.inds) > 5) {
     stop("Insufficient non-gap regions in alignment to proceed")
   }
+
+  if(!nrow(aln$ali)>1)
+    stop("Insufficient PDBs selected")
 })
 
-output$alignment_summary <- renderPrint({
+output$alignment_summary <- renderUI({
   invisible(capture.output( aln <- align() ))
   check_aln()
 
@@ -284,41 +287,73 @@ output$alignment_summary <- renderPrint({
   dims.nongap <- dim(ali[, gaps$f.inds, drop = FALSE])
   dims.gap <- dim(ali[, gaps$t.inds, drop = FALSE])
 
-  cat("Alignment dimensions:\n",
-      "  ", dims[1L], " sequence rows \n",
-      "  ", dims[2L], " position columns ", "(", dims.nongap[2L], " non-gap, ", dims.gap[2L], " gap) ", "\n", sep = "")
-  cat("\n")
-
-
-  wanted <- get_acc()
-  
-  missing <- !wanted %in% aln$lab
-  if(any(missing))
-    cat("Omitted PDBs:", paste(sort(wanted[missing]), collapse=", "))
-        
-  
+  str <- paste("<strong>Alignment dimensions:</strong><br>",
+               paste0("<ul><li>", dims[1L], " sequence rows</li>"),
+               paste0("<li>", dims[2L], " position columns</li>"),
+               paste0("<li>(", dims.nongap[2L], " non-gap, ", dims.gap[2L], " gap)</li></ul>"),
+               sep = "")
+  if(dims[1L] <= 15) {
+      updateRadioButtons(session, inputId = 'show_alignment', label = 'Show alignment',
+                        choices = c('Show' = 'yes', 'Hide' = 'no'),
+                        selected = 'yes', inline = TRUE)
+  }
+  HTML(str)
 })
 
 
-output$missres_summary <- renderPrint({
+output$omitted_pdbs_summary <- renderUI({
+  invisible(capture.output( pdbs <- align() ))
+  check_aln()
+  
+  wanted <- get_acc()
+  
+  missing <- !wanted %in% pdbs$lab
+  if(any(missing))
+    HTML("<strong>Omitted PDB(s):</strong>", paste(sort(wanted[missing]), collapse=", "))
+})
+
+pdbs_connectivity <- reactive({
+  invisible(capture.output( pdbs <- align() ))
+  check_aln()
+
+  ids <- pdbs$lab
+  nstructs <- length(ids)
+  
+  conn <- inspect.connectivity(pdbs, cut=4.05)
+  return(conn)
+})
+
+output$missres_summary <- renderUI({
   invisible(capture.output( pdbs <- align() ))
   check_aln()
 
   ids <- pdbs$lab
   nstructs <- length(ids)
 
-  conn <- inspect.connectivity(pdbs, cut=4.05)
+  conn <- pdbs_connectivity()
   if(sum(!conn) > 0) {
     inds <- which(!conn)
-
-    cat(sum(!conn), "PDBs with missing in-structure residues:\n")
-    cat("  ", paste(ids[!conn], collapse=", "))
-    cat("\n")
+    
+    str <- paste(paste0("<strong>", sum(!conn), " PDB(s) with missing in-structure residues:</strong><br>"),
+                 #"<ul><li>", 
+                 paste0(ids[!conn], collapse=", "),
+                 #"</li></ul>", 
+                 sep="")
+    HTML(str)
   }
-  else {
-    cat("No PDBs with missing in-structure residues\n")
-  }
+  #else {
+  #  str <- "No PDBs with missing in-structure residues"
+  #}
 })
+
+output$npdbs_with_missres <- reactive({
+  if(!rv$aligned)
+    return(0)
+  
+  conn <- pdbs_connectivity()
+  return(sum(!conn))
+})
+outputOptions(output, 'npdbs_with_missres', suspendWhenHidden=FALSE)
 
 
 
@@ -441,7 +476,7 @@ output$alignment <- renderUI({
 ####################################
 
 `prep.seq.row` <- function(tmp, i, x, x.mat, ids, buf.inds1, buf.inds2, aln.inds, width){
-    if( length(ids)<25 ) {
+    if( length(ids)<50 ) {
         for(j in 1:nrow(x)) {
           tmp[[j+1]] <- span(
             span(ids[j], class="aln_id"),
@@ -527,6 +562,105 @@ output$kslider <- renderUI({
 ####################################
 ####     Plotting functions     ####
 ####################################
+
+output$schematic_alignment <- renderPlot({
+  aln <- align()
+  hc <- hclust_seqide()
+  grps <- cutree_seqide()$grps
+
+  if(input$cluster_alignment) {
+    layout(matrix(c(4,2,3,1), ncol=2),
+           heights = c(.1, 1),
+           widths = c(0.3, 1))
+    par(mar=c(4, 0.1, 0.1, 4))
+  }
+  else {
+    layout(matrix(c(2, 1), nrow=2),
+           heights = c(.1, 1))
+    par(mar=c(4, 2, 0.1, 4))
+  }
+  
+  ## 1: gap, 0: non-gap
+  gaps <- gap.inspect(aln$ali)
+  
+  mat <- gaps$bin
+  if(any(mat==1)) {
+    mat[ mat == 1 ] <- -1
+    mat[ mat == 0 ] <- 1
+    mat[ mat == -1 ] <- 0
+  }
+  else {
+    mat <- mat+1
+  }
+  
+  ## re-order matrix
+  if(input$cluster_alignment) 
+    mat <- mat[ hc$order, ]
+  else 
+    mat <- mat[ seq(nrow(mat), 1), ]
+
+  if(any(mat==0))
+    col <- c("#FFFFFF", "#9F9F9F")
+  else
+    col <- c("#9F9F9F")
+  
+  image(t(mat), col = col, axes=FALSE)
+
+  by <- pretty(0:ncol(aln$ali), n = 6)
+  by <- by[2]
+    
+  labs <- seq(0, ncol(aln$ali), by=by)
+  labs[1] <- 1
+
+  at <- labs / labs[length(labs)]
+  at[1] <- 0
+  
+  axis(1, at=at, labels=labs)
+  mtext("Alignment index", 1, line=2, cex=1.0)
+  at <- seq(0, 1, length.out=length(aln$lab))
+  
+  labs <- aln$lab
+  if(input$cluster_alignment)
+    labs <- labs[hc$order]
+  
+  mtext(labs, side=4, line=2-1.25, at=at, cex=0.8, las=2)
+
+
+
+  ## cluster dendrogram
+  if(input$cluster_alignment) {
+    par(mar=c(4, 0.1, 0.1, 0.1))
+    ddr <- as.dendrogram(hc)
+    plot(ddr, horiz = TRUE, axes = FALSE, yaxs = "i", leaflab = "none")
+  }
+
+
+  ## conservation bar on top of alignment
+  cons <- conserv(aln$ali)
+  ng <- rep(0, length(cons))
+  ng[gaps$f.inds] <- 1
+ 
+
+  if(input$cluster_alignment)
+    par(mar=c(.1, 0.1, 2, 4))
+  else
+    par(mar=c(.1, 2, 2, 4))
+
+  #if(all(c(0,1) %in% cons))
+  #  col <- c("#FFFFFF", "#FF0000")
+  #else 
+  col <- colorRampPalette(c("white", "red"))( 10 )
+
+  image(as.matrix(cons), col = col, axes=FALSE)
+
+  if(input$cluster_alignment)
+    at <- 0.4
+  else
+    at <- NA
+  
+  mtext(quote(bold("Sequence Alignment Overview")), side = 3, line = 0.5, cex = 1.25, at=at)
+})
+
 
 make.plot.seqide.heatmap <- function() {
   pdbs <- align()

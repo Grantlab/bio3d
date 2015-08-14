@@ -107,7 +107,8 @@ output$checkboxgroup_label_ids <- renderUI({
   pdbs <- fit()
   grps <- cutree_pca()$grps
   ids <- pdbs$lab[order(grps)]
-  names(ids) <- paste(ids, " (c", grps[order(grps)], ")", sep="")
+  names(ids) <- paste(ids, " (c", grps, ")", sep="")
+  ids <- ids[ order(grps) ]
 
   checkboxInput("toggle_all", "Toggle all", TRUE)
 

@@ -23,6 +23,9 @@ rv$limit_hits <- 5
 rv$cutoff <- 41
 rv$sequence <- "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE"
 rv$pdb_codes <- "1TND, 1KJY_A"
+rv$aligned <- FALSE
+rv$fitted <- FALSE
+rv$modes <- NULL
 
 observeEvent(input$pdbid, {
   if(nchar(input$pdbid)>3) {
@@ -46,9 +49,7 @@ observeEvent(input$pdbid, {
       cut <- set_cutoff(blast, cutoff=NULL)
       rv$cutoff <- cut$cutoff
       rv$limit_hits <- 5
-      rv$modes <- NULL
-      rv$aligned <- FALSE
-      rv$fitted <- FALSE
+      reset_reactives()
     }
   }
 })
@@ -57,14 +58,12 @@ observeEvent(input$sequence, {
   if(nchar(input$sequence)>10) {
     if(input$input_type == "sequence") {
       rv$sequence <- input$sequence
-      blast <- run_blast()
-      rv$blast <- blast
+      rv$blast <- run_blast()
       cut <- set_cutoff(blast, cutoff=NULL)
       rv$cutoff <- cut$cutoff
       rv$limit_hits <- 5
-      rv$modes <- NULL
-      rv$aligned <- FALSE
-      rv$fitted <- FALSE
+
+      reset_reactives()
     }
   }
 })
@@ -75,35 +74,67 @@ observeEvent(input$chainId, {
 
 observeEvent(input$limit_hits, {
   rv$limit_hits <- as.numeric(input$limit_hits)
-  rv$modes <- NULL
-  rv$aligned <- FALSE
-  rv$fitted <- FALSE
+  ##reset_reactives()
 })
 
 observeEvent(input$cutoff, {
   rv$cutoff <- as.numeric(input$cutoff)
-  rv$modes <- NULL
-  rv$aligned <- FALSE
-  rv$fitted <- FALSE
+
+  cut <- set_cutoff(rv$blast, cutoff=rv$cutoff)
+  max.hits <- sum(cut$inds)
+  
+  if(max.hits < input$limit_hits)
+    updateSliderInput(session, "limit_hits", min = 1, max = max.hits, value = max.hits)
+  
+  ##reset_reactives()
 })
+
+observeEvent(input$blast_table_rows_selected, {
+  reset_reactives()
+})
+
+observeEvent(input$reset_pdbid, {
+  rv$pdbid <- "2LUM"
+  rv$chainid <- "A"
+  rv$sequence <- "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE"
+  rv$blast <- readRDS("2LUM_blast.RDS")
+  cut <- set_cutoff(rv$blast, cutoff=NULL)
+  rv$cutoff <- cut$cutoff
+  rv$limit_hits <- 5
+  
+  updateSliderInput(session, "cutoff", value = cut$cutoff)
+  updateSliderInput(session, "limit_hits", value = 5)
+  updateRadioButtons(session, "input_type", selected="pdb")
+  ##reset_reactives()
+})
+
 
 observeEvent(input$reset_cutoff, {
   if(input$input_type != "multipdb") {
-    blast <- rv$blast
-    cut <- set_cutoff(blast, cutoff=NULL)
+    cut <- set_cutoff(rv$blast, cutoff=NULL)
 
     updateSliderInput(session, "cutoff", value = cut$cutoff)
     updateSliderInput(session, "limit_hits", value = 5)
-    
-    rv$modes <- NULL
-    rv$aligned <- FALSE
-    rv$fitted <- FALSE
+    ##reset_reactives()
   }
 })
 
 observeEvent(input$reset_pdbid, {
   updateTextInput(session, "pdbid", value = "2LUM")
 })
+
+output$aligned <- reactive({
+  return(rv$aligned)
+})
+outputOptions(output, 'aligned', suspendWhenHidden=FALSE)
+
+
+## resets reactive values used in subsequent tabs
+reset_reactives <- function() {
+  rv$modes <- NULL
+  rv$aligned <- FALSE
+  rv$fitted <- FALSE
+}
 
 
 ## Returns HMMER results
