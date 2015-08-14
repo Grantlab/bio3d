@@ -180,7 +180,7 @@ table tr td {
 }
 
 div[class^="well"] {
-    border: 2px solid #e3e3e3
+    border: 2px solid #e3e3e3;
     border-radius: 4px;
     -webkit-transition: border-color ease-in-out 0.5s;
        -moz-transition: border-color ease-in-out 0.5s;
@@ -194,3 +194,17 @@ div[class^="well"].show-border {
     outline: 0;
 }
 
+div[id="alignment"] {
+    border: 2px solid rgba(0,0,0,0.0) !important;
+    border-radius: 5px !important;
+    -webkit-transition: border-color ease-in-out 0.5s;
+       -moz-transition: border-color ease-in-out 0.5s;
+        -ms-transition: border-color ease-in-out 0.5s;
+         -o-transition: border-color ease-in-out 0.5s;
+            transition: border-color ease-in-out 0.5s;
+}
+
+div[id="alignment"].show-border {
+    border-color: #66afe9 !important;
+    outline: 0 !important;
+}
