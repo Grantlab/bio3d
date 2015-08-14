@@ -211,6 +211,7 @@ align_pdbs <- reactive({
  
  gc()
  rv$aligned <- TRUE
+
  return(pdbs)
 })
 
@@ -294,8 +295,12 @@ output$alignment_summary <- renderUI({
                sep = "")
   if(dims[1L] <= 15) {
       updateRadioButtons(session, inputId = 'show_alignment', label = 'Show alignment',
-                        choices = c('Show' = 'yes', 'Hide' = 'no'),
-                        selected = 'yes', inline = TRUE)
+                         choices = c('Show' = 'yes', 'Hide' = 'no'),
+                         selected = 'yes', inline = TRUE)
+  } else {
+      updateRadioButtons(session, inputId = 'show_alignment', label = 'Show alignment',
+                         choices = c('Show' = 'yes', 'Hide' = 'no'),
+                         selected = 'no', inline = TRUE)
   }
   shinyjs::runjs("$(window).scrollTop(0);")
   HTML(str)
@@ -361,6 +366,9 @@ outputOptions(output, 'npdbs_with_missres', suspendWhenHidden=FALSE)
 
 output$alignment <- renderUI({
   message("generating HTML")
+  shinyjs::runjs('$("input[name=\'show_alignment\']").change(function(){
+                 $("html, body").animate({scrollTop:$("#alignment_row").offset().top}, "smooth");
+                 });')
   invisible(capture.output( aln <- align() ))
 
   ali <- aln$ali
@@ -467,9 +475,6 @@ output$alignment <- renderUI({
   progress$close()
   gc()
   #cat(as.character(out))
-  shinyjs::runjs('$("input[name=\'show_alignment\']").change(function(){
-                 $("html, body").animate({scrollTop:$("#alignment_row").offset().top}, "smooth");
-                 });')
   pre(class="alignment",
       out
       )
