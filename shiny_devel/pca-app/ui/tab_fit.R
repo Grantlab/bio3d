@@ -34,7 +34,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                              style = "position: absolute; right: 25px; top: 5px;"
                              ),
                     
-                    h4('Superposed PDB Viewing Options'),
+                    h4('A) Superposed PDB viewing options'),
                     checkboxInput('show_pdbs', 'Show PDBs', value=FALSE),
 
                     radioButtons("fit_type", "Superimpose to",
@@ -102,7 +102,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     
 
                     
-                    h4("Initial structure analysis"),
+                    h4("B) Initial structure analysis"),
 
                     selectInput("str_plot", "Plot options",
                                  c("RMSD Dendrogram" = "dendrogram",
@@ -199,6 +199,8 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
              ),
 
          hr(),
+         
+         h4("C) Structural core and RMSD details"),
 
          fluidRow(
            column(4,

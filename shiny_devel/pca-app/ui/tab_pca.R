@@ -39,7 +39,7 @@ tabPanel(
                       ),
              
              
-             h4('Principal Component Visualization'),
+             h4('A) Principal component visualization'),
              checkboxInput('show_trj', 'Show PC Trajectory', value=FALSE),
 
              selectInput('viewPC', 'Choose Principal Component:', choices=c(1:10)),
@@ -96,7 +96,7 @@ tabPanel(
                       ),
                     
                      
-        h4("Conformer plot"),
+        h4("B) Conformer plot"),
              popSelectInput('pcx', 'PC on X-axis:', choices=c(1:10), selected=1),
         selectInput('pcy', 'PC on Y-axis:', choices=c(1:10), selected=2),
 
@@ -261,7 +261,7 @@ tabPanel(
       condition = "input.plot_type == 'normal'",
       column(12,
              wellPanel(
-               h4("Hits annotation"),
+               h4("PCA conformer plot annotation"),
                helpText("Highlight structures in conformer plot by clicking their entries in the below table (only for plot type '2D Scatter')."),
                DT::dataTableOutput("pdbs_table")
                )
@@ -286,7 +286,7 @@ tabPanel(
                       ),
 
              
-             h4('Residue contributions'),
+             h4('C) Residue contributions'),
              selectInput('loadings_pc', 'Choose Principal Component:',
                          choices=c(1:10), selected=1, multiple=TRUE),
              ##checkboxInput("toggle_rmsf1", "Show RMSF", TRUE),

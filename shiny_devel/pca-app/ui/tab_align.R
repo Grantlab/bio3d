@@ -43,7 +43,7 @@ tabPanel("2. ALIGN",
                              ),
                     
                     
-                    h4("Alignment summary"),
+                    h4("A) Alignment summary"),
 
                     htmlOutput("alignment_summary"),
                     checkboxInput('cluster_alignment', "Alignment overview clustering", value=TRUE),
@@ -162,7 +162,7 @@ tabPanel("2. ALIGN",
                     
                     
                     
-                    h4("Sequence alignment analysis"),
+                    h4("B) Sequence alignment analysis"),
 
                     radioButtons("seq_plot", "Alignment overview plot options",
                                  c("Dendrogram" = "dendrogram",
@@ -309,7 +309,7 @@ tabPanel("2. ALIGN",
          fluidRow(
            id = "alignment_row",
            column(12,
-                  h3("Sequence alignment"),
+                  h4("C) Optional sequence alignment display"),
                   helpText("Rendering the alignment might be time consuming for large data sets (e.g. > 50 PDB IDs depending on the sequence lengths)."),
                   
                   radioButtons("show_alignment", "Show alignment",

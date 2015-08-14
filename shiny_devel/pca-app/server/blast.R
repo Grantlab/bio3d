@@ -163,7 +163,7 @@ run_blast <- reactive({
     progress <- shiny::Progress$new(session, min=1, max=5)
     on.exit(progress$close())
 
-    progress$set(message = 'Blasting',
+    progress$set(message = 'Searching PDB',
                  detail = 'Please wait')
     progress$set(value = 2)
 
