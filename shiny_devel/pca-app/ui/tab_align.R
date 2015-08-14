@@ -1,7 +1,7 @@
 tabPanel("2. ALIGN",
          icon=icon("arrow-right"),
          tags$style(type="text/css", "body {padding-top: 80px;}"),
-
+         shinyjs::useShinyjs(),
          div(
            h3("Sequence Alignment", style="border: 1px solid #e3e3e3; border-radius: 4px; padding-top: 10px; padding-bottom: 10px; padding-left: 5px; margin-top: -10px; background-color: white;")
            ),
@@ -212,8 +212,6 @@ tabPanel("2. ALIGN",
                     tags$script(HTML(
                       '$("#next-btn-align2").click(function(){',
                       '$("html, body").animate({scrollTop:$("#alignment_row").position().top - (0.1 * $(window).height())}, "smooth");',
-
-                      
                       '$("#alignment").addClass("show-border");',
                       'window.setTimeout(function(){',
                       '$("#alignment").removeClass("show-border");',
@@ -290,7 +288,7 @@ tabPanel("2. ALIGN",
                       h4("Download PDF Figures"),
                       downloadButton('seqide_dendrogram2pdf', "Dendrogram (PDF)"),
                       downloadButton('seqide_heatmap2pdf', "Heatmap (PDF)"),
-                      
+
                       downloadButton('conservation2pdf', "Conservation (PDF)"),
                       downloadButton('seqideZIP', "Sequence identity matrix")
 
@@ -300,10 +298,7 @@ tabPanel("2. ALIGN",
              ###
              )
            ),
-         
-         
-         
-         
+
          hr(),
 
          fluidRow(
@@ -311,21 +306,25 @@ tabPanel("2. ALIGN",
            column(12,
                   h4("C) Optional sequence alignment display"),
                   helpText("Rendering the alignment might be time consuming for large data sets (e.g. > 50 PDB IDs depending on the sequence lengths)."),
-                  
+
                   radioButtons("show_alignment", "Show alignment",
                                c("Show" = "yes",
                                   "Hide" = "no"),
                                selected = "no",
                                inline = TRUE),
-                  
+                    tags$script(HTML(
+                      '$("input[name=\'show_alignment\']").change(function(){',
+                        '$("html, body").animate({scrollTop:$("#alignment_row").offset().top}, "smooth");',
+                      '});'
+                    )),
                   conditionalPanel(
                     condition = "input.show_alignment == 'yes'",
-                    
                     uiOutput("alignment"),
                     tags$head(tags$script(src='tooltip.js')),
                     tags$head(tags$script(src='popover.js')),
-                    tags$head(tags$script(HTML('$(document).ready(function(){
-                      $("body")
+                    tags$head(tags$script(HTML(
+                      '$(document).ready(function(){',
+                      '$("body")
                       .popover({html: true,
                       selector: "[data-toggle=\'popover\']",
                       container: "body",
@@ -334,12 +333,11 @@ tabPanel("2. ALIGN",
                       delay: { "show": 200, "hide": 40 },
                       placement: "auto bottom"
                       });
-                      });
-                      ')))
+                      });'
+                      )))
                     )
                     )
            )
 
-         
          )
 

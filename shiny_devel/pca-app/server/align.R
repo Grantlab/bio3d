@@ -297,6 +297,7 @@ output$alignment_summary <- renderUI({
                         choices = c('Show' = 'yes', 'Hide' = 'no'),
                         selected = 'yes', inline = TRUE)
   }
+  shinyjs::runjs("$(window).scrollTop(0);")
   HTML(str)
 })
 
@@ -466,6 +467,9 @@ output$alignment <- renderUI({
   progress$close()
   gc()
   #cat(as.character(out))
+  shinyjs::runjs('$("input[name=\'show_alignment\']").change(function(){
+                 $("html, body").animate({scrollTop:$("#alignment_row").offset().top}, "smooth");
+                 });')
   pre(class="alignment",
       out
       )
