@@ -1,7 +1,9 @@
-### reactive stuff
 init_show_trj_nma <- TRUE
 
-rv$pdbs4nma <- NULL
+########################
+## NMA TAB observers  ##
+########################
+
 observeEvent(input$run_nma, {
   rv$pdbs4nma <- pdbs4nma()
   rv$modes <- nma2()
@@ -17,7 +19,7 @@ observeEvent(input$filter_rmsd, {
 observeEvent(input$filter_clusterBy, {
 
   if(!is.null(input$filter_rmsd)) {
-    #cut <- cutree_rmsd()
+    
     cut <- 1
     lab <- "RMSD Cutoff"
     step <- 0.25
@@ -40,7 +42,7 @@ observeEvent(input$filter_clusterBy, {
   }
 })
 
-
+## rv for output
 output$nma_allowed2 <- reactive({
   nma_allowed()$value
 })
@@ -51,11 +53,10 @@ output$nmaIsDone <- reactive({
 })
 outputOptions(output, 'nmaIsDone', suspendWhenHidden=FALSE)
 
+
 ############
 ## NMA
 ###########
-
-
 nma2 <- reactive({
 
   if(!nma_allowed()$value)
@@ -122,8 +123,13 @@ filter_pdbs <- reactive({
   pdbs <- align()
   rd <- rmsd1()
 
-  cut <- input$filter_rmsd
-  if(is.null(cut) | is.na(cut)) {
+  cut <- as.numeric(input$filter_rmsd)
+  if(length(cut)>0) {
+    if(is.null(cut) | is.na(cut)) {
+      cut <- 1
+    }
+  }
+  else {
     cut <- 1
   }
 

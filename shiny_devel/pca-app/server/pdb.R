@@ -1,18 +1,7 @@
 
 ## returns PDB code (4-characters)
 get_pdbid <- reactive({
-  if (is.null(rv$pdbid))
-    return()
-  else {
-    pdbid <- rv$pdbid
-
-    if(!nchar(pdbid)==4) {
-      ##stop("Provide a PDB code of 4 characters")
-      return()
-    }
-
-    return(pdbid)
-  }
+  return(rv$pdbid)
 })
 
 ## returns the selected chain ID
@@ -34,14 +23,18 @@ get_chainids <- reactive({
   return(anno$chainId)
 })
 
+## parse and return pdb codes for multipdb input type
 get_multipdbids <- reactive({
-  acc <- unique(trim(unlist(strsplit(input$pdb_codes, ","))))
-  acc <- acc[acc!=""]
+  acc <- unique(trim(unlist(strsplit(rv$pdb_codes, ","))))
+  inds <- nchar(acc) > 3 & nchar(acc) < 7
+  acc <- acc[inds]
+  acc <- format_pdbids(acc)
+  
   anno <- get_annotation(acc, use_chain=FALSE)
   inds <- unlist(sapply(acc, grep, anno$acc))
   anno <- anno[inds, ]
   acc <- anno$acc
-  acc <- format_pdbids(acc)
+  
   return(acc)
 })
 
@@ -82,58 +75,6 @@ get_pdb <- reactive({
 
   return(pdb)
 })
-
-## returns the sequence (fasta object)
-get_sequence <- reactive({
-  message("get_sequence called")
-
-  #if(is.null(input$input_type))
-  #  return()
-
-  ## option 1 - PDB code provided
-  if(input$input_type == "pdb") {
-    pdbid <- get_pdbid()
-    chainid <- get_chainid()
-
-    anno <- input_pdb_annotation()
-
-    if(is.vector(input$chainId)) {
-      ind <- which(anno$chainId==chainid[1])
-      seq <- unlist(strsplit(anno$sequence[ind], ""))
-    }
-    else {
-      seq <- unlist(strsplit(anno$sequence[1], ""))
-    }
-
-    if(!length(seq) > 10)
-      warning(paste("sequence is of length", nchar(seq)))
-    
-    seq <- as.fasta(seq)
-  }
-
-  ## option 2 - sequence provided
-  if(input$input_type == "sequence") {
-    message(rv$sequence)
-
-    if(nchar(rv$sequence)==0)
-      return()
-      ##stop("sequence is of length 0")
-
-    inp <- unlist(strsplit(rv$sequence, "\n"))
-    inds <- grep("^>", inp, invert=TRUE)
-
-    if(!length(inds)>0)
-      stop("Error reading input sequence")
-
-    inp <- toupper(paste(inp[inds], collapse=""))
-    seq <- as.fasta(unlist(strsplit(inp, "")))
-
-  }
-
-  return(seq)
-})
-
-
 
 ## returns annotation data for input PDB
 input_pdb_annotation <- reactive({
@@ -183,6 +124,8 @@ output$input_pdb_summary <- renderPrint({
       "(", anno$source[1], ")")
 
 })
+
+
 
 ## prints a longer log of the input PDB
 output$pdb_log <- renderPrint({

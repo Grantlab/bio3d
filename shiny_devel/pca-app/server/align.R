@@ -1,9 +1,6 @@
 #####################
-##-- Align
+##-- Align tab observers
 ####################
-
-## selected accession ids
-rv$selacc <- NULL
 
 observeEvent(input$selected_pdbids, {
   rv$fitted <- FALSE
@@ -16,7 +13,6 @@ observeEvent(input$selected_pdbids, {
   
   if(!all(input$selected_pdbids %in% rv$selacc))
     rv$selacc <- input$selected_pdbids
-  
 })
 
 
@@ -45,7 +41,6 @@ observeEvent(input$omit_missing, {
   }
   
 })
-  
 
 observeEvent(input$reset_fasta, {
   rv$fitted <- FALSE
@@ -55,8 +50,11 @@ observeEvent(input$reset_fasta, {
                     choices = acc, selected = acc)
   
   updateCheckboxInput(session, "omit_missing", value = FALSE)
-
 })
+
+#####################
+##-- Align 
+####################
 
 output$include_hits <- renderUI({
 

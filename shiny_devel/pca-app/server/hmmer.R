@@ -34,7 +34,8 @@ phmmer_local <- function(seq) {
   acc <- trim(substr(lines, 1, 7)) 
   evalue <- as.numeric(trim(substr(lines, 65, 73)))
   score <- as.numeric(trim(substr(lines, 75, 80)))
-  desc <- trim(substr(lines, 169, 220))
+  desc <- trim(substr(lines, 168, 220))
+
   return(data.frame(acc=acc, evalue=evalue, score=score, desc=desc,
                     stringsAsFactors=FALSE))
   

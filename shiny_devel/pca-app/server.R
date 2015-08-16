@@ -36,8 +36,12 @@ system_check()
 
 shinyServer(function(input, output, session) {
 
+  ## assign reactive values
+  source("server/rv.R", local=TRUE)$value
+  
   source("server/blast.R", local=TRUE)$value
   source("server/pdb.R", local=TRUE)$value
+  source("server/seq.R", local=TRUE)$value
   source("server/pfam.R", local=TRUE)$value
 
   source("server/align.R", local=TRUE)$value

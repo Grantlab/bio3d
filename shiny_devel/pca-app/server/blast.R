@@ -8,24 +8,13 @@ data_path <- reactive({
   return(path)
 })
 
+############################
+##-- BLAST tab observers   #
+############################
 
-###########################
-##-- PDB AND BLAST INPUT  #
-###########################
-
-### set default vaules
-rv <- reactiveValues()
-rv$pdbid <- "2LUM"
-rv$chainid <- "A"
-rv$blast <- readRDS("2LUM_blast.RDS")
-##rv$pfam <- readRDS("2LUM_pfam.RDS")
-rv$limit_hits <- 5
-rv$cutoff <- 41
-rv$sequence <- "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE"
-rv$pdb_codes <- "1TND, 1KJY_A"
-rv$aligned <- FALSE
-rv$fitted <- FALSE
-rv$modes <- NULL
+observeEvent(input$input_type, {
+  reset_reactives()
+})
 
 observeEvent(input$pdbid, {
   if(nchar(input$pdbid)>3) {
@@ -55,18 +44,41 @@ observeEvent(input$pdbid, {
 })
 
 observeEvent(input$sequence, {
-  if(nchar(input$sequence)>10) {
-    if(input$input_type == "sequence") {
-      rv$sequence <- input$sequence
+  if(input$input_type == "sequence") {
+    seq <- parse_inseq()
+    inds <- check_inseq()$inds
+    rv$blast <- NULL
+    
+    if(sum(inds)>10) {
+      rv$sequence <- paste(seq[inds], collapse="")
       rv$blast <- run_blast()
-      cut <- set_cutoff(blast, cutoff=NULL)
-      rv$cutoff <- cut$cutoff
-      rv$limit_hits <- 5
 
+      if(!is.null(rv$blast)) {
+        cut <- set_cutoff(rv$blast, cutoff=NULL)
+        rv$cutoff <- cut$cutoff
+        rv$limit_hits <- 5
+        rv$pdbid <- rv$blast$acc[1]
+      }
+        
       reset_reactives()
     }
   }
 })
+
+observeEvent(input$pdb_codes, {
+  if(nchar(input$pdb_codes) > 3) {
+    if(input$input_type == "multipdb") {
+      rv$pdb_codes <- trim(input$pdb_codes)
+      rv$pdbids <- get_multipdbids()
+      
+      if(length(rv$pdbids)>0)
+        rv$blast <- NULL
+      
+      reset_reactives()
+    }
+  }
+})
+
 
 observeEvent(input$chainId, {
   rv$chainid <- input$chainId
@@ -74,7 +86,6 @@ observeEvent(input$chainId, {
 
 observeEvent(input$limit_hits, {
   rv$limit_hits <- as.numeric(input$limit_hits)
-  ##reset_reactives()
 })
 
 observeEvent(input$cutoff, {
@@ -85,8 +96,6 @@ observeEvent(input$cutoff, {
   
   if(max.hits < input$limit_hits)
     updateSliderInput(session, "limit_hits", min = 1, max = max.hits, value = max.hits)
-  
-  ##reset_reactives()
 })
 
 observeEvent(input$blast_table_rows_selected, {
@@ -123,10 +132,11 @@ observeEvent(input$reset_pdbid, {
   updateTextInput(session, "pdbid", value = "2LUM")
 })
 
-output$aligned <- reactive({
-  return(rv$aligned)
-})
-outputOptions(output, 'aligned', suspendWhenHidden=FALSE)
+## not needed ??
+#output$aligned <- reactive({
+#  return(rv$aligned)
+#})
+#outputOptions(output, 'aligned', suspendWhenHidden=FALSE)
 
 
 ## resets reactive values used in subsequent tabs
@@ -136,6 +146,23 @@ reset_reactives <- function() {
   rv$fitted <- FALSE
 }
 
+###################################
+##-- rv output for search tab
+###################################
+
+## used for conditional panels in blast tab
+output$hits_found <- reactive({
+  if(is.null(rv$blast))
+    return(FALSE)
+  else
+    return(TRUE)
+})
+outputOptions(output, 'hits_found', suspendWhenHidden=FALSE)
+
+
+###################################
+##-- BLAST functions 
+###################################
 
 ## Returns HMMER results
 ## dataframe with columns: acc, evalue, score, desc
@@ -173,13 +200,14 @@ run_blast <- reactive({
     else
       hmm <- hmmer(input_sequence)
 
-    if(!nrow(hmm) > 0)
-      stop("No BLAST hits found")
+    if(!nrow(hmm) > 0) {
+      message("No BLAST hits found")
+      return(NULL)
+    }
 
-    ## to uppercase_untouched
+    ## pdb id uppercase
+    ## chain id untouched
     hmm$acc <- format_pdbids(hmm$acc)
-    ##blast <- hmm
-    ##saveRDS(blast, file="2LUM_blast.RDS")
 
     progress$set(value = 5)
     progress$close()
@@ -303,29 +331,15 @@ set_cutoff <- function(blast, cutoff=NULL) {
 }
 
 
+###################################
+##-- Blast output
+###################################
 
 output$blast_plot <- renderUI({
-  ##blast <- run_blast()
   blast <- rv$blast
-  plotOutput("blast_plot1")
 
-  #if(length(blast$acc) > 100) {
-  #  plotOutput("blast_plot1")
-  #}
-  #else {
-  #  showOutput("blast_plot2", "nvd3")
-
-    #tags$script(HTML(
-    #  'var css = document.createElement("style");
-    #                  css.type = "text/css";
-    #                  css.innerHTML = ".nv-x .nv-axislabel { font-size: 20px; }";
-    #                  document.body.appendChild(css);
-    #                  css = document.createElement("style");
-    #                  css.type = "text/css";
-    #                  css.innerHTML = ".nv-y .nv-axislabel { font-size: 20px; }";
-    #                  document.body.appendChild(css);'
-    #  ))
-  #}
+  if(!is.null(blast))
+    plotOutput("blast_plot1")
 
 })
 
@@ -333,9 +347,10 @@ output$blast_plot <- renderUI({
 output$blast_plot1 <- renderPlot({
   ptm <- proc.time()
 
-  
-  ##blast <- run_blast()
   blast <- rv$blast
+  if(is.null(blast))
+    return(NULL)
+  
   cut <- set_cutoff(blast, rv$cutoff)
 
   gp <- cut$gp.inds
@@ -447,6 +462,7 @@ get_blasttable <- reactive({
   message("fetching blast table")
 
   progress <- shiny::Progress$new(session, min=1, max=5)
+  on.exit(progress$close())
   progress$set(message = 'Annotating results',
                detail = 'Please wait ...')
   progress$set(value = 1)
@@ -456,6 +472,10 @@ get_blasttable <- reactive({
   if(input$input_type != "multipdb") {
 
     blast <- rv$blast
+
+    if(is.null(blast))
+      return(NULL)
+    
     grps <- set_cutoff(blast, cutoff=rv$cutoff)$grps
 
     acc <- blast$acc
@@ -484,15 +504,13 @@ get_blasttable <- reactive({
     anno$score <- blast$score
   }
   else {
-    acc <- unique(trim(unlist(strsplit(input$pdb_codes, ","))))
-    acc <- acc[acc!=""]
-
+    acc <- rv$pdbids
+    message(acc)
+    
     if(!length(acc) > 0)
       return()
 
-    acc <- format_pdbids(acc)
     anno <- get_annotation(acc, use_chain=FALSE)
-
     inds <- unlist(sapply(acc, grep, anno$acc))
     anno <- anno[inds, ]
     acc <- anno$acc
@@ -572,9 +590,9 @@ get_blasttable <- reactive({
 })
 
 
-  output$blast_table <- renderDataTable({
-      limit <- as.numeric(input$limit_hits)
-      DT::datatable(get_blasttable(), extensions = c('Scroller', 'ColVis'),## 'TableTools'),
+output$blast_table <- renderDataTable({
+  limit <- as.numeric(input$limit_hits)
+  DT::datatable(get_blasttable(), extensions = c('Scroller', 'ColVis'),## 'TableTools'),
               class = 'compact stripe cell-border',   ## Remove 'compact' to add padding
               escape = FALSE,
               ##- Note. Should have 'PFAM' and 'Authors' here also...
@@ -589,7 +607,7 @@ get_blasttable <- reactive({
                                   as.character(1:5)
                               } else {
                                   as.character(1:limit)
-                              }
+                                }
                       )
                   } else {
                       "none"

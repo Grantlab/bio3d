@@ -44,7 +44,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     conditionalPanel(
                       condition = "input.input_type == 'multipdb'",
                       tags$textarea(id="pdb_codes", rows=4, cols=40, "1TND, 1KJY_A"),
-                      ##textInput("pdb_codes", label = "hei", value = "1TND, 1KJY_A"),
+                      
                       helpText("Enter multiple comma ',' separated PDB IDs (4 character RCSB PDB codes with optional underscore chain, e.g. '1KJY_A')")
                       ),
 
@@ -112,7 +112,23 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     conditionalPanel(
                       condition = "input.input_type == 'sequence'",
                       h4("Protein Sequence Summary"),
-                      helpText("Report on whether sequence was acceptable (protein, no strange characters, sufficient length, top PDB hit id and link for visualization option?).")
+
+                      tags$label("Sequence check:"),
+                      verbatimTextOutput("input_seq_summary3"),
+
+                      tags$label("Number of hits:"),
+                      verbatimTextOutput("input_seq_summary2"),
+                      
+                      conditionalPanel(
+                        condition = "output.hits_found == true",
+                        
+                        tags$label("Top PDB hit:"),
+                        verbatimTextOutput("input_seq_summary"),
+                        
+                        DT::dataTableOutput('pfam_table2')
+                        )
+                      
+                      ##helpText("Report on whether sequence was acceptable (protein, no strange characters, sufficient length, top PDB hit id and link for visualization option?).")
                       #tags$textarea(id="sequence", rows=4, cols=40, "")
 
                       ##-- ToDo:
@@ -243,6 +259,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
            ##-- B. blast panel
            conditionalPanel(
              condition = "input.input_type != 'multipdb'",
+             ##&& output.hits_found == true",
 
              column(4,
                     wellPanel(
@@ -326,30 +343,30 @@ tabPanel("1. SEARCH", icon=icon("home"),
              )
            ),
 
-         fluidRow(
-           id = 'blast_row_table',
-           hr(),
-           column(12,
-                ## PopOver probably not needed...?...
-                #popoverQuestion(id="popQues4", content="This table provides annotation of identified structures and allows for selection (and de-selection) via <b>clicking to highlight</b> individual rows. This allows finer grained selection than the sliders in panel B above.",
-                #                data_toggle = "blast_table"),
-
-                  wellPanel(
-                    h4("C) Optional filtering of related structures for further analysis"),
-                    helpText(HTML("Optionally select (or de-select) structures by <b>clicking to highlight</b> their entries in the below table. This allows for finer grained selection than the sliders in panel B above.")),
-
-                    DT::dataTableOutput('blast_table'),
-                    hr(),
-                    actionButton3("page2", "Next (Alignment)", icon=icon("arrow-right"), cl="btn btn-primary btn-next-blast action-button"),
-                    tags$script(HTML(
-                       '$(".btn-next-blast").click(function(){',
-                       'tabs = $(".nav.navbar-nav li");',
-                       'tabs[1].childNodes[1].click()',
-                       '});'
-                    ))
+         #conditionalPanel(
+         #  condition = "output.hits_found == true",
+           fluidRow(
+             id = 'blast_row_table',
+             hr(),
+             column(12,
+                    wellPanel(
+                      h4("C) Optional filtering of related structures for further analysis"),
+                      helpText(HTML("Optionally select (or de-select) structures by <b>clicking to highlight</b> their entries in the below table. This allows for finer grained selection than the sliders in panel B above.")),
+                      
+                      
+                      
+                      DT::dataTableOutput('blast_table'),
+                      hr(),
+                      actionButton3("page2", "Next (Alignment)", icon=icon("arrow-right"), cl="btn btn-primary btn-next-blast action-button"),
+                      tags$script(HTML(
+                        '$(".btn-next-blast").click(function(){',
+                        'tabs = $(".nav.navbar-nav li");',
+                        'tabs[1].childNodes[1].click()',
+                        '});'
+                        ))
+                      )
                     )
-
-             )
+#             )
            )
-
+         
          )

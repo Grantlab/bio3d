@@ -8,9 +8,19 @@ get_pfam_annotation <- reactive({
     anno <- get_pfam(ids)
     return(anno[ anno$acc %in% ids, ])
   }
-  else {
-    pdbid <- get_pdbid()
-    return(get_pfam(pdbid))
+
+  if(input$input_type == "pdb") {
+    if(!is.null(rv$pdbid))
+      return(get_pfam(rv$pdbid))
+    else
+      return(NULL)
+  }
+
+  if(input$input_type == "sequence") {
+    if(!is.null(rv$pdbid))
+      return(get_pfam(rv$blast$acc[1]))
+    else
+      return(NULL)
   }
 
 })
@@ -19,13 +29,25 @@ get_pfam_annotation <- reactive({
 ##-- PFAM annotation of single or multiple PDBs
 output$pfam_table <- DT::renderDataTable({
   message("input_pdb_pfam called")
-  pdbid <- get_pdbid()
-  #chainid <- get_chainid()
-  if(is.null(pdbid)) {
+  ##pdbid <- get_pdbid()
+  
+  if(is.null(rv$pdbid)) {
     return()
   }
   get_pfam_table()
 })
+
+##-- PFAM annotation of single or multiple PDBs
+output$pfam_table2 <- DT::renderDataTable({
+  message("input_pdb_pfam called")
+  ##pdbid <- rv$pdbid
+
+  if(is.null(rv$pdbid)) {
+    return()
+  }
+  get_pfam_table()
+})
+
 
 output$pfam_table_multi <- DT::renderDataTable({
   message("pdb_pfam_multi called")
