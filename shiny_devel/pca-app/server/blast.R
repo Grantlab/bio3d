@@ -57,7 +57,7 @@ observeEvent(input$sequence, {
         cut <- set_cutoff(rv$blast, cutoff=NULL)
         rv$cutoff <- cut$cutoff
         rv$limit_hits <- 5
-        rv$pdbid <- rv$blast$acc[1]
+        ##rv$pdbid <- rv$blast$acc[1]
       }
         
       reset_reactives()
@@ -105,7 +105,7 @@ observeEvent(input$blast_table_rows_selected, {
 observeEvent(input$reset_pdbid, {
   rv$pdbid <- "2LUM"
   rv$chainid <- "A"
-  rv$sequence <- "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE"
+  ##rv$sequence <- "MQYKLVINGKTLKGETTTKAVDAETAEKAFKQYANDNGVDGVWTYDDATKTFTVTE"
   rv$blast <- readRDS("2LUM_blast.RDS")
   cut <- set_cutoff(rv$blast, cutoff=NULL)
   rv$cutoff <- cut$cutoff

@@ -17,7 +17,7 @@ get_pfam_annotation <- reactive({
   }
 
   if(input$input_type == "sequence") {
-    if(!is.null(rv$pdbid))
+    if(!is.null(rv$blast))
       return(get_pfam(rv$blast$acc[1]))
     else
       return(NULL)
