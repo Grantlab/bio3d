@@ -30,7 +30,7 @@ tabPanel(
   fluidRow(
     column(4,
            wellPanel(
-             h4("Filter structures"),
+             h4("A) Filter structures"),
              helpText("Filter similar structures (by RMSD) to reduce the computational load for NMA. PDB IDs colored red in the dendrogram will be omitted from the calculation."), 
              
              selectInput('filter_clusterBy', 'Filter by',
@@ -94,7 +94,7 @@ tabPanel(
                              ),
                     
                     
-                    h4('Normal Modes Visualization'),
+                    h4('B) Normal Modes Visualization'),
                     checkboxInput('show_trj2', 'Show NM Trajectory', value=FALSE),
 
                     uiOutput('struct_dropdown2'), ## viewStruct_nma
@@ -147,7 +147,7 @@ tabPanel(
                     
                     
                     
-                    h4('Residue fluctuations'),
+                    h4('C) Residue fluctuations'),
                     
                     checkboxInput('spread', 'Spread lines', value=FALSE),
                     checkboxInput('seqide', 'Sequence identity', value=FALSE),
@@ -220,16 +220,22 @@ tabPanel(
          ### Heatmaps
          fluidRow(
            hr(),
+           column(12, 
+                  h4("D) Cluster heatmaps")
+                  )
+           ),
+           
+         fluidRow(
            column(6,
                   conditionalPanel(
                     condition = "input.rm_gaps == true",
-                    h4("RMSIP heatmap"),
+                    h5("RMSIP heatmap"),
                     plotOutput("rmsip_heatmap2")
                     )
                   ),
            column(6,
-                    h4("RMSD heatmap"),
-                    plotOutput("rmsd_heatmap2")
+                  h5("RMSD heatmap"),
+                  plotOutput("rmsd_heatmap2")
                   )
            ),
 
@@ -270,7 +276,7 @@ tabPanel(
            hr(),
            column(4,
                   wellPanel(
-                    h4('Cluster dendrogram'),
+                    h4('E) Cluster dendrogram'),
                     checkboxInput('show_confplot2', 'Show PC conformer plot', value=FALSE),
                     checkboxInput('show_options5', 'More options', value=FALSE),
 
