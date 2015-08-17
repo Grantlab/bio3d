@@ -6,7 +6,7 @@
 ```
 #!r
 install.packages(c("devtools", "shiny", "RMySQL", "maptools",
-                   "reshape2", "abind", "threejs", "rjson", "shinyBS"),
+                   "reshape2", "abind", "threejs", "rjson", "shinyBS", "shinyjs"),
 		  dependencies=TRUE)
 
 ## special builds
