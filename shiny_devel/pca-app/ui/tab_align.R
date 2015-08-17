@@ -64,9 +64,10 @@ tabPanel("2. ALIGN",
                     tags$script(HTML(
                       '$("#next-btn-align1").click(function(){',
                       '$("html, body").animate({scrollTop:$("#seqanalysis_row").position().top - (0.1 * $(window).height())}, "smooth");',
-                      '$("#seqanalysis_row").children().find(".well").addClass("show-border");',
+                      'var well = $("#seqanalysis_row").children().find(".well");',
+                      'well.addClass("show-border");',
                       'window.setTimeout(function(){',
-                      '$("#seqanalysis_row").children().find(".well").removeClass("show-border");',
+                      'well.removeClass("show-border");',
                       '}, 2500);',
                       '});'
                       
@@ -312,11 +313,11 @@ tabPanel("2. ALIGN",
                                   "Hide" = "no"),
                                selected = "no",
                                inline = TRUE),
-                    tags$script(HTML(
-                      '$("input[name=\'show_alignment\']").change(function(){',
-                        '$("html, body").animate({scrollTop:$("#alignment_row").offset().top}, "smooth");',
-                      '});'
-                    )),
+                  tags$script(HTML(
+                    '$("input[name=\'show_alignment\']").change(function(){',
+                      '$("html, body").animate({scrollTop:$("#alignment_row").offset().top}, "smooth");',
+                    '});'
+                  )),
                   conditionalPanel(
                     condition = "input.show_alignment == 'yes'",
                     uiOutput("alignment"),
@@ -335,8 +336,16 @@ tabPanel("2. ALIGN",
                       });
                       });'
                       )))
-                    )
-                    )
+                    ),
+                  actionButton3("page3", "Next (Fit)", icon=icon("arrow-right"), cl="btn btn-primary btn-next-blast action-button"),
+                  tags$script(HTML(
+                    '$("#page3").click(function(){',
+                      'tabs = $(".nav.navbar-nav li");',
+                      'tabs.children()[2].click();',
+                    '});'
+                  )),
+                  br(), br()
+                  )
            )
 
          )

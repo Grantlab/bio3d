@@ -60,7 +60,20 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     checkboxInput('show_options_idsel', 'Filter/toggle displayed PDBs', value=FALSE),
                     
                     downloadButton('pdbsZIP', "Download Aligned PDBs"),
-                    downloadButton('pdbs2pymol', "PyMOL Session File")
+                    downloadButton('pdbs2pymol', "PyMOL Session File"),
+                    br(),
+                    actionButton3("next-btn-fit1", "Next (Analysis)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button", style = "margin-top: 0.9%;"),
+        
+                    tags$script(HTML(
+                      '$("#next-btn-fit1").click(function(){',
+                      '$("html, body").animate({scrollTop:$("#structanalysis_row").position().top - (0.1 * $(window).height())}, "smooth");',
+                      'well = $("#structanalysis_row").children().find(".well");',
+                      'well.addClass("show-border");',
+                      'window.setTimeout(function(){',
+                      'well.removeClass("show-border");',
+                      '}, 2500);',
+                      '});'
+                    ))
                     )
                   ),
 
@@ -88,6 +101,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
          
          
          fluidRow(
+           id = 'structanalysis_row',
            column(4,
                   wellPanel(
                     bsPopover("popfit1",
@@ -95,13 +109,11 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                               "All structures are (by default) superimposed on the <b>invariant core</b> - a region with low structural variability within the ensemble. </br></br>A hierarchical cluster analysis is performed on all pair-wise root mean square deviation (RMSD) values. Results can be visualized as a clustering <b>dendrogram</b>, alternatively in combination with a <b>heatmap</b>. </br></br><b>RMSF</b>: plot the residue-wise root mean square fluctuations (RMSF). </br></br> <b>RMSD histogram</b>: display the histogram of the pair-wise RMSD values.",
                               placement = "right", trigger = "hover",
                               options = list(container = "body")),
-                    
+
                     tags$div(id = "popfit1", icon("question-circle"),
                              style = "position: absolute; right: 25px; top: 5px;"
                              ),
-                    
 
-                    
                     h4("B) Initial structure analysis"),
 
                     selectInput("str_plot", "Plot options",
@@ -114,16 +126,25 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     uiOutput("kslider_rmsd"),
                     actionButton("setk_rmsd", "Auto-set number of K groups",
                                  icon=icon("cogs")),
-                    
 
                     conditionalPanel(
                       condition = "input.str_plot == 'heatmap'",
                       checkboxInput('rowcol_seqide', 'Row side color by sequence identity clusters',
                                     value=FALSE)
                       ),
-                    
-                    checkboxInput('show_options', 'More clustering and output options', value=FALSE)
-                    
+
+                    checkboxInput('show_options', 'More clustering and output options', value=FALSE),
+                    actionButton3("next-btn-fit2", "Next (Core & RMSD)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
+                    tags$script(HTML(
+                      '$("#next-btn-fit2").click(function(){',
+                      '$("html, body").animate({scrollTop:$("#structcore_row1").position().top - (0.1 * $(window).height())}, "smooth");',
+                      'var wells = $("div[id^=\'structcore_row\']").find(".well");',
+                      'wells.addClass("show-border");',
+                      'window.setTimeout(function(){',
+                      'wells.removeClass("show-border");',
+                      '}, 2500);',
+                      '});'
+                    ))
                     )
                   ),
 
@@ -203,6 +224,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
          h4("C) Structural core and RMSD details"),
 
          fluidRow(
+           id = 'structcore_row1',
            column(4,
                   wellPanel(
                     style="background: #FFFFFF;",
@@ -212,6 +234,7 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
            ),
          
          fluidRow(
+           id = 'structcore_row2',
            column(4,
                   wellPanel(
                     style="background: #FFFFFF;",

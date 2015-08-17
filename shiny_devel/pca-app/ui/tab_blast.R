@@ -67,10 +67,11 @@ tabPanel("1. SEARCH", icon=icon("home"),
                     actionButton3("page1_hits", "Next (Hit selection)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
                    tags$script(HTML(
                        '$("#page1_hits").click(function(){',
-                       '$("html, body").animate({scrollTop:$("#blast_row_plot").position().top - (0.1 * $(window).height())}, "smooth");',
-                       '$("#blast_plot").parent().siblings().find(".well").addClass("show-border");',
+                       '$("html, body").animate({scrollTop:$("#blast_plot_row").position().top - (0.1 * $(window).height())}, "smooth");',
+                       'var well = $("#blast_plot_row").find(".well");',
+                       'well.addClass("show-border");',
                        'window.setTimeout(function(){',
-                       '$("#blast_plot").parent().siblings().find(".well").removeClass("show-border");',
+                       'well.removeClass("show-border");',
                        '}, 2500);',
                        '});'
                                     )),
@@ -249,7 +250,7 @@ tabPanel("1. SEARCH", icon=icon("home"),
          ##-- Results Section --##
          #########################
          fluidRow(
-           id = 'blast_row_plot',
+           id = 'blast_plot_row',
            #conditionalPanel(
            #  condition = "input.input_type != 'multipdb'",
            #  ##h2("Blast results")
@@ -359,9 +360,9 @@ tabPanel("1. SEARCH", icon=icon("home"),
                       hr(),
                       actionButton3("page2", "Next (Alignment)", icon=icon("arrow-right"), cl="btn btn-primary btn-next-blast action-button"),
                       tags$script(HTML(
-                        '$(".btn-next-blast").click(function(){',
+                        '$("#page2").click(function(){',
                         'tabs = $(".nav.navbar-nav li");',
-                        'tabs[1].childNodes[1].click()',
+                        'tabs.children()[1].click();',
                         '});'
                         ))
                       )
