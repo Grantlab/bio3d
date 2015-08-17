@@ -104,6 +104,7 @@ observeEvent(input$setk_rmsd, {
 
 
 output$kslider_rmsd <- renderUI({
+  shinyjs::runjs("$(window).scrollTop(0);")
   cut <- cutree_rmsd()
   sliderInput("splitTreeK_rmsd", "Cluster/partition into K groups:",
               min = 1, max = 10, value = cut$k, step=1)

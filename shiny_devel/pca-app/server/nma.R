@@ -212,6 +212,7 @@ output$filter_summary <- renderUI({
 
 
 output$filter_rmsdInput <- renderUI({
+  shinyjs::runjs("$(window).scrollTop(0);")
   #cut <- cutree_rmsd()
   lab <- "RMSD Cutoff"
   numericInput("filter_rmsd", lab, value = 1, step = 0.25)
