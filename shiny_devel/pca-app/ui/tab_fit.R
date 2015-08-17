@@ -63,7 +63,6 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                     downloadButton('pdbs2pymol', "PyMOL Session File"),
                     br(),
                     actionButton3("next-btn-fit1", "Next (Analysis)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button", style = "margin-top: 0.9%;"),
-        
                     tags$script(HTML(
                       '$("#next-btn-fit1").click(function(){',
                       '$("html, body").animate({scrollTop:$("#structanalysis_row").position().top - (0.1 * $(window).height())}, "smooth");',
@@ -134,15 +133,11 @@ tabPanel("3. FIT", icon=icon("arrow-right"),
                       ),
 
                     checkboxInput('show_options', 'More clustering and output options', value=FALSE),
-                    actionButton3("next-btn-fit2", "Next (Core & RMSD)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
+                    actionButton3("next-btn-fit2", "Next (PCA)", icon=icon("arrow-right"), cl="btn btn-primary btn-input action-button"),
                     tags$script(HTML(
                       '$("#next-btn-fit2").click(function(){',
-                      '$("html, body").animate({scrollTop:$("#structcore_row1").position().top - (0.1 * $(window).height())}, "smooth");',
-                      'var wells = $("div[id^=\'structcore_row\']").find(".well");',
-                      'wells.addClass("show-border");',
-                      'window.setTimeout(function(){',
-                      'wells.removeClass("show-border");',
-                      '}, 2500);',
+                        'tabs = $(".nav.navbar-nav li");',
+                        'tabs.children()[3].click();',
                       '});'
                     ))
                     )

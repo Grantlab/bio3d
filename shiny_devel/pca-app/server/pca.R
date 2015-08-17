@@ -130,7 +130,6 @@ output$checkboxgroup_label_ids <- renderUI({
 ## normal conformer plot
 
 output$pca_plot1_conf <- renderPlot({
-  shinyjs::runjs("$(window).scrollTop(0);")
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
   cut <- cutree_pca()
@@ -191,6 +190,7 @@ output$pca_plot1_conf <- renderPlot({
 
 })
 output$pca_plot1_scree <- renderPlot({
+  shinyjs::runjs("$(window).scrollTop(0);")
   invisible(capture.output( pdbs <- fit() ))
   invisible(capture.output( pc <- pca1() ))
 

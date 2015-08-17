@@ -58,9 +58,8 @@ tabPanel("2. ALIGN",
 
                     hr(),
                     checkboxInput('show_alignment_edit', 'Filter/edit alignment', value=FALSE),
-                    
+
                     actionButton3("next-btn-align1", "Next (Analysis)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
-        
                     tags$script(HTML(
                       '$("#next-btn-align1").click(function(){',
                       '$("html, body").animate({scrollTop:$("#seqanalysis_row").position().top - (0.1 * $(window).height())}, "smooth");',
@@ -70,7 +69,7 @@ tabPanel("2. ALIGN",
                       'well.removeClass("show-border");',
                       '}, 2500);',
                       '});'
-                      
+
                       ))
 
 

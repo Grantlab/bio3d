@@ -67,8 +67,19 @@ tabPanel(
              br(),
              actionButton('viewUpdate', label='Refresh', icon=icon('undo')),
              downloadButton('pctraj', label='Download PDB Trajectory'),
-             downloadButton('pca2pymol', "Download PyMOL session file")
-
+             downloadButton('pca2pymol', "Download PyMOL session file"),
+             br(),
+             actionButton3("next-btn-pca1", "Next (Plot)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button", style = "margin-top: 0.9%;"),
+             tags$script(HTML(
+               '$("#next-btn-pca1").click(function(){',
+               '$("html, body").animate({scrollTop:$("#pca_conformer_row").position().top - (0.1 * $(window).height())}, "smooth");',
+               'well = $("#pca_conformer_row").children().find(".well");',
+               'well.addClass("show-border");',
+               'window.setTimeout(function(){',
+               'well.removeClass("show-border");',
+               '}, 2500);',
+               '});'
+             ))
              )
            ),
 
@@ -83,6 +94,7 @@ tabPanel(
 
   ##- Conformer plots
   fluidRow(
+    id = 'pca_conformer_row',
     column(4,
            wellPanel(
              bsPopover("poppca2",
@@ -90,12 +102,11 @@ tabPanel(
                        "A conformer plot is a low-dimensional representation of the conformational variability within the ensemble of PDB structures. The plot is obtained by projecting individual structures onto two or three selected principal components. ",
                        placement = "right", trigger = "hover",
                        options = list(container = "body")),
-             
+
              tags$div(id = "poppca2", icon("question-circle"),
                       style = "position: absolute; right: 25px; top: 5px;"
                       ),
-                    
-                     
+
         h4("B) Conformer plot"),
              popSelectInput('pcx', 'PC on X-axis:', choices=c(1:10), selected=1),
         selectInput('pcy', 'PC on Y-axis:', choices=c(1:10), selected=2),
@@ -115,7 +126,7 @@ tabPanel(
 
         conditionalPanel(
           condition = "input.cluster_by == 'pc_space'",
-          
+
           ## K-selecter
           uiOutput("kslider_pca"),
           actionButton("setk_pca", "Auto set number of K groups",
@@ -145,7 +156,18 @@ tabPanel(
                       choices = list("Auto"="auto", "Canvas"="canvas", "WebGL"="webgl"),
                       selected = 1),
           checkboxInput("grid", label = "Grid", value = TRUE)
-          )
+          ),
+          actionButton3("next-btn-pca2", "Next (Residue contributions)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button"),
+          tags$script(HTML(
+            '$("#next-btn-pca2").click(function(){',
+            '$("html, body").animate({scrollTop:$("#pca_contrib_row").position().top - (0.1 * $(window).height())}, "smooth");',
+            'var well = $("#pca_contrib_row").children().find(".well");',
+            'well.addClass("show-border");',
+            'window.setTimeout(function(){',
+            'well.removeClass("show-border");',
+            '}, 2500);',
+            '});'
+            ))
         )
            ),
 
@@ -191,10 +213,6 @@ tabPanel(
       )
 
     ),
-
- 
-    
-
 
 
   ##- Additional plotting options for conformer plot
@@ -273,6 +291,7 @@ tabPanel(
   
   ##- PC Loadings - fluctuations
   fluidRow(
+    id = 'pca_contrib_row',
     column(4,
            wellPanel(
              bsPopover("poppca3",
@@ -280,12 +299,11 @@ tabPanel(
                        "Residue-wise contributions to the chosen principal component.",
                        placement = "right", trigger = "hover",
                        options = list(container = "body")),
-             
+
              tags$div(id = "poppca3", icon("question-circle"),
                       style = "position: absolute; right: 25px; top: 5px;"
                       ),
 
-             
              h4('C) Residue contributions'),
              selectInput('loadings_pc', 'Choose Principal Component:',
                          choices=c(1:10), selected=1, multiple=TRUE),
@@ -294,7 +312,14 @@ tabPanel(
              checkboxInput("multiplot", "Multiline plot", FALSE),
              checkboxInput("spread_pcload", "Spread lines", FALSE),
              downloadButton('pcloadings2pdf', label='Download PDF'),
-             checkboxInput("show_options2", "More options", value=FALSE)
+             checkboxInput("show_options2", "More options", value=FALSE),
+             actionButton3("page5", "Next (eNMA)", icon=icon("arrow-right"), cl="btn btn-primary btn-next-blast action-button"),
+             tags$script(HTML(
+               '$("#page5").click(function(){',
+               'tabs = $(".nav.navbar-nav li");',
+               'tabs.children()[4].click();',
+               '});'
+               ))
              )
            ),
     
