@@ -145,7 +145,8 @@
     stop("indices must be provided")
   
   kaa     <- hessian[inc.inds, inc.inds]
-  kqq.inv <- solve(hessian[-inc.inds, -inc.inds])
+#  kqq.inv <- solve(hessian[-inc.inds, -inc.inds])
+  kqq.inv <- chol2inv(chol(hessian[-inc.inds, -inc.inds]))
   kaq     <- hessian[inc.inds, -inc.inds]
   kqa     <- t(kaq)
   k <- kaa - ((kaq %*% kqq.inv) %*% kqa)
