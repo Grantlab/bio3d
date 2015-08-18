@@ -119,7 +119,19 @@ tabPanel(
                     
                     br(),
                     ##actionButton('viewUpdate2', label='Refresh', icon=icon('undo')),
-                    downloadButton('nmtraj', label='Download PDB Trajectory')
+                    downloadButton('nmtraj', label='Download PDB Trajectory'),
+                    br(),
+                    actionButton3("next-btn-enma1", "Next (Fluctuations)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button", style = "margin-top: 0.9%;"),
+                    tags$script(HTML(
+                      '$("#next-btn-enma1").click(function(){',
+                      '$("html, body").animate({scrollTop:$("#enma_fluct_row").position().top - (0.1 * $(window).height())}, "smooth");',
+                      'well = $("#enma_fluct_row").children().find(".well");',
+                      'well.addClass("show-border");',
+                      'window.setTimeout(function(){',
+                      'well.removeClass("show-border");',
+                      '}, 2500);',
+                      '});'
+                    ))
                     )
                   ),
 
@@ -133,6 +145,7 @@ tabPanel(
 
          ### Fluctuation plot
          fluidRow(
+           id = 'enma_fluct_row',
            column(4,
                   wellPanel(
                     bsPopover("popnma2",
@@ -174,7 +187,19 @@ tabPanel(
                       ),
                     
                     checkboxInput('show_options3', 'More options', value=FALSE),
-                    downloadButton('nmaplot2pdf', "Download Plot PDF")
+                    downloadButton('nmaplot2pdf', "Download Plot PDF"),
+                    br(),
+                    actionButton3("next-btn-enma2", "Next (Heatmaps)", icon=icon("arrow-down"), cl="btn btn-primary btn-input action-button", style = "margin-top: 0.9%;"),
+                    tags$script(HTML(
+                      '$("#next-btn-enma2").click(function(){',
+                      '$("html, body").animate({scrollTop:$("#enma_heat_row1").position().top - (0.1 * $(window).height())}, "smooth");',
+                      'well = $("#enma_heat_row2").children().find(".well");',
+                      'well.addClass("show-border");',
+                      'window.setTimeout(function(){',
+                      'well.removeClass("show-border");',
+                      '}, 2500);',
+                      '});'
+                    ))
                     )
                   ),
            column(8,
@@ -219,6 +244,7 @@ tabPanel(
 
          ### Heatmaps
          fluidRow(
+           id = 'enma_heat_row1',
            hr(),
            column(12, 
                   h4("D) Cluster heatmaps")
@@ -226,6 +252,7 @@ tabPanel(
            ),
            
          fluidRow(
+           id = 'enma_heat_row2',
            column(6,
                   conditionalPanel(
                     condition = "input.rm_gaps == true",

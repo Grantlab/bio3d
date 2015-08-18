@@ -285,6 +285,7 @@ output$alignment_summary <- renderUI({
   gaps <- gap.inspect(ali)
   dims.nongap <- dim(ali[, gaps$f.inds, drop = FALSE])
   dims.gap <- dim(ali[, gaps$t.inds, drop = FALSE])
+  rv$hits_count <- dims[1L]
 
   str <- paste("<strong>Alignment dimensions:</strong><br>",
                paste0("<ul><li>", dims[1L], " sequence rows</li>"),
@@ -542,8 +543,7 @@ hclust_seqide <- reactive({
 
 cutree_seqide <- reactive({
   hc <- hclust_seqide()
-
-  if(is.null(input$splitTreeK))
+  if( is.null(input$splitTreeK) || (as.numeric(input$splitTreeK) > isolate(rv$hits_count)) )
     k <- NA
   else
     k <- as.numeric(input$splitTreeK)
@@ -561,8 +561,9 @@ observeEvent(input$setk, {
 
 output$kslider <- renderUI({
   cut <- cutree_seqide()
+  hits_count <- isolate(rv$hits_count)
   sliderInput("splitTreeK", "Cluster/partition into K groups:",
-              min = 1, max = 10, value = cut$k, step=1)
+              min = 1, max = if(hits_count > 10) 10 else hits_count, value = cut$k, step=1)
 })
                     
 

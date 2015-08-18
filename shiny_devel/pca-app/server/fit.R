@@ -87,7 +87,7 @@ hclust_rmsd <- reactive({
 cutree_rmsd <- reactive({
   hc <- hclust_rmsd()
 
-  if(is.null(input$splitTreeK_rmsd))
+  if( is.null(input$splitTreeK_rmsd) || (as.numeric(input$splitTreeK_rmsd) > isolate(rv$hits_count)) )
     k <- NA
   else
     k <- as.numeric(input$splitTreeK_rmsd)
@@ -106,8 +106,9 @@ observeEvent(input$setk_rmsd, {
 output$kslider_rmsd <- renderUI({
   shinyjs::runjs("$(window).scrollTop(0);")
   cut <- cutree_rmsd()
+  hits_count <- isolate(rv$hits_count)
   sliderInput("splitTreeK_rmsd", "Cluster/partition into K groups:",
-              min = 1, max = 10, value = cut$k, step=1)
+              min = 1, max = if(hits_count > 10) 10 else hits_count, value = cut$k, step=1)
 })
 
 

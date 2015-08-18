@@ -144,6 +144,9 @@ reset_reactives <- function() {
   rv$modes <- NULL
   rv$aligned <- FALSE
   rv$fitted <- FALSE
+  updateRadioButtons(session, inputId = 'show_alignment', label = 'Show alignment',
+                     choices = c('Show' = 'yes', 'Hide' = 'no'),
+                     selected = 'no', inline = TRUE)
 }
 
 ###################################

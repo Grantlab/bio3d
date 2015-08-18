@@ -69,7 +69,6 @@ tabPanel("2. ALIGN",
                       'well.removeClass("show-border");',
                       '}, 2500);',
                       '});'
-
                       ))
 
 
