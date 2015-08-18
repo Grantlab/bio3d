@@ -81,7 +81,7 @@ filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL
             tcij[lower.tri(tcij)] <- t(tcij)[lower.tri(tcij)]
             ncij[,,j] <- tcij
          }
-         if(length(i) == 1) ncij <- ncij[,,1]
+#         if(length(i) == 1) ncij <- ncij[,,1]
          return(ncij)
       } )
      
