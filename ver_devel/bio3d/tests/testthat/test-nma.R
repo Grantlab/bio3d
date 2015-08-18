@@ -240,5 +240,23 @@ test_that("NMA", {
               equals(hessian2[atom2xyz(j), atom2xyz(i)], tolerance=1e-6))
   
    
+  ###################################################################
+  #
+  # Test extracting effective hessian with 'outmodes' argument 
+  #
+  ###################################################################
+
+  out.inds <- atom.select(pdb, 'calpha', resno=5:124)
+  invisible(capture.output(modes <- nma(pdb, outmodes = out.inds)))
+
+  U7 <- c(0.022538557,  0.016313285, -0.007462564,  
+          0.024520684, -0.005453823, -0.015629021)
+  nowU7 <- head(modes$U[,7])
+  expect_that(nowU7 * mysign(U7, nowU7), equals(U7, tolerance=1e-6))
+
+  eival <- c(0.013868, 0.015537, 0.024559, 0.030261, 0.039459, 0.043531)
+  nowEival <- modes$L[7:12]
+  expect_that(nowEival, equals(eival, tolerance=1e-6))
+   
 }
           )
