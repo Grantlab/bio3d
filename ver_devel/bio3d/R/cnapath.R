@@ -24,7 +24,7 @@ cnapath <- function(cna, from, to, k = 10, ncore = NULL, ...) {
 
   # does a list contain this path?
   contains.path <- function(variants, variant){
-     return( any( unlist( lapply( variants, function(x){ identical(x$path, variant) } ) ) ) )
+     return( any( unlist( lapply( variants, function(x){ isTRUE(all.equal(x$path, variant)) } ) ) ) )
   }
 
   # first shortest path
@@ -42,7 +42,7 @@ cnapath <- function(cna, from, to, k = 10, ncore = NULL, ...) {
 
   # All shortest paths are stored in container A in order
   dist = sum(igraph::E(graph)$weight[k0$epath[[1]]])
-  A <- list(list(path=k0$vpath[[1]], epath=k0$epath[[1]], dist=dist))
+  A <- list(list(path=as.integer(k0$vpath[[1]]), epath=as.integer(k0$epath[[1]]), dist=dist))
 
   # All candidates are stored in container B
   B <- list()
@@ -65,7 +65,7 @@ cnapath <- function(cna, from, to, k = 10, ncore = NULL, ...) {
        # those shortest paths stored in A that share the same root path here
        g <- graph
        for(j in 1:length(A)) {
-          if(length(A[[j]]$path) > i && identical(rootPath, A[[j]]$path[1:i])) {
+          if(length(A[[j]]$path) > i && isTRUE(all.equal(rootPath, A[[j]]$path[1:i]))) {
              nn = A[[j]]$path[i+1]
              ee = igraph::E(g)[igraph::'%--%'(spurNode, nn)]
              if(length(ee)>0) g <- igraph::delete.edges(g, ee)
@@ -83,9 +83,9 @@ cnapath <- function(cna, from, to, k = 10, ncore = NULL, ...) {
        spurPath <- suppressWarnings(igraph::get.shortest.paths(g, spurNode, to, output='both'), ...)
 
        if(length(spurPath$vpath[[1]]) > 0 ) {
-          vpath = c(rootPath, spurPath$vpath[[1]][-1])
+          vpath = c(rootPath, as.integer(spurPath$vpath[[1]][-1]))
           if(!contains.path(B, vpath)) {
-             spurPath$epath <- as.numeric(igraph::E(graph, path=spurPath$vpath[[1]]))
+             spurPath$epath <- as.integer(igraph::E(graph, path=as.integer(spurPath$vpath[[1]])))
              epath = c(rootePath, spurPath$epath)
              return (list(path=vpath, epath = epath, dist = sum(igraph::E(graph)$weight[epath])) )
           }

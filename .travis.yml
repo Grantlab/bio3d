@@ -1,0 +1,41 @@
+language: r
+
+#sudo: false
+
+warnings_are_errors: true
+
+branches:
+  only:
+    - master
+    - releases
+
+before_install:
+   - sudo add-apt-repository -y "ppa:marutter/rrutter"
+   - sudo add-apt-repository -y "ppa:marutter/c2d4u"
+   - sudo apt-get update -qq
+   - sudo apt-get install -y r-cran-ncdf
+
+#addons:
+#   apt:
+#     packages:
+#     - r-cran-ncdf
+
+install: true
+  
+script: 
+   - Rscript -e "source('new_funs/check.bio3d.R'); check.bio3d('ver_devel/bio3d', check_dir='.', cleanup=FALSE)" && ! grep -q -e ERROR -e WARNING -e NOTE bio3d.Rcheck/00check.log 
+   - rm -rf bio3d.Rcheck
+   - R CMD build ver_devel/bio3d && R CMD check --as-cran --run-donttest bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
+
+after_success:
+   - Rscript -e 'devtools::install_github("jimhester/covr")'
+   - Rscript -e 'library(covr); coveralls("ver_devel/bio3d")'
+
+notifications:
+  email:
+    recipients:
+       - bjgrant@umich.edu
+       - xinqyao@umich.edu
+       - larsss@gmail.com
+    on_success: change
+    on_failure: change
