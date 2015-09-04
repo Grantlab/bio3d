@@ -134,7 +134,7 @@ hmmer(seq, type="phmmer", db = NULL, verbose = TRUE, timeout = 90)
   \code{\link{uniprot}}
 }
 \examples{
-\donttest{
+\dontrun{
 # HMMER server connection required - testing excluded
 
 ##- PHMMER

@@ -36,7 +36,7 @@ uniprot(accid)
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{blast.pdb}}, \code{\link{get.seq}} }
 \examples{
-\donttest{
+\dontrun{
 # UNIPROT server connection required - testing excluded
 
 prot <- uniprot('PH4H_HUMAN')
