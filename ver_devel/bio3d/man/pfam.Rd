@@ -40,7 +40,7 @@ pfam(id, alignment = "seed", verbose = FALSE)
   \code{\link{uniprot}}
 }
 \examples{
-\donttest{
+\dontrun{
 # PFAM server connection required - testing excluded
 
 aln <- pfam("piwi")
