@@ -64,7 +64,7 @@
 }
 \seealso{ \code{\link{hmmer}}, \code{\link{blast.pdb}} }
 \examples{
-\donttest{
+\dontrun{
 # HMMER server connection required - testing excluded
 
 ##- PHMMER
