@@ -75,7 +75,15 @@ test_that("clean.pdb() relabels chains properly (fix.chain = TRUE)", {
 
   # Label both chains as "A" 
   pdb$atom[, "chain"] <- "A"
-    
+  
+  # Update SSE 
+  pdb$helix$start[pdb$helix$chain=='B'] <- pdb$helix$start[pdb$helix$chain=='B'] + 99
+  pdb$helix$end[pdb$helix$chain=='B'] <- pdb$helix$end[pdb$helix$chain=='B'] + 99
+  pdb$sheet$start[pdb$sheet$chain=='B'] <- pdb$sheet$start[pdb$sheet$chain=='B'] + 99
+  pdb$sheet$end[pdb$sheet$chain=='B'] <- pdb$sheet$end[pdb$sheet$chain=='B'] + 99
+  pdb$helix$chain[] <- 'A'
+  pdb$sheet$chain[] <- 'A'
+ 
   invisible(capture.output(npdb <- clean.pdb(pdb, consecutive = FALSE, force.renumber = TRUE, fix.chain = TRUE)))
   
   pdb0$call <- NULL
