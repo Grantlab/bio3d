@@ -172,6 +172,11 @@ function (file, maxlines=-1, multi=FALSE,
      insert.e <- trim(substring(raw.sheet,38,38))
      names(sheet$start) <- insert.i
      names(sheet$end) <- insert.e
+
+     ##- remove repeated records for the same strand (e.g. in 1NH0)
+     pa <- paste(sheet$start, insert.i, sheet$chain, sep='_')
+     keep.inds <- which(!duplicated(pa))
+     sheet <- lapply(sheet, '[', keep.inds)
   } else {
      sheet <- NULL
   }
