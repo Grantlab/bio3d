@@ -64,8 +64,8 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   if(rm.wat) {
      wat <- atom.select(pdb, "water", verbose = FALSE)
      if(length(wat$atom) > 0) {
-        pdb$atom <- pdb$atom[-wat$atom, ]
-        pdb$xyz <- pdb$xyz[, -wat$xyz]
+        pdb$atom <- pdb$atom[-wat$atom, ,drop=FALSE]
+        pdb$xyz <- pdb$xyz[, -wat$xyz, drop=FALSE]
         log <- .update.log(log, paste("Found", length(wat$atom), "water atoms"), "REMOVED")
      }
   }
@@ -74,8 +74,8 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   if(rm.lig) {
      lig <- atom.select(pdb, "ligand", verbose = FALSE)
      if(length(lig$atom) > 0) {
-        pdb$atom <- pdb$atom[-lig$atom, ]
-        pdb$xyz <- pdb$xyz[, -lig$xyz]
+        pdb$atom <- pdb$atom[-lig$atom, ,drop=FALSE]
+        pdb$xyz <- pdb$xyz[, -lig$xyz, drop=FALSE]
         log <- .update.log(log, paste("Found", length(lig$atom), "ligand atoms"), "REMOVED")
      }
   }
@@ -84,16 +84,16 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   if(rm.h) {
      h.inds <- atom.select(pdb, "h", verbose = FALSE)
      if(length(h.inds$atom) > 0) {
-        pdb$atom <- pdb$atom[-h.inds$atom, ]
-        pdb$xyz <- pdb$xyz[, -h.inds$xyz]
+        pdb$atom <- pdb$atom[-h.inds$atom, ,drop=FALSE]
+        pdb$xyz <- pdb$xyz[, -h.inds$xyz, drop=FALSE]
         log <- .update.log(log, paste("Found", length(h.inds$atom), "hydrogens"), "REMOVED")
      }
   }
  
   ## check if 'alt' coords exist
   if(any(rm.p <- !is.na(pdb$atom$alt) & pdb$atom$alt != "A")) {
-     pdb$atom <- pdb$atom[!rm.p, ]
-     pdb$xyz <- pdb$xyz[, -atom2xyz(which(rm.p))]
+     pdb$atom <- pdb$atom[!rm.p, , drop=FALSE]
+     pdb$xyz <- pdb$xyz[, -atom2xyz(which(rm.p)), drop=FALSE]
      log <- .update.log(log, paste("Found", sum(rm.p), "ALT records"), "REMOVED")
   }
 
