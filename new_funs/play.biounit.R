@@ -1,26 +1,29 @@
 # A function to automate the generation
 # of requested multimeric alignment from a single chain based 'pdbs'
-play.biounit <- function(pdbs, nmer = 1, dir.rawpdb = "raw_pdbs", 
+play.biounit <- function(pdbs, nmer = 1, is.nmr=FALSE, dir.rawpdb = "raw_pdbs", 
       dir.output = "biounit", cofactor.ext = "_cofactor", file = "aln.fa", ncore=NULL) {
    require(bio3d)
-   source("pdb.biounit.R")
 
    # raw pdb ids to process
    ids = file.path(dir.rawpdb, paste(unique(substr(basename(pdbs$id), 1, 4)), ".pdb", sep=""))
-   cat("Found ", length(ids), " raw pdb files\n")
+   cat("Processing", length(ids), " raw pdb files\n")
 
    # loop to process each id
    files <- lapply(ids, function(x) {
       cat("\n     Generating biological unit for ", x, "...\n")
 
-      biounit <- pdb.biounit(x)
+      capture.output( pdb <- read.pdb(x) )
+      if(is.nmr)
+         biounit <- list(pdb)
+      else
+         biounit <- biounit(pdb)
+
       if(is.pdb(biounit) ) {
          cat("          No valid biological unit was found\n")
          return(NA)
       }
       cat("          Found ", length(biounit), " biological units\n")
 
-      invisible( capture.output( pdb <- read.pdb(x) ))
       chain <- unique(pdb$atom[, "chain"])
 
       # check if the biounit is what we want 
@@ -58,7 +61,7 @@ play.biounit <- function(pdbs, nmer = 1, dir.rawpdb = "raw_pdbs",
                cat("               Rearrange chain order...\n")
                tpdbs <- c(tpdbs[target.ind], tpdbs[-target.ind])
                cl <- y$call
-               y <- do.call(cat.pdb, tpdbs)
+               y <- do.call(cat.pdb, c(tpdbs, list(rechain=FALSE)))
                y$call <- cl
             }
           }
