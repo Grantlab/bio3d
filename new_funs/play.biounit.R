@@ -61,7 +61,7 @@ play.biounit <- function(pdbs, nmer = 1, is.nmr=FALSE, dir.rawpdb = "raw_pdbs",
                cat("               Rearrange chain order...\n")
                tpdbs <- c(tpdbs[target.ind], tpdbs[-target.ind])
                cl <- y$call
-               y <- do.call(cat.pdb, tpdbs)
+               y <- do.call(cat.pdb, c(tpdbs, list(rechain=FALSE)))
                y$call <- cl
             }
           }
