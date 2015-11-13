@@ -14,7 +14,8 @@
                      "ligandName", "source", "scopDomain", "classification", "compound", "title",
                      "citation", "citationAuthor", "journalName", "publicationYear",
                      "structureTitle","depositionDate","structureMolecularWeight","macromoleculeType",
-                     "chainId","entityId","sequence","chainLength","db_id","db_name")
+                     "chainId","entityId","sequence","chainLength","db_id","db_name",
+                     "rObserved", "rFree")
                      ##"molecularWeight","secondaryStructure","entityMacromoleculeType")
     
   if(is.null(anno.terms)) {

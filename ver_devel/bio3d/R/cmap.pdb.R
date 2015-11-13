@@ -8,7 +8,7 @@ cmap.pdb <- function(pdb, inds=NULL, verbose=FALSE, ...) {
 
   pdb <- trim.pdb(pdb, inds)
   xyz <- pdb$xyz
-  grpby <- paste(pdb$atom$resno, pdb$atom$chain, sep="-")
+  grpby <- paste(pdb$atom$chain, pdb$atom$insert, pdb$atom$resno, sep="-")
   return(cmap.xyz(xyz, grpby, ...))
   
 
