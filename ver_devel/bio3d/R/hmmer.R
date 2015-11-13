@@ -121,7 +121,8 @@
   
   
   ## Make the request to the HMMER website
-  url <- paste('http://hmmer.janelia.org/search/', type, sep="")
+  ##url <- paste('http://hmmer.janelia.org/search/', type, sep="")
+  url <- paste("http://www.ebi.ac.uk/Tools/hmmer/search/", type, sep="")
   curl.opts <- list(httpheader = "Expect:",
                     httpheader = "Accept:text/xml",
                     verbose = verbose,
@@ -133,14 +134,13 @@
                   .opts = curl.opts,
                   .contentEncodeFun=RCurl::curlPercentEncode, .checkParams=TRUE )
 
-  
   add.pdbs <- function(x, ...) {
     hit <- XML::xpathSApply(x, '@*')
     pdbs <- unique(XML::xpathSApply(x, 'pdbs', XML::xmlToList))
     new <- as.matrix(hit, ncol=1)
     
     if(length(pdbs) > 1) {
-      for(i in 2:length(pdbs)) {
+      for(i in 1:length(pdbs)) {
         hit["acc"]=pdbs[i]
         new=cbind(new, hit)
       }
@@ -149,33 +149,23 @@
     return(new)
   }
 
-  fetch.pdbs <- function(x) {
-    unique(XML::xpathSApply(x, 'pdbs', XML::xmlToList))
-  }
+  ##fetch.pdbs <- function(x) {
+  ##  unique(XML::xpathSApply(x, 'pdbs', XML::xmlToList))
+  ##}
 
   xml <- XML::xmlParse(hmm)
   data <- XML::xpathSApply(xml, '///hits', XML::xpathSApply, '@*')
 
   pdb.ids <- NULL
   if(db=="pdb") {
-    ## retrieve pdbs as a seperate list
-    ##pdb.ids <- xpathSApply(xml, '///hits', fetch.pdbs)
-    
-    ## or add pdbs into hits matrix
     tmp <- XML::xpathSApply(xml, '///hits', add.pdbs)
-    data <- NULL
-    for ( i in 1:length(tmp) ) {
-      data <- cbind(data, tmp[[i]])
-    }
-    dups <- which(!duplicated(data["acc",]))
-    data=data[,dups]
+    data <- as.data.frame(tmp, stringsAsFactors=FALSE)
+    colnames(data) <- NULL
   }
 
-  data=as.data.frame(t(data), stringsAsFactors=FALSE)
-  
-  ##data <- as.data.frame(t(xpathSApply(xml, '///hits', xpathSApply, '@*')),
-  ##                      stringsAsFactors=FALSE)
-  
+  data <- as.data.frame(t(data), stringsAsFactors=FALSE)
+  data <- data[!duplicated(data$acc), ]
+  ##rownames(data) <- data[, "acc"]
   
   ## convert to numeric
   fieldsToNumeric <- c("evalue", "pvalue", "score", "archScore", "ndom", "nincluded",
@@ -198,9 +188,6 @@
   }
   
   class(data) <- c("hmmer", type, "data.frame")
-  ##data$call <- cl
-  
-  ##out <- list(hits=data, pdbs=pdb.ids)
   out <- data
   return(out)
 }
