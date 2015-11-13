@@ -46,7 +46,8 @@ rawtable <- c(
   "CL", "Cl",
   "ZN", "Zn",
   "SE", "Se",
-  "F", "F")
+  "F", "F",
+  "AL", "Al")
 
 data <- as.data.frame(matrix(rawtable, ncol=2, byrow=TRUE), stringsAsFactors=FALSE)
 colnames(data) <- c("name", "symb")
