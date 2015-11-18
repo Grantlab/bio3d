@@ -6,7 +6,7 @@ cmap.default <- function(...)
 
 cmap.xyz <-
 function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
-         ncore=1, nseg.scale=1, ...) {
+         gc.first = FALSE, ncore=1, nseg.scale=1, ...) {
 
   # Parallelized by parallel package (Mon Apr 22 16:32:19 EDT 2013)
   ncore <- setup.ncore(ncore)
@@ -47,6 +47,7 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
            istart = (i-1)*lenSeg + 1
            iend = if(i<nDataSeg) i*lenSeg else ni
            cmap.list <- c(cmap.list, mclapply(istart:iend, function(j) {
+               if(gc.first) gc()
                dmat <- dm.xyz(xyz[j,], grpby, scut, mask.lower=TRUE)
                return(as.numeric(dmat[!lower.tri(dmat)] < dcut))
            }) )

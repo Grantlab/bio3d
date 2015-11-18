@@ -12,7 +12,7 @@ cmap(\dots)
 \method{cmap}{default}(\dots)
 
 \method{cmap}{xyz}(xyz, grpby = NULL, dcut = 4, scut = 3, pcut=1,
-            mask.lower = TRUE, ncore=1, nseg.scale=1, \dots)
+            mask.lower = TRUE, gc.first=FALSE, ncore=1, nseg.scale=1, \dots)
 
 \method{cmap}{pdb}(pdb, inds = NULL, verbose = FALSE, \dots)
 }
@@ -30,6 +30,9 @@ cmap(\dots)
     above which atoms are considered in contact with respect to the ensemble}
   \item{mask.lower}{ logical, if TRUE the lower matrix elements
     (i.e. those below the diagonal) are returned as NA.}
+  \item{gc.first}{ logical, if TRUE will call gc() first before calculation of 
+    distance matrix. This is to solve the memory overload problem when \code{ncore > 1}
+    and \code{xyz} has many rows, with a bit sacrifice on speed. }
   \item{ncore }{ number of CPU cores used to do the calculation.
     \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{nseg.scale }{ split input data into specified number of segments

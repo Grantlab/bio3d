@@ -45,6 +45,11 @@ amber.rst <- function(pdb, a.inds=NULL, b.inds=a.inds,
 
   if(cut[1]>cut[2])
     stop("cut: lower cutoff must be smaller than upper cutoff")
+
+  if(any(duplicated(pdb$atom$eleno))) {
+    stop(paste("Duplicate element numbers (pdb$atom$eleno) found. Re-number, and try again",
+               "   e.g. pdb$atom$eleno = 1:length(pdb$atom$eleno) ", sep="\n"))
+  }
   
   r <- round(r, 2)
   rk <- round(rk, 2)
@@ -63,8 +68,12 @@ amber.rst <- function(pdb, a.inds=NULL, b.inds=a.inds,
   dm[inds] <- NA
 
   ## avoid intra-residue restraints
-  res.a <- pdb$atom$resno[a.inds$atom]
-  res.b <- pdb$atom$resno[b.inds$atom]
+  res.a <- paste(pdb$atom$resno[a.inds$atom],
+                 pdb$atom$chain[a.inds$atom],
+                 pdb$atom$insert[a.inds$atom], sep="-")
+  res.b <- paste(pdb$atom$resno[b.inds$atom],
+                 pdb$atom$chain[b.inds$atom],
+                 pdb$atom$insert[b.inds$atom], sep="-")
   overlapping <- intersect(res.a, res.b)
   
   if(length(overlapping)>0) {
@@ -112,5 +121,16 @@ amber.rst <- function(pdb, a.inds=NULL, b.inds=a.inds,
   
   writeLines(rst.lines, file)
   cat("  written", length(atoms.a), "distance restraints to file:", file, "\n")
-  return(cbind(atoms.a, atoms.b))
+
+  inds <- which(dm <= cut[2])
+  out <- list(atoms.a = atoms.a,
+              resno.a = pdb$atom$resno[atoms.a],
+              chain.a = pdb$atom$chain[atoms.a],
+              
+              atoms.b = atoms.b,
+              resno.b = pdb$atom$resno[atoms.b],
+              chain.b = pdb$atom$chain[atoms.b],
+              d = round(dm[inds], 2))
+  
+  invisible(as.data.frame(out, stringsAsFactors=FALSE))
 }
