@@ -92,8 +92,11 @@ function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE) {
 
   ##- Mask concetive atoms
   if( is.null(grpby) ) {
-    if (!is.null(scut))
+    if (!is.null(scut)) {
       d[diag.ind(d, n = scut)] = NA
+      if(!mask.lower) 
+         d[lower.tri(d)] = t(d)[lower.tri(d)]
+    }
 
     return(d)
     
