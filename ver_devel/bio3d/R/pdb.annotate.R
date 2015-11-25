@@ -15,7 +15,7 @@
                      "citation", "citationAuthor", "journalName", "publicationYear",
                      "structureTitle","depositionDate","structureMolecularWeight","macromoleculeType",
                      "chainId","entityId","sequence","chainLength","db_id","db_name",
-                     "rObserved", "rFree")
+                     "rObserved", "rFree", "spaceGroup")
                      ##"molecularWeight","secondaryStructure","entityMacromoleculeType")
     
   if(is.null(anno.terms)) {
