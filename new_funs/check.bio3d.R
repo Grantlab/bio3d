@@ -14,7 +14,7 @@ check.bio3d <- function(pkg, run.skipcran = FALSE, run.dontrun = FALSE, run.dont
    }
   
    ##- Check and install dependencies
-   packages <- c("devtools", "roxygen2", "ncdf", "lattice", 
+   packages <- c("devtools", "roxygen2", "ncdf4", "lattice", 
                  "XML", "RCurl", "igraph", "knitr", "testthat")
    if(.Platform$OS.type == "unix") packages <- c(packages, "bigmemory")
    get.package <- function(x, cran.repos = cran.repos){

@@ -14,7 +14,7 @@ Suggests:
     XML,
     RCurl,
     lattice,
-    ncdf,
+    ncdf4,
     igraph,
     bigmemory,
     knitr,
