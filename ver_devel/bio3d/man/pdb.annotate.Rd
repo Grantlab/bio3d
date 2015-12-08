@@ -16,8 +16,8 @@ pdb.pfam(ids, best.only = TRUE, compact = TRUE)
     "structureId", "experimentalTechnique", "resolution", "chainId",
     "ligandId", "ligandName", "source",  "scopDomain", "classification",
     "compound","title",  "citation", "citationAuthor", "journalName",
-    "publicationYear", "rObserved", or "rFree".  If anno.terms=NULL, 
-    all information would be returned. }
+    "publicationYear", "rObserved", "rFree" or "spaceGroup".  
+    If anno.terms=NULL, all information would be returned. }
   \item{unique}{ logical, if TRUE only unique PDB entries are
     returned. Alternatively data for each chain ID is provided. }
   \item{verbose}{ logical, if TRUE details of the RCurl \code{postForm}
