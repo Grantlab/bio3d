@@ -17,7 +17,7 @@ write.ncdf(x, trjfile = "R.ncdf", cell = NULL)
 }
 \details{
   Writes an AMBER netCDF (Network Common Data Form) format trajectory
-  file with the help of David W. Pierce's (UCSD) ncdf package available
+  file with the help of David W. Pierce's (UCSD) ncdf4 package available
   from CRAN.
 }
 \value{

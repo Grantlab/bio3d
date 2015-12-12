@@ -14,7 +14,7 @@ install.bio3d <- function(version="2.1-0", dependencies=TRUE, cran.repos="http:/
 
   ##- Check and install missing R package dependences if necessary
   if(dependencies){
-    packages <- c("ncdf", "lattice", "bigmemory", "XML", "RCurl", "igraph", "knitr")
+    packages <- c("ncdf4", "lattice", "bigmemory", "XML", "RCurl", "igraph", "knitr")
 
     get.package <- function(x, cran.repos=cran.repos){
       if (!require(x, character.only = TRUE)){
