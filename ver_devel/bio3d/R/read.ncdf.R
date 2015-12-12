@@ -9,16 +9,16 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
   # Multicore support is suppressed
 #  ncore = 1
 
-  ##- Load ncdf package
-  oops <- requireNamespace("ncdf", quietly = TRUE)
+  ##- Load ncdf4 package
+  oops <- requireNamespace("ncdf4", quietly = TRUE)
   if(!oops)
-    stop("Please install the ncdf package from CRAN")
+    stop("Please install the ncdf4 package from CRAN")
   
   # open files 
   nc <- lapply(trjfile, function (fnm) {
 
-     nc <- ncdf::open.ncdf(fnm, readunlim=FALSE)
-     conv <- ncdf::att.get.ncdf( nc, varid=0, "Conventions")$value
+     nc <- ncdf4::nc_open(fnm, readunlim=FALSE)
+     conv <- ncdf4::ncatt_get( nc, varid=0, "Conventions")$value
      if(conv!="AMBER")
         warning(paste("File conventions is not set to AMBER",
                   fnm, sep=": "))
@@ -37,10 +37,10 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
     else
        print(paste("Reading file", trjfile))
     print(paste("Produced by program:",
-      ncdf::att.get.ncdf( nc[[1]], varid=0, "program")$value))
+      ncdf4::ncatt_get( nc[[1]], varid=0, "program")$value))
     print(paste("File conventions",
-      ncdf::att.get.ncdf( nc[[1]], varid=0, "Conventions")$value, "version",
-      ncdf::att.get.ncdf( nc[[1]], varid=0, "ConventionVersion")$value))
+      ncdf4::ncatt_get( nc[[1]], varid=0, "Conventions")$value, "version",
+      ncdf4::ncatt_get( nc[[1]], varid=0, "ConventionVersion")$value))
     print(paste("Frames:", sum(flen)))
     print(paste("Atoms:", nc[[1]]$dim$atom$len))
   }
@@ -64,8 +64,8 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
 
         #check frame No or time
         if(time) {
-           btime <- ncdf::get.var.ncdf(nc, "time", 1, 1)
-           etime <- ncdf::get.var.ncdf(nc, "time", nc$dim$frame$len, 1)
+           btime <- ncdf4::ncvar_get(nc, "time", 1, 1)
+           etime <- ncdf4::ncvar_get(nc, "time", nc$dim$frame$len, 1)
         } else {
            btime = frange[1]
            etime = frange[2]
@@ -75,12 +75,12 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
               (!is.null(last) && last >=0 && btime > last) ||
              (!is.null(first) && !is.null(last) && last >=0 && last < first) ) {
 #           if(verbose) print(paste("Skip file", nc$filename))
-           ncdf::close.ncdf(nc)
+           ncdf4::nc_close(nc)
            return()
         } 
         if(!headonly) {
            timeall <- btime:etime
-           if(time) timeall <- ncdf::get.var.ncdf(nc, "time")
+           if(time) timeall <- ncdf4::ncvar_get(nc, "time")
 
            ss <- if(is.null(first)) 1 else which((timeall - first) >=0 )[1]
            if(is.null(last) || last < 0 || last > etime) {
@@ -92,23 +92,23 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
         }
      }
      tlen = ee - ss + 1
-     conv <- ncdf::att.get.ncdf( nc, varid=0, "Conventions")$value
+     conv <- ncdf4::ncatt_get( nc, varid=0, "Conventions")$value
      if(headonly) {
        ## Report only header information
        return(list("file"=nc$filename,
                    "conv"=conv,
                    "frames"=nc$dim$frame$len,
                    "atoms"=nc$dim$atom$len))
-     ##time  <- get.var.ncdf(nc,"time")
+     ##time  <- ncdf4::ncvar_get(nc,"time")
      }
      if(cell) {
-        celldata <- ncdf::get.var.ncdf(nc, "cell_lengths", c(1, ss), 
+        celldata <- ncdf4::ncvar_get(nc, "cell_lengths", c(1, ss), 
                              c(-1, tlen))
-        celldata <- t( rbind(celldata, ncdf::get.var.ncdf(nc, "cell_angles", 
+        celldata <- t( rbind(celldata, ncdf4::ncvar_get(nc, "cell_angles", 
                          c(1, ss), c(-1, tlen))) )
         if(time)
-           rownames(celldata) <- ncdf::get.var.ncdf(nc, "time", ss, tlen)
-        ncdf::close.ncdf(nc)
+           rownames(celldata) <- ncdf4::ncvar_get(nc, "time", ss, tlen)
+        ncdf4::nc_close(nc)
         return( celldata )
      }
      if(count.atom < 0) count.atom = nc$dim$atom$len
@@ -122,17 +122,17 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
         .tlen <- rep(.nn, length(.ss) - 1)
         .tlen <- c(.tlen, tlen - sum(.tlen))
         coords <- sapply(1:length(.ss), function(i) 
-            ncdf::get.var.ncdf(nc, "coordinates", c(1, first.atom, .ss[i]), 
+            ncdf4::ncvar_get(nc, "coordinates", c(1, first.atom, .ss[i]), 
                           c(-1, count.atom, .tlen[i])) )
      } else {    
-        coords <- ncdf::get.var.ncdf(nc, "coordinates", c(1, first.atom, ss), 
+        coords <- ncdf4::ncvar_get(nc, "coordinates", c(1, first.atom, ss), 
                           c(-1, count.atom, tlen))
      }
      if(!is.null(at.sel)) coords <- coords[,atom.ind - first.atom + 1,]
      coords <- matrix( coords, ncol=(dim(coords)[2]*3), byrow=TRUE )
      if(time)
-        rownames(coords) <- ncdf::get.var.ncdf(nc, "time", ss, tlen)
-     ncdf::close.ncdf(nc)
+        rownames(coords) <- ncdf4::ncvar_get(nc, "time", ss, tlen)
+     ncdf4::nc_close(nc)
      return( coords )
   } )
 
