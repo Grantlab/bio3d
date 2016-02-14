@@ -110,8 +110,13 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
     
     if(lower<0 && upper>0)
       next
-    
-    sele <- intersect( which(dccm>lower), which(dccm<=upper) )
+   
+    ## make the positive and negative distributions symmetric
+    if(lower<0)
+      sele <- intersect( which(dccm>=lower), which(dccm<upper) )
+    else
+      sele <- intersect( which(dccm>lower), which(dccm<=upper) )
+
     if(length(sele)==0)
       next
     
