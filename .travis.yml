@@ -26,7 +26,12 @@ branches:
 #     packages:
 #     - lib
 r_packages: 
-  - XML RCurl igraph knitr testthat lattice
+  - lattice
+  - XML 
+  - RCurl 
+  - igraph 
+  - knitr 
+  - testthat 
 
 r_binary_packages: 
   - ncdf4
