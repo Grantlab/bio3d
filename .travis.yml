@@ -25,7 +25,9 @@ branches:
 #   apt:
 #     packages:
 #     - lib
-#r_packages: 
+r_packages: 
+  - XML RCurl igraph knitr testthat lattice
+
 r_binary_packages: 
   - ncdf4
 
