@@ -28,14 +28,10 @@ addons:
      - libnetcdf6
      - netcdf-bin
 
+# additional dependencies
 r_packages: 
-  - lattice
-  - XML 
-  - RCurl 
-  - igraph 
-  - knitr 
-  - testthat 
   - rmarkdown
+  - devtools
 
 r_binary_packages: 
   - ncdf4
@@ -44,7 +40,8 @@ r_github_packages:
   - jimhester/covr
 
 install: 
-  - Rscript -e 'install.packages(c("rmarkdown", "ncdf4", "devtools", "lattice", "XML", "RCurl", "igraph", "knitr", "testthat"));if (!all(c("rmarkdown", "ncdf4", "devtools", "lattice", "XML", "RCurl", "igraph", "knitr", "testthat") %in% installed.packages())) { q(status = 1, save = "no")}'
+  - Rscript -e 'install.packages(c("rmarkdown", "devtools"))'
+  - Rscript -e 'devtools::install_deps("ver_devel/bio3d", dependencies=TRUE)'
 
 before_script:
     - if test ! -d ~/.R; then mkdir ~/.R; fi
