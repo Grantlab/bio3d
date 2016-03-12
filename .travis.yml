@@ -1,6 +1,12 @@
 language: r
+r:
+   - oldrel
+   - release
+   - devel
 
-#sudo: false
+cache: packages
+
+sudo: false
 
 warnings_are_errors: true
 
@@ -9,27 +15,46 @@ branches:
     - master
     - releases
 
-before_install:
-   - sudo add-apt-repository -y "ppa:marutter/rrutter"
-   - sudo add-apt-repository -y "ppa:marutter/c2d4u"
-   - sudo apt-get update -qq
-   - sudo apt-get install -y r-cran-ncdf4
+#before_install:
+#   - sudo add-apt-repository -y "ppa:marutter/rrutter"
+#   - sudo add-apt-repository -y "ppa:marutter/c2d4u"
+#   - sudo apt-get update -qq
+#   - sudo apt-get install -y r-cran-ncdf4
 
-#addons:
-#   apt:
-#     packages:
-#     - r-cran-ncdf4
+addons:
+   apt:
+     packages:
+     - libnetcdf-dev
+     - libnetcdf6
+     - netcdf-bin
 
-install: true
-  
+# additional dependencies
+r_packages: 
+  - rmarkdown
+  - devtools
+
+r_binary_packages: 
+  - ncdf4
+
+r_github_packages: 
+  - jimhester/covr
+
+install: 
+  - Rscript -e 'install.packages(c("rmarkdown", "devtools"))'
+  - Rscript -e 'devtools::install_deps("ver_devel/bio3d", dependencies=TRUE)'
+
+before_script:
+    - if test ! -d ~/.R; then mkdir ~/.R; fi
+    - echo '_R_CHECK_CRAN_INCOMING_=FALSE' > ~/.R/check.Renviron
+
 script: 
-   - Rscript -e "source('new_funs/check.bio3d.R'); check.bio3d('ver_devel/bio3d', check_dir='.', cleanup=FALSE)" && ! grep -q -e ERROR -e WARNING -e NOTE bio3d.Rcheck/00check.log 
-   - rm -rf bio3d.Rcheck
-   - R CMD build ver_devel/bio3d && if test ! -d ~/.R; then mkdir ~/.R; fi; echo '_R_CHECK_CRAN_INCOMING_=FALSE' > ~/.R/check.Renviron && R CMD check --as-cran --run-donttest bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
+#   - Rscript -e "source('new_funs/check.bio3d.R'); check.bio3d('ver_devel/bio3d', check_dir='.', cleanup=FALSE)" && ! grep -q -e ERROR -e WARNING -e NOTE bio3d.Rcheck/00check.log 
+#   - rm -rf bio3d.Rcheck
+   - R CMD build ver_devel/bio3d && R CMD check --as-cran --run-donttest bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
 
 after_success:
    - Rscript -e 'devtools::install_github("jimhester/covr")'
-   - Rscript -e 'library(covr); coveralls("ver_devel/bio3d")'
+   - Rscript -e 'covr::coveralls("ver_devel/bio3d")'
 
 notifications:
   email:
