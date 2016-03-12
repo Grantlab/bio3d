@@ -21,10 +21,13 @@ branches:
 #   - sudo apt-get update -qq
 #   - sudo apt-get install -y r-cran-ncdf4
 
-#addons:
-#   apt:
-#     packages:
-#     - lib
+addons:
+   apt:
+     packages:
+     - libnetcdf-dev
+     - libnetcdf6
+     - netcdf-bin
+
 r_packages: 
   - lattice
   - XML 
