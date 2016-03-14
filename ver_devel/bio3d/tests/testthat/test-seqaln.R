@@ -3,6 +3,7 @@ context("Testing seqaln")
 
 test_that("seqaln works", {
   skip_on_cran()
+  skip_on_travis()
 
   ## seqaln with one sequence. should remove gaps
   seqs <- c("X", "-", "-", "A", "C", "A", "G", "K", "-")

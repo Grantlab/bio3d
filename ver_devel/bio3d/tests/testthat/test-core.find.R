@@ -21,6 +21,8 @@ test_that("core.find() works properly", {
   expect_equal(sum(core$xyz), 234006)
   
   ## Check multicore 
+  skip_on_travis()
+
   invisible(capture.output(core.mc <- core.find(pdbs, ncore=NULL)))
   expect_identical(core, core.mc)
 

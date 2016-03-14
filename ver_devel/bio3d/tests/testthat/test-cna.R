@@ -40,6 +40,8 @@ test_that("cna() and cnapath() work properly", {
   capture.output(ndg <- summary(pa)$degeneracy)
   expect_equal(ndg, ndg0)
 
+  skip_on_travis()
+
   capture.output(pa2 <- cnapath(net, from=3, to=53, k=20, collapse=TRUE, ncore=NULL))
   expect_equal(pa, pa2)
 })
