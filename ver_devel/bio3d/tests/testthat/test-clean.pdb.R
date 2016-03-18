@@ -20,6 +20,7 @@ test_that("clean.pdb() does nothing for 'clean' pdb by default", {
 test_that("clean.pdb() does renumbering properly", {
 
   skip_on_cran()
+  skip_on_travis()
 
   invisible(capture.output(pdb <- read.pdb("1tag")))
   invisible(capture.output(npdb <- clean.pdb(pdb, force.renumber = TRUE)))

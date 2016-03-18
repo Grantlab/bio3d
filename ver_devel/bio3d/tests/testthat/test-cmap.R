@@ -18,6 +18,7 @@ test_that("cmap() works properly", {
 
   ## Check multicore cmap 
   skip_on_cran()
+  skip_on_travis()
   trjfile <- system.file("examples/hivp.dcd", package="bio3d")
   invisible(capture.output(trj <- read.dcd(trjfile)))
   invisible(capture.output(cm <- cmap(trj, dcut=6, ncore=1)))

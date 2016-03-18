@@ -123,10 +123,10 @@ function(trjfile, headonly = FALSE, verbose = TRUE, time=FALSE,
         .tlen <- c(.tlen, tlen - sum(.tlen))
         coords <- sapply(1:length(.ss), function(i) 
             ncdf4::ncvar_get(nc, "coordinates", c(1, first.atom, .ss[i]), 
-                          c(-1, count.atom, .tlen[i])) )
+                          c(-1, count.atom, .tlen[i])), collapse_degen=FALSE)
      } else {    
         coords <- ncdf4::ncvar_get(nc, "coordinates", c(1, first.atom, ss), 
-                          c(-1, count.atom, tlen))
+                          c(-1, count.atom, tlen), collapse_degen=FALSE)
      }
      if(!is.null(at.sel)) coords <- coords[,atom.ind - first.atom + 1,]
      coords <- matrix( coords, ncol=(dim(coords)[2]*3), byrow=TRUE )
