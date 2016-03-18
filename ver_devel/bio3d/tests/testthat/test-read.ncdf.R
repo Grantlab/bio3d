@@ -34,6 +34,11 @@ test_that("read.ncdf() and write.ncdf() works properly", {
       at.sel = inds)
    expect_equivalent(trj, as.xyz(trj0[seq(10, 20, 2), inds$xyz]))
 
+   # read single frame 
+   trj <- read.ncdf(trjfile, verbose = FALSE, first=1, last=1,
+      at.sel = inds)
+   expect_equivalent(trj, as.xyz(trj0[1, inds$xyz]))
+
    # multiple files
    files <- rep(trjfile, 4)
    txt <- capture.output(trj <- read.ncdf(files, headonly = TRUE))
