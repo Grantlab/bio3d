@@ -106,6 +106,7 @@ test_that("fit.xyz() gets the same results as VMD", {
 
 test_that("fit.xyz() with ncore>1 works properly", {
    skip_on_cran()
+   skip_on_travis()
 
    attach(transducin)
    inds <- unlist(lapply(c("1TAG", "1AS0", "1AS2"), grep, pdbs$id))

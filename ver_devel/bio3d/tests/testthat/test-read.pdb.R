@@ -41,6 +41,7 @@ test_that("read.pdb() reads a normal pdb file", {
 
 test_that("read.pdb() reads and stores data properly", {
   skip_on_cran()
+  skip_on_travis()
   
   datdir <- tempdir()
   invisible(capture.output(get.pdb(c("3DRC", "1P3Q", "1SVK", "1L2Y"), path=datdir,
