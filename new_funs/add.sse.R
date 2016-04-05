@@ -94,16 +94,17 @@ add.segment <- function(x, pos = c("bottom", "left", "top", "right"),
       xlim[2] = xlim[2] + padref
 
    ##-- Format margin annotation object
-   grps <- table(margin.segments)
-   ##- Exclude small grps less than 'segment.min'
-   grps = names( grps[grps > segment.min] ) 
- 
+   grps <- names(table(margin.segments))
+#   grps = names( grps[grps > segment.min] ) 
+    
    store.grps <- NULL
    for(i in 1:length(grps)) {
      store.grps <- rbind(store.grps,
        cbind( bounds(which(margin.segments == grps[i])),
              "grp"=as.numeric(grps[i])) )
    }
+   ##- Exclude small grps less than 'segment.min'
+   store.grps <- store.grps[store.grps[, 'length'] >= segment.min, , drop=FALSE]
 
    ##- Margin segment colors (don't draw if color=NA)
    if(is.null(segment.col)) {
