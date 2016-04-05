@@ -1,3 +1,9 @@
+col2hex <- function (cname) 
+{
+    colMat <- col2rgb(cname)
+    rgb(red = colMat[1, ]/255, green = colMat[2, ]/255, blue = colMat[3, 
+        ]/255)
+}
 vec2color <- function(vec, pal=c("blue", "green", "red"), n) {
   ##-- Define a color scale from a numeric vector
   require(classInt)
@@ -87,7 +93,7 @@ normalize.cij <- function(cij, ...) {
 remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
        method = c('none', 'sum', 'mean', 'max'), ne=3, scut=4, normalize = TRUE, 
        vmd.color = TRUE, col.edge=c('none', 'variance', 'feature', 'significance'),
-       colmap.edge = NULL,  coledge.cutoff = 0.5, signif=NULL, cijs = NULL, ncore=NULL, ...) {
+       colmap.edge = NULL,  coledge.cutoff = 0.5, signif=NULL, cijs = NULL, one.net=FALSE, ncore=NULL, ...) {
 
    require(igraph)
    require(parallel)
@@ -231,9 +237,18 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
          edge.color = NULL
       } else {
          check <- TRUE
-         if(length(unique(sapply(member, length))) != 1) check = FALSE
-         else 
-            check <- all(apply(do.call(rbind, member), 2, function(x) length(unique(x))==1))
+         mlist <- lapply(member, function(x) sort(unique(x)))
+         if(length(unique(sapply(mlist, length))) > 1) {
+           check = FALSE
+         } else {
+           mmat <- do.call(rbind, mlist)
+           if(any(apply(mmat, 2, function(x) length(unique(x)) > 1))) 
+             check = FALSE
+         }
+         
+#         if(length(unique(sapply(member, length))) != 1) check = FALSE
+#         else 
+#            check <- all(apply(do.call(rbind, member), 2, function(x) length(unique(x))==1))
          if(!check) edge.color=NULL
          else {
             # set default colormap according to the color method for edges
@@ -319,5 +334,51 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
    } )
 
    names(x) <- net.names
+
+   if(one.net && length(x) == 2) {
+     y <- x[[1]]
+     size <- get.vertex.attribute(y$community.network, "size")
+     col <-  get.vertex.attribute(y$community.network, "color")
+     cij <- y$community.cij
+     cij[y$community.cij == 0] <- x[[2]]$community.cij[y$community.cij == 0]
+     y$community.network <- graph.adjacency(cij,
+                           mode = "undirected",
+                           weighted = TRUE,
+                           diag = FALSE)
+
+     y$community.network <- set.vertex.attribute(y$community.network, "size", value=size)
+     y$community.network <- set.vertex.attribute(y$community.network, "color", value = col)
+     y$community.cij <- cij
+
+     common.color <- col2hex(colmap.edge[1])
+     cij1 <- x[[1]]$community.cij
+     cij2 <- x[[2]]$community.cij
+     cij1 <- cij1[lower.tri(cij1)]
+     cij2 <- cij2[lower.tri(cij2)]
+     ecol1 <- get.edge.attribute(x[[1]]$community.network, "color")
+     ecol2 <- get.edge.attribute(x[[2]]$community.network, "color")
+     ecol <- rep(NA, length(cij1))
+     ecol[cij1 > 0] <- ecol1
+     ecol[cij2 > 0][ecol2 != common.color] <- ecol2[ecol2 != common.color]
+     ecol <- ecol[!is.na(ecol)]
+     y$community.network <- set.edge.attribute(y$community.network, "color", value=ecol)
+     
+     elty <- rep(NA, length(cij1))
+     elty[cij1 > 0] <- 1
+     elty[cij2 > 0 & cij1 == 0] <- 3
+     elty <- elty[!is.na(elty)]
+     y$community.network <- set.edge.attribute(y$community.network, "lty", value=elty)
+  
+     w1 <- rep(0, length(cij1))
+     w2 <- rep(0, length(cij1))
+     w1[cij1 > 0] <- get.edge.attribute(x[[1]]$community.network, "weight")
+     w2[cij2 > 0] <- get.edge.attribute(x[[2]]$community.network, "weight")
+     deltaW <- abs(w1 - w2)
+     deltaW <- deltaW[cij1 > 0 | cij2 > 0]
+     deltaW[ecol == common.color] <- 0 
+     y$delta.community.weight <- deltaW
+     x <- y
+   } 
+
    return(x)
 }
