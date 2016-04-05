@@ -110,9 +110,10 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
             stop('Provide either pre-calculated significance matrices or the raw residue cross-correlation matrices.')
          
          filters <- lapply(x, function(x) x$cij > 0)
+         flag <- rep(1:length(x), times=sapply(cijs, function(x) dim(x)[3L]))
          cijs <- lapply(cijs, function(x) lapply(1:dim(x)[3L], function(i) x[,,i]))
          cijs <- do.call('c', cijs)
-         flag <- rep(1:length(x), each = length(cijs)/length(x))
+#         flag <- rep(1:length(x), each = length(cijs)/length(x))
          cg.cij <- mclapply(1:length(cijs), function(i) {
             net <- cna(cijs[[i]]*filters[[flag[i]]], cutoff.cij=0)
             nnet <- remodel.cna(net, member=member, method='sum', scut=4, normalize=FALSE, col.edge='none')[[1]]

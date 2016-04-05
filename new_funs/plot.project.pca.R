@@ -56,11 +56,15 @@ plot.project.pca <- function(pca, xyz, col = "gray", fit = FALSE,
       }
    
    # Calculate density 
-   data <- discretize2d(xyz[, 1], xyz[, 2], breaks, breaks)
-   xx = seq(range(xyz[, 1])[1], range(xyz[, 1])[2], length.out = breaks + 1)
-   yy = seq(range(xyz[, 2])[1], range(xyz[, 2])[2], length.out = breaks + 1)
+#   data <- discretize2d(xyz[, 1], xyz[, 2], breaks, breaks)
+#   xx = seq(range(xyz[, 1])[1], range(xyz[, 1])[2], length.out = breaks + 1)
+#   yy = seq(range(xyz[, 2])[1], range(xyz[, 2])[2], length.out = breaks + 1)
+   data <- discretize2d(xyz[, 1], xyz[, 2], breaks, breaks, r1=xlim, r2=ylim)
+   xx = seq(xlim[1], xlim[2], length.out = breaks + 1)
+   yy = seq(ylim[1], ylim[2], length.out = breaks + 1)
    xx = xx[-length(xx)]
    yy = yy[-length(yy)]
+   data <- data / sum(data) / ((diff(xlim)/breaks) * (diff(ylim)/breaks))
    class(data) <- "matrix"
 
    # Plot trajectory sampling density
@@ -72,7 +76,7 @@ plot.project.pca <- function(pca, xyz, col = "gray", fit = FALSE,
                lattice::panel.contourplot(...)
                lattice::panel.abline(h=0, v=0, lty=3, col="gray80")
             },
-            at = seq(1, max(data), length.out = 255), colorkey = FALSE, 
+            at = seq(min(data[data>0]), max(data), length.out = 255), colorkey = FALSE, 
             col.regions = colorRampPalette(blues9[-(1:3)])(255)), dots) )
    print(p1)
 
@@ -85,11 +89,11 @@ plot.project.pca <- function(pca, xyz, col = "gray", fit = FALSE,
          vp = vpPath("plot_01.toplevel.vp","plot_01.panel.1.1.vp") )
 
    # Add start and end conformers of the trajectory
-   grid.points(xyz[1, 1], xyz[1, 2], pch=16, 
-         gp = gpar(col = "yellow", cex=0.4), 
+   grid.points(xyz[1, 1], xyz[1, 2], pch=17, 
+         gp = gpar(col = "green", cex=0.4), 
          vp = vpPath("plot_01.toplevel.vp","plot_01.panel.1.1.vp") )
-   grid.points(xyz[nrow(xyz), 1], xyz[nrow(xyz), 2], pch=16, 
-         gp = gpar(col = "pink", cex=0.4), 
+   grid.points(xyz[nrow(xyz), 1], xyz[nrow(xyz), 2], pch=17, 
+         gp = gpar(col = "red", cex=0.4), 
          vp = vpPath("plot_01.toplevel.vp","plot_01.panel.1.1.vp") )
   
 }
