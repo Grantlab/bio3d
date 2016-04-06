@@ -373,10 +373,13 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
      w2 <- rep(0, length(cij1))
      w1[cij1 > 0] <- get.edge.attribute(x[[1]]$community.network, "weight")
      w2[cij2 > 0] <- get.edge.attribute(x[[2]]$community.network, "weight")
-     deltaW <- abs(w1 - w2)
+     deltaW <- round(abs(w1 - w2), 1)
      deltaW <- deltaW[cij1 > 0 | cij2 > 0]
-     deltaW[ecol == common.color] <- 0 
-     y$delta.community.weight <- deltaW
+     y$delta.community.cij <- deltaW
+     deltaW[ecol == common.color] <- NA
+     y$community.network <- set.edge.attribute(y$community.network, "label", value=deltaW)
+     y$community.network <- set.edge.attribute(y$community.network, "label.color", value=ecol)
+      
      x <- y
    } 
 
