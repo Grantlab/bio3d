@@ -50,7 +50,7 @@ get.edgecolor <- function(cij, method, colmap, cutoff, n = 30, signif = NULL, p.
    colors <- rep(NA, length(color.code)) 
    color.code <- color.code[as.vector(pcij > 0)] # exclude pairs that have no edge 
    if(length(unique(color.code)) == 1)
-      colors[as.vector(pcij > 0)] <- rep(colmap[1], length(color.code))
+      colors[as.vector(pcij > 0)] <- rep(col2hex(colmap[1]), length(color.code))
    else 
       colors[as.vector(pcij>0)] <- switch(method, 
          variance = suppressWarnings( vec2color(color.code, pal = colmap, n = n) ),
@@ -105,6 +105,28 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
    # assume input 'x' is a network ensemble 
    if(inherits(x, "cna")) x = list(x)
    
+   # if not provided, the membership is extracted from the network
+   if(is.null(member)) {
+      member = lapply(x, function(y) y$communities$membership)
+   } else {
+      if(!is.list(member))
+         member = rep(list(member), length(x))
+      if(method == 'none') {
+         warning('method is "none" but member is not NULL. Set method to "sum"')
+         method = 'sum'
+      }
+   }
+   n_community <- length(unique(member[[1]]))
+
+   #check if community memberships from different networks match each other
+   if(length(x) > 1) {
+      bmatch = FALSE
+      chks <- sapply(member, function(x) sort(unique(x)))
+      if(is.matrix(chks)) {
+         bmatch <- all(apply(chks, 1, function(x) length(unique(x))==1))
+      }
+   }
+
    # will return with network names
    net.names <- names(x)
 
@@ -122,10 +144,9 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
 #         flag <- rep(1:length(x), each = length(cijs)/length(x))
          cg.cij <- mclapply(1:length(cijs), function(i) {
             net <- cna(cijs[[i]]*filters[[flag[i]]], cutoff.cij=0)
-            nnet <- remodel.cna(net, member=member, method='sum', scut=4, normalize=FALSE, col.edge='none')[[1]]
+            nnet <- remodel.cna(net, member=member[[flag[i]]], method='sum', scut=4, normalize=FALSE, col.edge='none')[[1]]
             nnet$community.cij[lower.tri(nnet$community.cij)]
          }, mc.cores = ncore )
-          
          signif <- unlist( mclapply(1:length(cg.cij[[1]]), function(i) {
             dat <- sapply(cg.cij, '[', i)
             n2 <- pairwise(length(x))
@@ -143,20 +164,9 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
             })
             min(p)
          }, mc.cores = ncore) )
-         a <- matrix(1, nrow=length(unique(member)), ncol=length(unique(member)))
+         a <- matrix(1, nrow=length(unique(member[[1]])), ncol=length(unique(member[[1]])))
          a[lower.tri(a)] <- signif
          signif=a
-      }
-   }
- 
-   # if not provided, the membership is extracted from the network
-   if(is.null(member)) {
-      member = lapply(x, function(y) y$communities$membership)
-   } else {
-      member = rep(list(member), length(x))
-      if(method == 'none') {
-         warning('method is "none" but member is not NULL. Set method to "sum"')
-         method = 'sum'
       }
    }
  
@@ -359,7 +369,10 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
      ecol2 <- get.edge.attribute(x[[2]]$community.network, "color")
      ecol <- rep(NA, length(cij1))
      ecol[cij1 > 0] <- ecol1
-     ecol[cij2 > 0][ecol2 != common.color] <- ecol2[ecol2 != common.color]
+     sub.ecol <- ecol[cij2 > 0]
+     sub.inds <- is.na(sub.ecol) | ecol2 != common.color
+     sub.ecol[sub.inds] <- ecol2[sub.inds]
+     ecol[cij2 > 0] <- sub.ecol
      ecol <- ecol[!is.na(ecol)]
      y$community.network <- set.edge.attribute(y$community.network, "color", value=ecol)
      
