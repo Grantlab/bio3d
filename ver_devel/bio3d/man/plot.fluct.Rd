@@ -6,19 +6,20 @@
   molecular dynamics simulations.
 }
 \usage{
-\method{plot}{fluct}(x, 
+\method{plot}{fluct}(x,
         col = NULL, label = rownames(x), signif = FALSE,
         p.cutoff = 0.005, q.cutoff = 0.04,
-        s.cutoff = 5, n.cutoff = 2, mean = FALSE, polygon = FALSE, 
-        ncore = NULL, ...) 
+        s.cutoff = 5, n.cutoff = 2, mean = FALSE, polygon = FALSE,
+        spread = FALSE, offset = 1,
+        ncore = NULL, ...)
 }
 \arguments{
-  \item{x}{ a numeric vector or matrix containing atomic fluctuation data obtained 
+  \item{x}{ a numeric vector or matrix containing atomic fluctuation data obtained
     from e.g. \code{\link{nma.pdbs}} or \code{\link{rmsf}}. }
   \item{col}{ a character vector of plotting colors. Used also to group
-    fluctuation profiles. NA values in col will omit the corresponding fluctuation 
+    fluctuation profiles. NA values in col will omit the corresponding fluctuation
     profile in the plot. }
-  \item{label}{ a character vector of plotting labels with length matching 
+  \item{label}{ a character vector of plotting labels with length matching
     \code{nrow(x)}. If \code{mean=TRUE}, the length of \code{label} can be equal to
     the number of categories indicated by \code{col}. }
   \item{signif}{ logical, if TRUE significance of fluctuation difference is calculated
@@ -27,26 +28,30 @@
   \item{q.cutoff}{ Cutoff of the mean fluctuation difference to define significance. }
   \item{s.cutoff}{ Cutoff of sample size in each group to calculate the significance. }
   \item{n.cutoff}{ Cutoff of consecutive residue positions with significant fluctuation
-             difference. If the actual number is less than the cutoff, 
+             difference. If the actual number is less than the cutoff,
              correponding postions will not be annotated. }
   \item{mean}{ logical, if TRUE plot mean fluctuations of each group. Significance is
              still calculated with the original data. }
-  \item{polygon}{ logical, if TRUE a nicer plot with area under the line for the first 
+  \item{polygon}{ logical, if TRUE a nicer plot with area under the line for the first
              row of \code{x} are filled with polygons. }
   \item{ncore }{ number of CPU cores used to do the calculation. By default
              (\code{ncore=NULL}), use all available CPU cores. The argument is only
              used when \code{signif=TRUE}. }
+  \item{spread}{ logical, if TRUE the fluctuation profiles are spread -
+    i.e. not on top of each other. }
+  \item{offset}{ numerical offset value in use when
+    \sQuote{spread=TRUE}. }
   \item{\dots}{ extra plotting arguments passed to \code{plot.bio3d}. }
 }
 \details{
-  The significance calculation is performed when \code{signif=TRUE} and there are at least 
-  two groups with sample size larger than or equal to \code{s.cutoff}. A "two-sided" 
+  The significance calculation is performed when \code{signif=TRUE} and there are at least
+  two groups with sample size larger than or equal to \code{s.cutoff}. A "two-sided"
   student's t-test is performed for each atomic position (each
-  column of \code{x}).  If \code{x} contains gaps, indicated by \code{NA}s, 
-  only non-gapped positions are considered. The position is considered significant if both 
-  \code{p-value <= p.cutoff} and the mean value difference of the two groups, q, satisfies 
-  \code{q >= q.cutoff}. If more than two groups are available, every pair of groups are 
-  subjected to the t-test calculation and the minimal p-value along with the q-value 
+  column of \code{x}).  If \code{x} contains gaps, indicated by \code{NA}s,
+  only non-gapped positions are considered. The position is considered significant if both
+  \code{p-value <= p.cutoff} and the mean value difference of the two groups, q, satisfies
+  \code{q >= q.cutoff}. If more than two groups are available, every pair of groups are
+  subjected to the t-test calculation and the minimal p-value along with the q-value
   for the corresponding pair are used for the significance evaluation.
 }
 \value{
@@ -88,7 +93,7 @@ col = annotation[, "color"]
 col[annotation[, "state3"] == "GDI"] = "blue"
 plot.fluct(x, col=col, signif = TRUE, sse = pdb, resno = pdb)
 
-## show only line of mean values for each group. Gapped positions are removed. Nicer  
+## show only line of mean values for each group. Gapped positions are removed. Nicer
 ## plot with area shaded for the first group.
 plot.fluct(x, col=col, signif = TRUE, sse = pdb, resno = pdb, mean=TRUE, polygon=TRUE, rm.gaps=TRUE)
 

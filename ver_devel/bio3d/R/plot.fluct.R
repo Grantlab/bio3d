@@ -1,6 +1,6 @@
 "plot.fluct" <-
-  function(x, col = NULL, label = rownames(x), signif = FALSE, p.cutoff = 0.005, 
-           q.cutoff = 0.04, s.cutoff = 5, n.cutoff = 2, mean = FALSE, polygon = FALSE, 
+  function(x, col = NULL, label = rownames(x), signif = FALSE, p.cutoff = 0.005,
+           q.cutoff = 0.04, s.cutoff = 5, n.cutoff = 2, mean = FALSE, polygon = FALSE, spread=FALSE, offset=1,
            ncore = NULL, ...) {
 
     ## check input data
@@ -8,11 +8,11 @@
       x = matrix(x, nrow=1)
     if(!is.matrix(x) || !is.numeric(x))
       stop("provide a numeric matrix or vector")
-   
+
     ## check colors, which also define groups of input data if signif=TRUE
     if(is.null(col))
       col <- seq(1, nrow(x))
-    if(length(col) != nrow(x)) 
+    if(length(col) != nrow(x))
        stop("length of col doesn't match dimension of x")
     if(any(is.na(col))) {
        x = x[!is.na(col), ]
@@ -23,18 +23,18 @@
     if(signif) {
        ns <- table(col)
        inds.signif <- which(ns >= s.cutoff)
-       if(length(inds.signif) < 2) { 
+       if(length(inds.signif) < 2) {
          warning("Insufficient samples to calculate significance")
          signif = FALSE
       }
     }
 
-    ## extract some values from '...' since we still do some plots here   
+    ## extract some values from '...' since we still do some plots here
     ## These could be removed after merging this function with plot.bio3d()
     dots = list(...)
     if("rm.gaps" %in% names(dots)) rm.gaps = dots$rm.gaps
     else rm.gaps = formals(plotb3)$rm.gaps
-    
+
     ## gaps positions
     gaps.pos <- gap.inspect(x)
 
@@ -50,6 +50,10 @@
     if("ylim" %in% names(dots)) ylim = dots$ylim
     else ylim = range(yvals, na.rm = TRUE)
 
+    if(spread) {
+        ylim[2] = ylim[2] + (offset * (length(unique(col))-1))
+    }
+
     if(ylim2zero) ylim[1] = 0
 
     if(! "ylab" %in% names(dots)) dots$ylab = "Fluctuation"
@@ -64,7 +68,7 @@
 #      op = par(no.readonly = TRUE)
       op = par()$new
       on.exit(par(new=op))
- 
+
       pairs <- pairwise(length(inds.signif))
 
       ## get p-value and q-value for each non-gap position
@@ -75,7 +79,7 @@
             p = t.test(x[inds1, i], x[inds2,i], alternative="two.sided")$p.value
             q <- abs(mean(x[inds1, i]) - mean(x[inds2, i]))
             c(p, q)
-         }) 
+         })
          c(p=min(p.i[1, ]), q=p.i[2, which.min(p.i[1,])])
       })
 
@@ -101,16 +105,16 @@
          ii <- which(bds[, "length"] >= n.cutoff)
 
          if(length(ii) > 0) {
- 
+
             plot.new()
             plot.window(xlim=xlim, ylim=ylim)
-   
+
             ## to show bricks for single site significance
             adjust = 0.1
             rect(bds[ii,1]-adjust, rep(ylim[1], length(ii)), bds[ii,2]+adjust,
                  rep(ylim[2], length(ii)),
                  col=rep("lightblue", length(ii)), border=NA)
-            
+
             ## add this for plot.bio3d on the same device
             par(new=TRUE)
          }
@@ -125,7 +129,7 @@
 
        if(!is.matrix(yvals))
           yvals = matrix(yvals, nrow=1)
-       else 
+       else
           yvals = yvals[col, , drop=FALSE]  # correct order change due to tapply
 
        # still keep the same gaps in first row
@@ -133,42 +137,54 @@
        yvals[1, is.na(x[1, ])] = NA
 
        x = yvals
-       if(rm.gaps) 
+       if(rm.gaps)
           yvals = x[, gaps.pos$f.inds, drop=FALSE]
 
        # trick to leave gap position unchanged.
        # Won't affect plot because plot.bio3d() only picks up the first row
        # All plots in this function should be done with yvals!!
-       x = rbind(x, gap.mark=rep(0, ncol(x))) 
+       x = rbind(x, gap.mark=rep(0, ncol(x)))
        x["gap.mark", gaps.pos$t.inds] = NA
     }
 
+
     ## Plot fluctuations
     if(polygon) {
-       dots$type = "n" 
-       do.call(plot.bio3d,  c(list(x=x), dots))
-     
-       xx = yvals[1, ] 
+        spread <- FALSE
+        dots$type = "n"
+
+
+       xx = yvals[1, ]
 
        ylim2 = range(xx, na.rm = TRUE)
        if(ylim2zero) ylim2[1] = 0
 
        n = bounds(which(is.na(xx)))
        if(length(n)>0) xx[n[, 1:2]] = ylim2[1]
-       
+
        # color for polygon
        n.col = do.call(rgb, c(as.list(col2rgb(col[1])/255), list(alpha=0.4)))
 
        polygon(c(1, seq_along(xx), length(xx)), c(ylim2[1], xx, ylim2[1]),
-          col = n.col, border=NA) 
-    } else {
-
-       do.call(plot.bio3d, c(list(x=x), dots))
-
+          col = n.col, border=NA)
     }
-   
-    ## Plot all lines 
-    for(i in 1:nrow(yvals)) lines(yvals[i, ], col=col[i], lwd=2)
+    else {
+        do.call(plot.bio3d, c(list(x=x), dots))
+    }
+
+    if(!spread) {
+        ## Plot all lines
+        for(i in 1:nrow(yvals))
+            lines(yvals[i, ], col=col[i], lwd=2)
+    }
+    else {
+        for(i in 1:length(unique(col))) {
+            grp.inds <- which(col==i)
+            off <- ((i-1)* offset)
+            for(j in 1:length(grp.inds))
+                lines(yvals[grp.inds[j], ] + off, col=i)
+        }
+    }
 
     ## legend
     if(!is.null(label))
@@ -177,6 +193,6 @@
     if(signif)
        out <- list(signif=sig)
     else
-       out <- NULL 
+       out <- NULL
     invisible(out)
   }
