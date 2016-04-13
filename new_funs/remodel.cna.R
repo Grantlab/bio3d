@@ -1,3 +1,9 @@
+col2hex <- function (cname) 
+{
+    colMat <- col2rgb(cname)
+    rgb(red = colMat[1, ]/255, green = colMat[2, ]/255, blue = colMat[3, 
+        ]/255)
+}
 vec2color <- function(vec, pal=c("blue", "green", "red"), n) {
   ##-- Define a color scale from a numeric vector
   require(classInt)
@@ -44,7 +50,7 @@ get.edgecolor <- function(cij, method, colmap, cutoff, n = 30, signif = NULL, p.
    colors <- rep(NA, length(color.code)) 
    color.code <- color.code[as.vector(pcij > 0)] # exclude pairs that have no edge 
    if(length(unique(color.code)) == 1)
-      colors[as.vector(pcij > 0)] <- rep(colmap[1], length(color.code))
+      colors[as.vector(pcij > 0)] <- rep(col2hex(colmap[1]), length(color.code))
    else 
       colors[as.vector(pcij>0)] <- switch(method, 
          variance = suppressWarnings( vec2color(color.code, pal = colmap, n = n) ),
@@ -87,7 +93,7 @@ normalize.cij <- function(cij, ...) {
 remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
        method = c('none', 'sum', 'mean', 'max'), ne=3, scut=4, normalize = TRUE, 
        vmd.color = TRUE, col.edge=c('none', 'variance', 'feature', 'significance'),
-       colmap.edge = NULL,  coledge.cutoff = 0.5, signif=NULL, cijs = NULL, ncore=NULL, ...) {
+       colmap.edge = NULL,  coledge.cutoff = 0.5, signif=NULL, cijs = NULL, one.net=FALSE, ncore=NULL, ...) {
 
    require(igraph)
    require(parallel)
@@ -99,6 +105,28 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
    # assume input 'x' is a network ensemble 
    if(inherits(x, "cna")) x = list(x)
    
+   # if not provided, the membership is extracted from the network
+   if(is.null(member)) {
+      member = lapply(x, function(y) y$communities$membership)
+   } else {
+      if(!is.list(member))
+         member = rep(list(member), length(x))
+      if(method == 'none') {
+         warning('method is "none" but member is not NULL. Set method to "sum"')
+         method = 'sum'
+      }
+   }
+   n_community <- length(unique(member[[1]]))
+
+   #check if community memberships from different networks match each other
+   if(length(x) > 1) {
+      bmatch = FALSE
+      chks <- sapply(member, function(x) sort(unique(x)))
+      if(is.matrix(chks)) {
+         bmatch <- all(apply(chks, 1, function(x) length(unique(x))==1))
+      }
+   }
+
    # will return with network names
    net.names <- names(x)
 
@@ -116,10 +144,9 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
 #         flag <- rep(1:length(x), each = length(cijs)/length(x))
          cg.cij <- mclapply(1:length(cijs), function(i) {
             net <- cna(cijs[[i]]*filters[[flag[i]]], cutoff.cij=0)
-            nnet <- remodel.cna(net, member=member, method='sum', scut=4, normalize=FALSE, col.edge='none')[[1]]
+            nnet <- remodel.cna(net, member=member[[flag[i]]], method='sum', scut=4, normalize=FALSE, col.edge='none')[[1]]
             nnet$community.cij[lower.tri(nnet$community.cij)]
          }, mc.cores = ncore )
-          
          signif <- unlist( mclapply(1:length(cg.cij[[1]]), function(i) {
             dat <- sapply(cg.cij, '[', i)
             n2 <- pairwise(length(x))
@@ -137,20 +164,9 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
             })
             min(p)
          }, mc.cores = ncore) )
-         a <- matrix(1, nrow=length(unique(member)), ncol=length(unique(member)))
+         a <- matrix(1, nrow=length(unique(member[[1]])), ncol=length(unique(member[[1]])))
          a[lower.tri(a)] <- signif
          signif=a
-      }
-   }
- 
-   # if not provided, the membership is extracted from the network
-   if(is.null(member)) {
-      member = lapply(x, function(y) y$communities$membership)
-   } else {
-      member = rep(list(member), length(x))
-      if(method == 'none') {
-         warning('method is "none" but member is not NULL. Set method to "sum"')
-         method = 'sum'
       }
    }
  
@@ -231,9 +247,18 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
          edge.color = NULL
       } else {
          check <- TRUE
-         if(length(unique(sapply(member, length))) != 1) check = FALSE
-         else 
-            check <- all(apply(do.call(rbind, member), 2, function(x) length(unique(x))==1))
+         mlist <- lapply(member, function(x) sort(unique(x)))
+         if(length(unique(sapply(mlist, length))) > 1) {
+           check = FALSE
+         } else {
+           mmat <- do.call(rbind, mlist)
+           if(any(apply(mmat, 2, function(x) length(unique(x)) > 1))) 
+             check = FALSE
+         }
+         
+#         if(length(unique(sapply(member, length))) != 1) check = FALSE
+#         else 
+#            check <- all(apply(do.call(rbind, member), 2, function(x) length(unique(x))==1))
          if(!check) edge.color=NULL
          else {
             # set default colormap according to the color method for edges
@@ -319,5 +344,57 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
    } )
 
    names(x) <- net.names
+
+   if(one.net && length(x) == 2) {
+     y <- x[[1]]
+     size <- get.vertex.attribute(y$community.network, "size")
+     col <-  get.vertex.attribute(y$community.network, "color")
+     cij <- y$community.cij
+     cij[y$community.cij == 0] <- x[[2]]$community.cij[y$community.cij == 0]
+     y$community.network <- graph.adjacency(cij,
+                           mode = "undirected",
+                           weighted = TRUE,
+                           diag = FALSE)
+
+     y$community.network <- set.vertex.attribute(y$community.network, "size", value=size)
+     y$community.network <- set.vertex.attribute(y$community.network, "color", value = col)
+     y$community.cij <- cij
+
+     common.color <- col2hex(colmap.edge[1])
+     cij1 <- x[[1]]$community.cij
+     cij2 <- x[[2]]$community.cij
+     cij1 <- cij1[lower.tri(cij1)]
+     cij2 <- cij2[lower.tri(cij2)]
+     ecol1 <- get.edge.attribute(x[[1]]$community.network, "color")
+     ecol2 <- get.edge.attribute(x[[2]]$community.network, "color")
+     ecol <- rep(NA, length(cij1))
+     ecol[cij1 > 0] <- ecol1
+     sub.ecol <- ecol[cij2 > 0]
+     sub.inds <- is.na(sub.ecol) | ecol2 != common.color
+     sub.ecol[sub.inds] <- ecol2[sub.inds]
+     ecol[cij2 > 0] <- sub.ecol
+     ecol <- ecol[!is.na(ecol)]
+     y$community.network <- set.edge.attribute(y$community.network, "color", value=ecol)
+     
+     elty <- rep(NA, length(cij1))
+     elty[cij1 > 0] <- 1
+     elty[cij2 > 0 & cij1 == 0] <- 3
+     elty <- elty[!is.na(elty)]
+     y$community.network <- set.edge.attribute(y$community.network, "lty", value=elty)
+  
+     w1 <- rep(0, length(cij1))
+     w2 <- rep(0, length(cij1))
+     w1[cij1 > 0] <- get.edge.attribute(x[[1]]$community.network, "weight")
+     w2[cij2 > 0] <- get.edge.attribute(x[[2]]$community.network, "weight")
+     deltaW <- round(abs(w1 - w2), 1)
+     deltaW <- deltaW[cij1 > 0 | cij2 > 0]
+     y$delta.community.cij <- deltaW
+     deltaW[ecol == common.color] <- NA
+     y$community.network <- set.edge.attribute(y$community.network, "label", value=deltaW)
+     y$community.network <- set.edge.attribute(y$community.network, "label.color", value=ecol)
+      
+     x <- y
+   } 
+
    return(x)
 }
