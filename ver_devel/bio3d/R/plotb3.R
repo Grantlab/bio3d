@@ -53,6 +53,8 @@ plotb3 <- function(x, resno=NULL, rm.gaps = FALSE, type="h",
     ## Obtain SSE vector from PDB input 'sse'
     if(is.pdb(sse)) 
       sse$sse <- pdb2sse(sse)
+    else if(is.character(sse))
+      sse <- list(sse=sse)
  
     h <- bounds( which(sse$sse == "H") )
     e <- bounds( which(sse$sse == "E") )
