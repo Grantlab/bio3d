@@ -150,12 +150,11 @@
 
     ## Plot fluctuations
     if(polygon) {
-        spread <- FALSE
-        dots$type = "n"
-
+       spread <- FALSE
+       dots$type = "n"
+       do.call(plot.bio3d,  c(list(x=x), dots))
 
        xx = yvals[1, ]
-
        ylim2 = range(xx, na.rm = TRUE)
        if(ylim2zero) ylim2[1] = 0
 
@@ -178,11 +177,13 @@
             lines(yvals[i, ], col=col[i], lwd=2)
     }
     else {
-        for(i in 1:length(unique(col))) {
-            grp.inds <- which(col==i)
+        unq.col <- unique(col)
+        for(i in 1:length(unq.col)) {
+            tmp.col <- unq.col[i]
+            grp.inds <- which(col==tmp.col)
             off <- ((i-1)* offset)
             for(j in 1:length(grp.inds))
-                lines(yvals[grp.inds[j], ] + off, col=i)
+                lines(yvals[grp.inds[j], ] + off, col=tmp.col)
         }
     }
 
