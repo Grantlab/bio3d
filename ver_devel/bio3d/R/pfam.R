@@ -8,7 +8,7 @@
   cl <- match.call()
   format <- "fasta"
   
-  url = paste('http://pfam.sanger.ac.uk/family/', id, '/acc', sep='')
+  url = paste('http://pfam.xfam.org/family/', id, '/acc', sep='')
   if(verbose)
     cat("Fetching accession from", url, "\n")
   
@@ -19,7 +19,7 @@
   accid <- readLines(url, warn=FALSE)[1]
   
   ## download alignment
-  url <- paste('http://pfam.sanger.ac.uk/family/', accid,
+  url <- paste('http://pfam.xfam.org/family/', accid,
                '/alignment/', alignment, '/format?format=', format, sep='')
 
   if(verbose)
