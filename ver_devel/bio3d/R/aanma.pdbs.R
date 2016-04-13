@@ -1,0 +1,368 @@
+#' Ensemble Normal Mode Analysis with All-Atom ENM
+#'
+#' Perform normal mode analysis (NMA) on an ensemble of aligned protein
+#' structures using all-atom elastic network model (aaENM).
+#'
+#' @details This function builds elastic network model (ENM) using all heavy 
+#'    atoms and performs subsequent normal mode analysis (NMA) on a set of 
+#'    aligned protein structures obtained with function \code{\link{read.fasta.pdb}} 
+#'    or \code{\link{pdbaln}}. The main purpose is to automate ensemble normal
+#'    mode analysis using all-atom ENMs. Local PDB files are required, with file paths 
+#'    specified by \code{pdbs$id} along with \code{prefix} and \code{pdbext}.
+#'
+#'    Customized "outmodes" (See \code{\link{aanma}} for more details) is not
+#'    supported. The effective Hessian for all C-alpha atoms (C-alpha atoms at 
+#'    'non-gap' positions if \code{rm.gaps=TRUE}) is calculated based on the
+#'    Hessian built from all heavy atoms (including ligand atoms if \code{ligand=TRUE}).
+#'  
+#'    The normal modes are calculated on the full structures as provided
+#'    by object \sQuote{pdbs}. With the input argument \sQuote{full=TRUE}
+#'    the full \sQuote{nma} objects are returned together with output
+#'    \sQuote{U.subs} providing the aligned mode vectors. When
+#'    \sQuote{rm.gaps=TRUE} the unaligned atoms are ommited from
+#'    output. With default arguments \sQuote{rmsip} provides RMSIP
+#'    values for all pairwise structures.
+#'
+#' @param pdbs an \sQuote{pdbs} object as obtained from
+#'    \code{\link{read.fasta.pdb}} or \code{\link{pdbaln}}. 
+#' @param fit logical, if TRUE C-alpha coordinate based superposition is performed
+#'    prior to normal mode calculations. 
+#' @param full logical, if TRUE return the complete, full structure,
+#'    \sQuote{nma} objects.
+#' @param subspace number of eigenvectors to store for further analysis.
+#' @param rm.gaps logical, if TRUE obtain the hessian matrices for only
+#'    atoms in the aligned positions (non-gap positions in all aligned
+#'    structures). Thus, gap positions are removed from output.
+#' @param ligand logical, if TRUE ligand molecules are also included in the calculation.
+#' @param prefix prefix to \sQuote{pdbs$id} to locate input pdb files.
+#' @param pdbext extension to \sQuote{pdbs$id} to locate input pdb files.
+#' @param outpath character string specifing the output directory to
+#'    which the PDB structures should be written.
+#' @param gc.first logical, if TRUE will call gc() first before mode calculation for
+#'    each structure. This is to avoid memory overload when \code{ncore > 1}.
+#' @param ncore number of CPU cores used to do the calculation.
+#' @param \dots additional arguments to \code{\link{aanma}}.
+#'
+#' @return Returns an \sQuote{enma} object with the following components:
+#'    \item{fluctuations }{ a numeric matrix containing aligned atomic
+#'      fluctuations with one row per input structure. }
+#'    \item{rmsip }{ a numeric matrix of pair wise RMSIP values (only the ten
+#'      lowest frequency modes are included in the calculation). }
+#'    \item{U.subspace }{ a three-dimensional array with aligned
+#'      eigenvectors  (corresponding to the subspace defined by the first N
+#'      non-trivial eigenvectors (\sQuote{U}) of the \sQuote{nma} object). }
+#'    \item{L }{ numeric matrix containing the raw eigenvalues with one row
+#'      per input structure. }
+#'    \item{full.nma }{ a list with a \code{nma} object for each input
+#'      structure. }
+#'
+#' @seealso 
+#'      For normal mode analysis on single structure PDB:
+#'      \code{\link{aanma}}
+#'
+#'      For conventional C-alpha based normal mode analysis:
+#'      \code{\link{nma}}, \code{\link{nma.pdbs}}.
+#'
+#'      For the analysis of the resulting \sQuote{eNMA} object:
+#'      \code{\link{mktrj.enma}}, \code{\link{dccm.enma}},
+#'      \code{\link{plot.enma}}, \code{\link{cov.enma}}.
+#'    
+#'      Similarity measures:
+#'      \code{\link{sip}}, \code{\link{covsoverlap}},
+#'      \code{\link{bhattacharyya}}, \code{\link{rmsip}}.
+#'    
+#'      Related functionality:
+#'      \code{\link{pdbaln}}, \code{\link{read.fasta.pdb}}.
+#'
+#' @author Xin-Qiu Yao & Lars Skjaerven
+#' 
+#' @examples
+#' \donttest{
+#'   # Needs MUSCLE installed - testing excluded
+#'   if(check.utility("muscle")) {
+#'
+#'     ## Fetch PDB files and split to chain A only PDB files
+#'     ids <- c("1a70_A", "1czp_A", "1frd_A", "1fxi_A", "1iue_A", "1pfd_A")
+#'     files <- get.pdb(ids, split = TRUE, path = tempdir())
+#'     
+#'     ## Sequence Alignement
+#'     pdbs <- pdbaln(files, outfile = tempfile())
+#'     
+#'     ## Normal mode analysis on aligned data
+#'     modes <- aanma.pdbs(pdbs, rm.gaps=TRUE)
+#'     
+#'     ## Plot fluctuation data
+#'     plot(modes, pdbs=pdbs)
+#'     
+#'     ## Cluster on Fluctuation similariy
+#'     sip <- sip(modes)
+#'     hc <- hclust(dist(sip))
+#'     col <- cutree(hc, k=3)
+#'     
+#'     ## Plot fluctuation data
+#'     plot(modes, pdbs=pdbs, col=col)
+#'     
+#'     ## RMSIP is pre-calculated
+#'     heatmap(1-modes$rmsip)
+#'     
+#'     ## Bhattacharyya coefficient
+#'     bc <- bhattacharyya(modes)
+#'     heatmap(1-bc)
+#'
+#'   }
+#' }
+aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE, 
+  ligand=FALSE, prefix="", pdbext="", outpath=NULL, gc.first=TRUE, ncore=NULL, ...) {
+
+  if(!inherits(pdbs, "pdbs"))
+    stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
+
+  ## Log the call
+  cl <- match.call()
+
+  if(!is.null(outpath))
+    dir.create(outpath, FALSE)
+
+  ## Parallelized by parallel package
+  requireNamespace('parallel', quietly=TRUE)
+  ncore = setup.ncore(ncore)
+  if(ncore > 1) {
+    mcparallel <- get("mcparallel", envir = getNamespace("parallel"))
+    mccollect <- get("mccollect", envir = getNamespace("parallel"))
+  }
+
+  dots <- list(...)
+  if('outmodes' %in% names(dots)) {
+     warning('Customized "outmodes" is not supported')
+     dots$outmodes <- NULL
+  }
+  if("keep" %in% names(dots))
+    nm.keep <- dots$keep
+  else
+    nm.keep <- NULL
+
+  gaps.res <- gap.inspect(pdbs$ali)
+  gaps.pos <- gap.inspect(pdbs$xyz)
+
+  ## Number of modes to store in U.subspace
+  if(is.null(subspace)) {
+    keep <- length(gaps.pos$f.inds)-6
+  }
+  else {
+    keep <- subspace
+    if (length(gaps.pos$f.inds) < (keep+6))
+      keep <- length(gaps.pos$f.inds)-6
+  }
+  if(!is.null(nm.keep) && keep > nm.keep) 
+    keep <- nm.keep
+
+  ## Read pdb files
+  cat('\nReading pdb files') 
+  all.pdb <- parallel::mclapply(pdbs$id, function(x) {
+     cat('.')
+     fpath <- paste(prefix, x, pdbext, sep="")
+     if(!file.exists(fpath)) return(invisible(NULL))
+     pdb <- read.pdb(fpath, verbose=FALSE)
+     inds1 <- atom.select(pdb, 'protein', verbose=FALSE)
+     inds2 <- atom.select(pdb, 'noh', verbose=FALSE)
+     if(ligand) {
+        inds3 <- atom.select(pdb, 'ligand', verbose=FALSE)
+        inds <- combine.select( combine.select(inds1, inds3, operator='OR', verbose=FALSE),
+                 inds2, verbose=FALSE)
+        trim(pdb, inds=inds, sse=FALSE)
+     } else {
+        inds <- combine.select(inds1, inds2, verbose=FALSE)
+        trim(pdb, inds=inds, sse=FALSE)
+     }
+  }, mc.cores = ncore)
+  cat('done\n')
+
+  keep.inds <- which(sapply(all.pdb, is.pdb))
+  if(length(keep.inds) == 0) 
+     stop('No pdb file is found.')
+  if(length(keep.inds) != length(all.pdb)) {
+     warning(paste('Following pdb files are not found: ', pdbs$id[-keep.inds], sep=''))
+
+     pdbs <- trim(pdbs, row.inds=keep.inds, col.inds=1:ncol(pdbs$ali))
+     all.pdb <- all.pdb[keep.inds]
+  }
+
+  # IMPORTANT NOTE: cannot be replaced by mclapply since pdb2aln.ind()
+  # writes to a tempporary file, which has the same file name across processes.
+  nogap.inds <- lapply(1:length(all.pdb), function(i)  {
+     pdb <- all.pdb[[i]]
+     pdb2aln.ind(pdbs, pdb, aln.id = pdbs$id[i], gaps.res$f.inds, file=NULL)$b
+  })
+
+  if(fit) {
+     cat('Fit pdb structures')
+     all.pdb <- mclapply(1:length(all.pdb), function(i) {
+        cat('.')
+        pdb <- all.pdb[[i]]
+        xyz <- fit.xyz(pdbs$xyz[1, ], pdb$xyz, gaps.pos$f.inds, nogap.inds[[i]]$xyz)
+        if(!is.null(outpath))
+           ofile <- file.path(outpath, basename(pdbs$id[i]))
+        else
+           ofile <- tempfile()
+        write.pdb(pdb, xyz=xyz, file=ofile)
+        read.pdb(ofile)
+     }, mc.cores=ncore)
+     cat('done\n')
+
+  } else {
+
+     if(!is.null(outpath)) 
+        mclapply(1:length(all.pdb), function(i)
+           write.pdb(all.pdb[[i]], file=file.path(outpath, basename(pdbs$id[i]))), 
+           mc.cores = ncore)
+  }
+
+  #### Prepare for NMA calculation ####      
+  ## Fluctuations for each structure
+  if(rm.gaps)
+    flucts <- matrix(NA, nrow=nrow(gaps.res$bin), ncol=length(gaps.res$f.inds))
+  else
+    flucts <- matrix(NA, nrow=nrow(gaps.res$bin), ncol=ncol(gaps.res$bin))
+
+  ## List object to store each modes object
+  if(full)
+    all.modes <- list()
+  else
+    all.modes <- NULL
+
+  ## 3D array- containing the modes vectors for each structure
+  if(rm.gaps)
+    modes.array <- array(NA, dim=c(length(gaps.pos$f.inds), keep, nrow(gaps.res$bin)))
+  else
+    modes.array <- array(NA, dim=c(ncol(pdbs$xyz), keep, nrow(gaps.res$bin)))
+
+  ## store eigenvalues of the first modes
+  L.mat <- matrix(NA, ncol=keep, nrow=nrow(gaps.res$bin))
+
+  ### Memory usage ###
+  dims <- dim(modes.array)
+  mem.usage <- sum(c(as.numeric(object.size(modes.array)),
+                     as.numeric(object.size(L.mat)),
+                     as.numeric(object.size(flucts)),
+                     as.numeric(object.size(matrix(NA, ncol=dims[3], nrow=dims[3]))) ))*2
+
+  if(full) {
+    if(is.null(nm.keep))
+      tmpncol <- dims[2]
+    else
+      tmpncol <- nm.keep
+
+    size.mat <- object.size(matrix(0.00000001, ncol=tmpncol, nrow=dims[1]))
+    size.vec <- object.size(vector(length=dims[1], 'numeric'))
+
+    tot.size <- ((size.mat * 2) + (size.vec * 4)) * length(pdbs$id)
+    mem.usage <- mem.usage+tot.size
+  }
+  mem.usage=round(mem.usage/1048600,1)
+
+  #### Print overview of scheduled calcualtion ####
+  cat("\nDetails of Scheduled Calculation:\n")
+  cat(paste("  ...", length(pdbs$id), "input structures", "\n"))
+  if(keep>0)
+    cat(paste("  ...", "storing", keep, "eigenvectors for each structure", "\n"))
+  if(keep>0)
+    cat(paste("  ...", "dimension of x$U.subspace: (",
+              paste(dims[1], dims[2], dims[3], sep="x"), ")\n"))
+
+  if(fit)
+    cat(paste("  ...", "coordinate superposition prior to NM calculation", "\n"))
+
+  if(full)
+    cat(paste("  ... individual complete 'nma' objects will be stored", "\n"))
+
+  if(rm.gaps)
+    cat(paste("  ... aligned eigenvectors (gap containing positions removed) ", "\n"))
+
+  if(mem.usage>0)
+    cat(paste("  ...", "estimated memory usage of final 'eNMA' object:", mem.usage, "Mb \n"))
+
+  cat("\n")
+
+  ##### Start modes calculation #####
+  ## Initialize progress bar
+  pb <- txtProgressBar(min=0, max=length(pdbs$id), style=3)
+  if(ncore > 1) {   # Parallel
+
+    # For progress bar
+    fpb <- fifo(tempfile(), open = "w+b", blocking = T)
+
+    # spawn a child process for message printing
+    child <- mcparallel({
+       progress <- 0.0
+       while(progress < length(pdbs$id) && !isIncomplete(fpb)) {
+          msg <- readBin(fpb, "double")
+          progress <- progress + as.numeric(msg)
+          setTxtProgressBar(pb, progress)
+       }
+    } )
+  }
+  
+  all.modes <- mclapply(1:length(all.pdb), function(i) {
+
+     if(gc.first) gc()
+
+     pdb <- all.pdb[[i]]
+     nogap.inds <- nogap.inds[[i]]
+     if(rm.gaps) 
+        capture.output( modes <- try(do.call(aanma, c(list(pdb=pdb, outmodes=nogap.inds), dots))) )
+     else
+        capture.output( modes <- try(do.call(aanma, c(list(pdb=pdb), dots))) )
+
+     if(inherits(modes, 'try-error')) {
+        close(fpb)
+        mccollect(child) # End the child for message printing
+        close(pb)
+        stop(paste('Encounter errors in ', i, 'th structure', sep=''))
+     }
+     if(ncore > 1) writeBin(1, fpb)
+     else setTxtProgressBar(pb, i)
+
+     modes$call <- NULL
+     return( modes )
+
+  }, mc.cores=ncore)
+
+  if(ncore > 1) {
+    close(fpb)
+    mccollect(child) # End the child for message printing
+  }
+  close(pb)
+
+  ##### Finalize calculation #####
+  for(i in 1:length(all.modes)) {
+     if(rm.gaps) {
+       flucts[i, ] <- all.modes[[i]]$fluctuations
+       modes.array[,,i] <- all.modes[[i]]$U[, 7:(keep+6)]
+     } else {
+       flucts[i, !is.gap(pdbs$ali[i, ])] <- all.modes[[i]]$fluctuations
+       modes.array[!is.gap(pdbs$xyz[i, ]),, i] <- all.modes[[i]]$U[, 7:(keep+6)]
+     }
+     L.mat[i, ] <- all.modes[[i]]$L[7:(keep+6)]
+  }
+  if(!full) all.modes <- NULL
+
+  ##### RMSIP ######
+  rmsip.map <- NULL
+  if(rm.gaps) {
+    rmsip.map <- .calcRMSIP(modes.array, ncore=ncore)
+    rownames(rmsip.map) <- basename(rownames(pdbs$xyz))
+    colnames(rmsip.map) <- basename(rownames(pdbs$xyz))
+
+    if(!fit)
+      warning("rmsip calculated on non-fitted structures:
+               ensure that your input coordinates are pre-fitted.")
+  }
+
+  rownames(flucts) <- basename(rownames(pdbs$xyz))
+  out <- list(fluctuations=flucts, rmsip=rmsip.map,
+              U.subspace=modes.array, L=L.mat, full.nma=all.modes, call=cl)
+
+  class(out) <- "enma"
+
+  return(out)
+}
