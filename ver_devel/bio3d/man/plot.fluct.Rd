@@ -68,34 +68,33 @@
 ## load transducin example data
 attach(transducin)
 
-## remove flexible termina for a full-length NMA calculation
-inds = 30:(ncol(pdbs$ali)-8)
-npdbs = trim(pdbs, col.inds = inds)
-gaps.res = gap.inspect(npdbs$ali)
+## subset of pdbs to analyze
+inds = c(1:5, 16:20)
+pdbs <- trim(pdbs, row.inds=inds)
+gaps.res = gap.inspect(pdbs$ali)
 
-## reference PDB for secondary structure annotation
-ref.pdb_id = substr(npdbs$id[1], 1, 4)
-ref.chain_id = substr(npdbs$id[1], 6, 6)
-ref.resno = npdbs$resno[1, !is.na(npdbs$resno[1, ])]
-pdb = read.pdb(ref.pdb_id)
-pdb = trim(pdb, resno=ref.resno, chain=ref.chain_id)
+## reference RESNO and SSE for axis annotations
+resno <- pdbs$resno[1, gaps.res$f.inds]
+sse <- pdbs$sse[1, gaps.res$f.inds]
 
 ## eNMA calculation and obtain modes of motion including atomic fluctuations
-modes <- nma(npdbs, rm.gaps=FALSE, full=FALSE, ncore=NULL)
+modes <- nma(pdbs, ncore=NULL)
 x = modes$fluctuation
 
 ## simple line plot with SSE annotation
-plot.fluct(x, sse = pdb, resno = pdb)
+plot.fluct(x, sse=sse, resno=resno)
 
 ## group data by specifying colors of each fluctuation line; same color indicates
 ## same group. Also do significance calculation and annotation
-col = annotation[, "color"]
-col[annotation[, "state3"] == "GDI"] = "blue"
-plot.fluct(x, col=col, signif = TRUE, sse = pdb, resno = pdb)
+col = c(rep('red', 5), rep('blue', 5))
+plot.fluct(x, col=col, signif=TRUE, sse=sse, resno=resno)
 
-## show only line of mean values for each group. Gapped positions are removed. Nicer
-## plot with area shaded for the first group.
-plot.fluct(x, col=col, signif = TRUE, sse = pdb, resno = pdb, mean=TRUE, polygon=TRUE, rm.gaps=TRUE)
+## spread lines
+plot.fluct(x, col=col, signif=TRUE, sse=sse, resno=resno, typ='l', spread=TRUE)
+
+## show only line of mean values for each group. 
+## Nicer plot with area shaded for the first group.
+plot.fluct(x, col=col, signif=TRUE, sse=sse, resno=resno, mean=TRUE, polygon=TRUE, label=c('GTP', 'GDI'))
 
 detach(transducin)
 }
