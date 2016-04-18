@@ -13,11 +13,13 @@
 ## Inter-domain restraints:
 # d1 <- atom.select(pdb, "noh", resno=8:94)
 # d2 <- atom.select(pdb, "noh", resno=1301:1387)
-# amber.rst(pdb, a.inds=d1, b.inds=d2, file="dist-intra.rst")
+# rst <- amber.rst(pdb, a.inds=d1, b.inds=d2)
+# write.rst(rst, file="R.rst")
 
 ## Intra-domain restraints:
 # d1 <- atom.select(pdb, "noh", resno=8:94)
-# amber.rst(pdb, a.inds=d1, file="dist-inter.rst")
+# rst <- amber.rst(pdb, a.inds=d1)
+# write.rst(rst, file="R.rst")
 
 ## cut: lower and upper cutoff. look for distances in range (lower, upper]. 
 ## r: corresponds to r1, r2, r3, r4
@@ -96,41 +98,55 @@ amber.rst <- function(pdb, a.inds=NULL, b.inds=a.inds,
   atoms.a <- as.numeric(pdb$atom$eleno[a.inds$atom][inds[,1]])
   atoms.b <- as.numeric(pdb$atom$eleno[b.inds$atom][inds[,2]])
 
-  ##rsts <- cbind(atoms.a, atoms.b)
-
-  rst.lines <- NULL
-  for(i in 1:length(atoms.a)) {
-    tmp.dist <- round(dm[inds[i,1], inds[i,2]], 2)
     
-    r1 <- tmp.dist + r[1]
-    r2 <- tmp.dist + r[2]
-    r3 <- tmp.dist + r[3]
-    r4 <- tmp.dist + r[4]
-    
-    tmp.lines <- c("#  ",
-                   paste("#  distance for atoms",
-                         " ", pdb$atom$resno[atoms.a[i]], "@", pdb$atom$elety[atoms.a[i]],
-                         " ", pdb$atom$resno[atoms.b[i]], "@", pdb$atom$elety[atoms.b[i]],
-                         sep=""), 
-                   paste(" &rst iat=", atoms.a[i], ",", atoms.b[i], ", ", sep=""),
-                   paste("   r1=", r1, ", r2=", r2, ", r3=", r3, ", r4=", r4, ", ", sep=""),
-                   paste("   rk2=", rk[1], ", rk3=", rk[2], ", &end  ", sep=""))
-    
-    rst.lines <- c(rst.lines, tmp.lines)
-  }
-  
-  writeLines(rst.lines, file)
-  cat("  written", length(atoms.a), "distance restraints to file:", file, "\n")
-
   inds <- which(dm <= cut[2])
-  out <- list(atoms.a = atoms.a,
+  out <- list(atom.a = atoms.a,
               resno.a = pdb$atom$resno[atoms.a],
-              chain.a = pdb$atom$chain[atoms.a],
+              elety.a = pdb$atom$elety[atoms.a],
+              ##chain.a = pdb$atom$chain[atoms.a],
               
-              atoms.b = atoms.b,
+              atom.b = atoms.b,
               resno.b = pdb$atom$resno[atoms.b],
-              chain.b = pdb$atom$chain[atoms.b],
-              d = round(dm[inds], 2))
+              elety.b = pdb$atom$elety[atoms.a],
+              ##chain.b = pdb$atom$chain[atoms.b],
+              d = round(dm[inds], 2),
+              
+              r1 = round(dm[inds], 2) + r[1],
+              r2 = round(dm[inds], 2) + r[2],
+              r3 = round(dm[inds], 2) + r[3],
+              r4 = round(dm[inds], 2) + r[4],
+              
+              rk2 = rk[1],
+              rk3 = rk[2])
   
-  invisible(as.data.frame(out, stringsAsFactors=FALSE))
+    return(as.data.frame(out, stringsAsFactors=FALSE))
+}
+
+
+write.rst <- function(rst, file="R.rst", append=FALSE) {
+
+    if(!nrow(rst)>0)
+        stop("'rst' must contain 1 or more restraints")
+    
+    rst.lines <- NULL
+    for(i in 1:nrow(rst)) {
+        
+        tmp.lines <- c("#  ",
+                       paste("#  Atoms",
+                             " ", rst$resno.a[i], "@", rst$elety.a[i],
+                             " - ", rst$resno.b[i], "@", rst$elety.b[i],
+                             " (", rst$d[i], " Å)",
+                             sep=""), 
+                       paste(" &rst iat=", rst$atom.a[i], ",", rst$atom.b[i], ", ", sep=""),
+                       paste("   r1=", rst$r1[i], ", r2=", rst$r2[i], ", r3=", rst$r3[i], ", r4=", rst$r4[i], ", ", sep=""),
+                       paste("   rk2=", rst$rk2[i], ", rk3=", rst$rk3[i], ", &end  ", sep=""))
+        
+        rst.lines <- c(rst.lines, tmp.lines)
+    }
+    
+    #writeLines(rst.lines, file)
+    write(rst.lines, file, append=append)
+    cat("  written", nrow(rst), "distance restraints to file:", file, "\n")
+    
+
 }
