@@ -9,7 +9,7 @@ mask.dccm <- function(dccm, pdb=NULL, a.inds=NULL, b.inds=NULL, ...) {
         stop("'a.inds' must be provided")
 
     if(is.null(b.inds))
-        b.inds <- a.inds
+        b.inds <- 1:nrow(dccm)
 
     if(!is.null(pdb)) {
         if(!is.pdb(pdb))
