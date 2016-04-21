@@ -5,7 +5,7 @@ cmap.default <- function(...)
   return(cmap.xyz(...))
 
 cmap.xyz <-
-function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
+function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, binary=TRUE, mask.lower = TRUE,
          gc.first = FALSE, ncore=1, nseg.scale=1, ...) {
 
   # Parallelized by parallel package (Mon Apr 22 16:32:19 EDT 2013)
@@ -59,7 +59,7 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, mask.lower = TRUE,
         }) 
      }
      cmap.t <- rowMeans(do.call(cbind, cmap.list))
-     cmap.t <- as.numeric(cmap.t >= pcut )
+     if(binary) cmap.t <- as.numeric(cmap.t >= pcut )
      cont.map <- matrix(NA, nrow=nres, ncol=nres)
      cont.map[!lower.tri(cont.map)] <- cmap.t
      if(!mask.lower) 
