@@ -58,9 +58,9 @@
       return(out)
   }
 
-  message(paste("Re-reading PDB (", basename.pdb(pdbs$id[ind]), ") to extract SSE", sep=""))
-
   ind <- ind[1]
+  message(paste("Re-reading PDB (", basename.pdb(pdbs$id[ind]), ") to extract SSE", sep=""))
+    
   if(file.exists(pdbs$id[ind]))
     id <- pdbs$id[ind]
 
