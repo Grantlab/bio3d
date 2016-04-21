@@ -124,11 +124,11 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
     dir.create(outpath, FALSE)
 
   ## Parallelized by parallel package
-  requireNamespace('parallel', quietly=TRUE)
   ncore = setup.ncore(ncore)
-  if(ncore > 1) {
-    mcparallel <- get("mcparallel", envir = getNamespace("parallel"))
-    mccollect <- get("mccollect", envir = getNamespace("parallel"))
+  if(ncore>1) {
+    prev.warn <- getOption("warn")
+    options(warn=1)
+    on.exit(options(warn=prev.warn))
   }
 
   dots <- list(...)
@@ -285,23 +285,8 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
 
   ##### Start modes calculation #####
   ## Initialize progress bar
-  pb <- txtProgressBar(min=0, max=length(pdbs$id), style=3)
-  if(ncore > 1) {   # Parallel
+  pb <- .init.pb(ncore, min=0, max=length(pdbs$id))
 
-    # For progress bar
-    fpb <- fifo(tempfile(), open = "w+b", blocking = T)
-
-    # spawn a child process for message printing
-    child <- mcparallel({
-       progress <- 0.0
-       while(progress < length(pdbs$id) && !isIncomplete(fpb)) {
-          msg <- readBin(fpb, "double")
-          progress <- progress + as.numeric(msg)
-          setTxtProgressBar(pb, progress)
-       }
-    } )
-  }
-  
   all.modes <- mclapply(1:length(all.pdb), function(i) {
 
      if(gc.first) gc()
@@ -314,24 +299,19 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
         capture.output( modes <- try(do.call(aanma, c(list(pdb=pdb), dots))) )
 
      if(inherits(modes, 'try-error')) {
-        close(fpb)
-        mccollect(child) # End the child for message printing
-        close(pb)
+        .close.pb(ncore, pb)
         stop(paste('Encounter errors in ', i, 'th structure', sep=''))
      }
-     if(ncore > 1) writeBin(1, fpb)
-     else setTxtProgressBar(pb, i)
+
+     .update.pb(ncore, pb, i)
 
      modes$call <- NULL
      return( modes )
 
   }, mc.cores=ncore)
 
-  if(ncore > 1) {
-    close(fpb)
-    mccollect(child) # End the child for message printing
-  }
-  close(pb)
+  ## Finish progress bar
+  .close.pb(ncore, pb)
 
   ##### Finalize calculation #####
   for(i in 1:length(all.modes)) {
@@ -366,3 +346,47 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
 
   return(out)
 }
+
+.init.pb <- function(ncore, min=0, max=1) {
+  if(ncore == 1) {
+
+     return ( txtProgressBar(min=min, max=max, style=3) )
+
+  } else if(ncore > 1) {
+
+     mcparallel <- get("mcparallel", envir = getNamespace("parallel"))
+     mccollect <- get("mccollect", envir = getNamespace("parallel"))
+
+     fpb <- fifo(tempfile(), open = "w+b", blocking = T)
+
+     # spawn a child process for message printing
+     child <- mcparallel({
+        pb <- txtProgressBar(min=min, max=max, style=3)
+        progress <- 0.0
+        while(progress < max && !isIncomplete(fpb)) {
+           msg <- readBin(fpb, "double")
+           progress <- progress + as.numeric(msg)
+           setTxtProgressBar(pb, progress)
+        }
+        close(pb)
+     } )
+
+     names(fpb) <- child$pid
+     return(fpb)
+  }
+}
+.update.pb <- function(ncore, pb, i) {
+
+  if(ncore > 1) writeBin(1, pb)
+  else setTxtProgressBar(pb, i)
+
+}
+
+.close.pb <- function(ncore, pb) {
+   if(ncore > 1) {
+      mccollect(as.numeric(names(pb)))
+      mccollect(as.numeric(names(pb)))
+   }
+   close(pb)
+}
+
