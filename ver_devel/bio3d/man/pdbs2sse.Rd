@@ -5,14 +5,14 @@
   Returns secondary structure element (SSE) annotation (\code{"sse"} object) for a structure in the provided \code{"pdbs"} object.
 }
 \usage{
-pdbs2sse(pdbs, ind = 1, rm.gaps = TRUE, resno = TRUE, pdb = FALSE, \dots)
+pdbs2sse(pdbs, ind = NULL, rm.gaps = TRUE, resno = TRUE, pdb = FALSE, \dots)
 }
 \arguments{
   \item{pdbs}{ a list of class \code{"pdbs"} containing PDB file
     data, as obtained from \code{read.fasta.pdb} or
     \code{pdbaln}. }
   \item{ind}{ numeric index pointing to the PDB in which the SSE should
-    be provided. }
+    be provided. If \code{ind=NULL}, then the consensus SSE is returned. }
   \item{rm.gaps}{ logical, if TRUE SSEs spanning gap containing columns are
     omitted from the output in the resulting \code{sse} object. }
   \item{resno}{ logical, if TRUE output is in terms of residue numbers
@@ -27,6 +27,10 @@ pdbs2sse(pdbs, ind = 1, rm.gaps = TRUE, resno = TRUE, pdb = FALSE, \dots)
   secondary structure elements (SSE) annotation data for a particular
   structure in the provided \code{"pdbs"} object. Residue numbers are
   provided relative to the alignment in the \code{"pdbs"} object.
+
+  When \code{ind=NULL} the function will attemt to return the consensus
+  SSE annotation, i.e. where there are SSEs across all structures. This
+  will only work SSE data is found in the \code{"pdbs"} object.
 
   See examples for more details.
 }

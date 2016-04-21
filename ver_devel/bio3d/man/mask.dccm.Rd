@@ -15,17 +15,21 @@ mask(\dots)
     \code{\link{dccm}}. }
   \item{pdb}{ a PDB structure object obtained from
     \code{\link{read.pdb}}. Must match the dimensions of \code{dccm}. }
-  \item{a.inds}{ a list object of ATOM and XYZ indices as obtained from
-    \code{\link{atom.select}} specifying which elements of the DCCM
-    matrix which should not be masked. }
-  \item{b.inds}{ a list object of ATOM and XYZ indices as obtained from
-    \code{\link{atom.select}} specifying which elements of the DCCM
-    matrix which should not be masked. }
+  \item{a.inds}{ a numeric vector containing the indices of the elements
+    of the DCCM matrix in which should not be masked. Alternatively, if
+    \code{pdb} is provided a selection object (as
+    obtained from \code{\link{atom.select}}) can be provided. }
+  \item{b.inds}{ a numeric vector containing the indices of the elements
+    of the DCCM matrix in which should not be masked. }
   \item{\dots}{ arguments not passed anywhere. }
 }
 \details{
   This is a basic utility function for masking a DCCM object matrix to
-  highlight a few user-selected areas in the correlation network.
+  highlight user-selected regions in the correlation network.
+
+  When both \code{a.inds} and \code{b.inds} are provided only their
+  intersection is retained. When only \code{a.inds} is provided then
+  the corresponding region to everything else is retained.
 
   Note: The current version assumes that the input PDB corresponds to
   the input DCCM. In many cases this will correspond to a PDB
@@ -49,6 +53,10 @@ cij <- dccm(nma(pdb))
 
 ## Mask DCCM matrix according to matrix indices
 cijm <- mask(cij, a.inds=40:50, b.inds=80:90)
+plot(cijm)
+
+## Retain only 40:50 to everything else
+cijm <- mask(cij, a.inds=40:50)
 plot(cijm)
 
 
