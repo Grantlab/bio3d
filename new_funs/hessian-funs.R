@@ -78,7 +78,7 @@ mat2vec <- function(mat) {
 }
 
 atompairs.pdb <- function(pdb, inds=NULL) {
-    if(is.null(inds))
+    if(!is.null(inds))
         pdb <- trim(pdb, inds)
 
     labs <- paste(pdb$atom$resid, "-",
