@@ -1,14 +1,15 @@
 .diag.rtb <- function(H, blocks, xyz, masses, ...) {
 
-  if(nlevels(blocks) == (nrow(H)/3))
-    return( eigen(H, ...) )
-
   ## mass weighted Hessian
   if(!all(masses == 1)) {
     m <- 1/sqrt(rep(masses, each=3))
     H <- sapply(1:ncol(H), function(i) H[,i] * m[i])
     H <- t( sapply(1:nrow(H), function(i) H[i,] * m[i]) )
   }
+
+  if(nlevels(blocks) == (nrow(H)/3))
+    return( eigen(H, ...) )
+
   MASS <- tapply(masses, blocks, sum)  # Block mass
 
   xyz <- matrix(xyz, ncol=3, byrow=TRUE)
