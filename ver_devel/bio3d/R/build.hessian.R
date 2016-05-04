@@ -1,6 +1,5 @@
 "build.hessian" <-
-  function(xyz, pfc.fun, fc.weights=NULL,
-           sequ=NULL, sse=NULL, ss.bonds=NULL, ... )  {
+  function(xyz, pfc.fun, fc.weights=NULL, pdb=NULL, ... )  {
     
     if(missing(xyz))
       stop("build.hessian: 'xyz' coordinates must be provided")
@@ -29,7 +28,7 @@
 
     build.submatrix <- function(xyz, natoms, 
                                 fc.weights=NULL, 
-                                ssdat=NULL, ...) {
+                                pdb=NULL, ...) {
      
       ## Full Hessian
       Hsm <- matrix(0, ncol=3*natoms, nrow=3*natoms)
@@ -53,9 +52,9 @@
         dists <- sqrt(rowSums(diff.vect**2))  ## quicker !
 
         ## pfc.fun takes a vector of distances
-        if("ssdat" %in% names(formals( pfc.fun )) &&
+        if("pdb" %in% names(formals( pfc.fun )) &&
            "atom.id"     %in% names(formals( pfc.fun )) )
-          force.constants <- pfc.fun(dists, atom.id=i, ssdat=ssdat, ...)
+          force.constants <- pfc.fun(dists, atom.id=i, pdb=pdb, ...)
         else 
           force.constants <- pfc.fun(dists, ...)
           
@@ -112,71 +111,11 @@
       }
       return(Hsm)
     }
-    
- 
-     
-    ## Sequence-structure properties in a list
-    ssdat <- list()
-
-    ## Sequence
-    if(!is.null(sequ)) {
-      ssdat$seq <- sequ
-    } else {
-      ssdat$seq <- NULL
-    }
-
-    ## SSE
-    if(!is.null(sse)) {
-      if(is.null(sse$call$resno) | is.null(sse$call$full)) {
-        use.sse <- FALSE
-      }
-      else {
-        if((sse$call$resno=="F" | sse$call$resno=="FALSE") &
-           (sse$call$full=="T"  | sse$call$full=="TRUE"  ))
-          use.sse <- TRUE
-        else
-          use.sse <- FALSE
-      }
       
-      ssdat$sse <- sse
-      if(!use.sse)
-        warning("sse argument ignored: use 'dssp' with 'resno=FALSE' and 'full=TRUE'")
-    }
-    else {
-      use.sse <- FALSE
-      ssdat$sse <- NULL
-    }
-    
-    ## SS-bonds
-    if(!is.null(ss.bonds)) {
-      if(class(ss.bonds)!="matrix")
-        stop("ss.bonds must be two a column matrix")
-      if(ncol(ss.bonds)!=2)
-        stop("ss.bonds must be two a column matrix")
-      ssdat$ss.bonds <- rbind(ss.bonds, ss.bonds[,2:1])
-    }
-    else {
-      ssdat$ss.bonds <- NULL
-    }
-
-    ## Identify bridge pairs
-    if(use.sse) {
-      ## Helix 1-4 interactions
-      ssdat$helix14      <- sse.bridges(sse, type="helix", hbond=TRUE, energy.cut=-1.0)
-      ssdat$helix14      <- rbind(ssdat$helix14, ssdat$helix14[,2:1])
-      
-      ## Beta bridges
-      ssdat$beta.bridges <- sse.bridges(sse, type="sheet", hbond=TRUE, energy.cut=-1.0)
-      ssdat$beta.bridges <- rbind(ssdat$beta.bridges, ssdat$beta.bridges[,2:1])
-    }      
-    else {
-      ssdat$helix14      <- NULL
-      ssdat$beta.bridges <- NULL
-    }
 
     H <- build.submatrix(xyz=xyz, natoms=natoms,
                          fc.weights=fc.weights,
-                         ssdat=ssdat, ... )
+                         pdb=pdb, ... )
     
     return(H)
   }
