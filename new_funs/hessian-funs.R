@@ -77,8 +77,8 @@ mat2vec <- function(mat) {
     return(mat[ !is.na(mat) ])
 }
 
-atompairs <- function(pdb, inds=NULL) {
-    if(is.null(inds))
+atompairs.pdb <- function(pdb, inds=NULL) {
+    if(!is.null(inds))
         pdb <- trim(pdb, inds)
 
     labs <- paste(pdb$atom$resid, "-",
@@ -100,3 +100,19 @@ atompairs <- function(pdb, inds=NULL) {
 
     return(plabs)
 }
+
+atompairs <- function(pdb, inds=NULL) {
+    plabs <- atompairs.pdb(pdb, inds)
+
+    labs1 <- unlist(strsplit(plabs, " "))
+    labs2 <- unlist(strsplit(labs1, "@"))
+    labs3 <- unlist(strsplit(labs2, "-"))
+    mat = matrix(labs3, ncol=6, byrow=T)
+
+    out <- data.frame(resid1=mat[,1], resno1=as.numeric(mat[,2]), elety1=mat[,3],
+                      resid2=mat[,4], resno2=as.numeric(mat[,5]), elety2=mat[,6],
+                      stringsAsFactors =  FALSE)
+    return(out)
+}
+
+
