@@ -167,12 +167,15 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
       if('nmer' %in% names(dots) && dots$nmer!=1)
         stop( paste('Currently only nmer=1 is supported for', 
          'RTB based ensemble normal mode analysis') )
-    } else {
-      rtb <- FALSE
     }
+  } else {
+    rtb <- formals(aanma)$rtb
   }
 
-  if('reduced' %in% names(dots)) reduced <- dots$reduced
+  if('reduced' %in% names(dots)) 
+    reduced <- dots$reduced
+  else
+    reduced <- formals(aanma)$reduced
 
   gaps.res <- gap.inspect(pdbs$ali)
   gaps.pos <- gap.inspect(pdbs$xyz)
