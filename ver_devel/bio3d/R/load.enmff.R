@@ -23,9 +23,9 @@ ff.aaenm2 <- function(r, atom.id, pdb, ...) {
 }
 
 
-"ff.aaanm" <- function(r, cutoff=7, gamma=1, ...) {
-  ifelse( r>cutoff, 0, gamma )
-}
+#"ff.aaanm" <- function(r, cutoff=7, gamma=1, ...) {
+#  ifelse( r>cutoff, 0, gamma )
+#}
 
 
 "ff.anm" <- function(r, cutoff=15, gamma=1, ...) {
@@ -54,22 +54,20 @@ ff.aaenm2 <- function(r, atom.id, pdb, ...) {
          a*(r)^(-6) )
 }
 
-"ff.sdenm" <- function(r, atom.id, ssdat=NULL, ...) {
+"ff.sdenm" <- function(r, atom.id, pdb, ...) {
   ## sdENM by lazyload. contains an array with dimensions
   ## 20  x 20  x 27
   ## aa1 x aa2 x distance.category
   sdENM = bio3d::sdENM
 
-  ## set sequence data to 1-letter aa code
-  if(any(nchar(ssdat$seq)==3))
-    sequ <- suppressWarnings( aa321(ssdat$seq) )
-  else
-    sequ <- ssdat$seq
-
+  if(!is.pdb(pdb))
+      stop("provide a 'pdb' object")
+  sequ <- pdbseq(pdb)
+   
   ## Check for non-standard amino acids
   if(any(sequ=="X")) {
     cat("\n")
-    unk <- paste(unique(ssdat$seq[which(sequ=="X")]), collapse=", ")
+    unk <- paste(unique(sequ[sequ == "X"]), collapse=", ")
     stop(paste("Unknown aminoacid identifier for:", unk))
   }
 
@@ -125,7 +123,7 @@ ff.aaenm2 <- function(r, atom.id, pdb, ...) {
   return(ks)
 }
 
-"ff.reach" <- function(r, atom.id, ssdat=NULL, ...) {
+"ff.reach" <- function(r, atom.id, ...) {
   natoms <- length(r)
 
   ## units in kJ/mol/A^2
@@ -177,11 +175,6 @@ ff.aaenm2 <- function(r, atom.id, pdb, ...) {
   ## Hinsen "C-alpha"-ff
   else if (ff=="calpha") {
     ff <- ff.calpha
-  }
-
-  ## Extended calpha-FF
-  else if(ff=="calphax") {
-    ff <- ff.calphax
   }
 
   ## sdENM

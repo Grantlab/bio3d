@@ -6,32 +6,34 @@
 #' @details This function builds an elastic network model (ENM) based on all  
 #' heavy atoms of input \code{pdb}, and performs subsequent normal mode 
 #' analysis (NMA) in various manners. By default, the \sQuote{aaenm2} force 
-#' field (defining of the spring constants between atoms) is employed, which 
-#' was parameterized by fitting to a local energy minimum of a crambin model 
-#' derived from the AMBER94 force field. See \code{\link{load.enmff}} for other 
-#' force field options. 
+#' field (defining of the spring constants between atoms) is used, which was
+#' obtained by fitting to a local energy minimum of a crambin model 
+#' derived from the AMBER99SB force field. It employs a pair force constant
+#' function which falls as r^-6, and specific force constants for
+#' covalent and intra-residue atom pairs. See also \code{\link{load.enmff}} 
+#' for other force field options. 
 #' 
 #' The \code{outmodes} argument controls the type of output modes. There are 
 #' two standard types of output modes: \sQuote{noh} and \sQuote{calpha}.
-#' \code{outmodes='noh'} invokes  regular all-atom based NMA. When
+#' \code{outmodes='noh'} invokes regular all-atom based ENM-NMA. When
 #' \code{outmodes='calpha'}, an effective Hessian with respect to all C-alpha
 #' atoms will be first calculated using the same formula as in Hinsen et al.  
 #' NMA is then performed on this effective C-alpha based Hessian. In addition,
 #' users can provide their own atom selection (see \code{\link{atom.select}}) 
 #' as the value of \code{outmodes} for customized output modes generation. 
 #' 
-#' When \code{reduced=TRUE}, instead of using all heavy atoms a specially chosen
-#' subset of atoms will be employed to build the ENM. In particular, four atoms
-#' per residue (three per residue for Glycines) are chosen, which includes
-#' three backbone atoms 'N', 'CA', 'C' plus one side chain atom that is furthest
-#' away from 'CA'. This coarse-grained ENM has significantly improved 
-#' computational efficiency and similar prediction accuracy with respect to the
-#' all-atom ENM.  
+#' When \code{reduced=TRUE}, only a selection of all heavy atoms is used 
+#' to build the ENM. More specifically, three to five atoms per residue
+#' constitute the model. Here the N, CA, C atoms represent the protein
+#' backbone, and zero to two selected side chain atoms represent the side chain 
+#' (selected based on side chain size and the distance to CA). This 
+#' coarse-grained ENM has significantly improved computational efficiency and 
+#' similar prediction accuracy with respect to the all-atom ENM.
 #'  
 #' When \code{rtb=TRUE}, rotation-translation block (RTB) based approximate 
 #' modes will be calculated. In this method, each residue is assumed to be a 
-#' rigid body (or \sQuote{block}) that has only rotation and translation as its 
-#' degree of freedom. Intra-residue deformation is ignored. 
+#' rigid body (or \sQuote{block}) that has only rotational and translational 
+#' degrees of freedom. Intra-residue deformation is thus ignored. 
 #' (See Durand et al 1994 and Tama et al. 2000 for more details). N residues per
 #' block is also supported, where N=1, 2, 3, etc. (See argument \code{nmer}).  
 #' The RTB method has significantly improved computational efficiency and 
@@ -146,7 +148,7 @@
 #'    plot(modes)
 #'
 #'    ## Visualize modes
-#'    #m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb")
+#'    #m7 <- mktrj.nma(modes, mode=7, file="mode_7.pdb", pdb=pdb)
 #' }
 "aanma" <- function(pdb, pfc.fun=NULL, mass=TRUE,
                     temp=300.0, keep=NULL, hessian=NULL, outmodes='calpha',
@@ -200,7 +202,7 @@
       pdb.tmp <- .nma.reduce.pdb(pdb.in)
 
       if(is.select(outmodes)) {
-          outmodes <- .match.sel(pdb, pdb2, outmodes)
+          outmodes <- .match.sel(pdb, pdb.tmp, outmodes)
       }
       pdb.in <- pdb.tmp
       rm(pdb.tmp)

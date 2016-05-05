@@ -12,8 +12,7 @@
                   mass = TRUE, temp = 300.0, keep = NULL, hessian = NULL,
                   outmodes = NULL, \dots )
 
-build.hessian(xyz, pfc.fun, fc.weights = NULL, sequ = NULL, sse = NULL,
-    ss.bonds = NULL, \dots)
+build.hessian(xyz, pfc.fun, fc.weights = NULL, pdb=NULL, \dots)
 
 \method{print}{nma}(x, nmodes=6, \dots)
 }
@@ -49,11 +48,6 @@ build.hessian(xyz, pfc.fun, fc.weights = NULL, sequ = NULL, sse = NULL,
   \item{fc.weights}{ a numeric matrix of size NxN (where N is the number
     of calpha atoms) containg scaling factors for the pariwise force
     constants. See examples below. }
-  \item{sse}{ secondary structure elements as obtained from
-    \code{dssp}. }
-  \item{sequ}{ a character vector of the amino acid sequence. }
-  \item{ss.bonds}{ a numeric two-column matrix containing the residue
-    numbers of the disulfide bridges in the structure. }
   \item{x}{ an \code{nma} object obtained from \code{\link{nma.pdb}}. }
   \item{nmodes}{ numeric, number of modes to be printed. }
   \item{...}{ additional arguments to \code{\link{build.hessian}},

@@ -324,13 +324,13 @@
 
 ".nma.reduce.pdb" <- function(pdb) {
 
+    pdb$atom$resid <- aa123(aa321(pdb$atom$resid))
+    
     ## Selected side chain atoms
     ## Using whatever is furthest away from CA, including N and O atoms.
     aa.elety <- list(
         ARG = c("NH1", "NH2"),
         HIS = c("CE1", "CG"),
-        HID = c("CE1", "CG"),
-        HIE = c("CE1", "CG"),
         LYS = c("NZ"),
         ASP = c("OD1", "OD2"),
         GLU = c("OE1", "OE2"),
@@ -339,7 +339,6 @@
         ASN = c("OD1", "ND2"),
         GLN = c("NE2", "OE1"),
         CYS = c("SG"),
-        CYX = c("SG"),
         ##GLY = c(),
         PRO = c("CG"),
         ALA = c("CB"),
