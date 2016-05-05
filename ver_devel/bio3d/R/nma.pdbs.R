@@ -388,9 +388,14 @@
   init <- list(pfcfun=pfc.fun, bh.args=bh.args)
   ##print(init$bh.args$fc.weights)
 
+  #invisible(capture.output( hessian <-
+  #                         .nma.hess(pdb.in$xyz, init=init,
+  #                                   hessian=NULL, inc.inds=inc.inds) ))
   invisible(capture.output( hessian <-
-                           .nma.hess(pdb.in$xyz, init=init,
-                                     hessian=NULL, inc.inds=inc.inds) ))
+                           .nma.hess(pdb.in$xyz, pfc.fun=pfc.fun, args=init,
+                                     hessian=NULL, pdb=pdb.in) ))
+
+  invisible(capture.output( hessian <- .nma.trim.hessian(hessian, inc.inds) ))
 
   ## Mass-weight hessian
   if(!is.null(masses.out))
