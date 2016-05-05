@@ -100,11 +100,12 @@
 }
 
 
-## H, (Non mass weighted) Hessian to approximate
-## pdb, pdb that matches H
-## mass, logical or numeric vector, should be mass weighted or not
-## nmer, residues / block
-rtb <- function(H, pdb, mass=TRUE, nmer=1, verbose=TRUE, ...) {
+#' @param verbose logical, if TRUE print detailed processing message
+#' @inheritParams aanma 
+#' @rdname aanma
+rtb <- function(hessian, pdb, mass=TRUE, nmer=1, verbose=TRUE) {
+
+  H <- hessian
 
   res <- paste( pdb$atom[, 'chain'],
                 pdb$atom[, 'resno'],
@@ -135,7 +136,7 @@ rtb <- function(H, pdb, mass=TRUE, nmer=1, verbose=TRUE, ...) {
     ptm <- proc.time()
   }
 
-  ei <- .diag.rtb(H, blocks, pdb$xyz, m,  ...)
+  ei <- .diag.rtb(H, blocks, pdb$xyz, m,  symmetric=TRUE)
 
   if(verbose) {
     t <- proc.time() - ptm

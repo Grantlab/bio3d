@@ -57,7 +57,7 @@
     inc.inds <- inc.inds$xyz
     kaa <- hessian[inc.inds, inc.inds]
     ei <- rtb(hessian[-inc.inds, -inc.inds], pdb=pdb, mass=FALSE, nmer=nmer,
-              verbose=FALSE, symmetric=TRUE)
+              verbose=FALSE)
 
     if(any(ei$values<=0)) {
       warning("Not all eigenvalues are positive!")

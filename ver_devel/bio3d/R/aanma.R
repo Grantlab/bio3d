@@ -67,7 +67,7 @@
 #'    approximate modes will be calculated. (See details below).
 #' @param nmer numerical, defines the number of residues per block (used only
 #'     when \code{rtb=TRUE}).
-#' @param \dots additional arguments to \code{\link{build.hessian}} and
+#' @param ... additional arguments to \code{\link{build.hessian}} and
 #'    \code{\link{aa2mass}}. One useful option here for dealing with 
 #'    unconventional residues is \sQuote{mass.custom}, see the 
 #'    \code{\link{aa2mass}} function for details.
@@ -266,7 +266,7 @@
       H <- .nma.trim.hessian.rtb(H, inc.inds=inc.inds, pdb=pdb.in, nmer=nmer)
 
       ## mass weighting + diagonalize using RTB
-      ei <- rtb(H, pdb=pdb.out, mass=masses.out, nmer=nmer, symmetric=TRUE)
+      ei <- rtb(H, pdb=pdb.out, mass=masses.out, nmer=nmer)
   }
   else {
       ## effective hessian
