@@ -161,12 +161,18 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
   else
     nm.keep <- NULL
 
-  if('rtb' %in% names(dots) && isTRUE(dots$rtb)) {
-    if('nmer' %in% names(dots) && dots$nmer!=1) {
-      stop( paste('Currently only nmer=1 is supported for', 
-       'RTB based ensemble normal mode analysis') )
+  if('rtb' %in% names(dots)) {
+    rtb <- dots$rtb
+    if(isTRUE(rtb)) {
+      if('nmer' %in% names(dots) && dots$nmer!=1)
+        stop( paste('Currently only nmer=1 is supported for', 
+         'RTB based ensemble normal mode analysis') )
+    } else {
+      rtb <- FALSE
     }
   }
+
+  if('reduced' %in% names(dots)) reduced <- dots$reduced
 
   gaps.res <- gap.inspect(pdbs$ali)
   gaps.pos <- gap.inspect(pdbs$xyz)
@@ -307,6 +313,12 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
 
     if(rm.gaps)
       cat(paste("  ... aligned eigenvectors (gap containing positions removed) ", "\n"))
+
+    if(reduced)
+      cat(paste("  ... reduced all-atom ENM will be employed", "\n"))
+
+    if(rtb)
+      cat(paste("  ... rotation-translation block (RTB) approximation will be applied", "\n"))
 
     if(mem.usage>0)
       cat(paste("  ...", "estimated memory usage of final 'eNMA' object:", mem.usage, "Mb \n"))
