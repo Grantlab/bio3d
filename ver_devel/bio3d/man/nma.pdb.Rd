@@ -12,7 +12,7 @@
                   mass = TRUE, temp = 300.0, keep = NULL, hessian = NULL,
                   outmodes = NULL, \dots )
 
-build.hessian(xyz, pfc.fun, fc.weights = NULL, pdb=NULL, \dots)
+build.hessian(xyz, pfc.fun, fc.weights = NULL, pdb = NULL, \dots)
 
 \method{print}{nma}(x, nmodes=6, \dots)
 }
