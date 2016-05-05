@@ -1,3 +1,6 @@
+#' @param ... (in \code{gnm.pdbs}) additional arguments passed to \code{gnm.pdb}. 
+#' @inheritParams aanma.pdbs
+#' @rdname gnm
 gnm.pdbs <- function(x, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
                      gc.first=TRUE, ncore=NULL, ...) {
 

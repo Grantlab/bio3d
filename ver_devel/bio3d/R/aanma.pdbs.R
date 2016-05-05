@@ -41,7 +41,7 @@
 #' @param gc.first logical, if TRUE will call gc() first before mode calculation for
 #'    each structure. This is to avoid memory overload when \code{ncore > 1}.
 #' @param ncore number of CPU cores used to do the calculation.
-#' @param \dots additional arguments to \code{\link{aanma}}.
+#' @param ... additional arguments to \code{\link{aanma}}.
 #'
 #' @return Returns an \sQuote{enma} object with the following components:
 #'    \item{fluctuations }{ a numeric matrix containing aligned atomic
