@@ -1,9 +1,11 @@
-"pdbs2sse" <- function(pdbs, ind=1, rm.gaps=TRUE, resno=TRUE, pdb=FALSE, ...) {
+"pdbs2sse" <- function(pdbs, ind=NULL, rm.gaps=TRUE, resno=TRUE, pdb=FALSE, ...) {
   ## Log the call
   cl <- match.call()
   by.resno <- resno
 
-  ind <- ind[1]
+  if(is.null(ind))
+    ind <- 1:length(pdbs$id)
+
   gaps.res <- gap.inspect(pdbs$ali)
 
   ## Use SSE information from pdbs object
@@ -11,18 +13,24 @@
       message("Extracting SSE from pdbs$sse")
 
       if(rm.gaps) {
-          sse <- pdbs$sse[ind, gaps.res$f.inds]
-          resno <- pdbs$resno[ind, gaps.res$f.inds]
-          chain <- pdbs$chain[ind, gaps.res$f.inds]
+          sse <- pdbs$sse[ind, gaps.res$f.inds, drop=FALSE]
+          resno <- pdbs$resno[ind[1], gaps.res$f.inds]
+          chain <- pdbs$chain[ind[1], gaps.res$f.inds]
       }
       else {
-          sse <- pdbs$sse[ind, ]
-          resno <- pdbs$resno[ind, ]
-          chain <- pdbs$chain[ind, ]
+          sse <- pdbs$sse[ind,, drop=FALSE]
+          resno <- pdbs$resno[ind[1], ]
+          chain <- pdbs$chain[ind[1], ]
       }
 
-      h.inds <- which(sse == "H")
-      e.inds <- which(sse == "E")
+      if(nrow(sse) > 1) {
+          h.inds <- which(apply(sse, 2, function(x) sum(x=="H")) == length(ind))
+          e.inds <- which(apply(sse, 2, function(x) sum(x=="E")) == length(ind))
+      }
+      else {
+          h.inds <- which(sse == "H")
+          e.inds <- which(sse == "E")
+      }
 
       if(by.resno) {
           h <- bounds( resno[h.inds], pre.sort=FALSE )
@@ -51,6 +59,8 @@
   }
 
   message(paste("Re-reading PDB (", basename.pdb(pdbs$id[ind]), ") to extract SSE", sep=""))
+
+  ind <- ind[1]
   if(file.exists(pdbs$id[ind]))
     id <- pdbs$id[ind]
 

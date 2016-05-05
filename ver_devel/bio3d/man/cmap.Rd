@@ -11,7 +11,7 @@ cmap(\dots)
 
 \method{cmap}{default}(\dots)
 
-\method{cmap}{xyz}(xyz, grpby = NULL, dcut = 4, scut = 3, pcut=1,
+\method{cmap}{xyz}(xyz, grpby = NULL, dcut = 4, scut = 3, pcut=1, binary=TRUE,
             mask.lower = TRUE, gc.first=FALSE, ncore=1, nseg.scale=1, \dots)
 
 \method{cmap}{pdb}(pdb, inds = NULL, verbose = FALSE, \dots)
@@ -27,7 +27,10 @@ cmap(\dots)
   \item{scut}{ a cutoff neighbour value which has the effect of
     excluding atoms that are sequentially within this value. }
   \item{pcut}{ a cutoff probability of structures/frames showing a contact,
-    above which atoms are considered in contact with respect to the ensemble}
+    above which atoms are considered in contact with respect to the ensemble.
+    Ignored if \code{binary=FALSE}. }
+  \item{binary}{ logical, if FALSE the raw matrix containing fraction of frames that 
+    two residues are in contact is returned. }
   \item{mask.lower}{ logical, if TRUE the lower matrix elements
     (i.e. those below the diagonal) are returned as NA.}
   \item{gc.first}{ logical, if TRUE will call gc() first before calculation of 

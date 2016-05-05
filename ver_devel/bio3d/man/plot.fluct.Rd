@@ -94,7 +94,8 @@ plot.fluct(x, col=col, signif=TRUE, sse=sse, resno=resno, typ='l', spread=TRUE)
 
 ## show only line of mean values for each group. 
 ## Nicer plot with area shaded for the first group.
-plot.fluct(x, col=col, signif=TRUE, sse=sse, resno=resno, mean=TRUE, polygon=TRUE, label=c('GTP', 'GDI'))
+plot.fluct(x, col=col, signif=TRUE, sse=sse, resno=resno, mean=TRUE, 
+           polygon=TRUE, label=c('GTP', 'GDI'))
 
 detach(transducin)
 }
