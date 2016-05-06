@@ -299,33 +299,40 @@
     return(nma)
   }
 
+
+.inds2ids <- function(pdb, inds=NULL) {
+    if(!is.null(inds)) {
+        paste(pdb$atom$chain[inds$atom],
+              pdb$atom$resno[inds$atom],
+              pdb$atom$elety[inds$atom],
+              pdb$atom$insert[inds$atom], sep="_")
+    }
+    else {
+        paste(pdb$atom$chain,
+              pdb$atom$resno,
+              pdb$atom$elety,
+              pdb$atom$insert, sep="_")
+    }
+}
+
 ".match.sel" <- function(a, b, inds) {
   ## a= original pdb
   ## b= trimmed pdb
   ## inds= indices of pdb 'a' to keep
   ## find corresponding atoms in b
 
-  names.a <- paste(a$atom[inds$atom, "chain"],
-                   a$atom[inds$atom, "resno"],
-                   a$atom[inds$atom, "elety"],
-                   a$atom[inds$atom, "eleno"], sep="-")
+  ids.a <- .inds2ids(a, inds)
+  ids.b <- .inds2ids(b)
 
-  names.b <- paste(b$atom[, "chain"],
-                   b$atom[, "resno"],
-                   b$atom[, "elety"],
-                   b$atom[, "eleno"], sep="-")
-
-  inds <- which(names.b %in% names.a)
-  out <- list(atom=inds, xyz=atom2xyz(inds))
-  class(out) <- "select"
-  return(out)
+  inds <- which(ids.b %in% ids.a)
+  return(as.select(inds))
 }
 
 
 ".nma.reduce.pdb" <- function(pdb) {
 
     pdb$atom$resid <- aa123(aa321(pdb$atom$resid))
-    
+
     ## Selected side chain atoms
     ## Using whatever is furthest away from CA, including N and O atoms.
     aa.elety <- list(
@@ -364,6 +371,7 @@
         }
     }
 
+    #return(sele)
     return(trim(pdb, sele))
 
 }
