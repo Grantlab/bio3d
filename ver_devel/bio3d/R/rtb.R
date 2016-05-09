@@ -43,28 +43,54 @@
      # equilibrium position relative to COM
      r0  <- t( t(xyz[iatom, ]) - Rc[[myblock]] )
 
-     P <- matrix(0, nrow=natom*3, ncol=6)
+     ncol <- ifelse(natom>=3, 6, ifelse(natom>=2, 5, 3))
+
+     P <- matrix(0, nrow=natom*3, ncol=ncol)
 
      # translation
      P[seq(1, nrow(P), 3), 1] <- sqrt(m/M) #xx
      P[seq(2, nrow(P), 3), 2] <- sqrt(m/M) #yy
      P[seq(3, nrow(P), 3), 3] <- sqrt(m/M) #zz
 
-     # rotation
-     rr <- rbind(0, -r0[, 3], r0[, 2])
-     P[, 4] <- 1/sqrt( sum(m * (r0[, 2]^2 + r0[, 3]^2)) ) *
-        ( sqrt(rep(m, each=3)) * as.numeric(rr) )  ## x-axis
+     if(natom>=3) {
 
-     rr <- rbind(r0[, 3], 0, -r0[, 1])
-     P[, 5] <- 1/sqrt( sum(m * (r0[, 1]^2 + r0[, 3]^2)) ) *
-        ( sqrt(rep(m, each=3)) * as.numeric(rr) )  ## y-axis
+       # rotation
+       rr <- rbind(0, -r0[, 3], r0[, 2])
+       P[, 4] <- 1/sqrt( sum(m * (r0[, 2]^2 + r0[, 3]^2)) ) *
+          ( sqrt(rep(m, each=3)) * as.numeric(rr) )  ## x-axis
+  
+       rr <- rbind(r0[, 3], 0, -r0[, 1])
+       P[, 5] <- 1/sqrt( sum(m * (r0[, 1]^2 + r0[, 3]^2)) ) *
+          ( sqrt(rep(m, each=3)) * as.numeric(rr) )  ## y-axis
+  
+       rr <- rbind(-r0[, 2], r0[, 1], 0)
+       P[, 6] <- 1/sqrt( sum(m * (r0[, 1]^2 + r0[, 2]^2)) ) *
+          ( sqrt(rep(m, each=3)) * as.numeric(rr) )  ## z-axis
+  
+       schmidt(P) # Orthonormalization
 
-     rr <- rbind(-r0[, 2], r0[, 1], 0)
-     P[, 6] <- 1/sqrt( sum(m * (r0[, 1]^2 + r0[, 2]^2)) ) *
-        ( sqrt(rep(m, each=3)) * as.numeric(rr) )  ## z-axis
+     } else if(natom==2) {
 
-     schmidt(P) # Orthonormalization
+       # check the line direction and choose the least overlapped axes to rotate.
+       ax <- rbind(c(2,3,1), c(3,1,2), c(1,2,3))
+       ax <- ax[which.max(abs(r0[1, ])), ]
+       rr <- list(rbind(0, -r0[, 3], r0[, 2]),
+                  rbind(r0[, 3], 0, -r0[, 1]),
+                  rbind(-r0[, 2], r0[, 1], 0))
+       # rotation
+       P[, 4] <- 1/sqrt( sum(m * (r0[, ax[2]]^2 + r0[, ax[3]]^2)) ) *
+          ( sqrt(rep(m, each=3)) * as.numeric(rr[[ax[1]]]) )  ## first-axis
 
+       P[, 5] <- 1/sqrt( sum(m * (r0[, ax[1]]^2 + r0[, ax[3]]^2)) ) *
+          ( sqrt(rep(m, each=3)) * as.numeric(rr[[ax[2]]]) )  ## second-axis
+
+       schmidt(P) # Orthonormalization
+         
+     } else {
+       
+       P
+
+     }
   } )
 
   ## effective reduced Hessian (can be parallelized)
@@ -88,11 +114,12 @@
   ei <- eigen(H, ...)
 
   ## map eigenvector to 3N space
+  block.bounds <- c(1, cumsum(sapply(P.blocks[unique(blocks)], ncol))+1)
   vecs <- lapply(1:nlevels(blocks), function(i) {
     myblock <- unique(blocks)[i]
-    iblock <- which(unique(blocks) %in% myblock)
+#    iblock <- which(unique(blocks) %in% myblock)
     P <- P.blocks[[myblock]]
-    crossprod( t(P), ei$vectors[(6*(iblock-1)+1):(6*iblock), ] )
+    crossprod( t(P), ei$vectors[(block.bounds[i]):(block.bounds[i+1]-1), ] )
   })
   ei$vectors <- do.call(rbind, vecs)
 
