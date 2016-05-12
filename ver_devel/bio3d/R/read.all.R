@@ -43,6 +43,11 @@ function(aln, prefix ="", pdbext="", sel=NULL, ncore=NULL, ...) {
       ##
     } else {
       pdb <- read.pdb( files[i], verbose=FALSE, ... )
+
+      ## Currently only works for protein.
+      ## Consider developing for ligand etc. in future.
+      pdb <- trim(pdb, 'protein') 
+
       pdbseq  <- aa321(pdb$atom[pdb$calpha,"resid"])
       aliseq  <- toupper(aln$ali[i,])
       tomatch <- gsub("X","[A-Z]",aliseq[aliseq!="-"])
