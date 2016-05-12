@@ -6,7 +6,7 @@
   coordinates, residue numbers, residue type and B-factors.
 }
 \usage{
-read.all(aln, prefix = "", pdbext = "", sel = NULL, ...)
+read.all(aln, prefix = "", pdbext = "", sel = NULL, ncore = NULL, ...)
 }
 
 \arguments{
@@ -16,6 +16,8 @@ read.all(aln, prefix = "", pdbext = "", sel = NULL, ...)
   \item{pdbext}{ the file name extention of the PDB files. }
   \item{sel}{ a selection string detailing the atom type data to store
     (see function store.atom) }
+  \item{ncore }{ number of CPU cores used to do the calculation.
+    By default (\code{ncore=NULL}) use all detected CPU cores. }
   \item{\dots}{ other parameters for \code{\link{read.pdb}}. }   
 }
 \details{
