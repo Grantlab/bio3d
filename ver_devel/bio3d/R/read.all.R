@@ -1,10 +1,12 @@
 "read.all" <-
-function(aln, prefix ="", pdbext="", sel=NULL, ...) {
+function(aln, prefix ="", pdbext="", sel=NULL, ncore=NULL, ...) {
 
   ## Usage:
   ## sel <- c("N", "CA", "C", "O", "CB", "*G", "*D",  "*E", "*Z")
   ## pdbs.all <- read.all(aln, sel=sel)
-  
+ 
+  ncore <- setup.ncore(ncore)
+ 
   files  <- paste(prefix, aln$id, pdbext,sep="")
 
   ##cat(files,sep="\n")
@@ -18,26 +20,24 @@ function(aln, prefix ="", pdbext="", sel=NULL, ...) {
     stop("No corresponding PDB files found")
 
 
-  coords <- NULL; res.nu <- NULL
-  res.bf <- NULL; res.ch <- NULL
-  res.id <- NULL
   blank <- rep(NA, ncol(aln$ali))
-  ## all atom data
-  coords.all <- NULL
-  elety.all <- NULL; resid.all <- NULL; resno.all <- NULL
   
-  for (i in 1:length(aln$id)) {
+#  for (i in 1:length(aln$id)) {
+  rtn <- mclapply(1:length(aln$id), function(i) {
 
     cat(paste("pdb/seq:",i,"  name:", aln$id[i]),"\n")
 
     if(!toread[i]) {
       warning(paste("No PDB file found for seq", aln$id[i],
               ": (with filename) ",files[i]), call.=FALSE)
-      coords <- rbind(coords, rep(blank,3))
-      res.nu <- rbind(res.nu, blank)
-      res.bf <- rbind(res.bf, blank)
-      res.ch <- rbind(res.ch, blank)
-      res.id <- rbind(res.id, blank)
+      coords <- rep(blank,3)
+      res.nu <- blank
+      res.bf <- blank
+      res.ch <- blank
+      res.id <- blank
+      ## all atom data
+      coords.all <- NULL
+      elety.all <- NULL; resid.all <- NULL; resno.all <- NULL
       ##
       ##coords.all
       ##
@@ -88,31 +88,44 @@ function(aln, prefix ="", pdbext="", sel=NULL, ...) {
       
       ##-- Store nseq justified PDB data
       ca.ali <- pdb$atom[pdb$calpha,][nseq,]
-      coords <- rbind(coords, as.numeric( t(ca.ali[,c("x","y","z")]) ))
-      res.nu <- rbind(res.nu, ca.ali[, "resno"])
-      res.bf <- rbind(res.bf, as.numeric( ca.ali[,"b"] ))
-      res.ch <- rbind(res.ch, ca.ali[, "chain"])
-      res.id <- rbind(res.id, ca.ali[, "resid"])
+      coords <- as.numeric( t(ca.ali[,c("x","y","z")]) )
+      res.nu <- ca.ali[, "resno"]
+      res.bf <- as.numeric( ca.ali[,"b"] )
+      res.ch <- ca.ali[, "chain"]
+      res.id <- ca.ali[, "resid"]
 
       raw <- store.atom(pdb)
       if(is.null(sel)) {
-        coords.all <- rbind(coords.all, as.numeric( raw[c("x","y","z"),,nseq] ) )
-        elety.all <- rbind(elety.all, c(raw[c("elety"),,nseq]) )
-        resid.all <- rbind(resid.all, c(raw[c("resid"),,nseq]) )
-        resno.all <- rbind(resno.all, c(raw[c("resno"),,nseq]) )
+        coords.all <- as.numeric( raw[c("x","y","z"),,nseq] ) 
+        elety.all <- c(raw[c("elety"),,nseq])
+        resid.all <- c(raw[c("resid"),,nseq])
+        resno.all <- c(raw[c("resno"),,nseq])
 
 
       } else {
-        coords.all <- rbind(coords.all, as.numeric( raw[c("x","y","z"), sel, nseq] ) )
-        elety.all <- rbind(elety.all, c(raw[c("elety"),sel,nseq]) )
-        resid.all <- rbind(resid.all, c(raw[c("resid"),sel,nseq]) )
-        resno.all <- rbind(resno.all, c(raw[c("resno"),sel,nseq]) )
+        coords.all <- as.numeric( raw[c("x","y","z"), sel, nseq] )
+        elety.all <- c(raw[c("elety"),sel,nseq])
+        resid.all <- c(raw[c("resid"),sel,nseq])
+        resno.all <- c(raw[c("resno"),sel,nseq])
       } 
 ##      raw <- store.main(pdb)
 ##      b <- cbind(b, raw[,,nseq])
 
-    } # end for
-  } # end else
+    } # end else 
+    list(coords=coords, coords.all=coords.all, res.nu=res.nu, res.bf=res.bf,
+         res.ch=res.ch, res.id=res.id, elety.all=elety.all, resid.all=resid.all,
+         resno.all=resno.all)
+  }, mc.cores=ncore) # end for
+
+  coords <- do.call( rbind, unname(sapply(rtn, '[', 'coords')) )
+  res.nu <- do.call( rbind, unname(sapply(rtn, '[', 'res.nu')) )
+  res.bf <- do.call( rbind, unname(sapply(rtn, '[', 'res.bf')) )
+  res.ch <- do.call( rbind, unname(sapply(rtn, '[', 'res.ch')) )
+  res.id <- do.call( rbind, unname(sapply(rtn, '[', 'res.id')) )
+  coords.all <- do.call( rbind, unname(sapply(rtn, '[', 'coords.all')) )
+  elety.all <- do.call( rbind,  unname(sapply(rtn, '[', 'elety.all')) )
+  resid.all <- do.call( rbind,  unname(sapply(rtn, '[', 'resid.all')) )
+  resno.all <- do.call( rbind,  unname(sapply(rtn, '[', 'resno.all')) )
 
   rownames(aln$ali) <- aln$id
 ##  out<-list(xyz=coords, resno=res.nu, b=res.bf,
