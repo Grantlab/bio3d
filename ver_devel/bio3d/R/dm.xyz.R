@@ -1,4 +1,4 @@
-dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, ncore=1, ...) {
+dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, gc.first=FALSE, ncore=1, ...) {
   ## Parallelized by parallel package
   ncore <- setup.ncore(ncore, bigmem = FALSE)
 
@@ -12,6 +12,8 @@ dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, ncore=1, ...) {
     j <- 1
     out <- vector("list", length=length(r.inds))
     for(i in r.inds) {
+      if(gc.first) gc()
+
       dmi <- .dm.xyz1(xyz[i,], grpby=grpby, scut=scut, mask.lower=mask.lower)
       out[[j]] <- dmi
       j <- j+1
