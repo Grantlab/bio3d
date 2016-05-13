@@ -42,7 +42,7 @@ write.mol2 <- function(mol, file="R.mol2", append=TRUE) {
 
 
     raw.lines <- c(raw.lines, "@<TRIPOS>BOND")
-    fmt <- "%7s %5s %5s %-5s"
+    fmt <- "%7s %5s %5s %-5s "
     for ( i in 1:nrow(mol$bond) ) {
         raw.lines <- c(raw.lines, 
                        paste0(
@@ -54,7 +54,7 @@ write.mol2 <- function(mol, file="R.mol2", append=TRUE) {
     }
     
     raw.lines <- c(raw.lines, "@<TRIPOS>SUBSTRUCTURE")
-    fmt <- "%7s %-8s %-10s %6s %4s %-6s %4s"
+    fmt <- "%7s %-8s %-10s %8s %4s %-6s %4s "
     for ( i in 1:nrow(mol$substructure) ) {
         raw.lines <- c(raw.lines, 
                        paste0(

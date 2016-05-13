@@ -16,8 +16,8 @@ atom.select.mol2 <- function(mol, string=NULL,
 
     pdb <- as.pdb(mol)
 
-    #if(!is.mol2(mol))
-    #    stop("'mol2' must be an object of class 'mol2'")
+    if(!is.mol2(mol))
+        stop("'mol2' must be an object of class 'mol2'")
     
     ## check input operator
     op.tbl <- c(rep("AND",3), rep("OR",4))

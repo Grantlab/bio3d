@@ -1,5 +1,8 @@
 trim.mol2 <- function(mol, inds=NULL, ...) {
 
+    if(!is.mol2(mol))
+        stop("input should be of class 'mol2' as obtained by 'read.mol2'")
+    
     if(!is.select(inds))
         stop("provide indices")
 
@@ -7,9 +10,10 @@ trim.mol2 <- function(mol, inds=NULL, ...) {
     rownames(new$atom) <- new$atom$eleno
     new$atom <- new$atom[inds$atom,,drop=FALSE]
     new$atom$eleno <- 1:nrow(new$atom)
-    
     new$bond <- mol$bond[inds$bond, ]
-    new$xyz <- mol$xyz[inds$xyz]
+    
+    xyz <- as.xyz(mol$xyz)
+    new$xyz <- as.xyz(mol$xyz[, inds$xyz, drop=FALSE])
     
     new$info[1] <- nrow(new$atom)
     new$info[2] <- nrow(new$bond)
