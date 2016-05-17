@@ -42,10 +42,10 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
   cluster.network <- function(network, cluster.method="btwn", ...){
     
     ## Passing arguments to different community detection functions
-    btwn.names <- names(formals( edge.betweenness.community ))
-    walk.names <- names(formals( walktrap.community ))
-    greed.names <- names(formals( fastgreedy.community ))
-    infomap.names <- names(formals( infomap.community ))
+    btwn.names <- names(formals( igraph::edge.betweenness.community ))
+    walk.names <- names(formals( igraph::walktrap.community ))
+    greed.names <- names(formals( igraph::fastgreedy.community ))
+    infomap.names <- names(formals( igraph::infomap.community ))
 
     dots <- list(...)
     btwn.args <- dots[names(dots) %in% btwn.names]
