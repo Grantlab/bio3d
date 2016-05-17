@@ -40,7 +40,8 @@
     community determination. Supported methods are:\cr
     btwn="Girvan-Newman betweenness"\cr
     walk="Random walk"\cr
-    greed="Greedy algorithm for modularity optimization"\cr }  
+    greed="Greedy algorithm for modularity optimization"\cr 
+    infomap="Infomap algorithm for community detection"\cr }  
   \item{collapse.method}{ A single element character vector specifing
     the \sQuote{cij} collapse method, can be one of \sQuote{max}, \sQuote{median},
     \sQuote{mean}, or \sQuote{trimmed}. By defualt the \sQuote{max} method is
@@ -79,7 +80,7 @@
   Internally this function calls the igraph package
   functions \sQuote{graph.adjacency},
   \sQuote{edge.betweenness.community}, \sQuote{walktrap.community},
-  \sQuote{fastgreedy.community}. The first constructs an undirected
+  \sQuote{fastgreedy.community}, and \sQuote{infomap.community}. The first constructs an undirected
   weighted network graph. The second performs Girvan-Newman style clustering by
   calculating the edge betweenness of the graph, removing the edge with
   the highest edge betweenness score, calculates modularity (i.e. the difference between
@@ -97,6 +98,8 @@
   network edges) in pairs and the modularity is calculated. At each step the join resulting
   in the highest increase of modularity is chosen. This process is repeated until a single
   community is obtained, then the partitioning with the highest modularity score is selected.
+  \sQuote{infomap.community} finds community structure that minimizes the expected description
+     length of a random walker trajectory.
 }
 \author{ Guido Scarabelli and Barry Grant }  
 \seealso{
@@ -104,7 +107,8 @@
    \code{\link{vmd.cna}}, \code{\link[igraph:graph.adjacency]{graph.adjacency}},
    \code{\link[igraph:edge.betweenness.community]{edge.betweenness.community}},
    \code{\link[igraph:walktrap.community]{walktrap.community}}, 
-   \code{\link[igraph:fastgreedy.community]{fastgreedy.community}}
+   \code{\link[igraph:fastgreedy.community]{fastgreedy.community}},
+   \code{\link[igraph:infomap.community]{infomap.community}}
 }
 \examples{
 \donttest{
