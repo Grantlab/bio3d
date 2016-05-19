@@ -6,7 +6,8 @@
   coordinates, residue numbers, residue type and B-factors.
 }
 \usage{
-read.all(aln, prefix = "", pdbext = "", sel = NULL, ncore = NULL, ...)
+read.all(aln, prefix = "", pdbext = "", sel = NULL, compact = TRUE, 
+         ncore = NULL, ...)
 }
 
 \arguments{
@@ -16,6 +17,9 @@ read.all(aln, prefix = "", pdbext = "", sel = NULL, ncore = NULL, ...)
   \item{pdbext}{ the file name extention of the PDB files. }
   \item{sel}{ a selection string detailing the atom type data to store
     (see function store.atom) }
+  \item{compact}{ logical, if TRUE the number of atoms stored for each aligned
+    residue varies according to the amino acid type. If FALSE, the constant 
+    maximum possible number of atoms are stored for all aligned residues. }
   \item{ncore }{ number of CPU cores used to do the calculation.
     By default (\code{ncore=NULL}) use all detected CPU cores. }
   \item{\dots}{ other parameters for \code{\link{read.pdb}}. }   
@@ -47,6 +51,8 @@ read.all(aln, prefix = "", pdbext = "", sel = NULL, ncore = NULL, ...)
   \item{all.elety}{numeric matrix of aligned atom element types. }
   \item{all.resid}{numeric matrix of aligned three-letter residue codes. }
   \item{all.resno}{numeric matrix of aligned residue numbers. }
+  \item{all.grpby}{numeric vector indicating the group of atoms belonging to
+    the same aligned residue. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
