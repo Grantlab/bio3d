@@ -24,16 +24,17 @@ trim.mol2 <- function(mol, inds=NULL, ...) {
 
     ## substrucutre
     new$substructure <- mol$substructure[ mol$substructure$root_atom %in% mol$atom$eleno[ inds$atom], ]
-    new$substructure$root_atom <- new$atom[ as.character(new$substructure$root_atom), "eleno" ]
+
+    if(nrow(new$substructure) > 0) {
+       new$substructure$root_atom <- new$atom[ as.character(new$substructure$root_atom), "eleno" ]
+       new$substructure$id <- 1:nrow(new$substructure)
+    }
 
     ## new ids and rownames
     new$bond$id <- 1:nrow(new$bond)
-    new$substructure$id <- 1:nrow(new$substructure)
-    
     rownames(new$bond) <- 1:nrow(new$bond)
     rownames(new$atom) <- 1:nrow(new$atom)
-    rownames(new$substructure) <- 1:nrow(new$substructure)
-  
+ 
     return(new)
  }
 

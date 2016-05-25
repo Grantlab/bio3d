@@ -1,7 +1,16 @@
+.match.statbit <- function(pdb, statbit) {
+  if(!is.character(statbit))
+    stop("'statbit' must be a character vector")
+  pdb$atom$statbit %in% statbit
+}
+
+
+
 atom.select.mol2 <- function(mol, string=NULL,
                              eleno = NULL, elety = NULL,
                              resid = NULL, chain = NULL, resno = NULL,
-                             operator = "AND", inverse = FALSE,
+                             statbit = NULL, 
+			     operator = "AND", inverse = FALSE,
                              value = FALSE, verbose=FALSE,  ...) {              
 
         
@@ -95,7 +104,11 @@ atom.select.mol2 <- function(mol, string=NULL,
     if(verbose) .verboseout(L, 'resno')
     M <- .combinelv(L, M, operator)
   }
-
+  if(!is.null(statbit)) {
+    L <- .match.statbit(mol, statbit)
+    if(verbose) .verboseout(L, 'statbit')
+    M <- .combinelv(L, M, operator)
+  }
 
   if(verbose)
     cat(" ..", sprintf("%08s", length(which(M))), "atom(s) in final combined selection \n")
@@ -108,18 +121,15 @@ atom.select.mol2 <- function(mol, string=NULL,
   }
   else
     sele <- as.select(which(M))
-
+    
   sele$call <- cl
 
-    print(sele)
-    
+  keep.bonds <- matrix(as.numeric(t(mol$bond[, c("origin","target")])) %in% sele$atom, ncol=2, byrow=T)
+  bond.inds  <- which(apply(keep.bonds, 1, all))
+  sele$bond <- bond.inds
 
-    keep.bonds <- matrix(as.numeric(t(mol$bond[, c("origin","target")])) %in% sele$atom, ncol=2, byrow=T)
-    bond.inds  <- which(apply(keep.bonds, 1, all))
-    sele$bond <- bond.inds
-
-    if(value)
-        return(trim.pdb(pdb, sele))
-    else
-        return(sele)
+  if(value)
+    return(trim.pdb(pdb, sele))
+  else
+    return(sele)
 }

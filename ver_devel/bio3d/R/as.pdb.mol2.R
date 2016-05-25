@@ -5,9 +5,9 @@ as.pdb.mol2 <- function(mol2, ...) {
   xyz <- mol2$xyz
   tmp.pdb <- list()
 
-  rownames(mol$substructure) <- mol$substructure$name
-    resid <- mol$substructure[mol$atom$resid, "sub_type"]
-  chain <- mol$substructure[mol$atom$resid, "chain"]
+  rownames(mol2$substructure) <- mol2$substructure$name
+  resid <- mol2$substructure[mol2$atom$resid, "sub_type"]
+  chain <- mol2$substructure[mol2$atom$resid, "chain"]
 
   tmp.pdb$atom <- data.frame(cbind(rep("ATOM", natoms),
                                    seq(1, natoms),
@@ -23,7 +23,7 @@ as.pdb.mol2 <- function(mol2, ...) {
                                                  function(x) x[1])),
                                    mol2$atom$charge),
                              stringsAsFactors=FALSE)
-
+    
   
   colnames(tmp.pdb$atom) <- c("type", "eleno", "elety", "alt", "resid",
                               "chain", "resno", "insert",

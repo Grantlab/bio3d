@@ -128,6 +128,11 @@ print.mol2 <- function(x, ...) {
       txt <- unlist(lapply(raw.atom, split.line, ncol=10, collapse=TRUE))
       ncol <- length(unlist(strsplit(txt[1], ";")))
 
+      if(ncol==9) {
+          txt[1]=paste0(txt[1], ";")
+          ncol <- length(unlist(strsplit(txt[1], ";")))
+      }
+      
       atom <- read.table(text=txt, 
                          stringsAsFactors=FALSE, sep=";", quote='',
                          colClasses=atom.format[1:ncol,"what"],
@@ -137,6 +142,12 @@ print.mol2 <- function(x, ...) {
       ## Read bond - split by space
       txt <- unlist(lapply(raw.bond, split.line, ncol=5, collapse=TRUE))
       ncol <- length(unlist(strsplit(txt[1], ";")))
+
+      if(ncol==4) {
+          txt[1]=paste0(txt[1], ";")
+          ncol <- length(unlist(strsplit(txt[1], ";")))
+      }
+
       bond <- read.table(text=txt,
                          stringsAsFactors=FALSE, sep=";", quote='',
                          colClasses=bond.format[1:ncol,"what"],
@@ -146,12 +157,17 @@ print.mol2 <- function(x, ...) {
       ## Read substructure info - split by space
       txt <- unlist(lapply(raw.subs, split.line, ncol=5, collapse=TRUE))
       ncol <- length(unlist(strsplit(txt[1], ";")))
+
+      if(ncol==4) {
+          txt[1]=paste0(txt[1], ";")
+          ncol <- length(unlist(strsplit(txt[1], ";")))
+      }
+      
       subs <- read.table(text=txt,
                          stringsAsFactors=FALSE, sep=";", quote='',
                          colClasses=substr.format[1:ncol,"what"],
                          col.names=substr.format[1:ncol,"name"],
                          comment.char="", na.strings="", fill=TRUE)
-      
       
       
       ## Same molecules as the previous ones?
