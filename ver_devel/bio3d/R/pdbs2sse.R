@@ -10,8 +10,8 @@
 
   ## Use SSE information from pdbs object
   if(!is.null(pdbs$sse) & !pdb) {
-      message("Extracting SSE from pdbs$sse")
-
+      message("Extracting SSE from pdbs$sse attribute")
+      
       if(rm.gaps) {
           sse <- pdbs$sse[ind, gaps.res$f.inds, drop=FALSE]
           resno <- pdbs$resno[ind[1], gaps.res$f.inds]
@@ -31,7 +31,7 @@
           h.inds <- which(sse == "H")
           e.inds <- which(sse == "E")
       }
-
+      
       if(by.resno) {
           h <- bounds( resno[h.inds], pre.sort=FALSE )
           e <- bounds( resno[e.inds], pre.sort=FALSE )
@@ -41,8 +41,15 @@
           e <- bounds( e.inds, pre.sort=FALSE )
       }
 
+      sse2 <- rep(NA, ncol(sse))
+      if(length(h.inds)>0) sse2[ h.inds ] <- "H"
+      if(length(e.inds)>0) sse2[ e.inds ] <- "E"
+      sse2[ is.na(sse2) ] <- " "
+      names(sse2) <- paste(resno, chain, sep="_")
+      
       out <- list()
-      out$sse <- sse
+      out$sse <- sse2
+      
       out$helix$start <- h[, "start"]
       out$helix$end <- h[, "end"]
       out$helix$length <- h[, "length"]
