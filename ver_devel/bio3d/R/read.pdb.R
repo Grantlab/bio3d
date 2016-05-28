@@ -189,7 +189,7 @@ function (file, maxlines=-1, multi=FALSE,
 
   atom <- read.table(text=sapply(raw.atom, split.fields), 
                     stringsAsFactors=FALSE, sep=";", quote='',
-                    colClasses=atom.format[!drop.ind,"what"],
+                    colClasses=unname(atom.format[!drop.ind,"what"]),
                     col.names=atom.format[!drop.ind,"name"],
                     comment.char="", na.strings="")
 
