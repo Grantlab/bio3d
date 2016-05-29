@@ -179,10 +179,6 @@
   ## Parse additional arguments
   args <- .nma.args(pfc.fun=pfc.fun, ...)
 
-  #if(is.select(outmodes)) {
-  #    sele.ids <- .inds2ids(pdb, outmodes)
-  #}
-
   ## check and prepare input PDB
   if(!is.null(hessian)) {
     pdb.in <- pdb
@@ -200,7 +196,7 @@
     lig.inds <- atom.select(pdb.in, "ligand")
     if(length(lig.inds$atom)>0) {
       ligs <- paste(unique(pdb.in$atom$resid[ lig.inds$atom ]), sep=", ")
-      warning(paste("ligands", ligs, "included in calculation of normal modes"))
+      warning(paste("ligands", paste(ligs, collapse=", "), "included in normal modes calculation"))
     }
   }
 
@@ -211,27 +207,20 @@
 
   ## Indices for effective hessian
   ## (selection, calphas, or all (noh) atoms)
+  if(!is.select(outmodes)) {
+      if(outmodes=="calpha") {
+          outmodes <- atom.select(pdb.in, "calpha")
+      }
+      else if(outmodes=="noh") {
+          outmodes <- atom.select(pdb.in, "noh")
+      }
+  }
+
   if(is.select(outmodes)) {
     ## since pdb might have changed, we need to re-select 'outmodes'
     inc.inds <- .match.sel(pdb0, pdb.in, outmodes)
     pdb.out <- trim(pdb.in, inc.inds)
-
-    unq.elety <- unique(pdb.out$atom$elety)
-    outmodes="noh"
-    if(length(unq.elety)==1)
-      if(unq.elety=="CA")
-        outmodes="calpha"
   }
-  else if(outmodes=="calpha") {
-    inc.inds <- atom.select(pdb.in, "calpha", verbose=FALSE)
-    pdb.out <- trim.pdb(pdb.in, inc.inds)
-  }
-  else {
-    inc.inds <- atom.select(pdb.in, "noh", verbose=FALSE)
-    pdb.out <- trim.pdb(pdb.in, inc.inds)
-  }
-
-  ##print(pdb.out$atom[,1:7])
 
   natoms.in <- nrow(pdb.in$atom)
   natoms.out <- nrow(pdb.out$atom)
@@ -243,16 +232,28 @@
   ## Note that mass weighting is done in rtb() for rtb=TRUE,
   ## and in .nma.mwhessian() when rtb=FALSE
   if (mass) {
-    ## Use atom2mass to fetch atom mass
-    if(outmodes=="noh") {
       masses.in <-  atom2mass(pdb.in)
-      masses.out <- masses.in[ inc.inds$atom ]
-    }
 
-    if(outmodes=="calpha") {
-      masses.in <-  atom2mass(pdb.in)
-      masses.out <- do.call('aa2mass', c(list(pdb=pdb.out, inds=NULL), args$am.args))
-    }
+      ## for residue mass
+      resids <- paste(pdb.in$atom$resno,
+                      pdb.in$atom$chain,
+                      pdb.in$atom$insert, sep="_")
+
+      ## group masses if outmodes contains only one atom per residue
+      if(!any(duplicated(resids[ inc.inds$atom ]))) {
+          masses.out <- unlist(lapply(split(masses.in, resids), sum))
+          masses.out <- masses.out[ resids[ inc.inds$atom ] ]
+      }
+      ## else, use indivdual atom masses
+      else {
+          if(length(resids[ inc.inds$atom]) == length(masses.in)) {
+              masses.out <- masses.in
+          }
+          else {
+              warning("mass weighting could not be grouped by residues")
+                masses.out <- masses.in[ inc.inds$atom ]
+          }
+      }
   }
   else {
     ## No mass-weighting
@@ -262,7 +263,6 @@
   ## build full hessian
   H <- .nma.hess(pdb.in$xyz, pfc.fun=pfc.fun, args=args,
                  hessian=hessian, pdb=pdb.in)
-
 
   ## extract effective hessian and diagonalize
   if(rtb) {

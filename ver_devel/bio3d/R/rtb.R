@@ -11,12 +11,11 @@
     return( eigen(H, ...) )
 
   MASS <- tapply(masses, blocks, sum)  # Block mass
-
   xyz <- matrix(xyz, ncol=3, byrow=TRUE)
 
   ## block center-of-mass
   Rc <- tapply(1:length(blocks), blocks, function(i) {
-    colSums(xyz[i, ] * masses[i]) / MASS[blocks[i[1]]]
+      colSums(xyz[i,, drop=FALSE ] * masses[i]) / MASS[blocks[i[1]]]
   } )
 
   ## Gram-Schmidt process for orthonormalization
@@ -58,15 +57,15 @@
        rr <- rbind(0, -r0[, 3], r0[, 2])
        P[, 4] <- 1/sqrt( sum(m * (r0[, 2]^2 + r0[, 3]^2)) ) *
           ( sqrt(rep(m, each=3)) * as.numeric(rr) )  ## x-axis
-  
+
        rr <- rbind(r0[, 3], 0, -r0[, 1])
        P[, 5] <- 1/sqrt( sum(m * (r0[, 1]^2 + r0[, 3]^2)) ) *
           ( sqrt(rep(m, each=3)) * as.numeric(rr) )  ## y-axis
-  
+
        rr <- rbind(-r0[, 2], r0[, 1], 0)
        P[, 6] <- 1/sqrt( sum(m * (r0[, 1]^2 + r0[, 2]^2)) ) *
           ( sqrt(rep(m, each=3)) * as.numeric(rr) )  ## z-axis
-  
+
        schmidt(P) # Orthonormalization
 
      } else if(natom==2) {
@@ -85,9 +84,9 @@
           ( sqrt(rep(m, each=3)) * as.numeric(rr[[ax[2]]]) )  ## second-axis
 
        schmidt(P) # Orthonormalization
-         
+
      } else {
-       
+
        P
 
      }
@@ -128,7 +127,7 @@
 
 
 #' @param verbose logical, if TRUE print detailed processing message
-#' @inheritParams aanma 
+#' @inheritParams aanma
 #' @rdname aanma
 rtb <- function(hessian, pdb, mass=TRUE, nmer=1, verbose=TRUE) {
 
