@@ -92,24 +92,25 @@
     }
 
     resid <- paste0(resno, chain)
+    resid[ resid == "NANA" ] = NA
 
     ## Helices
     if(length(sse.ref$helix$start) > 0) {
       resid.helix <- unbound(sse.ref$helix$start, sse.ref$helix$end)
       resid.helix <- paste0(resid.helix, rep(sse.ref$helix$chain, sse.ref$helix$length))
-      inds        <- which(resid %in% resid.helix)
+      h.inds      <- which(resid %in% resid.helix)
 
       ## inds points to the position in the alignment where the helices are
       if(by.resno) {
-          resno.sse <- resno[ inds ]
+          resno.sse <- resno[ h.inds ]
           new.sse <- bounds(resno.sse, pre.sort=FALSE)
       }
       else {
           sids <- 1:length(resid)
-          resno.sse <- sids[inds]
+          resno.sse <- sids[h.inds]
           new.sse <- bounds(resno.sse, pre.sort=FALSE)
       }
-      chain.sse <- chain[ bounds(inds, pre.sort=FALSE)[, "start"] ]
+      chain.sse <- chain[ bounds(h.inds, pre.sort=FALSE)[, "start"] ]
 
       if(length(new.sse) > 0) {
         sse.aln$helix$start  <- new.sse[,"start"]
@@ -123,18 +124,18 @@
     if(length(sse.ref$sheet$start) > 0) {
       resid.sheet <- unbound(sse.ref$sheet$start, sse.ref$sheet$end)
       resid.sheet <- paste0(resid.sheet, rep(sse.ref$sheet$chain, sse.ref$sheet$length))
-      inds        <- which(resid %in% resid.sheet)
+      e.inds      <- which(resid %in% resid.sheet)
 
       if(by.resno) {
-          resno.sse <- resno[ inds ]
+          resno.sse <- resno[ e.inds ]
           new.sse <- bounds(resno.sse, pre.sort=FALSE)
       }
       else {
           sids <- 1:length(resid)
-          resno.sse <- sids[inds]
+          resno.sse <- sids[e.inds]
           new.sse <- bounds(resno.sse, pre.sort=FALSE)
       }
-      chain.sse <- chain[ bounds(inds, pre.sort=FALSE)[, "start"] ]
+      chain.sse <- chain[ bounds(e.inds, pre.sort=FALSE)[, "start"] ]
 
       if(length(new.sse) > 0) {
         sse.aln$sheet$start  <- new.sse[,"start"]
@@ -145,18 +146,12 @@
     }
 
     ## SSE vector
-    sse <- rep(" ", length(resid))
-    if(length(sse.aln$helix$start) > 0) {
-      for(i in 1:length(sse.aln$helix$start))
-        sse[sse.aln$helix$start[i]:sse.aln$helix$end[i]] <- "H"
-    }
-
-    if(length(sse.aln$sheet$start) > 0) {
-      for(i in 1:length(sse.aln$sheet$start))
-        sse[sse.aln$sheet$start[i]:sse.aln$sheet$end[i]] <- "E"
-    }
-
-    sse.aln$sse <- sse
+    sse2 <- rep(NA, length(resid))
+    names(sse2) <- resid
+    if(length(h.inds)>0) sse2[ h.inds ] <- "H"
+    if(length(e.inds)>0) sse2[ e.inds ] <- "E"
+    sse2[ is.na(sse2) ] <- " "
+    sse.aln$sse <- sse2
   }
   else {
     msg <- NULL
