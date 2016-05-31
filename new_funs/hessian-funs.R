@@ -13,7 +13,8 @@ effective.hessian <- function(h, inds) {
     hoo <- h[-inds$xyz, -inds$xyz]
     hoa <- t(hao)
 
-    hoo.inv <- solve(hoo)
+    ##hoo.inv <- solve(hoo)
+    hoo.inv <- chol2inv(hoo)
     k <- haa - ((hao %*% hoo.inv) %*% hoa)
     return(k)
 }
@@ -116,3 +117,7 @@ atompairs <- function(pdb, inds=NULL) {
 }
 
 
+trace <- function(mat) {
+    return(sum(diag(mat)))
+}
+    
