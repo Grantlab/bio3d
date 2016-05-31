@@ -111,7 +111,7 @@ atom.select.pdb <- function(pdb, string = NULL,
   ## check input string
   if(!is.null(string)) {
     str.allowed <- c("all", "protein", "notprotein", "nucleic", "notnucleic", "water", "notwater",
-                     "calpha", "cbeta", "backbone", "back", "ligand", "h", "noh")
+                     "calpha", "cbeta", "backbone", "back", "side", "sidechain", "ligand", "h", "noh")
     if(!(string %in% str.allowed))
       stop("Unknown 'string' keyword. See documentation for allowed values")
   }
@@ -148,12 +148,14 @@ atom.select.pdb <- function(pdb, string = NULL,
                 cbeta       =  .is.protein(pdb)  & .match.elety(pdb, c("CA", "N", "C", "O", "CB")),
                 backbone    =  .is.protein(pdb)  & .match.elety(pdb, c("CA", "N", "C", "O")),
                 back        =  .is.protein(pdb)  & .match.elety(pdb, c("CA", "N", "C", "O")),
+                sidechain   =  .is.protein(pdb)  & !.match.elety(pdb, c("CA", "N", "C", "O")),
+                side        =  .is.protein(pdb)  & !.match.elety(pdb, c("CA", "N", "C", "O")),
                 ligand      = !.is.protein(pdb)  & !.is.nucleic(pdb) & !.is.water(pdb),
                 h           =  .is.hydrogen(pdb),
                 noh         = !.is.hydrogen(pdb),
                 NA
                 )
-    
+                
     if(verbose) {
       .verboseout(M, 'string')
     }

@@ -28,8 +28,8 @@ atom.select(\dots)
   \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
     \code{\link{read.pdb}}. }
   \item{string}{ a single selection keyword from \code{calpha}
-    \code{cbeta} \code{backbone} \code{protein} \code{nucleic}
-    \code{ligand} \code{water} \code{h} or \code{noh}. }
+    \code{cbeta} \code{backbone} \code{sidechain} \code{protein}
+    \code{nucleic} \code{ligand} \code{water} \code{h} or \code{noh}. }
   \item{type}{ a single element character vector for selecting \sQuote{ATOM}
     or \sQuote{HETATM} record types. }
   \item{eleno}{ a numeric vector of element numbers. }
@@ -58,7 +58,7 @@ atom.select(\dots)
   corresponding to the intersection of various input criteria.
 
   Input selection criteria include selection \code{string} keywords (such as
-  \code{"calpha"}, \code{"backbone"}, \code{"protein"},
+  \code{"calpha"}, \code{"backbone"}, \code{"sidechain"},  \code{"protein"},
   \code{"nucleic"}, \code{"ligand"}, etc.) and individual named
   selection components (including \sQuote{chain},  \sQuote{resno},
   \sQuote{resid}, \sQuote{elety} etc.).
