@@ -15,10 +15,11 @@ function(pdb) {
   res.data <- colpaste(pdb$atom, c("resno", "chain"))
   res.list <- unique(res.data)
   atom.names <- c("N", "CA", "C", "O", "CB", "*G", "*G1", "*G2",
-                  "*D", "*D1", "*D2", "*E", "*E1", "*E2", "*Z", "NH1",
-                  "NH2", "OH") ##
+                  "*D", "*D1", "*D2", "*E", "*E1", "*E2", "*E3", "*Z", 
+                  "*Z1", "*Z2", "*Z3", "*H", "*H1", "*H2") ##
   atom.greek <- c("N", "CA", "C", "O", "CB", "G", "G1", "G2",
-                  "D", "D1", "D2", "E", "E1", "E2", "Z", "*", "*", "*")
+                  "D", "D1", "D2", "E", "E1", "E2", "E3", "Z", 
+                  "Z1", "Z2", "Z3", "H", "H1", "H2")
 
   coords <- NULL
 # Changed for PDB format v3.3  

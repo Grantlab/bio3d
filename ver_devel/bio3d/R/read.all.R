@@ -1,10 +1,13 @@
 "read.all" <-
-function(aln, prefix ="", pdbext="", sel=NULL, ncore=NULL, ...) {
+function(aln, prefix ="", pdbext="", sel=NULL, compact=TRUE, ncore=NULL, ...) {
 
   ## Usage:
   ## sel <- c("N", "CA", "C", "O", "CB", "*G", "*D",  "*E", "*Z")
   ## pdbs.all <- read.all(aln, sel=sel)
- 
+
+  ## Log the call
+  cl <- match.call()
+
   ncore <- setup.ncore(ncore)
  
   files  <- paste(prefix, aln$id, pdbext,sep="")
@@ -19,6 +22,10 @@ function(aln, prefix ="", pdbext="", sel=NULL, ncore=NULL, ...) {
   if(all(!toread))
     stop("No corresponding PDB files found")
 
+  ## Avoid multi-thread downloading
+  if(any(substr(files,1,4) == "http")) {
+     ncore = 1
+  }
 
   blank <- rep(NA, ncol(aln$ali))
   
@@ -35,6 +42,7 @@ function(aln, prefix ="", pdbext="", sel=NULL, ncore=NULL, ...) {
       res.bf <- blank
       res.ch <- blank
       res.id <- blank
+      res.ss <- blank
       ## all atom data
       coords.all <- NULL
       elety.all <- NULL; resid.all <- NULL; resno.all <- NULL
@@ -43,9 +51,18 @@ function(aln, prefix ="", pdbext="", sel=NULL, ncore=NULL, ...) {
       ##
     } else {
       pdb <- read.pdb( files[i], verbose=FALSE, ... )
+
+      ## Currently only works for protein.
+      ## Consider developing for ligand etc. in future.
+      pdb <- trim(pdb, 'protein') 
+
+      ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
       pdbseq  <- aa321(pdb$atom[pdb$calpha,"resid"])
       aliseq  <- toupper(aln$ali[i,])
       tomatch <- gsub("X","[A-Z]",aliseq[aliseq!="-"])
+
+      if(length(pdbseq)<1)
+        stop(paste(basename(aln$id[i]), ": insufficent Calpha's in PDB"), call.=FALSE)
       
       ##-- Search for ali residues (1:15) in pdb
       start.num <- regexpr(pattern = paste(c(na.omit(tomatch[1:15])),collapse=""),
@@ -56,16 +73,16 @@ function(aln, prefix ="", pdbext="", sel=NULL, ncore=NULL, ...) {
 
       ##-- Numeric vec, 'nseq', for mapping aln to pdb
       nseq <- rep(NA,length(aliseq))
-      ali.res.ind <- which(aliseq != "-")
-      if( length(ali.res.ind) > length(pdbseq) ) {
+      ali.res.ind <- which(!is.gap(aliseq))
+      if( length(ali.res.ind) > (length(pdbseq) - start.num + 1) ) {
         warning(paste(aln$id[i],
-         ": sequence has more residues than PDB has Calpha's"))
-        ali.res.ind <- ali.res.ind[1:length(pdbseq)] ## exclude extra
-        tomatch <-  tomatch[1:length(pdbseq)]        ## terminal residues
+         ": sequence has more residues than PDB has Calpha's"), call.=FALSE)
+        ali.res.ind <- ali.res.ind[1:(length(pdbseq)-start.num+1)] ## exclude extra
+        tomatch <-  tomatch[1:(length(pdbseq)-start.num+1)]        ## terminal residues
       }
       nseq[ali.res.ind] = start.num:((start.num - 1) + length(tomatch))
 
-      ##-- Check for miss-matchs
+      ##-- Check for miss-matches
       match <- aliseq != pdbseq[nseq] 
       if ( sum(match, na.rm=TRUE) >= 1 ) {
         mismatch.ind <- which(match)
@@ -77,12 +94,29 @@ function(aln, prefix ="", pdbext="", sel=NULL, ncore=NULL, ...) {
                            pdbseq[nseq],
                            pdb$atom[pdb$calpha,"resno"][nseq] )
                            #### calpha[,"resno"][nseq] ) ###- typo??
-          rownames(details) = c("aliseq","match","pdbseq","pdbnum")
-          msg <- paste("ERROR:", aln$id[i],
-                       "alignment and pdb sequences do not match")
-          cat(msg,"\n"); print(details); cat(msg,"\n")
-          print( cbind(details[,mismatch.ind]) )
-          stop(msg)
+          details <- seqbind(aliseq, pdbseq[nseq])
+          details$ali[is.na(details$ali)] <- "-"
+          rownames(details$ali) <- c("aliseq","pdbseq")
+          details$id <- c("aliseq","pdbseq")
+          
+          resmatch <- which(!apply(details$ali, 2, function(x) x[1]==x[2]))
+          
+          resid <- paste(pdb$atom$resid[ca.inds$atom][nseq][resmatch][1], "-",
+                         pdb$atom$resno[ca.inds$atom][nseq][resmatch][1],
+                         " (", pdb$atom$chain[ca.inds$atom][nseq][resmatch][1], ")", sep="")
+          
+          cat("\n ERROR   Alignment mismatch. See alignment below for further details\n")
+          cat("         (row ", i, " of aln and sequence of '", aln$id[i], "').\n", sep="")
+          cat("         First mismatch residue in PDB is:", resid, "\n")
+          cat("         occurring at alignment position:", which(match)[1], "\n\n")
+          .print.fasta.ali(details)
+          
+          msg <- paste(basename.pdb(aln$id[i]),
+                       " alignment and PDB sequence miss-match\n",
+                       "       beginning at position ",
+                       which(match)[1], " (PDB RESNO ", resid, ")", sep="")
+          stop(msg, call.=FALSE)
+
         }
       }
       
@@ -94,14 +128,18 @@ function(aln, prefix ="", pdbext="", sel=NULL, ncore=NULL, ...) {
       res.ch <- ca.ali[, "chain"]
       res.id <- ca.ali[, "resid"]
 
+      sse <- pdb2sse(pdb, verbose = FALSE)
+      if(!is.null(sse)) 
+        res.ss <- sse[nseq]
+      else
+        res.ss <- blank
+
       raw <- store.atom(pdb)
       if(is.null(sel)) {
         coords.all <- as.numeric( raw[c("x","y","z"),,nseq] ) 
         elety.all <- c(raw[c("elety"),,nseq])
         resid.all <- c(raw[c("resid"),,nseq])
         resno.all <- c(raw[c("resno"),,nseq])
-
-
       } else {
         coords.all <- as.numeric( raw[c("x","y","z"), sel, nseq] )
         elety.all <- c(raw[c("elety"),sel,nseq])
@@ -113,8 +151,8 @@ function(aln, prefix ="", pdbext="", sel=NULL, ncore=NULL, ...) {
 
     } # end else 
     list(coords=coords, coords.all=coords.all, res.nu=res.nu, res.bf=res.bf,
-         res.ch=res.ch, res.id=res.id, elety.all=elety.all, resid.all=resid.all,
-         resno.all=resno.all)
+         res.ch=res.ch, res.id=res.id, res.ss=res.ss, elety.all=elety.all, 
+         resid.all=resid.all, resno.all=resno.all)
   }, mc.cores=ncore) # end for
 
   coords <- do.call( rbind, unname(sapply(rtn, '[', 'coords')) )
@@ -122,25 +160,59 @@ function(aln, prefix ="", pdbext="", sel=NULL, ncore=NULL, ...) {
   res.bf <- do.call( rbind, unname(sapply(rtn, '[', 'res.bf')) )
   res.ch <- do.call( rbind, unname(sapply(rtn, '[', 'res.ch')) )
   res.id <- do.call( rbind, unname(sapply(rtn, '[', 'res.id')) )
+  res.ss <- do.call( rbind, unname(sapply(rtn, '[', 'res.ss')) )
+  
+  if( all(is.na(res.ss)) ) res.ss <- NULL
+
   coords.all <- do.call( rbind, unname(sapply(rtn, '[', 'coords.all')) )
   elety.all <- do.call( rbind,  unname(sapply(rtn, '[', 'elety.all')) )
   resid.all <- do.call( rbind,  unname(sapply(rtn, '[', 'resid.all')) )
   resno.all <- do.call( rbind,  unname(sapply(rtn, '[', 'resno.all')) )
 
   rownames(aln$ali) <- aln$id
-##  out<-list(xyz=coords, resno=res.nu, b=res.bf,
-##            chain = res.ch, id=aln$id, ali=aln$ali)
-  out<-list(xyz=coords, all=coords.all, resno=res.nu, b=res.bf,
-            chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id,
-            all.elety=elety.all, all.resid=resid.all, all.resno=resno.all)
+  rownames(coords) <- aln$id
+  rownames(res.nu) <- aln$id
+  rownames(res.bf) <- aln$id
+  rownames(res.ch) <- aln$id
+  rownames(res.id) <- aln$id
+  if(!is.null(res.ss)) rownames(res.ss) <- aln$id
 
+  rownames(coords.all) <- aln$id
+  rownames(elety.all) <- aln$id
+  rownames(resid.all) <- aln$id
+  rownames(resno.all) <- aln$id
+
+  if(is.null(sel))
+    sel <- c("N", "CA", "C", "O", "CB", "*G", "*G1", "*G2",
+             "*D", "*D1", "*D2", "*E", "*E1", "*E2", "*E3", "*Z", 
+             "*Z1", "*Z2", "*Z3", "*H", "*H1", "*H2")
   atm <- rep( rep(sel,each=3), ncol(aln$ali))
-  colnames(out$all) = atm
+  colnames(coords.all) = atm
   atm <- rep( sel, ncol(aln$ali))
-  colnames(out$all.elety) = atm
-  colnames(out$all.resid) = atm
-  colnames(out$all.resno) = atm
-  
+  colnames(elety.all) = atm
+  colnames(resid.all) = atm
+  colnames(resno.all) = atm
+
+  coords <- as.xyz(coords)
+  coords.all <- as.xyz(coords.all)
+
+  width <- ncol(elety.all) / ncol(aln$ali)
+  grpby <- rep(1:ncol(aln$ali), each=width)
+  if(compact) {
+    # remove columns that have NA in all rows
+    rm.inds <- which(apply(elety.all, 2, function(x) all(is.na(x))))
+    coords.all <- as.xyz(coords.all[, -atom2xyz(rm.inds)])
+    elety.all <- elety.all[, -rm.inds, drop=FALSE]
+    resid.all <- resid.all[, -rm.inds, drop=FALSE]
+    resno.all <- resno.all[, -rm.inds, drop=FALSE]
+    grpby <- grpby[-rm.inds] 
+  } 
+
+  out<-list(xyz=coords, all=coords.all, resno=res.nu, b=res.bf,
+            chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id, sse=res.ss,
+            all.elety=elety.all, all.resid=resid.all, all.resno=resno.all,
+            all.grpby=grpby, call = cl)
+
   class(out)=c("pdbs", "fasta")
   return(out)
   
