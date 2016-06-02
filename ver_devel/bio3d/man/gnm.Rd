@@ -39,8 +39,8 @@ to include in the resulting mode object.}
 
 \item{check.connect}{logical, if TRUE check chain connectivity.}
 
-\item{fit}{logical, if TRUE C-alpha coordinate based superposition is performed
-prior to normal mode calculations.}
+\item{fit}{logical, if TRUE C-alpha coordinate based superposition is 
+performed prior to normal mode calculations.}
 
 \item{full}{logical, if TRUE return the complete, full structure,
 \sQuote{nma} objects.}
@@ -51,8 +51,9 @@ prior to normal mode calculations.}
 atoms in the aligned positions (non-gap positions in all aligned
 structures). Thus, gap positions are removed from output.}
 
-\item{gc.first}{logical, if TRUE will call gc() first before mode calculation for
-each structure. This is to avoid memory overload when \code{ncore > 1}.}
+\item{gc.first}{logical, if TRUE will call gc() first before mode calculation
+for each structure. This is to avoid memory overload when 
+\code{ncore > 1}.}
 
 \item{ncore}{number of CPU cores used to do the calculation.}
 }

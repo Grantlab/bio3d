@@ -127,8 +127,8 @@
 
 
 #' @param verbose logical, if TRUE print detailed processing message
-#' @inheritParams aanma
-#' @rdname aanma
+#' @inheritParams aanma.pdb
+#' @rdname aanma.pdb
 rtb <- function(hessian, pdb, mass=TRUE, nmer=1, verbose=TRUE) {
 
   H <- hessian

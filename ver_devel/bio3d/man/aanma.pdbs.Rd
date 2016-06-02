@@ -4,7 +4,7 @@
 \alias{aanma.pdbs}
 \title{Ensemble Normal Mode Analysis with All-Atom ENM}
 \usage{
-aanma.pdbs(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
+\method{aanma}{pdbs}(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
   rm.gaps = TRUE, ligand = FALSE, prefix = "", pdbext = "",
   outpath = NULL, gc.first = TRUE, ncore = NULL, ...)
 }
