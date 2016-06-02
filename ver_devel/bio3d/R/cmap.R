@@ -58,7 +58,8 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, binary=TRUE, mask.lower = TRUE
             return(as.numeric(dmat[!lower.tri(dmat)] < dcut))
         }) 
      }
-     cmap.t <- rowMeans(do.call(cbind, cmap.list))
+     cmap.t <- rowMeans(do.call(cbind, cmap.list), na.rm=TRUE)
+     cmap.t[!is.finite(cmap.t)] <- NA
      if(binary) cmap.t <- as.numeric(cmap.t >= pcut )
      cont.map <- matrix(NA, nrow=nres, ncol=nres)
      cont.map[!lower.tri(cont.map)] <- cmap.t
