@@ -1,9 +1,17 @@
 "read.all" <-
-function(aln, prefix ="", pdbext="", sel=NULL, compact=TRUE, ncore=NULL, ...) {
+function(aln, prefix="", pdbext="", sel=NULL, rm.wat=TRUE, rm.ligand=FALSE, 
+             compact=TRUE, ncore=NULL, ...) {
 
   ## Usage:
   ## sel <- c("N", "CA", "C", "O", "CB", "*G", "*D",  "*E", "*Z")
   ## pdbs.all <- read.all(aln, sel=sel)
+
+  if(!inherits(aln, 'fasta')) 
+      stop( paste("input 'aln' should be a list object as obtained from ", 
+                  "'seqaln()', 'pdbaln()', or 'read.fasta.pdb()'") )
+
+  dots <- list(...)
+  if(!'verbose' %in% names(dots)) dots$verbose = FALSE
 
   ## Log the call
   cl <- match.call()
@@ -27,8 +35,18 @@ function(aln, prefix ="", pdbext="", sel=NULL, compact=TRUE, ncore=NULL, ...) {
      ncore = 1
   }
 
+  if(ncore>1) {
+    prev.warn <- getOption("warn")
+    options(warn=1)
+    on.exit(options(warn=prev.warn))
+  }
+
+  ## make default selection
+  if(is.null(sel)) sel <- store.atom()
+
   blank <- rep(NA, ncol(aln$ali))
-  
+  blank.all <- rep(NA, ncol(aln$ali)*length(sel))
+
 #  for (i in 1:length(aln$id)) {
   rtn <- mclapply(1:length(aln$id), function(i) {
 
@@ -44,22 +62,37 @@ function(aln, prefix ="", pdbext="", sel=NULL, compact=TRUE, ncore=NULL, ...) {
       res.id <- blank
       res.ss <- blank
       ## all atom data
-      coords.all <- NULL
-      elety.all <- NULL; resid.all <- NULL; resno.all <- NULL
+      coords.all <- rep(blank.all, 3)
+      elety.all <- blank.all
+      resid.all <- blank.all 
+      resno.all <- blank.all
+      hetatm <- NULL
       ##
       ##coords.all
       ##
     } else {
-      pdb <- read.pdb( files[i], verbose=FALSE, ... )
+      pdb <- do.call(read.pdb, c(list(files[i]), dots) )
 
-      ## Currently only works for protein.
-      ## Consider developing for ligand etc. in future.
-      pdb <- trim(pdb, 'protein') 
+      ## Always remove hydrogen
+      pdb <- atom.select(pdb, 'noh', value=TRUE, verbose=FALSE)
+
+      hetatm <- atom.select(pdb, 'protein', inverse=TRUE, value=TRUE, verbose=FALSE)
+
+      if(rm.wat)
+        hetatm <- trim(hetatm, 'water', inverse=TRUE, verbose=FALSE)
+
+      if(rm.ligand)
+        hetatm <- trim(hetatm, 'ligand', inverse=TRUE, verbose=FALSE)
+
+      if(nrow(hetatm$atom)==0) hetatm <- NULL
+
+      ## Following works on protein only
+      pdb <- atom.select(pdb, 'protein', value=TRUE, verbose=FALSE)
 
       ca.inds <- atom.select(pdb, "calpha", verbose=FALSE)
-      pdbseq  <- aa321(pdb$atom[pdb$calpha,"resid"])
+      pdbseq  <- pdbseq(pdb)
       aliseq  <- toupper(aln$ali[i,])
-      tomatch <- gsub("X","[A-Z]",aliseq[aliseq!="-"])
+      tomatch <- gsub("X","[A-Z]",aliseq[!is.gap(aliseq)])
 
       if(length(pdbseq)<1)
         stop(paste(basename(aln$id[i]), ": insufficent Calpha's in PDB"), call.=FALSE)
@@ -135,25 +168,24 @@ function(aln, prefix ="", pdbext="", sel=NULL, compact=TRUE, ncore=NULL, ...) {
         res.ss <- blank
 
       raw <- store.atom(pdb)
-      if(is.null(sel)) {
-        coords.all <- as.numeric( raw[c("x","y","z"),,nseq] ) 
-        elety.all <- c(raw[c("elety"),,nseq])
-        resid.all <- c(raw[c("resid"),,nseq])
-        resno.all <- c(raw[c("resno"),,nseq])
-      } else {
-        coords.all <- as.numeric( raw[c("x","y","z"), sel, nseq] )
-        elety.all <- c(raw[c("elety"),sel,nseq])
-        resid.all <- c(raw[c("resid"),sel,nseq])
-        resno.all <- c(raw[c("resno"),sel,nseq])
-      } 
+      coords.all <- as.numeric( raw[c("x","y","z"), sel, nseq] )
+      elety.all <- c(raw[c("elety"),sel,nseq])
+      resid.all <- c(raw[c("resid"),sel,nseq])
+      resno.all <- c(raw[c("resno"),sel,nseq])
+
 ##      raw <- store.main(pdb)
 ##      b <- cbind(b, raw[,,nseq])
 
     } # end else 
     list(coords=coords, coords.all=coords.all, res.nu=res.nu, res.bf=res.bf,
          res.ch=res.ch, res.id=res.id, res.ss=res.ss, elety.all=elety.all, 
-         resid.all=resid.all, resno.all=resno.all)
-  }, mc.cores=ncore) # end for
+         resid.all=resid.all, resno.all=resno.all, hetatm=hetatm)
+  }, mc.cores=ncore, mc.allow.recursive=FALSE) # end for
+
+  tryerr <- which(sapply(rtn, inherits, 'try-error'))
+  if(length(tryerr)>0) {
+    stop(as.character(rtn[[tryerr[1]]]))
+  }
 
   coords <- do.call( rbind, unname(sapply(rtn, '[', 'coords')) )
   res.nu <- do.call( rbind, unname(sapply(rtn, '[', 'res.nu')) )
@@ -168,6 +200,9 @@ function(aln, prefix ="", pdbext="", sel=NULL, compact=TRUE, ncore=NULL, ...) {
   elety.all <- do.call( rbind,  unname(sapply(rtn, '[', 'elety.all')) )
   resid.all <- do.call( rbind,  unname(sapply(rtn, '[', 'resid.all')) )
   resno.all <- do.call( rbind,  unname(sapply(rtn, '[', 'resno.all')) )
+  hetatm.all <- unname(sapply(rtn, '[', 'hetatm'))
+
+  if(all(sapply(hetatm.all, is.null))) hetatm.all <- NULL
 
   rownames(aln$ali) <- aln$id
   rownames(coords) <- aln$id
@@ -181,11 +216,8 @@ function(aln, prefix ="", pdbext="", sel=NULL, compact=TRUE, ncore=NULL, ...) {
   rownames(elety.all) <- aln$id
   rownames(resid.all) <- aln$id
   rownames(resno.all) <- aln$id
+  if(!is.null(hetatm.all)) names(hetatm.all) <- aln$id
 
-  if(is.null(sel))
-    sel <- c("N", "CA", "C", "O", "CB", "*G", "*G1", "*G2",
-             "*D", "*D1", "*D2", "*E", "*E1", "*E2", "*E3", "*Z", 
-             "*Z1", "*Z2", "*Z3", "*H", "*H1", "*H2")
   atm <- rep( rep(sel,each=3), ncol(aln$ali))
   colnames(coords.all) = atm
   atm <- rep( sel, ncol(aln$ali))
@@ -201,17 +233,19 @@ function(aln, prefix ="", pdbext="", sel=NULL, compact=TRUE, ncore=NULL, ...) {
   if(compact) {
     # remove columns that have NA in all rows
     rm.inds <- which(apply(elety.all, 2, function(x) all(is.na(x))))
-    coords.all <- as.xyz(coords.all[, -atom2xyz(rm.inds)])
-    elety.all <- elety.all[, -rm.inds, drop=FALSE]
-    resid.all <- resid.all[, -rm.inds, drop=FALSE]
-    resno.all <- resno.all[, -rm.inds, drop=FALSE]
-    grpby <- grpby[-rm.inds] 
+    if(length(rm.inds) > 0) {
+      coords.all <- as.xyz(coords.all[, -atom2xyz(rm.inds)])
+      elety.all <- elety.all[, -rm.inds, drop=FALSE]
+      resid.all <- resid.all[, -rm.inds, drop=FALSE]
+      resno.all <- resno.all[, -rm.inds, drop=FALSE]
+      grpby <- grpby[-rm.inds]
+    } 
   } 
 
   out<-list(xyz=coords, all=coords.all, resno=res.nu, b=res.bf,
             chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id, sse=res.ss,
             all.elety=elety.all, all.resid=resid.all, all.resno=resno.all,
-            all.grpby=grpby, call = cl)
+            all.grpby=grpby, all.hetatm=hetatm.all, call = cl)
 
   class(out)=c("pdbs", "fasta")
   return(out)
