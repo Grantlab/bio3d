@@ -5,11 +5,9 @@
 #'
 #' @details This function builds elastic network model (ENM) using all heavy 
 #'    atoms and performs subsequent normal mode analysis (NMA) on a set of 
-#'    aligned protein structures obtained with function 
-#'    \code{\link{read.fasta.pdb}} or \code{\link{pdbaln}}. The main purpose is 
-#'    to automate ensemble normal mode analysis using all-atom ENMs. Local PDB 
-#'    files are required, with file paths specified by \code{pdbs$id} along with
-#'    \code{prefix} and \code{pdbext}.
+#'    aligned protein structures obtained with function \code{\link{read.all}}.
+#'    The main purpose is to automate ensemble normal mode analysis using 
+#'    all-atom ENMs.
 #'
 #'    By default, the effective Hessian for all C-alpha atoms is calculated 
 #'    based on the Hessian built from all heavy atoms (including ligand atoms if 
@@ -27,8 +25,7 @@
 #'    This is equivalent to a wrapper function repeatedly calling 
 #'    \code{\link{aanma}}.
 #'
-#' @param pdbs an \sQuote{pdbs} object as obtained from
-#'    \code{\link{read.fasta.pdb}} or \code{\link{pdbaln}}. 
+#' @param pdbs an \sQuote{pdbs} object as obtained from \code{\link{read.all}}. 
 #' @param fit logical, if TRUE C-alpha coordinate based superposition is 
 #'    performed prior to normal mode calculations. 
 #' @param full logical, if TRUE return the complete, full structure,
@@ -39,8 +36,6 @@
 #'    structures). Thus, gap positions are removed from output.
 #' @param ligand logical, if TRUE ligand molecules are also included in the 
 #'    calculation.
-#' @param prefix prefix to \sQuote{pdbs$id} to locate input pdb files.
-#' @param pdbext extension to \sQuote{pdbs$id} to locate input pdb files.
 #' @param outpath character string specifing the output directory to
 #'    which the PDB structures should be written.
 #' @param gc.first logical, if TRUE will call gc() first before mode calculation
@@ -80,7 +75,7 @@
 #'      \code{\link{bhattacharyya}}, \code{\link{rmsip}}.
 #'    
 #'      Related functionality:
-#'      \code{\link{pdbaln}}, \code{\link{read.fasta.pdb}}.
+#'      \code{\link{read.all}}.
 #'
 #' @author Xin-Qiu Yao & Lars Skjaerven
 #' 
@@ -94,10 +89,13 @@
 #'     files <- get.pdb(ids, split = TRUE, path = tempdir())
 #'     
 #'     ## Sequence Alignement
-#'     pdbs <- pdbaln(files, outfile = tempfile())
+#'     aln <- pdbaln(files, outfile = tempfile())
 #'     
+#'     ## Read all pdb coordinates
+#'     pdbs <- read.all(aln)
+#'
 #'     ## Normal mode analysis on aligned data
-#'     modes <- aanma.pdbs(pdbs, rm.gaps=TRUE)
+#'     modes <- aanma(pdbs, rm.gaps=TRUE)
 #'     
 #'     ## Plot fluctuation data
 #'     plot(modes, pdbs=pdbs)
@@ -120,11 +118,10 @@
 #'   }
 #' }
 aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE, 
-  ligand=FALSE, prefix="", pdbext="", outpath=NULL, gc.first=TRUE, ncore=NULL, 
-  ...) {
+  ligand=FALSE, outpath=NULL, gc.first=TRUE, ncore=NULL, ...) {
 
-  if(!inherits(pdbs, "pdbs"))
-    stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
+  if(!inherits(pdbs, "pdbs") || is.null(pdbs$all))
+    stop("input 'pdbs' should be a list object as obtained from 'read.all()'")
 
   ## Log the call
   cl <- match.call()
@@ -192,47 +189,33 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
   if(!is.null(nm.keep) && keep > nm.keep) 
     keep <- nm.keep
 
-  ## Read pdb files
-  cat('\nReading pdb files') 
-  all.pdb <- mclapply(pdbs$id, function(x) {
-     cat('.')
-     fpath <- paste(prefix, x, pdbext, sep="")
-     if(!file.exists(fpath)) return(invisible(NULL))
-     pdb <- read.pdb(fpath, verbose=FALSE)
-     inds1 <- atom.select(pdb, 'protein', verbose=FALSE)
-     inds2 <- atom.select(pdb, 'noh', verbose=FALSE)
-     if(ligand) {
-        inds3 <- atom.select(pdb, 'ligand', verbose=FALSE)
-        inds <- combine.select( combine.select(inds1, inds3, operator='OR', 
-                 verbose=FALSE), inds2, verbose=FALSE)
-        trim(pdb, inds=inds, sse=FALSE)
-     } else {
-        inds <- combine.select(inds1, inds2, verbose=FALSE)
-        trim(pdb, inds=inds, sse=FALSE)
-     }
-  }, mc.cores = ncore)
-  cat('done\n')
+  ## Convert from pdbs to pdb
+  all.pdb <- pdbs2pdb(pdbs, all.atom=TRUE, ncore=ncore)
 
+  ## Check if some structures are unavailable
   keep.inds <- which(sapply(all.pdb, is.pdb))
   if(length(keep.inds) == 0) 
      stop('No pdb file is found.')
   if(length(keep.inds) != length(all.pdb)) {
-     warning(paste('Following pdb files are not found: ', pdbs$id[-keep.inds], 
+     warning(paste('Following pdb coordinates are not found: ', pdbs$id[-keep.inds], 
                sep=''))
 
      pdbs <- trim(pdbs, row.inds=keep.inds, col.inds=1:ncol(pdbs$ali))
      all.pdb <- all.pdb[keep.inds]
   }
 
-  # IMPORTANT NOTE: cannot be replaced by mclapply since pdb2aln.ind()
-  # writes to a tempporary file, which has the same file name across processes.
-  nogap.inds <- lapply(1:length(all.pdb), function(i)  {
+  ## Remove ligand
+  if(!ligand) 
+    all.pdb <- mclapply(all.pdb, trim, 'protein', mc.cores=ncore)
+
+  ## Non-gap position for each pdb
+  nogap.inds <- mclapply(1:length(all.pdb), function(i)  {
      pdb <- all.pdb[[i]]
      pdb2aln.ind(pdbs, pdb, aln.id = pdbs$id[i], gaps.res$f.inds, file=NULL)$b
-  })
+  }, mc.cores=ncore)
 
   if(fit) {
-     cat('Fit pdb structures')
+     cat('Fitting pdb structures')
      all.pdb <- mclapply(1:length(all.pdb), function(i) {
         cat('.')
         pdb <- all.pdb[[i]]
@@ -243,7 +226,7 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
            ofile <- tempfile()
         write.pdb(pdb, xyz=xyz, file=ofile)
         read.pdb(ofile)
-     }, mc.cores=ncore)
+     }, mc.cores=ncore, mc.allow.recursive=FALSE)
      cat('done\n')
 
   } else {
@@ -397,9 +380,19 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
                ensure that your input coordinates are pre-fitted.")
   }
 
+  if(fit) {
+    xyz <- fit.xyz(fixed = pdbs$xyz[1, ], mobile = pdbs,
+                   fixed.inds = gaps.pos$f.inds, mobile.inds = gaps.pos$f.inds,
+                   ncore = ncore)
+  }
+  else {
+     xyz <- pdbs$xyz
+  }
+
   rownames(flucts) <- basename(rownames(pdbs$xyz))
   out <- list(fluctuations=flucts, rmsip=rmsip.map,
-              U.subspace=modes.array, L=L.mat, full.nma=all.modes, call=cl)
+              U.subspace=modes.array, L=L.mat, full.nma=all.modes, 
+              xyz=xyz, call=cl)
 
   class(out) <- "enma"
 

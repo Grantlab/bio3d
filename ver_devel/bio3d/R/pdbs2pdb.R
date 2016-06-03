@@ -1,23 +1,25 @@
-"pdbs2pdb" <- function(pdbs, inds=NULL, rm.gaps=FALSE) {
+"pdbs2pdb" <- function(pdbs, inds=NULL, rm.gaps=FALSE, all.atom=FALSE, ncore=NULL) {
   if(!inherits(pdbs, "pdbs")) {
     stop("Input 'pdbs' should be of class 'pdbs', e.g. from pdbaln() or read.fasta.pdb()")
   }
   
+  if(all.atom && is.null(pdbs$all))
+    stop("With 'all.atom=TRUE', input 'pdbs' must be obtained from read.all()")
+
   if(is.null(inds))
     inds <- seq(1, length(pdbs$id))
 
-  ## Temporaray file
-  fname <- tempfile(fileext = "pdb")
+  ncore <- setup.ncore(ncore)
 
   ## Set indicies
   gaps.res <- gap.inspect(pdbs$ali)
   gaps.pos <- gap.inspect(pdbs$xyz)
 
   
-  all.pdbs <- list()
-  for ( i in 1:length(inds) ) {
-    j <- inds[i]
-    
+  all.pdbs <- mclapply(inds, function(j) {    
+    ## Temporaray file
+    fname <- tempfile(fileext = "pdb")
+
     ## Set indices for this structure only
     f.inds <- NULL
     if(rm.gaps) {
@@ -28,15 +30,42 @@
       f.inds$res <- which(gaps.res$bin[j,]==0)
       f.inds$pos <- atom2xyz(f.inds$res)
     }
+    
+    if(length(f.inds$res) > 0) {
+      ## Make a temporary PDB object
+      if(all.atom){
+        f.inds$res <- which( (pdbs$all.grpby %in% f.inds$res) & !is.gap(pdbs$all.elety[j, ]) )
+        f.inds$pos <- atom2xyz(f.inds$res)
+        all.chain <- vec2resno(pdbs$chain[j, ], pdbs$all.grpby)
+        xyz <- pdbs$all[j,f.inds$pos]
+        resno <- pdbs$all.resno[j,f.inds$res]
+        resid <- pdbs$all.resid[j,f.inds$res]
+        chain <- all.chain[f.inds$res]
+        elety <- pdbs$all.elety[j,f.inds$res]
+        het <- pdbs$all.hetatm[[j]]
+        if(!is.null(het)) {
+          xyz <- c(xyz, het$xyz)
+          resno <- c(resno, het$atom[, 'resno'])
+          resid <- c(resid, het$atom[, 'resid'])
+          chain <- c(chain, het$atom[, 'chain'])
+          elety <- c(elety, het$atom[, 'elety'])
+        }
+        write.pdb(pdb=NULL, xyz=xyz, resno=resno, resid=resid, 
+                  chain=chain, elety=elety, file=fname)
+      }
+      else {
+        write.pdb(pdb=NULL,
+                  xyz  =pdbs$xyz[j,f.inds$pos],   resno=pdbs$resno[j,f.inds$res],
+                  resid=pdbs$resid[j,f.inds$res], chain=pdbs$chain[j,f.inds$res],
+                  file=fname)
+      }
+      read.pdb(fname)
+    } 
+    else {
+      NULL
+    }
+  }, mc.cores=ncore )
 
-    ## Make a temporary PDB object
-    write.pdb(pdb=NULL,
-              xyz  =pdbs$xyz[j,f.inds$pos],   resno=pdbs$resno[j,f.inds$res],
-              resid=pdbs$resid[j,f.inds$res], chain=pdbs$chain[j,f.inds$res],
-              file=fname)
-
-    all.pdbs[[i]] <- read.pdb(fname)
-  }
   names(all.pdbs) <- sub(".pdb$", "", basename(pdbs$id[inds]))
   return(all.pdbs)
 }

@@ -5,12 +5,11 @@
 \title{Ensemble Normal Mode Analysis with All-Atom ENM}
 \usage{
 \method{aanma}{pdbs}(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
-  rm.gaps = TRUE, ligand = FALSE, prefix = "", pdbext = "",
-  outpath = NULL, gc.first = TRUE, ncore = NULL, ...)
+  rm.gaps = TRUE, ligand = FALSE, outpath = NULL, gc.first = TRUE,
+  ncore = NULL, ...)
 }
 \arguments{
-\item{pdbs}{an \sQuote{pdbs} object as obtained from
-\code{\link{read.fasta.pdb}} or \code{\link{pdbaln}}.}
+\item{pdbs}{an \sQuote{pdbs} object as obtained from \code{\link{read.all}}.}
 
 \item{fit}{logical, if TRUE C-alpha coordinate based superposition is 
 performed prior to normal mode calculations.}
@@ -26,10 +25,6 @@ structures). Thus, gap positions are removed from output.}
 
 \item{ligand}{logical, if TRUE ligand molecules are also included in the 
 calculation.}
-
-\item{prefix}{prefix to \sQuote{pdbs$id} to locate input pdb files.}
-
-\item{pdbext}{extension to \sQuote{pdbs$id} to locate input pdb files.}
 
 \item{outpath}{character string specifing the output directory to
 which the PDB structures should be written.}
@@ -65,11 +60,9 @@ structures using all-atom elastic network model (aaENM).
 \details{
 This function builds elastic network model (ENM) using all heavy 
    atoms and performs subsequent normal mode analysis (NMA) on a set of 
-   aligned protein structures obtained with function 
-   \code{\link{read.fasta.pdb}} or \code{\link{pdbaln}}. The main purpose is 
-   to automate ensemble normal mode analysis using all-atom ENMs. Local PDB 
-   files are required, with file paths specified by \code{pdbs$id} along with
-   \code{prefix} and \code{pdbext}.
+   aligned protein structures obtained with function \code{\link{read.all}}.
+   The main purpose is to automate ensemble normal mode analysis using 
+   all-atom ENMs.
 
    By default, the effective Hessian for all C-alpha atoms is calculated 
    based on the Hessian built from all heavy atoms (including ligand atoms if 
@@ -97,10 +90,13 @@ This function builds elastic network model (ENM) using all heavy
     files <- get.pdb(ids, split = TRUE, path = tempdir())
     
     ## Sequence Alignement
-    pdbs <- pdbaln(files, outfile = tempfile())
+    aln <- pdbaln(files, outfile = tempfile())
     
+    ## Read all pdb coordinates
+    pdbs <- read.all(aln)
+
     ## Normal mode analysis on aligned data
-    modes <- aanma.pdbs(pdbs, rm.gaps=TRUE)
+    modes <- aanma(pdbs, rm.gaps=TRUE)
     
     ## Plot fluctuation data
     plot(modes, pdbs=pdbs)
@@ -142,6 +138,6 @@ For normal mode analysis on single structure PDB:
      \code{\link{bhattacharyya}}, \code{\link{rmsip}}.
    
      Related functionality:
-     \code{\link{pdbaln}}, \code{\link{read.fasta.pdb}}.
+     \code{\link{read.all}}.
 }
 
