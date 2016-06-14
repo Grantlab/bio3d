@@ -59,23 +59,31 @@ amber.rst <- function(pdb, a.inds=NULL, b.inds=a.inds,
   ## distance matrix
   dm <- dist.xyz(pdb$xyz[1, a.inds$xyz], pdb$xyz[1, b.inds$xyz])
 
-  ## avoid duplicate pairs
-  if(length(a.inds$atom) > length(b.inds$atom))
-    dm[upper.tri(dm, diag=TRUE)] <- NA
-  else
-    dm[lower.tri(dm, diag=TRUE)] <- NA
-
-  ## omit covalent atoms
-  inds <- which(dm < cut[1])
-  dm[inds] <- NA
-
-  ## avoid intra-residue restraints
+  ## matrix names
   res.a <- paste(pdb$atom$resno[a.inds$atom],
                  pdb$atom$chain[a.inds$atom],
                  pdb$atom$insert[a.inds$atom], sep="-")
   res.b <- paste(pdb$atom$resno[b.inds$atom],
                  pdb$atom$chain[b.inds$atom],
                  pdb$atom$insert[b.inds$atom], sep="-")
+  
+  rownames(dm) <- res.a
+  colnames(dm) <- res.b
+  #print(dm)
+  
+  ## avoid duplicate pairs
+  if(identical(a.inds, b.inds, ignore.environment = TRUE)) {
+    dm[lower.tri(dm, diag=TRUE)] <- NA
+  }
+  #print(dm)
+  
+  ## omit covalent atoms
+  inds <- which(dm < cut[1])
+  dm[inds] <- NA
+  #print(dm)
+
+
+  ## avoid intra-residue restraints
   overlapping <- intersect(res.a, res.b)
   
   if(length(overlapping)>0) {
@@ -90,7 +98,7 @@ amber.rst <- function(pdb, a.inds=NULL, b.inds=a.inds,
   inds <- which(dm <= cut[2], arr.ind=TRUE)
 
   if(!length(inds)>0) {
-    cat(" no atom distances within provided cutoff range")
+    cat(" no atom distances within provided cutoff range\n")
     return(NULL)
   }
 
@@ -103,12 +111,12 @@ amber.rst <- function(pdb, a.inds=NULL, b.inds=a.inds,
   out <- list(atom.a = atoms.a,
               resno.a = pdb$atom$resno[atoms.a],
               elety.a = pdb$atom$elety[atoms.a],
-              ##chain.a = pdb$atom$chain[atoms.a],
+              chain.a = pdb$atom$chain[atoms.a],
               
               atom.b = atoms.b,
               resno.b = pdb$atom$resno[atoms.b],
               elety.b = pdb$atom$elety[atoms.a],
-              ##chain.b = pdb$atom$chain[atoms.b],
+              chain.b = pdb$atom$chain[atoms.b],
               d = round(dm[inds], 2),
               
               r1 = round(dm[inds], 2) + r[1],
