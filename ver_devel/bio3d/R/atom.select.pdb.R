@@ -89,8 +89,11 @@
 
 
 .match.insert <- function(pdb, insert) {
-  if(!is.character(insert) & !is.na(insert))
-    stop("'insert' must be a character vector")
+  # insert should be NA or a character vector
+  if(!all(is.na(insert))) {
+    if(!is.character(insert[ !is.na(insert) ]))
+      stop("'insert' must be a character vector")
+  }
 
   ## NA and '' are treated the same 
   if(any(insert=="", na.rm=TRUE))
