@@ -87,6 +87,20 @@
   pdb$atom$resno %in% resno
 }
 
+
+.match.insert <- function(pdb, insert) {
+  if(!is.character(insert) & !is.na(insert))
+    stop("'insert' must be a character vector")
+
+  ## NA and '' are treated the same 
+  if(any(insert=="", na.rm=TRUE))
+    insert[ insert == "" ] = NA
+  if(any(pdb$atom$insert == "", na.rm=TRUE))
+    pdb$atom$insert[ pdb$atom$insert == "" ] = NA
+  
+  pdb$atom$insert %in% insert
+}
+
 .match.segid <- function(pdb, segid) {
   if(!is.character(segid))
     stop("'segid' must be a character vector")
@@ -96,7 +110,8 @@
 atom.select.pdb <- function(pdb, string = NULL,
                             type  = NULL, eleno = NULL, elety = NULL,
                             resid = NULL, chain = NULL, resno = NULL,
-                            segid = NULL, operator = "AND", inverse = FALSE,
+                            insert = NULL, segid = NULL, 
+                            operator = "AND", inverse = FALSE,
                             value = FALSE, verbose=FALSE,  ...) {
 
   if(!is.pdb(pdb))
@@ -189,6 +204,11 @@ atom.select.pdb <- function(pdb, string = NULL,
   if(!is.null(resno)) {
     L <- .match.resno(pdb, resno)
     if(verbose) .verboseout(L, 'resno')
+    M <- .combinelv(L, M, operator)
+  }
+  if(!is.null(insert)) {
+    L <- .match.insert(pdb, insert)
+    if(verbose) .verboseout(L, 'insert')
     M <- .combinelv(L, M, operator)
   }
   if(!is.null(segid)) {
