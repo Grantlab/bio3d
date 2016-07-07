@@ -19,6 +19,8 @@
     ## check atom composition - need backbone atoms to continue SSE analysis
     checkatoms <- TRUE
     if(checkatoms) {
+
+      ## check on backbone atoms
       inds <- atom.select(pdb, "backbone", verbose=verbose)
       tmp <- trim.pdb(pdb, inds)
       
@@ -40,6 +42,13 @@
         warning(paste("Residues with missing backbone atoms detected:",
                       paste(unique(resid)[incomplete], collapse=", "), 
                       collapse=" "))
+
+      ## check for non-protein atoms
+      inds <- atom.select(pdb, "protein", verbose=verbose, inverse=TRUE)
+      if(length(inds$atom) > 0)
+          warning(paste("Non-protein residues detected in input PDB:",
+                        paste(unique(pdb$atom$resid[ inds$atom ]), collapse=", ")))
+ 
     }
     
     infile <- tempfile()
@@ -99,6 +108,11 @@
     res.insert <- substring(raw.lines, 11, 11)          ## Insertion codes
     res.ind <- 1:length(res.num)                        ## Internal indices
 
+    ## names for output sse vector
+    ins <- trim(res.insert)
+    ins[ ins=="" ] = NA
+    names(sse) <- paste(res.num, cha, ins, sep="_")
+      
     if(any(res.insert!=" ")) {
        if(resno) {
          warning("Insertions are found in PDB: Residue numbers may be incorrect.

@@ -58,24 +58,32 @@ amber.rst <- function(pdb, a.inds=NULL, b.inds=a.inds,
 
   ## distance matrix
   dm <- dist.xyz(pdb$xyz[1, a.inds$xyz], pdb$xyz[1, b.inds$xyz])
-
+  
+  ## matrix names
+  all.atoms <- paste(pdb$atom$elety,
+                     pdb$atom$resno,
+                     pdb$atom$chain,
+                     pdb$atom$insert, sep="-")
+    
+  res.a <- all.atoms[ a.inds$atom ]
+  res.b <- all.atoms[ b.inds$atom ]
+    
+  rownames(dm) <- res.a
+  colnames(dm) <- res.b
+  #print(dm)
+  
   ## avoid duplicate pairs
-  if(length(a.inds$atom) > length(b.inds$atom))
-    dm[upper.tri(dm, diag=TRUE)] <- NA
-  else
+  if(identical(a.inds, b.inds, ignore.environment = TRUE)) {
     dm[lower.tri(dm, diag=TRUE)] <- NA
-
+  }
+  #print(dm)
+  
   ## omit covalent atoms
-  inds <- which(dm < cut[1])
-  dm[inds] <- NA
+  inds.cut1 <- which(dm < cut[1])
+  dm[inds.cut1] <- NA
+  #print(dm)
 
   ## avoid intra-residue restraints
-  res.a <- paste(pdb$atom$resno[a.inds$atom],
-                 pdb$atom$chain[a.inds$atom],
-                 pdb$atom$insert[a.inds$atom], sep="-")
-  res.b <- paste(pdb$atom$resno[b.inds$atom],
-                 pdb$atom$chain[b.inds$atom],
-                 pdb$atom$insert[b.inds$atom], sep="-")
   overlapping <- intersect(res.a, res.b)
   
   if(length(overlapping)>0) {
@@ -87,28 +95,27 @@ amber.rst <- function(pdb, a.inds=NULL, b.inds=a.inds,
   }
 
   ## finally, collect distances below cutoff
-  inds <- which(dm <= cut[2], arr.ind=TRUE)
+  inds.cut2 <- which(dm <= cut[2], arr.ind=TRUE)
 
-  if(!length(inds)>0) {
-    cat(" no atom distances within provided cutoff range")
+  if(!length(inds.cut2)>0) {
+    cat(" no atom distances within provided cutoff range\n")
     return(NULL)
   }
 
-  ## atom numbers
-  atoms.a <- as.numeric(pdb$atom$eleno[a.inds$atom][inds[,1]])
-  atoms.b <- as.numeric(pdb$atom$eleno[b.inds$atom][inds[,2]])
+  ## atom indices  
+  atoms.a <- which(all.atoms %in% rownames(dm))[ inds.cut2[,1] ]
+  atoms.b <- which(all.atoms %in% colnames(dm))[ inds.cut2[,2] ]
 
-    
   inds <- which(dm <= cut[2])
   out <- list(atom.a = atoms.a,
               resno.a = pdb$atom$resno[atoms.a],
               elety.a = pdb$atom$elety[atoms.a],
-              ##chain.a = pdb$atom$chain[atoms.a],
+              chain.a = pdb$atom$chain[atoms.a],
               
               atom.b = atoms.b,
               resno.b = pdb$atom$resno[atoms.b],
-              elety.b = pdb$atom$elety[atoms.a],
-              ##chain.b = pdb$atom$chain[atoms.b],
+              elety.b = pdb$atom$elety[atoms.b],
+              chain.b = pdb$atom$chain[atoms.b],
               d = round(dm[inds], 2),
               
               r1 = round(dm[inds], 2) + r[1],

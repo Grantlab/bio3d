@@ -15,8 +15,9 @@ atom.select(\dots)
 \method{atom.select}{pdb}(pdb, string = NULL,
                           type  = NULL, eleno = NULL, elety = NULL,
                           resid = NULL, chain = NULL, resno = NULL,
-                          segid = NULL, operator = "AND",
-                          inverse = FALSE, value = FALSE, verbose=FALSE, \dots)
+                          insert = NULL, segid = NULL,
+                          operator = "AND", inverse = FALSE,
+                          value = FALSE, verbose=FALSE, \dots)
 
 \method{atom.select}{prmtop}(prmtop, ...)
 
@@ -37,6 +38,9 @@ atom.select(\dots)
   \item{resid}{ a character vector of residue name identifiers. }
   \item{chain}{ a character vector of chain identifiers. }
   \item{resno}{ a numeric vector of residue numbers. }
+  \item{insert}{ a character vector of insert identifiers. Non-insert 
+    residues can be selected with \code{NA} or \sQuote{} values. The default value 
+    of \code{NULL} will select both insert and non-insert residues. }
   \item{segid}{ a character vector of segment identifiers. }
   \item{operator}{ a single element character specifying either the AND
     or OR operator by which individual selection components should be
