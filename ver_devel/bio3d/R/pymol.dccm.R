@@ -46,8 +46,8 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
     stop("cartesian coordinates missing")
 
   if(is.matrix(radius)) {
-    if(!all(dim(cij), dim(radius)))
-      stop("dimension mismatch. provide a 'radius' matrix of the same dimensions as 'dccm'")
+    if(!all(dim(dccm) == dim(radius)))
+      stop("dimension mismatch. provide a 'radius' matrix with the same dimensions as 'dccm'")
   }    
   
   dims <- dim(dccm)
