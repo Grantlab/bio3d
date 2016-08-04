@@ -44,6 +44,11 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
     stop("correlation matrix must be provided")
   if(missing(xyz))
     stop("cartesian coordinates missing")
+
+  if(is.matrix(radius)) {
+    if(!all(dim(cij), dim(radius)))
+      stop("dimension mismatch. provide a 'radius' matrix of the same dimensions as 'dccm'")
+  }    
   
   dims <- dim(dccm)
   if((length(xyz)/3)!=dims[1L])
@@ -141,6 +146,11 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
       val <- dccm[x,y]           ## corr coeff
       k   <- atom2xyz(inds[j,1]) ## resi 1
       l   <- atom2xyz(inds[j,2]) ## resi 2
+
+      if(is.matrix(w))
+        w2 <- abs(w[x, y])
+      else
+        w2 <- w
       
       if(pymol) {
         a <- paste(xyz[k], collapse=",")
@@ -154,7 +164,7 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
         col <- round(col/256,4)
         col <- paste(col, collapse=", ")
         
-        str <- paste("obj.extend([CYLINDER", a, b, w, col, col, "])", sep=", ")
+        str <- paste("obj.extend([CYLINDER", a, b, w2, col, col, "])", sep=", ")
         scr <- c(scr, str)
       }
       else {
