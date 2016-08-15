@@ -39,9 +39,15 @@ dccm.local.xyz(trj, pdb, radius=9, basin.grp=NULL, write.average=FALSE, ncore=1)
  vector is specified, where M is the number of frames
  and N the number of residues) the pearson correlations are calculated,
  resulting in a NxN correlation matrix. For more details, see the
- reference XXX.
+ reference Balabin, I.A. et al. (2009).
   
 }  
+
+\references{
+  Balabin, I.A. et al. (2009) \emph{PNAS} \bold{106(34)}, 14253--14258.  
+
+  Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
+}
 
 \author{ Guido Scarabelli and Xin-Qiu Yao }
 
