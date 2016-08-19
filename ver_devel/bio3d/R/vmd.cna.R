@@ -5,7 +5,7 @@ vmd.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
                      radius=table(x$communities$membership)/5,
                      alpha=1,
                      vmdfile="network.vmd", pdbfile="network.pdb",
-                     launch=FALSE) {
+                     full=FALSE, launch=FALSE) {
 
   ## Draw a cna network in VMD
 
@@ -105,23 +105,67 @@ vmd.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
   ##- Lets get drawing
   ##radius = V(x$community.network)$size
   ###radius = table(x$raw.communities$membership)/5
-  scr <- c(scr, .vmd.sphere( layout, radius=radius, col=col.sphere))
+  if(!full)  {
+      scr <- c(scr, .vmd.sphere( layout, radius=radius, col=col.sphere))
 
-  ## Edges
-###edge.list <- unlist2(get.adjlist(x$community.network))
-###start.no <- as.numeric(names(edge.list))
-###end.no <- as.numeric((edge.list))
-###inds <- which(end.no > start.no)
-###start <- layout[start.no[inds],]
-###end <- layout[end.no[inds],]
-  edge.list <- igraph::get.edges(x$community.network, 1:length(igraph::E(x$community.network)))
-  start <- layout[edge.list[,1],]
-  end <- layout[edge.list[,2],]
-  
-  ###weights=E(x$community.network)$weight ##/0.2
-  scr <- c(scr, .vmd.lines( start=start, end=end,
-                           radius=weights, col=col.lines))
+      ## Edges
+      ##edge.list <- unlist2(get.adjlist(x$community.network))
+      ##start.no <- as.numeric(names(edge.list))
+      ##end.no <- as.numeric((edge.list))
+      ##inds <- which(end.no > start.no)
+      ##start <- layout[start.no[inds],]
+      ##end <- layout[end.no[inds],]
+      edge.list <- igraph::get.edges(x$community.network, 1:length(igraph::E(x$community.network)))
+      start <- layout[edge.list[,1],]
+      end <- layout[edge.list[,2],]
+      
+      ## weights=E(x$community.network)$weight ##/0.2
+      scr <- c(scr, .vmd.lines(start=start, end=end,
+                               radius=weights, col=col.lines))
+  }
+      
+  ## full network
+  if(full) {
 
+      ## Calpha PDB
+      if(!all(pdb$atom$elety == "CA")) {
+          message("Trimming provided PDB to calpha atoms")
+          pdb.ca <- trim(pdb, "calpha")
+      }
+      else {
+          pdb.ca <- pdb
+      }
+
+      if(length(x$network[1]) != nrow(pdb.ca$atom))
+          stop("Mismatch between provided network and pdb")
+      
+      ## Edges
+      edge.list <- igraph::get.edges(x$network, 1:length(igraph::E(x$network)))
+      start <- matrix(pdb.ca$xyz[, atom2xyz(edge.list[,1]) ], ncol=3, byrow=TRUE)
+      end <- matrix(pdb.ca$xyz[, atom2xyz(edge.list[,2]) ], ncol=3, byrow=TRUE)
+
+      ## Edge colors and radius
+      col2 <- match(igraph::V(x$network)$color, vmd.colors())-1
+      names(col2) = 1:nrow(pdb.ca$atom)
+      
+      col3 = apply(edge.list, 1, function(x) {
+          if(col2[x[1]]==col2[x[2]])
+              col2[x[1]]
+          else
+              16 ## black
+      })
+      
+      rad3 = apply(edge.list, 1, function(x) {
+          if(col2[x[1]]==col2[x[2]])
+              0.1
+          else
+              0.25
+      })
+      
+      scr2 = .vmd.lines(start=start, end=end, radius=rad3, col=col3)
+      scr = c(scr, scr2)
+
+  }
   cat(scr, file=vmdfile, sep="")
 
   ## Output a PDB file with chain color
