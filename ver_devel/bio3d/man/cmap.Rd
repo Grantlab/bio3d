@@ -12,7 +12,7 @@ cmap(\dots)
 \method{cmap}{default}(\dots)
 
 \method{cmap}{xyz}(xyz, grpby = NULL, dcut = 4, scut = 3, pcut=1, binary=TRUE,
-            mask.lower = TRUE, gc.first=FALSE, ncore=1, nseg.scale=1, \dots)
+            mask.lower = TRUE, collapse=TRUE, gc.first=FALSE, ncore=1, nseg.scale=1, \dots)
 
 \method{cmap}{pdb}(pdb, inds = NULL, verbose = FALSE, \dots)
 }
@@ -33,6 +33,7 @@ cmap(\dots)
     two residues are in contact is returned. }
   \item{mask.lower}{ logical, if TRUE the lower matrix elements
     (i.e. those below the diagonal) are returned as NA.}
+  \item{collapse}{ logical, if FALSE an array of contact maps for all frames is returned. }
   \item{gc.first}{ logical, if TRUE will call gc() first before calculation of 
     distance matrix. This is to solve the memory overload problem when \code{ncore > 1}
     and \code{xyz} has many rows, with a bit sacrifice on speed. }
