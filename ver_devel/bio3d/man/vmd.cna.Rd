@@ -1,5 +1,5 @@
-\name{view.cna}
-\alias{view.cna}
+\name{vmd.cna}
+\alias{vmd.cna}
 \title{ View CNA Protein Structure Network Community Output in VMD }
 \description{
   This function generates a VMD scene file and a PDB file that can be 
@@ -8,11 +8,11 @@
   the community protein structure network. 
 }
 \usage{
-view.cna(x, pdb, layout = layout.cna(x, pdb, k=3), 
+vmd.cna(x, pdb, layout = layout.cna(x, pdb, k=3), 
 		col.sphere=NULL, col.lines = "silver", weights = NULL, 
-		radius = table(x$communities$membership)/5, alpha = 1, 
+		radius = table(x$communities$membership)/5, alpha = 1,
 		vmdfile = "network.vmd", pdbfile = "network.pdb", 
-		launch = FALSE)
+                full = FALSE, launch = FALSE)
 }
 \arguments{
   \item{x}{A 'cna' class object such as obtained from \sQuote{cna} function/
@@ -42,9 +42,14 @@ view.cna(x, pdb, layout = layout.cna(x, pdb, k=3),
   \item{pdbfile}{ A character element specifying the output pdb file name to be
     loaded in VMD.
   }
+  \item{full}{ Logical, if TRUE the full all-atom network rather than the
+    clustered community network will be drawn. Intra community edges are
+    colored according to the community membership, while inter community
+    edges are thicker and colored black.
+  }
   \item{launch}{ Logical. If TRUE, a VMD session will be started with
-    the output of \sQuote{view.cna}.
-}
+    the output of \sQuote{vmd.cna}.
+  }
 }
 \details{ 
   This function generates a scaled sphere (communities) and stick (edges) 
@@ -74,7 +79,7 @@ pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 pdb <- read.pdb(pdbfile)
 
 # View cna 
-view.cna(net, pdb, launch=FALSE)
+vmd.cna(net, pdb, launch=FALSE)
 ## within VMD set 'coloring method' to 'Chain' and 'Drawing method' to Tube
 
 
@@ -84,7 +89,7 @@ pdb.gdi = trim.pdb(pdb.gdi, inds=atom.select(pdb.gdi, chain="A", elety="CA"))
 modes.gdi = nma(pdb.gdi)
 cij.gdi = dccm(modes.gdi)
 net.gdi = cna(cij.gdi, cutoff.cij=0.35)
-#view.cna(net.gdi, pdb.gdi, alpha = 0.7, launch=TRUE)
+#vmd.cna(net.gdi, pdb.gdi, alpha = 0.7, launch=TRUE)
 
 detach(hivp)
 

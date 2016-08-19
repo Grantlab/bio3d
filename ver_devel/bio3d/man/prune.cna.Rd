@@ -40,7 +40,7 @@ that is returned also.
 }
 \seealso{
    \code{\link{cna}},  \code{\link{summary.cna}},
-   \code{\link{view.cna}}, \code{\link{plot.cna}}
+   \code{\link{vmd.cna}}, \code{\link{plot.cna}}
 }
 \examples{
 

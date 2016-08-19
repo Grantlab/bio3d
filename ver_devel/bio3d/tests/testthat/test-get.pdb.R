@@ -2,6 +2,7 @@ context("Testing get.pdb()")
 
 test_that("get.pdb() works properly", {
   skip_on_cran()
+  skip_on_travis()
   
    ids <- c("1tag", "1tnd")  # Gt
    tmp <- tempdir()
@@ -17,6 +18,7 @@ test_that("get.pdb() works properly", {
 
 test_that("get.pdb() with ncore>1 works properly", {
   skip_on_cran()
+  skip_on_travis()
      
    ids <- c("1tag", "1tnd", "3v00", "1got")
    tmp1 <- paste(tempdir(), "1", sep="")

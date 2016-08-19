@@ -6,7 +6,7 @@ function(file, rm.dup=TRUE, to.upper=FALSE, to.dash=TRUE) {
   ## Version   0.3 ... Thu Apr 26 19:17:09 PDT 2007
   ##                    uses scan instead of read.table
   
-  raw.fa <- scan(file, what=character(0), sep="\n", quiet = TRUE)
+  raw.fa <- scan(file, what=character(0), sep="\n", quiet = TRUE, na.strings='')
   ind <- grep(">", raw.fa) ## seq id lines
   if(length(ind) == 0) {
     stop("read.fasta: no '>' id lines found, check file format")

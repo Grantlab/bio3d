@@ -1,3 +1,24 @@
+HELIX    1   1 GLY A   86  THR A   91  1                                   6
+HELIX    2   2 GLN A   92  GLY A   94  5                                   3
+HELIX    3   3 GLY B   86  THR B   91  1                                   6
+HELIX    4   4 GLN B   92  GLY B   94  5                                   3
+SHEET    1   1 3 THR B  96  ASN B  98  0
+SHEET    2   1 3 THR A  96  ASN A  98 -1  N  THR A  96   O  ASN B  98
+SHEET    3   1 3 GLN B   2  THR B   4 -1  N  ILE B   3   O  LEU A  97
+SHEET    1   5 7 GLY A  52  ILE A  66  0
+SHEET    2   5 7 LEU A  10  ILE A  15 -1  O  LYS A  14   N  GLU A  65
+SHEET    3   5 7 GLN A  18  LEU A  24 -1  O  GLN A  18   N  ILE A  15
+SHEET    4   5 7 ILE A  84  ILE A  85  1  N  ILE A  85   O  LEU A  23
+SHEET    5   5 7 VAL A  32  LEU A  33 -1  O  VAL A  32   N  ILE A  84
+SHEET    6   5 7 HIS A  69  VAL A  77  1  O  LEU A  76   N  LEU A  33
+SHEET    7   5 7 GLY A  52  ILE A  66 -1  N  ARG A  57   O  VAL A  77
+SHEET    1  14 7 GLY B  52  ILE B  66  0
+SHEET    2  14 7 LEU B  10  ILE B  15 -1  O  LYS B  14   N  GLU B  65
+SHEET    3  14 7 GLN B  18  LEU B  24 -1  O  GLN B  18   N  ILE B  15
+SHEET    4  14 7 ILE B  84  ILE B  85  1  N  ILE B  85   O  LEU B  23
+SHEET    5  14 7 VAL B  32  LEU B  33 -1  O  VAL B  32   N  ILE B  84
+SHEET    6  14 7 HIS B  69  VAL B  77  1  O  LEU B  76   N  LEU B  33
+SHEET    7  14 7 GLY B  52  ILE B  66 -1  N  ARG B  57   O  VAL B  77
 ATOM      1  CA  PRO A   1      51.842  59.784  -6.815  1.00  0.00          
 ATOM      2  CA  GLN A   2      51.577  59.564  -2.997  1.00  0.00          
 ATOM      3  CA  ILE A   3      48.107  57.932  -2.171  1.00  0.00          

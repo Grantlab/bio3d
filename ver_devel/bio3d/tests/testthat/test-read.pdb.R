@@ -41,6 +41,7 @@ test_that("read.pdb() reads a normal pdb file", {
 
 test_that("read.pdb() reads and stores data properly", {
   skip_on_cran()
+  skip_on_travis()
   
   datdir <- tempdir()
   invisible(capture.output(get.pdb(c("3DRC", "1P3Q", "1SVK", "1L2Y"), path=datdir,
@@ -116,6 +117,7 @@ test_that("read.pdb() reads and stores data properly", {
 
 test_that("read.pdb() reads PDB with , in atom names", {
   skip_on_cran()
+  skip_on_travis()
 
   datdir <- tempdir()
   invisible(capture.output(get.pdb("1H5T", path=datdir,

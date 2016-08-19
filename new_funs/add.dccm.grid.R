@@ -83,7 +83,7 @@ add.dccm.grid <- function(x, fill.col=NA, helix.col="purple", sheet.col="yellow"
   }
 
   ##- For SSE objects
-  if(class(x) == "dssp") {
+  if(inherits(x, "sse")) {
     start <- c(x$helix$start, x$sheet$start)
     length <- c(x$helix$length, x$sheet$length)
     
@@ -92,20 +92,15 @@ add.dccm.grid <- function(x, fill.col=NA, helix.col="purple", sheet.col="yellow"
       fill.col <- c(rep(helix.col, length(x$helix$start)),
                     rep(sheet.col, length(x$sheet$start)) )
     }
-  }  
-
+  }  else if(is.list(x)) {
   ##- For other list objects
-  if(class(x) == "list") {
     start <- x$start
     length <- x$length
-  }
-
+  } else if(is.matrix(x)) {
   ##- For matrix objects - e.g. from bounds()
-  if(class(x) =="matrix") {
     start  <- x[,"start"]
     length <- x[,"length"]
   }
-
 
   ##-- Filter out short segments based on input 'segment.min'
   if(segment.min.exclusion) {
@@ -118,4 +113,3 @@ add.dccm.grid <- function(x, fill.col=NA, helix.col="purple", sheet.col="yellow"
   ## Draw
   draw.box(start, length, fill.col=fill.col, alpha=alpha)
 }
-

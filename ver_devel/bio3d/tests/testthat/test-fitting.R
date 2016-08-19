@@ -58,7 +58,12 @@ test_that("Fitting still works", {
 
 test_that("struct.aln still works", {
   skip_on_cran()
-  
+  skip_on_travis()
+
+  if(!check.utility('muscle')) {
+     skip('Need MUSCLE installed to run this test')
+  }
+
   ## Simple test with PDB ID 1HEL
   file.a <- system.file("examples/1hel.pdb",package="bio3d")
   file.b <- system.file("examples/1dpx.pdb",package="bio3d")
@@ -80,6 +85,11 @@ test_that("struct.aln still works", {
 # A little bit more tests...
 test_that("fit.xyz() gets the same results as VMD", {
    skip_on_cran()
+   skip_on_travis()
+
+   if(!check.utility('muscle')) {
+      skip('Need MUSCLE installed to run this test')
+   }
 
    invisible(capture.output(pdbs <- pdbaln(c("1tag", "1as0"))))
    inds <- gap.inspect(pdbs$xyz)$f.inds
@@ -98,6 +108,7 @@ test_that("fit.xyz() gets the same results as VMD", {
 
 test_that("fit.xyz() with ncore>1 works properly", {
    skip_on_cran()
+   skip_on_travis()
 
    attach(transducin)
    inds <- unlist(lapply(c("1TAG", "1AS0", "1AS2"), grep, pdbs$id))

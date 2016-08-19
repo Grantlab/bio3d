@@ -1,18 +1,22 @@
 Package: bio3d
 Title: Biological Structure Analysis
-Version: 2.2-2.9000
+Version: 2.2-3.9000
 Author: Barry Grant, Xin-Qiu Yao, Lars Skjaerven, Julien Ide
 VignetteBuilder: knitr
 LinkingTo: Rcpp
 Imports:
     Rcpp,
     parallel,
-    grid
+    grid,
+    graphics,
+    grDevices,
+    stats,
+    utils
 Suggests:
     XML,
     RCurl,
     lattice,
-    ncdf,
+    ncdf4,
     igraph,
     bigmemory,
     knitr,

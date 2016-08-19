@@ -29,7 +29,7 @@ read.ncdf(trjfile, headonly = FALSE, verbose = TRUE, time = FALSE,
 }
 \details{
   Reads a AMBER netCDF format trajectory file with the help of David
-  W. Pierce's (UCSD) ncdf package available from CRAN.
+  W. Pierce's (UCSD) ncdf4 package available from CRAN.
 }
 \value{
    A list of trajectory header data,  a numeric matrix of xyz
@@ -41,7 +41,7 @@ read.ncdf(trjfile, headonly = FALSE, verbose = TRUE, time = FALSE,
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
-  \url{http://www.unidata.ucar.edu/packages/netcdf/}
+  \url{http://www.unidata.ucar.edu/software/netcdf/}
   \url{http://cirrus.ucsd.edu/~pierce/ncdf/}
   \url{http://ambermd.org/formats.html#netcdf}
 }

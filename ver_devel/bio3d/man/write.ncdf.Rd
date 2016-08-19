@@ -17,7 +17,7 @@ write.ncdf(x, trjfile = "R.ncdf", cell = NULL)
 }
 \details{
   Writes an AMBER netCDF (Network Common Data Form) format trajectory
-  file with the help of David W. Pierce's (UCSD) ncdf package available
+  file with the help of David W. Pierce's (UCSD) ncdf4 package available
   from CRAN.
 }
 \value{
@@ -25,7 +25,7 @@ write.ncdf(x, trjfile = "R.ncdf", cell = NULL)
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
-  \url{http://www.unidata.ucar.edu/packages/netcdf/}
+  \url{http://www.unidata.ucar.edu/software/netcdf/}
   \url{http://cirrus.ucsd.edu/~pierce/ncdf/}
   \url{http://ambermd.org/formats.html#netcdf}
 }

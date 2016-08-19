@@ -36,6 +36,8 @@ test_that("Correlation matrix from XYZ (dccm.xyz)", {
   expect_that(cm[1,3], equals(cm[3,1]))
 
   ## Check multicore DCCM
+  skip_on_travis()
+
   invisible(capture.output(cm.mc <- dccm(trj, ncore=NULL)))
   expect_that(cm, equals(cm.mc, tolerance=1e-6))
   
@@ -59,6 +61,8 @@ test_that("Correlation matrix from PCA (dccm.pca)", {
   expect_that(cm, equals(cm2, tolerance=1e-6))
 
   ## Check multicore DCCM
+  skip_on_travis()
+
   invisible(capture.output(cm.mc <- dccm(pca, ncore=NULL)))
   expect_that(cm, equals(cm.mc, tolerance=1e-6))
   

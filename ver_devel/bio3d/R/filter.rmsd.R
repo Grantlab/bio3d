@@ -1,5 +1,5 @@
 filter.rmsd <- function(xyz=NULL, rmsd.mat=NULL, cutoff=0.5, fit=TRUE, verbose=TRUE,
-                        inds=NULL, ...) {
+                        inds=NULL, method="complete", ...) {
 
   # k<-filter.rmsd(xyz=pdbs$xyz, cutoff=0.5)
   # k<-filter.rmsd(rmsd.mat=k$rmsd.mat, cutoff=2.0)
@@ -17,7 +17,7 @@ filter.rmsd <- function(xyz=NULL, rmsd.mat=NULL, cutoff=0.5, fit=TRUE, verbose=T
   }
   
   r.d  <- as.dist(rmsd.mat)
-  tree <- hclust(r.d)
+  tree <- hclust(r.d, method=method)
 
   h <- cutoff
   n <- nrow(tree$merge) + 1

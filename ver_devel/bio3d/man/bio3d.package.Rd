@@ -10,8 +10,8 @@ Utilities for the analysis of protein structure and sequence data.
 \tabular{ll}{
 Package: \tab bio3d\cr
 Type: \tab Package\cr
-Version: \tab 2.2-2\cr
-Date: \tab 2015-03-02\cr
+Version: \tab 2.2-3\cr
+Date: \tab 2015-09-04\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab \url{http://thegrantlab.org/bio3d/}\cr
 }
@@ -43,9 +43,9 @@ Perform normal mode analysis (\code{\link{nma}}, \code{\link{build.hessian}}), e
 mode analysis (\code{\link{nma.pdbs}}), mode comparison
 (\code{\link{rmsip}}) and (\code{\link{overlap}}), atomic fluctuation
 prediction (\code{\link{fluct.nma}}), cross-correlation analysis
-(\code{\link{dccm.nma}}), cross-correlation visualization (\code{\link{view.dccm}}),
+(\code{\link{dccm.nma}}), cross-correlation visualization (\code{\link{pymol.dccm}}),
 deformation analysis (\code{\link{deformation.nma}}), and mode visualization
-(\code{\link{view.modes}}, \code{\link{mktrj.nma}}).
+(\code{\link{pymol.modes}}, \code{\link{mktrj.nma}}).
 
 In addition, various utility functions are provided to facilitate
 manipulation and analysis of biological sequence and structural data

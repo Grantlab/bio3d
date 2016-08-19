@@ -1,4 +1,4 @@
-dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, ncore=1, ...) {
+dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, gc.first=FALSE, ncore=1, ...) {
   ## Parallelized by parallel package
   ncore <- setup.ncore(ncore, bigmem = FALSE)
 
@@ -12,6 +12,8 @@ dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, ncore=1, ...) {
     j <- 1
     out <- vector("list", length=length(r.inds))
     for(i in r.inds) {
+      if(gc.first) gc()
+
       dmi <- .dm.xyz1(xyz[i,], grpby=grpby, scut=scut, mask.lower=mask.lower)
       out[[j]] <- dmi
       j <- j+1
@@ -92,8 +94,11 @@ function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE) {
 
   ##- Mask concetive atoms
   if( is.null(grpby) ) {
-    if (!is.null(scut))
+    if (!is.null(scut)) {
       d[diag.ind(d, n = scut)] = NA
+      if(!mask.lower) 
+         d[lower.tri(d)] = t(d)[lower.tri(d)]
+    }
 
     return(d)
     
