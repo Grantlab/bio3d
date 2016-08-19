@@ -10,9 +10,9 @@
 \usage{
 vmd.cna(x, pdb, layout = layout.cna(x, pdb, k=3), 
 		col.sphere=NULL, col.lines = "silver", weights = NULL, 
-		radius = table(x$communities$membership)/5, alpha = 1, 
+		radius = table(x$communities$membership)/5, alpha = 1,
 		vmdfile = "network.vmd", pdbfile = "network.pdb", 
-		launch = FALSE)
+                full = FALSE, launch = FALSE)
 }
 \arguments{
   \item{x}{A 'cna' class object such as obtained from \sQuote{cna} function/
@@ -42,9 +42,14 @@ vmd.cna(x, pdb, layout = layout.cna(x, pdb, k=3),
   \item{pdbfile}{ A character element specifying the output pdb file name to be
     loaded in VMD.
   }
+  \item{full}{ Logical, if TRUE the full all-atom network rather than the
+    clustered community network will be drawn. Intra community edges are
+    colored according to the community membership, while inter community
+    edges are thicker and colored black.
+  }
   \item{launch}{ Logical. If TRUE, a VMD session will be started with
     the output of \sQuote{vmd.cna}.
-}
+  }
 }
 \details{ 
   This function generates a scaled sphere (communities) and stick (edges) 
