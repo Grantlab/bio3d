@@ -62,7 +62,10 @@ pymol(\dots)
   \item{step}{ binning interval of cross-correlation coefficents. }
   \item{omit}{ correlation coefficents with values (0-omit, 0+omit) will
     be omitted from visualization. }
-  \item{radius}{ radius of visualized correlations. }
+  \item{radius}{ numeric, radius of visualized correlation cylinders in
+    PyMol. Alternatively, a matrix with the same dimesions as
+    \code{dccm} can be provided, e.g. to draw cylinders with radii
+    associated to the pairwise correlation value. }
   \item{\dots}{ arguments passed to function \code{pymol.modes} for
     \sQuote{nma} and \sQuote{pca} objects. }
 }
