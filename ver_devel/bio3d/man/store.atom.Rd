@@ -5,7 +5,7 @@
   Not intended for public usage
 }
 \usage{
-store.atom(pdb)
+store.atom(pdb=NULL)
 }
 \arguments{
   \item{pdb}{ A pdb object as obtained from read.pdb }
@@ -15,7 +15,8 @@ store.atom(pdb)
   tested.  Hence it is not yet recommended for public usage.
 }
 \value{
-  Returns a matrix of all-atom data
+  Returns a matrix of all-atom data. If \code{pdb=NULL}, returns the default 
+  atom names to be stored. 
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
