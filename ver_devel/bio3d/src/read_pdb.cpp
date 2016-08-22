@@ -207,7 +207,12 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
 	  insert.push_back(trim(line.substr(26,1)));
 	  o.push_back(stringToDouble(trim(line.substr(54,6))));
 	  b.push_back(stringToDouble(trim(line.substr(60,6))));
-	  segid.push_back(trim(trim(line.substr(72,4))));
+
+	  try{
+	    segid.push_back(trim(trim(line.substr(72,4))));
+	  } catch(...) {
+	    segid.push_back("");
+	  }
 	  
 	  try{
 	    elesy.push_back(trim(line.substr(76,2)));

@@ -1,12 +1,8 @@
-#### Use Sys.setenv("PKG_CXXFLAGS"="-std=c++11")
-#### when compiling
-
 read.pdb <- function(file, maxlines = -1, multi=FALSE, rm.insert=FALSE, rm.alt=TRUE,
                      ATOM.only=FALSE, verbose=FALSE) {
-  ### hex=FALSE, 
   
   cl <- match.call()
-
+    
   if(missing(file)) {
     stop("read.pdb: please specify a PDB 'file' for reading")
   }
@@ -30,6 +26,9 @@ read.pdb <- function(file, maxlines = -1, multi=FALSE, rm.insert=FALSE, rm.alt=T
     else {
       stop("No input PDB file found: check filename")
     }
+  }
+  else {
+      file <- normalizePath(file)
   }
   
   ## parse PDB file with cpp function
