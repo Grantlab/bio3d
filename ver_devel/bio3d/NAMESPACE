@@ -1,12 +1,11 @@
 #exportPattern("^[[:alpha:]]+")
 exportPattern("^[^\\.]")
 useDynLib(bio3d)
-import(parallel, grid, Rcpp)
 import("graphics")
 import("grDevices")
 import("stats")
 import("utils")
->>>>>>> master
+import(parallel, grid, Rcpp)
 S3method(as.pdb, default)
 S3method(as.pdb, mol2)
 S3method(as.pdb, prmtop)
