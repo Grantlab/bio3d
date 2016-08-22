@@ -21,19 +21,19 @@ test_that("aanma based all-atom NMA works", {
                                         mass=TRUE, temp=300.0)))
  
   ## Check first eigenvector
-  U7 <- c(0.06866314, 0.05545397, -0.00219604,
-          0.03743162, 0.04853997, -0.001929003)
+  U7 <- c(-0.066793729, -0.053883268,  0.001891979,
+          -0.036738304, -0.047565978,  0.001753576)
   nowU7 <- head(modes$U[,7])
   expect_that(nowU7 * mysign(U7, nowU7), equals(U7, tolerance=1e-4))
 
   ## Check second eigenvector
-  U8 <- c(-0.0004398378, -0.006375451, -0.01791086, 
-          -0.02096124,   -0.007711646, -0.02020036 )
+  U8 <- c(-0.0006820437, -0.0063015252, -0.0172583581,
+          -0.0208773865, -0.0077078236, -0.0197741642)
   nowU8 <- head(modes$U[,8])
   expect_that(nowU8 * mysign(U8, nowU8), equals(U8, tolerance=1e-4))
 
   ## Check eigenvalues
-  eival <- c(0.011362, 0.015574, 0.023757, 0.03164, 0.03751, 0.045251)
+  eival <- c(0.012147, 0.016651, 0.025490, 0.034212, 0.040073, 0.048434)
   nowEival <- modes$L[7:12]
   expect_that(nowEival, equals(eival, tolerance=1e-4))
 
@@ -65,19 +65,19 @@ test_that("aanma based all-atom NMA works", {
                                         mass=TRUE, temp=300.0, reduced=TRUE)))
  
   ## Check first eigenvector
-  U7 <- c(0.07243077, 0.06455693, -0.004789346, 
-          0.03705018, 0.05790539, -0.00305091)
+  U7 <- c(-0.059992473, -0.053860808,  0.002632462,
+          -0.038492062, -0.060252657,  0.002212016)
   nowU7 <- head(modes$U[,7])
   expect_that(nowU7 * mysign(U7, nowU7), equals(U7, tolerance=1e-4))
 
   ## Check second eigenvector
-  U8 <- c(-0.01133821, -0.003806995, 0.0262246, 
-           0.01619017, -0.002352164, 0.02449826)
+  U8 <- c(-0.008837969, -0.003401558,  0.018160517, 
+           0.018834639, -0.002279249,  0.022343009)
   nowU8 <- head(modes$U[,8])
   expect_that(nowU8 * mysign(U8, nowU8), equals(U8, tolerance=1e-4))
 
   ## Check eigenvalues
-  eival <- c(0.003232, 0.004269, 0.005667, 0.008636, 0.009515, 0.010767)
+  eival <- c(0.005865, 0.007781, 0.010644, 0.015755, 0.019162, 0.020037)
   nowEival <- modes$L[7:12]
   expect_that(nowEival, equals(eival, tolerance=1e-4))
 
@@ -88,7 +88,7 @@ test_that("aanma based all-atom NMA works", {
   
   expect_that(all(round(c(modes$L[1:6]), 6)==0), equals(TRUE))
 
- 
+
   ###################################################################
   #
   # Test with rtb = TRUE 
@@ -100,19 +100,19 @@ test_that("aanma based all-atom NMA works", {
                                         mass=TRUE, temp=300.0, rtb=TRUE)))
  
   ## Check first eigenvector
-  U7 <- c(0.06890201, 0.05549496, -0.001374399, 
-          0.03701697, 0.04819402, -0.001895817)
+  U7 <- c(0.067011206,  0.053922543, -0.001093240,
+          0.036319837,  0.047227389, -0.001719102)
   nowU7 <- head(modes$U[,7])
   expect_that(nowU7 * mysign(U7, nowU7), equals(U7, tolerance=1e-4))
 
   ## Check second eigenvector
-  U8 <- c(0.0005610636, 0.006274672, 0.0171175, 
-          0.0208543, 0.007827309, 0.01999255)
+  U8 <- c(0.0007543764, 0.0061986220, 0.0164859315,
+          0.0207461840, 0.0078183773, 0.0195714639)
   nowU8 <- head(modes$U[,8])
   expect_that(nowU8 * mysign(U8, nowU8), equals(U8, tolerance=1e-4))
 
   ## Check eigenvalues
-  eival <- c(0.011646, 0.016051, 0.024595, 0.034361, 0.038952, 0.047275)
+  eival <- c(0.012450, 0.017159, 0.026374, 0.037100, 0.041601, 0.050559)
   nowEival <- modes$L[7:12]
   expect_that(nowEival, equals(eival, tolerance=1e-4))
 
