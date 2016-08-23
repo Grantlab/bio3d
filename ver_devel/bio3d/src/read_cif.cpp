@@ -10,7 +10,7 @@ using namespace std;
 using namespace Rcpp;
 
 // [[Rcpp::export('.read_cif')]]
-List read_cif(std::string filename, bool multi=false, bool hex=false, int maxlines=-1, bool atoms_only=false) {
+List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
   // out is a List object
   Rcpp::List out;
 
@@ -114,6 +114,14 @@ List read_cif(std::string filename, bool multi=false, bool hex=false, int maxlin
 	//cout << tmps;
 	//cout << "\n";
 
+	// include here check for model number as in read_pdb.cpp
+	// add checks for "?"
+	models = stringToInt(tmp_vec[25]);
+	if(!multi && models > 1) {
+	  models=1;
+	  break;
+	}
+	
 	// read coordinates
 	double tmpx = stringToDouble(tmp_vec[10]);
 	double tmpy = stringToDouble(tmp_vec[11]);
@@ -124,10 +132,6 @@ List read_cif(std::string filename, bool multi=false, bool hex=false, int maxlin
 	xyz.push_back(tmpy);
 	xyz.push_back(tmpz);
 
-	// include here check for model number as in read_pdb.cpp
-	// add checks for "?"
-	models = stringToInt(tmp_vec[25]);
-	  
 	// only store other items for first MODEL
 	if(models == 1) {
 	  natoms++;
@@ -186,8 +190,8 @@ List read_cif(std::string filename, bool multi=false, bool hex=false, int maxlin
 	  //_atom_site.pdbx_PDB_model_num
 	  model.push_back(stringToInt(tmp_vec[25]));
 	  
-	} // if(models < 2) {
-      } // if(line.substr(0,4)=="ATOM" 
+	} 
+      } 
     } // while ( getline (myfile,line) ) {
     
     mystream.close();
