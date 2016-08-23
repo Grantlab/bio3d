@@ -6,8 +6,8 @@
   coordinates, residue numbers, residue type and B-factors.
 }
 \usage{
-read.all(aln, prefix = "", pdbext = "", sel = NULL, compact = TRUE, 
-         ncore = NULL, ...)
+read.all(aln, prefix = "", pdbext = "", sel = NULL, rm.wat=TRUE, rm.ligand=FALSE,
+         compact = TRUE, ncore = NULL, ...)
 }
 
 \arguments{
@@ -17,6 +17,8 @@ read.all(aln, prefix = "", pdbext = "", sel = NULL, compact = TRUE,
   \item{pdbext}{ the file name extention of the PDB files. }
   \item{sel}{ a selection string detailing the atom type data to store
     (see function store.atom) }
+  \item{rm.wat}{logical, if TRUE water atoms are removed. }
+  \item{rm.ligand}{logical, if TRUE ligand atoms are removed. }
   \item{compact}{ logical, if TRUE the number of atoms stored for each aligned
     residue varies according to the amino acid type. If FALSE, the constant 
     maximum possible number of atoms are stored for all aligned residues. }
@@ -53,6 +55,7 @@ read.all(aln, prefix = "", pdbext = "", sel = NULL, compact = TRUE,
   \item{all.resno}{numeric matrix of aligned residue numbers. }
   \item{all.grpby}{numeric vector indicating the group of atoms belonging to
     the same aligned residue. }
+  \item{all.hetatm}{a list of \sQuote{pdb} objects for non-protein atoms. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.

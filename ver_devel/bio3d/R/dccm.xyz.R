@@ -4,8 +4,12 @@ function(x, reference=NULL, grpby=NULL, ncore=1, nseg.scale=1, ... ) {
   # Parallelized by parallel package (Wed Dec 12 18:36:39 EST 2012)
   ncore <- setup.ncore(ncore)
 
-  if(is.null(reference)) ref = colMeans(xyz)
-  else ref = reference
+  if(is.null(reference)) {
+     ref = colMeans(xyz)
+  } 
+  else {
+     ref = reference
+  }
   dxyz  <- sweep(xyz, 2, ref)
 
   covmat <- cov(dxyz)

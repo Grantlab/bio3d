@@ -6,7 +6,7 @@ cmap.default <- function(...)
 
 cmap.xyz <-
 function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, binary=TRUE, mask.lower = TRUE,
-         gc.first = FALSE, ncore=1, nseg.scale=1, ...) {
+         collapse=TRUE, gc.first = FALSE, ncore=1, nseg.scale=1, ...) {
 
   # Parallelized by parallel package (Mon Apr 22 16:32:19 EDT 2013)
   ncore <- setup.ncore(ncore, bigmem = TRUE)
@@ -72,20 +72,37 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, binary=TRUE, mask.lower = TRUE
             return(as.numeric(dmat[!lower.tri(dmat)] < dcut))
         }) 
      }
-      
+
       rm(xyz)
       if(gc.first) gc()
       
-      cmap.t <- rowMeans(do.call(cbind, cmap.list))
-      
+     if(collapse) {
+       cmap.t <- rowMeans(do.call(cbind, cmap.list), na.rm=TRUE)
+       cmap.t[!is.finite(cmap.t)] <- NA
+
       rm(cmap.list)
       if(gc.first) gc()
       
-     if(binary) cmap.t <- as.numeric(cmap.t >= pcut )
-     cont.map <- matrix(NA, nrow=nres, ncol=nres)
-     cont.map[!lower.tri(cont.map)] <- cmap.t
-     if(!mask.lower) 
+       if(binary) cmap.t <- as.numeric(cmap.t >= pcut )
+       cont.map <- matrix(NA, nrow=nres, ncol=nres)
+       cont.map[!lower.tri(cont.map)] <- cmap.t
+       if(!mask.lower) 
          cont.map[lower.tri(cont.map)] <- t(cont.map)[lower.tri(cont.map)]
+     }
+     else {
+       cont.map <- array(NA, dim=c(nres, nres, nrow(xyz)))
+       cmap.t <- matrix(NA, nres, nres)
+       for(i in 1:nrow(xyz)) {
+         cmap.t[!lower.tri(cmap.t)] <- cmap.list[[i]]
+         if(!mask.lower)
+           cmap.t[lower.tri(cmap.t)] <- t(cmap.t)[lower.tri(cmap.t)]
+         cont.map[,,i] <- cmap.t
+       }
+
+      rm(cmap.list)
+      if(gc.first) gc()
+      
+     }
       
       rm(cmap.t)
       if(gc.first) gc()

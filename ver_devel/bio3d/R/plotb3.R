@@ -13,6 +13,8 @@ plotb3 <- function(x, resno=NULL, rm.gaps = FALSE, type="h",
   ## Check for gap positions 
   gaps.pos = gap.inspect(x)
   if(is.matrix(x)) x = x[1, ]   ## should support matrix in future
+  if(!is.vector(x))
+    stop('Input x should be a numeric vector')
 
   if(!is.null(resno)) {
     if(is.pdb(resno)) {
