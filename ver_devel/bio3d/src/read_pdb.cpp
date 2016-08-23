@@ -10,7 +10,8 @@ using namespace std;
 using namespace Rcpp;
 
 // [[Rcpp::export('.read_pdb')]]
-List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlines=-1, bool atoms_only=false) {
+List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlines=-1,
+	      bool atoms_only=false) {
   // out is a List object
   Rcpp::List out;
 
@@ -61,6 +62,9 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
   // store REMARK 350 lines
   vector<string> remark350;
 
+  // store HEADER
+  string header;
+  
   // temp variables
   string tmp;
   int tmp_eleno;
@@ -73,51 +77,25 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
   igzstream mystream;
   mystream.open(filename.c_str());
   
-  /**
-  if (filename.find(".gz") != std::string::npos) {
-     std::cout << "gzipped file detected\n";
-     
-    igzstream gzstream;
-    gzstream.open(filename.c_str());
-    if (gzstream.is_open())  {
-      while ( getline (gzstream, line) ) {
-	raw_lines.push_back(line);
-      }
-      gzstream.close();
-    }
-  }
-  else {
-    std::cout << "raw text file detected\n";
-    
-    ifstream rawstream;
-    rawstream.open(filename.c_str());
-    if (rawstream.is_open())  {
-      std::cout << "open\n";
-      while ( getline (rawstream, line) ) {
-	std::cout << line;
-	raw_lines.push_back(line);
-      }
-      rawstream.close();
-    }
-  }
-  */
-  
-  //for ( int line_nr = 0; line_nr < raw_lines.size(); line_nr++ ) {
-  //  line = raw_lines[line_nr];
-  //  std::cout << line;
   
   if (mystream.is_open())  {
+
+    // read line by line
     while ( getline (mystream, line) ) {
   
       // break if user has provided maxlines argument
       counter++;
-      
       if(maxlines != -1 && counter > maxlines) {
 	break;
       }
+
+      // output header only if verbose=true
+      if(line.substr(0,6)=="HEADER") {
+	header = line;
+      }
       
-      // keep of track of number of models in PDB file
-      if(line.substr(0,5)=="MODEL") {
+      // keep track of number of models in PDB file
+      else if(line.substr(0,5)=="MODEL") {
 	models+=1;
 	
 	// break out of loop if we dont want multi-model
@@ -289,7 +267,9 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
 					      Rcpp::Named("sense")=sheet_sense
 					      ),
 
-			   Rcpp::Named("remark350")=remark350
+			   Rcpp::Named("remark350")=remark350,
+
+			   Rcpp::Named("header")=header
 			   
 			   );
   

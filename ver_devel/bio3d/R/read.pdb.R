@@ -1,113 +1,134 @@
 read.pdb <- function(file, maxlines = -1, multi=FALSE, rm.insert=FALSE, rm.alt=TRUE,
-                     ATOM.only=FALSE, verbose=FALSE) {
+                     ATOM.only=FALSE, verbose=TRUE) {
   
-  cl <- match.call()
+    cl <- match.call()
     
-  if(missing(file)) {
-    stop("read.pdb: please specify a PDB 'file' for reading")
-  }
-  
-  if(!is.logical(multi)) {
-    stop("read.pdb: 'multi' must be logical TRUE/FALSE")
-  }
-
-  ##- Check if file exists locally or on-line
-  toread <- file.exists(file)
-  if(substr(file,1,4)=="http") {
-    toread <- TRUE
-  }
-
-  ## Check for 4 letter code and possible on-line file
-  if(!toread) {
-    if(nchar(file)==4) {
-      cat("  Note: Accessing on-line PDB file\n")
-      file <- get.pdb(file, path=tempdir(), quiet=TRUE)
+    if(missing(file)) {
+        stop("read.pdb: please specify a PDB 'file' for reading")
     }
-    else {
-      stop("No input PDB file found: check filename")
-    }
-  }
-  else {
-      file <- normalizePath(file)
-  }
-  
-  ## parse PDB file with cpp function
-  pdb <- .read_pdb(file, multi=multi, hex=FALSE, maxlines=maxlines, atoms_only=ATOM.only)
-  if(!is.null(pdb$error))
-    stop(paste("Error in reading PDB file", file))
-  else
-    class(pdb) <- c("pdb", "sse")
-
-  ## convert xyz to matrix
-  if(pdb$models > 1)
-    pdb$xyz <- matrix(pdb$xyz, nrow=pdb$models, byrow=TRUE)
-  
-  pdb$xyz <- as.xyz(pdb$xyz)
-  pdb$models <- NULL
-
-  ## set empty strings to NA
-  pdb$atom[pdb$atom==""] <- NA
     
-  ## give names to seqres
-  names(pdb$seqres) <- pdb$seqres_chain
-  pdb$seqres_chain <- NULL
+    if(!is.logical(multi)) {
+        stop("read.pdb: 'multi' must be logical TRUE/FALSE")
+    }
+    
+    ##- Check if file exists locally or on-line
+    putfile <- NULL
+    if(substr(file,1,4)=="http") {
+        ## cpp function can not read from http
+        putfile <- tempfile(fileext=".pdb")
+        rt <- try(download.file(file, putfile, method='internal', quiet = !verbose), silent=TRUE)
+        if(inherits(rt, "try-error")) {
+            file.remove(putfile)
+            stop("File not found at provided URL")
+        }
+        else {
+            file <- putfile
+        }
+    }
+    
+    toread <- file.exists(file)
+    if(toread & basename(file) != file) {
+        file <- normalizePath(file)
+    }
+    
+    ## Check for 4 letter code and possible on-line file
+    if(!toread) {
+        if(nchar(file)==4) {
+            cat("  Note: Accessing on-line PDB file\n")
+            file <- get.pdb(file, path=tempdir(), quiet=TRUE)
+        }
+        else {
+            stop("No input PDB file found: check filename")
+        }
+    }
+    
+    ## parse PDB file with cpp function
+    pdb <- .read_pdb(file, multi=multi, hex=FALSE, maxlines=maxlines, atoms_only=ATOM.only)
+    
+    ## remove temp file if we downloaded it above
+    if(!is.null(putfile)) {
+        file.remove(putfile)
+    }
+    
+    if(verbose)
+        cat(" ", pdb$header, "\n")
+    pdb$header <- NULL
+    
+    if(!is.null(pdb$error))
+        stop(paste("Error in reading PDB file", file))
+    else
+        class(pdb) <- c("pdb", "sse")
+    
+    ## convert xyz to matrix
+    if(pdb$models > 1)
+        pdb$xyz <- matrix(pdb$xyz, nrow=pdb$models, byrow=TRUE)
+    
+    pdb$xyz <- as.xyz(pdb$xyz)
+    pdb$models <- NULL
 
-  ## fix stuff that should be NULL instead of empty vectors
-  if(!length(pdb$helix$start) > 0) {
-    pdb$helix <- NULL
-  }
+    ## set empty strings to NA
+    pdb$atom[pdb$atom==""] <- NA
+    
+    ## give names to seqres
+    names(pdb$seqres) <- pdb$seqres_chain
+    pdb$seqres_chain <- NULL
+    
+    ## fix stuff that should be NULL instead of empty vectors
+    if(!length(pdb$helix$start) > 0) {
+        pdb$helix <- NULL
+    }
+    
+    if(!length(pdb$sheet$start) > 0) {
+        pdb$sheet <- NULL
+    }
+    
+    if(!length(pdb$seqres) > 0)
+        pdb$seqres <- NULL
+    
+    if(!length(pdb$remark350) > 0)
+        pdb$remark350 <- NULL
 
-  if(!length(pdb$sheet$start) > 0) {
-    pdb$sheet <- NULL
-  }
-
-  if(!length(pdb$seqres) > 0)
-    pdb$seqres <- NULL
-
-  if(!length(pdb$remark350) > 0)
+    ## Remove 'Alt records'
+    if (rm.alt) {
+        if ( sum( !is.na(pdb$atom$alt) ) > 0 ) {
+            first.alt <- sort( unique(na.omit(pdb$atom$alt)) )[1]
+            cat(paste("   PDB has ALT records, taking",first.alt,"only, rm.alt=TRUE\n"))
+            alt.inds <- which( (pdb$atom$alt != first.alt) ) # take first alt only
+            if(length(alt.inds)>0) {
+                pdb$atom <- pdb$atom[-alt.inds,]
+                pdb$xyz <- trim.xyz(pdb$xyz, col.inds=-atom2xyz(alt.inds))
+            }
+        }
+    }
+    
+    ## Remove 'Insert records'
+    if (rm.insert) {
+        if ( sum( !is.na(pdb$atom$insert) ) > 0 ) {
+            cat("   PDB has INSERT records, removing, rm.insert=TRUE\n")
+            insert.inds <- which(!is.na(pdb$atom$insert)) # rm insert positions
+            pdb$atom <- pdb$atom[-insert.inds,]
+            pdb$xyz <- trim.xyz(pdb$xyz, col.inds=-atom2xyz(insert.inds))
+        }
+    }
+    
+    if(any(duplicated(pdb$atom$eleno)))
+        warning("duplicated element numbers ('eleno') detected")
+    
+    ## construct c-alpha attribute
+    ca.inds <-  atom.select.pdb(pdb, string="calpha", verbose=FALSE)
+    pdb$calpha <- seq(1, nrow(pdb$atom)) %in% ca.inds$atom
+    
+    ##- Parse REMARK records for storing symmetry matrices to 
+    ##  build biological unit by calling 'biounit()'
+    remark <- .parse.pdb.remark350(pdb$remark350)
     pdb$remark350 <- NULL
-
-  ## Remove 'Alt records'
-  if (rm.alt) {
-    if ( sum( !is.na(pdb$atom$alt) ) > 0 ) {
-      first.alt <- sort( unique(na.omit(pdb$atom$alt)) )[1]
-      cat(paste("   PDB has ALT records, taking",first.alt,"only, rm.alt=TRUE\n"))
-      alt.inds <- which( (pdb$atom$alt != first.alt) ) # take first alt only
-      if(length(alt.inds)>0) {
-        pdb$atom <- pdb$atom[-alt.inds,]
-        pdb$xyz <- trim.xyz(pdb$xyz, col.inds=-atom2xyz(alt.inds))
-      }
-    }
-  }
-
-  ## Remove 'Insert records'
-  if (rm.insert) {
-    if ( sum( !is.na(pdb$atom$insert) ) > 0 ) {
-      cat("   PDB has INSERT records, removing, rm.insert=TRUE\n")
-      insert.inds <- which(!is.na(pdb$atom$insert)) # rm insert positions
-      pdb$atom <- pdb$atom[-insert.inds,]
-      pdb$xyz <- trim.xyz(pdb$xyz, col.inds=-atom2xyz(insert.inds))
-    }
-  }
-  
-  if(any(duplicated(pdb$atom$eleno)))
-    warning("duplicated element numbers ('eleno') detected")
-
-  ## construct c-alpha attribute
-  ca.inds <-  atom.select.pdb(pdb, string="calpha", verbose=FALSE)
-  pdb$calpha <- seq(1, nrow(pdb$atom)) %in% ca.inds$atom
- 
-  ##- Parse REMARK records for storing symmetry matrices to 
-  ##  build biological unit by calling 'biounit()'
-  remark <- .parse.pdb.remark350(pdb$remark350)
-  pdb$remark350 <- NULL
-  pdb$remark <- remark
-
-  ## set call
-  pdb$call <- cl
-
-  ## finished
-  return(pdb)
+    pdb$remark <- remark
+    
+    ## set call
+    pdb$call <- cl
+    
+    ## finished
+    return(pdb)
 }
 
 

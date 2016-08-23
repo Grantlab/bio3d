@@ -1,5 +1,5 @@
 
-read.crd.amber <- function(file) {
+read.crd.amber <- function(file, ...) {
   cl <- match.call()
 
   if(missing(file)) {
