@@ -6,17 +6,15 @@
 using namespace Rcpp;
 
 // read_cif
-List read_cif(std::string filename, bool multi, bool hex, int maxlines, bool atoms_only);
-RcppExport SEXP bio3d_read_cif(SEXP filenameSEXP, SEXP multiSEXP, SEXP hexSEXP, SEXP maxlinesSEXP, SEXP atoms_onlySEXP) {
+List read_cif(std::string filename, int maxlines, bool multi);
+RcppExport SEXP bio3d_read_cif(SEXP filenameSEXP, SEXP maxlinesSEXP, SEXP multiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< bool >::type multi(multiSEXP);
-    Rcpp::traits::input_parameter< bool >::type hex(hexSEXP);
     Rcpp::traits::input_parameter< int >::type maxlines(maxlinesSEXP);
-    Rcpp::traits::input_parameter< bool >::type atoms_only(atoms_onlySEXP);
-    __result = Rcpp::wrap(read_cif(filename, multi, hex, maxlines, atoms_only));
+    Rcpp::traits::input_parameter< bool >::type multi(multiSEXP);
+    __result = Rcpp::wrap(read_cif(filename, maxlines, multi));
     return __result;
 END_RCPP
 }
