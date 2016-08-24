@@ -1,0 +1,2 @@
+vmd <- function(...)
+  UseMethod("vmd")

@@ -5,7 +5,7 @@ vmd.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
                      radius=table(x$communities$membership)/5,
                      alpha=1,
                      vmdfile="network.vmd", pdbfile="network.pdb",
-                     full=FALSE, launch=FALSE) {
+                     full=FALSE, launch=FALSE, ...) {
 
   ## Draw a cna network in VMD
 
