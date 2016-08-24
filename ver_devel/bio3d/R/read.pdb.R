@@ -74,11 +74,27 @@ read.pdb <- function(file, maxlines = -1, multi=FALSE, rm.insert=FALSE, rm.alt=T
     pdb$seqres_chain <- NULL
     
     ## fix stuff that should be NULL instead of empty vectors
-    if(!length(pdb$helix$start) > 0) {
+    if(length(pdb$helix$start) > 0) {
+        ## names are set in cpp func
+        ## names(pdb$helix$start) <- pdb$helix$inserti
+        ## names(pdb$helix$end) <- pdb$helix$inserte
+    }
+    else {
         pdb$helix <- NULL
     }
     
-    if(!length(pdb$sheet$start) > 0) {
+    if(length(pdb$sheet$start) > 0) {
+        ## names(pdb$sheet$start) <- pdb$sheet$inserti
+        ## names(pdb$sheet$end) <- pdb$sheet$inserte
+        
+        ##- remove repeated records for the same strand (e.g. in 1NH0)
+        pa <- paste(pdb$sheet$start, pdb$sheet$inserti, pdb$sheet$chain, sep='_')
+        keep.inds <- which(!duplicated(pa))
+        pdb$sheet <- lapply(pdb$sheet, '[', keep.inds)
+
+        pdb$sheet$inserti <- NULL
+    }
+    else {
         pdb$sheet <- NULL
     }
     

@@ -62,9 +62,9 @@ function (file, maxlines=-1, multi=FALSE,
   split.fields <- function(x) {
      ##- Split a character string for data.frame fwf reading
      ##  First splits a string 'x' according to 'first' and 'last'
-     ##  then re-combines to new string with "," as separator 
+     ##  then re-combines to new string with ";" as separator 
      x <- trim( substring(x, first, last) )
-     paste(x,collapse=",")
+     paste(x,collapse=";")
   } 
 
   is.character0 <- function(x){length(x)==0 & is.character(x)}
@@ -172,6 +172,11 @@ function (file, maxlines=-1, multi=FALSE,
      insert.e <- trim(substring(raw.sheet,38,38))
      names(sheet$start) <- insert.i
      names(sheet$end) <- insert.e
+
+     ##- remove repeated records for the same strand (e.g. in 1NH0)
+     pa <- paste(sheet$start, insert.i, sheet$chain, sep='_')
+     keep.inds <- which(!duplicated(pa))
+     sheet <- lapply(sheet, '[', keep.inds)
   } else {
      sheet <- NULL
   }
@@ -183,7 +188,7 @@ function (file, maxlines=-1, multi=FALSE,
  ## rm.insert=FALSE; rm.alt=TRUE; het2atom=FALSE; verbose=TRUE
 
   atom <- read.table(text=sapply(raw.atom, split.fields), 
-                    stringsAsFactors=FALSE, sep=",", quote='',
+                    stringsAsFactors=FALSE, sep=";", quote='',
                     colClasses=unname(atom.format[!drop.ind,"what"]),
                     col.names=atom.format[!drop.ind,"name"],
                     comment.char="", na.strings="")
@@ -256,5 +261,3 @@ function (file, maxlines=-1, multi=FALSE,
   return(output)
 
 }
-
-

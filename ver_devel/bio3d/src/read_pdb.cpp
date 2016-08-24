@@ -264,7 +264,8 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
 					      Rcpp::Named("start")=sheet_start_out,
 					      Rcpp::Named("end")=sheet_end_out,
 					      Rcpp::Named("chain")=sheet_chain,
-					      Rcpp::Named("sense")=sheet_sense
+					      Rcpp::Named("sense")=sheet_sense,
+					      Rcpp::Named("inserti")=sheet_inserti
 					      ),
 
 			   Rcpp::Named("remark350")=remark350,
