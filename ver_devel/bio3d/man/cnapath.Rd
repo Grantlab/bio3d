@@ -2,7 +2,6 @@
 \alias{cnapath}
 \alias{summary.cnapath}
 \alias{print.cnapath}
-\alias{vmd.cnapath}
 \title{ Suboptimal Path Analysis for Correlation Networks }
 \description{
   Find k shortest paths between a pair of nodes, source and sink, in a correlation 
@@ -13,11 +12,8 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
 \method{summary}{cnapath}(object, \dots, pdb = NULL, label = NULL, col = NULL,
    plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE, weight = FALSE)
 \method{print}{cnapath}(x, \dots)
-vmd.cnapath(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE, 
-   colors = c("blue", "red"), launch = FALSE, \dots)
 }
 \arguments{
-
   \item{cna}{ A \sQuote{cna} object obtained from \code{\link{cna}}. }
   \item{from}{ Integer vector or matrix indicating node id(s) of source. If is matrix
        and \code{to} is NULL, the first column represents source and the second sink. }
@@ -46,24 +42,14 @@ vmd.cnapath(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE,
   \item{normalize}{ Logical, if TRUE node degeneracy is divided by the total 
        (weighted) number of paths. }
   \item{weight}{ Logical, if TRUE each path is weighted by path length in calculating the
-       node degeneracty. }
-
-  \item{x}{ A \sQuote{cnapath} class of object obtained from \code{cnapath}. }
-  \item{out.prefix}{ Prefix for the names of output files, \sQuote{vmd.cnapath.vmd}
-       and \sQuote{vmd.cnapath.pdb}. }
-  \item{spline}{ Logical, if TRUE all paths are displayed as spline curves. }
-  \item{colors}{ Character vector or integer scalar, define path colors. If a
-     character vector, passed to \code{\link{colorRamp}} function to generate the 
-     color scales. If an integer, color all paths the same way with VMD color 
-     ID equal to the integer. }
-  \item{launch}{ Logical, if TRUE VMD will be launched. }
-
+    node degeneracty. }
+  \item{x}{ A 'cnapath' class object as obtained from function \code{cna}.
+  }
   \item{\dots}{ Additional arguments passed to igraph function 
        \code{\link[igraph:get.shortest.paths]{get.shortest.paths}} (in 
        the function \code{cnapath}), passed to \code{summary.cnapath} 
        (in \code{print.cnapath}), as additional paths for 
-       comparison (in \code{summary.cnapath}), or passed to the function 
-       \code{\link{colorRamp}} (in \code{vmd.cnapath}). }
+       comparison (in \code{summary.cnapath}). }
 }
 \value{
   The function \code{cnapath} returns a \sQuote{cnapath} class of list containing 
@@ -81,8 +67,10 @@ vmd.cnapath(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE,
   Yen, J.Y. (1971) \emph{Management Science} \bold{17}, 712--716.
 }
 \author{ Xin-Qiu Yao }
-\seealso{ \code{\link{cna}}, \code{\link{cna.dccm}}, 
-   \code{\link[igraph:get.shortest.paths]{get.shortest.paths}}. }
+\seealso{
+  \code{\link{cna}}, \code{\link{cna.dccm}},
+  \code{\link{vmd.cna}}, \code{\link{vmd.cnapath}}, 
+  \code{\link[igraph:get.shortest.paths]{get.shortest.paths}}. }
 \examples{
 \donttest{
 # Redundant testing excluded

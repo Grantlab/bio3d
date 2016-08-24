@@ -118,3 +118,6 @@ S3method(pymol, nma)
 S3method(pymol, pca)
 S3method(pymol, pdbs)
 S3method(mask, dccm)
+S3method(vmd, cna)
+S3method(vmd, cnapath)
+
