@@ -145,18 +145,29 @@ test_that("read.pdb() (cpp) gives the same results as read.pdb2() (old R version
   
   invisible(capture.output(pdb0 <- read.pdb(file.path(datdir, "1H5T.pdb"))))
   invisible(capture.output(pdb1 <- read.pdb2(file.path(datdir, "1H5T.pdb"))))
-  
-  
   expect_equal(pdb0$atom, pdb1$atom)
   expect_equal(pdb0$xyz, pdb1$xyz)
   expect_equal(pdb0$sheet, pdb1$sheet)
   expect_equal(pdb0$helix, pdb1$helix)
   expect_equal(pdb0$calpha, pdb1$calpha)
+  expect_equal(pdb0$seqres, pdb1$seqres)
   expect_equal(pdb0$remark, pdb1$remark)
 
+  ## 1TOH - more remarks 
+  invisible(capture.output(get.pdb("2TOH", path=datdir,
+                                   overwrite = FALSE, verbose = FALSE)))
+  
+  invisible(capture.output(pdb0 <- read.pdb(file.path(datdir, "2TOH.pdb"))))
+  invisible(capture.output(pdb1 <- read.pdb2(file.path(datdir, "2TOH.pdb"))))
+  expect_equal(pdb0$atom, pdb1$atom)
+  expect_equal(pdb0$xyz, pdb1$xyz)
+  expect_equal(pdb0$sheet, pdb1$sheet)
+  expect_equal(pdb0$helix, pdb1$helix)
+  expect_equal(pdb0$calpha, pdb1$calpha)
+  expect_equal(pdb0$seqres, pdb1$seqres)
+  expect_equal(pdb0$remark, pdb1$remark)
 
   ## multi = TRUE
-  datdir <- tempdir()
   invisible(capture.output(get.pdb("2EYB", path=datdir,
                                    overwrite = FALSE, verbose = FALSE)))
   
@@ -164,11 +175,8 @@ test_that("read.pdb() (cpp) gives the same results as read.pdb2() (old R version
   invisible(capture.output(pdb1 <- read.pdb2(file.path(datdir, "2EYB.pdb"), multi=TRUE)))
   expect_equal(pdb0$xyz, pdb1$xyz)
   expect_equal(pdb0$atom, pdb1$atom)
-
-
   
   ## rm.insert = TRUE
-  datdir <- tempdir()
   invisible(capture.output(get.pdb("1FUJ", path=datdir,
                                    overwrite = FALSE, verbose = FALSE)))
   
@@ -177,10 +185,22 @@ test_that("read.pdb() (cpp) gives the same results as read.pdb2() (old R version
   expect_equal(pdb0$xyz, pdb1$xyz)
   expect_equal(pdb0$atom, pdb1$atom)
 
+  ## rm.alt = TRUE/FALSE
+  invisible(capture.output(get.pdb("1RX2", path=datdir,
+                                   overwrite = FALSE, verbose = FALSE)))
+  
+  invisible(capture.output(pdb0 <- read.pdb(file.path(datdir, "1RX2.pdb"), rm.alt=TRUE)))
+  invisible(capture.output(pdb1 <- read.pdb2(file.path(datdir, "1RX2.pdb"), rm.alt=TRUE)))
+  expect_equal(pdb0$xyz, pdb1$xyz)
+  expect_equal(pdb0$atom, pdb1$atom)
+
+  invisible(capture.output(pdb0 <- read.pdb(file.path(datdir, "1RX2.pdb"), rm.alt=FALSE)))
+  invisible(capture.output(pdb1 <- read.pdb2(file.path(datdir, "1RX2.pdb"), rm.alt=FALSE)))
+  expect_equal(pdb0$xyz, pdb1$xyz)
+  expect_equal(pdb0$atom, pdb1$atom)
 
   ## ATOM.only = TRUE
   if(FALSE) {
-      datdir <- tempdir()
       invisible(capture.output(get.pdb("1FUJ", path=datdir,
                                        overwrite = FALSE, verbose = FALSE)))
       
