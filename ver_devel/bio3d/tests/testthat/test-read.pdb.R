@@ -208,5 +208,15 @@ test_that("read.pdb() (cpp) gives the same results as read.pdb2() (old R version
       invisible(capture.output(pdb1 <- read.pdb2(file.path(datdir, "1FUJ.pdb"), ATOM.only=TRUE)))
       expect_equal(attributes(pdb0), attributes(pdb1))
   }
-  
+
+  ## read PDB with 'insert'
+  invisible(capture.output(get.pdb("1FUJ", path=datdir,
+                                   overwrite = FALSE, verbose = FALSE)))
+  invisible(capture.output(pdb0 <- read.pdb(file.path(datdir, "1FUJ.pdb"))))
+  invisible(capture.output(pdb1 <- read.pdb2(file.path(datdir, "1FUJ.pdb"))))
+  for(i in names(pdb1)) {
+    if(i != 'call') {
+      expect_equal(pdb0[[i]], pdb1[[i]]) 
+    }
+  } 
 })
