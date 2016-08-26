@@ -6,7 +6,7 @@
 }
 \usage{
 get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, gzip = FALSE, 
-     split = FALSE, verbose = TRUE, ncore = 1, ...)
+     split = FALSE, format = "pdb", verbose = TRUE, ncore = 1, ...)
 }
 \arguments{
   \item{ids}{ A character vector of one or more 4-letter PDB
@@ -22,7 +22,9 @@ get.pdb(ids, path = ".", URLonly=FALSE, overwrite = FALSE, gzip = FALSE,
   \item{gzip}{ logical, if TRUE the gzipped PDB will be downloaded and
     extracted locally. }
   \item{split}{ logical, if TRUE \code{\link{pdbsplit}} funciton will be called to split pdb files
-    into separated chains. } 
+    into separated chains. }
+  \item{format}{ format of the data file: \sQuote{pdb} or
+    \sQuote{cif} for PDB and mmCIF file formats, respectively. }
   \item{verbose}{ print details of the reading process. }
   \item{ncore}{ number of CPU cores used to do the calculation.
      \code{ncore>1} requires package \sQuote{parallel} installed. }
