@@ -1,6 +1,7 @@
 \name{atom.select}
 \alias{atom.select}
 \alias{atom.select.pdb}
+\alias{atom.select.mol2}
 \alias{atom.select.prmtop}
 \alias{print.select}
 \title{ Atom Selection from PDB and PRMTOP Structure Objects }
@@ -15,9 +16,16 @@ atom.select(\dots)
 \method{atom.select}{pdb}(pdb, string = NULL,
                           type  = NULL, eleno = NULL, elety = NULL,
                           resid = NULL, chain = NULL, resno = NULL,
-                          insert = NULL, segid = NULL,
+                          insert = NULL, segid = NULL, 
                           operator = "AND", inverse = FALSE,
                           value = FALSE, verbose=FALSE, \dots)
+
+\method{atom.select}{mol2}(mol, string=NULL,
+                           eleno = NULL, elety = NULL,
+                           resid = NULL, chain = NULL, resno = NULL,
+                           statbit = NULL,
+			   operator = "AND", inverse = FALSE,
+                           value = FALSE, verbose=FALSE,  \dots)
 
 \method{atom.select}{prmtop}(prmtop, ...)
 
@@ -52,6 +60,9 @@ atom.select(\dots)
     the matches determined by \code{atom.select} are returned, and if TRUE,
     a \code{pdb} object containing the matching atoms themselves is
     returned. }
+  \item{mol}{ a structure object of class \code{"mol2"}, obtained from
+    \code{\link{read.mol2}}. }
+  \item{statbit}{ a character vector of statbit identifiers. }
   \item{prmtop}{ a structure object of class \code{"prmtop"}, obtained from
     \code{\link{read.prmtop}}. }
   \item{x}{ a atom.select object as obtained from

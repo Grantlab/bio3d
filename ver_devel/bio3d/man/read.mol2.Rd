@@ -77,7 +77,7 @@ cat("\n")
 \dontrun{
 ## Read a single entry MOL2 file
 ## (returns a single object)
-mol <- read.mol2("single.mol2")
+mol <- read.mol2( system.file("examples/aspirin.mol2", package="bio3d") )
 
 ## Short summary of the molecule
 print(mol)
@@ -101,30 +101,30 @@ head(mol$atom[, "charge"])
 
 ## Read a multi-molecule MOL2 file
 ## (returns a list of objects)
-multi.mol <- read.mol2("zinc.mol2")
+#multi.mol <- read.mol2("zinc.mol2")
 
 ## Number of molecules described in file
-length(multi.mol)
+#length(multi.mol)
 
 ## Access ATOM records for the first molecule
-multi.mol[[1]]$atom
+#multi.mol[[1]]$atom
 
 ## Or coordinates for the second molecule
-multi.mol[[2]]$xyz
+#multi.mol[[2]]$xyz
 
 
 
 ## Process output from docking (e.g. DOCK)
 ## (typically one molecule with many conformations)
 ## (returns one object, but xyz in matrix format)
-dock <- read.mol2("dock.mol2")
+#dock <- read.mol2("dock.mol2")
 
 ## Reference PDB file (e.g. X-ray structure)
-pdb <- read.pdb("dock_ref.pdb")
+#pdb <- read.pdb("dock_ref.pdb")
 
 ## Calculate RMSD of docking modes
-sele <- atom.select(dock, "noh")
-rmsd(pdb$xyz, dock$xyz, b.inds=sele$xyz)
+#sele <- atom.select(dock, "noh")
+#rmsd(pdb$xyz, dock$xyz, b.inds=sele$xyz)
 }
 }
 \keyword{ IO }

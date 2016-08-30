@@ -26,7 +26,7 @@ atom.select.mol2 <- function(mol, string=NULL,
     pdb <- as.pdb(mol)
 
     if(!is.mol2(mol))
-        stop("'mol2' must be an object of class 'mol2'")
+        stop("'mol' must be an object of class 'mol2'")
     
     ## check input operator
     op.tbl <- c(rep("AND",3), rep("OR",4))
@@ -42,6 +42,11 @@ atom.select.mol2 <- function(mol, string=NULL,
             stop("Unknown 'string' keyword. See documentation for allowed values")
     }
 
+    ## verbose message output
+    if(verbose) cat("\n")
+    .verboseout <- function(M, type) {
+        cat(" .. ", sprintf("%08s", length(which(M))), " atom(s) from '", type, "' selection \n", sep="")
+    }
     
     ## combine logical vectors
     .combinelv <- function(L, M, operator) {

@@ -1,4 +1,4 @@
-write.mol2 <- function(mol, file="R.mol2", append=TRUE) {
+write.mol2 <- function(mol, file="R.mol2", append=FALSE) {
 
     if(!is.mol2(mol))
         stop("input should be of class 'mol2' as obtained by 'read.mol2'")
@@ -6,11 +6,13 @@ write.mol2 <- function(mol, file="R.mol2", append=TRUE) {
     if(any(is.na(mol$atom))) {
         mol$atom[ is.na(mol$atom) ] = ""
     }
-    if(any(is.na(mol$bond))) {
-        mol$bond[ is.na(mol$bond) ] = ""
+    if(!is.null(mol$bond)) {
+        if(any(is.na(mol$bond)))
+            mol$bond[ is.na(mol$bond) ] = ""
     }
-    if(any(is.na(mol$substructure))) {
-        mol$substructure[ is.na(mol$substructure) ] = ""
+    if(!is.null(mol$substructure)) {
+        if(any(is.na(mol$substructure)))
+            mol$substructure[ is.na(mol$substructure) ] = ""
     }
   
     raw.lines <- c()
@@ -40,35 +42,36 @@ write.mol2 <- function(mol, file="R.mol2", append=TRUE) {
                        )
     }
 
-    raw.lines <- c(raw.lines, "@<TRIPOS>BOND")
-    fmt <- "%7s %5s %5s %-5s "
-    for ( i in 1:nrow(mol$bond) ) {
-        raw.lines <- c(raw.lines, 
-                       paste0(
-                           sprintf(fmt,
-                                   mol$bond[i, 1], mol$bond[i, 2],
-                                   mol$bond[i, 3], mol$bond[i, 4]
-                                   ), mol$bond[1, 5])
+    if(!is.null(mol$bond)) {
+        raw.lines <- c(raw.lines, "@<TRIPOS>BOND")
+        fmt <- "%7s %5s %5s %-5s "
+        for ( i in 1:nrow(mol$bond) ) {
+            raw.lines <- c(raw.lines, 
+                           paste0(
+                               sprintf(fmt,
+                                       mol$bond[i, 1], mol$bond[i, 2],
+                                       mol$bond[i, 3], mol$bond[i, 4]
+                                       ), mol$bond[1, 5])
                            )
+        }
     }
 
-    raw.lines <- c(raw.lines, "@<TRIPOS>SUBSTRUCTURE")
-    fmt <- "%7s %-8s %-10s %8s %4s %-6s %4s %4s "
-    for ( i in 1:nrow(mol$substructure) ) {
-        raw.lines <- c(raw.lines, 
-                       paste0(
-                           sprintf(fmt,
-                                   mol$substructure[i, 1], mol$substructure[i, 2],
-                                   mol$substructure[i, 3], mol$substructure[i, 4],
-                                   mol$substructure[i, 5], mol$substructure[i, 6],
+    if(!is.null(mol$substructure)) {
+        raw.lines <- c(raw.lines, "@<TRIPOS>SUBSTRUCTURE")
+        fmt <- "%7s %-8s %-10s %8s %4s %-6s %4s %4s "
+        for ( i in 1:nrow(mol$substructure) ) {
+            raw.lines <- c(raw.lines, 
+                           paste0(
+                               sprintf(fmt,
+                                       mol$substructure[i, 1], mol$substructure[i, 2],
+                                       mol$substructure[i, 3], mol$substructure[i, 4],
+                                       mol$substructure[i, 5], mol$substructure[i, 6],
                                    mol$substructure[i, 7], mol$substructure[i, 8]
                                    ), mol$substructure[1, 9])
                            )
+        }
     }
-
- 
-    
-    
+     
     
     write.table(raw.lines, file = file, quote = FALSE, na="",
                 row.names = FALSE, col.names = FALSE, append = append)
