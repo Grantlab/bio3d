@@ -1,11 +1,12 @@
 \name{load.enmff}
 \alias{load.enmff}
 \alias{ff.calpha}
-\alias{ff.calphax}
 \alias{ff.anm}
 \alias{ff.pfanm}
 \alias{ff.sdenm}
 \alias{ff.reach}
+\alias{ff.aaenm}
+\alias{ff.aaenm2}
 \title{ ENM Force Field Loader }
 \description{
   Load force field for elastic network normal mode calculation.
@@ -15,9 +16,10 @@ load.enmff(ff = 'calpha')
 ff.calpha(r, rmin=2.9, ...)
 ff.anm(r, cutoff=15, gamma=1, ...)
 ff.pfanm(r, cutoff=NULL, ...)
-ff.calphax(r, atom.id, ssdat=NULL, verbose=FALSE, ...)
-ff.sdenm(r, atom.id, ssdat=NULL, ...)
-ff.reach(r, atom.id, ssdat=NULL, ...)
+ff.sdenm(r, atom.id, pdb, ...)
+ff.reach(r, atom.id, ...)
+ff.aaenm(r, ...)
+ff.aaenm2(r, atom.id, pdb, ...)
 }
 \arguments{
   \item{ff}{ a character string specifying the force field to use:
@@ -30,8 +32,7 @@ ff.reach(r, atom.id, ssdat=NULL, ...)
   \item{cutoff}{ numerical, cutoff for pair-wise interactions. }
   \item{gamma}{ numerical, global scaling factor. }
   \item{atom.id}{ atomic index. }
-  \item{ssdat}{ sequence and structure data. }
-  \item{verbose}{ logical, if TRUE interaction details are printed. }
+  \item{pdb}{ a \code{pdb} object as obtained from function \code{read.pdb}. }
   \item{...}{ additional arguments (for technical reasons). }
 }
 \details{
@@ -68,16 +69,22 @@ ff.reach(r, atom.id, ssdat=NULL, ...)
   simulations. It employs force constants that fall off exponentially
   with distance for non-bonded pairs.
 
+  The all-atom ENM force fields (\sQuote{aaenm} and \sQuote{aaenm2}) was
+  obtained by fitting to a local energy minimum of a crambin model
+  derived from the AMBER99SB force field (same approach as in Hinsen et
+  al 2000). It employs a pair force constant function which falls as
+  r^-6. \sQuote{aanma2} employs additonally specific force constants for
+  covalent and intra-residue atom pairs. See also \code{\link{aanma}}
+  for more details.
+
   See references for more details on the individual force fields.
 }
 \note{
-  The arguments \sQuote{atom.id} and \sQuote{ssdat} are used
+  The arguments \sQuote{atom.id} and \sQuote{pdb} are used
   from within function \sQuote{build.hessian} for functions that are not
   simply a function of the pair-wise distance. e.g. the force constants
-  in the \sQuote{calphax} model is a function of c-alpha distances, SSE 
-  information and SS-bonds, while the \sQuote{sdENM} force field
-  computes the force constants based on a function of the residue types
-  and calpha distance.
+  in the \sQuote{sdENM} model computes the force constants based on a
+  function of the residue types and calpha distance. 
 }
 \value{
   \sQuote{load.enmff} returns a function for calculating the spring 

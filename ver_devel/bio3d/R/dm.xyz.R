@@ -1,4 +1,4 @@
-dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, ncore=1, ...) {
+dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, gc.first=FALSE, ncore=1, ...) {
   ## Parallelized by parallel package
   ncore <- setup.ncore(ncore, bigmem = FALSE)
 
@@ -12,6 +12,8 @@ dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, ncore=1, ...) {
     j <- 1
     out <- vector("list", length=length(r.inds))
     for(i in r.inds) {
+      if(gc.first) gc()
+
       dmi <- .dm.xyz1(xyz[i,], grpby=grpby, scut=scut, mask.lower=mask.lower)
       out[[j]] <- dmi
       j <- j+1
@@ -120,10 +122,12 @@ function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE) {
     
     ##- Min per residue
     for(k in 1 : nrow(ij) ) {
-      m[ij[k,1],ij[k,2]] <-
-        min( d[ (inds[ij[k,1],"start"]:inds[ij[k,1],"end"]),
-                  (inds[ij[k,2],"start"]:inds[ij[k,2],"end"])],
-            na.rm=TRUE )
+      t.d <- d[ (inds[ij[k,1],"start"]:inds[ij[k,1],"end"]),
+                (inds[ij[k,2],"start"]:inds[ij[k,2],"end"]) ]
+      if(!all(is.na(t.d))) 
+        m[ij[k,1],ij[k,2]] <- min(t.d, na.rm=TRUE)
+      else
+        m[ij[k,1],ij[k,2]] <- NA
     }
     if( !mask.lower )
       m[lower.tri(m)] = t(m)[lower.tri(m)]

@@ -39,16 +39,31 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
 
   
   ##-- Functions for later
-  cluster.network <- function(network, cluster.method="btwn"){
+  cluster.network <- function(network, cluster.method="btwn", ...){
     
+    ## Passing arguments to different community detection functions
+    btwn.names <- names(formals( igraph::edge.betweenness.community ))
+    walk.names <- names(formals( igraph::walktrap.community ))
+    greed.names <- names(formals( igraph::fastgreedy.community ))
+    infomap.names <- names(formals( igraph::infomap.community ))
+
+    dots <- list(...)
+    btwn.args <- dots[names(dots) %in% btwn.names]
+    walk.args <- dots[names(dots) %in% walk.names]
+    greed.args <- dots[names(dots) %in% greed.names]
+    infomap.args <- dots[names(dots) %in% infomap.names]
+
+    btwn.args$directed <- FALSE
+
     ## Function to define community clusters from network,
     ##  cluster methods can be one of of 'cluster.options'
-    cluster.options=c("btwn", "walk", "greed")
+    cluster.options=c("btwn", "walk", "greed", "infomap")
     cluster.method <- match.arg(tolower(cluster.method), cluster.options)
     comms <- switch( cluster.method,
-              btwn = igraph::edge.betweenness.community(network, directed=FALSE),
-              walk = igraph::walktrap.community(network),
-              greed = igraph::fastgreedy.community(network) )
+              btwn = do.call(igraph::edge.betweenness.community, c(list(network), btwn.args)),
+              walk = do.call(igraph::walktrap.community, c(list(network), walk.args)), 
+              greed = do.call(igraph::fastgreedy.community, c(list(network), greed.args)),
+              infomap = do.call(igraph::infomap.community, c(list(network), infomap.args)) )
     
     names(comms$membership) <- igraph::V(network)$name
     return(comms)
@@ -148,7 +163,7 @@ cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
                              diag=FALSE)
   
   ##-- Calculate the first set of communities
-  communities <- cluster.network(network, cluster.method)
+  communities <- cluster.network(network, cluster.method, ...)
 
   ##-- Coarse grain the cij matrix to a new cluster/community matrix
   community.cij <- contract.matrix(cij.network, communities$membership, 

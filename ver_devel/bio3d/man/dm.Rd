@@ -11,7 +11,8 @@ dm(\dots)
 
 \method{dm}{pdb}(pdb, inds = NULL, grp = TRUE, verbose=TRUE, \dots)
 
-\method{dm}{xyz}(xyz, grpby = NULL, scut = NULL, mask.lower = TRUE, ncore=1, \dots)
+\method{dm}{xyz}(xyz, grpby = NULL, scut = NULL, mask.lower = TRUE, 
+                  gc.first=FALSE, ncore=1, \dots)
 }
 \arguments{
   \item{pdb}{ a \code{pdb} structure object as returned by
@@ -31,6 +32,9 @@ dm(\dots)
     value.}
   \item{mask.lower}{ logical, if TRUE the lower matrix elements
     (i.e. those below the diagonal) are returned as NA.}
+  \item{gc.first}{ logical, if TRUE will call gc() first before calculation of 
+    distance matrix. This is to solve the memory overload problem when \code{ncore > 1}
+    and \code{xyz} has many rows/columns, with a bit sacrifice on speed. }
   \item{ncore }{ number of CPU cores used to do the calculation.
     \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{\dots}{ arguments passed to and from functions. }

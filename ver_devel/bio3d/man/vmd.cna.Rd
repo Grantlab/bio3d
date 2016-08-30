@@ -1,5 +1,7 @@
-\name{vmd.cna}
+\name{vmd}
+\alias{vmd}
 \alias{vmd.cna}
+\alias{vmd.cnapath}
 \title{ View CNA Protein Structure Network Community Output in VMD }
 \description{
   This function generates a VMD scene file and a PDB file that can be 
@@ -8,14 +10,21 @@
   the community protein structure network. 
 }
 \usage{
-vmd.cna(x, pdb, layout = layout.cna(x, pdb, k=3), 
+vmd(\dots)
+
+\method{vmd}{cna}(x, pdb, layout = layout.cna(x, pdb, k=3), 
 		col.sphere=NULL, col.lines = "silver", weights = NULL, 
-		radius = table(x$communities$membership)/5, alpha = 1, 
+		radius = table(x$communities$membership)/5, alpha = 1,
 		vmdfile = "network.vmd", pdbfile = "network.pdb", 
-		launch = FALSE)
+                full = FALSE, launch = FALSE, \dots)
+
+\method{vmd}{cnapath}(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE, 
+   colors = c("blue", "red"), launch = FALSE, \dots)
+
 }
 \arguments{
-  \item{x}{A 'cna' class object such as obtained from \sQuote{cna} function/
+  \item{x}{A 'cna' or 'cnapath' class object as obtained from functions
+    \code{cna} or \code{cnapath}.
   }
   \item{pdb}{A 'pdb' class object such as obtained from \sQuote{read.pdb} function.
   }
@@ -42,9 +51,28 @@ vmd.cna(x, pdb, layout = layout.cna(x, pdb, k=3),
   \item{pdbfile}{ A character element specifying the output pdb file name to be
     loaded in VMD.
   }
+  \item{full}{ Logical, if TRUE the full all-atom network rather than the
+    clustered community network will be drawn. Intra community edges are
+    colored according to the community membership, while inter community
+    edges are thicker and colored black.
+  }
   \item{launch}{ Logical. If TRUE, a VMD session will be started with
     the output of \sQuote{vmd.cna}.
-}
+  }
+  \item{out.prefix}{ Prefix for the names of output files, \sQuote{vmd.cnapath.vmd}
+    and \sQuote{vmd.cnapath.pdb}.
+  }
+  \item{spline}{ Logical, if TRUE all paths are displayed as spline
+    curves. 
+  }
+  \item{colors}{
+    Character vector or integer scalar, define path colors. If a
+    character vector, passed to \code{\link{colorRamp}} function to generate the 
+    color scales. If an integer, color all paths the same way with VMD color 
+    ID equal to the integer. }
+  \item{\dots}{ additional arguments passed to the function
+    \code{\link{colorRamp}} (in \code{vmd.cnapath}).
+  }
 }
 \details{ 
   This function generates a scaled sphere (communities) and stick (edges) 

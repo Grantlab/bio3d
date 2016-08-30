@@ -1,5 +1,6 @@
 \name{read.pdb}
 \alias{read.pdb}
+\alias{read.pdb2}
 \alias{print.pdb}
 \alias{summary.pdb}
 \title{ Read PDB File}
@@ -8,6 +9,9 @@
 }
 \usage{
 read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
+         rm.alt = TRUE, ATOM.only = FALSE, verbose = TRUE)
+
+read.pdb2(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
          rm.alt = TRUE, ATOM.only = FALSE, verbose = TRUE)
 
 \method{print}{pdb}(x, printseq=TRUE, \dots)
@@ -39,6 +43,10 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
    
 }
 \details{
+  \code{read.pdb} is a re-implementation (using Rcpp) of the slower but
+  more tested R implementation of the same function (called
+  \code{read.pdb2} since bio3d-v2.3).
+  
   \code{maxlines} may be set so as to restrict the reading to a portion
   of input files. Note that the preferred means of reading large 
   multi-model files is via binary DCD or NetCDF format trajectory files 

@@ -6,16 +6,19 @@
   \code{pdb} objects. 
 }
 \usage{
-pdbs2pdb(pdbs, inds = NULL, rm.gaps = FALSE)
+pdbs2pdb(pdbs, inds = NULL, rm.gaps = FALSE, all.atom=FALSE, ncore=NULL)
 }
 \arguments{
   \item{pdbs}{ a list of class \code{"pdbs"} containing PDB file
-    data, as obtained from \code{read.fasta.pdb} or
-    \code{pdbaln}. }
+    data, as obtained from \code{read.fasta.pdb},
+    \code{pdbaln}, or \code{read.all}. }
   \item{inds}{ a vector of indices that selects the PDB structures to
     convert. }
   \item{rm.gaps}{ logical, if TRUE atoms in gap containing columns are
     removed in the output \code{pdb} objects. }
+  \item{all.atom}{ logical, if TRUE all atom data are converted (the 
+    \sQuote{pdbs} object must be obtained from \code{read.all}). }
+  \item{ncore}{ number of CPU cores used to do the calculation. }
 }
 \details{
   This function will generate a list of \code{pdb} objects from a

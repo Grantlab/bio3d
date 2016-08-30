@@ -6,7 +6,8 @@
 }
 \usage{
   \method{plot}{cna}(x, pdb = NULL, weights=NULL, vertex.size=NULL,
-            layout=NULL, col=NULL, full=FALSE, scale=TRUE, color.edge = FALSE, ...)
+            layout=NULL, col=NULL, full=FALSE, scale=TRUE, color.edge = FALSE, 
+            interactive=FALSE, ...)
 }
 \arguments{
   \item{x}{ A protein network graph object as obtained from the
@@ -30,6 +31,9 @@
     clustered community network will be plotted. }    
   \item{scale}{ Logical, if TRUE weights are scaled with respect to the network. }   
   \item{color.edge}{ Logical, if TRUE edges are colored with respect to their weights. }   
+  \item{interactive}{ Logical, if TRUE interactive graph will be drawn where users
+    can manually adjust the network (positions of vertices, colors of edges, etc.).
+    Needs Tcl/Tk support in the installed R build. }
   \item{\dots}{ Additional graphical parameters for \sQuote{plot.igraph}. }
 }
 \details{

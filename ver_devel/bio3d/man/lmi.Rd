@@ -2,7 +2,7 @@
 \alias{lmi}
 \title{ LMI: Linear Mutual Information Matrix }
 \description{
-  Calculate the linear mutural information correlations of atomic displacements.
+  Calculate the linear mutual information correlations of atomic displacements.
 }
 \usage{
 lmi(trj, grpby=NULL, ncore=1)

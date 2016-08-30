@@ -1,5 +1,6 @@
 plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
-                     layout=NULL, col=NULL, full=FALSE, scale = TRUE, color.edge = FALSE, ...) {
+                     layout=NULL, col=NULL, full=FALSE, scale = TRUE, 
+                     color.edge = FALSE, interactive = FALSE, ...) {
 
   ##- Function for plotting cna networks the way we like them.
   ##   Returns the plot layout coordinates silently. These can 
@@ -110,11 +111,20 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
      }
 
      colors <- vec2color(weights)
-     igraph::plot.igraph(y, edge.width=weights, edge.color = colors, layout=layout, vertex.color=col, vertex.size=vertex.size, ...)
+     if(interactive) 
+        igraph::tkplot(y, edge.width=weights, edge.color = colors, layout=layout, 
+                          vertex.color=col, vertex.size=vertex.size, ...)
+     else 
+        igraph::plot.igraph(y, edge.width=weights, edge.color = colors, layout=layout, 
+                          vertex.color=col, vertex.size=vertex.size, ...)
 
   } else { 
-
-     igraph::plot.igraph(y, edge.width=weights, layout=layout, vertex.color=col, vertex.size=vertex.size, ...)
+     if(interactive)
+        igraph::tkplot(y, edge.width=weights, layout=layout, vertex.color=col, 
+                       vertex.size=vertex.size, ...)
+     else 
+        igraph::plot.igraph(y, edge.width=weights, layout=layout, vertex.color=col, 
+                       vertex.size=vertex.size, ...)
 
   }
   
