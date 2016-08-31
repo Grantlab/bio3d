@@ -1,6 +1,6 @@
 cna.dccm <-  function(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
                   cluster.method="btwn", collapse.method="max", 
-                  cols=vmd.colors(), minus.log=TRUE, ...){
+                  cols=vmd_colors(), minus.log=TRUE, ...){
 
     
   ## Check for presence of igraph package

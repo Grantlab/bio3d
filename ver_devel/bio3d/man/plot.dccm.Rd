@@ -11,7 +11,7 @@
                     helix.col = "gray20", sheet.col = "gray80",
                     inner.box=TRUE, outer.box=FALSE,
                     xlab="Residue No.", ylab="Residue No.",
-                    margin.segments=NULL, segment.col=vmd.colors(), segment.min=1, ...)
+                    margin.segments=NULL, segment.col=vmd_colors(), segment.min=1, ...)
 }
 \arguments{
   \item{x}{ a numeric matrix of atom-wise cross-correlations as output by

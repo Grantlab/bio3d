@@ -240,7 +240,7 @@ sd_section("Normal Mode Analysis:",
            "Plotting and Graphic Display",
   c(
     "bwr.colors",
-    "vmd.colors",
+    "vmd_colors",
     "mono.colors",
     "plot.bio3d",
     "plot.blast",

@@ -1,12 +1,12 @@
-\name{vmd.colors}
-\alias{vmd.colors}
+\name{vmd_colors}
+\alias{vmd_colors}
 \title{ VMD Color Palette }
 \description{
   This function creates a character vector of the colors used by the VMD
   molecular graphics program.
 }
 \usage{
-vmd.colors(n=33, picker=FALSE, ...)
+vmd_colors(n=33, picker=FALSE, ...)
 }
 \arguments{
   \item{n}{ The number of desired colors chosen in sequence
@@ -39,7 +39,7 @@ vmd.colors(n=33, picker=FALSE, ...)
 }
 \examples{
 ## Generate a vector of 10 colors
-clrs <- vmd.colors(10)
-vmd.colors(4, picker=TRUE)
+clrs <- vmd_colors(10)
+vmd_colors(4, picker=TRUE)
 }
 \keyword{utility}

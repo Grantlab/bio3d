@@ -78,7 +78,7 @@ network.amendment <- function(x, membership, minus.log=TRUE){
 
   x$community.cij <- contract.matrix(x$cij, membership, minus.log=minus.log)
   
-  cols=vmd.colors()
+  cols=vmd_colors()
   
   if(sum(x$community.cij)>0){
     x$community.network <-  igraph::graph.adjacency(x$community.cij,
