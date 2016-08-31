@@ -25,7 +25,7 @@ build.hessian(xyz, pfc.fun, fc.weights = NULL, pdb = NULL, \dots)
     function will attempt to select the calpha atoms automatically
     (based on function \code{\link{atom.select}}). }
   \item{ff}{ character string specifying the force field to use:
-    \sQuote{calpha}, \sQuote{anm}, \sQuote{pfanm}, \sQuote{calphax},
+    \sQuote{calpha}, \sQuote{anm}, \sQuote{pfanm}, 
     \sQuote{reach}, or \sQuote{sdenm}. }
   \item{pfc.fun}{ customized pair force constant (\sQuote{pfc})
     function. The provided function should take a vector of distances as
@@ -155,8 +155,6 @@ sse      <- dssp(pdb, resno=FALSE, full=TRUE)
 ss.bonds <- matrix(c(76,94, 64,80, 30,115, 6,127),
                    ncol=2, byrow=TRUE)
 
-modes <- nma(pdb, ff="calphax", sse=sse, ss.bonds=ss.bonds)
-
 
 ## User defined energy function
 ## Note: Must take a vector of distances
@@ -179,7 +177,7 @@ modes <- eigen(hessian)
 pdb <- read.pdb("1xj0")
 
 ## nma(pdb)
-modes <- nma(pdb, mass.custom=list(CSX=121.166))
+#modes <- nma(pdb, mass.custom=list(CSX=121.166))
 }
 }
 \keyword{ analysis }

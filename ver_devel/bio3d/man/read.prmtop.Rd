@@ -59,30 +59,31 @@ read.prmtop(file)
 \examples{
 \dontrun{
 ## Read a PRMTOP file
-prmtop <- read.prmtop("prot_solvated.prmtop")
+prmtop <- read.prmtop(system.file("examples/crambin.prmtop", package="bio3d"))
 print(prmtop)
 
-## Explore parameters
-prmtop$MASS
-prmtop$ATOM_NAME
+## Explore prmtop file
+head(prmtop$MASS)
+head(prmtop$ATOM_NAME)
+
+## Read Amber coordinates
+crds <- read.crd(system.file("examples/crambin.inpcrd", package="bio3d"))
 
 ## Atom selection
 ca.inds <- atom.select(prmtop, "calpha")
 
-## Trajectory processing
-trj <- read.ncdf("traj.nc", at.sel=ca.inds)
-
-## Read a Amber CRD file
-crds <- read.crd("prot_solvated.inpcrd")
-
 ## Convert to PDB format
-pdb <- as.pdb(prmtop, crds, inds=ca.inds)
+pdb <- as.pdb(prmtop, crds)
+pdb.ca <- as.pdb(prmtop, crds, inds=ca.inds)
+
+## Trajectory processing
+#trj <- read.ncdf("traj.nc", at.sel=ca.inds)
 
 ## Convert to multimodel PDB format
-pdb <- as.pdb(prmtop, trj[1:20,], inds=ca.inds, inds.crd=NULL)
+#pdb <- as.pdb(prmtop, trj[1:20,], inds=ca.inds, inds.crd=NULL)
 
 ## RMSD of trajectory
-rd <- rmsd(crds$xyz[ca.inds$xyz], traj, fit=TRUE)
+#rd <- rmsd(crds$xyz[ca.inds$xyz], traj, fit=TRUE)
 }
 }
 \keyword{ IO }
