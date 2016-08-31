@@ -193,12 +193,35 @@ print.mol2 <- function(x, ...) {
                 txt[1]=paste0(txt[1], ";")
                 ncol <- length(unlist(strsplit(txt[1], ";")))
             }
+
+            subs <- try(read.table(text=txt,
+                                   stringsAsFactors=FALSE, sep=";", quote='',
+                                   colClasses=unname(substr.format[1:ncol,"what"]),
+                                   col.names=substr.format[1:ncol,"name"],
+                                   comment.char="", na.strings="", fill=TRUE), silent=TRUE)
+
             
-            subs <- read.table(text=txt,
-                               stringsAsFactors=FALSE, sep=";", quote='',
-                               colClasses=unname(substr.format[1:ncol,"what"]),
-                               col.names=substr.format[1:ncol,"name"],
-                               comment.char="", na.strings="", fill=TRUE)
+            if(inherits(subs, "try-error")) {
+                subs <- try(read.table(text=txt,
+                                       stringsAsFactors=FALSE, sep=";", quote='',
+                                       comment.char="", na.strings="", fill=TRUE), silent=TRUE)
+                
+                if(inherits(subs, "try-error")) {
+                    warning("error reading SUBSTRUCTURE records. check format.")
+                    subs <- NULL
+                }
+                else {
+                    warning("could not determine field type of SUBSTRUCTURE records. check format.")
+                    ncol <- ncol(subs)
+                    if(ncol > 3) 
+                        colnames(subs) <- c(substr.format[1:3], colnames(subs[4:ncol]))
+                    else
+                        colnames(subs) <- c(substr.format[1:3])
+                }
+                
+            }
+
+
         }
         else {
             subs <- NULL
@@ -217,7 +240,7 @@ print.mol2 <- function(x, ...) {
       ## Store data
       xyz <- as.xyz(as.numeric(t(atom[, c("x", "y", "z")])))
       
-      out <- list("atom" = atom, "bond" = bond, "xyz" = xyz, 
+      out <- list("atom" = atom, "bond" = bond, "xyz" = xyz, "substructure" = subs,
                   "info" = mol.info[i,], "name" = mol.names[i])
       class(out) <- "mol2"
       mols[[i]] <- out
