@@ -46,9 +46,6 @@ read.mol2(file, maxlines = -1L)
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
-  
-  For a description of the MOL2 format see:\cr
-  \url{http://www.tripos.com/data/support/mol2.pdf}.
 }
 \author{ Lars Skjaerven }
 \note{ 
@@ -114,6 +111,8 @@ head(mol$atom[, c("x","y","z")])
 ## Print atom charges
 head(mol$atom[, "charge"])
 
+## Convert to PDB
+pdb <- as.pdb(mol)
 
 
 ## Read a multi-molecule MOL2 file

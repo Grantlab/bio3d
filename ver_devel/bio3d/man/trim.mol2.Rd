@@ -30,7 +30,7 @@
 \author{ Lars Skjaerven }
 \seealso{
   \code{\link{read.mol2}}, \code{\link{atom.select.mol2}},
-  \code{\link{as.pdb.mol2}}
+  \code{\link{as.pdb.mol2}}, \code{\link{write.mol2}}, 
 }
 \examples{
 \dontrun{

@@ -10,7 +10,7 @@
 \usage{
 as.pdb(\dots)
 
-\method{as.pdb}{mol2}(mol2, \dots)
+\method{as.pdb}{mol2}(mol, \dots)
 
 \method{as.pdb}{prmtop}(prmtop, crd=NULL, inds=NULL, inds.crd=inds, ncore=NULL, \dots)
 
@@ -21,7 +21,7 @@ as.pdb(\dots)
 }
 \arguments{
   \item{\dots}{ arguments passed to and from functions. }
-  \item{mol2}{ a list object of type \code{"mol2"} (obtained with
+  \item{mol}{ a list object of type \code{"mol2"} (obtained with
     \code{\link{read.mol2}}). }
   \item{prmtop}{ a list object of type \code{"prmtop"} (obtained with
     \code{\link{read.prmtop}}). }
@@ -129,20 +129,24 @@ pdb
 
 \dontrun{
 ## Read a PRMTOP file
-prmtop <- read.prmtop("prot_solvated.prmtop")
+prmtop <- read.prmtop(system.file("examples/crambin.prmtop", package="bio3d"))
+
+## Read Amber coordinates
+crds <- read.crd(system.file("examples/crambin.inpcrd", package="bio3d"))
 
 ## Atom selection
 ca.inds <- atom.select(prmtop, "calpha")
 
-## Read a Amber CRD file
-crds <- read.crd("prot_solvated.inpcrd")
-
 ## Convert to PDB format
 pdb <- as.pdb(prmtop, crds, inds=ca.inds)
 
-## Convert to PDB format
-trj <- read.ncdf("traj.nc", at.sel=ca.inds)
-pdb <- as.pdb(prmtop, trj[20,], inds=ca.inds, inds.crd=NULL)
+
+## Read a single entry MOL2 file
+## (returns a single object)
+mol <- read.mol2( system.file("examples/aspirin.mol2", package="bio3d") )
+
+## Convert to PDB
+pdb <- as.pdb(mol)
 }
 }
 \keyword{ IO }
