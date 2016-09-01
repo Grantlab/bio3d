@@ -5,9 +5,15 @@
 }
 
 
+.match.elena <- function(pdb, elena) {
+    if(!is.character(elena))
+        stop("'elena' must be a character vector")
+    pdb$atom$elena %in% elena
+}
+
 
 atom.select.mol2 <- function(mol, string=NULL,
-                             eleno = NULL, elety = NULL,
+                             eleno = NULL, elena = NULL, elety = NULL,
                              resid = NULL, chain = NULL, resno = NULL,
                              statbit = NULL, 
 			     operator = "AND", inverse = FALSE,
@@ -92,6 +98,11 @@ atom.select.mol2 <- function(mol, string=NULL,
   if(!is.null(elety)) {
     L <- .match.elety(mol, elety)
     if(verbose) .verboseout(L, 'elety')
+    M <- .combinelv(L, M, operator)
+  }
+  if(!is.null(elena)) {
+    L <- .match.elena(mol, elena)
+    if(verbose) .verboseout(L, 'elena')
     M <- .combinelv(L, M, operator)
   }
   if(!is.null(resid)) {

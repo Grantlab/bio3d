@@ -21,7 +21,7 @@ atom.select(\dots)
                           value = FALSE, verbose=FALSE, \dots)
 
 \method{atom.select}{mol2}(mol, string=NULL,
-                           eleno = NULL, elety = NULL,
+                           eleno = NULL, elena = NULL, elety = NULL,
                            resid = NULL, chain = NULL, resno = NULL,
                            statbit = NULL,
 			   operator = "AND", inverse = FALSE,
@@ -42,6 +42,7 @@ atom.select(\dots)
   \item{type}{ a single element character vector for selecting \sQuote{ATOM}
     or \sQuote{HETATM} record types. }
   \item{eleno}{ a numeric vector of element numbers. }
+  \item{elena}{ a character vector of atom names. }
   \item{elety}{ a character vector of atom names. }
   \item{resid}{ a character vector of residue name identifiers. }
   \item{chain}{ a character vector of chain identifiers. }
