@@ -1,40 +1,43 @@
 
-as.pdb.mol2 <- function(mol2, ...) {
+as.pdb.mol2 <- function(mol, ...) {
 
     cl <- match.call()
-    natoms <- nrow(mol2$atom)
-    xyz <- mol2$xyz
-    tmp.pdb <- list()
+    natoms <- nrow(mol$atom)
+    pdbn <- list()
+
+    allset <- FALSE
+    resid <- strtrim(mol$atom$resid, 3)
+    chain <- NULL
     
-    if(!is.null(mol2$substructure)) {
-        rownames(mol2$substructure) <- mol2$substructure$name
-        resid <- mol2$substructure[mol2$atom$resid, "sub_type"]
-        chain <- mol2$substructure[mol2$atom$resid, "chain"]
+    if(!is.null(mol$substructure)) {
+        if(all(c("root_atom", "subst_type", "chain") %in% colnames(mol$substructure))) {
+            key1 <- paste(mol$atom$resno, mol$atom$resid, sep="-")
+            rownames(mol$substructure) <- key1[ mol$subs$root_atom ]
+            resid <- mol$substructure[key1, "sub_type"]
+            chain <- mol$substructure[key1, "chain"]
+            allset <- TRUE
+        }
     }
-    else {
-        resid <- "UNK"
-        chain <- NA
+
+    if(!allset & length(unique(mol$resid)) > 1) {
+        warning("insuffient data in SUBSTRUCTURE to set residue and chain identifiers in PDB")
     }
+
+    pdb <- as.pdb.default(pdb    = NULL,
+                          xyz    = mol$xyz,
+                          type   = rep("ATOM", natoms),
+                          resno  = mol$atom$resno,
+                          resid  = resid,
+                          eleno  =  mol$eleno,
+                          elety  = mol$atom$elena,
+                          chain  = chain,
+                          insert = NULL,
+                          alt    = NULL,
+                          o=NULL, b=NULL, segid=NULL,
+                          elesy=unlist(lapply(strsplit(mol$atom$elety, split="[.]"),
+                                                function(x) x[1])),
+                          charge=mol$atom$charge)
     
-    tmp.pdb$atom <- data.frame(cbind(type=rep("ATOM", natoms),
-                                     eleno=seq(1, natoms),
-                                     elety=mol2$atom$elena,
-                                     alt=NA,
-                                     resid=resid,
-                                     chain=chain, 
-                                     resno=mol2$atom$resno,
-                                     insert=NA,
-                                     x=mol2$atom$x, y=mol2$atom$y, z=mol2$atom$z,
-                                     o=NA, b=NA, segid=NA,
-                                     elesy=unlist(lapply(strsplit(mol2$atom$elety, split="[.]"),
-                                                         function(x) x[1])),
-                                     charge=mol2$atom$charge),
-                               stringsAsFactors=FALSE)
-    
-    tmp.pdb$xyz <- xyz
-    class(tmp.pdb) <- "pdb"
-    tmp.pdb$calpha <- rep(FALSE, nrow(tmp.pdb$atom))
-    tmp.pdb$call <- cl
-    
-    return(tmp.pdb)
+    pdb$call <- cl
+    return(pdb)
 }
