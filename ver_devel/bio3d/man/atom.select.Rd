@@ -163,7 +163,7 @@ ca.pdb <- trim.pdb(pdb, sele)
 \dontrun{
 
 ##- PRMTOP example
-prmtop <- read.prmtop("prot_solvated.prmtop")
+prmtop <- read.prmtop(system.file("examples/crambin.prmtop", package="bio3d"))
 
 ## Atom selection
 ca.inds <- atom.select(prmtop, "calpha")
