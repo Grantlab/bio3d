@@ -436,6 +436,8 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
 
 .close.pb <- function(ncore, pb) {
    if(ncore > 1) {
+      mccollect <- get("mccollect", envir = getNamespace("parallel"))
+
       mccollect(as.numeric(names(pb)))
       mccollect(as.numeric(names(pb)))
    }

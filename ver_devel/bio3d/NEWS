@@ -1,6 +1,45 @@
 NEWS
 ====
 
+v2.3
+Version 2.3, released in September 2016, contains new facilities for
+ensemble normal mode analysis (NMA) with all-atom elastic network model (ENM) 
+and Gaussian network model (GNM), enhanced NMA calculation with 
+rotation-translation block (RTB) method and "4-bead" coarse-grained ENM, 
+more efficiently reading large PDB files using Rcpp, 
+PDB annotation from PFAM database, and more supported I/O file format.
+
+We have also updated online vignettes and other documentations.
+For a fine-grained list of changes, or to report a bug, please consult:
+
+* [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
+* [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+
+Major new/enhanced functions include:
+* aanma:  All-atom ENM normal mode analysis (with RTB and 4-bead ENM supported)
+* aanma.pdbs:  Ensemble NMA with all-atom ENM
+* gnm:  Gaussian network model (GNM) calculations
+* gnm.pdbs:  Ensemble NMA with GNM
+* dccm.gnm:  Dynamical cross-correlation for GNM
+* pdbs2sse: Retrieve SSE from pdbs object with appropriate residue numbers for plotting
+* mask.dccm:  Produce a new DCCM object with selected atoms masked
+* pdb.pfam:  Function for PFAM annotation of PDB IDs
+* pymol.pdbs:  Builds a pymol session from a 'pdbs' object
+* read.cif:  Read a Protein Data Bank (mmCIF) coordinate file
+* read.dssp:  For reading existing DSSP output files
+* read.stride:  For reading existing STRIDE output files
+* read.crd:  Read a CHARMM CARD (CRD) or AMBER coordinate file
+* read.prmtop:  Read parameter and topology data from an AMBER PrmTop file
+* read.pdb:  Use Rcpp to (more rapidly) read and parse PDB files
+* read.pdb2: Renamed old read.pdb function
+* plot.matrix.loadings:  For plotting loadings obtained from pca.array()
+* community.aln:  To align communities from two or more related networks
+* atom.select: Supports 'insert' identifier
+* vmd.cna and vmd.cnapath: Renamed view.cna and view.cnapath
+* pymol.dccm, pymol.modes, pymol.nma, and pymol.pca: Renamed view.xxx functions
+* plot.fasta: Improved plotting function for multiple sequence alignment
+
+
 v2.2
 Version 2.2, released in Feb 2015, contains new facilities for
 sub-optimal path analysis of biomolecular correlation networks,

@@ -10,7 +10,7 @@ vmd.cnapath <- function(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE,
    }
    else {
       if(length(colors) == 1 && is.numeric(colors))
-         cols <- colorRamp(vmd.colors()[colors + 1])
+         cols <- colorRamp(vmd_colors()[colors + 1])
       else
          stop("colors should be a character vector or an integer indicating a VMD color ID")
    }

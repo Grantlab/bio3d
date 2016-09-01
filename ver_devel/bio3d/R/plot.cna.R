@@ -15,10 +15,10 @@ plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
   ##
   ##- Other options:
   ##   \dots can contain all ?igraph.plotting options, including:
-  ##   col=vmd.colors(),
+  ##   col=vmd_colors(),
   ##   mark.groups=list() - A list of vertex id vectors 
-  ##   mark.col=vmd.colors(alpha=0.3),
-  ##   mark.border=vmd.colors()
+  ##   mark.col=vmd_colors(alpha=0.3),
+  ##   mark.border=vmd_colors()
   ##     etc... see ?plot.igraph
   ##  AND
   ##   vertex.size:  Node sizes:   V(x$network)$size

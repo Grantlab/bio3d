@@ -30,7 +30,7 @@ vmd.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
   
   if(is.null(col.sphere)) {
     ## Get colors from network and convert to 0:17 VMD color index
-    col.sphere <- match(igraph::V(x$community.network)$color, vmd.colors())-1
+    col.sphere <- match(igraph::V(x$community.network)$color, vmd_colors())-1
   } else {
     ## Check supplied color(s) will work in VMD
     if(!all(col.sphere %in% c(0:17))) {
@@ -145,7 +145,7 @@ vmd.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
       end <- matrix(pdb.ca$xyz[, atom2xyz(edge.list[,2]) ], ncol=3, byrow=TRUE)
 
       ## Edge colors and radius
-      col2 <- match(igraph::V(x$network)$color, vmd.colors())-1
+      col2 <- match(igraph::V(x$network)$color, vmd_colors())-1
       names(col2) = 1:nrow(pdb.ca$atom)
       
       col3 = apply(edge.list, 1, function(x) {
