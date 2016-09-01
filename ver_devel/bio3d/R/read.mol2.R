@@ -94,6 +94,8 @@ print.mol2 <- function(x, ...) {
     mol.names <- raw.lines[mol.start+1]
     mol.info <- trim( raw.lines[mol.start+2] )
     mol.info <- as.numeric(unlist(lapply(mol.info, split.line, collapse=FALSE)))
+    if(length(mol.info) < 5) mol.info <- c(mol.info, rep(NA, 5-length(mol.info)))
+        
 
     ## mol.info should contain num_atoms, num_bonds, num_subs, num_feat, num_sets
     mol.info <- matrix(mol.info, nrow=num.mol, byrow=T)
@@ -102,7 +104,7 @@ print.mol2 <- function(x, ...) {
     num.bonds <- as.numeric(mol.info[,2])
     atom.end  <- atom.start + num.atoms
     bond.end  <- bond.start + num.bonds
-    subs.end <- subs.start + mol.info[3]
+    subs.end <- subs.start + mol.info[,3]
 
     ## Build a list containing ATOM record indices
     if(length(atom.start) > 0) {
@@ -185,6 +187,7 @@ print.mol2 <- function(x, ...) {
             
             
         ## Read substructure info - split by space
+        subs <- NULL
         if(!is.null(raw.subs)) {
             txt <- unlist(lapply(raw.subs, split.line, ncol=5, collapse=TRUE))
             ncol <- length(unlist(strsplit(txt[1], ";")))
@@ -211,22 +214,21 @@ print.mol2 <- function(x, ...) {
                     subs <- NULL
                 }
                 else {
-                    warning("could not determine field type of SUBSTRUCTURE records. check format.")
                     ncol <- ncol(subs)
-                    if(ncol > 3) 
-                        colnames(subs) <- c(substr.format[1:3], colnames(subs[4:ncol]))
-                    else
-                        colnames(subs) <- c(substr.format[1:3])
+                    if(ncol < 3) {
+                        warning("insufficent fields in SUBSTRUCTURE. check format.")
+                    }
+                    else {
+                        warning("could not determine field type of SUBSTRUCTURE records. check format.")
+                        if(ncol > 3) 
+                            colnames(subs) <- c(substr.format[1:3], colnames(subs[4:ncol]))
+                        else
+                            colnames(subs) <- c(substr.format[1:3])
+                        }
                 }
-                
             }
-
-
         }
-        else {
-            subs <- NULL
-        }
-      
+        
       ## Same molecules as the previous ones?
       mol.str <- paste(atom$elena, collapse="")
 
