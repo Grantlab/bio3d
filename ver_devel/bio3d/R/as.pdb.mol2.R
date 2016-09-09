@@ -1,33 +1,43 @@
 
-as.pdb.mol2 <- function(mol2, ...) {
-  
-  natoms <- nrow(mol2$atom)
-  xyz <- mol2$xyz
-  tmp.pdb <- list()
-  
-  
-  tmp.pdb$atom <- data.frame(cbind(rep("ATOM", natoms),
-                                   seq(1, natoms),
-                                   mol2$atom$elena,
-                                   NA,
-                                   mol2$atom$resid,
-                                   rep(" ", natoms),
-                                   rep(1, natoms),
-                                   NA,
-                                   mol2$atom$x, mol2$atom$y, mol2$atom$z,
-                                   NA, NA, NA,
-                                   unlist(lapply(strsplit(mol2$atom$elety, split="[.]"),
-                                                 function(x) x[1])),
-                                   NA),
-                             stringsAsFactors=FALSE)
+as.pdb.mol2 <- function(mol, ...) {
 
-  
-  colnames(tmp.pdb$atom) <- c("type", "eleno", "elety", "alt", "resid",
-                              "chain", "resno", "insert",
-                              "x", "y", "z", "o", "b", "segid", "elesy", "charge")
-  
-  tmp.pdb$xyz <- xyz
-  class(tmp.pdb) <- "pdb"
-  ca.inds        <- rep(FALSE, natoms)
-  return(tmp.pdb)
+    cl <- match.call()
+    natoms <- nrow(mol$atom)
+    pdbn <- list()
+
+    allset <- FALSE
+    resid <- strtrim(mol$atom$resid, 3)
+    chain <- NULL
+    
+    if(!is.null(mol$substructure)) {
+        if(all(c("root_atom", "subst_type", "chain") %in% colnames(mol$substructure))) {
+            key1 <- paste(mol$atom$resno, mol$atom$resid, sep="-")
+            rownames(mol$substructure) <- key1[ mol$subs$root_atom ]
+            resid <- mol$substructure[key1, "sub_type"]
+            chain <- mol$substructure[key1, "chain"]
+            allset <- TRUE
+        }
+    }
+
+    if(!allset & length(unique(mol$resid)) > 1) {
+        warning("insuffient data in SUBSTRUCTURE to set residue and chain identifiers in PDB")
+    }
+
+    pdb <- as.pdb.default(pdb    = NULL,
+                          xyz    = mol$xyz,
+                          type   = rep("ATOM", natoms),
+                          resno  = mol$atom$resno,
+                          resid  = resid,
+                          eleno  =  mol$eleno,
+                          elety  = mol$atom$elena,
+                          chain  = chain,
+                          insert = NULL,
+                          alt    = NULL,
+                          o=NULL, b=NULL, segid=NULL,
+                          elesy=unlist(lapply(strsplit(mol$atom$elety, split="[.]"),
+                                                function(x) x[1])),
+                          charge=mol$atom$charge)
+    
+    pdb$call <- cl
+    return(pdb)
 }

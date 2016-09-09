@@ -38,6 +38,7 @@ Major new/enhanced functions include:
 * vmd.cna and vmd.cnapath: Renamed view.cna and view.cnapath
 * pymol.dccm, pymol.modes, pymol.nma, and pymol.pca: Renamed view.xxx functions
 * plot.fasta: Improved plotting function for multiple sequence alignment
+* read.mol2, write.mol2, atom.select, trim, as.pdb:  Read, write and manipulate mol2 files with functions
 
 
 v2.2
