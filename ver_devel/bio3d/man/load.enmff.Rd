@@ -33,7 +33,7 @@ ff.aaenm2(r, atom.id, pdb, ...)
   \item{gamma}{ numerical, global scaling factor. }
   \item{atom.id}{ atomic index. }
   \item{pdb}{ a \code{pdb} object as obtained from function \code{read.pdb}. }
-  \item{...}{ additional arguments (for technical reasons). }
+  \item{...}{ additional arguments passed to and from functions. }
 }
 \details{
   This function provides a collection of elastic network model (ENM)

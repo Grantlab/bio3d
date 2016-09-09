@@ -126,7 +126,7 @@ ff.aaenm2 <- function(r, atom.id, pdb, ...) {
   return(ks)
 }
 
-"ff.reach" <- function(r, atom.id, pdb=NULL, ...) {
+"ff.reach" <- function(r, atom.id, ...) {
   natoms <- length(r)
 
   ## units in kJ/mol/A^2
