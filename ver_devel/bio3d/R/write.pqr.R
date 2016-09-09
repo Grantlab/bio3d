@@ -17,27 +17,27 @@ function (pdb = NULL,
 ## For Testing:
 ## resno = NULL; resid = NULL;eleno = NULL;elety = NULL;chain = NULL;o = NULL;b = NULL; het = FALSE;append = FALSE;verbose =FALSE;chainter = FALSE
 ## pdb=mt; eleno=eleno.new; resno=resno.new; file="t3.pqr"
-  
+    
   if(is.null(xyz) || !is.numeric(xyz))
     stop("write.pqr: please provide a 'pdb' object or numeric 'xyz' vector")
 
   if(any(is.na(xyz)))
     stop("write.pqr: 'xyz' coordinates must have no NA's.")
-  
-  if(is.vector(xyz)) {
-    natom <- length(xyz)/3
-    nfile <- 1
-  } else if (is.matrix(xyz)) {
-    stop("write.pqr: no multimodel PQR support")
-    ##natom <- ncol(xyz)/3 
-    ##nfile <- nrow(xyz)
-    ##if (verbose) {
-    ##  cat("Multiple 'xyz' rows will be interperted as multimodels/frames\n")
-    ##}
-  } else {
-    stop("write.pdb: 'xyz' or 'pdb$xyz' must be either a vector or matrix")
-  }
 
+  xyz <- as.xyz(xyz)
+  xyz <- trim(xyz, row.inds=1)
+  natom <- ncol(xyz)/3
+  nfile <- 1
+        
+  if (nrow(xyz)>1) {
+      warning("write.pqr: no multimodel PQR support")
+      xyz <- trim(xyz, row.inds=1)
+      ##natom <- ncol(xyz)/3 
+      ##nfile <- nrow(xyz)
+      ##if (verbose) {
+      ##  cat("Multiple 'xyz' rows will be interperted as multimodels/frames\n")
+  }
+    
   card <- rep("ATOM", natom)
   
   if(!is.null(pdb)) {
