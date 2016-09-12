@@ -20,25 +20,32 @@ read.pqr(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
   \item{verbose}{ print details of the reading process. }
 }
 \details{
+  PQR file format is basically the same as PDB format except for the fields of
+  \code{o} and \code{b}. In PDB, these two fields are filled with \sQuote{Occupancy}
+  and \sQuote{B-factor} values, respectively, with each field 6-column long.
+  In PQR, they are atomic \sQuote{partial charge} and \sQuote{radii}
+  values, respectively, with each field 8-column long.
+
   \code{maxlines} may require increasing for some large multi-model files.
   The preferred means of reading such data is via binary DCD format 
   trajectory files (see the \code{\link{read.dcd}} function).
 }
 \value{
   Returns a list of class \code{"pdb"} with the following components:
-  \item{atom}{ a character matrix containing all atomic coordinate ATOM data, 
-  with a row per ATOM and a column per record type.  See below for details
-  of the record type naming convention (useful for accessing columns). }
-  \item{het }{ a character matrix containing atomic coordinate records
-    for atoms within \dQuote{non-standard} HET groups (see \code{atom}). }
+  \item{atom}{ a data.frame containing all atomic coordinate ATOM and
+    HETATM data, with a row per ATOM/HETATM and a column per record type.
+    See below for details of the record type naming convention (useful for
+    accessing columns). }
   \item{helix }{ \sQuote{start}, \sQuote{end} and \sQuote{length} of H
     type sse, where start and end are residue numbers \dQuote{resno}. }
   \item{sheet }{ \sQuote{start}, \sQuote{end} and \sQuote{length} of E
     type sse, where start and end are residue numbers \dQuote{resno}. }
   \item{seqres }{ sequence from SEQRES field. }
-  \item{xyz }{ a numeric vector of ATOM coordinate data. }
+  \item{xyz }{ a numeric matrix of class \code{"xyz"} containing the
+    ATOM and HETATM coordinate data. }
   \item{calpha }{ logical vector with length equal to \code{nrow(atom)}
     with TRUE values indicating a C-alpha \dQuote{elety}. }
+  \item{call }{ the matched call. }
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
@@ -64,39 +71,47 @@ read.pqr(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
   Temperature factor \dQuote{b}.
   See examples for further details.
 }
-\seealso{ \code{\link{atom.select}}, \code{\link{write.pdb}},
+\seealso{ \code{\link{atom.select}}, \code{\link{write.pqr}}, 
+  \code{\link{read.pdb}}, \code{\link{write.pdb}},
   \code{\link{read.dcd}}, \code{\link{read.fasta.pdb}},
   \code{\link{read.fasta}} }
 \examples{
 \donttest{
 # PDB server connection required - testing excluded
 
-# Read a PDB file
+# Read a PDB file and write it as a PQR file
 pdb <- read.pdb( "4q21" )
-  
-# Print data for the first atom
-pdb$atom[1,]
-# Look at the first het atom
-pdb$het[1,]
-# Print some coordinate data
-pdb$atom[1:20, c("x","y","z")]
+outfile = file.path(tempdir(), "eg.pqr")
+write.pqr(pdb=pdb, file = outfile)
 
-# Print C-alpha coordinates (can also use 'atom.select')
-##pdb$xyz[pdb$calpha, c("resid","x","y","z")]
+# Read the PQR file
+pqr <- read.pqr(outfile)
 
-# Print SSE data (for helix and sheet)
-pdb$helix
-pdb$sheet$start
-  
-# Print SEQRES data
-pdb$seqres
+## Print a brief composition summary
+pqr
 
-# Renumber residues 
-nums <- as.numeric(pdb$atom[,"resno"])
-pdb$atom[,"resno"] <- nums - (nums[1] - 1)
+## Examine the storage format (or internal *str*ucture)
+str(pqr)
 
-# Write out renumbered PDB file
-#write.pdb(pdb=pdb,file="eg.pdb")
+## Print data for the first four atom
+pqr$atom[1:4,]
+
+## Print some coordinate data
+head(pqr$atom[, c("x","y","z")])
+
+## Print C-alpha coordinates (can also use 'atom.select' function)
+head(pqr$atom[pqr$calpha, c("resid","elety","x","y","z")])
+inds <- atom.select(pqr, elety="CA")
+head( pqr$atom[inds$atom, ] )
+
+## The atom.select() function returns 'indices' (row numbers)
+## that can be used for accessing subsets of PDB objects, e.g.
+inds <- atom.select(pqr,"ligand")
+pqr$atom[inds$atom,]
+pqr$xyz[inds$xyz]
+
+## See the help page for atom.select() function for more details.
+
 }
 }
 \keyword{ IO }

@@ -124,7 +124,7 @@ pdb$atom[1:4,]
 head(pdb$atom[, c("x","y","z")])
 
 ## Or coordinates as a numeric vector
-head(pdb$xyz)
+#head(pdb$xyz)
 
 ## Print C-alpha coordinates (can also use 'atom.select' function)
 head(pdb$atom[pdb$calpha, c("resid","elety","x","y","z")])
