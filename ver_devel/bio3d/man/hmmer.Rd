@@ -70,7 +70,7 @@ hmmer(seq, type="phmmer", db = NULL, verbose = TRUE, timeout = 90)
   
   
   More information can be found at the HMMER website:\cr
-  \url{http://hmmer.janelia.org}
+  \url{http://hmmer.org}
 }
 \value{
   A data frame with multiple components depending on the selected job
