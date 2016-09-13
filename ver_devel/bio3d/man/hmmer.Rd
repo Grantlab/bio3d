@@ -26,7 +26,7 @@ hmmer(seq, type="phmmer", db = NULL, verbose = TRUE, timeout = 90)
 }
 \details{
   This function employs direct HTTP-encoded requests to the HMMER web
-  server. HMMER can be used to search sequence databases for homolog
+  server. HMMER can be used to search sequence databases for homologous
   protein sequences. The HMMER server implements methods using
   probabilistic models called profile hidden Markov models (profile
   HMMs).
@@ -76,31 +76,31 @@ hmmer(seq, type="phmmer", db = NULL, verbose = TRUE, timeout = 90)
   A data frame with multiple components depending on the selected job
   \sQuote{type}. Frequently reported fields include:
 
-  \item{name}{ a character vector containg the name of the target. }
-  \item{acc}{ a character vector containg the accession identifier of
+  \item{name}{ a character vector containing the name of the target. }
+  \item{acc}{ a character vector containing the accession identifier of
     the target. }
-  \item{acc2}{ a character vector containg secondary accession of the
+  \item{acc2}{ a character vector containing secondary accession of the
     target. }
-  \item{id}{ a character vector containg Identifier of the target }
-  \item{desc}{ a character vector containg entry description. }
-  \item{score}{ a numeric vector containg bit score of the sequence (all
+  \item{id}{ a character vector containing Identifier of the target }
+  \item{desc}{ a character vector containing entry description. }
+  \item{score}{ a numeric vector containing bit score of the sequence (all
     domains, without correction). }
-  \item{pvalue}{ a numeric vector containg the P-value of the score. }
-  \item{evalue}{ a numeric vector containg the E-value of the score. }
-  \item{nregions}{ a numeric vector containg Number of regions
+  \item{pvalue}{ a numeric vector containing the P-value of the score. }
+  \item{evalue}{ a numeric vector containing the E-value of the score. }
+  \item{nregions}{ a numeric vector containing Number of regions
     evaluated. } 
-  \item{nenvelopes}{ a numeric vector containg the number of envelopes
+  \item{nenvelopes}{ a numeric vector containing the number of envelopes
     handed over for domain definition, null2, alignment, and scoring. }
-  \item{ndom}{ a numeric vector containg the total number of domains
+  \item{ndom}{ a numeric vector containing the total number of domains
     identified in this sequence. } 
-  \item{nreported}{ a numeric vector containg the number of domains
+  \item{nreported}{ a numeric vector containing the number of domains
     satisfying reporting thresholding. } 
-  \item{nincluded}{ a numeric vector containg the number of domains
+  \item{nincluded}{ a numeric vector containing the number of domains
     satisfying inclusion thresholding. } 
-  \item{taxid}{ a character vector containg The NCBI taxonomy identifier
+  \item{taxid}{ a character vector containing The NCBI taxonomy identifier
     of the target (if applicable). } 
-  \item{species}{ a character vector containg the species name. }
-  \item{kg}{ a character vector containg the kingdom of life that the
+  \item{species}{ a character vector containing the species name. }
+  \item{kg}{ a character vector containing the kingdom of life that the
     target belongs to - based on placing in the NCBI taxonomy tree. }
 
   More details can be found at the HMMER website:\cr
@@ -111,8 +111,8 @@ hmmer(seq, type="phmmer", db = NULL, verbose = TRUE, timeout = 90)
   PDBs) is included directly into the result list (applies only when
   \code{db='pdb'}). In this case, the \sQuote{name} component of the
   target contains the parent (non redundant) entry, and the \sQuote{acc}
-  component the chained PDB identiers. The search results will therefore
-  provide duplicated PDB identiers for component \code{$name}, while
+  component the chained PDB identifiers. The search results will therefore
+  provide duplicated PDB identifiers for component \code{$name}, while
   \code{$acc} should be unique. 
 }
 \references{
@@ -122,7 +122,7 @@ hmmer(seq, type="phmmer", db = NULL, verbose = TRUE, timeout = 90)
   Eddy, S.R. (2011) \emph{PLoS Comput Biol} \bold{7}(10): e1002195.
   
   See also the \sQuote{HMMER} website:\cr
-  \url{http://hmmer.janelia.org}
+  \url{http://hmmer.org}
 }
 \author{ Lars Skjaerven }
 \note{
