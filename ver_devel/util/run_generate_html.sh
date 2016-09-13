@@ -33,7 +33,7 @@ ln -s inst/matrices ./bio3d/
 sh $utildir/remove_dontrun.sh
 
 # 5. start an R session and run the commands to generate html files in ./html/
-
+mkdir html
 if ! Rscript -e "library(staticdocs)" \
         -e "options(device=x11)" \
         -e "build_site(pkg='bio3d', site_path='html', examples=$example, launch=TRUE)"; then
@@ -43,6 +43,14 @@ fi
 
 # 6. tidy up html files
 utildir=$utildir sh $utildir/tidy_html.sh
+# some modification to index.html...
+# - add links to all vignettes
+sed -i 's/<li><a href="vignettes\/bio3d_vignettes.html">bio3d Vignettes<\/a><\/li>/<li><a href="vignettes\/Bio3D_install.pdf">Installing Bio3D<\/a><\/li>\
+      <li><a href="vignettes\/Bio3D_pdb.pdf">PDB Structure Manipulation and Analysis<\/a><\/li>\
+      <li><a href="vignettes\/Bio3D_pca.pdf">Comparative Sequence and Structure Analysis with Bio3D<\/a><\/li>\
+      <li><a href="vignettes\/Bio3D_nma.pdf">Enhanced Methods for Normal Mode Analysis with Bio3D<\/a><\/li>\
+      <li><a href="vignettes\/Bio3D_md.pdf">Beginning Trajectory Analysis with Bio3D<\/a><\/li>\
+      <li><a href="vignettes\/cna_vignette.pdf">Protein Structure Networks with Bio3D<\/a><\/li>/' html/index.html 
 
 # 7. create a link to the results
 rm -f $utildir/html
