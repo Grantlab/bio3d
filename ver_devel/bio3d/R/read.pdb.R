@@ -35,7 +35,7 @@ read.pdb <- function(file, maxlines = -1, multi=FALSE, rm.insert=FALSE, rm.alt=T
     if(!toread) {
         if(nchar(file)==4) {
             cat("  Note: Accessing on-line PDB file\n")
-            file <- get.pdb(file, path=tempdir(), quiet=TRUE)
+            file <- get.pdb(file, path=tempdir(), verbose=FALSE)
         }
         else {
             stop("No input PDB file found: check filename")
@@ -44,14 +44,14 @@ read.pdb <- function(file, maxlines = -1, multi=FALSE, rm.insert=FALSE, rm.alt=T
     
     ## parse PDB file with cpp function
     pdb <- .read_pdb(file, multi=multi, hex=FALSE, maxlines=maxlines, atoms_only=ATOM.only)
-    
+
     ## remove temp file if we downloaded it above
     if(!is.null(putfile)) {
         file.remove(putfile)
     }
     
-    if(verbose)
-        cat(" ", pdb$header, "\n")
+#    if(verbose)
+#        cat(" ", pdb$header, "\n")
     pdb$header <- NULL
     
     if(!is.null(pdb$error))
