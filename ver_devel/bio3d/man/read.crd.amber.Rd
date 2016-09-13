@@ -44,10 +44,10 @@ prm <- read.prmtop(system.file("examples/crambin.prmtop", package="bio3d"))
 crd <- read.crd(system.file("examples/crambin.inpcrd", package="bio3d"))
 
 ## Convert to PDB format
-pdb <- as.pdb(prmtop, crds)
+pdb <- as.pdb(prm, crd)
 
 ## Atom selection
-ca.inds <- atom.select(prmtop, "calpha")
+ca.inds <- atom.select(prm, "calpha")
 }
 }
 \keyword{ IO }
