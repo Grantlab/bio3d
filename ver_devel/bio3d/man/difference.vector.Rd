@@ -30,8 +30,7 @@ difference.vector(xyz, xyz.inds=NULL, normalize=FALSE)
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{overlap}} }
 \examples{
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+attach(kinesin)
      
 # Ignore gap containing positions
 gaps.pos <- gap.inspect(pdbs$xyz)

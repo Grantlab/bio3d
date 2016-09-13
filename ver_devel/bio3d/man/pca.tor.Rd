@@ -27,8 +27,7 @@
   \code{\link{plot.pca.loadings}}, \code{\link{pca.xyz}} }
 \examples{
 ##-- PCA on torsion data for multiple PDBs 
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+attach(kinesin)
 
 gaps.pos <- gap.inspect(pdbs$xyz)
 tor <- t(apply( pdbs$xyz[, gaps.pos$f.inds], 1, torsion.xyz, atm.inc=1))

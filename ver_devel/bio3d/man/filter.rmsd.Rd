@@ -50,8 +50,8 @@ filter.rmsd(xyz = NULL, rmsd.mat = NULL, cutoff = 0.5,
 }
 \examples{
 \dontrun{
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+attach(kinesin)
+
 k <- filter.rmsd(xyz=pdbs,cutoff=0.5)
 pdbs$id[k$ind]
 plot(k$tree, ylab="RMSD")

@@ -47,6 +47,8 @@ plot(aln, labels=basename.pdb(aln$id))
 attach(transducin)
 plot(pdbs)
 
+detach(transducin)
+
 \dontrun{
 infile <- "http://pfam.xfam.org/family/PF00071/alignment/seed/format?format=fasta"
 aln <- read.fasta( infile )

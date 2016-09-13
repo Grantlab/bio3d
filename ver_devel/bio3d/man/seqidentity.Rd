@@ -41,8 +41,7 @@ aln <- read.fasta( system.file("examples/kif1a.fa",
                      package = "bio3d") )
 }
 
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+attach(kinesin)
 
 ide.mat <- seqidentity(pdbs)
 

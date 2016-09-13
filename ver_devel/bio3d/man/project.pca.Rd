@@ -34,8 +34,7 @@ xyz2z.pca(xyz.coord, pca)
 \seealso{ \code{\link{pca.xyz}}, \code{\link{pca.tor}}, \code{\link{fit.xyz}} }
 \examples{
 \dontrun{
-data(transducin)
-attach(transducin, warn.conflicts=FALSE)
+attach(transducin)
 
 gaps.pos <- gap.inspect(pdbs$xyz)
 

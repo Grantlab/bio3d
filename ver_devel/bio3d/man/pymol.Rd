@@ -145,6 +145,6 @@ pymol(cm, modes$xyz)
 ##- pymol with a 'nma' or 'pca' object
 pymol(modes, mode=7)
 
-
+detach(transducin)
 }
 }

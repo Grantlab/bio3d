@@ -39,8 +39,7 @@ overlap(modes, dv, nmodes=20)
 \seealso{ \code{\link{rmsip}}, \code{\link{pca.xyz}}, \code{\link{nma}},
   \code{\link{difference.vector}} }
 \examples{
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+attach(kinesin)
      
 # Ignore gap containing positions
 ##gaps.res <- gap.inspect(pdbs$ali)

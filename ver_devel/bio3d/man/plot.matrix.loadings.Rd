@@ -51,6 +51,7 @@ Call for its effect.
    # plot loadings
    plot.matrix.loadings(pc, sse=sse)
 
+   detach(transducin)
 }
 }
 \author{

@@ -66,6 +66,7 @@ sse <- pdbs2sse(pdbs, ind=1, rm.gaps=TRUE, resno=TRUE)
 gaps.res <- gap.inspect(pdbs$ali)
 plotb3(rf, sse=sse, resno=pdbs$resno[1, gaps.res$f.inds])
 
+detach(transducin)
 }
 }
 \keyword{ utilities }

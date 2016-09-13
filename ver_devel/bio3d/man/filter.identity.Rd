@@ -38,8 +38,7 @@ filter.identity(aln = NULL, ide = NULL, cutoff = 0.6, verbose = TRUE, \dots)
 \seealso{ \code{\link{read.fasta}}, \code{\link{seqaln}},
   \code{\link{seqidentity}}, \code{\link{entropy}}, \code{\link{consensus}} }
 \examples{
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+attach(kinesin)
 
 ide.mat <- seqidentity(pdbs)
 
