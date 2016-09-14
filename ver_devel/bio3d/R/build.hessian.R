@@ -53,13 +53,11 @@
 
         ## pfc.fun takes a vector of distances
         ff.names <- names(formals( pfc.fun ))
-        if(all(c('atom.id', 'pdb') %in% ff.names)) {
-          force.constants <- pfc.fun(dists, atom.id=i, pdb=pdb, ...)
-        }
-        else
-        {
-          force.constants <- pfc.fun(dists, ...)
-        }
+        args <- list(dists)
+        if('atom.id' %in% ff.names) args <- c(args, list(atom.id=i))
+        if('pdb' %in% ff.names) args <- c(args, list(pdb=pdb))
+        args <- c(args, list(...))
+        force.constants <- do.call(pfc.fun, args)
           
         ## Scale the force constants
         if(!is.null(fc.weights)) {
