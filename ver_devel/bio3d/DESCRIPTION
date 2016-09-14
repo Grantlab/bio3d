@@ -1,9 +1,11 @@
 Package: bio3d
 Title: Biological Structure Analysis
 Version: 2.3-0
-Authors@R: c(person("Barry Grant", email="bjgrant@umich.edu"),
-             person("Xin-Qiu Yao"), person("Lars Skjaerven"), 
-             person("Julien Ide"))
+Authors@R: c(person("Barry Grant", "Developer", role=c("aut", "cre"),
+                     email="bjgrant@umich.edu"),
+             person("Xin-Qiu Yao", "Developer", role="aut"),
+             person("Lars Skjaerven", "Developer", role="aut"), 
+             person("Julien Ide", "Developer", role="aut"))
 Author: Barry Grant, Xin-Qiu Yao, Lars Skjaerven, Julien Ide
 VignetteBuilder: knitr
 LinkingTo: Rcpp
