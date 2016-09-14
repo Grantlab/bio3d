@@ -17,7 +17,7 @@ test_that("read.ncdf() and write.ncdf() works properly", {
 
    ##- Read
    trj <- read.ncdf(trjfile, headonly = TRUE, verbose = FALSE)
-   expect_output(str(trj), "frames: int 351" )
+   expect_output(str(trj), "frames: int 117" )
    expect_output(str(trj), "atoms : int 198" )
 
    trj <- read.ncdf(trjfile, cell = TRUE, verbose = FALSE)
@@ -42,7 +42,7 @@ test_that("read.ncdf() and write.ncdf() works properly", {
    # multiple files
    files <- rep(trjfile, 4)
    txt <- capture.output(trj <- read.ncdf(files, headonly = TRUE))
-   expect_output(print(txt), "Frames: 1404")
+   expect_output(print(txt), "Frames: 468")
    expect_output(print(txt), "Atoms: 198")
 })
 
