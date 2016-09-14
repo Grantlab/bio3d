@@ -54,7 +54,7 @@ attach(kinesin)
 
 k <- filter.rmsd(xyz=pdbs,cutoff=0.5)
 pdbs$id[k$ind]
-plot(k$tree, ylab="RMSD")
+hclustplot(k$tree, h=0.5, ylab="RMSD")
 abline(h=0.5, col="gray")
 
 detach(kinesin)

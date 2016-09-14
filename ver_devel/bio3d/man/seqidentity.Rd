@@ -36,10 +36,6 @@
   \code{\link{entropy}}, \code{\link{consensus}}
 }
 \examples{
-\dontrun{
-aln <- read.fasta( system.file("examples/kif1a.fa",
-                     package = "bio3d") )
-}
 
 attach(kinesin)
 
@@ -55,7 +51,7 @@ hist(ide.mat[upper.tri(ide.mat)], breaks=30,xlim=c(0,1),
      main="Sequence Identity", xlab="Identity")
 
 # Compare two sequences
-seqidentity( rbind(pdbs$ali[1,], pdbs$ali[20,]) )
+seqidentity( rbind(pdbs$ali[1,], pdbs$ali[15,]) )
 
 detach(kinesin)
 }

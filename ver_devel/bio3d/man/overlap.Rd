@@ -49,7 +49,7 @@ gaps.pos <- gap.inspect(pdbs$xyz)
 pc.xray <- pca.xyz(pdbs$xyz[, gaps.pos$f.inds])
     
 # Define a difference vector between two structural states
-diff.inds <- c(grep("d1v8ja", pdbs$id), 
+diff.inds <- c(grep("d1v8ka", pdbs$id), 
                grep("d1goja", pdbs$id))
 
 dv <- difference.vector( pdbs$xyz[diff.inds,], gaps.pos$f.inds )

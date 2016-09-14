@@ -35,4 +35,16 @@ for i in ./bio3d/man/*.Rd; do
      # replace the tag '\cr' to newlines to avoid some errors from staticdocs
      sed -i 's/\\cr/\n/g' $i
    fi
+
+   # comment out 'check.utility()' in examples, because it will cause
+   #  the loss of some plots.
+   if [ `basename $i` != "check.utility.Rd" ]; then
+      awk 'BEGIN{bok=0; n=0} 
+           /check.utility/{bok=1}
+           bok {a=$0; while(sub(/\{/,"",a)) n++; while(sub(/\}/,"",a)) n--}
+           n>0 && !/check.utility/ {print} 
+           !bok{print} 
+           bok && n==0 {bok=0}' $i > t.Rd
+      mv t.Rd $i
+   fi
 done

@@ -83,7 +83,7 @@ dm(\dots)
 
 ##--- Distance Matrix Plot
 pdb <- read.pdb( "4q21" )
-k <- dm(pdb,selection="calpha")
+k <- dm(pdb,inds="calpha")
 filled.contour(k, nlevels = 10)
 
 ## NOTE: FOLLOWING EXAMPLE NEEDS MUSCLE INSTALLED
