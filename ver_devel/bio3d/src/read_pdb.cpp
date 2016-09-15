@@ -18,6 +18,7 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
   // keep track of number of atoms and models in PDB
   int natoms = 0;
   int models = 0;
+  int nresi = 0;
   
   // assign vectors for building final 'atom' object
   vector<string> type;
@@ -68,6 +69,9 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
   // temp variables
   string tmp;
   int tmp_eleno;
+  int tmp_resno;
+  string prev_resno_str;
+  string curr_resno_str;
   int counter = 0;
 
   // for reading
@@ -174,9 +178,23 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
 	    tmp_eleno = stringToInt(line.substr(6,5));
 	  }
 	  eleno.push_back(tmp_eleno);
+
+	  // resno can be hexadecimal (e.g. from VMD)
+	  curr_resno_str = trim(line.substr(22,4));
+	  if(curr_resno_str != prev_resno_str) {
+	    nresi++;
+	  }
+	  prev_resno_str = curr_resno_str;
 	  
+	  if(hex && nresi > 9999) {
+	    tmp_resno = getHex(curr_resno_str);
+	  }
+	  else {
+	    tmp_resno = stringToInt(curr_resno_str);
+	  }
+
 	  // read all others items as they are
-	  resno.push_back(stringToInt(line.substr(22,4)));
+	  resno.push_back(tmp_resno);
 	  type.push_back(rtrim(line.substr(0,6)));
 	  elety.push_back(trim(line.substr(12,4)));
 	  alt.push_back(trim(line.substr(16,1)));

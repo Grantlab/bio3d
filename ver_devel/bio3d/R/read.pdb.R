@@ -1,5 +1,5 @@
 read.pdb <- function(file, maxlines = -1, multi=FALSE, rm.insert=FALSE, rm.alt=TRUE,
-                     ATOM.only=FALSE, verbose=TRUE) {
+                     ATOM.only=FALSE, hex=FALSE, verbose=TRUE) {
   
     cl <- match.call()
     
@@ -43,7 +43,7 @@ read.pdb <- function(file, maxlines = -1, multi=FALSE, rm.insert=FALSE, rm.alt=T
     }
     
     ## parse PDB file with cpp function
-    pdb <- .read_pdb(file, multi=multi, hex=FALSE, maxlines=maxlines, atoms_only=ATOM.only)
+    pdb <- .read_pdb(file, multi=multi, hex=hex, maxlines=maxlines, atoms_only=ATOM.only)
 
     ## remove temp file if we downloaded it above
     if(!is.null(putfile)) {
