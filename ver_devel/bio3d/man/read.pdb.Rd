@@ -9,7 +9,7 @@
 }
 \usage{
 read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
-         rm.alt = TRUE, ATOM.only = FALSE, verbose = TRUE)
+         rm.alt = TRUE, ATOM.only = FALSE, hex = FALSE, verbose = TRUE)
 
 read.pdb2(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
          rm.alt = TRUE, ATOM.only = FALSE, verbose = TRUE)
@@ -32,6 +32,10 @@ read.pdb2(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
   \item{ATOM.only}{ logical, if TRUE only ATOM/HETATM records are stored.
     Useful for speed enhancements with large files where secondary structure, 
     biological unit and other remark records are not required. }
+  \item{hex}{ logical, if TRUE assume atom numbers (> 99999) and residue
+    numbers (> 9999) are written as hexadecimals in the PDB file
+    (e.g. from VMD). Note that numbering must be consequitive in the PDB
+    file with no residues and/or atoms missing. }
   \item{verbose}{ print details of the reading process. }
   \item{x}{ a PDB structure object obtained from
     \code{\link{read.pdb}}.  }
