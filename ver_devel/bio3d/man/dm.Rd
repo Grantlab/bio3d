@@ -2,6 +2,7 @@
 \alias{dm}
 \alias{dm.pdb}
 \alias{dm.xyz}
+\alias{dm.pdbs}
 \title{ Distance Matrix Analysis }
 \description{
   Construct a distance matrix for a given protein structure.
@@ -10,6 +11,7 @@
 dm(\dots)
 
 \method{dm}{pdb}(pdb, inds = NULL, grp = TRUE, verbose=TRUE, \dots)
+\method{dm}{pdbs}(pdbs, \dots)
 
 \method{dm}{xyz}(xyz, grpby = NULL, scut = NULL, mask.lower = TRUE, 
                   gc.first=FALSE, ncore=1, \dots)
@@ -23,6 +25,8 @@ dm(\dots)
   \item{grp}{ logical, if TRUE atomic distances will be grouped according
     to their residue membership. See \sQuote{grpby}. }
   \item{verbose}{ logical, if TRUE possible warnings are printed. }
+  \item{pdbs}{ a \sQuote{pdbs} object as returned by \code{\link{read.fasta.pdb}}
+    or \code{\link{pdbaln}}. }
   \item{xyz}{ a numeric vector or matrix of Cartesian coordinates.}
   \item{grpby}{ a vector counting connective duplicated elements that
     indicate the elements of \code{xyz} that should be considered as a group

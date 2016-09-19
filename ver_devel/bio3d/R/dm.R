@@ -23,3 +23,8 @@
   return(d)
 }
 
+"dm.pdbs" <- function(pdbs, ...) {
+  if(!is.pdbs(pdbs))
+    stop("Input should be a 'pdbs' object as obtained from 'read.fasta.pdb()'.")
+  dm.xyz(pdbs$xyz, ...)
+}
