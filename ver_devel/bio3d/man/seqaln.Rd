@@ -8,7 +8,7 @@
 \usage{
 seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa", 
        protein=TRUE, seqgroup=FALSE, refine=FALSE, extra.args="",
-       verbose=FALSE)  
+       verbose=FALSE, web.args = list())  
 }
 \arguments{
   \item{aln}{ a sequence character matrix, as obtained from
@@ -33,7 +33,10 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   \item{extra.args}{ a single character string containing extra command
     line arguments for the alignment program. }
   \item{verbose}{ logical, if TRUE \sQuote{MUSCLE} warning and error
-    messages are printed. } 
+    messages are printed. }
+  \item{web.args}{ a \sQuote{list} object containing arguments to perform
+    online sequence alignment using EMBL-EBI Web Services. 
+    See below for details. } 
 }
 \details{
   Sequence alignment attempts to arrange the sequences of protein,
@@ -66,6 +69,21 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   \sQuote{CLUSTALO} can be used as an alternative to \sQuote{MUSCLE} by
   specifiying \code{exefile='clustalo'}. This might be useful e.g. when
   adding several sequences to a profile alignment. 
+
+  If local \sQuote{MUSCLE} or \sQuote{CLUSTALO} program is unavailable,
+  the function will attempt to perform alignment online using the EMBL-EBI
+  Web Services (See http://www.ebi.ac.uk). In this case, the argument 
+  \code{web.args} cannot be empty and must contain at least user's E-Mail 
+  address. Note that as stated by EBI, a fake email address may result 
+  in your jobs being killed and your IP, Organisation or entire domain being 
+  black-listed (See http://www.ebi.ac.uk/Tools/webservices/help/faq). 
+  Possible parameters to be passed via \code{web.args} include:
+  \item{email}{ a string containing a valid E-Mail address. Required. }
+  \item{title}{ a string for the title of the job to be submitted to
+    the remote server. Optional. }
+  \item{timeout}{ integer specifying the number of seconds to wait for
+    the response of the server before a time out occurs. Default: 90. }
+  An example of usage is \code{web.args=list(email='user_id@email.provider')}.
 }
 \value{
   Returns a list of class \code{"fasta"} with the following components:
