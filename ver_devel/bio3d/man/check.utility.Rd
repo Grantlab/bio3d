@@ -5,7 +5,7 @@
   Internally used in examples, tests, or vignettes.
 }
 \usage{
-  check.utility(x = c("muscle", "dssp", "stride", "mustang", "makeup"), quiet = TRUE)
+  check.utility(x = c("muscle", "clustalo", "dssp", "stride", "mustang", "makeup"), quiet = TRUE)
 }
 \arguments{
   \item{x}{ Names of one or more utility programs to check. }

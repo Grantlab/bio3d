@@ -1,6 +1,6 @@
 ---
 title: "bio3d Vignettes"
-date: "Feb 19 2015"
+date: "Sep 15 2016"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}

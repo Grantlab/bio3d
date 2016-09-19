@@ -1,4 +1,4 @@
-check.utility <- function(x = c("muscle", "dssp", "stride", "mustang", "makeup"), 
+check.utility <- function(x = c("muscle", "clustalo", "dssp", "stride", "mustang", "makeup"), 
    quiet = TRUE) {
   
   utilities <- match.arg(x, several.ok = TRUE)

@@ -78,11 +78,13 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   in your jobs being killed and your IP, Organisation or entire domain being 
   black-listed (See http://www.ebi.ac.uk/Tools/webservices/help/faq). 
   Possible parameters to be passed via \code{web.args} include:
-  \item{email}{ a string containing a valid E-Mail address. Required. }
-  \item{title}{ a string for the title of the job to be submitted to
-    the remote server. Optional. }
-  \item{timeout}{ integer specifying the number of seconds to wait for
-    the response of the server before a time out occurs. Default: 90. }
+  \describe{
+    \item{email}{ a string containing a valid E-Mail address. Required. }
+    \item{title}{ a string for the title of the job to be submitted to
+      the remote server. Optional. }
+    \item{timeout}{ integer specifying the number of seconds to wait for
+      the response of the server before a time out occurs. Default: 90. }
+  }
   An example of usage is \code{web.args=list(email='user_id@email.provider')}.
 }
 \value{
