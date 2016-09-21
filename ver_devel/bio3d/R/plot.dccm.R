@@ -1,4 +1,4 @@
-plot.dccm <-function(x, sse=NULL, colorkey=TRUE,
+plot.dccm <-function(x, resno=NULL, sse=NULL, colorkey=TRUE,
                      at=c(-1, -0.75, -0.5,  -0.25, 0.25, 0.5, 0.75, 1),
                      main="Residue Cross Correlation", # pad=0.022
                      helix.col = "gray20", sheet.col = "gray80",
@@ -9,6 +9,36 @@ plot.dccm <-function(x, sse=NULL, colorkey=TRUE,
 
   requireNamespace("lattice", quietly = TRUE)
   colnames(x) = NULL; rownames(x)=NULL
+
+  ##-- Customized axis tick labels
+  if(!is.null(resno)) {
+    if(is.pdb(resno)) {
+      ## Take Calpha residue numbers from PDB input
+      ca.inds <- atom.select(resno, "calpha", verbose = FALSE)
+      resno <- resno$atom$resno[ca.inds$atom]
+    }
+    if(length(resno) != nrow(x)) {
+      warning("Length of input 'resno' does not equal the length of input 'x'; Ignoring 'resno'")
+      resno=NULL
+    }
+  }
+
+  scales <- NULL
+  dots <- list(...)
+  if('scales' %in% names(dots)) scales <- dots$scales
+  xy.at <- pretty(seq_along(x[1, ]))
+  xy.at <- xy.at[xy.at <= ncol(x)]
+  xy.at[1] <- 1
+  if(is.null(resno)) {
+     scales$at <- xy.at
+     scales$labels <- xy.at
+  } else {
+     labs <- resno[xy.at]
+     labs[is.na(labs)] <- ""
+     scales$at <- xy.at
+     scales$labels <- labs
+  }
+  dots$scales <- scales
 
   draw.segment <- function(start, length, xymin, xymax, fill.col="gray", side=1) {
     ##-- Draw Annotation On Plot Margins, used for SSE and CLUSTER members
@@ -58,11 +88,16 @@ plot.dccm <-function(x, sse=NULL, colorkey=TRUE,
   }
   
   ##-- Main Plot
-  p1 <- lattice::contourplot(x, region = TRUE, labels=F, col="gray40",
+  p1 <- do.call(lattice::contourplot, c(list(x, region = TRUE, labels=FALSE, col="gray40",
                     at=at, xlab=xlab, ylab=ylab,
-                    colorkey=colorkey, main=main, ...)
+                    colorkey=colorkey, main=main), dots))
 
   ##-- Check sse
+  if(is.pdb(sse)) {
+     sse <- pdb2sse(sse)
+     sse <- bounds.sse(unname(sse))
+  }
+
   if(length(sse$helix$start)==0 && 
      length(sse$sheet$start)==0) 
     sse <- NULL

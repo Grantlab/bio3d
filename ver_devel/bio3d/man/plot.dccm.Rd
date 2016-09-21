@@ -5,7 +5,7 @@
   Plot a dynamical cross-correlation matrix.
 }
 \usage{
-\method{plot}{dccm}(x, sse=NULL, colorkey=TRUE,
+\method{plot}{dccm}(x, resno=NULL, sse=NULL, colorkey=TRUE,
                     at=c(-1, -0.75, -0.5,  -0.25, 0.25, 0.5, 0.75, 1),
                     main="Residue Cross Correlation",
                     helix.col = "gray20", sheet.col = "gray80",
@@ -16,6 +16,11 @@
 \arguments{
   \item{x}{ a numeric matrix of atom-wise cross-correlations as output by
     the \sQuote{dccm} function. }
+  \item{resno}{ an optional vector with length equal to that of
+    \code{x} that will be used to annotate the x- and y-axis. This is typically
+    a vector of residue numbers. Can be also provided with a \sQuote{pdb} object,
+    in which \sQuote{resno} of all C-alpha atoms will be used. If NULL residue 
+    positions from 1 to the length of \code{x} will be used. See examples below. }
   \item{sse}{ secondary structure object as returned from
     \code{\link{dssp}}, \code{\link{stride}} or \code{\link{read.pdb}}. }
   \item{colorkey}{ logical, if TRUE a key is plotted. }
@@ -61,12 +66,11 @@
   trtfile <- system.file("examples/hivp.dcd", package="bio3d")
   trj <- read.dcd(trtfile)
 
-  ## Read the starting PDB file to determine atom correspondence
-  pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
-  pdb <- read.pdb(pdbfile)
+  ## Read reference PDB and trim it to match the trajectory
+  pdb <- trim(read.pdb("1W5Y"), 'calpha')
 
   ## select residues 24 to 27 and 85 to 90 in both chains
-  inds <- atom.select(pdb, resno=c(24:27,85:90), elety='CA')
+  inds <- atom.select(pdb, resno=c(24:27,85:90))
 
   ## lsq fit of trj on pdb
   xyz <- fit.xyz(pdb$xyz, trj, fixed.inds=inds$xyz, mobile.inds=inds$xyz)
@@ -81,12 +85,14 @@
   plot.dccm(cij, contour=FALSE, col.regions=bwr.colors(200), at=seq(-1,1,by=0.01) )
 
   ## Add secondary structure annotation to plot margins
-  sse <- dssp(read.pdb("1W5Y"), resno=FALSE)
-  plot.dccm(cij, sse=sse) 
+  plot.dccm(cij, sse=pdb) 
+
+  ## Also label x- and y-axis with PDB residue numbers
+  plot.dccm(cij, resno=pdb, sse=pdb)
 
   ## Add additional margin annotation for chains..
-  ch <- ifelse(pdb$atom[pdb$calpha,"chain"]=="A", 1,2)
-  plot.dccm(cij, sse=sse, margin.segments=ch)
+  ch <- ifelse(pdb$atom$chain=="A", 1,2)
+  plot.dccm(cij, sse=pdb, margin.segments=ch)
 
   ## Plot with cluster annotation from dynamic network analysis
   #net <- cna(cij)
