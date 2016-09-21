@@ -134,7 +134,16 @@ gnm.pdb <- function(x, inds=NULL, temp=300.0, keep=NULL, outmodes=NULL,
   
   if(length(inc.inds$atom) < nrow(K)) {
     # calculate effective Kirchhoff
-    K <- .nma.trim.hessian(K, inc.inds=inc.inds$atom) 
+    ptm <- proc.time()
+#    cat(" Extracting effective Kirchhoff..")
+    inc.inds <- inc.inds$atom
+    kaa    <- K[inc.inds, inc.inds]
+    kqq.inv <- chol2inv(chol(K[-inc.inds, -inc.inds]))
+    kaq     <- K[inc.inds, -inc.inds]
+    kqa     <- t(kaq)
+    K <- kaa - crossprod(crossprod(kqq.inv, kqa), kqa)
+    t <- proc.time() - ptm
+#    cat("\tDone in", t[[3]], "seconds.\n")
   }
 
   ## diagonalize - get eigenvectors

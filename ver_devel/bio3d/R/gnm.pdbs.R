@@ -137,8 +137,7 @@ gnm.pdbs <- function(x, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
 
      pdb <- pdbs2pdb(pdbs, i, rm.gaps = FALSE)[[1]]
      sele <- match(gaps.res$f.inds, which(!is.gap(pdbs$ali[i, ])))
-     sele <- list(atom=sele, xyz=atom2xyz(sele))
-     class(sele) <- 'select'
+     sele <- as.select(sele)
 
      if(rm.gaps)
         modes <- try(do.call(gnm, c(list(x=pdb, outmodes=sele), dots)))
