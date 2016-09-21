@@ -146,11 +146,11 @@ gnm.pdbs <- function(x, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
         modes <- try(do.call(gnm, c(list(x=pdb), dots)))
 
      if(inherits(modes, 'try-error')) {
-        .close.pb(ncore, pb)
+        .close.pb(pb)
         stop(paste('Encounter errors in ', i, 'th structure', sep=''))
      }
 
-     .update.pb(ncore, pb, i)
+     .update.pb(pb)
 
      modes$call <- NULL
      return( modes )
@@ -158,7 +158,7 @@ gnm.pdbs <- function(x, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
   }, mc.cores=ncore)
 
   ## Finish progress bar
-  .close.pb(ncore, pb)
+  .close.pb(pb)
 
   ##### Finalize calculation #####
   for(i in 1:length(all.modes)) {

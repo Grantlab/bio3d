@@ -30,31 +30,8 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
         for(j in 1:length(to)) pairs <- c(pairs, list(list(from=from[i], to=to[j])))
   }
 
-  ## Progress bar
-  pb <- txtProgressBar(min=0, max=k*length(pairs), style=3)
-  if(ncore > 1) {
-     mcparallel <- get("mcparallel", envir = getNamespace("parallel"))
-     mccollect <- get("mccollect", envir = getNamespace("parallel"))
-
-     fpb <- fifo(tempfile(), open = "w+b", blocking = T)
-
-     # spawn a child process for message printing
-     child <- mcparallel({
-        progress <- 0.0
-        while(progress < k*length(pairs) && !isIncomplete(fpb)) {
-           msg <- readBin(fpb, "double")
-           progress <- progress + as.numeric(msg)
-           setTxtProgressBar(pb, progress)
-        }
-     } )
- 
-     local.pb <- fpb
- 
-  } else {
-
-     local.pb <- pb
-
-  }
+  ## Initialize progress bar
+  pb <- .init.pb(ncore, min=0, max=k*length(pairs))
 
   ## optimize ncore partition
   ncore.out <- ifelse(ncore < length(pairs), ncore, length(pairs))
@@ -62,7 +39,7 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
 
   paths <- mclapply(pairs, function(x)
               .cnapath.core(cna=cna, from=x$from, to=x$to, k=k, ncore=ncore.in, 
-                 pb=local.pb, ...), mc.cores=ncore.out)
+                 pb=pb, ...), mc.cores=ncore.out)
 
   if(collapse) {
      cls <- class(paths[[1]])
@@ -72,11 +49,8 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
      class(paths) <- cls
   }
 
-  if(ncore > 1) {
-     close(fpb)
-     mccollect(child) # End the child for message printing
-  }
-  close(pb)
+  ## Finish progress bar
+  .close.pb(pb)
 
   return(paths)
 }
@@ -107,14 +81,7 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
 
   # number of currently found shortest paths
   kk <- 1
-  if(!is.null(pb)) {
-     if(inherits(pb, "txtProgressBar")) {
-        ipb <- getTxtProgressBar(pb)
-        setTxtProgressBar(pb, ipb + 1)
-     } else if(inherits(pb, "fifo")) {
-        writeBin(1, pb)
-     }
-  }
+  if(!is.null(pb)) .update.pb(pb)
 
   # All shortest paths are stored in container A in order
   dist = sum(igraph::E(graph)$weight[k0$epath[[1]]])
@@ -177,26 +144,12 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
     kk <- kk + 1
     B <- B[-sp]
 
-    if(!is.null(pb)) {
-       if(inherits(pb, "txtProgressBar")) {
-          ipb <- getTxtProgressBar(pb)
-          setTxtProgressBar(pb, ipb + 1)
-       } else if(inherits(pb, "fifo")) {
-          writeBin(1, pb)
-       }
-    }
+    if(!is.null(pb)) .update.pb(pb)
   }
 
   # stopped before reaching k paths
   if(kk < k) {
-    if(!is.null(pb)) {
-       if(inherits(pb, "txtProgressBar")) {
-          ipb <- getTxtProgressBar(pb)
-          setTxtProgressBar(pb, ipb + k - kk)
-       } else if(inherits(pb, "fifo")) {
-          writeBin(k-kk, pb)
-       }
-    }
+    if(!is.null(pb)) .update.pb(pb, k-kk)
     warning("Reaching maximal number of possible paths (", kk, ")")
   }
 

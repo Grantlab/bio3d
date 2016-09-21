@@ -339,11 +339,11 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
      } 
 
      if(inherits(modes, 'try-error')) {
-        .close.pb(ncore, pb)
+        .close.pb(pb)
         stop(paste('Encounter errors in ', i, 'th structure', sep=''))
      }
 
-     .update.pb(ncore, pb, i)
+     .update.pb(pb)
 
      modes$call <- NULL
      return( modes )
@@ -351,7 +351,7 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
   }, mc.cores=ncore)
 
   ## Finish progress bar
-  .close.pb(ncore, pb)
+  .close.pb(pb)
 
   if(!aligned.modes) return( all.modes )
 
@@ -427,17 +427,21 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
      return(fpb)
   }
 }
-.update.pb <- function(ncore, pb, i) {
+.update.pb <- function(pb, step=1) {
 
-  if(ncore > 1) writeBin(1, pb)
-  else setTxtProgressBar(pb, i)
+  if(inherits(pb, "txtProgressBar")) {
+     i <- getTxtProgressBar(pb)
+     setTxtProgressBar(pb, i+step)
+  }
+  else {
+     if(inherits(pb, "fifo"))
+        writeBin(step, pb)
+  }
 
 }
-
-.close.pb <- function(ncore, pb) {
-   if(ncore > 1) {
+.close.pb <- function(pb) {
+   if(inherits(pb, "fifo")) {
       mccollect <- get("mccollect", envir = getNamespace("parallel"))
-
       mccollect(as.numeric(names(pb)))
       mccollect(as.numeric(names(pb)))
    }

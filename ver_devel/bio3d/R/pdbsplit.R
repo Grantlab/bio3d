@@ -33,8 +33,9 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
   }
 
   if(!verbose)
-    pb <- txtProgressBar(min=0, max=length(pdb.files), style=3)
-  
+    ## Initialize progress bar
+    pb <- .init.pb(ncore, min=0, max=length(pdb.files))
+
   if(!file.exists(path)) 
      dir.create(path)
   
@@ -92,7 +93,7 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
     if (length(chains) > 0) {
       for (j in 1:length(chains)) {
         if(!verbose)
-          setTxtProgressBar(pb, (i-1)+(j/length(chains)))
+          .update.pb(pb, step=1/length(chains))
         
         ##if (!is.na(chains[j])) {
           new.pdb <- NULL
@@ -139,8 +140,9 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
         ##}
       }
     }
-    if(!verbose)
-      setTxtProgressBar(pb, i)
+    else {
+      if(!verbose) .update.pb(pb, step=1)
+    }
 
     gc()
     return( list(out=out, unused=unused, skipped=skipped) )
@@ -163,7 +165,7 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
   }
 
   if(!verbose)
-    close(pb)
+    .close.pb(pb)
   
   if(!is.null(ids)) {
     ids.used <- NULL; nonmatch <- NULL
