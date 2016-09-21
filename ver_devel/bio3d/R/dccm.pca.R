@@ -8,11 +8,6 @@
    ## Check for multiple cores
    ncore = setup.ncore(ncore)
 
-   if(ncore > 1) {
-     mcparallel <- get("mcparallel", envir = getNamespace("parallel"))
-     mccollect <- get("mccollect", envir = getNamespace("parallel"))
-   }
-   
    ## Set modes to be included
    if(is.null(modes))
       modes <- 1:length(x$L)
@@ -35,8 +30,7 @@
    vcovmat <- function(r.inds, pca, vcov.mat = 0) {
      for ( i in seq_along(r.inds) ) {
        vcov.mat <- vcov.mat + (pca$U[, r.inds[i]] %o% pca$U[, r.inds[i]]) * pca$L[r.inds[i]]
-       if(ncore > 1) writeBin(1, fpb)
-       else setTxtProgressBar(pb, i)
+       .update.pb(pb)
      }
      return(vcov.mat)
    }
@@ -51,24 +45,10 @@
    } else {
 
       ## Initialize progress bar
-      pb <- txtProgressBar(min=1, max=nmodes, style=3)
+      pb <- .init.pb(ncore, min=0, max=nmodes)
 
       if(ncore > 1) {   # Parallel
 
-         # For progress bar
-         fpb <- fifo(tempfile(), open = "w+b", blocking = T)
-
-         # spawn a child process for message printing
-         child <- mcparallel({ 
-            progress <- 0.0
-            while(progress < nmodes && !isIncomplete(fpb)) {
-               msg <- readBin(fpb, "double")
-               progress <- progress + as.numeric(msg)
-               setTxtProgressBar(pb, progress)
-            }
-         } )
-         ###################
- 
          jobid <- rep(1:ncore, ceiling(nmodes/ncore))
          jobid <- jobid[1:nmodes]
 
@@ -89,15 +69,12 @@
          vcov <- vcov + t(vcov)
          diag(vcov) <- diag(vcov) / 2
 
-         close(fpb)
-         mccollect(child) # End the child for message printing
-
       } else {       # Serial
 
          vcov <- vcovmat(modes, x)
 
       }
-      close(pb)
+      .close.pb(pb)
    }
    
    corr.mat <- cov2dccm(vcov, ncore = ncore, ...)
