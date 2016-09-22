@@ -21,8 +21,8 @@ function(xyz, subset = rep(TRUE, nrow(as.matrix(xyz))), use.svd = FALSE,
       }
     } else {
        stop( paste("  Infinite or missing values in 'xyz' input.",
-      "\t Likely solution is to remove gap positions (cols)",
-      "\t or gap containing structures (rows) from input.", sep="\n") )
+      "\t Likely solution is to remove gap positions (cols) with rm.gaps=TRUE",
+      "\t or remove gap containing structures (rows) from input.", sep="\n") )
     }
   }
 

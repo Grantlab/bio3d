@@ -60,8 +60,8 @@
 attach(transducin)
 
 gaps.pos <- gap.inspect(pdbs$xyz)
-modes <- nma.pdbs(pdbs, full=TRUE)
-dccms <- dccm.enma(modes)
+modes <- nma.pdbs(pdbs, ncore=NULL)
+dccms <- dccm.enma(modes, ncore=NULL)
 
 cij <- filter.dccm(dccms, xyz=pdbs)
 
@@ -78,7 +78,7 @@ pdbs <- pdbaln(files) # Sequence identity
 summary(c(seqidentity(pdbs)))
 
 # NMA on all structures
-modes <- nma.pdbs(pdbs, full = TRUE)
+modes <- nma.pdbs(pdbs, ncore=NULL)
 
 # Calculate correlation matrices for each structure
 cij <- dccm(modes)

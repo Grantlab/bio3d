@@ -87,12 +87,10 @@
   ## Add secondary structure annotation to plot margins
   plot.dccm(cij, sse=pdb) 
 
+  ## Add additional margin annotation for chains
   ## Also label x- and y-axis with PDB residue numbers
-  plot.dccm(cij, resno=pdb, sse=pdb)
-
-  ## Add additional margin annotation for chains..
   ch <- ifelse(pdb$atom$chain=="A", 1,2)
-  plot.dccm(cij, sse=pdb, margin.segments=ch)
+  plot.dccm(cij, resno=pdb, sse=pdb, margin.segments=ch)
 
   ## Plot with cluster annotation from dynamic network analysis
   #net <- cna(cij)
