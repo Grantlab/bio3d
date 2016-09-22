@@ -2,12 +2,13 @@ NEWS
 ====
 
 v2.3
-Version 2.3, released in September 2016, contains new facilities for
-ensemble normal mode analysis (NMA) with all-atom elastic network model (ENM) 
-and Gaussian network model (GNM), enhanced NMA calculation with 
-rotation-translation block (RTB) method and "4-bead" coarse-grained ENM, 
-more efficiently reading large PDB files using Rcpp, 
-PDB annotation from PFAM database, and more supported I/O file format.
+Version 2.3, released September 2016, provides a number of new features and 
+enhancements including: new facilities for ensemble normal mode analysis (NMA) 
+with all-atom elastic network model (ENM) and Gaussian network model (GNM), 
+enhanced NMA calculations with the rotation-translation block (RTB) method, 
+new "4-bead" coarse-grained ENM, more efficient reading of large PDB files 
+using Rcpp, PDB annotation from the PFAM database, and more supported I/O file 
+formats.  
 
 We have also updated online vignettes and other documentations.
 For a fine-grained list of changes, or to report a bug, please consult:
@@ -15,7 +16,11 @@ For a fine-grained list of changes, or to report a bug, please consult:
 * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
 * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
 
+For full install instructions see: 
+<http://thegrantlab.org/bio3d/tutorials/installing-bio3d>
+
 Major new/enhanced functions include:
+
 * aanma:  All-atom ENM normal mode analysis (with RTB and 4-bead ENM supported)
 * aanma.pdbs:  Ensemble NMA with all-atom ENM
 * gnm:  Gaussian network model (GNM) calculations
@@ -38,7 +43,9 @@ Major new/enhanced functions include:
 * vmd.cna and vmd.cnapath: Renamed view.cna and view.cnapath
 * pymol.dccm, pymol.modes, pymol.nma, and pymol.pca: Renamed view.xxx functions
 * plot.fasta: Improved plotting function for multiple sequence alignment
-* read.mol2, write.mol2, atom.select, trim, as.pdb:  Read, write and manipulate mol2 files with functions
+* read.mol2, write.mol2, atom.select, trim, as.pdb:  Read, write and manipulate mol2 files with functions  
+
+Happy Bio3Ding!
 
 
 v2.2
