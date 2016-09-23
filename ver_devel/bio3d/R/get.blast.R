@@ -59,8 +59,8 @@ get.blast <- function(urlget, time.out = NULL, chain.single=TRUE) {
 
   ## Catch long chain IDs as in hits from "P12612" (e.g "1WF4_GG" => "1WF4_g")
   if(chain.single) {
-    chain.ind <- nchar(pdb.chain) > 1
-    if(any(chain.ind)) {
+    chain.ind <- which(nchar(pdb.chain) > 1)
+    if(length(chain.ind) > 0) {
       pdb.chain[ chain.ind ] <- tolower( substr(pdb.chain[ chain.ind ],1,1 ) )
     }
   }
