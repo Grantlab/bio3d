@@ -129,6 +129,11 @@ read.pdb <- function(file, maxlines = -1, multi=FALSE, rm.insert=FALSE, rm.alt=T
     
     if(any(duplicated(pdb$atom$eleno)))
         warning("duplicated element numbers ('eleno') detected")
+
+    if(any(is.na(pdb$atom$resno))) {
+        warning("NA values for residue numbers ('resno') detected")
+    }
+    
     
     ## construct c-alpha attribute
     ca.inds <-  atom.select.pdb(pdb, string="calpha", verbose=FALSE)
