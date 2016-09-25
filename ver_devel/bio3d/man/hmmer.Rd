@@ -73,20 +73,26 @@ hmmer(seq, type="phmmer", db = NULL, verbose = TRUE, timeout = 90)
   \url{http://hmmer.org}
 }
 \value{
-  A data frame with multiple components depending on the selected job
-  \sQuote{type}. Frequently reported fields include:
+  A list object with components \sQuote{hit.tbl} and
+  \sQuote{url}. \sQuote{hit.tbl} is a data frame with multiple
+  components depending on the selected job \sQuote{type}. Frequently
+  reported fields include: 
 
   \item{name}{ a character vector containing the name of the target. }
   \item{acc}{ a character vector containing the accession identifier of
     the target. }
   \item{acc2}{ a character vector containing secondary accession of the
     target. }
+  \item{pdb.id}{ same as \sQuote{acc}. }
   \item{id}{ a character vector containing Identifier of the target }
   \item{desc}{ a character vector containing entry description. }
   \item{score}{ a numeric vector containing bit score of the sequence (all
     domains, without correction). }
+  \item{bitscore}{ same as \sQuote{score}. }
   \item{pvalue}{ a numeric vector containing the P-value of the score. }
   \item{evalue}{ a numeric vector containing the E-value of the score. }
+  \item{mlog.evalue }{ a numeric vector containing minus the natural log
+    of the E-value. }
   \item{nregions}{ a numeric vector containing Number of regions
     evaluated. } 
   \item{nenvelopes}{ a numeric vector containing the number of envelopes
@@ -129,9 +135,9 @@ hmmer(seq, type="phmmer", db = NULL, verbose = TRUE, timeout = 90)
   Online access is required to query HMMER services.
 }
 \seealso{
-  \code{\link{seqaln}}, \code{\link{get.seq}}
-  \code{\link{blast.pdb}}, \code{\link{pfam}}
-  \code{\link{uniprot}}
+  \code{\link{blast.pdb}}, \code{\link{plot.blast}}, 
+  \code{\link{seqaln}}, \code{\link{get.seq}},
+  \code{\link{pfam}}, \code{\link{uniprot}}
 }
 \examples{
 \dontrun{
