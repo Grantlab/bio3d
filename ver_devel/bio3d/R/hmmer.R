@@ -153,7 +153,10 @@
   ##  unique(XML::xpathSApply(x, 'pdbs', XML::xmlToList))
   ##}
 
+
   xml <- XML::xmlParse(hmm)
+  resurl <- XML::xpathSApply(xml, '//data', XML::xpathSApply, '@*')
+  resurl <- paste0("http://www.ebi.ac.uk/Tools/hmmer/results/", resurl["uuid", 1])
   data <- XML::xpathSApply(xml, '///hits', XML::xpathSApply, '@*')
 
   pdb.ids <- NULL
@@ -186,8 +189,15 @@
     }
     )
   }
+
+  data$pdb.id <- data$acc
+  data$bitscore <- data$score
+  data$mlog.evalue <- -log(data$evalue)
+
+  out <- list(hit.tbl = data,
+              url = resurl)
   
-  class(data) <- c("hmmer", type, "data.frame")
-  out <- data
+  ##class(data) <- c("hmmer", type, "data.frame")
+  class(out) <- c("hmmer", type)
   return(out)
 }

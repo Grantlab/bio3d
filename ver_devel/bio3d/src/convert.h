@@ -19,7 +19,7 @@ inline double stringToDouble(const std::string& s)
   std::istringstream i(s);
   double x;
   if (!(i >> x))
-    throw BadConversion("stringToDouble(\"" + s + "\")");
+    throw BadConversion("Could not convert string to double (\"" + s + "\")");
   return x;
 }
 
@@ -32,6 +32,6 @@ inline int stringToInt(const std::string& s)
   std::istringstream i(s);
   int x;
   if (!(i >> x))
-    throw BadConversion("stringToInt(\"" + s + "\")");
+    throw BadConversion("Could not convert string to int (\"" + s + "\")");
   return x;
 }
