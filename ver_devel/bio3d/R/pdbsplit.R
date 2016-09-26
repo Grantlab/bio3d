@@ -164,9 +164,11 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
     skipped <- c(skipped, tmp.out$skipped)
   }
 
-  if(!verbose)
+  if(!verbose) {
+    .update.pb(pb)
     .close.pb(pb)
-  
+  }
+ 
   if(!is.null(ids)) {
     ids.used <- NULL; nonmatch <- NULL
     if(length(outfiles)>0) {
