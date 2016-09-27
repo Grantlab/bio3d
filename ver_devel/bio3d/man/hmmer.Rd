@@ -149,12 +149,12 @@ res <- hmmer(seq, db="pdb")
 
 ##- HMMSCAN
 fam <- hmmer(seq, type="hmmscan", db="pfam")
-pfam.aln <- pfam(fam$acc[1])
+pfam.aln <- pfam(fam$hit.tbl$acc[1])
 
 ##- HMMSEARCH
 hmm <- hmmer(pfam.aln, type="hmmsearch", db="pdb")
-unique(hmm$species)
-hmm$acc
+unique(hmm$hit.tbl$species)
+hmm$hit.tbl$acc
 
 }
 }

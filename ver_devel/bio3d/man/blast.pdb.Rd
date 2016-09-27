@@ -91,30 +91,32 @@ get.blast(urlget, time.out = NULL, chain.single=TRUE)
   examples below for further details.
 }
 \value{
-  The function \code{blast.pdb} returns a list with the first eight components 
-  below.  The function \code{plot.blast} produces a plot on the active graphics 
-  device and returns a three component list object with \code{hits},
-  \code{pdb.id} and \code{acc} see below:
-
+  The function \code{blast.pdb} returns a list with three components,
+  \code{hit.tbl}, \code{raw}, and \code{url}. 
+  The function \code{plot.blast} produces a plot on the 
+  active graphics device and returns a list object with four components,
+  \code{hits}, \code{pdb.id}, \code{acc}, and \code{inds}. See below:
+ 
   \item{hit.tbl }{ a data frame summarizing BLAST results for each
-    reported hit, see below. }
-  
-  \item{bitscore }{ a numeric vector containing the raw score for each
-    alignment. }
-  \item{evalue }{ a numeric vector containing the E-value of the raw
-    score for each alignment. }
-  \item{mlog.evalue }{ a numeric vector containing minus the natural log
-    of the E-value. }
-  \item{acc }{ a character vector containing the accession database identifier of
-    each hit. }  
-  \item{pdb.id }{ a character vector containing the PDB database identifier of
-    each hit. }  
-
-  \item{raw }{ a data frame summarizing BLAST results, note multiple
+    reported hit. It contains following major columns:
+    \itemize{
+      \item \sQuote{bitscore}, a numeric vector containing the raw score for each
+    alignment.
+      \item \sQuote{evalue}, a numeric vector containing the E-value of the raw
+    score for each alignment. 
+      \item \sQuote{mlog.evalue}, a numeric vector containing minus the natural log
+    of the E-value. 
+      \item \sQuote{acc}, a character vector containing the accession database identifier of
+    each hit.  
+      \item \sQuote{pdb.id}, a character vector containing the PDB database identifier of
+    each hit. 
+   } 
+  }
+  \item{raw }{ a data frame containing the raw BLAST output. Note multiple
     hits may appear in the same row. }
   \item{url }{ a single element character vector with the NCBI result URL and 
     RID code. This can be passed to the get.blast function. }
-  
+
   \item{hits}{ an ordered matrix detailing the subset of hits with a normalized
     score above the chosen cutoff. Database identifiers are listed along
     with their cluster group number. }
