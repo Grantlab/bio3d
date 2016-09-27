@@ -8,8 +8,8 @@
 dist.xyz(a, b = NULL, all.pairs=TRUE, ncore=1, nseg.scale=1)
 }
 \arguments{
-  \item{a}{ a numeric data matrix or vector }
-  \item{b}{ an optional second data matrix or vector }
+  \item{a}{ a \sQuote{xyz} object, numeric data matrix, or vector. }
+  \item{b}{ an optional second \sQuote{xyz} object, data matrix, or vector. }
   \item{all.pairs}{  logical, if TRUE all pairwise distances between the
     rows of \sQuote{a} and all rows of \sQuote{b} are computed, if FALSE
     only the distances between coresponding rows of \sQuote{a} and
