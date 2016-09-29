@@ -4,7 +4,14 @@ check.utility <- function(x = c("muscle", "clustalo", "dssp", "stride", "mustang
   utilities <- match.arg(x, several.ok = TRUE)
 
   ##- Check on missing utility programs
-  missing.util <- nchar(Sys.which(utilities)) == 0
+  if('dssp' %in% utilities) {
+    utilities <- c(utilities, 'mkdssp')
+    missing.util <- nchar(Sys.which(utilities)) == 0
+    missing.util['dssp'] <- all(missing.util[c('dssp', 'mkdssp')])
+    missing.util <- missing.util[-length(missing.util)]
+  } else {
+    missing.util <- nchar(Sys.which(utilities)) == 0
+  }
   if( any(missing.util) ) {
     if(!quiet) {
        warning(paste0("  Checking for external utility programs failed\n",
