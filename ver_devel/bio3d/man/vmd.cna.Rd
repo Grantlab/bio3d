@@ -16,10 +16,10 @@ vmd(\dots)
 		col.sphere=NULL, col.lines = "silver", weights = NULL, 
 		radius = table(x$communities$membership)/5, alpha = 1,
 		vmdfile = "network.vmd", pdbfile = "network.pdb", 
-                full = FALSE, launch = FALSE, \dots)
+                full = FALSE, launch = FALSE, exefile=NULL, \dots)
 
 \method{vmd}{cnapath}(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE, 
-   colors = c("blue", "red"), launch = FALSE, \dots)
+   colors = c("blue", "red"), launch = FALSE, exefile=NULL, \dots)
 
 }
 \arguments{
@@ -70,6 +70,9 @@ vmd(\dots)
     character vector, passed to \code{\link{colorRamp}} function to generate the 
     color scales. If an integer, color all paths the same way with VMD color 
     ID equal to the integer. }
+  \item{exefile}{ file path to the \sQuote{VMD} program on your system (i.e.
+    how is \sQuote{VMD} invoked). If \code{NULL}, use OS-dependent
+    default path to the program. }
   \item{\dots}{ additional arguments passed to the function
     \code{\link{colorRamp}} (in \code{vmd.cnapath}).
   }

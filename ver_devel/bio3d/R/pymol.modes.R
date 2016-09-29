@@ -5,7 +5,7 @@ pymol.pca <- function(...)
   pymol.modes(...)
 
 pymol.modes <- function(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
-                      type="script", exefile = "pymol", ...) {
+                      type="script", exefile = NULL, ...) {
 
   if(! (inherits(modes, "nma") || inherits(modes,"pca")) )
     stop("must supply a 'nma' or 'pca' object, i.e. from 'nma()' or 'pca.xyz()'")
@@ -16,9 +16,21 @@ pymol.modes <- function(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
                paste(allowed, collapse=", ")))
   }
   
-  
   ## Check if the program is executable
   if(type %in% c("session", "launch")) {
+
+    ## Find default path to external program
+    if(is.null(exefile)) {
+      exefile <- 'pymol'
+      if(nchar(Sys.which(exefile)) == 0) {
+        os1 <- Sys.info()["sysname"]
+        exefile <- switch(os1,
+          Windows = 'C:/python27/PyMOL/pymol.exe',
+          Darwin = '/Applications/MacPyMOL.app/Contents/MacOS/MacPyMOL',
+          'pymol' )
+      }
+    }
+
     ver <- "-cq"
     os1 <- .Platform$OS.type
     status <- system(paste(exefile, ver),
@@ -143,19 +155,14 @@ pymol.modes <- function(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
       args <- ""
     
     ## Open pymol
-    cmd <- paste('pymol', args, pyfile)
+    cmd <- paste(exefile, args, pyfile)
     
     os1 <- .Platform$OS.type
     if (os1 == "windows") {
       success <- shell(shQuote(cmd))
     }
     else {
-      if(Sys.info()["sysname"]=="Darwin") {
-        success <- system(paste("open -a MacPyMOL", pyfile))
-      }
-      else {
-        success <- system(cmd)
-      }
+      success <- system(cmd)
     }
     
     if(success!=0)
