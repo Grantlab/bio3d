@@ -93,7 +93,9 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
     ## start pymol script
     scr <- c("from pymol import cmd")
     scr <- c(scr, "from pymol.cgo import *")
-    scr <- c(scr, paste("cmd.load('", pdbfile, "', 'prot')", sep=""))
+    scr <- c(scr, paste("cmd.load('", 
+      normalizePath(pdbfile, winslash='/', mustWork=FALSE), 
+       "', 'prot')", sep=""))
     scr <- c(scr, "cmd.show('cartoon')")
     
     if(!is.pdb(pdb) || ca.pdb)
@@ -214,7 +216,9 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
   }
 
   if(type == "session")
-    scr <- c(scr, paste0("cmd.save('", psefile, "')"))
+    scr <- c(scr, paste0("cmd.save('", 
+      normalizePath(psefile, winslash='/', mustWork=FALSE),
+      "')"))
   
   ## Write python script or PDB with conect records
   if(pymol) {

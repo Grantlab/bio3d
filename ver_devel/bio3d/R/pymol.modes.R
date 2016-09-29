@@ -78,7 +78,9 @@ pymol.modes <- function(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
   ## start building pymol script
   scr <- c("from pymol import cmd")
   scr <- c(scr, "from pymol.cgo import *")
-  scr <- c(scr, paste("cmd.load('", pdbfile, "', 'prot')", sep=""))
+  scr <- c(scr, paste("cmd.load('", 
+    normalizePath(pdbfile, winslash='/', mustWork=FALSE),
+    "', 'prot')", sep=""))
   scr <- c(scr, "cmd.show('cartoon')")
   scr <- c(scr, "cmd.set('cartoon_trace_atoms', 1)")
       
@@ -140,7 +142,9 @@ pymol.modes <- function(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
   scr <- c(scr, paste("cmd.load_cgo(obj, '", name, "')", sep=""))
 
   if(type == "session")
-    scr <- c(scr, paste0("cmd.save('", psefile, "')"))
+    scr <- c(scr, paste0("cmd.save('", 
+      normalizePath(psefile, winslash='/', mustWork=FALSE),
+      "')"))
    
   ## Write PDB structure file
   write.pdb(xyz=xyz, file=pdbfile)

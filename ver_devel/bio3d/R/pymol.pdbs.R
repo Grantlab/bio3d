@@ -279,7 +279,8 @@ pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
   l <- l+1
   
   if(type == "session")
-    lines[l+1] <- paste("save", psefile)
+    lines[l+1] <- paste("save", 
+      normalizePath(psefile, winslash='/', mustWork=FALSE))
   
   lines <- lines[!is.na(lines)]
   write.table(lines, file=pmlfile, append=FALSE, quote=FALSE, sep="\n",
