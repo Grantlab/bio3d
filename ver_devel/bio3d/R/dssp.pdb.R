@@ -12,6 +12,8 @@
     status <- system(paste(exefile, "--version"),
                      ignore.stderr = TRUE, ignore.stdout = TRUE)
 
+    exefile0 <- exefile # for error message only
+
     ## Try for Mac OS X homebrew version, called "mkdssp".
     if(!(status %in% c(0,1))) {
       exefile = "mkdssp"
@@ -21,7 +23,7 @@
 ###    if(!(status %in% c(0,1)))
     if(status!=0) {
       stop(paste("Launching external program 'dssp' (or 'mkdssp') failed\n",
-                 "  make sure '", exefile, "' is in your search path", sep=""))
+                 "  make sure '", exefile0, "' is in your search path", sep=""))
     }
 
     ## check atom composition - need backbone atoms to continue SSE analysis
