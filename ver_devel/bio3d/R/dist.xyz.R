@@ -34,7 +34,11 @@ function(a, b=NULL, all.pairs=TRUE, ncore=1, nseg.scale=1){
   } else {
     a <- as.matrix(a)
   }
-  
+  if(ncol(a) != 3) 
+    message(paste('ncol(a) is not 3.\n',
+       'General n-dimension Euclidean distance ',
+       'between rows will be calculated.', sep=''))
+ 
   if(is.null(b)) {
     return(as.matrix(dist(a)))
   } else {

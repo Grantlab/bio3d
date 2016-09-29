@@ -104,25 +104,24 @@ function(x, cutoff=NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5
         panelplot(x$alignmentlength, ylab="Length", gp=gp.inds)
     if("kg" %in% names(x)) {
                 
-        tbl <- table(x$kg[inds], cut(x$score[inds], 10))
+        tbl <- table(x$kg[inds], cut(x$score[inds], 20))
         tbl=tbl[, seq(ncol(tbl), 1), drop=FALSE]
         cols <- seq(1,nrow(tbl))
-        barplot(tbl, col=cols, ylab="Frequency")
-        
-        legend("topleft", rownames(tbl), col=cols,  pch=16, ncol=2, 
-               cex=cex*0.8, box.lwd = 0, box.col = "white",bg = "white")
+        barplot(tbl, col=cols, ylab="Frequency", border="grey50")
         box()
+        
+        legend("topleft", rownames(tbl), col=cols,  pch=15, ncol=3, 
+               cex=cex*0.8, box.lwd = .5, box.lty=2, box.col = "grey50", bg = "white")
 
         
-        tbl <- table(x$kg[!inds], cut(x$score[!inds], 30))
+        tbl <- table(x$kg[!inds], cut(x$score[!inds], 20))
         tbl=tbl[, seq(ncol(tbl), 1), drop=FALSE]
         cols <- seq(1,nrow(tbl))
-        barplot(tbl, col=cols, ylab="Frequency")
+        barplot(tbl, col=cols, ylab="Frequency", border="grey50")
         
-        legend("topleft", rownames(tbl), col=cols,  pch=16, ncol=2, 
-               cex=cex*0.8, box.lwd = 0, box.col = "white",bg = "white")
-        box()
-        
+        legend("topleft", rownames(tbl), col=cols,  pch=15, ncol=3,
+               cex=cex*0.8, box.lwd = .5, box.lty=2, box.col = "grey50", bg = "white")
+
     }
 
 
@@ -131,5 +130,5 @@ function(x, cutoff=NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5
   rownames(out) <- which(inds)
   o <- list(hits=out, pdb.id=x$pdb.id[inds], acc=x$acc[inds], inds=inds)
   class(o) <- "blast" 
-  return(o)
+  return(invisible(o))
 }
