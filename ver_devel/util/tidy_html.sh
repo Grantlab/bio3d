@@ -25,14 +25,14 @@ for j in html/*.html; do
    fi
 done
 
-# if two figures placed on continuous lines, delete the first one
-for i in html/*.html; do 
-#   echo $i
-   awk 'BEGINE{n=-1} NR>1 && (!/png/||NR>n+1) {print a} \
-     /png/{n=NR} {a=$0} END{print a}' $i \
-    > `basename $i`.t
-   mv `basename $i`.t $i
-done
+## if two figures placed on continuous lines, delete the first one
+#for i in html/*.html; do 
+##   echo $i
+#   awk 'BEGINE{n=-1} NR>1 && (!/png/||NR>n+1) {print a} \
+#     /png/{n=NR} {a=$0} END{print a}' $i \
+#    > `basename $i`.t
+#   mv `basename $i`.t $i
+#done
 
 #./check_html.sh > tidy_html.log
 
