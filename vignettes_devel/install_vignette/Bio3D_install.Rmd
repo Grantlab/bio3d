@@ -1,7 +1,7 @@
 ---
 title: "Installing Bio3D"
 author: "Xin-Qiu Yao, Lars Skjaerven & Barry J. Grant"
-date: "February 25, 2015"
+date: "September 25, 2016"
 affiliation: University of Bergen (Norway), and University of Michigan (Ann Arbor, US)
 output:
   pdf_document:
@@ -24,7 +24,62 @@ linkcolor: black
 
 <br><br>
 
-# Installation Prerequisites
+# Quick Install  
+
+On all platforms (Mac, Linux, and PC) open R (version 3.1.0 or higher) and use the function 
+**install.packages()** at the R command prompt to install the package from your 
+local [CRAN](http://cran.r-project.org/web/packages/bio3d/) site:
+
+```{r, eval=FALSE}
+install.packages("bio3d", dependencies=TRUE)
+```
+
+Alternatively, if you prefer to use [RStudio](https://www.rstudio.com/products/rstudio/), select 
+`Tools` $\rightarrow$ `Install Packages..`, Enter **bio3d** in the `Packages` text box (and make 
+sure `Install Dependencies` is selected). Then click `Install`.
+
+
+
+## Optional Extras
+For full Bio3D functionality you should have *MUSCLE*, *DSSP*, and 
+*NetCDF* (headers and libraries) installed on your system and in the search path 
+for executables. Background details and install instructions for each of these packages on different 
+operating systems is provided further below. 
+
+For quick install on a **Mac** we recommend using [homebrew](http://brew.sh/index.html):
+
+    brew install homebrew/science/muscle
+    brew install homebrew/science/netcdf
+    brew install homebrew/science/dssp
+
+On a **Linux/UNIX** system you should use your appropriate package manager (e.g. *apt-get* for Debian/Ubuntu and *yum* for Red Hat/Fedora systems, see below). If you experience problems with any of these steps please read on for alternative installation methods.
+
+
+## Testing your installation
+
+You should now be able to load the Bio3D package into your current R
+session by typing the usual `library(bio3d)` command at the R Console.
+
+```{r, eval=FALSE}
+library(bio3d) 
+help(package="bio3d")
+vignette(package="bio3d") 
+```
+
+We now suggest you use the command `demo("pdb")`, `demo("pca")` and
+`demo("md")` to get a quick feel for some of the tasks that we will be
+introducing in subsequent vignettes:
+
+```{r, eval=FALSE}
+library(bio3d) 
+demo("pdb") 
+demo("pca") 
+demo("md") 
+```
+<br>
+
+
+# Detailed Installation Instructions
 
 Before you attempt to install Bio3D you should have a relatively recent
 version of R installed and working on your system (we recommend at least
@@ -37,7 +92,7 @@ Make sure required headers and libraries are installed on your system prior to i
 these R packages. i.e. the R package `ncdf` requires `netcdf` and 
 `libnetcdf-dev`; `XML` requires `libxml2-dev`; and `RCurl` requires `libcurl3-dev`. 
 
-In addition, for full Bio3D functionality you should have *MUSCLE* (and optionally *DSSP*)
+In addition, for full Bio3D functionality you should have *MUSCLE* and *DSSP*
 installed on your system and in the search path for executables. 
 
 
@@ -48,7 +103,7 @@ correlation network analysis; `RCurl` and `XML` for searching and fetching data 
 various biomolecular databases. 
 
 
-# Obtaining Bio3D
+## Obtaining Bio3D
 
 The Bio3D package is available in two forms from
 [CRAN](http://cran.r-project.org/web/packages/bio3d/) and 
@@ -64,14 +119,42 @@ the [Bio3D website](http://thegrantlab.org/bio3d/)
 To install from source requires that your machine has standard compilers
 and tools such as Perl 5.004 or later. If you run into problems with
 source installation please refer to section 6.1 of the [R Installation
-and Administration Manual](http://cran.r-project.org/doc/manuals/R-admin.html).
+and Administration Manual](http://cran.r-project.org/doc/manuals/R-admin.html). 
+Below we provide installation instructions for some of the most common OS's. 
 
 
+## MacOS X Installation
 
-# Installing Bio3D
-Installing required headers, libraries, R packages, and utility programs are
-relatively straightforward on most common architectures and operative systems. Below
-we provide installation instructions for some of the most common OS's. 
+R on Mac OS X can be used either on the command-line, like on other UNIX
+systems, via the R.app GUI (included with your binary R install), or the increasingly popular [RStudio](https://www.rstudio.com/products/rstudio/) IDE. 
+
+Regardless of your preferred interface you should be able to find the R command prompt and 
+install the Bio3D package from [CRAN](http://cran.r-project.org/web/packages/bio3d/) using 
+the following command:
+
+```{r, eval=FALSE}
+install.packages("bio3d", dependencies=TRUE)
+```
+
+We recommend using the [homebrew](http://brew.sh/index.html) package manager for installation 
+of MUSCLE, DSSP and NetCDF. For more information on homebrew see <http://brew.sh/index.html>. 
+Using homebrew these packages can be installed with the following command:
+
+      brew install homebrew/science/muscle
+      brew install homebrew/science/netcdf
+      brew install homebrew/science/dssp
+    
+
+Alternatively, you can use the `Packages and Data` menu of the R.app GUI, in
+particular the sub-item Package Installer: Download the source tar.gz
+file from above. In the R GUI select `Packages and Data` $\rightarrow$
+`Package Installer` $\rightarrow$ `Local Source Package`, and press the
+`Install` button. Select the Bio3D tar file and press `Open`.
+
+In RStudio, select `Tools` $\rightarrow$ `Install Packages..`, Enter **bio3d** in the 
+`Packages` text box, make sure `Dependencies` is selected and click `Install`.
+
+
 
 ## Linux Systems (Ubuntu & Fedora)
 On a Debian system (e.g. Ubuntu) most required packages and programs
@@ -86,7 +169,8 @@ For Red Hat based systems (e.g. Fedora) the equivalent command is:
     yum install R-base R-devel netcdf-devel netcdf libxml2-devel \
                 libcurl-devel seaview pymol 
 
-The Bio3D package can be obtained and installed via [CRAN](http://cran.r-project.org/web/packages/bio3d/). Start R by issuing the command `R` and then from the R prompt install the Bio3D package:
+The Bio3D package can be obtained and installed via [CRAN](http://cran.r-project.org/web/packages/bio3d/). 
+Start R by issuing the command `R` and then from the R prompt install the Bio3D package:
 
 ```{r, eval=FALSE}
 install.packages("bio3d", dependencies=TRUE)
@@ -97,7 +181,7 @@ from <https://bitbucket.org/Grantlab/bio3d/downloads> and installed
 with the command:
 
 ```{r, eval=FALSE}
-install.packages("bio3d_2.2-0.tar.gz")
+install.packages("bio3d_3.0-0.tar.gz")
 ```
 
 Note that **MUSCLE** is not available from the Fedora package manager, but can be installed by:
@@ -107,14 +191,14 @@ Note that **MUSCLE** is not available from the Fedora package manager, but can b
     mv muscle3.8.31_i86linux64 /usr/local/bin/muscle
     chmod a+x /usr/local/bin/muscle
 
-**DSSP** is neither available from the package managers, but can be installed by:
+**DSSP** is also not available from a number of the package managers, but can be installed by:
 
     wget ftp://ftp.cmbi.ru.nl/pub/software/dssp/dssp-2.0.4-linux-amd64 -O /usr/local/bin/dssp
     chmod a+x /usr/local/bin/dssp
 
 
 ### Installing a minimal version of Bio3D {.unnumbered}
-A minimal version of Bio3D with reduced functionaly (i.e. for reading/writing
+A minimal version of Bio3D with reduced functionality (i.e. for reading/writing
 binary trajectory files, and fetching data from various databases)
 will require only the R base installed (i.e. no additional packages needed).
 Thus, only the R base will be required. In Ubuntu this can be obtained with the
@@ -138,33 +222,6 @@ install.packages(c("XML", "RCurl", "ncdf", "igraph", "bigmemory"),
                  dependencies=TRUE)
 ```
 
-
-## MacOS X Installation
-
-R on Mac OS X can be used either on the command-line, like on other Unix
-systems, or via the R.app GUI. If you prefer to use the command line
-based R system the installtion is similar to the Linux installation
-described above:
-
-The Bio3D package can be obtained and installed via [CRAN](http://cran.r-project.org/web/packages/bio3d/).
-Start R by issuing the command `R` and then from the R prompt install the Bio3D package:
-```{r, eval=FALSE}
-install.packages("bio3d", dependencies=TRUE)
-```
-
-We recommend using [MacPort](http://www.macports.org/) for the installtion of NetCDF
-headers and libraries. For more details on the installation process see e.g.
-<http://mazamascience.com/WorkingWithData/?p=1474>. After the installtion of MacPort,
-NetCDF can be installed with the command:
-
-    port install netcdf
-
-
-Alternatively, you can use the `Packages and Data` menu of the R.app GUI, in
-particular the sub-item Package Installer: Download the source tar.gz
-file from above. In the R GUI select `Packages and Data` $\rightarrow$
-`Package Installer` $\rightarrow$ `Local Source Package`, and press the
-`Install` button. Select the Bio3D tar file and press `Open`.
 
 
 ## Windows Installation
@@ -205,29 +262,6 @@ repository](https://bitbucket.org/Grantlab/bio3d/).
 <br><br>
 
 
-# Testing your installation
-
-You should now be able to load the Bio3D library into your current R
-session by typing the usual `library(bio3d)` command at the R Console.
-
-```{r, eval=FALSE}
-library(bio3d) 
-help(package="bio3d")
-vignette(package="bio3d") 
-```
-
-We now suggest you use the command `demo("pdb")`, `demo("pca")` and
-`demo("md")` to get a quick feel for some of the tasks that we will be
-introducing in subsequent vignettes:
-
-```{r, eval=FALSE}
-library(bio3d) 
-demo("pdb") 
-demo("pca") 
-demo("md") 
-```
-<br>
-
 
 # Additional utilities
 
@@ -239,7 +273,7 @@ how to obtain these additional packages is given below.
 
 ## Required for full Bio3D functionality
 
-#### MUSCLE: {.unnumbered} 
+### MUSCLE: {.unnumbered} 
 
 Muscle is a fast multiple sequence alignment program available from the
 muscle home page <http://www.drive5.com/muscle>. The Bio3D functions
@@ -247,15 +281,15 @@ muscle home page <http://www.drive5.com/muscle>. The Bio3D functions
 MUSCLE must be installed on your system and in the search path for
 executables if you wish to use this function.
 
-#### A note for Mac and Unix users: {.unnumbered} 
+**A note for Mac and Unix users**: 
 
 After downloading MUSCLE, it should be unzipped and renamed to just
-“muscle” and placed in a directory such as “/usr/local/bin/”.
+“muscle” and placed in a directory such as “/usr/local/bin/” (i.e. in your PATH).
 
-#### DSSP: {.unnumbered} 
+### DSSP: {.unnumbered} 
 
-DSSP is another secondary structure analysis which should be installed
-on your system as an executable called “dssp” and be in the search path
+DSSP a popular secondary structure analysis program which should be installed
+on your system as an executable called “dssp” or "mkdssp" and be in the search path
 for executables. DSSP is available from a number of sources including:
 
 -   <http://www.cmbi.ru.nl/dssp.html>
@@ -264,66 +298,86 @@ for executables. DSSP is available from a number of sources including:
 
 ## Optional
 
-#### STRIDE: {.unnumbered} 
+### STRIDE: {.unnumbered} 
 
-STRIDE is a secondary structure analysis program available from the
+STRIDE is another secondary structure analysis program available from the
 [EMBL-Heidelberg](http://webclu.bio.wzw.tum.de/stride/). Stride is
-similar in functionality to the more prevalent DSSP (see below).
-However, stride is often much easer to setup on different computer
+similar in functionality to the more prevalent DSSP (see above).
+However, stride is often much easier to setup on different computer
 systems as you may be able to simply copy or link to the stride
-executable distributed within every version of VMD (see above).
+executable distributed within every version of VMD (see below).
 
-#### SEAVIEW: {.unnumbered} 
+### SEAVIEW: {.unnumbered} 
 
 SEAVIEW is a graphical multiple sequence alignment editor. Download
 information and documentation are available from PBIL
 <http://pbil.univ-lyon1.fr/software/seaview.html>. I use Seaview to
-manually check and edit protein sequence alignment files pior to
+manually check and edit protein sequence alignment files prior to
 detailed analysis. I believe this should be done with every alignment
 regardless of how accurate the various automatic tools are supposed to
 be.
 
-#### Clustal Omega: {.unnumbered} 
+### Clustal Omega: {.unnumbered} 
 
 Clustal Omega is multiple sequence alignment program that can be used as 
 an alternative to MUSCLE (needed e.g. for functions `seqaln()` and `pdbaln()`). 
 Clustal Omega is available from <http://www.clustal.org/omega/>.
 
-#### VMD: {.unnumbered} 
+### VMD: {.unnumbered} 
 
 VMD is a molecular visualization program for displaying, animating, and
 analyzing large biomolecular systems using 3-D graphics. Visit the VMD
 website for download information and documentation
-<http://www.ks.uiuc.edu/Research/vmd/>. Along with the standard
-documentation you may find my [VMD cheat sheet
-useful](http://bio3d.pbworks.com/w/page/7824484/vmd_cmds). I have also
-included a link on this page to my .vmdrc file which includes a number
-of timesaving customizations (see the [cheat
-sheet](http://bio3d.pbworks.com/w/page/7824484/vmd_cmds) for full
-details).
+<http://www.ks.uiuc.edu/Research/vmd/>.
 
-#### PyMOL: {.unnumbered} 
+### PyMOL: {.unnumbered} 
 
-PyMOL is another visualization program with overlapping functionality
-with VMD. Bio3D functions `view.dccm()` and `view.modes()` require PyMOL
-in the search path. PyMOL is open-source software and available from
+PyMOL is another visualization program. Bio3D functions `pymol.dccm()` and `pymol.modes()` require PyMOL
+to be in your search path. PyMOL is available from
 <http://www.pymol.org>.
 <br><br>
 
+
+# A Note on Calling External Programs from R/Bio3D
+Ideally, as mentioned previouly, MUSCLE and DSSP should installed on your system and be in the search path for executables. To test this you should be able to call these programs from the command line with just their name from any directory.
+
+For **Mac and Linux** you can find out whats in your **PATH** by launching your favorate Terminal program (on Mac one called Terminal can be found in Applications/Utilities folder) and entering:
+
+    echo $PATH
+
+And the result should be like this…
+
+    /usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
+
+So this is stating that you can run Unix style applications located in 5 default locations of path in the file system:
+
+    /usr/bin
+    /bin
+    /usr/sbin
+    /sbin
+    /usr/local/bin
+
+You can add extra locations to your path by creating or editing an existing **.bash_profile** file in your home directory. This file should contain a line like the following:
+
+    export PATH="/my/new/path:$PATH"  
+
+You can now put muscle and dssp in any of the locations listed by echo $PATH, including /my/new/path/, which of course you should change to something sensible for you.
+
+For **Windows**, right click "My computer" -> click "Change settings" -> Advanced -> Environment Variables -> From "System variables" list find "Path" and click "Edit" -> Add the path to your programs at the end of the line. 
 
 
 # Where to next
 
 If you have read this far, congratulations! We are ready to have some
-fun and move to other package vignettes that describe various analysis
-including basic Molecular Dynamics Trajectory Analysis, Correlation
+fun and move on to other package vignettes that describe various analysis
+including Molecular Dynamics Trajectory Analysis, Correlation
 Network Analysis (where we will build and dissect dynamic networks form
 different correlated motion data), enhanced methods for Normal Mode
 Analysis (where we will explore the dynamics of large protein families
 and superfamilies), and advanced Comparative Structure Analysis (where
 we will mine available experimental data and supplement it with
 simulation results to map the conformational dynamics and coupled
-motions of proteins).
+motions of proteins). Happy Bio3Ding!
 <br><br>
 
 # Session Information
