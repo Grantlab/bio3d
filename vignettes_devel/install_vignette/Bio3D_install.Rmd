@@ -52,7 +52,7 @@ For quick install on a **Mac** we recommend using [homebrew](http://brew.sh/inde
     brew install homebrew/science/netcdf
     brew install homebrew/science/dssp
 
-On a **Linux/UNIX** system you should use your appropriate package manager (e.g. *apt-get* for Debian/Ubuntu and *yum* for Red Hat/Fedora systems, see below). If you experience problems with any of these steps please read on for alternative installation methods.
+On a **Linux/UNIX** system you should use your appropriate package manager (e.g. *apt-get* for Debian/Ubuntu and *dnf* for Red Hat/Fedora systems, see below). If you experience problems with any of these steps please read on for alternative installation methods.
 
 
 ## Testing your installation
@@ -166,7 +166,7 @@ with the `apt-get install` command:
 
 For Red Hat based systems (e.g. Fedora) the equivalent command is:
 
-    yum install R-base R-devel netcdf-devel netcdf libxml2-devel \
+    dnf install R-base R-devel netcdf-devel netcdf libxml2-devel \
                 libcurl-devel seaview pymol 
 
 The Bio3D package can be obtained and installed via [CRAN](http://cran.r-project.org/web/packages/bio3d/). 
@@ -181,7 +181,7 @@ from <https://bitbucket.org/Grantlab/bio3d/downloads> and installed
 with the command:
 
 ```{r, eval=FALSE}
-install.packages("bio3d_3.0-0.tar.gz")
+install.packages("bio3d_2.3-0.tar.gz")
 ```
 
 Note that **MUSCLE** is not available from the Fedora package manager, but can be installed by:
