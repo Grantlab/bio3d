@@ -1,5 +1,6 @@
 \name{read.pdb}
 \alias{read.pdb}
+\alias{read.pdb2}
 \alias{print.pdb}
 \alias{summary.pdb}
 \title{ Read PDB File}
@@ -8,6 +9,9 @@
 }
 \usage{
 read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
+         rm.alt = TRUE, ATOM.only = FALSE, hex = FALSE, verbose = TRUE)
+
+read.pdb2(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
          rm.alt = TRUE, ATOM.only = FALSE, verbose = TRUE)
 
 \method{print}{pdb}(x, printseq=TRUE, \dots)
@@ -28,6 +32,11 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
   \item{ATOM.only}{ logical, if TRUE only ATOM/HETATM records are stored.
     Useful for speed enhancements with large files where secondary structure, 
     biological unit and other remark records are not required. }
+  \item{hex}{ logical, if TRUE enable parsing of hexadecimal atom
+    numbers (> 99.999) and residue numbers (> 9.999) (e.g. from VMD). Note
+    that numbering is assumed to be consecutive (with no missing numbers)
+    and the hexadecimals should start at atom number 100.000 and residue
+    number 10.000 and proceed to the end of file. }
   \item{verbose}{ print details of the reading process. }
   \item{x}{ a PDB structure object obtained from
     \code{\link{read.pdb}}.  }
@@ -39,6 +48,10 @@ read.pdb(file, maxlines = -1, multi = FALSE, rm.insert = FALSE,
    
 }
 \details{
+  \code{read.pdb} is a re-implementation (using Rcpp) of the slower but
+  more tested R implementation of the same function (called
+  \code{read.pdb2} since bio3d-v2.3).
+  
   \code{maxlines} may be set so as to restrict the reading to a portion
   of input files. Note that the preferred means of reading large 
   multi-model files is via binary DCD or NetCDF format trajectory files 
@@ -116,7 +129,7 @@ pdb$atom[1:4,]
 head(pdb$atom[, c("x","y","z")])
 
 ## Or coordinates as a numeric vector
-head(pdb$xyz)
+#head(pdb$xyz)
 
 ## Print C-alpha coordinates (can also use 'atom.select' function)
 head(pdb$atom[pdb$calpha, c("resid","elety","x","y","z")])

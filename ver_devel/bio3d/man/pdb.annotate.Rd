@@ -62,7 +62,7 @@ pdb.annotate(ids, anno.terms = c("ligandId", "citation"))
 # PFAM server connection required - testing excluded
 
 # Find PFAM annotations of PDB entries
-pdb.pfam("6Q21_A", "1NVW", "1P2U_A")
+pdb.pfam(c("6Q21_A", "1NVW", "1P2U_A"))
 
 # More details and a not fond entry warning
 pdb.pfam(c("1P2U_A", "6Q21_B"), compact=FALSE)

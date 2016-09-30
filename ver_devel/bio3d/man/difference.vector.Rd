@@ -30,8 +30,7 @@ difference.vector(xyz, xyz.inds=NULL, normalize=FALSE)
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{overlap}} }
 \examples{
-data(kinesin)
-attach(kinesin, warn.conflicts=FALSE)
+attach(kinesin)
      
 # Ignore gap containing positions
 gaps.pos <- gap.inspect(pdbs$xyz)
@@ -40,7 +39,7 @@ gaps.pos <- gap.inspect(pdbs$xyz)
 pc.xray <- pca.xyz(pdbs$xyz[, gaps.pos$f.inds])
      
 # Define a difference vector between two structural states
-diff.inds <- c(grep("d1v8ja", pdbs$id), 
+diff.inds <- c(grep("d1v8ka", pdbs$id), 
                grep("d1goja", pdbs$id))
 
 ## Calculate the difference vector

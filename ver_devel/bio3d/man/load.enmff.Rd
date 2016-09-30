@@ -23,7 +23,7 @@ ff.aaenm2(r, atom.id, pdb, ...)
 }
 \arguments{
   \item{ff}{ a character string specifying the force field to use:
-    \sQuote{calpha}, \sQuote{anm}, \sQuote{pfanm}, \sQuote{calphax},
+    \sQuote{calpha}, \sQuote{anm}, \sQuote{pfanm}, 
     \sQuote{reach}, or  \sQuote{sdenm}. }
   \item{r}{ a numeric vector of c-alpha distances. }
   \item{rmin}{ lowest allowed atom-atom distance for the force constant
@@ -33,7 +33,7 @@ ff.aaenm2(r, atom.id, pdb, ...)
   \item{gamma}{ numerical, global scaling factor. }
   \item{atom.id}{ atomic index. }
   \item{pdb}{ a \code{pdb} object as obtained from function \code{read.pdb}. }
-  \item{...}{ additional arguments (for technical reasons). }
+  \item{...}{ additional arguments passed to and from functions. }
 }
 \details{
   This function provides a collection of elastic network model (ENM)
@@ -55,11 +55,6 @@ ff.aaenm2(r, atom.id, pdb, ...)
   so-called \sQuote{pfANM} (parameter free ANM) with interactions that
   fall off with the square of the distance.
   
-  The \sQuote{calphax} force field is an extension of the original
-  \sQuote{calpha} force field by Hinsen. In this implementation we have
-  included specific force constants for disulfide bridges, helix 1-4
-  interactions, and beta sheet bridges.
-
   The \sQuote{sdENM} (by Dehouck and Mikhailov) employs residue specific
   spring force constants. It has been parameterized through a
   statistical analysis of a total of 1500 NMR ensembles.

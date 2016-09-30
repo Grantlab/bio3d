@@ -1,7 +1,7 @@
 ---
 title: "Ensemble NMA of *E.coli* DHFR structures"
 author: "Lars Skjaerven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant"
-date: "February 24, 2015"
+date: "September 29, 2016"
 output:
   pdf_document:
     fig_caption: yes
@@ -113,18 +113,18 @@ conformationally redundant to reduce the computational load with function **filt
 ```{r example1e, cache=TRUE, warning=FALSE, results='hide'}
 # remove structures with missing residues
 conn <- inspect.connectivity(pdbs.all, cut=4.05)
-pdbs <- trim.pdbs(pdbs.all, row.inds=which(conn))
+pdbs <- trim(pdbs.all, row.inds=which(conn))
 
 # which structures are omitted
 which(!conn)
 
 # remove conformational redundant structures
 rd <- filter.rmsd(pdbs$xyz, cutoff=0.1, fit=TRUE)
-pdbs <- trim.pdbs(pdbs, row.inds=rd$ind)
+pdbs <- trim(pdbs, row.inds=rd$ind)
 
 # remove "humanized" e-coli dhfr
 excl <- unlist(lapply(c("3QL0", "4GH8"), grep, pdbs$id))
-pdbs <- trim.pdbs(pdbs, row.inds=which(!(1:length(pdbs$id) %in% excl)))
+pdbs <- trim(pdbs, row.inds=which(!(1:length(pdbs$id) %in% excl)))
 
 # a list of PDB codes of our final selection
 ids <- unlist(strsplit(basename(pdbs$id), split=".pdb"))
@@ -210,9 +210,9 @@ mktrj(pc.xray, pc=1,
 Function **pdbfit()** can be used to write the PDB files to separate directories according to their cluster membership:
 
 ```{r example1j, eval=FALSE}
-pdbfit(trim.pdbs(pdbs, row.inds=which(grps.rd==1)), outpath="grps1") ## closed
-pdbfit(trim.pdbs(pdbs, row.inds=which(grps.rd==2)), outpath="grps2") ## open
-pdbfit(trim.pdbs(pdbs, row.inds=which(grps.rd==3)), outpath="grps3") ## occluded
+pdbfit(trim(pdbs, row.inds=which(grps.rd==1)), outpath="grps1") ## closed
+pdbfit(trim(pdbs, row.inds=which(grps.rd==2)), outpath="grps2") ## open
+pdbfit(trim(pdbs, row.inds=which(grps.rd==3)), outpath="grps3") ## occluded
 ```
 
 
@@ -223,23 +223,22 @@ by object *pdbs*. With the default argument `rm.gaps=TRUE` unaligned atoms
 are omitted from output:
 
 ```{r example1k, cache=TRUE, warning=FALSE, results="hide", message=FALSE}
-modes <- nma.pdbs(pdbs, rm.gaps=TRUE, ncore=4)
+modes <- nma(pdbs, rm.gaps=TRUE, ncore=4)
 ```
 
 
 The *modes* object of class *enma* contains aligned normal mode data including fluctuations,
 RMSIP data, and aligned eigenvectors. A short summary of the *modes* object can be obtain by
 calling the function **print()**, and the aligned fluctuations can be plotted with function
-**plot.enma()**. This function also facilitates the calculation and visualization of sequence conservation
-(use argument `conservation=TRUE`), and fluctuation variance (use argument `variance=TRUE`).
+**plot.enma()**. 
 
 ```{r example1l, cache=TRUE, warning=FALSE,}
 print(modes)
 ```
 
-```{r fig1l-1, fig.cap="Normal mode fluctuations of the E.coli DHFR ensemble. (**upper panel**) Each line represent the mode fluctuations for the individual structures. Color coding according to structural clustering: green (occluded), black (open), and red (closed). (**lower panel**) Variance of mode fluctuations. The Met20 loop seems to display the largest deviations / differences in predicted fluctuations. ", fig.height=6, fig.width=6,}
+```{r fig1l-1, fig.cap="Normal mode fluctuations of the E.coli DHFR ensemble. Each line represent the mode fluctuations for the individual structures. Color coding according to structural clustering: green (occluded), black (open), and red (closed). ", fig.height=4, fig.width=6,}
 # plot modes fluctuations
-plot(modes, pdbs=pdbs, col=grps.rd, variance=TRUE)
+plot(modes, pdbs=pdbs, col=grps.rd, label=NULL)
 ```
 
 ```{r example1m, cache=TRUE, warning=FALSE,}
@@ -259,19 +258,19 @@ can reveal specific regions of distinct flexibility patterns. Below we focus on 
 differences between the open (black), closed (red) and occluded (green) conformations
 of the *E.coli* structures: 
 
-```{r fig1n-1, fig.cap="Comparison of mode fluctuations between open (black) and closed (red) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4, fig.width=6,}
+```{r fig1n-1, fig.cap="Comparison of mode fluctuations between open (black) and closed (red) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4, fig.width=6, warning=FALSE}
 cols <- grps.rd
 cols[which(cols!=1 & cols!=2)]=NA
 plot(modes, pdbs=pdbs, col=cols, signif=TRUE)
 ```
 
-```{r fig1n-2, fig.cap="Comparison of mode fluctuations between open (black) and occluded (green) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4, fig.width=6,}
+```{r fig1n-2, fig.cap="Comparison of mode fluctuations between open (black) and occluded (green) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4, fig.width=6, warning=FALSE}
 cols <- grps.rd
 cols[which(cols!=1 & cols!=3)]=NA
 plot(modes, pdbs=pdbs, col=cols, signif=TRUE)
 ```
 
-```{r fig1n-3, fig.cap="Comparison of mode fluctuations between closed (red) and occluded (green) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4, fig.width=6,}
+```{r fig1n-3, fig.cap="Comparison of mode fluctuations between closed (red) and occluded (green) conformers. Significant differences among the mode fluctuations between the two groups are marked with shaded blue regions.", fig.height=4, fig.width=6, warning=FALSE}
 cols <- grps.rd
 cols[which(grps.rd!=2 & grps.rd!=3)]=NA
 plot(modes, pdbs=pdbs, col=cols, signif=TRUE)

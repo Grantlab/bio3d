@@ -126,6 +126,9 @@ plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=sse, ylab="B-factor", typ="l",
 col="blue", lwd=2)
 }
 
+\donttest{
+# PDB server connection required - testing excluded
+
 ## Plot 'aligned' data respecting gap positions
 attach(transducin)
 
@@ -139,6 +142,7 @@ plot.bio3d(pdbs$b, resno=pdb, sse=pdb, ylab="B-factor")
 plot.bio3d(pdbs$b, rm.gaps=TRUE, resno = pdb, sse=pdb, ylab="B-factor")
 
 detach(transducin)
+}
 
 ## Fancy secondary structure elements
 ##plot.bio3d(pdb$atom[pdb$calpha,"b"], sse=pdb, ssetype="fancy")

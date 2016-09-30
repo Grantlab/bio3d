@@ -53,10 +53,9 @@ test_that("PDB annotation works", {
   expect_identical(anno$chainId, "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j")
   
   
-  expected <- rep("ANP,MN,MYR,TPO", 2)
-  
+  expected <- sort(rep(c("ANP", "MN", "MYR", "TPO"), 2))
   invisible(capture.output(anno <- pdb.annotate(c('1cdk_A', '1cdk_B'), anno.terms="ligandId")))
-  expect_identical(anno$ligandId, expected)
+  expect_identical(sort(unlist(strsplit(anno$ligandId, ","))), expected)
 
   
 })

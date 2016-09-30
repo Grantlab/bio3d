@@ -1,5 +1,7 @@
-\name{vmd.cna}
+\name{vmd}
+\alias{vmd}
 \alias{vmd.cna}
+\alias{vmd.cnapath}
 \title{ View CNA Protein Structure Network Community Output in VMD }
 \description{
   This function generates a VMD scene file and a PDB file that can be 
@@ -8,14 +10,21 @@
   the community protein structure network. 
 }
 \usage{
-vmd.cna(x, pdb, layout = layout.cna(x, pdb, k=3), 
+vmd(\dots)
+
+\method{vmd}{cna}(x, pdb, layout = layout.cna(x, pdb, k=3), 
 		col.sphere=NULL, col.lines = "silver", weights = NULL, 
 		radius = table(x$communities$membership)/5, alpha = 1,
 		vmdfile = "network.vmd", pdbfile = "network.pdb", 
-                full = FALSE, launch = FALSE)
+                full = FALSE, launch = FALSE, exefile=NULL, \dots)
+
+\method{vmd}{cnapath}(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE, 
+   colors = c("blue", "red"), launch = FALSE, exefile=NULL, \dots)
+
 }
 \arguments{
-  \item{x}{A 'cna' class object such as obtained from \sQuote{cna} function/
+  \item{x}{A 'cna' or 'cnapath' class object as obtained from functions
+    \code{cna} or \code{cnapath}.
   }
   \item{pdb}{A 'pdb' class object such as obtained from \sQuote{read.pdb} function.
   }
@@ -49,6 +58,23 @@ vmd.cna(x, pdb, layout = layout.cna(x, pdb, k=3),
   }
   \item{launch}{ Logical. If TRUE, a VMD session will be started with
     the output of \sQuote{vmd.cna}.
+  }
+  \item{out.prefix}{ Prefix for the names of output files, \sQuote{vmd.cnapath.vmd}
+    and \sQuote{vmd.cnapath.pdb}.
+  }
+  \item{spline}{ Logical, if TRUE all paths are displayed as spline
+    curves. 
+  }
+  \item{colors}{
+    Character vector or integer scalar, define path colors. If a
+    character vector, passed to \code{\link{colorRamp}} function to generate the 
+    color scales. If an integer, color all paths the same way with VMD color 
+    ID equal to the integer. }
+  \item{exefile}{ file path to the \sQuote{VMD} program on your system (i.e.
+    how is \sQuote{VMD} invoked). If \code{NULL}, use OS-dependent
+    default path to the program. }
+  \item{\dots}{ additional arguments passed to the function
+    \code{\link{colorRamp}} (in \code{vmd.cnapath}).
   }
 }
 \details{ 

@@ -39,18 +39,15 @@
   \code{\link{read.pdb}}, \code{\link{read.crd.charmm}}  }
 \examples{
 \dontrun{
-## Read a PRMTOP file
-prmtop <- read.prmtop("prot_solvated.prmtop")
-print(prmtop)
-
-## Read a Amber CRD file
-crds <- read.crd("prot_solvated.inpcrd")
-
-## Atom selection
-ca.inds <- atom.select(prmtop, "calpha")
+## Read Amber PRMTOP and CRD files
+prm <- read.prmtop(system.file("examples/crambin.prmtop", package="bio3d"))
+crd <- read.crd(system.file("examples/crambin.inpcrd", package="bio3d"))
 
 ## Convert to PDB format
-pdb <- as.pdb(prmtop, crds, inds=ca.inds)
+pdb <- as.pdb(prm, crd)
+
+## Atom selection
+ca.inds <- atom.select(prm, "calpha")
 }
 }
 \keyword{ IO }

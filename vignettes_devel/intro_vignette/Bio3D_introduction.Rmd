@@ -179,7 +179,7 @@ can be extracted and automatically executed to generate Figures and/or the PDF w
 
 ```{r eval=FALSE}
 library(rmarkdown)
-render("Bio3D_nma.Rmd", "all")
+render("Bio3D_introduction.Rmd", "all")
 ```
 
 

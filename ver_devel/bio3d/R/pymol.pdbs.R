@@ -19,7 +19,7 @@ pymol <- function(...)
   UseMethod("pymol")
 
 pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
-                       type="script", exefile = "pymol", ...) {
+                       type="script", exefile = NULL, ...) {
   
   allowed <- c("session", "script", "launch")
   if(!type %in% allowed) {
@@ -59,9 +59,22 @@ pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
     if(type=="script")
       file <- "R.pml"
   }
-  
+ 
   ## Check if the program is executable
   if(type %in% c("session", "launch")) {
+
+    ## Find default path to external program
+    if(is.null(exefile)) {
+      exefile <- 'pymol'
+      if(nchar(Sys.which(exefile)) == 0) {
+        os1 <- Sys.info()["sysname"]
+        exefile <- switch(os1,
+          Windows = 'C:/python27/PyMOL/pymol.exe',
+          Darwin = '/Applications/MacPyMOL.app/Contents/MacOS/MacPyMOL',
+          'pymol' )
+      }
+    }
+ 
     ver <- "-cq"
     os1 <- .Platform$OS.type
     status <- system(paste(exefile, ver),
@@ -266,7 +279,8 @@ pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
   l <- l+1
   
   if(type == "session")
-    lines[l+1] <- paste("save", psefile)
+    lines[l+1] <- paste("save", 
+      normalizePath(psefile, winslash='/', mustWork=FALSE))
   
   lines <- lines[!is.na(lines)]
   write.table(lines, file=pmlfile, append=FALSE, quote=FALSE, sep="\n",
@@ -279,19 +293,14 @@ pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
       args <- ""
     
     ## Open pymol
-    cmd <- paste('pymol', args, pmlfile)
+    cmd <- paste(exefile, args, pmlfile)
     
     os1 <- .Platform$OS.type
     if (os1 == "windows") {
       success <- shell(shQuote(cmd))
     }
     else {
-      if(Sys.info()["sysname"]=="Darwin") {
-        success <- system(paste("open -a MacPyMOL", pmlfile))
-      }
-      else {
-        success <- system(cmd)
-      }
+      success <- system(cmd)
     }
     
     if(success!=0)

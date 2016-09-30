@@ -120,7 +120,7 @@ community.aln <- function(x, ...) {
      stop('Two or more communities from the same network are in one cluster.')
 
    ## Renumber communities and update 'nets'
-   col <- vmd.colors() ## use vmd colors
+   col <- vmd_colors() ## use vmd colors
    for(i in 1:length(nets)) {
      net <- nets[[i]]
      inds <- which(sapply(str, '[[', 1) %in% i)

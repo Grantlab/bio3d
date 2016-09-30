@@ -70,6 +70,8 @@ dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, gc.first=FALSE, 
   else {
     dms <- .dm.xyz1(xyz, grpby=grpby, scut=scut, mask.lower=mask.lower)
   }
+  
+  class(dms) <- 'dmat'
   return(dms)
 }
 

@@ -1,6 +1,6 @@
 pymol.dccm <- function(dccm, pdb, file=NULL,
                        step=0.2, omit=0.2, radius = 0.15,
-                       type="script", exefile = "pymol", ...) {
+                       type="script", exefile = NULL, ...) {
   
   allowed <- c("session", "script", "launch", "pdb")
   if(!type %in% allowed) {
@@ -12,9 +12,22 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
     pymol <- FALSE
   else
     pymol <- TRUE
-  
+
   ## Check if the program is executable
   if(type %in% c("session", "launch")) {
+
+    ## Find default path to external program
+    if(is.null(exefile)) {
+      exefile <- 'pymol'
+      if(nchar(Sys.which(exefile)) == 0) {
+        os1 <- Sys.info()["sysname"]
+        exefile <- switch(os1, 
+          Windows = 'C:/python27/PyMOL/pymol.exe',
+          Darwin = '/Applications/MacPyMOL.app/Contents/MacOS/MacPyMOL',
+          'pymol' )
+      }
+    }
+
     ver <- "-cq"
     os1 <- .Platform$OS.type
     status <- system(paste(exefile, ver),
@@ -80,7 +93,9 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
     ## start pymol script
     scr <- c("from pymol import cmd")
     scr <- c(scr, "from pymol.cgo import *")
-    scr <- c(scr, paste("cmd.load('", pdbfile, "', 'prot')", sep=""))
+    scr <- c(scr, paste("cmd.load('", 
+      normalizePath(pdbfile, winslash='/', mustWork=FALSE), 
+       "', 'prot')", sep=""))
     scr <- c(scr, "cmd.show('cartoon')")
     
     if(!is.pdb(pdb) || ca.pdb)
@@ -201,7 +216,9 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
   }
 
   if(type == "session")
-    scr <- c(scr, paste0("cmd.save('", psefile, "')"))
+    scr <- c(scr, paste0("cmd.save('", 
+      normalizePath(psefile, winslash='/', mustWork=FALSE),
+      "')"))
   
   ## Write python script or PDB with conect records
   if(pymol) {
@@ -224,19 +241,14 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
       args <- ""
     
     ## Open pymol
-    cmd <- paste('pymol', args, pyfile)
+    cmd <- paste(exefile, args, pyfile)
     
     os1 <- .Platform$OS.type
     if (os1 == "windows") {
       success <- shell(shQuote(cmd))
     }
     else {
-      if(Sys.info()["sysname"]=="Darwin") {
-        success <- system(paste("open -a MacPyMOL", pyfile))
-      }
-      else {
-        success <- system(cmd)
-      }
+      success <- system(cmd)
     }
     
     if(success!=0)

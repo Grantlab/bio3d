@@ -61,8 +61,7 @@
 \author{ Barry Grant }
 \seealso{ \code{\link{pca.xyz}}, \code{\link{plot.bio3d}} }
 \examples{
-data(transducin)
-attach(transducin, warn.conflicts=FALSE)
+attach(transducin)
 
 pc.xray <- pca(pdbs$xyz, rm.gaps=TRUE)
 plot(pc.xray)

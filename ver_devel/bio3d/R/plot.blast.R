@@ -4,6 +4,10 @@ function(x, cutoff=NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5
   ## b <- blast.pdb( pdbseq( read.pdb("4q21") ) )
   ## plot(b, 188)  ## cut.seed=110
 
+    cl <- class(x)
+    if("hit.tbl" %in% names(x))
+        x <- x$hit.tbl
+
 
   panelplot <- function(z=x$mlog.evalue, ylab="-log(Evalue)", gp=gp, ...) {
     z=as.numeric(z)
@@ -19,9 +23,12 @@ function(x, cutoff=NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5
 
   ##- Setup plot arangment
   opar <- par(no.readonly = TRUE)
-  on.exit(par(opar))
-  par(mfcol=c(4,1), mar=mar, cex.lab=cex)
+    on.exit(par(opar))
 
+    if("blast" %in% cl)
+        par(mfcol=c(4,1), mar=mar, cex.lab=cex)
+    if("hmmer" %in% cl & "kg" %in% names(x))
+        par(mfcol=c(4,1), mar=mar, cex.lab=cex)
 
   ##- Find the point pair with largest diff evalue
   dx <- abs(diff(x$mlog.evalue))
@@ -89,15 +96,39 @@ function(x, cutoff=NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5
 
   ##- Plot each alignment statistic with annotated grps
   panelplot(gp=gp.inds)
-  panelplot(x$bitscore, ylab="Bitscore", gp=gp.inds)
-  panelplot(x$hit.tbl[,"identity"], ylab="Identity", gp=gp.inds)
-  panelplot(x$hit.tbl[,"alignmentlength"], ylab="Length", gp=gp.inds)
+    panelplot(x$bitscore, ylab="Bitscore", gp=gp.inds)
+
+    if("identity" %in% names(x))
+        panelplot(x$identity, ylab="Identity", gp=gp.inds)
+    if("alignmentlength" %in% names(x))
+        panelplot(x$alignmentlength, ylab="Length", gp=gp.inds)
+    if("kg" %in% names(x)) {
+                
+        tbl <- table(x$kg[inds], cut(x$score[inds], 20))
+        tbl=tbl[, seq(ncol(tbl), 1), drop=FALSE]
+        cols <- seq(1,nrow(tbl))
+        barplot(tbl, col=cols, ylab="Frequency", border="grey50")
+        box()
+        
+        legend("topleft", rownames(tbl), col=cols,  pch=15, ncol=3, 
+               cex=cex*0.8, box.lwd = .5, box.lty=2, box.col = "grey50", bg = "white")
+
+        
+        tbl <- table(x$kg[!inds], cut(x$score[!inds], 20))
+        tbl=tbl[, seq(ncol(tbl), 1), drop=FALSE]
+        cols <- seq(1,nrow(tbl))
+        barplot(tbl, col=cols, ylab="Frequency", border="grey50")
+        
+        legend("topleft", rownames(tbl), col=cols,  pch=15, ncol=3,
+               cex=cex*0.8, box.lwd = .5, box.lty=2, box.col = "grey50", bg = "white")
+
+    }
 
 
   ##- Return details of hits above cutoff
-  out <- cbind("pdb.id"=x$pdb.id[inds], "gi.id"=x$gi.id[inds], "group"=gps[inds])
+  out <- cbind("pdb.id"=x$pdb.id[inds], "acc"=x$acc[inds], "group"=gps[inds])
   rownames(out) <- which(inds)
-  o <- list(hits=out, pdb.id=x$pdb.id[inds], gi.id=x$gi.id[inds])
+  o <- list(hits=out, pdb.id=x$pdb.id[inds], acc=x$acc[inds], inds=inds)
   class(o) <- "blast" 
-  return(o)
+  return(invisible(o))
 }

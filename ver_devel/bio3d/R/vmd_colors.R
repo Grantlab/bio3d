@@ -1,4 +1,4 @@
-vmd.colors <- function(n=33, picker=FALSE, ...){
+vmd_colors <- function(n=33, picker=FALSE, ...){
   
   ## RGB numbers
   red <- c(0, 1, 0.35, 1, 1, 0.5, 0.6, 0, 1, 1,

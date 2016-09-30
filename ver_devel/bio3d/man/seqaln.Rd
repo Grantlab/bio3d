@@ -8,7 +8,7 @@
 \usage{
 seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa", 
        protein=TRUE, seqgroup=FALSE, refine=FALSE, extra.args="",
-       verbose=FALSE)  
+       verbose=FALSE, web.args = list())  
 }
 \arguments{
   \item{aln}{ a sequence character matrix, as obtained from
@@ -33,7 +33,10 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   \item{extra.args}{ a single character string containing extra command
     line arguments for the alignment program. }
   \item{verbose}{ logical, if TRUE \sQuote{MUSCLE} warning and error
-    messages are printed. } 
+    messages are printed. }
+  \item{web.args}{ a \sQuote{list} object containing arguments to perform
+    online sequence alignment using EMBL-EBI Web Services. 
+    See below for details. } 
 }
 \details{
   Sequence alignment attempts to arrange the sequences of protein,
@@ -45,10 +48,12 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   (\sQuote{-}) are inserted between the aminoacids or nucleotides so that
   equivalent characters are positioned in the same column.
 
-  This function calls the \sQuote{MUSCLE} program, to perform a multiple
-  sequence alignment, which MUST BE INSTALLED on your system and in the
-  search path for executables.
- 
+  This function calls the \sQuote{MUSCLE} program to perform a multiple 
+  sequence alignment, which must be installed on your system and in the search 
+  path for executables. If local \sQuote{MUSCLE} can not be found, alignment
+  can still be performed via online web services (see below) with limited
+  features. 
+
   If you have a large number of input sequences (a few thousand), or they are
   very long, the default settings may be too slow for practical
   use. A good compromise between speed and accuracy is to run just the
@@ -66,6 +71,23 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   \sQuote{CLUSTALO} can be used as an alternative to \sQuote{MUSCLE} by
   specifiying \code{exefile='clustalo'}. This might be useful e.g. when
   adding several sequences to a profile alignment. 
+
+  If local \sQuote{MUSCLE} or \sQuote{CLUSTALO} program is unavailable, 
+  the function will attempt to perform alignment via the EMBL-EBI Web Services 
+  (See \url{http://www.ebi.ac.uk}). In this case, the argument \code{web.args} 
+  cannot be empty and must contain at least user's E-Mail address. 
+  Note that as stated by EBI, a fake email address may result 
+  in your jobs being killed and your IP, organisation or entire domain being 
+  black-listed (See \url{http://www.ebi.ac.uk/Tools/webservices/help/faq}). 
+  Possible parameters to be passed via \code{web.args} include:
+  \describe{
+    \item{email}{ a string containing a valid E-Mail address. Required. }
+    \item{title}{ a string for the title of the job to be submitted to
+      the remote server. Optional. }
+    \item{timeout}{ integer specifying the number of seconds to wait for
+      the response of the server before a time out occurs. Default: 90. }
+  }
+  An example of usage is \code{web.args=list(email='user_id@email.provider')}.
 }
 \value{
   Returns a list of class \code{"fasta"} with the following components:
@@ -88,6 +110,8 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
 \note{
   A system call is made to the \sQuote{MUSCLE} program, which must be
   installed on your system and in the search path for executables.
+  See \url{http://thegrantlab.org/bio3d/tutorials/installing-bio3d} for 
+  instructions of how to install this program.
 }
 \seealso{ \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}},
   \code{\link{get.seq}}, \code{\link{seqbind}}, 

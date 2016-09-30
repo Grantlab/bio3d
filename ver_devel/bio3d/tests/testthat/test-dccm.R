@@ -31,8 +31,8 @@ test_that("Correlation matrix from XYZ (dccm.xyz)", {
   invisible(capture.output(cm <- dccm(trj, ncore=1)))
   
   expect_that(cm[1,1], equals(1,           tolerance=1e-6))
-  expect_that(cm[1,2], equals(0.9965964,  tolerance=1e-6))
-  expect_that(cm[1,3], equals(0.992211, tolerance=1e-6))
+  expect_that(cm[1,2], equals(0.997,  tolerance=1e-3))
+  expect_that(cm[1,3], equals(0.992, tolerance=1e-3))
   expect_that(cm[1,3], equals(cm[3,1]))
 
   ## Check multicore DCCM
@@ -55,8 +55,8 @@ test_that("Correlation matrix from PCA (dccm.pca)", {
   invisible(capture.output(cm2 <- dccm(pca, ncore = 1)))
    
   expect_that(cm[1,1], equals(1,           tolerance=1e-6))
-  expect_that(cm[1,2], equals(0.7120510,  tolerance=1e-6))
-  expect_that(cm[1,3], equals(0.5455956, tolerance=1e-6))
+  expect_that(cm[1,2], equals(0.627,  tolerance=1e-3))
+  expect_that(cm[1,3], equals(0.632, tolerance=1e-3))
   expect_that(cm[1,3], equals(cm[3,1]))
   expect_that(cm, equals(cm2, tolerance=1e-6))
 

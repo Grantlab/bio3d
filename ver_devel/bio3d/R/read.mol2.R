@@ -38,12 +38,23 @@ print.mol2 <- function(x, ...) {
                           dimnames = list(c(1:10), c("name","what")) )
 
     
-    bond.format <-matrix( c("id",      'numeric', 
+    bond.format <- matrix( c("id",      'numeric', 
                             "origin",  'numeric', 
                             "target",  'numeric', 
                             "type",    'character',
                             "statbit", 'character'), ncol=2, byrow=TRUE,
                          dimnames = list(c(1:5), c("name","what")) )
+
+    substr.format <-  matrix( c("id",      'numeric', 
+                                "name",  'character', 
+                                "root_atom",  'numeric', 
+                                "subst_type",    'character',
+                                "dict_type",    'character',
+                                "chain",    'character',
+                                "sub_type",    'character',
+                                "inter_bonds",    'numeric',
+                                "status",    'character'), ncol=2, byrow=TRUE,
+                             dimnames = list(c(1:9), c("name","what")) )
     
     trim <- function(s) {
         s <- sub("^ +", "", s)
@@ -60,8 +71,8 @@ print.mol2 <- function(x, ...) {
         return(tmp[inds])
       else {
         tmp <- tmp[inds]
-        if(length(tmp)<ncol)
-          tmp <- c(tmp, NA)
+        if(length(tmp) < ncol)
+          tmp <- c(tmp, "")
         return(paste(tmp, collapse=";"))
       }
     }
@@ -72,6 +83,7 @@ print.mol2 <- function(x, ...) {
     mol.start <- grep("@<TRIPOS>MOLECULE", raw.lines)
     atom.start <- grep("@<TRIPOS>ATOM", raw.lines)
     bond.start <- grep("@<TRIPOS>BOND", raw.lines)
+    subs.start <- grep("@<TRIPOS>SUBSTRUCTURE", raw.lines)
     num.mol <- length(mol.start)
 
     if (!num.mol>0) {
@@ -82,6 +94,8 @@ print.mol2 <- function(x, ...) {
     mol.names <- raw.lines[mol.start+1]
     mol.info <- trim( raw.lines[mol.start+2] )
     mol.info <- as.numeric(unlist(lapply(mol.info, split.line, collapse=FALSE)))
+    if(length(mol.info) < 5) mol.info <- c(mol.info, rep(NA, 5-length(mol.info)))
+        
 
     ## mol.info should contain num_atoms, num_bonds, num_subs, num_feat, num_sets
     mol.info <- matrix(mol.info, nrow=num.mol, byrow=T)
@@ -90,13 +104,33 @@ print.mol2 <- function(x, ...) {
     num.bonds <- as.numeric(mol.info[,2])
     atom.end  <- atom.start + num.atoms
     bond.end  <- bond.start + num.bonds
+    subs.end <- subs.start + mol.info[,3]
 
     ## Build a list containing ATOM record indices
-    se <- matrix(c(atom.start, atom.end), nrow=length(atom.start))
-    atom.indices <- lapply(1:num.mol, function(d) seq(se[d,1]+1, se[d,2]))
+    if(length(atom.start) > 0) {
+        se <- matrix(c(atom.start, atom.end), nrow=length(atom.start))
+        atom.indices <- lapply(1:num.mol, function(d) seq(se[d,1]+1, se[d,2]))
+    }
+    else {
+        stop("No ATOM records found")
+    }
 
-    se <- matrix(c(bond.start, bond.end), nrow=length(bond.start))
-    bond.indices <- lapply(1:num.mol, function(d) seq(se[d,1]+1, se[d,2]))
+    if(length(bond.start) > 0) {
+        se <- matrix(c(bond.start, bond.end), nrow=length(bond.start))
+        bond.indices <- lapply(1:num.mol, function(d) seq(se[d,1]+1, se[d,2]))
+    }
+    else {
+        bond.indices <- NULL
+        warning("No BOND records found")
+    }
+
+    if(length(subs.start) > 0) {
+        se <- matrix(c(subs.start, subs.end), nrow=length(subs.start))
+        subs.indices <- lapply(1:num.mol, function(d) seq(se[d,1]+1, se[d,2]))
+    }
+    else {
+        subs.indices <- NULL
+    }    
 
     ## Check if file consist of identical molecules
     same.mol <- TRUE
@@ -104,28 +138,97 @@ print.mol2 <- function(x, ...) {
     
     mols <- list()
     for ( i in 1:num.mol ) {
-      raw.atom <- raw.lines[ atom.indices[[i]] ]
-      raw.bond <- raw.lines[ bond.indices[[i]] ]
+        raw.atom <- raw.lines[ atom.indices[[i]] ]
+
+        if(!is.null(bond.indices))
+            raw.bond <- raw.lines[ bond.indices[[i]] ]
+        else
+            raw.bond <- NULL
+
+        if(!is.null(subs.indices))
+            raw.subs <- raw.lines[ subs.indices[[i]] ]
+        else
+            raw.subs <- NULL
       
-      ## Split by space
+      ## Read atoms - split by space
       txt <- unlist(lapply(raw.atom, split.line, ncol=10, collapse=TRUE))
       ncol <- length(unlist(strsplit(txt[1], ";")))
+
+      if(ncol==9) {
+          txt[1]=paste0(txt[1], ";")
+          ncol <- length(unlist(strsplit(txt[1], ";")))
+      }
+      
       atom <- read.table(text=txt, 
                          stringsAsFactors=FALSE, sep=";", quote='',
-                         colClasses=atom.format[1:ncol,"what"],
+                         colClasses=unname(atom.format[1:ncol,"what"]),
                          col.names=atom.format[1:ncol,"name"],
-                         comment.char="", na.strings=" ")
+                         comment.char="", na.strings="", fill=TRUE)
 
+        ## Read bond - split by space
+        if(!is.null(raw.bond)) {
+            txt <- unlist(lapply(raw.bond, split.line, ncol=5, collapse=TRUE))
+            ncol <- length(unlist(strsplit(txt[1], ";")))
+            
+            if(ncol==4) {
+                txt[1]=paste0(txt[1], ";")
+                ncol <- length(unlist(strsplit(txt[1], ";")))
+            }
 
-      ## Split by space
-      txt <- unlist(lapply(raw.bond, split.line, ncol=5, collapse=TRUE))
-      ncol <- length(unlist(strsplit(txt[1], ";")))
-      bond <- read.table(text=txt,
-                         stringsAsFactors=FALSE, sep=";", quote='',
-                         colClasses=bond.format[1:ncol,"what"],
-                         col.names=bond.format[1:ncol,"name"],
-                         comment.char="", na.strings=" ")
-      
+            bond <- read.table(text=txt,
+                               stringsAsFactors=FALSE, sep=";", quote='',
+                               colClasses=unname(bond.format[1:ncol,"what"]),
+                               col.names=bond.format[1:ncol,"name"],
+                               comment.char="", na.strings="", fill=TRUE)
+        }
+        else {
+            bond <- NULL
+        }
+            
+            
+        ## Read substructure info - split by space
+        subs <- NULL
+        if(!is.null(raw.subs)) {
+            txt <- unlist(lapply(raw.subs, split.line, ncol=5, collapse=TRUE))
+            ncol <- length(unlist(strsplit(txt[1], ";")))
+            
+            if(ncol==4) {
+                txt[1]=paste0(txt[1], ";")
+                ncol <- length(unlist(strsplit(txt[1], ";")))
+            }
+
+            subs <- try(read.table(text=txt,
+                                   stringsAsFactors=FALSE, sep=";", quote='',
+                                   colClasses=unname(substr.format[1:ncol,"what"]),
+                                   col.names=substr.format[1:ncol,"name"],
+                                   comment.char="", na.strings="", fill=TRUE), silent=TRUE)
+
+            
+            if(inherits(subs, "try-error")) {
+                subs <- try(read.table(text=txt,
+                                       stringsAsFactors=FALSE, sep=";", quote='',
+                                       comment.char="", na.strings="", fill=TRUE), silent=TRUE)
+                
+                if(inherits(subs, "try-error")) {
+                    warning("error reading SUBSTRUCTURE records. check format.")
+                    subs <- NULL
+                }
+                else {
+                    ncol <- ncol(subs)
+                    if(ncol < 3) {
+                        warning("insufficent fields in SUBSTRUCTURE. check format.")
+                    }
+                    else {
+                        warning("could not determine field type of SUBSTRUCTURE records. check format.")
+                        if(ncol > 3) 
+                            colnames(subs) <- c(substr.format[1:3], colnames(subs[4:ncol]))
+                        else
+                            colnames(subs) <- c(substr.format[1:3])
+                        }
+                }
+            }
+        }
+        
       ## Same molecules as the previous ones?
       mol.str <- paste(atom$elena, collapse="")
 
@@ -139,7 +242,7 @@ print.mol2 <- function(x, ...) {
       ## Store data
       xyz <- as.xyz(as.numeric(t(atom[, c("x", "y", "z")])))
       
-      out <- list("atom" = atom, "bond" = bond, "xyz" = xyz, 
+      out <- list("atom" = atom, "bond" = bond, "xyz" = xyz, "substructure" = subs,
                   "info" = mol.info[i,], "name" = mol.names[i])
       class(out) <- "mol2"
       mols[[i]] <- out
@@ -152,7 +255,7 @@ print.mol2 <- function(x, ...) {
       xyz <- t(sapply(lapply(mols, function(x) x$xyz), rbind))
       xyz <- as.xyz(xyz)
       
-      out <- list("atom" = atom, "bond" = bond, "xyz" = xyz,
+      out <- list("atom" = atom, "bond" = bond, "substructure" = subs, "xyz" = xyz,
                   "info" = mol.info[1,], "name" = mol.names[1])
       class(out) <- "mol2"
     }

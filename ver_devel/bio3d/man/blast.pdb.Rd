@@ -34,8 +34,8 @@ get.blast(urlget, time.out = NULL, chain.single=TRUE)
     \code{\link{blast.pdb}}. }
   \item{cutoff}{ A numeric cutoff value, in terms of minus the log of
     the evalue, for returned hits.  If null then the function will
-  try to find a suitable cutoff near \sQuote{cut.seed} which can be used
-  as an initial guide (see below). }
+    try to find a suitable cutoff near \sQuote{cut.seed} which can be used
+    as an initial guide (see below). }
   \item{cut.seed}{ A numeric seed cutoff value, used for initial
     cutoff estimation. If null then a seed position is set to the point of 
     largest drop-off in normalized scores (i.e. the biggest jump in 
@@ -91,32 +91,41 @@ get.blast(urlget, time.out = NULL, chain.single=TRUE)
   examples below for further details.
 }
 \value{
-  The function \code{blast.pdb} returns a list with the first eight components 
-  below.  The function \code{plot.blast} produces a plot on the active graphics 
-  device and returns a three component list object with \code{hits}, \code{pdb.id} and \code{gi.id} see below:
-  \item{bitscore }{ a numeric vector containing the raw score for each
-    alignment. }
-  \item{evalue }{ a numeric vector containing the E-value of the raw
-    score for each alignment. }
-  \item{mlog.evalue }{ a numeric vector containing minus the natural log
-    of the E-value. }
-  \item{gi.id }{ a character vector containing the gi database identifier of
-    each hit. }  
-  \item{pdb.id }{ a character vector containing the PDB database identifier of
-    each hit. }  
-  \item{hit.tbl }{ a character matrix summarizing BLAST results for each
-    reported hit, see below. }
-  \item{raw }{ a data frame summarizing BLAST results, note multiple
+  The function \code{blast.pdb} returns a list with three components,
+  \code{hit.tbl}, \code{raw}, and \code{url}. 
+  The function \code{plot.blast} produces a plot on the 
+  active graphics device and returns a list object with four components,
+  \code{hits}, \code{pdb.id}, \code{acc}, and \code{inds}. See below:
+ 
+  \item{hit.tbl }{ a data frame summarizing BLAST results for each
+    reported hit. It contains following major columns:
+    \itemize{
+      \item \sQuote{bitscore}, a numeric vector containing the raw score for each
+    alignment.
+      \item \sQuote{evalue}, a numeric vector containing the E-value of the raw
+    score for each alignment. 
+      \item \sQuote{mlog.evalue}, a numeric vector containing minus the natural log
+    of the E-value. 
+      \item \sQuote{acc}, a character vector containing the accession database identifier of
+    each hit.  
+      \item \sQuote{pdb.id}, a character vector containing the PDB database identifier of
+    each hit. 
+   } 
+  }
+  \item{raw }{ a data frame containing the raw BLAST output. Note multiple
     hits may appear in the same row. }
   \item{url }{ a single element character vector with the NCBI result URL and 
-    RID code. This can be passed to the get.blast function. }  
+    RID code. This can be passed to the get.blast function. }
+
   \item{hits}{ an ordered matrix detailing the subset of hits with a normalized
     score above the chosen cutoff. Database identifiers are listed along
     with their cluster group number. }
   \item{pdb.id}{ a character vector containing the PDB database identifier of
     each hit above the chosen threshold. }
-  \item{gi.id}{ a character vector containing the gi database identifier of
+  \item{acc}{ a character vector containing the gi database identifier of
     each hit above the chosen threshold. }
+  \item{inds}{ a numeric vector containing the indices of the hits
+    relative to the input blast object.}
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.

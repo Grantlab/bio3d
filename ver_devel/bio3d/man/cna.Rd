@@ -15,7 +15,7 @@
   cna(cij, \dots)
   \method{cna}{dccm}(cij, cutoff.cij=0.4, cm=NULL,  vnames=colnames(cij),
       cluster.method="btwn", collapse.method="max", 
-      cols=vmd.colors(), minus.log=TRUE, \dots)
+      cols=vmd_colors(), minus.log=TRUE, \dots)
   \method{cna}{ensmb}(cij, \dots, ncore = NULL)
 }
 \arguments{

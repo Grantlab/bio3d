@@ -41,16 +41,16 @@ function (file, maxlines=-1, multi=FALSE,
     ##- Remove leading and trailing spaces from character strings
     s <- sub("^ +", "", s)
     s <- sub(" +$", "", s)
-    s[(s=="")]<-NA
+    s[(s=="")]<-""
     s
   }
 
   split.fields <- function(x) {
      ##- Split a character string for data.frame fwf reading
      ##  First splits a string 'x' according to 'first' and 'last'
-     ##  then re-combines to new string with "," as separator 
+     ##  then re-combines to new string with ";" as separator 
      x <- trim( substring(x, first, last) )
-     paste(x,collapse=",")
+     paste(x,collapse=";")
   }
 
   is.character0 <- function(x){length(x)==0 & is.character(x)}
@@ -140,10 +140,10 @@ function (file, maxlines=-1, multi=FALSE,
  ## rm.insert=FALSE; rm.alt=TRUE; het2atom=FALSE; verbose=TRUE
 
   atom <- read.table(text=sapply(raw.atom, split.fields),
-                    stringsAsFactors=FALSE, sep=",", quote='',
-                    colClasses=atom.format[!drop.ind,"what"],
+                    stringsAsFactors=FALSE, sep=";", quote='',
+                    colClasses=unname(atom.format[!drop.ind,"what"]),
                     col.names=atom.format[!drop.ind,"name"],
-                    comment.char="")
+                    comment.char="", na.strings="")
 
   ##-- End data.frame update
 
@@ -165,6 +165,7 @@ function (file, maxlines=-1, multi=FALSE,
       ## Extract coords to nrow/frame * ncol/xyz matrix
       xyz.models <- matrix( as.numeric(tmp.xyz), ncol=nrow(atom)*3,
                             nrow=length(raw.end), byrow=TRUE)
+      rownames(xyz.models) = NULL
 
     } else {
       warning(paste("Unequal number of atoms in multi-model records:", file))
@@ -198,18 +199,20 @@ function (file, maxlines=-1, multi=FALSE,
   }
   ##- Vector of Calpha positions 
   ##  check for calcium resid and restrict to ATOM records only
-  calpha = (atom[,"elety"]=="CA") & (atom[,"resid"]!="CA") & (atom[,"type"]=="ATOM")
-
+#  calpha = (atom[,"elety"]=="CA") & (atom[,"resid"]!="CA") & (atom[,"type"]=="ATOM")
+  
   output<-list(atom=atom,
                #het=atom[atom$type=="HETATM",],
                helix=helix,
                sheet=sheet,
                seqres=seqres,
-               xyz=xyz.models,
-               calpha = calpha, call=cl)
+               xyz=as.xyz(xyz.models),
+               calpha = NULL, call=cl)
 
-  class(output) <- c("pdb", "sse")
-  class(output$xyz) <- c("numeric","xyz")
+  class(output) <- c("pdb", "sse")  
+  ca.inds <-  atom.select.pdb(output, string="calpha", verbose=FALSE)
+  output$calpha <- seq(1, nrow(atom)) %in% ca.inds$atom
+
   return(output)
 
 }

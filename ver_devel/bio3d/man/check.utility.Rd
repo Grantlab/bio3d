@@ -5,7 +5,8 @@
   Internally used in examples, tests, or vignettes.
 }
 \usage{
-  check.utility(x = c("muscle", "dssp", "stride", "mustang", "makeup"), quiet = TRUE)
+  check.utility(x = c("muscle", "clustalo", "dssp", "stride", 
+                "mustang", "makeup"), quiet = TRUE)
 }
 \arguments{
   \item{x}{ Names of one or more utility programs to check. }
@@ -15,7 +16,8 @@
   Check if requested utility programs are availabe or not.
 }
 \value{
-  logical, TRUE if programs are available and FALSE if any one of them is missing.
+  logical, TRUE if programs are available and FALSE if any one of 
+     them is missing.
 }
 \examples{
    check.utility(c("muscle", "dssp"), quiet=FALSE)

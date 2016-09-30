@@ -30,11 +30,11 @@ data(hivp)
   Three objects from analysis of the \code{kinesin} and \code{transducin} sequence and structure
   data:
   \enumerate{
-    \item{pdbs}{ is a list of class \code{"pdbs"} containing aligned PDB
-      structure data.  In the case of transducin this is the output of running
-      \code{\link{pdbaln}} on a set of 47 kinesin structures from the SCOP database (again see \code{pdbs$id} for details). In both cases the coordinates
-      are fitted onto the first structure based on \code{"core"} positions obtained from \code{\link{core.find}} and superposed using the function 
-      \code{\link{pdbfit}}. }
+    \item{pdbs}{ is a list of class \code{pdbs} containing aligned PDB
+      structure data.  In the case of transducin this is the output of running 
+      \code{\link{pdbaln}} on a set of 53 G[alpha]i structures from the PDB database (see \code{pdbs$id} 
+      or \code{annotation} described below for details). The coordinates
+      are fitted onto the first structure based on \code{"core"} positions obtained from \code{\link{core.find}} and superposed using the function \code{\link{pdbfit}}. }
     \item{core}{ is a list of class \code{"core"} obtained by running the
       function \code{\link{core.find}} on the \code{pdbs} object as described above.}
     \item{annotation}{ is a character matrix describing the nucleotide state and bound 

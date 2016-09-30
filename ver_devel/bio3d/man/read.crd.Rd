@@ -43,11 +43,11 @@ read.crd(file, ...)
 \examples{
 \dontrun{
 ## Read a PRMTOP file
-prmtop <- read.prmtop("prot_solvated.prmtop")
+prmtop <- read.prmtop(system.file("examples/crambin.prmtop", package="bio3d"))
 print(prmtop)
 
 ## Read a Amber CRD file
-crds <- read.crd("prot_solvated.inpcrd")
+crds <- read.crd(system.file("examples/crambin.inpcrd", package="bio3d"))
 
 ## Atom selection
 ca.inds <- atom.select(prmtop, "calpha")

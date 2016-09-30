@@ -1,9 +1,11 @@
+## All-atom ENMs
 "ff.aaenm" <- function(r, ...) {
   a <- 7424;
   k <- a * r^(-6)
   k[k>1500]=1500
   return(k)
 }
+
 
 ff.aaenm2 <- function(r, atom.id, pdb, ...) {
     # all non-covalent interactions
@@ -23,6 +25,7 @@ ff.aaenm2 <- function(r, atom.id, pdb, ...) {
 }
 
 
+## Coarse-grained ENMs
 #"ff.aaanm" <- function(r, cutoff=7, gamma=1, ...) {
 #  ifelse( r>cutoff, 0, gamma )
 #}

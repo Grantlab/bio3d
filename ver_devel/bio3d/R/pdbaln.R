@@ -116,6 +116,8 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
         NA
     }))
     
+    if(!is.character(id)) id <- rep(NA, length(id))
+
     nams <- paste("seq", 1:length(id), sep="")
     id[is.na(id)] <- nams[is.na(id)]
     

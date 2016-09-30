@@ -8,7 +8,7 @@ function(alignment) {
   aa <- c("V","I","L","M",  "F","W","Y",  "S","T",
           "N","Q",  "H","K","R",  "D","E",
           "A","G",  "P",  "C",  "-","X")
-  
+
   composition <- table(alignment)
   unk <- composition[!names( composition  ) %in% aa]
   if(length(unk) > 0) {
@@ -16,7 +16,7 @@ function(alignment) {
     for(i in 1:length(unk))
       alignment[alignment==names(unk[i])]="X"
   }
-  
+
   len <- ncol(alignment)
   freq.22 <- matrix(0, nrow = 22, ncol = ncol(alignment),
                     dimnames = list(aa,seq(1:len)))
@@ -24,7 +24,7 @@ function(alignment) {
   freq.10 <- matrix(0, nrow = 10, ncol = ncol(alignment),
                     dimnames = list(c(1:10),c(1:len)))
 
-  for (i in 1:len) { 
+  for (i in 1:len) {
     freq.22[names(summary((as.factor(toupper(alignment[,i]))))), i] <-
       (summary(as.factor(toupper(alignment[,i])))/length(alignment[,i]))
 
@@ -50,12 +50,12 @@ function(alignment) {
                                log2(freq.22[freq.22[, i] != 0, i]))
 
     entropy.10[i] <- -1*sum(freq.10[freq.10[, i] != 0, i] *
-                            log2(freq.10[freq.10[, i] != 0, i]))  
+                            log2(freq.10[freq.10[, i] != 0, i]))
   }
 
   out <- list(H=entropy.22, H.10=entropy.10,
-              H.norm=(1-(entropy.22/max(entropy.22))),
-              H.10.norm=(1-(entropy.10/max(entropy.10))),
+              H.norm=1-(if(max(entropy.22)==0) entropy.22 else (entropy.22/max(entropy.22))),
+              H.10.norm=1-(if(max(entropy.10)==0) entropy.10 else (entropy.10/max(entropy.10))),
               freq=freq.22)
 }
 

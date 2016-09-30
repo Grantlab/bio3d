@@ -52,11 +52,12 @@
         dists <- sqrt(rowSums(diff.vect**2))  ## quicker !
 
         ## pfc.fun takes a vector of distances
-        if("pdb" %in% names(formals( pfc.fun )) &&
-           "atom.id"     %in% names(formals( pfc.fun )) )
-          force.constants <- pfc.fun(dists, atom.id=i, pdb=pdb, ...)
-        else 
-          force.constants <- pfc.fun(dists, ...)
+        ff.names <- names(formals( pfc.fun ))
+        args <- list(dists)
+        if('atom.id' %in% ff.names) args <- c(args, list(atom.id=i))
+        if('pdb' %in% ff.names) args <- c(args, list(pdb=pdb))
+        args <- c(args, list(...))
+        force.constants <- do.call(pfc.fun, args)
           
         ## Scale the force constants
         if(!is.null(fc.weights)) {

@@ -1,6 +1,6 @@
 \name{pca.array}
 \alias{pca.array}
-\title{ Principal Component Analysis of an arrary of matrices }
+\title{ Principal Component Analysis of an array of matrices }
 \description{
   Calculate the principal components of an array of correlation or
   covariance matrices.
@@ -16,8 +16,14 @@
   \item{\dots}{ . }
 }
 \details{
-  This function performs an PCA of residue-residue cross-correlations or
-  covariance matrices derived from ensemble NMA of M structures. 
+  This function performs PCA of symmetric matrices, such as distance 
+  matrices from an ensemble of crystallographic structures, residue-residue 
+  cross-correlations or covariance matrices derived from ensemble NMA 
+  or MD simulation replicates, and so on. The \sQuote{upper triangular} 
+  region of the matrix is regarded as a long vector of random variables. 
+  The function returns M eigenvalues and eigenvectors with each eigenvector 
+  having the dimension N(N-1)/2, where M is the number of matrices and N 
+  the number of rows/columns of matrices.
 }
 \value{
   Returns a list with components equivalent to the output from

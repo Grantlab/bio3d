@@ -1,5 +1,5 @@
 vmd.cnapath <- function(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE, 
-        colors = c("blue", "red"), launch = FALSE, ...) {
+        colors = c("blue", "red"), launch = FALSE, exefile=NULL, ...) {
 
    if(!inherits(x, "cnapath")) 
       stop("Input x is not a 'cnapath' object")
@@ -10,7 +10,7 @@ vmd.cnapath <- function(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE,
    }
    else {
       if(length(colors) == 1 && is.numeric(colors))
-         cols <- colorRamp(vmd.colors()[colors + 1])
+         cols <- colorRamp(vmd_colors()[colors + 1])
       else
          stop("colors should be a character vector or an integer indicating a VMD color ID")
    }
@@ -162,18 +162,30 @@ mol addrep top
    write.pdb(pdb, file=pdbfile)
    
    if(launch) {
-      
-      cmd <- paste("vmd -e", file)
 
-      os1 <- .Platform$OS.type
-      if (os1 == "windows") {
-        shell(shQuote(cmd))
-      } else{
-        if(Sys.info()["sysname"]=="Darwin") {
-          system(paste("/Applications/VMD\\ 1.9.*app/Contents/MacOS/startup.command -e", file))
-        } else {
-          system(cmd)
-        }
-      }
+     ## Find default path to external program
+     if(is.null(exefile)) {
+       exefile <- 'vmd'
+       if(nchar(Sys.which(exefile)) == 0) {
+         os1 <- Sys.info()["sysname"]
+         exefile <- switch(os1,
+           Windows = 'vmd.exe', # to be updated
+           Darwin = '/Applications/VMD\\ 1.9.*app/Contents/MacOS/startup.command',
+           'vmd' )
+       }
+     }
+     if(nchar(Sys.which(exefile)) == 0)
+       stop(paste("Launching external program failed\n",
+                  "  make sure '", exefile, "' is in your search path", sep=""))
+
+     cmd <- paste(exefile, "-e", file)
+
+     os1 <- .Platform$OS.type
+     if (os1 == "windows") {
+       shell(shQuote(cmd))
+     } else{
+       system(cmd)
+     }
+      
    }
 }

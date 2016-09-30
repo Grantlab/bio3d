@@ -17,10 +17,17 @@ rmsf(xyz, grpby=NULL, average=FALSE)
   \item{average}{ logical, if TRUE averaged over atoms. }
 }
 \details{
-  An often used measure of conformational variance.
+  RMSF is an often used measure of conformational variance. It is calculated by
+  \deqn{f_i=\sqrt{\frac{1}{M-1}\sum_j \|r_i^j-r_i^0\|^2}}{%
+        f_i=sqrt((1/(M-1))Sum_j(||r_i^j-r_i^0||^2))},
+  where \eqn{f_i}{f_i} is the RMSF value for the ith atom, M the total number of frames 
+  (total number of rows of \code{xyz}), \eqn{r_i^j}{r_i^j} the positional vector of the
+  ith atom in the jth frame, and \eqn{r_i^0}{r_i^0} the mean position of ith atom. 
+  ||r|| denotes the Euclidean norm of the vector r.
 }
 \value{
-  Returns a numeric vector of RMSF values.
+  Returns a numeric vector of RMSF values. If \code{average=TRUE} a single numeric value
+  representing the averaged RMSF value over all atoms will be returned. 
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.

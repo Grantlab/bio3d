@@ -8,7 +8,6 @@ function (pdb = NULL,
           chain = NULL,
           o = NULL,
           b = NULL,
-          het = FALSE,
           append = FALSE,
           verbose =FALSE,
           chainter = FALSE,
@@ -17,77 +16,81 @@ function (pdb = NULL,
 ## For Testing:
 ## resno = NULL; resid = NULL;eleno = NULL;elety = NULL;chain = NULL;o = NULL;b = NULL; het = FALSE;append = FALSE;verbose =FALSE;chainter = FALSE
 ## pdb=mt; eleno=eleno.new; resno=resno.new; file="t3.pqr"
-  
+    
   if(is.null(xyz) || !is.numeric(xyz))
     stop("write.pqr: please provide a 'pdb' object or numeric 'xyz' vector")
 
   if(any(is.na(xyz)))
     stop("write.pqr: 'xyz' coordinates must have no NA's.")
-  
-  if(is.vector(xyz)) {
-    natom <- length(xyz)/3
-    nfile <- 1
-  } else if (is.matrix(xyz)) {
-    stop("write.pqr: no multimodel PQR support")
-    ##natom <- ncol(xyz)/3 
-    ##nfile <- nrow(xyz)
-    ##if (verbose) {
-    ##  cat("Multiple 'xyz' rows will be interperted as multimodels/frames\n")
-    ##}
-  } else {
-    stop("write.pdb: 'xyz' or 'pdb$xyz' must be either a vector or matrix")
-  }
 
-  card <- rep("ATOM", natom)
+  xyz <- as.xyz(xyz)
+  xyz <- trim(xyz, row.inds=1)
+  natom <- ncol(xyz)/3
+  nfile <- 1
+        
+  if (nrow(xyz)>1) {
+      warning("write.pqr: no multimodel PQR support")
+      xyz <- trim(xyz, row.inds=1)
+      ##natom <- ncol(xyz)/3 
+      ##nfile <- nrow(xyz)
+      ##if (verbose) {
+      ##  cat("Multiple 'xyz' rows will be interperted as multimodels/frames\n")
+  }
+  
+  card <- rep('ATOM', natom)
   
   if(!is.null(pdb)) {
-    if(natom == 1)
+#    if(natom == 1)
       ## make sure we are a matrix
-      pdb$atom <- t(as.matrix(pdb$atom))
-    
-    if (het) 
-      card <- c( rep("ATOM", nrow(pdb$atom)), rep("HETATM", nrow(pdb$het)) )
-    if (is.null(resno)) {
+#      pdb$atom <- t(as.matrix(pdb$atom))
+
+    card <- pdb$atom$type
+
+    if (is.null(resno))
       resno = pdb$atom[, "resno"]
-      if (het) { resno = c(resno, pdb$het[, "resno"]) }}
     
-    if (is.null(resid)) {
+    if (is.null(resid))
       resid = pdb$atom[, "resid"]
-      if (het) { resid = c(resid, pdb$het[, "resid"]) }}
     
-    if (is.null(eleno)) {
+    if (is.null(eleno))
       eleno = pdb$atom[, "eleno"]
-      if (het) { eleno = c(eleno, pdb$het[, "eleno"]) }}
     
-    if (is.null(elety)) {
+    if (is.null(elety))
       elety = pdb$atom[, "elety"]
-      if (het) { elety = c(elety, pdb$het[, "elety"]) }}
-    
+   
     if (is.null(chain)) {
       chain = pdb$atom[, "chain"]
-      if (het) { chain = c(chain, pdb$het[, "chain"]) }}
-    
-    if (is.null(o)) {
+    }
+    else {
+      if(length(chain)==1) chain=rep(chain, natom)
+    }
+
+    if (is.null(o))
       o = pdb$atom[, "o"]
-      if (het) { o = c(o, pdb$het[, "o"]) }}
     
-    if (is.null(b)) {
+    if (is.null(b))
       b = pdb$atom[, "b"]
-      if (het) { b = c(b, pdb$het[, "b"]) }}
     
-    if (any(is.na(o))) {      o = rep("1.00", natom) }
-    if (any(is.na(b))) {      b = rep("0.00", natom) }
+    if (any(is.na(o))) {      o = rep("0.00", natom) }
+    if (any(is.na(b))) {      b = rep("1.00", natom) }
     #if (any(is.na(chain))) { chain = rep(" ", natom) }
-    chain[is.na(chain)]= " "
+    chain[is.na(chain)]= ""
     
   } else {
     if (is.null(resno)) resno = c(1:natom)
     if (is.null(resid)) resid = rep("ALA", natom)
     if (is.null(eleno)) eleno = c(1:natom)
     if (is.null(elety)) elety = rep("CA", natom)
-    if (is.null(chain)) chain = rep(" ", natom)
-    if (is.null(o))         o = rep("1.00",natom)
-    if (is.null(b))         b = rep("0.00", natom)
+    if (is.null(chain)) {
+      chain = rep("", natom)
+    }
+    else {
+      if (length(chain) == 1) chain = rep(chain, natom)
+    }
+    if (is.null(o))         o = rep("0.00",natom)
+    if (is.null(b))         b = rep("1.00", natom)
+
+    chain[is.na(chain)]= ""
   }
 
   
@@ -139,37 +142,37 @@ function (pdb = NULL,
     ind.4 <- which(cases==4)
 
     atom.print.1 <- function(card = "ATOM", eleno, elety, alt = "",
-        resid, chain = "", resno, insert = "", x, y, z, o = "1.00",
-        b = "0.00", segid = "") {
+        resid, chain = "", resno, insert = "", x, y, z, o = "0.00",
+        b = "1.00", segid = "") {
 
-      format <- "%-6s%5s  %-3s%1s%-4s%1s%4s%1s%3s%8.3f%8.3f%8.3f%8.4f%7.4f%6s%4s"
+      format <- "%-6s%5s  %-3s%1s%-4s%1s%4s%1s%3s%8.3f%8.3f%8.3f%8.4f%8.3f%6s%4s"
       sprintf(format, card, eleno, elety, alt, resid, chain,
               resno, insert, "", x, y, z, o, b, "", segid)
     } 
 
     atom.print.2 <- function(card = "ATOM", eleno, elety, alt = "",
-        resid, chain = "", resno, insert = "", x, y, z, o = "1.00",
-        b = "0.00", segid = "") {
+        resid, chain = "", resno, insert = "", x, y, z, o = "0.00",
+        b = "1.00", segid = "") {
 
-      format <- "%-6s%5s %-4s%1s%-4s%1s%4s%1s%3s%8.3f%8.3f%8.3f%8.4f%7.4f%6s%4s"
+      format <- "%-6s%5s %-4s%1s%-4s%1s%4s%1s%3s%8.3f%8.3f%8.3f%8.4f%8.3f%6s%4s"
       sprintf(format, card, eleno, elety, alt, resid, chain,
               resno, insert, "", x, y, z, o, b, "", segid)
     } 
 
     atom.print.3 <- function(card = "ATOM", eleno, elety, alt = "",
-        resid, chain = "", resno, insert = "", x, y, z, o = "1.00",
-        b = "0.00", segid = "") {
+        resid, chain = "", resno, insert = "", x, y, z, o = "0.00",
+        b = "1.00", segid = "") {
 
-      format <- "%-4s%7s  %-3s%1s%-4s%1s%4s%1s%3s%8.3f%8.3f%8.3f%8.4f%7.4f%6s%4s"
+      format <- "%-4s%7s  %-3s%1s%-4s%1s%4s%1s%3s%8.3f%8.3f%8.3f%8.4f%8.3f%6s%4s"
       sprintf(format, card, eleno, elety, alt, resid, chain,
               resno, insert, "", x, y, z, o, b, "", segid)
     } 
   
     atom.print.4 <- function(card = "ATOM", eleno, elety, alt = "",
-        resid, chain = "", resno, insert = "", x, y, z, o = "1.00",
-        b = "0.00", segid = "") {
+        resid, chain = "", resno, insert = "", x, y, z, o = "0.00",
+        b = "1.00", segid = "") {
 
-      format <- "%-4s%7s %-4s%1s%-4s%1s%4s%1s%3s%8.3f%8.3f%8.3f%8.4f%7.4f%6s%4s"
+      format <- "%-4s%7s %-4s%1s%-4s%1s%4s%1s%3s%8.3f%8.3f%8.3f%8.4f%8.3f%6s%4s"
       sprintf(format, card, eleno, elety, alt, resid, chain,
               resno, insert, "", x, y, z, o, b, "", segid)
     } 

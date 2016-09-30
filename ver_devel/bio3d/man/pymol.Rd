@@ -13,18 +13,18 @@
 pymol(\dots)
 
 \method{pymol}{pdbs}(pdbs, col=NULL, as="ribbon", file=NULL, type="script",
-                     exefile="pymol", \dots)
+                     exefile=NULL, \dots)
 
 \method{pymol}{nma}(\dots)
 
 \method{pymol}{pca}(\dots)
 
 \method{pymol}{modes}(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
-                     type="script", exefile="pymol", \dots)
+                     type="script", exefile=NULL, \dots)
 
 \method{pymol}{dccm}(dccm, pdb, file=NULL,
                      step=0.2, omit=0.2, radius = 0.15,
-                     type="script", exefile="pymol", \dots)
+                     type="script", exefile=NULL, \dots)
 
 
 }
@@ -46,7 +46,8 @@ pymol(\dots)
     type: \sQuote{script} generates a .pml script; \sQuote{session}
     generates a .pse session file; \sQuote{launch} launches pymol. }
   \item{exefile}{ file path to the \sQuote{PYMOL} program on your system (i.e.
-    how is \sQuote{PYMOL} invoked). }
+    how is \sQuote{PYMOL} invoked). If \code{NULL}, use OS-dependent 
+    default path to the program. }
   \item{modes}{ an object of class \code{nma} or \code{pca} as obtained
     from functions \code{nma} or \code{pca.xyz}. }
   \item{mode}{ the mode number for which the vector field should be
@@ -145,6 +146,6 @@ pymol(cm, modes$xyz)
 ##- pymol with a 'nma' or 'pca' object
 pymol(modes, mode=7)
 
-
+detach(transducin)
 }
 }

@@ -54,9 +54,9 @@
 \examples{
 \dontrun{
  pdb <- read.pdb("1bg2")
- crdfile <- tempfile()
+ crdfile <- paste(tempfile(), '.crd', sep='')
  write.crd(pdb, file=crdfile)
- crd <- read.crd(crdfile)
+ crd <- read.crd(crdfile, ext=FALSE)
  ca.inds <- which(crd$calpha)
  crd$atom[ca.inds[1:20],c("x","y","z")]
 # write.pdb(crd, file=tempfile())
