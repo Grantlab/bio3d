@@ -1,7 +1,7 @@
 ---
 title: "Beginning Trajectory Analysis with Bio3D"
 author: "Xin-Qiu Yao, Lars Skjaerven, & Barry J. Grant"
-date: "October 30, 2014 (last updated: Feburary 20, 2015)"
+date: "October 30, 2014 (last updated: September 30, 2016)"
 affiliation: University of Michigan (Ann Arbor, USA) and University of Bergen (Norway) 
 output:
   pdf_document:
@@ -56,7 +56,7 @@ demo("md")
 library(bio3d)
 ```
 
-#### Side-note: {.unnumbered}
+**Side-note:**
 
 Note that you will be prompted to hit the `RETURN` key at each step of
 the demo as this will allow you to see the particular functions being
@@ -89,7 +89,7 @@ dcdfile <- system.file("examples/hivp.dcd", package="bio3d")
 pdbfile <- system.file("examples/hivp.pdb", package="bio3d")
 ```
 
-#### Side-note: {.unnumbered}
+**Side-note:**
 
 Note that in the above example the `system.file()` command returns a
 character string corresponding to the file name of a PDB structure
@@ -121,16 +121,16 @@ print(dcd)
 
 The output of the above function is telling us that we have 351 trajectory frames and 594 coordinates. The trajectory information is stored in a  `xyz` matrix object with one row per frame and columns for the Cartesian coordinates (x, y and z columns).
 
-#### Question: {.unnumbered}
+**Question:**
 
 How many atoms are in the trajectory and PDB files?
 
-#### Question: {.unnumbered}
+**Question:**
 
 How would you extract the amino acid sequence of the HIVpr system in
 1-letter and 3-letter forms? HINT: try `help.search("PDB sequence")` for a Bio3D function that might help you.
 
-#### Side-note: {.unnumbered}
+**Side-note:**
 
 Note that typically one works with trajectory files that contain all
 protein atoms, or at the very least all backbone atoms. Solvent however
@@ -170,19 +170,19 @@ of the input trajectory:
 dim(xyz) == dim(dcd)
 ```
 
-#### Question: {.unnumbered}
+**Question:**
 
 How would you fit trajectory frames on the Calpha atoms of residues 24
 to 27 and 85 to 90 in both chains? HINT: See the example section of
 `help(atom.select)`.
 
-#### Question: {.unnumbered}
+**Question:**
 
 Would you expect the alternate fitting suggested above to alter your
 later results? HINT: You can come back to this question later after
 going through the other sections.
 
-#### Side-note: {.unnumbered}
+**Side-note:**
 
 A simple way to obtain the average structure from your fitted trajectory
 is to use the following command `apply(xyz,2,mean)`.
@@ -212,11 +212,11 @@ lines(density(rd), col="gray", lwd=3)
 summary(rd)
 ```
 
-#### Question: {.unnumbered}
+**Question:**
 
 How would you calculate the pairwise RMSD between all frames?
 
-#### Question: {.unnumbered}
+**Question:**
 
 What would be a good way to visualize and further analyze such a
 pairwise RMSD matrix? HINT: Have a look at the NMA vignette for some,
@@ -235,11 +235,11 @@ rf <- rmsf(xyz[,ca.inds$xyz])
 plot(rf, ylab="RMSF", xlab="Residue Position", typ="l")
 ```
 
-#### Question: {.unnumbered}
+**Question:**
 
 If you had multiple simulations (which by the way we greatly encourage), how would you plot these on the same graph? HINT: See `help(points)`.
 
-#### Question: {.unnumbered}
+**Question:**
 
 If you noticed differences at particular sites (e.g. in the presence or
 absence of a ligand) how would you go about addressing the significance
@@ -287,7 +287,7 @@ grps <- cutree(hc, k=2)
 plot(pc, col=grps)
 ```
 
-#### Question: {.unnumbered}
+**Question**
 
 How can we find out which frames correspond to the distinct groups along PC1? HINT: Which variable/object created above tells us about cluster membership?
 <br><br>
@@ -300,7 +300,7 @@ plot.bio3d(pc$au[,1], ylab="PC1 (A)", xlab="Residue Position", typ="l")
 points(pc$au[,2], typ="l", col="blue")
 ```
 
-#### Question: {.unnumbered}
+**Question:**
 
 Why do you think there might be two major peaks in our RMSF plot?
 <br><br>
@@ -333,7 +333,7 @@ write.ncdf(p1, "trj_pc1.nc")
 
 ![Visualization of the first principal component of HIV-1 protease. Color scale from blue to red depict low to high atomic displacements.](figures/hiv_pc1.png)
 
-#### Question: {.unnumbered}
+**Question:**
 
 Which regions are the most dynamic and why?
 <br><br>
@@ -352,7 +352,7 @@ cij<-dccm(xyz[,ca.inds$xyz])
 plot(cij)
 ```
 
-#### Question: {.unnumbered}
+**Question:**
 
 What do the off-diagonal regions of negative correlation correspond to
 in this plot and which regions are involved? HINT: Negative values
@@ -360,14 +360,14 @@ typical indicate regions that move in opposite directions.
 <br><br>
 
 A 3D visualization of these correlations can be provided through the
-function `view.dccm()`
+function `pymol.dccm()`
 
 ```{r, eval=FALSE}
 # View the correlations in pymol
-view.dccm(cij, pdb, launch=TRUE)
+pymol.dccm(cij, pdb, type="launch")
 ```
 
-![Visualization of residue-residue cross correlations (using function **view.dccm()**). Red and blue lines indicate correlated and anti-correlation motions, respectively.](figures/dccm_hivpr.png)
+![Visualization of residue-residue cross correlations (using function **pymol.dccm()**). Red and blue lines indicate correlated and anti-correlation motions, respectively.](figures/dccm_hivpr.png)
 
 See also the `Enhanced Methods for Normal Mode Analysis` for additional
 visualization examples. Also you might want to checkout the
