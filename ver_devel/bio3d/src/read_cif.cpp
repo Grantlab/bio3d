@@ -68,7 +68,9 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
   // temp variables
   string tmp;
   int counter = 0;
-
+  int curr_model;
+  int prev_model = -1;
+  
   string tmps;
   vector<string> tmp_vec;
 
@@ -116,11 +118,18 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
 
 	// include here check for model number as in read_pdb.cpp
 	// add checks for "?"
-	models = stringToInt(tmp_vec[25]);
+	curr_model = stringToInt(tmp_vec[25]);
+
+	if(curr_model != prev_model) {
+	  models++;
+	  prev_model = curr_model;
+	}
+	
 	if(!multi && models > 1) {
 	  models=1;
 	  break;
 	}
+
 	
 	// read coordinates
 	double tmpx = stringToDouble(tmp_vec[10]);
@@ -143,7 +152,7 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
 
 	  //_atom_site.group_PDB
 	  type.push_back(tmp_vec[0]);
-	  
+
 	  //_atom_site.id
 	  eleno.push_back(stringToInt(tmp_vec[1]));
 	
