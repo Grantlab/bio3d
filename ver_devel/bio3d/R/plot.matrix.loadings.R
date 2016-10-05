@@ -73,6 +73,9 @@ plot.matrix.loadings <- function(x, pc=1, resno=NULL, sse=NULL, mask.n=0, ...) {
    else
       show <- as.character(args.plot.dccm$show)[2]
    if(is.na(show)) show <- 'full'
+   if(!'main' %in% names(args))
+     args$main <- paste('Loadings of PC ', pc, 
+       ' (', round(x$L[pc]/sum(x$L)*100, 1), '%)', sep='')
 
    ## compute the dim of matrix
    M <- nrow(x$U)
@@ -83,6 +86,14 @@ plot.matrix.loadings <- function(x, pc=1, resno=NULL, sse=NULL, mask.n=0, ...) {
       stop('Wrong dimension of eigenvectors detected. Check the input x.')
 
    if(is.null(resno)) resno <- 1:N
+   if(is.pdb(sse)) {
+    sse <- unname(pdb2sse(sse))
+   }
+   else if(inherits(sse, 'sse')) {
+    if(!is.null(sse$sse)) sse <- unname(sse$sse)
+   }
+   if(is.character(sse)) sse <- bounds.sse(sse)
+   
    args$resno <- resno
    args$sse <- sse
    
@@ -128,8 +139,8 @@ plot.matrix.loadings <- function(x, pc=1, resno=NULL, sse=NULL, mask.n=0, ...) {
           sse$helix$length <- (sse$helix$end+1)-sse$helix$start
 
           inds <- which(sse$helix$length >= segment.min)
-          sse$helix$start <- match(sort(sse$helix$start[inds]), resno)
-          sse$helix$end <- match(sort(sse$helix$end[inds]), resno)
+#          sse$helix$start <- match(sort(sse$helix$start[inds]), resno)
+#          sse$helix$end <- match(sort(sse$helix$end[inds]), resno)
           draw.sse.grid(sse$helix)
       }
       if(length(sse$sheet$start) > 0) {
@@ -138,8 +149,8 @@ plot.matrix.loadings <- function(x, pc=1, resno=NULL, sse=NULL, mask.n=0, ...) {
           sse$sheet$length <- (sse$sheet$end+1)-sse$sheet$start
 
           inds <- which(sse$sheet$length >= segment.min)
-          sse$sheet$start <- match(sort(sse$sheet$start[inds]), resno)
-          sse$sheet$end <- match(sort(sse$sheet$end[inds]), resno)
+#          sse$sheet$start <- match(sort(sse$sheet$start[inds]), resno)
+#          sse$sheet$end <- match(sort(sse$sheet$end[inds]), resno)
           draw.sse.grid(sse$sheet)
       }
    }
