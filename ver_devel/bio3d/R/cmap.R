@@ -28,7 +28,8 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, binary=TRUE, mask.lower = TRUE
   }
 
   xyz=as.xyz(xyz)
-  
+  nxyz =nrow(xyz)
+
     if(nrow(xyz)>1) {
       pb <- txtProgressBar(min=0, max=nrow(xyz), style=3)
         
@@ -90,9 +91,9 @@ function(xyz, grpby=NULL, dcut=4, scut=3, pcut=1, binary=TRUE, mask.lower = TRUE
          cont.map[lower.tri(cont.map)] <- t(cont.map)[lower.tri(cont.map)]
      }
      else {
-       cont.map <- array(NA, dim=c(nres, nres, nrow(xyz)))
+       cont.map <- array(NA, dim=c(nres, nres, nxyz))
        cmap.t <- matrix(NA, nres, nres)
-       for(i in 1:nrow(xyz)) {
+       for(i in 1:nxyz) {
          cmap.t[!lower.tri(cmap.t)] <- cmap.list[[i]]
          if(!mask.lower)
            cmap.t[lower.tri(cmap.t)] <- t(cmap.t)[lower.tri(cmap.t)]
