@@ -75,6 +75,7 @@ function(x,
   image(x=1:ncol(x),
         y=1:nrow(x),
         z=z,
+        zlim=zlim,
         col=col, yaxt="n", xaxt="n", ...)
         #xlab="Residue Number", ylab="Residue Number")
 
