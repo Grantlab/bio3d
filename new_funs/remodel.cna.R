@@ -304,13 +304,13 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
       else 
          col = lapply(member, function(y) {
                     col <- 1:length(unique(y))
-                    if(vmd.color) vmd.colors()[col]
+                    if(vmd.color) vmd_colors()[col]
                     else col
                } )
    } else {
       if(!all(sapply(n.mem, '==', length(col))))
          stop("Length of color vector doesn't match number of communities")
-      if(is.numeric(col) && vmd.color) col = vmd.colors()[col]
+      if(is.numeric(col) && vmd.color) col = vmd_colors()[col]
       col = rep(list(col), length(member))
    }
    # update network components
@@ -337,7 +337,7 @@ remodel.cna <- function(x,  member = NULL, col = NULL, minus.log = TRUE,
       y$network <- set.vertex.attribute(y$network, "color", value= col[[i]][member[[i]]])
       y$community.network <- set.vertex.attribute(y$community.network, "color", value = col[[i]])
       if(!is.null(y$community.reindex)) {
-         if(vmd.color) y$community.reindex = match(col[[i]], vmd.colors())
+         if(vmd.color) y$community.reindex = match(col[[i]], vmd_colors())
          else y$community.reindex = 1:length(unique(member[[i]]))
       }
       y

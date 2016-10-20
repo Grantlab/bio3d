@@ -118,6 +118,12 @@
         sse.aln$helix$length <- new.sse[,"length"]
         sse.aln$helix$chain <- chain.sse
       }
+    } else {
+        h.inds <- NULL
+        sse.aln$helix$start  <- NULL
+        sse.aln$helix$end    <- NULL
+        sse.aln$helix$length <- NULL
+        sse.aln$helix$chain <- NULL
     }
 
     ## Sheets
@@ -143,6 +149,12 @@
         sse.aln$sheet$length <- new.sse[,"length"]
         sse.aln$sheet$chain <- chain.sse
       }
+    } else {
+        e.inds <- NULL
+        sse.aln$sheet$start  <- NULL
+        sse.aln$sheet$end    <- NULL
+        sse.aln$sheet$length <- NULL
+        sse.aln$sheet$chain <- NULL
     }
 
     ## SSE vector
