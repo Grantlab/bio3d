@@ -50,15 +50,29 @@
       out <- list()
       out$sse <- sse2
       
-      out$helix$start <- h[, "start"]
-      out$helix$end <- h[, "end"]
-      out$helix$length <- h[, "length"]
-      out$helix$chain <- chain[ bounds(h.inds)[, "start"] ]
+      if(length(h.inds)>0) {
+        out$helix$start <- h[, "start"]
+        out$helix$end <- h[, "end"]
+        out$helix$length <- h[, "length"]
+        out$helix$chain <- chain[ bounds(h.inds)[, "start"] ]
+      } else {
+        out$helix$start <- NULL
+        out$helix$end <- NULL
+        out$helix$length <- NULL
+        out$helix$chain <- NULL
+      }
 
-      out$sheet$start <- e[, "start"]
-      out$sheet$end <- e[, "end"]
-      out$sheet$length <- e[, "length"]
-      out$sheet$chain <- chain[ bounds(e.inds)[, "start"] ]
+      if(length(e.inds)>0) {
+        out$sheet$start <- e[, "start"]
+        out$sheet$end <- e[, "end"]
+        out$sheet$length <- e[, "length"]
+        out$sheet$chain <- chain[ bounds(e.inds)[, "start"] ]
+      } else {
+        out$sheet$start <- NULL
+        out$sheet$end <- NULL
+        out$sheet$length <- NULL
+        out$sheet$chain <- NULL
+      }
 
       out$call <- cl
       class(out) <- "sse"
