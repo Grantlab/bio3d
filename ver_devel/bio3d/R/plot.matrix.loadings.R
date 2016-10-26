@@ -20,6 +20,7 @@
 #'    or a \sQuote{pdb} object as obtained from \code{\link{read.pdb}} to show secondary
 #'    structural elements along x- and y-axis.
 #' @param mask.n the number of elements from the diagonal to be masked from output. 
+#' @param plot logical, if FALSE no plot will be shown.
 #' @param ... additional arguments passed to \code{\link{plot.dccm}}.
 #'
 #' @return Plot and also returns a numeric matrix containing the loadings.
@@ -56,14 +57,15 @@
 #'    plot.matrix.loadings(pc, sse=sse, mask.n=10)
 #'
 #' }
-plot.matrix.loadings <- function(x, pc=1, resno=NULL, sse=NULL, mask.n=0, ...) {
+plot.matrix.loadings <- function(x, pc=1, resno=NULL, sse=NULL, mask.n=0, plot=TRUE, ...) {
    
    if(!inherits(x, 'pca') && grepl('pca.array', x$call))
       stop('Input x must be a "pca" object obtained from "pca.array()".')
 
    args.plot.dccm <- formals(plot.dccm)
    dots <- list(...)
-   args <- dots[names(dots) %in% names(args.plot.dccm)]
+#   args <- dots[names(dots) %in% names(args.plot.dccm)]
+   args <- dots
    if('segment.min' %in% names(dots))
       segment.min <- dots$segment.min
    else
@@ -112,47 +114,49 @@ plot.matrix.loadings <- function(x, pc=1, resno=NULL, sse=NULL, mask.n=0, ...) {
   
    args$x <- lmat
 
-   do.call(plot.dccm, args)
+   if(plot) {
+     do.call(plot.dccm, args)
 
-   ## add grids
-   draw.sse.grid <- function(sse) {
-      # vertical
-      grid.segments( x0 = sse$start,
-                     y0 = switch(show, full=1, upper=N, lower=1),
-                     x1 = sse$start,
-                     y1 = switch(show, full=N, upper=sse$start, lower=sse$start),
-                     gp=gpar(col="gray80", lty=2, lwd=0.3), default.units = "native",
-                     vp=vpPath("plot_01.toplevel.vp", "plot_01.panel.1.1.vp") )
-      # horizental
-      grid.segments( x0 = switch(show, full=1, upper=1, lower=N),
-                     y0 = sse$start,
-                     x1 = switch(show, full=N, upper=sse$start, lower=sse$start),
-                     y1 = sse$start,
-                     gp=gpar(col="gray80", lty=2, lwd=0.3), default.units = "native",
-                     vp=vpPath("plot_01.toplevel.vp", "plot_01.panel.1.1.vp") )
-   }
+     ## add grids
+     draw.sse.grid <- function(sse) {
+        # vertical
+        grid.segments( x0 = sse$start,
+                       y0 = switch(show, full=1, upper=N, lower=1),
+                       x1 = sse$start,
+                       y1 = switch(show, full=N, upper=sse$start, lower=sse$start),
+                       gp=gpar(col="gray80", lty=2, lwd=0.3), default.units = "native",
+                       vp=vpPath("plot_01.toplevel.vp", "plot_01.panel.1.1.vp") )
+        # horizental
+        grid.segments( x0 = switch(show, full=1, upper=1, lower=N),
+                       y0 = sse$start,
+                       x1 = switch(show, full=N, upper=sse$start, lower=sse$start),
+                       y1 = sse$start,
+                       gp=gpar(col="gray80", lty=2, lwd=0.3), default.units = "native",
+                       vp=vpPath("plot_01.toplevel.vp", "plot_01.panel.1.1.vp") )
+     }
 
-   if(!is.null(sse)) {
-   	  if(length(sse$helix$start) > 0) {
-        ## dont have a pdb$helix$length
-        if( is.null(sse$helix$length) )
-          sse$helix$length <- (sse$helix$end+1)-sse$helix$start
+     if(!is.null(sse)) {
+     	  if(length(sse$helix$start) > 0) {
+          ## dont have a pdb$helix$length
+          if( is.null(sse$helix$length) )
+            sse$helix$length <- (sse$helix$end+1)-sse$helix$start
 
-          inds <- which(sse$helix$length >= segment.min)
-#          sse$helix$start <- match(sort(sse$helix$start[inds]), resno)
-#          sse$helix$end <- match(sort(sse$helix$end[inds]), resno)
-          draw.sse.grid(sse$helix)
-      }
-      if(length(sse$sheet$start) > 0) {
-        ## dont have a pdb$sheet$length
-        if( is.null(sse$sheet$length) )
-          sse$sheet$length <- (sse$sheet$end+1)-sse$sheet$start
+            inds <- which(sse$helix$length >= segment.min)
+  #          sse$helix$start <- match(sort(sse$helix$start[inds]), resno)
+  #          sse$helix$end <- match(sort(sse$helix$end[inds]), resno)
+            draw.sse.grid(sse$helix)
+        }
+        if(length(sse$sheet$start) > 0) {
+          ## dont have a pdb$sheet$length
+          if( is.null(sse$sheet$length) )
+            sse$sheet$length <- (sse$sheet$end+1)-sse$sheet$start
 
-          inds <- which(sse$sheet$length >= segment.min)
-#          sse$sheet$start <- match(sort(sse$sheet$start[inds]), resno)
-#          sse$sheet$end <- match(sort(sse$sheet$end[inds]), resno)
-          draw.sse.grid(sse$sheet)
-      }
+            inds <- which(sse$sheet$length >= segment.min)
+  #          sse$sheet$start <- match(sort(sse$sheet$start[inds]), resno)
+  #          sse$sheet$end <- match(sort(sse$sheet$end[inds]), resno)
+            draw.sse.grid(sse$sheet)
+        }
+     }
    }
    invisible( lmat )
 }
