@@ -5,7 +5,7 @@
 \title{Plot Residue-Residue Matrix Loadings}
 \usage{
 \method{plot}{matrix.loadings}(x, pc = 1, resno = NULL, sse = NULL,
-  mask.n = 0, ...)
+  mask.n = 0, plot = TRUE, ...)
 }
 \arguments{
 \item{x}{the results of PCA as obtained from \code{\link{pca.array}}.}
@@ -20,6 +20,8 @@ or a \sQuote{pdb} object as obtained from \code{\link{read.pdb}} to show seconda
 structural elements along x- and y-axis.}
 
 \item{mask.n}{the number of elements from the diagonal to be masked from output.}
+
+\item{plot}{logical, if FALSE no plot will be shown.}
 
 \item{...}{additional arguments passed to \code{\link{plot.dccm}}.}
 }

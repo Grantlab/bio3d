@@ -38,7 +38,7 @@
 #' \dontrun{
 #'    attach(transducin)
 #'    gaps.res <- gap.inspect(pdbs$ali)
-#'    sse <- bounds.sse(pdbs$sse[1, gaps.res$f.inds])
+#'    sse <- pdbs$sse[1, gaps.res$f.inds]
 #'
 #'    # calculate modes
 #'    modes <- nma(pdbs, ncore=NULL)
