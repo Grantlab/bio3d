@@ -1,6 +1,6 @@
 get.blast <- function(urlget, time.out = NULL, chain.single=TRUE) {
 
-  if(substr(urlget, 1, 4) == "http" && grep("Blast.cgi", urlget)
+  if(substr(urlget, 1, 5) == "https" && grep("Blast.cgi", urlget)
       && grep("RID[[:space:]]*=", urlget)) {
      rid <- sub("^.*RID[[:space:]]*=[[:space:]]*", "", urlget)
      names(urlget)=rid 
