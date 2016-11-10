@@ -80,7 +80,7 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
   }
 
   cat("\n\nExtracting sequences\n")
-  s <- lapply(pdb.list, pdbseq, mc.cores=ncore)
+  s <- mclapply(pdb.list, pdbseq, mc.cores=ncore)
 
   ## check for NULL in pdbseq output
   ## (this would indicate no amino acid sequence in PDB)
