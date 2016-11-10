@@ -11,7 +11,7 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
   ids <- unique(ids)
   
   if(db=="nr") {
-    get.files <- paste("http://www.ncbi.nlm.nih.gov/",
+    get.files <- paste("https://www.ncbi.nlm.nih.gov/",
                        "sviewer/viewer.fcgi?db=protein&val=",
                        ids,"&report=fasta&retmode=text", sep="")
 
