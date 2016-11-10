@@ -19,7 +19,7 @@ pymol <- function(...)
   UseMethod("pymol")
 
 pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
-                       type="script", exefile = NULL, ...) {
+                       type="script", exefile = "pymol", ...) {
   
   allowed <- c("session", "script", "launch")
   if(!type %in% allowed) {
@@ -60,31 +60,22 @@ pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
       file <- "R.pml"
   }
  
-  ## Check if the program is executable
-  if(type %in% c("session", "launch")) {
-
-    ## Find default path to external program
-    if(is.null(exefile)) {
-      exefile <- 'pymol'
-      if(nchar(Sys.which(exefile)) == 0) {
-        os1 <- Sys.info()["sysname"]
-        exefile <- switch(os1,
-          Windows = 'C:/python27/PyMOL/pymol.exe',
-          Darwin = '/Applications/MacPyMOL.app/Contents/MacOS/MacPyMOL',
-          'pymol' )
-      }
+    ## Check if the program is executable
+    if(type %in% c("session", "launch")) {
+        
+        ## determine path to exefile
+        exefile <- .get.exepath(exefile)
+        message(exefile)
+        
+        ## Check if the program is executable
+        success <- .test.exefile(exefile)
+        
+        if(!success) {
+            stop(paste("Launching external program failed\n",
+                       "  make sure '", exefile, "' is in your search path", sep=""))
+        }
     }
- 
-    ver <- "-cq"
-    os1 <- .Platform$OS.type
-    status <- system(paste(exefile, ver),
-                     ignore.stderr = TRUE, ignore.stdout = TRUE)
     
-    if(!(status %in% c(0,1)))
-      stop(paste("Launching external program failed\n",
-                 "  make sure '", exefile, "' is in your search path", sep=""))
-  }
-
   ## use temp-dir unless we output a PML script
   if(type %in% c("session", "launch"))
     tdir <- tempdir()
@@ -278,9 +269,10 @@ pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
   lines[l+1] <- "zoom"
   l <- l+1
   
-  if(type == "session")
-    lines[l+1] <- paste("save", 
-      normalizePath(psefile, winslash='/', mustWork=FALSE))
+    if(type == "session") {
+        lines[l+1] <- paste("save", 
+                            normalizePath(psefile, winslash='/', mustWork=FALSE))
+    }
   
   lines <- lines[!is.na(lines)]
   write.table(lines, file=pmlfile, append=FALSE, quote=FALSE, sep="\n",
@@ -294,34 +286,34 @@ pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
     
     ## Open pymol
     cmd <- paste(exefile, args, pmlfile)
-    
-    os1 <- .Platform$OS.type
-    if (os1 == "windows") {
-      success <- shell(shQuote(cmd))
+
+    os1 <- Sys.info()["sysname"]
+    if (os1 == "Windows") {
+        status <- shell(paste(shQuote(exefile), args, pmlfile))
     }
     else {
-      success <- system(cmd)
+        status <- system(cmd)
     }
     
-    if(success!=0)
-      stop(paste("An error occurred while running command\n '",
-                 exefile, "'", sep=""))
-  }
+    if(!(status %in% c(0,1))) {
+        stop(paste("An error occurred while running command\n '",
+                   exefile, "'", sep=""))
+    }
 
+  }
+    
   if(type == "session") {
-    file.copy(psefile, file, overwrite=TRUE)
-    unlink(pmlfile)
-    unlink(psefile)
-    message(paste("PyMOL session written to file", file))
-    invisible(file)
+      file.copy(psefile, file, overwrite=TRUE)
+      unlink(pmlfile)
+      unlink(psefile)
+      message(paste("PyMOL session written to file", file))
+      invisible(file)
   }
-
+    
   if(type == "script") {
-    file.copy(pmlfile, file, overwrite=TRUE)
-    unlink(pmlfile)
-    message(paste("PyMOL script written to file", file))
-    invisible(file)
+      file.copy(pmlfile, file, overwrite=TRUE)
+      unlink(pmlfile)
+      message(paste("PyMOL script written to file", file))
+      invisible(file)
   }
 }
-
-

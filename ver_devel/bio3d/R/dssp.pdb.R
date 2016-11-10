@@ -5,26 +5,18 @@
   function (pdb, exefile = "dssp", resno=TRUE, full=FALSE, verbose=FALSE, ...) {
 
     ## Log the call
-    cl <- match.call()
-    
-    ## Check if the program is executable
-    os1 <- .Platform$OS.type
-    status <- system(paste(exefile, "--version"),
-                     ignore.stderr = TRUE, ignore.stdout = TRUE)
+      cl <- match.call()
 
-    exefile0 <- exefile # for error message only
-
-    ## Try for Mac OS X homebrew version, called "mkdssp".
-    if(!(status %in% c(0,1))) {
-      exefile = "mkdssp"
-      status <- system(paste(exefile, "--version"),
-                       ignore.stderr = TRUE, ignore.stdout = TRUE)
-     }    
-###    if(!(status %in% c(0,1)))
-    if(status!=0) {
-      stop(paste("Launching external program 'dssp' (or 'mkdssp') failed\n",
-                 "  make sure '", exefile0, "' is in your search path", sep=""))
-    }
+      ## determine path to exefile
+      os1 <- Sys.info()["sysname"]
+      exefile <- .get.exepath(exefile)
+      message(exefile)
+      success <- .test.exefile(exefile)
+      
+      if(!success) {
+          stop(paste("Launching external program 'dssp' (or 'mkdssp') failed\n",
+                     "  make sure '", exefile, "' is in your search path", sep=""))
+      }
 
     ## check atom composition - need backbone atoms to continue SSE analysis
     checkatoms <- TRUE
@@ -69,16 +61,20 @@
     if(verbose)
       cat(paste("Running command:\n ", cmd , "\n"))
     
-    if(os1 == "windows")
-      success <- shell(cmd, 
-                       ignore.stderr = !verbose, ignore.stdout = !verbose)
-    else 
-      success <- system(cmd,
-                        ignore.stderr = !verbose, ignore.stdout = !verbose)
-    
-    if(success!=0)
+      if(os1 == "Windows") {
+          status <- shell(paste(shQuote(exefile), infile, outfile),
+                          ignore.stderr = !verbose, ignore.stdout = !verbose)
+      }
+      else  {
+          status <- system(cmd,
+                           ignore.stderr = !verbose, ignore.stdout = !verbose)
+      }
+          
+    if(!(status %in% c(0,1))) {
       stop(paste("An error occurred while running command\n '",
                  cmd, "'", sep=""))
+    }
+
     
 ##
 ## For Debug (Tue Aug  3 18:22:11 PDT 2010)
@@ -99,7 +95,7 @@
       return(trim(tmp[inds]))
     }
 
-    raw.lines <- readLines(outfile)
+      raw.lines <- readLines(outfile)
     unlink(c(infile, outfile))
     type <- substring(raw.lines, 1, 3)
     raw.lines <- raw.lines[-(1:which(type == "  #"))]

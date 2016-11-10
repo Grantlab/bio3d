@@ -5,7 +5,7 @@ pymol.pca <- function(...)
   pymol.modes(...)
 
 pymol.modes <- function(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
-                      type="script", exefile = NULL, ...) {
+                      type="script", exefile = "pymol", ...) {
 
   if(! (inherits(modes, "nma") || inherits(modes,"pca")) )
     stop("must supply a 'nma' or 'pca' object, i.e. from 'nma()' or 'pca.xyz()'")
@@ -15,32 +15,23 @@ pymol.modes <- function(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
     stop(paste("input argument 'type' must be either of:",
                paste(allowed, collapse=", ")))
   }
-  
-  ## Check if the program is executable
-  if(type %in% c("session", "launch")) {
-
-    ## Find default path to external program
-    if(is.null(exefile)) {
-      exefile <- 'pymol'
-      if(nchar(Sys.which(exefile)) == 0) {
-        os1 <- Sys.info()["sysname"]
-        exefile <- switch(os1,
-          Windows = 'C:/python27/PyMOL/pymol.exe',
-          Darwin = '/Applications/MacPyMOL.app/Contents/MacOS/MacPyMOL',
-          'pymol' )
-      }
-    }
-
-    ver <- "-cq"
-    os1 <- .Platform$OS.type
-    status <- system(paste(exefile, ver),
-                     ignore.stderr = TRUE, ignore.stdout = TRUE)
     
-    if(!(status %in% c(0,1)))
-      stop(paste("Launching external program failed\n",
-                 "  make sure '", exefile, "' is in your search path", sep=""))
-  }
-  
+    ## Check if the program is executable
+    if(type %in% c("session", "launch")) {
+        
+        ## determine path to exefile
+        exefile <- .get.exepath(exefile)
+        message(exefile)
+        
+        ## Check if the program is executable
+        success <- .test.exefile(exefile)
+        
+        if(!success) {
+            stop(paste("Launching external program failed\n",
+                       "  make sure '", exefile, "' is in your search path", sep=""))
+        }
+    }
+    
   if(inherits(modes, "nma")) {
     if(is.null(mode))
       mode <- 7
@@ -161,17 +152,19 @@ pymol.modes <- function(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
     ## Open pymol
     cmd <- paste(exefile, args, pyfile)
     
-    os1 <- .Platform$OS.type
-    if (os1 == "windows") {
-      success <- shell(shQuote(cmd))
+    os1 <- Sys.info()["sysname"]
+    if (os1 == "Windows") {
+        status <- shell(paste(shQuote(exefile), args, pyfile))
     }
     else {
-      success <- system(cmd)
+        status <- system(cmd)
     }
     
-    if(success!=0)
-      stop(paste("An error occurred while running command\n '",
-                 exefile, "'", sep=""))
+    if(!(status %in% c(0,1))) {
+        stop(paste("An error occurred while running command\n '",
+                   exefile, "'", sep=""))
+    }
+
   }
 
   if(type == "session") {
