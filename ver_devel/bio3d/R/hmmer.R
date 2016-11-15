@@ -193,6 +193,7 @@
   data$pdb.id <- data$acc
   data$bitscore <- data$score
   data$mlog.evalue <- -log(data$evalue)
+  data$mlog.evalue[is.infinite(data$mlog.evalue)] <- -log(.Machine$double.xmin)
 
   out <- list(hit.tbl = data,
               url = resurl)
