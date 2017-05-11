@@ -121,7 +121,7 @@ function(x, cutoff=NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5
         
         legend("topleft", rownames(tbl), col=cols,  pch=15, ncol=3,
                cex=cex*0.8, box.lwd = .5, box.lty=2, box.col = "grey50", bg = "white")
-
+        box()
     }
 
 
