@@ -50,7 +50,9 @@ atom.select(\dots)
   \item{insert}{ a character vector of insert identifiers. Non-insert 
     residues can be selected with \code{NA} or \sQuote{} values. The default value 
     of \code{NULL} will select both insert and non-insert residues. }
-  \item{segid}{ a character vector of segment identifiers. }
+  \item{segid}{ a character vector of segment identifiers. Empty segid
+    values can be selected with \code{NA} or \sQuote{} values. The default value
+    of \code{NULL} will select both empty and non-empty segment identifiers. }
   \item{operator}{ a single element character specifying either the AND
     or OR operator by which individual selection components should be
     combined. Allowed values are \sQuote{"AND"} and \sQuote{"OR"}. }
