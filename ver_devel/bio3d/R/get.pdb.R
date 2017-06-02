@@ -7,13 +7,13 @@
 
     # Parallelized by parallel package (Tue Oct 15 15:23:36 EDT 2013)
     ncore <- setup.ncore(ncore)
-    if(ncore > 4) {
+    if(ncore > 1) {
        # To avoid too frequent access to PDB server
        if(!split) {
-          warning("Exceed maximum ncore (=4) to access PDB server. Use ncore=4")
-          ncore <- setup.ncore(ncore = 4)
+          warning("Multiple-core access to PDB server is not allowed. Reset ncore=1")
+          ncore <- setup.ncore(ncore = 1)
        } else {
-          setup.ncore(ncore = 4)
+          setup.ncore(ncore = 1)
        }
     }
 
