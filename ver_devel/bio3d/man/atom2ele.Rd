@@ -11,7 +11,7 @@ atom2ele(\dots)
 
 \method{atom2ele}{default}(x, elety.custom=NULL, rescue=TRUE, \dots)
 
-\method{atom2ele}{pdb}(pdb, inds=NULL, elety.custom=NULL, rescue=TRUE, \dots)
+\method{atom2ele}{pdb}(pdb, inds=NULL, \dots)
 }
 \arguments{
   \item{x}{a character vector containing atom names/types to be converted.}
