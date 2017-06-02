@@ -2,7 +2,7 @@
 function(x, y=NULL, type="o", pch=18,
          main="", sub="",
          xlim=c(0,20), ylim=NULL, 
-         ylab="Proporton of Variance (%)",
+         ylab="Proportion of Variance (%)",
          xlab="Eigenvalue Rank",
          axes=TRUE, ann=par("ann"),
          col=par("col"), lab=TRUE,
