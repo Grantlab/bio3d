@@ -53,14 +53,14 @@ atom2ele(atom.names)
 
 ## Get atomic symbols from a PDB object with a customized data set
 pdb <- read.pdb("3RE0",verbose=FALSE)
-inds <- atom.select(pdb, resno=201, verbose=FALSE)
+lig <- trim(pdb, "ligand")
 
-## maps CL2 to C
-atom2ele(pdb, inds, elety.custom = NULL)
+## maps PT1 to Pt, CL2 to Cl, C4A to C
+atom2ele(lig)
 
-## map CL2 to Cl manually
+## map atom name to element manually
 myelety <- data.frame(name = "CL2", symb = "Cl")
-atom2ele(pdb, inds, elety.custom = myelety)
+atom2ele(lig, elety.custom = myelety)
 
 }
 }
