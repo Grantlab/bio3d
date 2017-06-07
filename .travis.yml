@@ -27,6 +27,11 @@ addons:
      - libnetcdf-dev
      - libnetcdf6
      - netcdf-bin
+     - texlive-fonts-recommended
+     - texlive-latex-extra
+     - texlive-fonts-extra 
+     - texlive-latex-recommended 
+#     - dvipng
 
 # additional dependencies
 r_packages: 
