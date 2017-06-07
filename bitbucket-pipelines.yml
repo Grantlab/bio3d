@@ -4,14 +4,19 @@
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
 # image: atlassian/default-image:latest
- 
+
 pipelines:
   default:
   branches:
     master:
       - step:
               script:
-                        - echo "Syncronize bio3d repo at Bitbucket and Githup"
+                        - echo "Syncronize master branch of bio3d repo at Bitbucket and Githup"
                         - git remote add github git@github.com:Grantlab/bio3d.git
                         - git push github master:master
+    releases:
+      - step:
+              script:
+                        - echo "Syncronize releases branch of bio3d repo at Bitbucket and Githup"
+                        - if ! git remote -v | awk '{print $1}' | grep -q github; then git remote add github git@github.com:Grantlab/bio3d.git; fi
                         - git push github releases:releases
