@@ -7,6 +7,11 @@
 
 pipelines:
   default:
+  branches:
+    master:
       - step:
               script:
-                        - echo "Everything is awesome!"
+                        - echo "Syncronize bio3d repo at Bitbucket and Githup"
+                        - git remote add github git@github.com:Grantlab/bio3d.git
+                        - git push github master:master
+                        - git push github releases:releases
