@@ -7,13 +7,13 @@
 
     # Parallelized by parallel package (Tue Oct 15 15:23:36 EDT 2013)
     ncore <- setup.ncore(ncore)
-    if(ncore > 4) {
+    if(ncore > 1) {
        # To avoid too frequent access to PDB server
        if(!split) {
-          warning("Exceed maximum ncore (=4) to access PDB server. Use ncore=4")
-          ncore <- setup.ncore(ncore = 4)
+          warning("Multiple-core access to PDB server is not allowed. Reset ncore=1")
+          ncore <- setup.ncore(ncore = 1)
        } else {
-          setup.ncore(ncore = 4)
+          setup.ncore(ncore = 1)
        }
     }
 
@@ -37,7 +37,7 @@
     }
     ids4 <- unique(ids4)
     pdb.files <- paste(ids4, ".", format, ifelse(gzip, ".gz", ""), sep = "")
-    get.files <- file.path("http://www.rcsb.org/pdb/files", pdb.files)
+    get.files <- file.path("https://files.rcsb.org/download", pdb.files)
     if (URLonly) 
         return(get.files)
     put.files <- file.path(path, pdb.files)
@@ -49,7 +49,7 @@
     if(ncore > 1) {
        rtn <- unlist(mclapply(1:length(pdb.files), function(k) {
           if (!file.exists(sub(".gz$", "", put.files[k])) | overwrite ) {
-            rtn <- try(download.file(get.files[k], put.files[k], method='internal', quiet = !verbose), silent = TRUE)
+            rtn <- try(download.file(get.files[k], put.files[k], quiet = !verbose), silent = TRUE)
             if(inherits(rtn, "try-error")) {
                rtn <- 1
                file.remove(put.files[k])
@@ -67,7 +67,7 @@
     } else {
        for (k in 1:length(pdb.files)) {
          if (!file.exists(sub(".gz$", "", put.files[k])) | overwrite ) {
-           rt <- try(download.file(get.files[k], put.files[k], method='internal', quiet = !verbose), silent=TRUE)
+           rt <- try(download.file(get.files[k], put.files[k], quiet = !verbose), silent=TRUE)
            rtn[k] <- rt
            if(inherits(rt, "try-error")) {
               rtn[k] <- 1

@@ -153,6 +153,15 @@
   ##  unique(XML::xpathSApply(x, 'pdbs', XML::xmlToList))
   ##}
 
+  ## workaround for 'act_site' tags that can not be parsed
+  ## XML Parsing Error: not well-formed, e.g. for 1h1h_A
+  ## type = hmmscan and pdb = pfam
+  if(grepl("act_site", hmm)) {
+      lines <- unlist(strsplit(hmm, "\n"))
+      actsite.inds <- grep("act_site", lines)
+      hmm <- paste(lines[-seq(actsite.inds[1], actsite.inds[2])],
+                   collapse="\n")
+  }
 
   xml <- XML::xmlParse(hmm)
   resurl <- XML::xpathSApply(xml, '//data', XML::xpathSApply, '@*')
@@ -193,6 +202,7 @@
   data$pdb.id <- data$acc
   data$bitscore <- data$score
   data$mlog.evalue <- -log(data$evalue)
+  data$mlog.evalue[is.infinite(data$mlog.evalue)] <- -log(.Machine$double.xmin)
 
   out <- list(hit.tbl = data,
               url = resurl)

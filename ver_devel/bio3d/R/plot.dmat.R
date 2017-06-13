@@ -67,19 +67,23 @@ function(x,
   
   z <- as.matrix(as.data.frame(t(x)))
   nums <- seq(1,ncol(x),by=axis.tick.space)
-  a2 <- resnum.2[nums]
-  
-  if(flip) {
-    z=as.matrix(rev(as.data.frame(t(x)))); a2 <- rev(resnum.2[nums])
+    
+  if(flip) { 
+    ylim = c(ncol(z),1) 
+  } else { 
+    ylim = c(1,ncol(z)) 
   }
+
   image(x=1:ncol(x),
         y=1:nrow(x),
         z=z,
+        zlim=zlim,
         col=col, yaxt="n", xaxt="n", ...)
         #xlab="Residue Number", ylab="Residue Number")
 
   axis(side=1, at=nums, labels=resnum.1[nums])
-  axis(side=2, at=nums, labels=a2)
+  axis(side=2, at=nums, labels=resnum.2[nums])
+  
   if(grid)
     grid(grid.nx ,grid.ny, col=grid.col)
   box()

@@ -15,11 +15,12 @@ branches:
     - master
     - releases
 
-#before_install:
+before_install:
 #   - sudo add-apt-repository -y "ppa:marutter/rrutter"
 #   - sudo add-apt-repository -y "ppa:marutter/c2d4u"
 #   - sudo apt-get update -qq
 #   - sudo apt-get install -y r-cran-ncdf4
+    - tlmgr install xkeyval
 
 addons:
    apt:
@@ -27,6 +28,11 @@ addons:
      - libnetcdf-dev
      - libnetcdf6
      - netcdf-bin
+     - texlive-fonts-recommended
+     - texlive-latex-extra
+     - texlive-fonts-extra 
+     - texlive-latex-recommended 
+#     - dvipng
 
 # additional dependencies
 r_packages: 
@@ -42,6 +48,7 @@ r_github_packages:
 install: 
   - Rscript -e 'install.packages(c("rmarkdown", "devtools"))'
   - Rscript -e 'devtools::install_deps("ver_devel/bio3d", dependencies=TRUE)'
+  - Rscript -e 'devtools::install_github("RcppCore/Rcpp", ref="0.12.11")'
 
 before_script:
     - if test ! -d ~/.R; then mkdir ~/.R; fi
@@ -60,8 +67,8 @@ after_success:
 notifications:
   email:
     recipients:
-       - bjgrant@umich.edu
-       - xinqyao@umich.edu
+       - barryus@gmail.com
+       - xinqiu.yao@gmail.com
        - larsss@gmail.com
     on_success: change
     on_failure: change

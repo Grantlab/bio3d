@@ -17,7 +17,7 @@ read.cif <- function(file, maxlines = -1, multi=FALSE,
     if(substr(file,1,4)=="http") {
         ## cpp function can not read from http
         putfile <- tempfile(fileext=".cif")
-        rt <- try(download.file(file, putfile, method='internal', quiet = !verbose), silent=TRUE)
+        rt <- try(download.file(file, putfile, quiet = !verbose), silent=TRUE)
         if(inherits(rt, "try-error")) {
             file.remove(putfile)
             stop("File not found at provided URL")
