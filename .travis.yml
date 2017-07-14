@@ -62,7 +62,7 @@ script:
 
 after_success:
    - Rscript -e 'devtools::install_github("jimhester/covr")'
-   - Rscript -e 'covr::coveralls("ver_devel/bio3d")'
+#   - Rscript -e 'covr::coveralls("ver_devel/bio3d")'
 
 notifications:
   email:
