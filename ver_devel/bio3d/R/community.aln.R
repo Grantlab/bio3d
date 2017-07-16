@@ -1,29 +1,31 @@
 #' Align communities from two or more networks
 #'
-#' Find equivalent communities from two or more networks and renumber them in
-#' a consistent way across networks. 
+#' Find equivalent communities from two or more networks and re-assign colors
+#' to them in a consistent way across networks. A \sQuote{new.membership} vector is
+#' also generated for each network, which maps nodes to community IDs that are 
+#' renumbered according to the community equivalency.
 #'
 #' This function facilitates the inspection on the variance of the community
 #' partition in a group of similar networks. The original community numbering
-#' (and so coloring in \code{plot.cna}) can be inconsistent across networks, 
-#' i.e. equivalent communities may have different numbering in different 
-#' networks. The function calculates the dissimilarity between all communities 
-#' and clusters communities with \sQuote{hclust} funciton. In each cluster, 0 or
-#' 1 community per network is included. Communities are then renumbered 
-#' according to the clusters through all networks. Note that the 
-#' \sQuote{membership} in \code{$communities} is not updated because some basic
-#' \sQuote{igraph} functions such as \code{length} assume the \sQuote{membership} 
-#' a consecutive integer vector. Instead, a \sQuote{renumbered} membership 
-#' vector is added as an extra component in the returned \sQuote{cna} object. 
+#' (and so the colors of communities in the output of \code{plot.cna} and 
+#' \code{vmd.cna}) can be inconsistent across networks, i.e. equivalent 
+#' communities may display different colors, impeding network comparison. 
+#' The function calculates the dissimilarity between all communities and 
+#' clusters communities with \sQuote{hclust} funciton. In each cluster, 0 or
+#' 1 community per network is included. The color attribute of communities is 
+#' then re-assigned according to the clusters through all networks. In addition,
+#' a \sQuote{new.membership} vector is generated for each network, which mapps 
+#' nodes to new community IDs that are numbered consistently across networks. 
 #'
-#' @param x,... two or more objects of class \code{cna} (with equal number of
-#'    nodes) as obtained from function \code{\link{cna}}. Alternatively, a list 
-#'    of \code{cna} objects can be given to \code{x}, the element of which will 
-#'    be used for pairwise comparison.
-#'
+#' @param x,... two or more objects of class \code{cna} (if the numbers of
+#'    nodes are different, an alignment \sQuote{fasta} object is required for 
+#'    the \code{aln} argument; See below) as obtained from function \code{\link{cna}}. 
+#'    Alternatively, a list of \code{cna} objects can be given to \code{x}.
+#' @param aln alignment for comparing networks with different numbers of nodes.
+#' 
 #' @return Returns a list of updated \code{cna} objects.
 #'
-#' @seealso \code{\link{cna}}, \code{\link{plot.cna}}
+#' @seealso \code{\link{cna}}, \code{\link{plot.cna}}, \code{\link{vmd.cna}}
 #'
 #' @examples
 #' \donttest{
@@ -73,7 +75,7 @@
 #'   }
 #' }
 #' @keywords analysis
-community.aln <- function(x, ...) {
+community.aln <- function(x, ..., aln=NULL) {
     
    ## Check for presence of igraph package
    oops <- requireNamespace("igraph", quietly = TRUE)
@@ -89,17 +91,27 @@ community.aln <- function(x, ...) {
      stop('Provide at least two networks.')
 
    ## Construct dissimilarity matrix
-   raw.mat <- lapply(nets, function(net) {
+   raw.mat <- lapply(1:length(nets), function(j, aln) {
+     net <- nets[[j]]
      ids <- unique(net$communities$membership)
      mat <- NULL
      for(i in ids) {
        r <- t(as.numeric(net$communities$membership==i))
-       mat <- rbind(mat, r)
+       if(inherits(aln, "fasta")) {
+         r2 <- rep(0, ncol(aln$ali))
+         r2[!is.gap(aln$ali[j, ])] <- r
+         mat <- rbind(mat, r2)
+       }
+       else {
+         mat <- rbind(mat, r)
+       }
      }
      rownames(mat) <- ids
      return(mat)
-   })
+   }, aln)
+   
    raw.mat <- do.call(rbind, raw.mat)
+   
    ncomms <- sapply(nets, function(net) 
      length(unique(net$communities$membership)))
    r <- rep(1:length(nets), ncomms)
@@ -119,6 +131,21 @@ community.aln <- function(x, ...) {
    if(any(unlist(chk))) 
      stop('Two or more communities from the same network are in one cluster.')
 
+   ## rename grps to make sure the group number is assigned based on the rank of
+   ## the network in the network list in which the group appears for the first time. 
+   ni <- as.numeric(sapply(str, "[[", 1))
+   ci <- as.numeric(sapply(str, "[[", 2))
+   minc <- tapply(1:length(grps), grps, function(i){
+     ind <- order(ni[i], ci[i])[1]
+     c(ni[i[ind]], ci[i[ind]])
+   }, simplify=FALSE)
+   minc <- do.call(rbind, minc)
+   inds <- order(minc[, 1], minc[, 2])
+   rl <- rle(grps)
+   rl$values[] <- match(rl$values, inds)
+   grps <- inverse.rle(rl)
+   
+   
    ## Renumber communities and update 'nets'
    col <- vmd_colors() ## use vmd colors
    for(i in 1:length(nets)) {
@@ -138,20 +165,20 @@ community.aln <- function(x, ...) {
      names(new.membership) <- names(net$communities$membership)
      net$new.membership <- new.membership
 
-     # reconstruct community network
+     # update community network
      if(!is.null(net$community.network)) {
-       community.cij <- net$community.cij
-       rownames(community.cij) <- mygrps
-       colnames(community.cij) <- mygrps
-#       community.cij <- community.cij[order(mygrps), order(mygrps)]
-       community.network <-  igraph::graph.adjacency(community.cij,
-                               mode="undirected",
-                               weighted=TRUE,
-                               diag=FALSE)
-       igraph::V(community.network)$color <- col[mygrps]
-       igraph::V(community.network)$size <- table(net$communities$membership)
-       net$community.cij <- community.cij
-       net$community.network <- community.network
+#       community.cij <- net$community.cij
+#       rownames(community.cij) <- mygrps
+#       colnames(community.cij) <- mygrps
+##       community.cij <- community.cij[order(mygrps), order(mygrps)]
+#       community.network <-  igraph::graph.adjacency(community.cij,
+#                               mode="undirected",
+#                               weighted=TRUE,
+#                               diag=FALSE)
+       igraph::V(net$community.network)$color <- col[mygrps]
+#       igraph::V(community.network)$size <- table(net$communities$membership)
+#       net$community.cij <- community.cij
+#       net$community.network <- community.network
      }
      nets[[i]] <- net
    }

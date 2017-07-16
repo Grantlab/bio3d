@@ -170,7 +170,14 @@ vmd.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
 
   ## Output a PDB file with chain color
   # Use the chain field to store cluster membership data for color in VMD
-  ch <- vec2resno(vec=x$communities$membership, resno=pdb$atom[,"resno"])
+  if(!is.null(igraph::V(x$network)$color)) {
+    ch <- vec2resno(match(igraph::V(x$network)$color, vmd_colors()), 
+                    resno=pdb$atom[, "resno"])
+  }
+  else {
+    ch <- vec2resno(vec=x$communities$membership, resno=pdb$atom[,"resno"])
+  }
+    
   write.pdb(pdb, chain=LETTERS[ch], file=pdbfile)
 
   ## Launch option ...
