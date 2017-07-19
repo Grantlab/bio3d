@@ -44,6 +44,10 @@
 }
 \examples{
 
+if (!requireNamespace("igraph", quietly = TRUE)) {
+   message('Need igraph installed to run this example')
+} else {
+
 ## Load the correlation network
 attach(hivp)
 
@@ -58,6 +62,7 @@ x$members[[2]]
 
 detach(hivp)
 
+}
 }
 \keyword{ utilities }
 
