@@ -48,7 +48,7 @@ r_github_packages:
 install: 
   - Rscript -e 'install.packages(c("rmarkdown", "devtools"))'
   - Rscript -e 'devtools::install_deps("ver_devel/bio3d", dependencies=TRUE)'
-  - Rscript -e 'devtools::install_github("RcppCore/Rcpp", ref="0.12.11")'
+#  - Rscript -e 'devtools::install_github("RcppCore/Rcpp", ref="0.12.11")'
 
 before_script:
     - if test ! -d ~/.R; then mkdir ~/.R; fi
@@ -58,11 +58,12 @@ script:
 #   - Rscript -e "source('new_funs/check.bio3d.R'); check.bio3d('ver_devel/bio3d', check_dir='.', cleanup=FALSE)" && ! grep -q -e ERROR -e WARNING -e NOTE bio3d.Rcheck/00check.log 
 #   - rm -rf bio3d.Rcheck
 #   - R CMD build ver_devel/bio3d && R CMD check --as-cran --run-donttest --run-dontrun bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
-   - R CMD build ver_devel/bio3d && R CMD check --as-cran --run-donttest bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
+#   - R CMD build ver_devel/bio3d && R CMD check --as-cran --run-donttest bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
+   - R CMD build ver_devel/bio3d && R CMD check --as-cran bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
 
 after_success:
    - Rscript -e 'devtools::install_github("jimhester/covr")'
-   - Rscript -e 'covr::coveralls("ver_devel/bio3d")'
+#   - Rscript -e 'covr::coveralls("ver_devel/bio3d")'
 
 notifications:
   email:
