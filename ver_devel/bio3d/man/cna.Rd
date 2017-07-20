@@ -114,6 +114,10 @@
 \donttest{
 # PDB server connection required - testing excluded
 
+if (!requireNamespace("igraph", quietly = TRUE)) {
+   message('Need igraph installed to run this example')
+} else {
+
 ##-- Build a correlation network from NMA results
 ## Read example PDB
 pdb <- read.pdb("4Q21")
@@ -166,6 +170,6 @@ attributes(net)
 table( net$communities$members )
 
 }
-
+}
 }
 \keyword{analysis}

@@ -41,6 +41,10 @@ nodes to new community IDs that are numbered consistently across networks.
   # Needs MUSCLE installed - testing excluded
   if(check.utility("muscle")) {
 
+    if (!requireNamespace("igraph", quietly = TRUE)) {
+      message('Need igraph installed to run this example')
+    } else {
+
     ## Fetch PDB files and split to chain A only PDB files
     ids <- c("1tnd_A", "1tag_A")
     files <- get.pdb(ids, split = TRUE, path = tempdir())
@@ -81,6 +85,8 @@ nodes to new community IDs that are numbered consistently across networks.
        plot(x, layout=layout.cna(x, pdb=pdb, k=3)[, 1:2])) )
 
     par(op)     
+
+    }
   }
 }
 }

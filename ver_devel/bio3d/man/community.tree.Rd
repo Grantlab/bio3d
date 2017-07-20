@@ -43,6 +43,10 @@
 \donttest{
 # PDB server connection required - testing excluded
 
+if (!requireNamespace("igraph", quietly = TRUE)) {
+   message('Need igraph installed to run this example')
+} else {
+
 ###-- Build a CNA object
 pdb <- read.pdb("4Q21")
 modes <- nma(pdb)
@@ -76,6 +80,7 @@ net.7 <- network.amendment(net, memb.k7)
 plot(net.7, pdb)
 #view.cna(net.7, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
 
+}
 }
 }
 \keyword{analysis}

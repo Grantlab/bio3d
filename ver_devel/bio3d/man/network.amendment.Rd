@@ -33,6 +33,10 @@
 \donttest{
 # PDB server connection required - testing excluded
 
+if (!requireNamespace("igraph", quietly = TRUE)) {
+   message('Need igraph installed to run this example')
+} else {
+
 ##-- Build a CNA object
 pdb <- read.pdb("4Q21")
 modes <- nma(pdb)
@@ -50,7 +54,8 @@ plot(net.7, pdb)
 
 print(net)
 print(net.7)
-}
 
+}
+}
 }
 \keyword{utility}
