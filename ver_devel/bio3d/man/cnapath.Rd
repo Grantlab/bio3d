@@ -75,6 +75,10 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
 \donttest{
 # Redundant testing excluded
 
+if (!requireNamespace("igraph", quietly = TRUE)) {
+   message('Need igraph installed to run this example')
+} else {
+
 attach(transducin)
 inds = match(c("1TND_A", "1TAG_A"), pdbs$id)
 
@@ -117,6 +121,8 @@ print.cnapath(pas, pdb = pdb, col=c("red", "darkgreen"), plot=TRUE)
 #vmd.cnapath(pa2, pdb2, launch = TRUE)
 
 detach(transducin)
+
+}
 }
 }
 \keyword{ utilities }

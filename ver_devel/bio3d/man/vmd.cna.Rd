@@ -97,6 +97,10 @@ Barry Grant}
 \examples{
 \dontrun{
 
+if (!requireNamespace("igraph", quietly = TRUE)) {
+   message('Need igraph installed to run this example')
+} else {
+
 # Load the correlation network from MD data
 attach(hivp)
 
@@ -119,6 +123,7 @@ net.gdi = cna(cij.gdi, cutoff.cij=0.35)
 
 detach(hivp)
 
+}
 }
 }
 
