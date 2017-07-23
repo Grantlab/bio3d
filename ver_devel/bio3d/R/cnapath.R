@@ -73,7 +73,7 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
   k0 <- igraph::get.shortest.paths(graph, from, to, output='both', ...)
   
   # if no shortest path found, network contains isolated parts.
-  if(length(k0$vpath[[1]]) == 0) {
+  if(length(k0$vpath[[1]]) <= 1) {
      cat("  No path found.\n", 
          "  Please check if the network contains isolated parts!\n\n", sep="")
      return(NULL)
@@ -122,7 +122,7 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
        # Suppress warnings because some nodes are intentionally isolated 
        spurPath <- suppressWarnings(igraph::get.shortest.paths(g, spurNode, to, output='both'), ...)
 
-       if(length(spurPath$vpath[[1]]) > 0 ) {
+       if(length(spurPath$vpath[[1]]) > 1 ) {
           vpath = c(rootPath, as.integer(spurPath$vpath[[1]][-1]))
           if(!contains.path(B, vpath)) {
              spurPath$epath <- as.integer(igraph::E(graph, path=as.integer(spurPath$vpath[[1]])))
