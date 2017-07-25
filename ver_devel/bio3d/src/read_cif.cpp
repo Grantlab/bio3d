@@ -118,7 +118,7 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
 
 	// include here check for model number as in read_pdb.cpp
 	// add checks for "?"
-	curr_model = stringToInt(tmp_vec[25]);
+	curr_model = stringToInt(tmp_vec[20]);
 
 	if(curr_model != prev_model) {
 	  models++;
@@ -186,18 +186,18 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
 	  //_atom_site.occupancy_esd
 	  //_atom_site.B_iso_or_equiv_esd
 	  //_atom_site.pdbx_formal_charge
-	  charge.push_back(tmp_vec[20]);
+	  charge.push_back(tmp_vec[15]);
 	  
 	  //_atom_site.auth_seq_id
-	  resno.push_back(stringToInt(tmp_vec[21]));
+	  resno.push_back(stringToInt(tmp_vec[16]));
 	  //_atom_site.auth_comp_id
-	  resid.push_back(tmp_vec[22]);
+	  resid.push_back(tmp_vec[17]);
 	  //_atom_site.auth_asym_id
-	  chain.push_back(tmp_vec[23]);
+	  chain.push_back(tmp_vec[18]);
 	  //_atom_site.auth_atom_id
-	  elety.push_back(tmp_vec[24]);
+	  elety.push_back(tmp_vec[19]);
 	  //_atom_site.pdbx_PDB_model_num
-	  model.push_back(stringToInt(tmp_vec[25]));
+	  model.push_back(stringToInt(tmp_vec[20]));
 	  
 	} 
       } 
