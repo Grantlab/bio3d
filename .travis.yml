@@ -58,8 +58,8 @@ script:
 #   - Rscript -e "source('new_funs/check.bio3d.R'); check.bio3d('ver_devel/bio3d', check_dir='.', cleanup=FALSE)" && ! grep -q -e ERROR -e WARNING -e NOTE bio3d.Rcheck/00check.log 
 #   - rm -rf bio3d.Rcheck
 #   - R CMD build ver_devel/bio3d && R CMD check --as-cran --run-donttest --run-dontrun bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
-#   - R CMD build ver_devel/bio3d && R CMD check --as-cran --run-donttest bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
-   - R CMD build ver_devel/bio3d && R CMD check --as-cran bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
+   - R CMD build ver_devel/bio3d && R CMD check --as-cran --run-donttest bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
+#   - R CMD build ver_devel/bio3d && R CMD check --as-cran bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
 
 after_success:
    - Rscript -e 'devtools::install_github("jimhester/covr")'
