@@ -1,7 +1,7 @@
 ---
 title: "Ensemble NMA across multiple species of DHFR"
 author: "Lars Skjaerven, Xin-Qiu Yao, Guido Scarabelli & Barry J. Grant"
-date: "February 24, 2015"
+date: "September 29, 2016"
 output:
   pdf_document:
     fig_caption: yes
@@ -39,7 +39,7 @@ This vignette was generated using **Bio3D version `r packageVersion("bio3d")`**.
 In this vignette we extend the analysis from Part I by including 
 a more extensive search of distant homologues within the
 DHFR family. Based on a HMMER search we identify and collect
-protein species down to a pairwise sequence identity of 21\%.
+protein species down to a pairwise sequence identity of 20\%.
 Normal modes analysis (NMA) across these species reveals
 a remarkable similarity of the fluctuation profiles, but also
 features which are characteristic to specific species.
@@ -49,7 +49,7 @@ Below we use the sequence of *E.coli* DHFR to perform an initial search against
 the Pfam HMM database with function **hmmer()**. The arguments `type` and `db`
 specifies the type of hmmer search and the database to search, respectively. In this particular
 example, our query sequence is searched against the Pfam profile HMM library
-(arguments `type=hmmscan` and `db=pfam`) to identify its respecitve protein family. 
+(arguments `type="hmmscan"` and `db="pfam"`) to identify its respecitve protein family. 
 The to **hmmer()** will return a data frame object containing the Pfam accession ID (`$acc`),
 description of the identified family (`$desc`), family name (`$name`), etc. 
 
@@ -63,8 +63,7 @@ seq <- get.seq("1rx2_A")
 
 # scan the Pfam database for our sequence
 pfam <- hmmer(seq, type="hmmscan", db="pfam")
-pfam$name
-pfam$desc
+pfam$hit.tbl
 ```
 
 
@@ -78,33 +77,39 @@ the sequence alignmenment itself will be written to screen.
 
 ```{r pfam2, cache=TRUE,}
 # download pfam alignment for the DHFR family
-pfam.aln <- pfam(pfam$acc[1])
+pfam.aln <- pfam(pfam$hit.tbl$acc[1])
 print(pfam.aln, alignment=FALSE)
 ```
 
 
-The next hmmer search builds a profile HMM from the Pfam multiple sequence alignment and uses this HMM to search against a target sequence database (use `type=hmmsearch`). In this case our target sequence database is the PDB (`db=pdb`), but there are also other options such as *Swissprot* and *UniProt*. 
+The next hmmer search builds a profile HMM from the Pfam multiple sequence alignment and uses this HMM to search against a target sequence database (use `type="hmmsearch"`). In this case our target sequence database is the PDB (`db="pdb"`), but there are also other options such as `"swissprot"` and `"uniprot"`. 
 
 ```{r hmmer1, cache=TRUE}
 # use Pfam alignment in search 
 hmm <- hmmer(pfam.aln, type="hmmsearch", db="pdb")
 ```
 
-Function **plot.hmmer()** (the equivalent to **plot.blast()**) provides a quick overview of the rearch results, and can aid in the identification of a sensible hit similarity threshold. The normalized scores (-log(E-Value)) are shown in the upper panel, and the lower panel provides an overview of the kingdom and specie each hit are associated with. Here we specify a cutoff of 90 yielding 517 hits:
+Function **plot.hmmer()** (the equivalent to **plot.blast()**) provides a quick overview of the rearch results, and can aid in the identification of a sensible hit similarity threshold. The normalized scores (-log(E-Value)) are shown in the upper panel, and the lower panel provides an overview of the kingdom and specie each hit are associated with. Here we specify a cutoff of 56 yielding 655 hits: 
 
-```{r fig3-2,  fig.height=7, fig.width=6, fig.cap="Overview  of hits obtained from the HMMER search. Upper panel shows the normalized scores. Lower panel the scores and hits are colored according to their respective kingdom (background colors) and specie (foreground barplot)."}
-hits <- plot.hmmer(hmm, cutoff=90)
+```{r fig3-2,  fig.height=7, fig.width=6, fig.cap="Overview  of hits obtained from the HMMER search. The two upper panels show the normalized scores and bitscore. The two lower panels show a bar graph of the distribution of significant hits according to the bitscores and taxonomic kingdom. The first bar plot corresponds to the hits above cutoff, while the second par plot corresponds to those hits below the cutoff. Observe e.g. that the majority of the top scoring hits is from bacteria (red) while there are several eukaryotes (green) with lower scores."}
+hits <- plot(hmm, cutoff=56)
 ```
 
+**Side-note**: To visualize the hmmer search results in a web-browser go to the URL in the `hmm$url` attribute:
+
+```{r hmmer-url, cache=TRUE}
+# view hmmer results in web-browser
+print(hmm$url)
+```
+
+
+An summary over the hit species can be obtained by investigatin the `hmm$hit.tbl$species` attribute:
 
 ```{r hits, cache=TRUE}
 ids <- hits$acc
-species <- hmm$species[hits$inds]
-```
+species <- hmm$hit.tbl$species[hits$inds]
 
-
-```{r species, cache=TRUE, warning=FALSE,}
-# collected species
+# print collected species
 print(unique(species))
 ```
 
@@ -125,17 +130,21 @@ files <- pdbsplit(raw.files, ids = ids,
                   path = "raw_pdbs/split_chain", ncore=4)
 pdbs.all <- pdbaln(files)
 
-# exclude DHFR-TS fusion protein
-excl.inds <- unlist(lapply(c("1qzf", "1sej"), grep, pdbs.all$id))
-pdbs <- trim.pdbs(pdbs.all, row.inds=-excl.inds)
+# exclude hits with fusion proteins
+gaps <- gap.inspect(pdbs.all$ali)
+pdbs <- trim(pdbs.all, row.inds=which(gaps$row > 200))
+
+# exclude specific hits
+excl.inds <- unlist(lapply(c("5dxv"), grep, pdbs$id))
+pdbs <- trim(pdbs, row.inds=-excl.inds)
 
 # exclude structures with missing residues
 conn <- inspect.connectivity(pdbs, cut=4.05)
-pdbs <- trim.pdbs(pdbs, row.inds=which(conn))
+pdbs <- trim(pdbs, row.inds=which(conn))
           
 # exclude conformational redundant structures
 rd <- filter.rmsd(pdbs$xyz, cutoff=0.25, fit=TRUE, ncore=4)
-pdbs <- trim.pdbs(pdbs, row.inds=rd$ind)
+pdbs <- trim(pdbs, row.inds=rd$ind)
 ```
 
 
@@ -149,6 +158,7 @@ using argument `profile` to function **seqaln()**. Subsequently, we re-read the 
 # align pdbs to Pfam-profile alignment
 aln <- seqaln(pdbs, profile=pfam.aln, exefile="clustalo", extra.args="--dealign")
 
+# final alignment will also contain the profile
 # store only PDBs in alignment
 aln$ali <- aln$ali[1:length(pdbs$id),]
 aln$id  <- aln$id[1:length(pdbs$id)]
@@ -157,7 +167,7 @@ aln$id  <- aln$id[1:length(pdbs$id)]
 pdbs <- read.fasta.pdb(aln)
 
 # exclude gap-only columns
-pdbs <- trim.pdbs(pdbs)
+pdbs <- trim(pdbs)
 
 # refit coordinates
 pdbs$xyz <- pdbfit(pdbs)
@@ -170,8 +180,8 @@ pdbs$xyz <- pdbfit(pdbs, outpath="flsq/")
 
 ```{r ids, cache=TRUE, warning=FALSE,}
 # fetch IDs again
-ids <- unlist(strsplit(basename(pdbs$id), split="\\.pdb"))
-species <- hmm$species[hmm$acc %in% ids]
+ids <- basename.pdb(pdbs$id)
+species <- hmm$hit.tbl$species[hmm$hit.tbl$acc %in% ids]
 ```
 
 
@@ -212,9 +222,8 @@ by object *pdbs*. Use argument `rm.gaps=FALSE` to visualize fluctuations also of
 residues:
 
 ```{r modes1, cache=TRUE, results='hide'}
-modes <- nma.pdbs(pdbs, rm.gaps=FALSE, ncore=4)
+modes <- nma(pdbs, rm.gaps=FALSE, ncore=4)
 ```
-
 
 The *modes* object of class *enma* contains aligned normal mode data including fluctuations,
 RMSIP data (only when`rm.gaps=FALSE`), and aligned eigenvectors. A short summary of the *modes* object can be obtain by
@@ -225,8 +234,17 @@ calling the function **print()**, and the aligned fluctuations can be plotted wi
 print(modes)
 ```
 
-```{r fig3-4, fig.cap="Flexibility profiles and sequence conservation. The figure shows the modes fluctuations colored according their sequence identity. The lower panel shows the sequence conservation for the PDBs. The plot is generated with function **plot.enma()** with argument `conservation=TRUE`.", fig.height=6, fig.width=6, message=FALSE, results="hide",}
-plot(modes, pdbs=pdbs, ylim=c(0,2), col=grps.seq, conservation=TRUE)
+```{r fig3-4, fig.cap="Flexibility profiles and sequence conservation. The figure shows the modes fluctuations colored according their sequence identity. The lower panel shows the sequence conservation for the PDBs. The plot is generated with function **plot.enma()** along with function call to **conerv()**.", fig.height=7, fig.width=6, message=FALSE, results="hide",}
+
+cons <- conserv(pdbs$ali)
+sse <- pdbs2sse(pdbs, rm.gaps=FALSE, ind=1)
+resno <- pdbs$resno[1, ]
+resno[is.na(resno)] <- ""
+xlab <- paste0("Residue number (reference PDB: ", basename.pdb(pdbs$id[1]), ")")
+
+par(mfrow=c(2,1), mar=c(4, 4, 2, 2))
+plot(modes, pdbs, ylim=c(0,2), col=grps.seq, label=NULL, xlab=xlab)
+plot.bio3d(cons, resno=resno, sse=sse, ylab="Conservation", xlab=xlab)
 ```
 
 
@@ -243,8 +261,9 @@ grps[grep("casei", labs)]=5
 grps[grep("sapiens", labs)]=6
 grps[grep("albicans", labs)]=7
 grps[grep("glabrata", labs)]=8
+grps[grep("carinii", labs)]=9
 
-plot(modes, pdbs=pdbs, col=grps, spread=TRUE)
+plot(modes, pdbs=pdbs, col=grps, spread=TRUE, ylim=c(0,1.5), label=NULL)
 ```
 
 
@@ -263,13 +282,13 @@ inds <- c(grep("coli", species)[1],
           grep("albicans", species)[1])
 
 # E.coli
-mktrj.enma(modes, pdbs, m.inds=1, s.inds=inds[1], file="ecoli-mode1.pdb")
+mktrj(modes, pdbs, m.inds=1, s.inds=inds[1], file="ecoli-mode1.pdb")
 
 # H. sapiens
-mktrj.enma(modes, pdbs, m.inds=1, s.inds=inds[2], file="hsapiens-mode1.pdb")
+mktrj(modes, pdbs, m.inds=1, s.inds=inds[2], file="hsapiens-mode1.pdb")
 
 # C. albicans
-mktrj.enma(modes, pdbs, m.inds=1, s.inds=inds[3], file="calbicans-mode1.pdb")
+mktrj(modes, pdbs, m.inds=1, s.inds=inds[3], file="calbicans-mode1.pdb")
 ```
 
 ![Mode comparison of *E.coli*, *H.sapiens*, and *C.albicans*. The trajectories are made with function **mktrj.enma()** and visualized in PyMol.](figures/visualize-4hfrs.png)

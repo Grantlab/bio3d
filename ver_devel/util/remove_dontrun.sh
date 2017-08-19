@@ -33,7 +33,7 @@ for i in ./bio3d/man/*.Rd; do
 
    if [ `basename $i` == "hmmer.Rd" ]; then
      # replace the tag '\cr' to newlines to avoid some errors from staticdocs
-     sed -i 's/\\cr/\n/g' $i
+     sed -i 's/\\cr//g' $i
    fi
 
    # comment out 'check.utility()' in examples, because it will cause

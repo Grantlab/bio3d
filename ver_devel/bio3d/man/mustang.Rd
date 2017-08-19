@@ -65,6 +65,11 @@ mustang(files, exefile="mustang", outfile="aln.mustang.fa",
 }
 \examples{
 \dontrun{
+
+if(!check.utility('mustang')) {
+   message('Need MUSTANG installed to run this example')
+} else {
+
 ## Fetch PDB files and split to chain A only PDB files
 ids <- c("1a70_A", "1czp_A", "1frd_A")
 files <- get.pdb(ids, split = TRUE, path = tempdir())
@@ -81,6 +86,7 @@ aln <- mustang(files)
 ##-- Read Aligned PDBs storing coordinate data
 pdbs <- read.fasta.pdb(aln) 
 
+}
 }
 }
 \keyword{ utilities }

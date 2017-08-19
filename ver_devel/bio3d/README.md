@@ -23,6 +23,8 @@ We also distribute a number of extended **Bio3D vignettes** that provide worked 
 - Comparative sequence and structure analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_pca.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/principal-component-analysis">HTML</a>)
 - Correlation network analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/Bio3D_cna-transducin.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/ensemble-nma-part-1/81-vignettes/87-correlation-network-analysis-with-bio3d">HTML</a> )
 - Protein structure network analysis with Bio3D ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/cna_vignette.pdf">PDF</a> | <a href="http://thegrantlab.org/bio3d/tutorials/protein-structure-networks">HTML</a> )
+- Online protein structure analysis with the Bio3D WebApp ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/PCA-WebApp.pdf">PDF</a> | HTML )
+- Online Normal Mode Analysis with Bio3D WebApps ( <a href="http://thegrantlab.org/bio3d/phocadownload/vignettes/NMA-WebApp.pdf">PDF</a> | HTML )
 
 There is also a <a href="http://thegrantlab.org/bio3d/bio3d.pdf">package manual</a> (in PDF format) that is a concatenation of each functions documentation. 
 

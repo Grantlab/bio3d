@@ -1,6 +1,6 @@
 get.blast <- function(urlget, time.out = NULL, chain.single=TRUE) {
 
-  if(substr(urlget, 1, 4) == "http" && grep("Blast.cgi", urlget)
+  if(substr(urlget, 1, 5) == "https" && grep("Blast.cgi", urlget)
       && grep("RID[[:space:]]*=", urlget)) {
      rid <- sub("^.*RID[[:space:]]*=[[:space:]]*", "", urlget)
      names(urlget)=rid 
@@ -17,7 +17,7 @@ get.blast <- function(urlget, time.out = NULL, chain.single=TRUE) {
   repeat {
     raw  <- try(read.csv(urlget,
                      header = FALSE, sep = ",", quote="\"", dec=".",
-                     fill = TRUE, comment.char=""), silent=TRUE)
+                     fill = TRUE, comment.char="", stringsAsFactors=FALSE), silent=TRUE)
     if(class(raw)=="try-error") { stop("No hits found: thus no output generated") }
     html <- grep("DOCTYPE", raw[1,])
     
@@ -40,16 +40,14 @@ get.blast <- function(urlget, time.out = NULL, chain.single=TRUE) {
                      "evalue", "bitscore")
   
   ##- Expand 'raw' for each hit in 'subjectids' (i.e. split on ";")
-  rawm <- as.matrix(raw)
-  
-  eachsubject <- strsplit(rawm[,"subjectids"],";")
+  eachsubject <- strsplit(raw$subjectids, ";")
   subjectids  <- unlist(eachsubject)
   n.subjects  <- sapply(eachsubject, length)
-  
-  rawm <- apply(rawm, 2, rep, times=n.subjects)
-  rawm[,"subjectids"] <- subjectids
-  
 
+  df <- raw[rep(row.names(raw), times=n.subjects), ]
+  df$subjectids <- subjectids
+  row.names(df) <- 1:nrow(df)
+    
   ##- Parse ids
   all.ids <- strsplit(subjectids, "\\|")
   gi.id  <- sapply(all.ids, '[', 2)
@@ -59,8 +57,8 @@ get.blast <- function(urlget, time.out = NULL, chain.single=TRUE) {
 
   ## Catch long chain IDs as in hits from "P12612" (e.g "1WF4_GG" => "1WF4_g")
   if(chain.single) {
-    chain.ind <- nchar(pdb.chain) > 1
-    if(any(chain.ind)) {
+    chain.ind <- which(nchar(pdb.chain) > 1)
+    if(length(chain.ind) > 0) {
       pdb.chain[ chain.ind ] <- tolower( substr(pdb.chain[ chain.ind ],1,1 ) )
     }
   }
@@ -68,21 +66,17 @@ get.blast <- function(urlget, time.out = NULL, chain.single=TRUE) {
 
 
   ##- Map zero evalues to arbitrarily high value for -log(evalue)
-  mlog.evalue <- -log(as.numeric(rawm[,"evalue"]))
-  mlog.evalue[is.infinite(mlog.evalue)] <- -log(1e-308)
-
+  df$mlog.evalue <- -log(df$evalue)
+  df$mlog.evalue[is.infinite(df$mlog.evalue)] <- -log(1e-308)
+  df$pdb.id <- pdb.id
+  df$acc <- gi.id
   
   cat(paste("\n Reporting",length(pdb.id),"hits\n"))
   
-  output <- list(bitscore=  as.numeric(rawm[,"bitscore"]),
-                evalue =  as.numeric(rawm[,"evalue"]),
-                mlog.evalue = mlog.evalue,
-                gi.id = gi.id,
-                pdb.id = pdb.id,
-                hit.tbl = rawm,
-                raw = raw,
-                url = urlget)
-
+  output <- list(hit.tbl = df,
+                 raw = raw,
+                 url = urlget)
+    
   class(output) <- "blast"
   return(output)
 }

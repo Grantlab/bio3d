@@ -11,14 +11,14 @@ atom2ele(\dots)
 
 \method{atom2ele}{default}(x, elety.custom=NULL, rescue=TRUE, \dots)
 
-\method{atom2ele}{pdb}(pdb, inds, elety.custom=NULL, rescue=TRUE, \dots)
+\method{atom2ele}{pdb}(pdb, inds=NULL, \dots)
 }
 \arguments{
   \item{x}{a character vector containing atom names/types to be converted.}
   \item{elety.custom}{a customized data.frame containing atom
     names/types and corresponding atomic symbols.} 
-  \item{rescue}{logical, if TRUE the atomic symbols will be mapped to
-    the first character of the atom names/types.} 
+  \item{rescue}{logical, if TRUE the atomic symbols will be converted 
+    based on matching with \code{bio3d::elements$symb}. }
   \item{pdb}{an object of class \sQuote{pdb} for which \code{elety} will
     be converted.} 
   \item{inds}{an object of class \sQuote{select} indicating a subset of
@@ -53,14 +53,14 @@ atom2ele(atom.names)
 
 ## Get atomic symbols from a PDB object with a customized data set
 pdb <- read.pdb("3RE0",verbose=FALSE)
-inds <- atom.select(pdb, resno=201, verbose=FALSE)
+lig <- trim(pdb, "ligand")
 
-## maps CL2 to C
-atom2ele(pdb, inds, elety.custom = NULL)
+## maps PT1 to Pt, CL2 to Cl, C4A to C
+atom2ele(lig)
 
-## map CL2 to Cl manually
+## map atom name to element manually
 myelety <- data.frame(name = "CL2", symb = "Cl")
-atom2ele(pdb, inds, elety.custom = myelety)
+atom2ele(lig, elety.custom = myelety)
 
 }
 }

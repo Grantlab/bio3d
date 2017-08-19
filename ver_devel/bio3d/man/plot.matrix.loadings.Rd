@@ -5,7 +5,7 @@
 \title{Plot Residue-Residue Matrix Loadings}
 \usage{
 \method{plot}{matrix.loadings}(x, pc = 1, resno = NULL, sse = NULL,
-  mask.n = 0, ...)
+  mask.n = 0, plot = TRUE, ...)
 }
 \arguments{
 \item{x}{the results of PCA as obtained from \code{\link{pca.array}}.}
@@ -21,23 +21,32 @@ structural elements along x- and y-axis.}
 
 \item{mask.n}{the number of elements from the diagonal to be masked from output.}
 
+\item{plot}{logical, if FALSE no plot will be shown.}
+
 \item{...}{additional arguments passed to \code{\link{plot.dccm}}.}
 }
 \value{
-Plot and also returns the loadings.
+Plot and also returns a numeric matrix containing the loadings.
 }
 \description{
 Plot residue-residue matrix loadings of a particular PC that is obtained from a 
 principal component analysis (PCA) of cross-correlation or distance matrices.
 }
 \details{
-Call for its effect.
+The function plots loadings (the eigenvectors) of PCA performed on a set of matrices 
+such as distance matrices from an ensemble of crystallographic structures 
+and residue-residue cross-correlations or covariance matrices derived from 
+ensemble NMA or MD simulation replicates (See \code{\link{pca.array}} for detail). 
+Loadings are displayed as a matrix with dimension the same as the input matrices 
+of the PCA. Each element of loadings represents the proportion that the corresponding 
+residue pair contributes to the variance in a particular PC. The plot can be used 
+to identify key regions that best explain the variance of underlying matrices.
 }
 \examples{
 \dontrun{
    attach(transducin)
    gaps.res <- gap.inspect(pdbs$ali)
-   sse <- bounds.sse(pdbs$sse[1, gaps.res$f.inds])
+   sse <- pdbs$sse[1, gaps.res$f.inds]
 
    # calculate modes
    modes <- nma(pdbs, ncore=NULL)
@@ -49,9 +58,12 @@ Call for its effect.
    pc <- pca.array(cijs)
 
    # plot loadings
-   plot.matrix.loadings(pc, sse=sse)
+   l <- plot.matrix.loadings(pc, sse=sse)
+   l[1:10, 1:10]
 
-   detach(transducin)
+   # plot loadings with elements 10-residue separated from diagonal masked
+   plot.matrix.loadings(pc, sse=sse, mask.n=10)
+
 }
 }
 \author{

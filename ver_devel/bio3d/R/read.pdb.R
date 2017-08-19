@@ -16,7 +16,7 @@ read.pdb <- function(file, maxlines = -1, multi=FALSE, rm.insert=FALSE, rm.alt=T
     if(substr(file,1,4)=="http") {
         ## cpp function can not read from http
         putfile <- tempfile(fileext=".pdb")
-        rt <- try(download.file(file, putfile, method='internal', quiet = !verbose), silent=TRUE)
+        rt <- try(download.file(file, putfile, quiet = !verbose), silent=TRUE)
         if(inherits(rt, "try-error")) {
             file.remove(putfile)
             stop("File not found at provided URL")
@@ -129,6 +129,11 @@ read.pdb <- function(file, maxlines = -1, multi=FALSE, rm.insert=FALSE, rm.alt=T
     
     if(any(duplicated(pdb$atom$eleno)))
         warning("duplicated element numbers ('eleno') detected")
+
+    if(any(is.na(pdb$atom$resno))) {
+        warning("NA values for residue numbers ('resno') detected")
+    }
+    
     
     ## construct c-alpha attribute
     ca.inds <-  atom.select.pdb(pdb, string="calpha", verbose=FALSE)

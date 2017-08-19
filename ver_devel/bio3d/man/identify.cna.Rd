@@ -40,6 +40,10 @@
 \examples{
 \dontrun{
 
+if (!requireNamespace("igraph", quietly = TRUE)) {
+   message('Need igraph installed to run this example')
+} else {
+
 attach(hivp)
 
 # Read the starting PDB file to determine atom correspondence
@@ -57,6 +61,7 @@ d <- identify.cna(xy, cna=net)
 
 detach(hivp)
 
+}
 }
 }
 \keyword{ utility }

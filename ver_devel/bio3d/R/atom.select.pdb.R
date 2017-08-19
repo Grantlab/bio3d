@@ -105,8 +105,18 @@
 }
 
 .match.segid <- function(pdb, segid) {
-  if(!is.character(segid))
-    stop("'segid' must be a character vector")
+  # segid should be NA or a character vector
+  if(!all(is.na(segid))) {
+    if(!is.character(segid[ !is.na(segid) ]))
+      stop("'segid' must be a character vector")
+  }
+
+  ## NA and '' are treated the same 
+  if(any(segid=="", na.rm=TRUE))
+    segid[ segid == "" ] = NA
+  if(any(pdb$atom$segid == "", na.rm=TRUE))
+    pdb$atom$segid[ pdb$atom$segid == "" ] = NA
+  
   pdb$atom$segid %in% segid
 }
 

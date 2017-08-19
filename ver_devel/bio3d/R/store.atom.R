@@ -19,9 +19,9 @@ function(pdb=NULL) {
   repadd <- function(num, nrep = nres, toadd = nxyz) {
     c(num, rep(num, (nrep - 1)) + rep(cumsum(rep(toadd, (nrep - 1))), each = length(num)))
   }
-  atom.data <- colpaste(pdb$atom, c("elety", "resno", "chain"))
-  atom.list <- matrix(unlist(strsplit(atom.data, "\\.")), ncol = 3, byrow = TRUE)
-  res.data <- colpaste(pdb$atom, c("resno", "chain"))
+  atom.data <- colpaste(pdb$atom, c("elety", "resno", "insert", "chain"))
+  atom.list <- matrix(unlist(strsplit(atom.data, "\\.")), ncol = 4, byrow = TRUE)
+  res.data <- colpaste(pdb$atom, c("resno", "insert", "chain"))
   res.list <- unique(res.data)
 
   coords <- NULL

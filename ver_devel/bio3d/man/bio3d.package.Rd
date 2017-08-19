@@ -10,8 +10,8 @@ Utilities for the analysis of protein structure and sequence data.
 \tabular{ll}{
 Package: \tab bio3d\cr
 Type: \tab Package\cr
-Version: \tab 2.3-0\cr
-Date: \tab 2016-09-15\cr
+Version: \tab 2.3-3\cr
+Date: \tab 2017-07-29\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab \url{http://thegrantlab.org/bio3d/}\cr
 }
@@ -32,7 +32,7 @@ Perform sequence and structure database searches (\code{\link{blast.pdb}},
 \code{\link{hclust}}), principal component analysis
 (\code{\link{pca.xyz}},  \code{\link{pca.pdbs}}, \code{\link{pca.tor}},  \code{\link{plot.pca}},
 \code{\link{plot.pca.loadings}},  \code{\link{mktrj.pca}}), dynamical
-cross-correlation analysis (\code{\link{dccm}}, \code{\link{lmi}}, \code{\link{plot.dccm}}) and correlation network analysis (\code{\link{cna}},  \code{\link{plot.cna}}, \code{\link{cnapath}}) of structure data.
+cross-correlation analysis (\code{\link{dccm}}, \code{\link{plot.dccm}}) and correlation network analysis (\code{\link{cna}},  \code{\link{plot.cna}}, \code{\link{cnapath}}) of structure data.
 
 Perform conservation analysis of sequence (\code{\link{seqaln}}, \code{\link{conserv}},
 \code{\link{seqidentity}},  \code{\link{entropy}},  \code{\link{consensus}})

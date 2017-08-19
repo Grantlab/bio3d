@@ -50,15 +50,29 @@
       out <- list()
       out$sse <- sse2
       
-      out$helix$start <- h[, "start"]
-      out$helix$end <- h[, "end"]
-      out$helix$length <- h[, "length"]
-      out$helix$chain <- chain[ bounds(h.inds)[, "start"] ]
+      if(length(h.inds)>0) {
+        out$helix$start <- h[, "start"]
+        out$helix$end <- h[, "end"]
+        out$helix$length <- h[, "length"]
+        out$helix$chain <- chain[ bounds(h.inds)[, "start"] ]
+      } else {
+        out$helix$start <- NULL
+        out$helix$end <- NULL
+        out$helix$length <- NULL
+        out$helix$chain <- NULL
+      }
 
-      out$sheet$start <- e[, "start"]
-      out$sheet$end <- e[, "end"]
-      out$sheet$length <- e[, "length"]
-      out$sheet$chain <- chain[ bounds(e.inds)[, "start"] ]
+      if(length(e.inds)>0) {
+        out$sheet$start <- e[, "start"]
+        out$sheet$end <- e[, "end"]
+        out$sheet$length <- e[, "length"]
+        out$sheet$chain <- chain[ bounds(e.inds)[, "start"] ]
+      } else {
+        out$sheet$start <- NULL
+        out$sheet$end <- NULL
+        out$sheet$length <- NULL
+        out$sheet$chain <- NULL
+      }
 
       out$call <- cl
       class(out) <- "sse"
@@ -118,6 +132,12 @@
         sse.aln$helix$length <- new.sse[,"length"]
         sse.aln$helix$chain <- chain.sse
       }
+    } else {
+        h.inds <- NULL
+        sse.aln$helix$start  <- NULL
+        sse.aln$helix$end    <- NULL
+        sse.aln$helix$length <- NULL
+        sse.aln$helix$chain <- NULL
     }
 
     ## Sheets
@@ -143,6 +163,12 @@
         sse.aln$sheet$length <- new.sse[,"length"]
         sse.aln$sheet$chain <- chain.sse
       }
+    } else {
+        e.inds <- NULL
+        sse.aln$sheet$start  <- NULL
+        sse.aln$sheet$end    <- NULL
+        sse.aln$sheet$length <- NULL
+        sse.aln$sheet$chain <- NULL
     }
 
     ## SSE vector

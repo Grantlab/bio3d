@@ -26,7 +26,7 @@ function(seq, database="pdb", time.out=NULL, chain.single=TRUE) {
     stop("Option database should be one of pdb, nr or swissprot")
 
   ##- Submit
-  urlput <- paste("http://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Put&DATABASE=",
+  urlput <- paste("https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Put&DATABASE=",
                   database,"&HITLIST_SIZE=20000&PROGRAM=blastp&CLIENT=web&QUERY=",
                   paste(seq,collapse=""),
                   sep="")
@@ -34,7 +34,7 @@ function(seq, database="pdb", time.out=NULL, chain.single=TRUE) {
   txt <- scan(urlput, what="raw", sep="\n", quiet=TRUE)
   rid <- sub("^.*RID = " ,"",txt[ grep("RID =",txt) ])
 
-  urlget <- paste("http://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Get",
+  urlget <- paste("https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Get",
                   "&FORMAT_OBJECT=Alignment",
                   "&ALIGNMENT_VIEW=Tabular",
                   "&RESULTS_FILE=on",

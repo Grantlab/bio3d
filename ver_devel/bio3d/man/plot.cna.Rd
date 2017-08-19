@@ -77,7 +77,9 @@
 \donttest{
 # PDB server connection required - testing excluded
 
-require(igraph)
+if (!requireNamespace("igraph", quietly = TRUE)) {
+   message('Need igraph installed to run this example')
+} else {
 
 ##-- Build a CNA object
 pdb <- read.pdb("4Q21")
@@ -93,16 +95,15 @@ xy <- plot.cna(net)
 plot.cna(net, pdb)
 
 # Play with plot layout and colors...
-plot.cna(net, layout=layout.mds(net$community.network), col=c("blue","green") ) 
-}
+plot.cna(net, layout=igraph::layout.mds(net$community.network), col=c("blue","green") ) 
 
-\dontrun{
 # Plot full residue network colored by communities - will be slow due to number of edges!!
 plot.cna(net, pdb, full=TRUE)
 
 # Alter plot settings
 plot.cna(net, pdb, full=TRUE, vertex.size=3, weights=1, vertex.label=NA)
-}
 
+}
+}
 }
 \keyword{ hplot }

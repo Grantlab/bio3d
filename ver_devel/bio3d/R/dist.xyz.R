@@ -26,12 +26,19 @@ function(a, b=NULL, all.pairs=TRUE, ncore=1, nseg.scale=1){
      }
   }
 
+  if(is.xyz(a) && nrow(a)==1) a <- as.vector(a)
+  if(is.xyz(b) && nrow(b)==1) b <- as.vector(b)
+
   if(is.vector(a)) {
     a <- matrix(a, ncol=3, byrow=TRUE)
   } else {
     a <- as.matrix(a)
   }
-  
+  if(ncol(a) != 3) 
+    message(paste('ncol(a) is not 3.\n',
+       'General n-dimension Euclidean distance ',
+       'between rows will be calculated.', sep=''))
+ 
   if(is.null(b)) {
     return(as.matrix(dist(a)))
   } else {

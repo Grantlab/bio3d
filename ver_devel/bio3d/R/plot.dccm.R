@@ -26,7 +26,7 @@ plot.dccm <-function(x, resno=NULL, sse=NULL, colorkey=TRUE,
   scales <- NULL
   dots <- list(...)
   if('scales' %in% names(dots)) scales <- dots$scales
-  xy.at <- pretty(seq_along(x[1, ]))
+  xy.at <- pretty(1:ncol(x))
   xy.at <- xy.at[xy.at <= ncol(x)]
   xy.at[1] <- 1
   if(is.null(resno)) {

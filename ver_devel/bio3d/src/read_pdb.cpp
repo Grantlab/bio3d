@@ -70,9 +70,17 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
   string tmp;
   int tmp_eleno;
   int tmp_resno;
+  
+  string prev_eleno_str;
+  string curr_eleno_str;
   string prev_resno_str;
   string curr_resno_str;
+  string prev_chain;
+  string curr_chain;
   int counter = 0;
+
+  bool hex_eleno = false;
+  bool hex_resno = false;
 
   // for reading
   vector<string> raw_lines;
@@ -170,36 +178,90 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
 	  y.push_back(tmpy);
 	  z.push_back(tmpz);
 
-	  // eleno can be hexadecimal (e.g. from VMD)
-	  if(hex && natoms > 99999) {
-	    tmp_eleno = getHex(trim(line.substr(6,5)));
+	  // read atom number
+	  curr_eleno_str = trim(line.substr(6,5));
+
+	  // enable parsing hexadecimals (e.g. from VMD)
+	  // issue warning if hexdec found
+	  if(natoms > 99999 && !hex_eleno && 
+	     curr_eleno_str == "186a0" && prev_eleno_str == "99999") {
+	    
+	    if(!hex) {
+	      Rf_warning("possible hexadecimal atom numbering. re-run with 'hex=TRUE'");
+	    }
+	    else {
+	      Rf_warning("hexadecimal atom numbering used for eleno > 99.999");
+	    }
+	    hex_eleno = true;
+	  }
+	    
+	  if(hex && hex_eleno) {
+	    tmp_eleno = getHex(curr_eleno_str);
 	  }
 	  else {
-	    tmp_eleno = stringToInt(line.substr(6,5));
+	    try {
+	      tmp_eleno = stringToInt(curr_eleno_str);
+	    }
+	    catch (...) {
+	      tmp_eleno = NA_INTEGER;
+	    }
 	  }
-	  eleno.push_back(tmp_eleno);
+	  prev_eleno_str = curr_eleno_str;
 
-	  // resno can be hexadecimal (e.g. from VMD)
+
+	  // read residue number and chain identifier
 	  curr_resno_str = trim(line.substr(22,4));
+	  curr_chain = trim(line.substr(21,1));
+
+	  // count number of residues
 	  if(curr_resno_str != prev_resno_str) {
+	    // reset nresi if chain change
+	    if(curr_chain != prev_chain) {
+	      nresi = 0;
+	      hex_resno = false;
+	    }
+	    prev_chain = curr_chain;
 	    nresi++;
 	  }
-	  prev_resno_str = curr_resno_str;
+
+	  // enable parsing hexadecimals (e.g. from VMD)
+	  // issue warning if hexdec found
+	  if(nresi > 9999 && !hex_resno &&
+	     curr_resno_str == "2710" && prev_resno_str == "9999") {
+
+	    if(!hex) {
+	      Rf_warning("possible hexadecimal residue numbering. re-run with 'hex=TRUE'");
+	    }
+	    else {
+	      Rf_warning("hexadecimal residue numbering used for resno > 9.999");
+	    }
+	    hex_resno = true;
+	  }
 	  
-	  if(hex && nresi > 9999) {
+	  if(hex && hex_resno) {
 	    tmp_resno = getHex(curr_resno_str);
 	  }
 	  else {
-	    tmp_resno = stringToInt(curr_resno_str);
+	    try {
+	      tmp_resno = stringToInt(curr_resno_str);
+	    }
+	    catch (...) {
+	      tmp_resno = NA_INTEGER;
+	    }
 	  }
+	  prev_resno_str = curr_resno_str;
+	  
+
+	  // store eleno resno chain to arrays
+	  eleno.push_back(tmp_eleno);
+	  resno.push_back(tmp_resno);
+	  chain.push_back(curr_chain);
 
 	  // read all others items as they are
-	  resno.push_back(tmp_resno);
 	  type.push_back(rtrim(line.substr(0,6)));
 	  elety.push_back(trim(line.substr(12,4)));
 	  alt.push_back(trim(line.substr(16,1)));
 	  resid.push_back(trim(line.substr(17,4)));
-	  chain.push_back(trim(line.substr(21,1)));
 	  insert.push_back(trim(line.substr(26,1)));
 	  o.push_back(stringToDouble(trim(line.substr(54,6))));
 	  b.push_back(stringToDouble(trim(line.substr(60,6))));
