@@ -1,29 +1,34 @@
 `get.seq` <-
-function(ids, outfile="seqs.fasta", db="refseq", verbose=FALSE) {
-  ## Download FASTA format sequences from the NCBI RefSeq,
+function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
+  ## Download FASTA format sequences from the NCBI nr,
   ## SWISSPROT/UNIPROT, or RCSB PDB databases via their gi,
-  ## SWISSPROT identifer number, or PDB identifiers.
+  ## SWISSPROT identifer number, or PDB ids.
   oops <- requireNamespace("httr", quietly = TRUE)
   if(!oops)
     stop("Please install the httr package from CRAN")
 
   db <- tolower(db)
-  if( !(db %in% c("refseq", "swissprot", "uniprot", "pdb")) )
-    stop("Option database should be one of refseq, swissprot/uniprot, or pdb")
-  db <- switch(db, refseq='refseqp', swissprot='uniprotkb', 
+  if( !(db %in% c("nr", "swissprot", "uniprot", "pdb")) )
+    stop("Option database should be one of nr, swissprot/uniprot, or pdb")
+
+  db <- switch(db, nr='nr', swissprot='uniprotkb', 
                    uniprot='uniprotkb', pdb='pdb')
 
   ids <- toupper(ids)
   ids <- unique(ids)
 
-  baseUrl <- 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
-
-  # check if API works
-  url <- paste(baseUrl, '/dbfetch.databases', sep='')
-  resp <- httr::GET(url)
-  if(httr::http_error(resp))
-    stop('EMBL-EBI server request failed.')
-
+  if(db == "nr") {
+    baseUrl <- 'https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?db=protein'
+  } else {
+    baseUrl <- 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
+ 
+    # check if API works
+    url <- paste(baseUrl, '/dbfetch.databases', sep='')
+    resp <- httr::GET(url)
+    if(httr::http_error(resp))
+      stop('Access to EMBL-EBI server failed.')
+  }
+  
   # fetch sequences
   ## Remove existing file
   if(file.exists(outfile)) {
@@ -31,6 +36,8 @@ function(ids, outfile="seqs.fasta", db="refseq", verbose=FALSE) {
     unlink(outfile)
   }
 
+  cat("Fetching... Please wait")
+  
   ## do multiple requests if # of sequences > 500
   errorCount=0
   checkInterval = 3
@@ -39,37 +46,53 @@ function(ids, outfile="seqs.fasta", db="refseq", verbose=FALSE) {
     i1 <- (i-1)*500 + 1
     i2 <- ifelse(i*500>length(ids), length(ids), i*500)
     ids1 <- ids[i1:i2]
-    url <- paste(baseUrl, db, paste(ids1, collapse=','), 'fasta', sep='/')
+    if(db=="nr") {
+      url <- paste(baseUrl, "&val=", paste(ids1, collapse=','), 
+                   "&report=fasta&retmode=text&page_size=500", sep='')
+    } else {
+      url <- paste(baseUrl, db, paste(ids1, collapse=','), 'fasta', sep='/')
+    }
     resp <- httr::GET(url)
-    text <- httr::content(resp, 'text')
+    text <- httr::content(resp, 'text', encoding='utf-8')
     retry=0
-    while((httr::http_error(resp) || grepl('^ERROR', text)) 
-       && retry<3) {
+    while((httr::http_error(resp) || grepl('^ERROR', text) ||
+           grepl('Nothing has been found', text)) && retry<3) {
       retry = retry + 1
       if(verbose) cat('Fetching sequences failed. Retry ', retry, '...\n', sep='')
       Sys.sleep(checkInterval)
       resp <- httr::GET(url)
-      text <- httr::content(resp, 'text')
+      text <- httr::content(resp, 'text', encoding='utf-8')
     }
-    if(httr::http_error(resp) || grepl('^ERROR', text)) {
+    if(httr::http_error(resp) || grepl('^ERROR', text) ||
+       grepl('Nothing has been found', text)) {
       errorCount = errorCount + 1
       if(errorCount==n)
         stop('No sequence found. Check the ID(s).')
     }
     cat(text, file=outfile, append=TRUE)
+    cat('.')
   }
-
+  cat(' Done.\n')
+  
   # check if all sequences are downloaded successfully.
   seqs <- read.fasta(outfile)
-  myids <- strsplit(seqs$id, split='\\|')
-  myids <- sapply(myids, function(x) {
-    ii <- match('pdb', x)
-    if(!is.na(ii))
-      x[ii+1] <- paste(x[ii+1], ifelse(is.na(x[ii+2]), 'A', x[ii+2]), sep='_')
-    paste(x, collapse='|')
+  if(db=="nr") {
+     if(length(seqs$id) == length(ids)) {
+       rtn = FALSE
+     } else {
+       rtn <- sapply(ids, function(x) !any(grepl(x, seqs$id)))
+     }
+  } else {
+    myids <- strsplit(seqs$id, split='\\|')
+    myids <- sapply(myids, function(x) {
+      ii <- match('pdb', x)
+      if(!is.na(ii))
+        x[ii+1] <- paste(x[ii+1], ifelse(is.na(x[ii+2]), 'A', x[ii+2]), sep='_')
+      paste(x, collapse='|')
     })
-  rtn <- sapply(ids, function(x) !any(grepl(x, myids)))
-
+    rtn <- sapply(ids, function(x) !any(grepl(x, myids)))
+  }
+  
   if(all(!rtn)) {
     return(seqs)
   } else {
