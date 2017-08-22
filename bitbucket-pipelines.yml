@@ -6,7 +6,7 @@
 
 image: atlassian/default-image:latest
 pipelines:
-  default:
+#  default:
 #      - step:
 #              image: r-base
 #              script:
