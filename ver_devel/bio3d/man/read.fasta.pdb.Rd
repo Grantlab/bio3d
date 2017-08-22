@@ -7,7 +7,7 @@
 }
 \usage{
 read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
-             pdblist=NULL, ncore = 1, nseg.scale = 1, ...)
+             pdblist=NULL, ncore = 1, nseg.scale = 1, progress = NULL, ...)
 }
 \arguments{
   \item{aln}{ an alignment data structure obtained with
@@ -24,6 +24,7 @@ read.fasta.pdb(aln, prefix = "", pdbext = "", fix.ali = FALSE,
     \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{nseg.scale }{ split input data into specified number of segments
     prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
+  \item{progress}{ progress bar for use with shiny web app. }
   \item{\dots}{ other parameters for \code{\link{read.pdb}}. }  
 }
 \details{

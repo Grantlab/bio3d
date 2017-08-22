@@ -5,7 +5,7 @@
   Calculate the cross-correlation matrix from Normal Modes Analysis.
 }
 \usage{
-\method{dccm}{nma}(x, nmodes = NULL, ncore = NULL, \dots)
+\method{dccm}{nma}(x, nmodes = NULL, ncore = NULL, progress = NULL, \dots)
 }
 \arguments{
   \item{x}{ an object of class \code{nma} as obtained from
@@ -13,6 +13,7 @@
   \item{nmodes}{ numerical, number of modes to consider. }
   \item{ncore }{ number of CPU cores used to do the calculation.
     \code{ncore>1} requires package \sQuote{parallel} installed. }
+  \item{progress}{ progress bar for use with shiny web app. }
   \item{\dots}{ additional arguments ? }
 }
 \details{
