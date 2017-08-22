@@ -7,16 +7,16 @@
 image: atlassian/default-image:latest
 pipelines:
   default:
-      - step:
-              image: r-base
-              script:
-                        - apt-get update -qq
-                        - apt-get install libcurl4-openssl-dev libssl-dev libxml2-dev libnetcdf-dev qpdf texinfo texlive texlive-latex-extra texlive-fonts-extra
-                        - Rscript -e 'install.packages(c("rmarkdown", "devtools"))'
-                        - Rscript -e 'devtools::install_deps("ver_devel/bio3d", dependencies=TRUE)'
-                        - if test ! -d ~/.R; then mkdir ~/.R; fi
-                        - echo '_R_CHECK_CRAN_INCOMING_=FALSE' > ~/.R/check.Renviron
-                        - R CMD build ver_devel/bio3d && R CMD check --as-cran --run-donttest bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
+#      - step:
+#              image: r-base
+#              script:
+#                        - apt-get update -qq
+#                        - apt-get install libcurl4-openssl-dev libssl-dev libxml2-dev libnetcdf-dev qpdf texinfo texlive texlive-latex-extra texlive-fonts-extra
+#                        - Rscript -e 'install.packages(c("rmarkdown", "devtools"))'
+#                        - Rscript -e 'devtools::install_deps("ver_devel/bio3d", dependencies=TRUE)'
+#                        - if test ! -d ~/.R; then mkdir ~/.R; fi
+#                        - echo '_R_CHECK_CRAN_INCOMING_=FALSE' > ~/.R/check.Renviron
+#                        - R CMD build ver_devel/bio3d && R CMD check --as-cran --run-donttest bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
   branches:
     master:
       - step:
