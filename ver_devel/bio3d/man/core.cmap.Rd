@@ -30,7 +30,15 @@ core.cmap(pdbs, write.pdb = FALSE, outfile="core.pdb",
 \details{
   This function calculates eigenvector centrality of the weighted
   contact network built based on input structure data and uses it
-  to determine the core positions. 
+  to determine the core positions.
+  
+  In this context, core positions correspond to the most invariant
+  C-alpha atom positions across an aligned set of protein
+  structures. Traditionally one would use the \code{core.find}
+  function to for their identification and then use these positions as
+  the basis for improved structural superposition. This more recent
+  function utilizes a  much faster approach and is thus preferred in
+  time sensitive applications such as shiny apps.
 }
 \value{
   Returns a list of class \code{"select"} containing \sQuote{atom} and
@@ -40,8 +48,11 @@ core.cmap(pdbs, write.pdb = FALSE, outfile="core.pdb",
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Xin-Qiu Yao }
-\seealso{ \code{\link{read.fasta.pdb}}, \code{\link{core.find}},
-  \code{\link{fit.xyz}} }
+\seealso{
+  \code{\link{core.find}},
+  \code{\link{read.fasta.pdb}}, 
+  \code{\link{fit.xyz}}
+}
 \examples{
 \dontrun{
 ##-- Generate a small kinesin alignment and read corresponding structures
