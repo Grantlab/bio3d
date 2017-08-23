@@ -4,8 +4,7 @@
 
 "nma.pdbs" <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL,
                        rm.gaps=TRUE, varweight=FALSE,
-                       outpath = NULL, ncore=1, ...) {
-
+                       outpath = NULL, ncore=1, progress = NULL, ...) {
 
   if(!inherits(pdbs, "pdbs"))
     stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
@@ -229,7 +228,10 @@
                        pdbs, xyz, gaps.res,
                        mass, am.args, nm.keep, temp, keep, wts,
                        rm.gaps, full,
-                       pfc.fun, ff, ff.args, outpath, pb, ncore, env=environment())
+                       pfc.fun, ff, ff.args, outpath, pb, ncore, env=environment(),
+                       ## edit for shiny version  
+                       progress=progress)
+                       ## edit end
   close(pb)
 
   ##### Collect data #####
@@ -304,7 +306,10 @@
 .calcAlnModes <- function(i, pdbs, xyz, gaps.res,
                           mass, am.args, nm.keep, temp, keep, wts,
                           rm.gaps, full,
-                          pfc.fun, ff, ff.args, outpath, pb, ncore, env=NULL) {
+                          pfc.fun, ff, ff.args, outpath, pb, ncore, env=NULL,
+                          ## edit for shiny version
+                          progress=NULL) {
+                          ## edit end
 
   ## Set indices for this structure only
   f.inds <- NULL
@@ -441,6 +446,12 @@
     j <- i
   setTxtProgressBar(pb, j)
 
+  ## edit for shiny version
+  if(!is.null(progress)) {
+    progress$inc(1/length(pdbs$id))
+  }
+  ## edit end
+  
   L <- modes$L[seq(7, keep+6)]
   if(!full) {
     remove(modes)
