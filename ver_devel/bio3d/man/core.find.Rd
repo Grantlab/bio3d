@@ -14,7 +14,7 @@ core.find(\dots)
 \method{core.find}{pdbs}(pdbs, shortcut = FALSE, rm.island = FALSE,
           verbose = TRUE, stop.at = 15, stop.vol = 0.5,
           write.pdbs = FALSE, outpath="core_pruned",
-          ncore = 1, nseg.scale = 1, \dots)
+          ncore = 1, nseg.scale = 1, progress = NULL, \dots)
 
 \method{core.find}{default}(xyz, \dots)
 
@@ -43,6 +43,7 @@ core.find(\dots)
     \code{ncore>1} requires package \sQuote{parallel} installed. }
   \item{nseg.scale }{ split input data into specified number of segments
     prior to running multiple core calculation. See \code{\link{fit.xyz}}.}
+  \item{progress}{ progress bar for use with shiny web app. }
   \item{xyz}{ a numeric matrix of xyz Cartesian coordinates,
     e.g. obtained from \code{\link{read.dcd}} or \code{\link{read.ncdf}}. }
   \item{pdb}{ an object of type \code{pdb} as obtained from function

@@ -1,5 +1,5 @@
 `pdbsplit` <-
-function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE, mk4=FALSE, ncore=1, ...) {
+function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE, mk4=FALSE, ncore=1, progress=NULL, ...) {
   
   toread <- file.exists(pdb.files)
   toread[substr(pdb.files, 1, 4) == "http"] <- TRUE
@@ -40,6 +40,12 @@ function(pdb.files, ids=NULL, path="split_chain", overwrite=TRUE, verbose=FALSE,
      dir.create(path)
   
   "splitOnePdb" <- function(i, pdb.files, ids, path, overwrite, verbose, ...) {
+
+    ## edit for shiny version
+    if(!is.null(progress)) {
+      progress$inc(1/length(pdb.files))
+    }
+    ## edit end
 
     out <- c(); skipped <- c(); unused <- NULL;
     if(!overwrite && !verbose) {
