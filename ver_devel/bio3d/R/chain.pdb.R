@@ -12,8 +12,16 @@ function(pdb, ca.dist=4, blank="X", rtn.vec=TRUE) {
 
   ## Distance between concetive C-alphas
   ca <- atom.select(pdb, "calpha", verbose=FALSE)
-  xyz <- matrix(pdb$xyz[ca$xyz], nrow=3)
-  d <- sqrt( rowSums( apply(xyz , 1, diff)^2 ) )
+  if(length(ca$atom) <=1) {
+    d <- 0
+  } else {
+    xyz <- matrix(pdb$xyz[ca$xyz], nrow=3)
+    if(length(ca$atom) == 2) 
+      d <- sqrt( sum( apply(xyz , 1, diff)^2 ) )
+    else
+      d <- sqrt( rowSums( apply(xyz , 1, diff)^2 ) )
+    
+  }
 
   ## Chain break distance check
   ind <- which(d > ca.dist)
@@ -40,6 +48,12 @@ function(pdb, ca.dist=4, blank="X", rtn.vec=TRUE) {
     resno.val <- matrix(as.numeric(resno.val),nrow=2)
 
     vec <- rep(blank, nrow(pdb$atom))
+    if(is.na(resno.val[1])) {
+      return(vec)
+    } else if(is.na(resno.val[2])) {
+      resno.val[2] <- resno.val[1]
+    }
+    
     for(i in 1:(length(resno.val)/2)) {
       sel.ind <- atom.select(pdb,
                              resno=c(resno.val[1,i]:resno.val[2,i]),
