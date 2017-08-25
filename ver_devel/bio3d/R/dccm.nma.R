@@ -21,7 +21,7 @@
     }
 
     ## Calc initial correlations for a subset of modes
-    corrmats <- function(r.inds, core.id, nma, corr.mat, freqs, progress, pbmax) {
+    corrmats <- function(r.inds, core.id, nma, corr.mat, freqs, progress) {
       for ( i in r.inds ) {
         mode <- matrix(nma$U[,i], ncol=3, byrow=TRUE)
         corr.mat <- corr.mat + (cross.inner.prod(mode, mode) / (freqs[i]**2))
@@ -30,8 +30,10 @@
           setTxtProgressBar(pb, i)
         }
 
-        if(!is.null(progress) & core.id == 1) {
-          progress$inc(1/pbmax)
+        if(!is.null(progress)) { 
+            if(i %% 20 == 0) {
+                progress$set(i)
+            }
         }
       }
       return(corr.mat)
@@ -73,11 +75,11 @@
       rinds <- mode.inds[ which(core.ids==i) ]
     
       if(ncore>1) {
-        q <- mcparallel(corrmats(rinds, i, nma, corr.mat, freqs, progress, pbmax))
+        q <- mcparallel(corrmats(rinds, i, nma, corr.mat, freqs, progress))
         jobs[[i]] <- q
       }
       else
-        corr.mat <- corrmats(rinds, i, nma, corr.mat, freqs, progress, pbmax)
+        corr.mat <- corrmats(rinds, i, nma, corr.mat, freqs, progress)
     }
 
     ## Collect all jobs, and sum matrices
@@ -101,7 +103,9 @@
       setTxtProgressBar(pb, k)
       
       if(!is.null(progress)) {
-        progress$inc(1/pbmax)
+          if(j %% 20 == 0) {
+              progress$set(k)
+          }
       }
     }
     
