@@ -9,9 +9,14 @@
                          ... ) {      # args for write.pdb
 
   ## make a trjactory of atomic displacments along a given mode
-  if(!inherits(enma, "enma"))
+  if(!inherits(enma, "enma")) 
     stop("mktrj.enma: must supply 'enma' object, i.e. from 'nma.pdbs'")
 
+  if(!is.null(pdbs)) {
+      if(!inherits(pdbs, "pdbs"))
+          stop("input 'pdbs' should be a list object as obtained from 'read.fasta.pdb'")
+  }
+    
   ## Parallelized by parallel package
   ncore <- setup.ncore(ncore, bigmem = FALSE)
   
@@ -28,15 +33,17 @@
   
   if(is.null(file) & length(s.inds)==1 & length(m.inds)==1)
     file <- paste("mode_", m.inds+6, "-s", s.inds, ".pdb", sep="")
-  
-  if(is.null(enma$call$rm.gaps))
-    rm.gaps <- TRUE
-  else if(enma$call$rm.gaps=="T" || enma$call$rm.gaps=="TRUE")
-    rm.gaps <- TRUE
-  else
-    rm.gaps <- FALSE
 
-  if(!rm.gaps & length(s.inds)>1 & length(m.inds)>1)
+  ## check dimensions to determine rm.gaps
+  if(any(is.gap(enma$xyz))
+     & (dim(enma$U.subspace)[1] == dim(enma$xyz)[2])) {
+      rm.gaps <- FALSE
+  }
+  else {
+      rm.gaps <- TRUE
+  }
+
+  if(!rm.gaps & length(s.inds)>1)
     stop(paste("enma object must be calculated with argument rm.gaps=TRUE", "\n",
                "for trajectory generation of multiple structures and modes"))
 
@@ -64,7 +71,7 @@
       minus <- sapply(c(-zcoor), scor, u=enma$U.subspace[u.inds,mode,ind], m=enma$xyz[ind,xyz.inds])
       
       if(rock) {
-        tmp  <- cbind(pdbs$xyz[ind,xyz.inds],
+          tmp  <- cbind(enma$xyz[ind,xyz.inds],
                       plus,  plus[,rev(1:ncol(plus))],
                       enma$xyz[ind,xyz.inds],
                       minus, minus[,rev(1:ncol(minus))])
