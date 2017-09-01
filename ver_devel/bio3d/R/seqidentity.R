@@ -19,11 +19,11 @@ function( alignment , normalize=TRUE, similarity=FALSE, ncore=1, nseg.scale=1) {
   ids <- NULL
   if(is.list(alignment)) {
     if(inherits(alignment, c("fasta", "pdbs")))
-      ids <- alignment$id
+      ids <- basename.pdb(alignment$id)
     alignment <- alignment$ali
   }
   else {
-    ids <- rownames(alignment)
+    ids <- basename.pdb(rownames(alignment))
   }
 
   ## calculate similarity instead of identity?
