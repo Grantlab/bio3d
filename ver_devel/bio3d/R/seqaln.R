@@ -330,9 +330,9 @@ function(aln, id=NULL, profile=NULL,
   if(!oops)
     stop("Please install the httr package from CRAN")
 
-  oops <- requireNamespace("XML", quietly = TRUE)
-  if(!oops)
-    stop("Please install the XML package from CRAN")
+#  oops <- requireNamespace("XML", quietly = TRUE)
+#  if(!oops)
+#    stop("Please install the XML package from CRAN")
 
   # Check number of sequences
   if(length(x$id)>500)
@@ -368,7 +368,7 @@ function(aln, id=NULL, profile=NULL,
   # get job id 
   jobid <- httr::content(resp, 'text')
   cat('Job successfully submited (job ID: ', jobid, ')\n',
-      'Waiting for job to finish...\n', sep='')
+      'Waiting for job to finish...', sep='')
   
   # poll job status every 3s; stop if "error" obtained 3 times.
   # will also stopped if time out.
@@ -391,16 +391,20 @@ function(aln, id=NULL, profile=NULL,
 
     time <- time + checkInterval
     if(time >= timeout)
-      stop(paste('Connection time out. Check your results from following URL:\n', 
+      stop(paste('\nConnection time out. Check your results from following URL:\n', 
         baseUrl, '/result/', jobid, '/aln-fasta', sep=''))
   }
   if(status != 'FINISHED') 
-    stop('Job failed. Check your E-Mails for more information')
+    stop('\nJob failed. Check your E-Mails for more information')
+
+  cat('Done.\n')
 
   # check result type
   url <- paste(baseUrl, '/resulttypes/', jobid, sep='')
   resp <- httr::GET(url)
-  types <- XML::xmlToDataFrame(XML::xmlParse(httr::content(resp, 'text')), stringsAsFactors=FALSE)
+#  types <- XML::xmlToDataFrame(XML::xmlParse(httr::content(resp, 'text')), stringsAsFactors=FALSE)
+  types <- httr::content(resp)
+  types <- as.data.frame(t(sapply(types[[1]], function(x) x)), stringsAsFactors=FALSE)
   if(!any(grepl('fasta', types$identifier)))
     stop('Returned results do not contain FASTA format.')
 

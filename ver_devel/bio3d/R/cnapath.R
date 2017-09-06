@@ -40,13 +40,26 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
   paths <- mclapply(pairs, function(x)
               .cnapath.core(cna=cna, from=x$from, to=x$to, k=k, ncore=ncore.in, 
                  pb=pb, ...), mc.cores=ncore.out)
+  
+  rm.inds <- sapply(paths, is.null)
+  if(sum(rm.inds) == length(paths)) {
+     warning(paste("  No path found.\n", 
+         "  Please check if the network contains isolated parts!\n\n", sep=""))
+     paths <- NULL
+  } else {
 
-  if(collapse) {
-     cls <- class(paths[[1]])
-     coms <- names(paths[[1]])
-     paths <- lapply(coms, function(x) do.call(c, lapply(paths, "[[", x)) )
-     names(paths) <- coms 
-     class(paths) <- cls
+      if(collapse) {
+         paths <- paths[!rm.inds]
+         cls <- class(paths[[1]])
+         coms <- names(paths[[1]])
+         paths <- lapply(coms, function(x) do.call(c, lapply(paths, "[[", x)) )
+         names(paths) <- coms 
+         class(paths) <- cls
+      }
+      if(sum(rm.inds)>0) {
+         warning(paste("  No path found for some source/sink pairs.\n", 
+         "  Please check if the network contains isolated parts!\n\n", sep=""))
+      }
   }
 
   ## Finish progress bar
@@ -70,12 +83,13 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
   }
 
   # first shortest path
-  k0 <- igraph::get.shortest.paths(graph, from, to, output='both', ...)
+  k0 <- suppressWarnings( igraph::get.shortest.paths(graph, from, to, output='both', ...) )
   
   # if no shortest path found, network contains isolated parts.
-  if(length(k0$vpath[[1]]) == 0) {
-     cat("  No path found.\n", 
-         "  Please check if the network contains isolated parts!\n\n", sep="")
+  if(length(k0$vpath[[1]]) <= 1) {
+#     cat("  No path found.\n", 
+#         "  Please check if the network contains isolated parts!\n\n", sep="")
+     if(!is.null(pb)) .update.pb(pb, step=k)
      return(NULL)
   }
 
@@ -122,7 +136,7 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
        # Suppress warnings because some nodes are intentionally isolated 
        spurPath <- suppressWarnings(igraph::get.shortest.paths(g, spurNode, to, output='both'), ...)
 
-       if(length(spurPath$vpath[[1]]) > 0 ) {
+       if(length(spurPath$vpath[[1]]) > 1 ) {
           vpath = c(rootPath, as.integer(spurPath$vpath[[1]][-1]))
           if(!contains.path(B, vpath)) {
              spurPath$epath <- as.integer(igraph::E(graph, path=as.integer(spurPath$vpath[[1]])))

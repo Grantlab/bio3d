@@ -9,7 +9,7 @@
 \usage{
 \method{nma}{pdbs}(pdbs, fit = TRUE, full = FALSE, subspace = NULL,
          rm.gaps = TRUE, varweight=FALSE, 
-         outpath = NULL, ncore = 1, \dots)
+         outpath = NULL, ncore = 1, progress = NULL, \dots)
 
 \method{print}{enma}(x, \dots)
 }
@@ -35,6 +35,7 @@
     \code{ncore>1} requires package \sQuote{parallel} installed. }
   
   \item{x}{ an \code{enma} object obtained from \code{\link{nma.pdbs}}. }
+  \item{progress}{ progress bar for use with shiny web app. }
   \item{...}{ additional arguments to \code{nma}, \code{\link{aa2mass}}, and
     \code{\link{print}}. }
 }

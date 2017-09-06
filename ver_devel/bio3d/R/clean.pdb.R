@@ -269,8 +269,12 @@ function(pdb, consecutive=TRUE, force.renumber = FALSE, fix.chain = FALSE,
   
   ## update seqres 
   if(has.fixed.chain && !is.null(npdb$seqres)) {
-     chs <- unique(npdb$atom[ca.inds$atom, "chain"])
-     names(npdb$seqres) <- vec2resno(chs, names(npdb$seqres))
+     tinds <- combine.select(atom.select(npdb, 'protein'), atom.select(npdb, 'nucleic'), 
+                             operator='+', verbose=FALSE)
+     npdb2 <- trim(npdb, tinds)
+     id <- paste(npdb2$atom$resno, npdb2$atom$chain, npdb2$atom$insert, sep='_')
+     chs <- npdb2$atom[!duplicated(id), "chain"]
+     names(npdb$seqres) <- chs
      if(!identical(npdb$seqres, pdb$seqres))
         log <- .update.log(log, "SEQRES", "UPDATED")
   }

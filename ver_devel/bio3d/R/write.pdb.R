@@ -126,11 +126,11 @@ function (pdb = NULL,
         resid, chain = "", resno, insert = "", x, y, z, o = "1.00",
         b = "0.00", segid = "", elesy = "", charge = "") {
     
-    format <- "%-6s%5s  %-3s%1s%-4s%1s%4s%1s%3s%8.3f%8.3f%8.3f%6.2f%6.2f%6s%-4s%2s%2s"
-    if (nchar(elety) > 3) {
+    format <- "%-6s%5s  %-3s%1s%3s %1s%4s%1s%3s%8.3f%8.3f%8.3f%6.2f%6.2f%6s%-4s%2s%2s"
+    if (nchar(elety) > 3 || (is.character(elesy) && nchar(elesy)>1)) {
 #    if (nchar(elety) >= 3) {
 #      if ((substr(elety, 2, 2) == "H") | (substr(elety, 1, 1) == "H")) {
-        format <- "%-6s%5s %-4s%1s%-4s%1s%4s%1s%3s%8.3f%8.3f%8.3f%6.2f%6.2f%6s%-4s%2s%2s"
+        format <- "%-6s%5s %-4s%1s%3s %1s%4s%1s%3s%8.3f%8.3f%8.3f%6.2f%6.2f%6s%-4s%2s%2s"
 #      }
     }
     sprintf(format, card, eleno, elety, alt, resid, chain,

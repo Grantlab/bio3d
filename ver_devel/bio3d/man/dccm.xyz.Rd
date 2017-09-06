@@ -1,14 +1,12 @@
 \name{dccm.xyz}
 \alias{dccm.xyz}
-\alias{cov2dccm}
-\title{ DCCM: Dynamical Cross-Correlation Matrix }
+\title{ Dynamical Cross-Correlation Matrix from Cartesian Coordinates }
 \description{
   Determine the cross-correlations of atomic displacements.
 }
 \usage{
-\method{dccm}{xyz}(x, reference = NULL, grpby=NULL,
-ncore=1, nseg.scale=1, \dots)
-cov2dccm(vcov, method = c("pearson", "lmi"), ncore = NULL)
+\method{dccm}{xyz}(x, reference = NULL, grpby=NULL, method=c("pearson", "lmi"),
+                   ncore=1, nseg.scale=1, \dots)
 }
 \arguments{
   \item{x}{ a numeric matrix of Cartesian coordinates with a row per
@@ -18,14 +16,13 @@ cov2dccm(vcov, method = c("pearson", "lmi"), ncore = NULL)
   \item{grpby}{ a vector counting connective duplicated elements that
     indicate the elements of \code{xyz} that should be considered as a group
     (e.g. atoms from a particular residue). }
+  \item{method}{ method to calculate the cross-correlation. Currently supports
+    Pearson and linear mutual information (LMI). }
   \item{ncore }{ number of CPU cores used to do the calculation.
-    \code{ncore>1} requires package \sQuote{parallel} installed. } 
+    \code{ncore=NULL} will use all the cores detected. } 
   \item{nseg.scale }{ split input data into specified number of segments
-    prior to running multiple core calculation. See
-    \code{\link{fit.xyz}}. }
-  \item{\dots}{ hmm. }
-  \item{vcov}{ numeric variance-covariance matrix. }
-  \item{method}{ method to calculate the cross-correlation. }
+    prior to running multiple core calculation. See \code{\link{fit.xyz}}. }
+  \item{\dots}{ Additional arguments to be passed (currently ignored). }
 }
 \details{
   The extent to which the atomic fluctuations/displacements of a system are
@@ -54,20 +51,19 @@ cov2dccm(vcov, method = c("pearson", "lmi"), ncore = NULL)
   correlations may indicate potentially interesting correlations between
   domains of non-contiguous residues.
 
-  \code{cov2dccm} function calculates the N-by-N cross-correlation matrix 
-  directly from a 3N-by-3N variance-covariance matrix. 
   If \code{method = "pearson"}, the conventional Pearson's inner-product 
   correlaiton calculation will be invoked, in which only the diagnol of 
-  each residue-residue covariance sub-matrix is considered. 
+  each atom-atom variance-covariance sub-matrix is considered. 
 
   If \code{method = "lmi"}, then the linear mutual information
   cross-correlation will be calculated. \sQuote{LMI} considers both
-  diagnol and off-diagnol entries in sub-matrices, and so even grabs the
-  correlation of residues moving on orthognal directions. (See more details
-  in \code{\link{lmi}}.)
+  diagnol and off-diagnol entries in the sub-matrices, and so even captures 
+  the correlation of atoms moving in orthognal directions.
+  
 }
 \value{
-  Returns a cross-correlation matrix.
+  Returns a cross-correlation matrix with values in a range from -1 to 1 (Pearson)
+  or from 0 to 1 (LMI).
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
@@ -77,14 +73,15 @@ cov2dccm(vcov, method = c("pearson", "lmi"), ncore = NULL)
 
   Lange, O.F. and Grubmuller, H. (2006) \emph{PROTEINS: Structure, Function, and Bioinformatics} \bold{62}:1053--1061.
 }
-\author{ Xin-Qiu Yao and Gisle Saelensminde }
+\author{ Xin-Qiu Yao, Hongyang Li, Gisle Saelensminde, and Barry Grant }
 
 \seealso{ \code{\link{cor}} for examining xyz cross-correlations,
   \code{\link{dccm}}, \code{\link{dccm.nma}},
-  \code{\link{dccm.pca}}, \code{\link{lmi}}, \code{\link{dccm.enma}}. }
+  \code{\link{dccm.pca}}, \code{\link{dccm.enma}}. }
+  
 \examples{
+\donttest{
 
-\dontrun{
 ##-- Read example trajectory file
 trtfile <- system.file("examples/hivp.dcd", package="bio3d")
 trj <- read.dcd(trtfile)
@@ -111,6 +108,14 @@ contourplot(cij, region = TRUE, labels=FALSE, col="gray40",
             at=c(-1, -0.75, -0.5, -0.25, 0.25, 0.5, 0.75, 1),
             xlab="Residue No.", ylab="Residue No.",
             main="DCCM: dynamic cross-correlation map")
+            
+## LMI matrix
+cij <- dccm(xyz, method='lmi')
+
+## Plot LMI matrix
+#plot(cij)
+col.scale <- colorRampPalette(c("gray95", "cyan"))(5)
+plot(cij, at=seq(0.4,1, length=5), col.regions=col.scale)
 }
 
 }

@@ -41,6 +41,10 @@
   \code{\link[igraph:plot.igraph]{plot.igraph}}}
 \examples{
 
+if (!requireNamespace("igraph", quietly = TRUE)) {
+   message('Need igraph installed to run this example')
+} else {
+
 # Load the correlation network
 attach(hivp)
 
@@ -61,5 +65,6 @@ layout.cna(net, pdb)
 
 detach(hivp)
 
+}
 }
 \keyword{ utility }

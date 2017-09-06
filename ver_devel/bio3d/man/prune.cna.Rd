@@ -44,6 +44,10 @@ that is returned also.
 }
 \examples{
 
+if (!requireNamespace("igraph", quietly = TRUE)) {
+   message('Need igraph installed to run this example')
+} else {
+
 # Load the correlation network
 attach(hivp)
 
@@ -61,5 +65,6 @@ plot(dnet)
 
 detach(hivp)
 
+}
 }
 \keyword{ utility }

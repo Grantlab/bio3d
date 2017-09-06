@@ -4,39 +4,46 @@
 \alias{community.aln}
 \title{Align communities from two or more networks}
 \usage{
-community.aln(x, ...)
+community.aln(x, ..., aln = NULL)
 }
 \arguments{
-\item{x, ...}{two or more objects of class \code{cna} (with equal number of
-nodes) as obtained from function \code{\link{cna}}. Alternatively, a list 
-of \code{cna} objects can be given to \code{x}, the element of which will 
-be used for pairwise comparison.}
+\item{x, ...}{two or more objects of class \code{cna} (if the numbers of
+nodes are different, an alignment \sQuote{fasta} object is required for 
+the \code{aln} argument; See below) as obtained from function \code{\link{cna}}. 
+Alternatively, a list of \code{cna} objects can be given to \code{x}.}
+
+\item{aln}{alignment for comparing networks with different numbers of nodes.}
 }
 \value{
 Returns a list of updated \code{cna} objects.
 }
 \description{
-Find equivalent communities from two or more networks and renumber them in
-a consistent way across networks.
+Find equivalent communities from two or more networks and re-assign colors
+to them in a consistent way across networks. A \sQuote{new.membership} vector is
+also generated for each network, which maps nodes to community IDs that are 
+renumbered according to the community equivalency.
 }
 \details{
 This function facilitates the inspection on the variance of the community
 partition in a group of similar networks. The original community numbering
-(and so coloring in \code{plot.cna}) can be inconsistent across networks, 
-i.e. equivalent communities may have different numbering in different 
-networks. The function calculates the dissimilarity between all communities 
-and clusters communities with \sQuote{hclust} funciton. In each cluster, 0 or
-1 community per network is included. Communities are then renumbered 
-according to the clusters through all networks. Note that the 
-\sQuote{membership} in \code{$communities} is not updated because some basic
-\sQuote{igraph} functions such as \code{length} assume the \sQuote{membership} 
-a consecutive integer vector. Instead, a \sQuote{renumbered} membership 
-vector is added as an extra component in the returned \sQuote{cna} object.
+(and so the colors of communities in the output of \code{plot.cna} and 
+\code{vmd.cna}) can be inconsistent across networks, i.e. equivalent 
+communities may display different colors, impeding network comparison. 
+The function calculates the dissimilarity between all communities and 
+clusters communities with \sQuote{hclust} funciton. In each cluster, 0 or
+1 community per network is included. The color attribute of communities is 
+then re-assigned according to the clusters through all networks. In addition,
+a \sQuote{new.membership} vector is generated for each network, which mapps 
+nodes to new community IDs that are numbered consistently across networks.
 }
 \examples{
 \donttest{
   # Needs MUSCLE installed - testing excluded
   if(check.utility("muscle")) {
+
+    if (!requireNamespace("igraph", quietly = TRUE)) {
+      message('Need igraph installed to run this example')
+    } else {
 
     ## Fetch PDB files and split to chain A only PDB files
     ids <- c("1tnd_A", "1tag_A")
@@ -78,11 +85,12 @@ vector is added as an extra component in the returned \sQuote{cna} object.
        plot(x, layout=layout.cna(x, pdb=pdb, k=3)[, 1:2])) )
 
     par(op)     
+
+    }
   }
 }
 }
 \seealso{
-\code{\link{cna}}, \code{\link{plot.cna}}
+\code{\link{cna}}, \code{\link{plot.cna}}, \code{\link{vmd.cna}}
 }
 \keyword{analysis}
-

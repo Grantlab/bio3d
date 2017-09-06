@@ -30,8 +30,13 @@ uniprot <- function(accid) {
   ## organism
   inds <- which(node.names=="organism")
   node <- xml[[1]][[inds]]
-  organism <- XML::xmlValue(node[[1]])
-  
+  organism <- NULL
+  tmpl <- unlist(XML::xmlApply(node, XML::xmlAttrs))
+  if("scientific" %in% tmpl)
+      organism <- XML::xmlValue(node[[which(tmpl %in% "scientific")]])
+  if("common" %in% tmpl)
+      organism <- c(organism, XML::xmlValue(node[[which(tmpl %in% "common")]]))
+    
   ## taxon
   inds <- which(node.names=="organism")
   node <- xml[[1]][[inds]]
@@ -48,11 +53,26 @@ uniprot <- function(accid) {
   ## gene
   node <- xml[[1]][['gene']]
   gene <- XML::xmlValue(node[[1]])
+
+  ## dbReference
+  inds <- which(node.names=="dbReference")
+  dbref <- list()
+  for(i in 1:length(inds)) {
+      node <- xml[[1]][[inds[i]]]
+      dbref[[i]] <- XML::xmlAttrs(node)
+  }
+  
+  dbref <- unlist(dbref)
+  type.inds <- names((dbref)) == "type"
+  id.inds <- names((dbref)) == "id"
+  dbref <- data.frame(type=dbref[type.inds], id=dbref[id.inds],
+                      stringsAsFactors=FALSE)
   
   out <- list(accession = accession, name = name,
               fullName = fullName, shortName = shortName,
               sequence = sequence, gene = gene,
-              organism = organism, taxon = taxon)
+              organism = organism, taxon = taxon,
+              dbref=dbref)
   
   return(out)
 }
