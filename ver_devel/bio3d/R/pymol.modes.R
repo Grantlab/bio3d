@@ -20,16 +20,17 @@ pymol.modes <- function(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
     if(type %in% c("session", "launch")) {
         
         ## determine path to exefile
-        exefile <- .get.exepath(exefile)
-        message(exefile)
+        exefile1 <- .get.exepath(exefile)
+        message(exefile1)
         
         ## Check if the program is executable
-        success <- .test.exefile(exefile)
+        success <- .test.exefile(exefile1)
         
         if(!success) {
             stop(paste("Launching external program failed\n",
                        "  make sure '", exefile, "' is in your search path", sep=""))
         }
+        exefile <- exefile1
     }
     
   if(inherits(modes, "nma")) {

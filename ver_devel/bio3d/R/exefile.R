@@ -27,7 +27,8 @@
             Darwin = c("/usr/bin/muscle",
                        "/usr/local/bin/muscle"),
             
-            Windows = c("C:/Program Files/muscle.exe", 
+            Windows = c("C:/Program Files/muscle.exe",
+                        "C:/Program Files/muscle3.8.31_i86win32.exe",
                         "C:/Program Files/muscle/muscle.exe",
                         "C:/Program Files/Muscle/muscle.exe",
                         "C:/Program Files/seaview/muscle.exe",
@@ -63,12 +64,10 @@
                        "/usr/bin/mkdssp",
                        "/usr/local/bin/mkdssp"),
             
-            Windows = c("C:/Program Files/dssp.exe", 
+            Windows = c("C:/Program Files/dssp.exe",
+                        "C:/Program Files/dssp-2.0.4-win32.exe",
                         "C:/Program Files/dssp/dssp.exe",
-                        "C:/Program Files/Dssp/dssp.exe",
-                        "C:/Program Files/dssp", 
-                        "C:/Program Files/dssp/dssp",
-                        "C:/Program Files/Dssp/dssp"),
+                        "C:/Program Files/Dssp/dssp.exe"),
             
             ver = "--version"
         )
@@ -108,7 +107,6 @@
     if(is.null(exefile)) {
         stop(paste0("could not determine path to '", prg, "'"))
     }
-    print(exefile)
     return(exefile)
 }
 
