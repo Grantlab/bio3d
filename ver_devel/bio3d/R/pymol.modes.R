@@ -21,7 +21,6 @@ pymol.modes <- function(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
         
         ## determine path to exefile
         exefile1 <- .get.exepath(exefile)
-        message(exefile1)
         
         ## Check if the program is executable
         success <- .test.exefile(exefile1)

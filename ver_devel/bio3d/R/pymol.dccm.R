@@ -18,7 +18,6 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
         
         ## determine path to exefile
         exefile1 <- .get.exepath(exefile)
-        message(exefile1)
         
         ## Check if the program is executable
         success <- .test.exefile(exefile1)
