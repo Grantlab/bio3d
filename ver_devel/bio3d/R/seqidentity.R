@@ -16,16 +16,20 @@ function( alignment , normalize=TRUE, similarity=FALSE, ncore=1, nseg.scale=1) {
      }
   }
 
+  ## set labels for output seqide matrix
   ids <- NULL
-  if(is.list(alignment)) {
-    if(inherits(alignment, c("fasta", "pdbs")))
-      ids <- basename.pdb(alignment$id)
-    alignment <- alignment$ali
+  if(inherits(alignment, c("fasta", "pdbs"))) {
+    ids <- basename.pdb(as.character(alignment$id))
   }
-  else {
-    ids <- basename.pdb(rownames(alignment))
+  if(is.matrix(alignment) & !is.null(rownames(alignment))) {
+    ids <- basename.pdb(as.character(rownames(alignment)))
   }
 
+  ## continue with ali matrix only
+  if(inherits(alignment, c("fasta", "pdbs"))) {
+    alignment <- alignment$ali
+  }
+  
   ## calculate similarity instead of identity?
   if(similarity) {
     alnTo10 <- function(x) {
