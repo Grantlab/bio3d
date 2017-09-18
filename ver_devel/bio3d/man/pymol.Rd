@@ -13,18 +13,18 @@
 pymol(\dots)
 
 \method{pymol}{pdbs}(pdbs, col=NULL, as="ribbon", file=NULL, type="script",
-                     exefile=NULL, \dots)
+                     exefile="pymol", \dots)
 
 \method{pymol}{nma}(\dots)
 
 \method{pymol}{pca}(\dots)
 
 \method{pymol}{modes}(modes, mode=NULL, file=NULL, scale=5, dual=FALSE,
-                     type="script", exefile=NULL, \dots)
+                     type="script", exefile="pymol", \dots)
 
 \method{pymol}{dccm}(dccm, pdb, file=NULL,
                      step=0.2, omit=0.2, radius = 0.15,
-                     type="script", exefile=NULL, \dots)
+                     type="script", exefile="pymol", \dots)
 
 
 }
