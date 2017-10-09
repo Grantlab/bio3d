@@ -122,7 +122,7 @@
   
   ## Make the request to the HMMER website
   ##url <- paste('http://hmmer.janelia.org/search/', type, sep="")
-  url <- paste("http://www.ebi.ac.uk/Tools/hmmer/search/", type, sep="")
+  url <- paste("https://www.ebi.ac.uk/Tools/hmmer/search/", type, sep="")
   curl.opts <- list(httpheader = "Expect:",
                     httpheader = "Accept:text/xml",
                     verbose = verbose,
@@ -134,6 +134,16 @@
                   .opts = curl.opts,
                   .contentEncodeFun=RCurl::curlPercentEncode, .checkParams=TRUE )
 
+  ## check results from the server
+  if(!grepl("results", hmm)) {
+      if(verbose) {
+          message("Content from HMMER server:")
+          message("  ", hmm)
+      }
+      
+      stop("Request to HMMER server failed")
+  }
+  
   add.pdbs <- function(x, ...) {
     hit <- XML::xpathSApply(x, '@*')
     pdbs <- unique(XML::xpathSApply(x, 'pdbs', XML::xmlToList))
