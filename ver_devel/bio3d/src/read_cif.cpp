@@ -235,7 +235,7 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
 						   Rcpp::Named("z")=z,
 						   Rcpp::Named("o")=o,
 						   Rcpp::Named("b")=b,
-						   Rcpp::Named("entid")=entid,
+						   Rcpp::Named("segid")=entid,
 						   Rcpp::Named("elesy")=elesy,
 						   Rcpp::Named("charge")=charge,
 						   Rcpp::Named("stringsAsFactors")=false
