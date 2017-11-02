@@ -38,17 +38,18 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
 
   cat("Fetching... Please wait")
   
-  ## do multiple requests if # of sequences > 500
+  ## do multiple requests if # of sequences > 200
+  nmax = 200
   errorCount=0
   checkInterval = 3
-  n <- floor( (length(ids)-1)/500 ) + 1
+  n <- floor( (length(ids)-1)/nmax) + 1
   for(i in 1:n) {
-    i1 <- (i-1)*500 + 1
-    i2 <- ifelse(i*500>length(ids), length(ids), i*500)
+    i1 <- (i-1)*nmax+ 1
+    i2 <- ifelse(i*nmax>length(ids), length(ids), i*nmax)
     ids1 <- ids[i1:i2]
     if(db=="nr") {
       url <- paste(baseUrl, "&val=", paste(ids1, collapse=','), 
-                   "&report=fasta&retmode=text&page_size=500", sep='')
+                   "&report=fasta&retmode=text&page_size=",nmax, sep='')
     } else {
       url <- paste(baseUrl, db, paste(ids1, collapse=','), 'fasta', sep='/')
     }
