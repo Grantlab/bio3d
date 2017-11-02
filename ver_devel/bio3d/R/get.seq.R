@@ -38,8 +38,8 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
 
   cat("Fetching... Please wait")
   
-  ## do multiple requests if # of sequences > 200
-  nmax = 200
+  ## do multiple requests if # of sequences > 100
+  nmax = 100
   errorCount=0
   checkInterval = 3
   n <- floor( (length(ids)-1)/nmax) + 1
@@ -72,6 +72,7 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
     }
     cat(text, file=outfile, append=TRUE)
     cat('.')
+    Sys.sleep(10)
   }
   cat(' Done.\n')
   
