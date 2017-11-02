@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // read_cif
 List read_cif(std::string filename, int maxlines, bool multi);
-RcppExport SEXP bio3d_read_cif(SEXP filenameSEXP, SEXP maxlinesSEXP, SEXP multiSEXP) {
+RcppExport SEXP _bio3d_read_cif(SEXP filenameSEXP, SEXP maxlinesSEXP, SEXP multiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +20,7 @@ END_RCPP
 }
 // read_crd
 List read_crd(std::string filename);
-RcppExport SEXP bio3d_read_crd(SEXP filenameSEXP) {
+RcppExport SEXP _bio3d_read_crd(SEXP filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -31,7 +31,7 @@ END_RCPP
 }
 // read_pdb
 List read_pdb(std::string filename, bool multi, bool hex, int maxlines, bool atoms_only);
-RcppExport SEXP bio3d_read_pdb(SEXP filenameSEXP, SEXP multiSEXP, SEXP hexSEXP, SEXP maxlinesSEXP, SEXP atoms_onlySEXP) {
+RcppExport SEXP _bio3d_read_pdb(SEXP filenameSEXP, SEXP multiSEXP, SEXP hexSEXP, SEXP maxlinesSEXP, SEXP atoms_onlySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -46,7 +46,7 @@ END_RCPP
 }
 // read_prmtop
 List read_prmtop(std::string filename);
-RcppExport SEXP bio3d_read_prmtop(SEXP filenameSEXP) {
+RcppExport SEXP _bio3d_read_prmtop(SEXP filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
