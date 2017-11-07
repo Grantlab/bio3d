@@ -35,15 +35,25 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
     warning(paste("Removing existing file:",outfile))
     unlink(outfile)
   }
-
-  cat("Fetching... Please wait")
   
-  ## do multiple requests if # of sequences > 100
-  nmax = 100
+  if(verbose) {
+    cat("Fetching sequences from\n\t", baseUrl, "\n\nPlease wait", sep="")
+  } else {
+    cat("Fetching... Please wait")
+  }
+
+  ## do multiple requests if # of sequences > nmax
+  if(grepl('ebi', baseUrl)) {
+     nmax = 100
+  } else {
+     nmax = 500
+  }
   errorCount=0
   checkInterval = 3
+  checkInterval2 = 300 # wait longer if blocked by servers
   n <- floor( (length(ids)-1)/nmax) + 1
   for(i in 1:n) {
+    if(i>1) Sys.sleep(10) # sleep 10s before sending another request
     i1 <- (i-1)*nmax+ 1
     i2 <- ifelse(i*nmax>length(ids), length(ids), i*nmax)
     ids1 <- ids[i1:i2]
@@ -53,26 +63,52 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
     } else {
       url <- paste(baseUrl, db, paste(ids1, collapse=','), 'fasta', sep='/')
     }
-    resp <- httr::GET(url)
-    text <- httr::content(resp, 'text', encoding='utf-8')
-    retry=0
-    while((httr::http_error(resp) || grepl('^ERROR', text) ||
-           grepl('Nothing has been found', text)) && retry<3) {
-      retry = retry + 1
-      if(verbose) cat('Fetching sequences failed. Retry ', retry, '...\n', sep='')
-      Sys.sleep(checkInterval)
-      resp <- httr::GET(url)
+    resp <- try(httr::GET(url), silent=TRUE)
+    if(inherits(resp, 'try-error')) {
+      text <- 'LOST CONNECTION'
+    } else {
       text <- httr::content(resp, 'text', encoding='utf-8')
     }
-    if(httr::http_error(resp) || grepl('^ERROR', text) ||
+    retry=0
+    while((grepl('^LOST CONNECTION', text) || httr::http_error(resp) || 
+           grepl('^ERROR', text) ||
+           grepl('Nothing has been found', text)) && retry<3) {
+      retry = retry + 1
+      if(grepl('^LOST CONNECTION', text)) {
+        if(verbose) {
+          cat('\nLost connection to the URL:\n\t', url, '\n\nRetry ', retry, 
+            ' in ', as.integer(checkInterval2*retry/60), ' minutes...', sep='')
+        } else {
+          cat('\nLost connection. Retry ', retry, ' in ', 
+            as.integer(checkInterval2*retry/60), 'min...', sep='') 
+        }
+        Sys.sleep(checkInterval2 * retry)
+      } else { 
+        if(verbose) {
+          cat('\nFetching sequences failed from the URL:\n\t', url, '\n\nRetry ', 
+            retry, '...', sep='')
+        } else {
+          cat('\nFailed. Retry ', retry, '...', sep='')
+        }
+        Sys.sleep(checkInterval)
+      }
+      resp <- try(httr::GET(url), silent=TRUE)
+      if(inherits(resp, 'try-error')) {
+         text <- 'LOST CONNECTION'
+      } else {
+         text <- httr::content(resp, 'text', encoding='utf-8')
+      }
+    }
+    if(grepl('^LOST CONNECTION', text) || httr::http_error(resp) || 
+       grepl('^ERROR', text) ||
        grepl('Nothing has been found', text)) {
       errorCount = errorCount + 1
       if(errorCount==n)
         stop('No sequence found. Check the ID(s).')
+    } else {
+       cat(text, file=outfile, append=TRUE)
     }
-    cat(text, file=outfile, append=TRUE)
     cat('.')
-    Sys.sleep(10)
   }
   cat(' Done.\n')
   
