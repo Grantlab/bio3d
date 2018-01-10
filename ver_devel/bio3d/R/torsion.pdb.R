@@ -16,7 +16,8 @@ function(pdb) {
   ##-- List atoms form each residue of each chain
   atom.data <- colpaste(pdb$atom,c("elety","resno","chain"))
   atom.list <- matrix(unlist(strsplit(atom.data,"\\.")), ncol=3, byrow=TRUE)
-  res.data  <- colpaste(pdb$atom,c("resno","chain"))
+  res.data  <- colpaste(pdb$atom,c("resno","chain", "resid", "insert"))
+  res.data  <- sub(".NA", "", res.data)
   res.list  <- unique(res.data)
 
   atom.names <- c("N","CA","C","O","CB", "*G","*G1","*G2","*D","*D1",
@@ -112,6 +113,7 @@ function(pdb) {
   ## New table/matrix for output
   tbl=cbind(phi[-(nres+1)], psi, chi1.F, chi2.F, chi3.F, chi4, chi51)
   colnames(tbl) <- c("phi", "psi", "chi1", "chi2", "chi3", "chi4", "chi5")
+  rownames(tbl) <- res.list
   
   out <- list(psi=psi, phi=phi[-(nres+1)], omega=omega,
               chi1=chi1.F, ##chi11=chi11, chi12=chi12,
