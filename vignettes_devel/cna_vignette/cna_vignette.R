@@ -184,14 +184,14 @@ tree$tree[max.mod.ind,]
 all( net$communities$membership == tree$tree[max.mod.ind,] )
 
 #+ hplotDummy, eval=FALSE
-# Inspect the clustering dendrogram (Figure 6). To match colors use 'colors=vmd.colors()[memb.k3]'
+# Inspect the clustering dendrogram (Figure 6). To match colors use 'colors=vmd_colors()[memb.k3]'
 h <- as.hclust(net$communities)
 hclustplot(h, k=3)
 
 #+ hplot, fig.cap="Example of community partitioning viewed as a dendrogram with colored communities", echo=FALSE
 h <- as.hclust(net$communities)
 memb.k3 <- tree$tree[ tree$num.of.comms == 3, ]
-hclustplot(h, colors=vmd.colors()[memb.k3])
+hclustplot(h, colors=vmd_colors()[memb.k3])
 
 #+ membK3
 # Inspect a new membership partitioning (at k=3)
@@ -353,7 +353,7 @@ identify.cna(xy, cna = net)
 
 #' 
 #' ### Color settings and node/edge labels
-#' The **vmd.colors()** function is used by default to define node color. This can be changed to any input color vector as demonstrated below. Note that the **vmd.colors()** function outputs a vector of colors that is ordered as they are in the VMD molecular graphics program and changing the colors will likely break this correspondence.
+#' The **vmd_colors()** function is used by default to define node color. This can be changed to any input color vector as demonstrated below. Note that the **vmd_colors()** function outputs a vector of colors that is ordered as they are in the VMD molecular graphics program and changing the colors will likely break this correspondence.
 
  
 grp.col <- bwr.colors(20)[net$communities$membership]
@@ -372,8 +372,8 @@ for (i in 1:max(net$communities$membership)) {
 }
 
 #+ plotNET, results="hide", fig.cap="Example of *mark.groups* and *mark.col* options to the **plot.cna()** function. In this case adding convex hulls that are colored according to communities." 
-colbar.full <- vmd.colors()[net$communities$membership]
-colbar.comms <- vmd.colors(max(net$communities$membership), alpha = 0.5)
+colbar.full <- vmd_colors()[net$communities$membership]
+colbar.comms <- vmd_colors(max(net$communities$membership), alpha = 0.5)
 # See Figure 16.
 plot(net, pdb, full = TRUE, mark.groups = grp.col, mark.col = colbar.comms)
 
