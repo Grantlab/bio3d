@@ -97,15 +97,15 @@ plot(net, pdb)
 #'
 #' Note that the above code plots both a *full* all-residue network as well as a more coarse grained community network - see **Figure 2**. In this example, and by default, the Girvan-Newman clustering method was used to map the full network into communities of highly intra-connected but loosely inter-connected nodes these were in turn used to derive the simplified network displayed in **Figure 2B**. We will discuss community detection in a separate section below and for now simply highlight that a comparison of the full network and the distribution and connectivity of communities between similar biomolecular systems (e.g. in the presence and absence of a binding partner or mutation) has the potential to highlight differences in coupled motions that may be indicative of potential allosteric pathways. This approach has previously been applied to investigate allostery in tRNA–protein complexes, kinesin motor domains, G-proteins, thrombin, and other systems [1-4].
 #' 
-#' Another useful function for the inspection of community structure is the **view.cna()** function, which permits interactive network visualization in the VMD molecular graphics program (see **Figure 3**).
+#' Another useful function for the inspection of community structure is the **vmd.cna()** function, which permits interactive network visualization in the VMD molecular graphics program (see **Figure 3**).
 #'   
 
 
 #+ viewCNA, eval=FALSE
 # View the network in VMD (see Figure 3)
-view.cna(net, pdb, launch = TRUE)
+vmd.cna(net, pdb, launch = TRUE)
 
-#' ![Example of **view.cna()** output. For this figure we have set the VMD display style to 'Tube' and color method to 'Color by Chain'. This allows one to see corresponding regions of structure colored by community along with the community protein structure network](figures/cna_fig3.png)
+#' ![Example of **vmd.cna()** output. For this figure we have set the VMD display style to 'Tube' and color method to 'Color by Chain'. This allows one to see corresponding regions of structure colored by community along with the community protein structure network](figures/cna_fig3.png)
  
 #' 
 #' One of the main advantages of correlation network analysis is that it often facilitates the interpretation of correlated motions that can be challenging to rationalize from the output of a dynamic correlation map alone (e.g. the output of the **dccm()** function). For example, the identified communities of highly intra-connected residues can be tied into the visualization of the correlation data (**Figure 4**) and cross referenced to the network visualizations presented in **Figures 2** and **3**. In this example the colored marginal segments of **Figure 4** math the identified communities in **Figures 2** and **3**:
@@ -204,9 +204,9 @@ plot(net.3, pdb)
 
 #+ viewCNAk3, eval=FALSE
 # View the network in VMD (see Figure 8)
-view.cna(net.3, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
+vmd.cna(net.3, trim.pdb(pdb, atom.select(pdb,"calpha")), launch=TRUE )
 
-#' ![Example of **view.cna()** output for modified k=3 community network. Within VMD we have set display style to 'Tube' and color to 'Color by Chain' as well as removing community spheres by deleting graphical objects.](figures/cna_fig7.png)
+#' ![Example of **vmd.cna()** output for modified k=3 community network. Within VMD we have set display style to 'Tube' and color to 'Color by Chain' as well as removing community spheres by deleting graphical objects.](figures/cna_fig7.png)
 
 
 #' 
@@ -255,17 +255,17 @@ plot(net, pdb)
 #' 
 #+ viewDCCM, eval=FALSE
 # View the correlations in pymol (see Figure 10).
-view.dccm(cij, pdb, launch = TRUE)
+pymol.dccm(cij, pdb, type = "launch")
 #' 
 #' 
-#' ![ Example of **view.dccm()** output for an MD trajectory ](figures/cna_fig10.png)
+#' ![ Example of **pymol.dccm()** output for an MD trajectory ](figures/cna_fig10.png)
 #'
 #+ viewNetMD, eval=FALSE
 # View the structure mapped network (see Figure 11).
-view.cna(net, pdb)
+vmd.cna(net, pdb, launch = TRUE)
 
 #'
-#' ![ The **view.cna()** output for the HIVpr example MD trajectory](figures/cna_fig11.png)
+#' ![ The **vmd.cna()** output for the HIVpr example MD trajectory](figures/cna_fig11.png)
 
 
 #'
@@ -300,10 +300,10 @@ plot(nnet, pdb)
 
 #+ viewK3MD, eval=FALSE
 # See Figure 14.
-view.cna(nnet, pdb, launch=TRUE)
+vmd.cna(nnet, pdb, launch=TRUE)
 
 #'
-#' ![ The **view.cna()** output for the HIVpr example MD trajectory after modularity inspection](figures/cna_fig13.png)
+#' ![ The **vmd.cna()** output for the HIVpr example MD trajectory after modularity inspection](figures/cna_fig13.png)
 
 #' 
 #' 
@@ -330,7 +330,7 @@ plot.dccm((cij * cm), main="")
 #' 
 #' 
 #' ## Part II: Customized network visualization
-#' We have already introduced the plot.cna() and view.cna() functions in earlier sections. Here we focus on methods for customizing network layouts, colors, labels, nodes and edges for visualization. 
+#' We have already introduced the plot.cna() and vmd.cna() functions in earlier sections. Here we focus on methods for customizing network layouts, colors, labels, nodes and edges for visualization. 
 #'
 #' The **layout.cna()** function can be used to determine the _geometric center_ of protein residues and communities and thus provide 3D and 2D network and community graph layouts that most closely match the protein systems 3D coords. 
 #' 
@@ -421,7 +421,7 @@ write.pdb(pdb, b=normalize.vector(node.betweenness), file="tmp.pdb")
  
 #'
 #' #### Suboptimal paths calculation.
-#' Identifying residues potentially involved in the dynamic coupling of distal protein regions can be facilitated by calculating possible linking paths through the correlation network objects. To run such an analysis, we can use the Bio3D function **cnapath()** and associated tools for printing and visulization (**summary.cnapath()**, **print.cnapath()** and **view.cnapath()**). 
+#' Identifying residues potentially involved in the dynamic coupling of distal protein regions can be facilitated by calculating possible linking paths through the correlation network objects. To run such an analysis, we can use the Bio3D function **cnapath()** and associated tools for printing and visulization (**summary.cnapath()**, **print.cnapath()** and **vmd.cnapath()**). 
 #+ cnapath, cache=TRUE, results="hide"
 pa <- cnapath(net, from=32, to=131, k=50)
 
@@ -439,10 +439,10 @@ print(pa)
 # Also plot graphics for length distribution and node degeneracy
 print(pa, label="HIVP", plot=TRUE)
 
-#' To visulize paths use the function **view.cnapath()** (NOTE: you need VMD installed properly).
+#' To visulize paths use the function **vmd.cnapath()** (NOTE: you need VMD installed properly).
 #+ viewpa, eval=FALSE
 # See Fig 20
-view.cnapath(pa, pdb=pdb, spline=TRUE, col='cyan', launch=TRUE)
+vmd.cnapath(pa, pdb=pdb, spline=TRUE, col='cyan', launch=TRUE)
 
 #' 
 #' ![**Visulization of suboptimal paths in a correlation network.** Paths are represented as cyan lines, and source/sink nodes are black spheres.](figures/cna_fig20.png)
@@ -450,7 +450,7 @@ view.cnapath(pa, pdb=pdb, spline=TRUE, col='cyan', launch=TRUE)
 
 
 #' #### Side-note: {.unnumbered}
-#' Set **spline=FALSE** to get faster loading of paths in VMD. Also, set **launch=FALSE** if you want to view paths later. To do that, load the two files generated by the function, 'view.cnapath.pdb' and 'view.cnapath.vmd', in VMD (Read VMD manual for more detailed instruction).
+#' Set **spline=FALSE** to get faster loading of paths in VMD. Also, set **launch=FALSE** if you want to view paths later. To do that, load the two files generated by the function, 'vmd.cnapath.pdb' and 'vmd.cnapath.vmd', in VMD (Read VMD manual for more detailed instruction).
 #'
 #' To view an example of the output obtained and how key residues involved in the allosteric signaling were identified, please read the following work: Scarabelli and Grant, (2014). Kinesin-5 allosteric inhibitors uncouple the dynamics of nucleotide, microtubule and neck-linker binding sites, *Biophys J*, **107**, 2204-2213 and Yao and Grant, Allosteric networks in G-Proteins with molecular dynamics and normal mode analysis, *in preparation*.
 #'
