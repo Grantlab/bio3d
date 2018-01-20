@@ -196,7 +196,8 @@ vmd.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
 
     os1 <- .Platform$OS.type
     if (os1 == "windows") {
-      shell(shQuote(cmd))
+      cmd <- paste(shQuote(exefile), pdbfile, "-e", vmdfile)
+      shell(cmd)
     } else{
       system(cmd)
     }
