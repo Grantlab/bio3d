@@ -70,6 +70,9 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
   string tmp;
   int tmp_eleno;
   int tmp_resno;
+
+  // counter for seqres while loop
+  int i;
   
   string prev_eleno_str;
   string curr_eleno_str;
@@ -143,12 +146,16 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
       
       // store SEQRES info
       else if(line.substr(0,6)=="SEQRES" && !atoms_only) {
-	for(int i=0; i<13; i++) { 
-	  tmp = trim(line.substr(19+(i*4),3));
+
+	i=0;
+	while(19+(i*4) < (int) line.length()) {
+	  tmp = trim(line.substr(19+(i*4), 3));
+
 	  if(tmp != "") {
 	    seqres.push_back(tmp);
 	    seqres_chain.push_back(trim(line.substr(11,1)));
 	  }
+	  i++;
 	}
       }
 
