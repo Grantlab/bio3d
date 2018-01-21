@@ -2,7 +2,7 @@
 #'title: "Protein Structure Networks with Bio3D"
 #'author: "Xin-Qiu Yao, Guido Scarabelli, Lars Skjaerven & Barry J. Grant"
 #'affiliation: University of Michigan, Ann Arbor, USA
-#'date: "October 8, 2014 (last updated: Feburary 24, 2015)"
+#'date: "October 8, 2014 (last updated: January 20, 2018)"
 #'output:
 #'  pdf_document:
 #'    fig_caption: yes
@@ -26,6 +26,16 @@
 
 #+ setup, include=FALSE
 knitr::opts_chunk$set(dev='png', dev.args=list(type="cairo"), dpi=120)
+knitr::knit_hooks$set(two.col = function(before, options, envir) {
+   if(before) par(mfcol = c(1, 2))
+})
+knitr::knit_hooks$set(small.mar = function(before, options, envir) {
+   if(before) par(mar = c(4, 4, 1, .1))
+})
+knitr::knit_hooks$set(no.mar = function(before, options, envir) {
+   if(before) par(mar = c(0, 0, 0, 0))
+})
+
 
 #+ preamble, include=FALSE, eval=FALSE
 library(rmarkdown)
@@ -62,7 +72,7 @@ install.packages("igraph")
 #' The code snippet below first loads the Bio3D package, then reads an example PDB structure from the RCSB online database. We then follow the flow in Figure 1 by performing NMA, then dynamic cross-correlation analysis, and finally network analysis with the **cna()** function.
 #' 
 #' 
-#+ example1, results="hide", warning=FALSE
+#+ example1, results="hide", warning=FALSE, message=FALSE
 library(bio3d)
 library(igraph)
 pdbfile <- system.file("examples/hivp.pdb", package = "bio3d")
@@ -83,19 +93,17 @@ attributes(x)
 # List the residues belonging to the 5th community
 x$members[5]
 
-#+ figure2, results="hide", fig.cap="Full all-residue network and simplified community network"
+#+ figure2, results="hide", two.col=TRUE, no.mar=TRUE, fig.width=5, fig.height=2.5, fig.cap="Full all-residue network and simplified community network"
 # Plot both the ‘full’ all-residue network and simplified community network
-par(mfcol = c(1, 2), mar = c(0, 0, 0, 0))
 plot(net, pdb, full = TRUE, vertex.label.cex=0.7)
 plot(net, pdb)
-
 
 #'
 #' #### Side note:
 #' *The raw correlation matrix obtained from NMA (or indeed MD) typically has many small but non-zero value elements. By default the **cna()** function excludes some of the weakest values (close to zero) to avoid building an edge heavy network, which would considerably slow down further analysis. The **cutoff.cij** argument in the **cna()** function specifies the lower boundary for considering correlation values. All values whose absolute value is lower than **cutoff.cij** will be ignored when defining network edges.*
 #'
 #'
-#' Note that the above code plots both a *full* all-residue network as well as a more coarse grained community network - see **Figure 2**. In this example, and by default, the Girvan-Newman clustering method was used to map the full network into communities of highly intra-connected but loosely inter-connected nodes these were in turn used to derive the simplified network displayed in **Figure 2B**. We will discuss community detection in a separate section below and for now simply highlight that a comparison of the full network and the distribution and connectivity of communities between similar biomolecular systems (e.g. in the presence and absence of a binding partner or mutation) has the potential to highlight differences in coupled motions that may be indicative of potential allosteric pathways. This approach has previously been applied to investigate allostery in tRNA–protein complexes, kinesin motor domains, G-proteins, thrombin, and other systems [1-4].
+#' Note that the above code plots both a *full* all-residue network as well as a more coarse grained community network - see **Figure 2**. In this example, and by default, the Girvan-Newman clustering method was used to map the full network into communities of highly intra-connected but loosely inter-connected nodes these were in turn used to derive the simplified network displayed in **Figure 2B**. We will discuss community detection in a separate section below and for now simply highlight that a comparison of the full network and the distribution and connectivity of communities between similar biomolecular systems (e.g. in the presence and absence of a binding partner or mutation) has the potential to highlight differences in coupled motions that may be indicative of potential allosteric pathways. This approach has previously been applied to investigate allostery in tRNA–protein complexes, kinesin motor domains, G-proteins, thrombin, and other systems [1-5].
 #' 
 #' Another useful function for the inspection of community structure is the **vmd.cna()** function, which permits interactive network visualization in the VMD molecular graphics program (see **Figure 3**).
 #'   
@@ -108,10 +116,10 @@ vmd.cna(net, pdb, launch = TRUE)
 #' ![Example of **vmd.cna()** output. For this figure we have set the VMD display style to 'Tube' and color method to 'Color by Chain'. This allows one to see corresponding regions of structure colored by community along with the community protein structure network](figures/cna_fig3.png)
  
 #' 
-#' One of the main advantages of correlation network analysis is that it often facilitates the interpretation of correlated motions that can be challenging to rationalize from the output of a dynamic correlation map alone (e.g. the output of the **dccm()** function). For example, the identified communities of highly intra-connected residues can be tied into the visualization of the correlation data (**Figure 4**) and cross referenced to the network visualizations presented in **Figures 2** and **3**. In this example the colored marginal segments of **Figure 4** math the identified communities in **Figures 2** and **3**:
+#' One of the main advantages of correlation network analysis is that it often facilitates the interpretation of correlated motions that can be challenging to rationalize from the output of a dynamic correlation map alone (e.g. the output of the **dccm()** function). For example, the identified communities of highly intra-connected residues can be tied into the visualization of the correlation data (**Figure 4**) and cross referenced to the network visualizations presented in **Figures 2** and **3**. In this example the colored marginal segments of **Figure 4** match the identified communities in **Figures 2** and **3**:
 #' 
 #' 
-#+ figNMAcij, results="hide", fig.cap="Example dynamical cross-correlation matrix (DCCM) plot with community annotation. Note that unique colors are assigned to communities (that are not necessary consecutive in sequence) and that these correspond to those annotated communities in all previous network Figures and those used by VMD in Figure 3."
+#+ figNMAcij, results="hide", fig.width=5, fig.height=4.5, fig.cap="Example dynamical cross-correlation matrix (DCCM) plot with community annotation. Note that unique colors are assigned to communities (that are not necessary consecutive in sequence) and that these correspond to those annotated communities in all previous network Figures and those used by VMD in Figure 3."
 # Plot the correlation matrix with community annotation, see Figure 4. 
 plot.dccm(cij, margin.segments = net$communities$membership, main="")
 
@@ -137,7 +145,7 @@ attributes(net)
 #' * **`$community.cij`**: A cij matrix obtained by applying a "collapse.method" on `$cij`. The rows and columns match the number of communities in $communities. The individual values are based on the cij couplings of inter-community residues. The currently available collapse methods for defining these values include: max, mean, trimmed and median.
 #' 
 #'
-#' Both the **`$network`** and **`$community.network`** attributes are [igraph compatible network objects](http://igraph.sourceforge.net) [5] and contain additional node (or vertex) and edge annotations that can be accessed with the **V()** and **E()** functions in the following way:
+#' Both the **`$network`** and **`$community.network`** attributes are [igraph compatible network objects](http://igraph.sourceforge.net) [6] and contain additional node (or vertex) and edge annotations that can be accessed with the **V()** and **E()** functions in the following way:
 #'  
 #' 
 #+ dataLook
@@ -151,7 +159,7 @@ V(net$community.network)$name
 #' In addition to various Bio3D functions, the full set of extensive [igraph package](http://igraph.sourceforge.net) features can thus be used to further analyze these network objects.
 #' 
 #' ### The community clustering procedure
-#' The **`$communities`** attribute returned by the **cna()** function provides details of the community clustering procedure. This procedure aims to split the full network into highly correlated local substructures (referred to as communities) within which the network connections are dense but between which they are sparser.  A number of community detection algorithms can be used to solve this so called graph-partitioning problem. The default Girvan-Newman edge-betweenness approach is a divisive algorithm that is based on the use of the edge betweenness as a partitioning criterion. "Betweenness" is calculated by finding the shortest path(s) between a pair of vertexes and scoring each of the edges on this/these path(s) with the inverse value of the number of shortest paths. (So if there was only one path of the shortest length, each edge on it would score 1 and if there were 10 paths of that length, each edge would score 1/10.) This is done for every pair of vertexes. In this way each edge accumulates a "betweenness" score for the whole network. The network is separated into clusters by removing the edge with the highest "betweenness", then recalculating betweenness and repeating. The method is fully described in (Girvan and Newman, 2002 PNAS) [6].
+#' The **`$communities`** attribute returned by the **cna()** function provides details of the community clustering procedure. This procedure aims to split the full network into highly correlated local substructures (referred to as communities) within which the network connections are dense but between which they are sparser.  A number of community detection algorithms can be used to solve this so called graph-partitioning problem. The default Girvan-Newman edge-betweenness approach is a divisive algorithm that is based on the use of the edge betweenness as a partitioning criterion. "Betweenness" is calculated by finding the shortest path(s) between a pair of vertexes and scoring each of the edges on this/these path(s) with the inverse value of the number of shortest paths. (So if there was only one path of the shortest length, each edge on it would score 1 and if there were 10 paths of that length, each edge would score 1/10.) This is done for every pair of vertexes. In this way each edge accumulates a "betweenness" score for the whole network. The network is separated into clusters by removing the edge with the highest "betweenness", then recalculating betweenness and repeating. The method is fully described in (Girvan and Newman, 2002 PNAS) [7].
 #' 
 #' A useful quantity used to measure the quality of a given community partition is the **modularity** (detailed in the **`$communities$modularity`** component of **cna()** output). The modularity represents the difference in probability of intra- and inter-community connections for a given network division. Modularity values fall in the range from 0 to 1, with higher values indicating higher quality of the community structure. The optimum community structures obtained for typical MD and NMA derived correlation networks fall in the 0.4 to 0.7 range.
 #' 
@@ -164,7 +172,7 @@ max(net$communities$modularity)
 #' 
 #' The **community.tree()** function can be used to reconstruct the community membership vector for each clustering step. Here we plot modularity vs number of communities.
 
-#+ modularityPlot, fig.cap="Network modularity upon removing edges during the betweenness clustering procedure for community annotation. Note the peak in modularity at k=8"
+#+ modularityPlot, small.mar=TRUE, fig.width=4.5, fig.height=4, fig.cap="Network modularity upon removing edges during the betweenness clustering procedure for community annotation. Note the peak in modularity at k=8."
 # See Figure 5.
 tree <- community.tree(net, rescale=TRUE)
 plot( tree$num.of.comms, tree$modularity, xlab="Communities", ylab="Modularity") 
@@ -188,16 +196,16 @@ all( net$communities$membership == tree$tree[max.mod.ind,] )
 h <- as.hclust(net$communities)
 hclustplot(h, k=3)
 
-#+ hplot, fig.cap="Example of community partitioning viewed as a dendrogram with colored communities", echo=FALSE
+#+ hplot, fig.width=4, fig.height=4, fig.cap="Example of community partitioning viewed as a dendrogram with colored communities", echo=FALSE
 h <- as.hclust(net$communities)
 memb.k3 <- tree$tree[ tree$num.of.comms == 3, ]
-hclustplot(h, colors=vmd_colors()[memb.k3])
+hclustplot(h, colors=vmd_colors()[memb.k3], mar=c(1, 2, 1, 0))
 
 #+ membK3
 # Inspect a new membership partitioning (at k=3)
 memb.k3 <- tree$tree[ tree$num.of.comms == 3, ]
 
-#+ net3, results="hide", fig.cap="Example of forcing a k=3 community network"
+#+ net3, results="hide", no.mar=TRUE, fig.width=3.5, fig.height=3, fig.cap="Example of forcing a k=3 community network"
 # Produce a new k=3 community network (Figure 7)
 net.3 <- network.amendment(net, memb.k3)
 plot(net.3, pdb)
@@ -239,7 +247,7 @@ trj <- fit.xyz(fixed = pdb$xyz, mobile = dcd,
 #' Once we have the superposed trajectory frames we can asses the extent to which the atomic fluctuations of individual residues (in this very short example simulation) are correlated with one another and build a network from this data:
 #' 
 #' 
-#+ example2MD, results="hide", fig.cap="Example network analysis of MD data"
+#+ example2MD, results="hide", no.mar=TRUE, fig.width=4, fig.height=2.7, fig.cap="Example network analysis of MD data"
 # See Figure 9.
 cij <- dccm(trj)
 net <- cna(cij)
@@ -247,7 +255,7 @@ plot(net, pdb)
 
 
 #' #### Side note:
-#' *Due to the often noisy nature of correlations calculated from short MD simulations, we typically suggest running longer simulations and multiple replica simulations from which a consensus correlation matrix and consensus network can be generated and compared to results obtained from individual simulations. For example, see the following works: Scarabelli and Grant, (2014). Kinesin-5 allosteric inhibitors uncouple the dynamics of nucleotide, microtubule and neck-linker binding sites, Biophys J. in press and Yao and Grant, (2014). Characterizing nucleotide dependent allostery in G-Proteins with molecular dynamics and normal mode analysis. submitted.*
+#' *Due to the often noisy nature of correlations calculated from short MD simulations, we typically suggest running longer simulations and multiple replica simulations from which a consensus correlation matrix and consensus network can be generated and compared to results obtained from individual simulations. For example, see the following works: Scarabelli and Grant, (2014). Kinesin-5 allosteric inhibitors uncouple the dynamics of nucleotide, microtubule and neck-linker binding sites, Biophys J. 107:2204 and Yao, et al., and Grant, (2016). Dynamic coupling and allosteric networks in the alpha subunit of heterotrimeric G proteins. J. Biol. Chem. 291:4742. *
 #'
 #' 
 #' Note that the **dccm()** function can be slow to run on very large trajectories. In such cases you may want to use multiple CPU cores for the calculation by setting the 'ncore' option to an appropriate value for your computer - see *help(dccm)* for details.
@@ -271,7 +279,7 @@ vmd.cna(net, pdb, launch = TRUE)
 #'
 #' As noted above, maximization of modularity sometimes creates unexpected community partitions splitting visually obvious domains into many small community 'islands'. In such cases we look into partitions with modularity close to the maximal value but with an overall smaller number of communities (see above).
 
-#+ modularityPlot2, fig.cap="Network modularity for example HIVpr MD derived network. Note the two peaks in modularity for this short trajectory."
+#+ modularityPlot2, small.mar=TRUE, fig.width=5, fig.height=4, fig.cap="Network modularity for example HIVpr MD derived network. Note the two peaks in modularity for this short trajectory."
 # See Figure 12.
 tree <- community.tree(net, rescale=TRUE)
 plot( tree$num.of.comms, tree$modularity, xlab="Communities", ylab="Modularity" ) 
@@ -292,7 +300,7 @@ mod.select <- function(x, thres=0.1) {
    network.amendment(x, remodel$tree[ind, ])
 }
 
-#+ modularity_selection, results="hide", fig.cap="Alternate community partition "
+#+ modularity_selection, results="hide", no.mar=TRUE, fig.width=3.5, fig.height=2.7, fig.cap="Alternate community partition "
 nnet = mod.select(net)
 nnet
 # See Figure 13.
@@ -308,10 +316,10 @@ vmd.cna(nnet, pdb, launch=TRUE)
 #' 
 #' 
 #' ### Using a contact map filter:
-#' In the original Luthy-Shulten and co-workers approach to correlation network analysis [1] edges were only included between “in contact” nodes. Contacting nodes were defined as those having any heavy atom within 4.5 Å for greater than 75% of the simulation. The weight of these contact edges was then taken from the cross-correlation data. This approach effectively ignores long range correlations between residues that are not in physical contact for the majority of the trajectory. To replicate this approach one can simply define a contact map with the **cmap()** function and provide this to the **cna()** function along with the required cross-correlation matrix, e.g.: 
+#' In the original Luthey-Schulten and co-workers approach to correlation network analysis [1] edges were only included between “in contact” nodes. Contacting nodes were defined as those having any heavy atom within 4.5 Å for greater than 75% of the simulation. The weight of these contact edges was then taken from the cross-correlation data. This approach effectively ignores long range correlations between residues that are not in physical contact for the majority of the trajectory. To replicate this approach one can simply define a contact map with the **cmap()** function and provide this to the **cna()** function along with the required cross-correlation matrix, e.g.: 
 #' 
 #' 
-#+ cmfliter
+#+ cmfliter, results='hide'
 cm <- cmap(trj, dcut = 4.5, scut = 0, pcut = 0.75, mask.lower = FALSE)
 net.cut <- cna(cij, cm = cm)
 
@@ -319,14 +327,14 @@ net.cut <- cna(cij, cm = cm)
 #' One could also simply multiple the correlation matrix by the contact map to zero out these long-range correlations. However, we currently prefer not to use this filtering step as we have found that this approach can remove potentially interesting correlations that might prove to be important for the types of long-range coupling we are most interested in exploring. For example, compare the plot of correlation values below in **Figure 15** to those in **Figure 4**.
 #' 
 #' 
-#+ plotDCCM, results="hide", fig.cap="Contact map filtered DCCM plot (compare to Figure 4)"
+#+ plotDCCM, results="hide", small.mar=TRUE, fig.width=5, fig.height=3.7, fig.cap="Contact map filtered DCCM plot (compare to Figure 4)"
 # See Figure 15.
 plot.dccm((cij * cm), main="")
 ## Plot non-filtered DCCM
 ##plot.dccm(cij, margin.segments = net$communities$membership)
 
 #'  
-#' It is also possible to use a consensus of contact map and dynamical correlation matrices from replica simulations with the functions **cmap.filter()** and **dccm.filter()** - see their respective help pages for further details.
+#' It is also possible to use a consensus of contact map and dynamical correlation matrices from replica simulations with the functions **filter.cmap()** and **filter.dccm()** - see their respective help pages for further details.
 #' 
 #' 
 #' ## Part II: Customized network visualization
@@ -361,7 +369,7 @@ grp.col <- bwr.colors(20)[net$communities$membership]
 #' 
 #' 
 #' 
-#' Useful options in **plot.cna()** to be aware of include the optional flags 'mark.groups' and 'mark.col', which let one draw and color areas around groups of residues corresponding to the community clustering or any other residue partitioning of interest (see **Figure 14**):
+#' Useful options in **plot.cna()** to be aware of include the optional flags 'mark.groups' and 'mark.col', which let one draw and color areas around groups of residues corresponding to the community clustering or any other residue partitioning of interest (see **Figure 16**):
 #'
 
 
@@ -371,7 +379,7 @@ for (i in 1:max(net$communities$membership)) {
   grp.col[[i]] <- grp.tmp
 }
 
-#+ plotNET, results="hide", fig.cap="Example of *mark.groups* and *mark.col* options to the **plot.cna()** function. In this case adding convex hulls that are colored according to communities." 
+#+ plotNET, results="hide", no.mar=TRUE, fig.width=3.5, fig.height=3.5, fig.cap="Example of *mark.groups* and *mark.col* options to the **plot.cna()** function. In this case adding convex hulls that are colored according to communities." 
 colbar.full <- vmd_colors()[net$communities$membership]
 colbar.comms <- vmd_colors(max(net$communities$membership), alpha = 0.5)
 # See Figure 16.
@@ -380,22 +388,21 @@ plot(net, pdb, full = TRUE, mark.groups = grp.col, mark.col = colbar.comms)
  
 #' 
 #' ### Network manipulation
-#' The **prune.cna()** function allows one to remove communities under a certain size or with less less than a certain number of edges to other communities prior to visualization or further analysis. For example, to remove communities composed of only 2 residues (see Figure 15):
+#' The **prune.cna()** function allows one to remove communities under a certain size or with less less than a certain number of edges to other communities prior to visualization or further analysis. For example, to remove communities composed of only 1 residue (see **Figure 17**):
 #' 
 
 
-net.pruned <- prune.cna(net, size.min = 3)
+net.pruned <- prune.cna(net, size.min = 2)
 
  
 #' 
-#+ pruneNET, results="hide", fig.cap="Original (left) and pruned (right) networks" 
+#+ pruneNET, results="hide", two.col=TRUE, no.mar=TRUE, fig.width=6, fig.height=3, fig.cap="Original (left) and pruned (right) networks" 
 # See Figure 17.
-par(mfcol = c(1, 2), mar = c(0, 0, 0, 0))
 plot.cna(net)
 plot.cna(net.pruned)
 
 #' 
-#' Applying this command to our network example, you can see how the communities composed by less than 3 residues are deleted from the graph.
+#' Applying this command to our network example, you can see how the communities composed by less than 2 residues are deleted from the graph.
 #' 
 #'
 #' ### Calculating network node centrality and suboptimal paths through the network.
@@ -407,7 +414,7 @@ plot.cna(net.pruned)
 
 node.betweenness <- betweenness(net$network)
 
-#+ centrality, fig.cap="Betweenness centrality"
+#+ centrality, small.mar=TRUE, fig.width=5, fig.height=4, fig.cap="Betweenness centrality"
 # See Figure 18. 
 plot(node.betweenness, xlab="Residue No", ylab="Centrality", type="h")
 
@@ -428,7 +435,7 @@ pa <- cnapath(net, from=32, to=131, k=50)
 #' The 'from' and 'to' arguments in above function call represent the node IDs of the two ends (denoted by 'source' and 'sink', respectively) in the path anlaysis. The number of paths calculated is specified by the argument 'k' (Here we explore 50 suboptimal paths). 
 #'
 #' Some basic statistics about the paths, including path length distribution and node degeneracy (number of paths going through each node) can be obtained by using the function **print()** (or **summary()** for a similar effect). 
-#+ printpa, fig.cap="Length distribution and node degeneracy in path analysis"
+#+ printpa, small.mar=TRUE, fig.width=5, fig.height=2.5, fig.cap="Length distribution and node degeneracy in path analysis"
 print(pa)
 # Or, simply type 'pa'
 
@@ -436,7 +443,7 @@ print(pa)
 # (e.g. from networks of the same system but under distinct states)
 # print(pa1, pa2, ...)
 
-# Also plot graphics for length distribution and node degeneracy
+# Also generate plots for path length distribution and node degeneracy; See Figure 19.
 print(pa, label="HIVP", plot=TRUE)
 
 #' To visulize paths use the function **vmd.cnapath()** (NOTE: you need VMD installed properly).
@@ -452,9 +459,9 @@ vmd.cnapath(pa, pdb=pdb, spline=TRUE, col='cyan', launch=TRUE)
 #' #### Side-note: {.unnumbered}
 #' Set **spline=FALSE** to get faster loading of paths in VMD. Also, set **launch=FALSE** if you want to view paths later. To do that, load the two files generated by the function, 'vmd.cnapath.pdb' and 'vmd.cnapath.vmd', in VMD (Read VMD manual for more detailed instruction).
 #'
-#' To view an example of the output obtained and how key residues involved in the allosteric signaling were identified, please read the following work: Scarabelli and Grant, (2014). Kinesin-5 allosteric inhibitors uncouple the dynamics of nucleotide, microtubule and neck-linker binding sites, *Biophys J*, **107**, 2204-2213 and Yao and Grant, Allosteric networks in G-Proteins with molecular dynamics and normal mode analysis, *in preparation*.
+#' To view an example of the output obtained and how key residues involved in the allosteric signaling were identified, please read the following work: Scarabelli and Grant, (2014). Kinesin-5 allosteric inhibitors uncouple the dynamics of nucleotide, microtubule and neck-linker binding sites, *Biophys J*, **107**, 2204-2213 and Yao, et al., and Grant, (2016). Dynamic coupling and allosteric networks in the alpha subunit of heterotrimeric G proteins. *J Biol Chem*, **291**, 4742-4753.
 #'
-#' Alternatively, suboptimal path analysis can be performed with the WISP program [7]. It is easy to interface the protein network built using Bio3D with WISP to perform a search for the shortest paths between two selected network nodes. WISP requires an input adjacency matrix of the network, which can be saved in a file using the following command:
+#' Alternatively, suboptimal path analysis can be performed with the WISP program [8]. It is easy to interface the protein network built using Bio3D with WISP to perform a search for the shortest paths between two selected network nodes. WISP requires an input adjacency matrix of the network, which can be saved in a file using the following command:
 
 #+ forWISIP, eval=FALSE
 write.table(net$cij, quote=FALSE, row.names=FALSE, col.names=FALSE, file="adj.txt")
@@ -475,13 +482,15 @@ write.table(net$cij, quote=FALSE, row.names=FALSE, col.names=FALSE, file="adj.tx
 #'
 #' [3] Yao X, Grant BJ, Biophys J 105, L08–L10.
 #'
-#' [4] Gasper PM, Fuglestad B, Komives EA, Markwick PR, McCammon JA. Proc Natl Acad Sci U S A. 2012 Dec 26;109(52):21216-22.
+#' [4] Yao X, Malik RU, Griggs NW, Skjaerven L, Traynor JR, Sivaramakrishnan S, and Grant BJ, J Biol Chem 291, 4742-4753.
 #'
-#' [5] Gábor Csárdi, Tamás Nepusz. InterJournal Complex Systems, 1695, 2006.
+#' [5] Gasper PM, Fuglestad B, Komives EA, Markwick PR, McCammon JA. Proc Natl Acad Sci U S A. 2012 Dec 26;109(52):21216-22.
 #'
-#' [6] Girvan M, Newman ME. Proc Natl Acad Sci U S A. 2002 Jun 11;99(12):7821-6.
+#' [6] Gábor Csárdi, Tamás Nepusz. InterJournal Complex Systems, 1695, 2006.
 #'
-#' [7] Van Wart AT, Durrant J, Votapka L, Amaro RE. J. Chem. Theory Comput., 2014, 10 (2), pp 511–517.
+#' [7] Girvan M, Newman ME. Proc Natl Acad Sci U S A. 2002 Jun 11;99(12):7821-6.
+#'
+#' [8] Van Wart AT, Durrant J, Votapka L, Amaro RE. J. Chem. Theory Comput., 2014, 10 (2), pp 511–517.
 #'
 
 #'
