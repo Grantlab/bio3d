@@ -31,6 +31,10 @@ trim.pdbs <- function(pdbs, row.inds=NULL, col.inds=NULL, ...) {
   new$sse   =pdbs$sse[row.inds, col.inds, drop=FALSE]
   new$call  =cl
  
+  if(!is.null(pdbs$insert)) {
+    new$insert =pdbs$insert[row.inds, col.inds, drop=FALSE]
+  }
+  
   if(!is.null(pdbs$all)) {
     col.inds.all <- which(pdbs$all.grpby %in% abs(col.inds))
     col.inds.all <- col.inds.all * sign(rep(col.inds, rle(pdbs$all.grpby[col.inds.all])$length))

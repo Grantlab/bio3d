@@ -13,8 +13,9 @@ ff.aaenm2 <- function(r, atom.id, pdb, ...) {
     k <- a * r^(-6)
 
     # intra-residue
-    resno = pdb$atom[atom.id, "resno"]
-    intra.inds <- which(pdb$atom[, "resno"] == resno)
+    res <- paste(pdb$atom$resno, pdb$atom$chain, pdb$atom$insert, sep="-")
+    myres <- res[atom.id]
+    intra.inds <- which(res == myres)
     k[ intra.inds ] = 200
 
     covalent.inds <- which(r < 2)
