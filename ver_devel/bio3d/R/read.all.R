@@ -61,6 +61,7 @@ function(aln, prefix="", pdbext="", sel=NULL, rm.wat=TRUE, rm.ligand=FALSE,
       res.ch <- blank
       res.id <- blank
       res.ss <- blank
+      res.in <- blank
       ## all atom data
       coords.all <- rep(blank.all, 3)
       elety.all <- blank.all
@@ -160,7 +161,8 @@ function(aln, prefix="", pdbext="", sel=NULL, rm.wat=TRUE, rm.ligand=FALSE,
       res.bf <- as.numeric( ca.ali[,"b"] )
       res.ch <- ca.ali[, "chain"]
       res.id <- ca.ali[, "resid"]
-
+      res.in <- ca.ali[, "insert"]
+      
       sse <- pdb2sse(pdb, verbose = FALSE)
       if(!is.null(sse)) 
         res.ss <- sse[nseq]
@@ -178,7 +180,7 @@ function(aln, prefix="", pdbext="", sel=NULL, rm.wat=TRUE, rm.ligand=FALSE,
 
     } # end else 
     list(coords=coords, coords.all=coords.all, res.nu=res.nu, res.bf=res.bf,
-         res.ch=res.ch, res.id=res.id, res.ss=res.ss, elety.all=elety.all, 
+         res.ch=res.ch, res.id=res.id, res.in=res.in, res.ss=res.ss, elety.all=elety.all, 
          resid.all=resid.all, resno.all=resno.all, hetatm=hetatm)
   }, mc.cores=ncore, mc.allow.recursive=FALSE) # end for
 
@@ -193,9 +195,15 @@ function(aln, prefix="", pdbext="", sel=NULL, rm.wat=TRUE, rm.ligand=FALSE,
   res.ch <- do.call( rbind, unname(sapply(rtn, '[', 'res.ch')) )
   res.id <- do.call( rbind, unname(sapply(rtn, '[', 'res.id')) )
   res.ss <- do.call( rbind, unname(sapply(rtn, '[', 'res.ss')) )
+  res.in <- do.call( rbind, unname(sapply(rtn, '[', 'res.in')) )
   
   if( all(is.na(res.ss)) ) res.ss <- NULL
-
+  if( all(is.na(res.in)) ) {
+    res.in <- NULL
+  } else {
+    res.in[is.na(res.in)] <- ''
+  }
+  
   coords.all <- do.call( rbind, unname(sapply(rtn, '[', 'coords.all')) )
   elety.all <- do.call( rbind,  unname(sapply(rtn, '[', 'elety.all')) )
   resid.all <- do.call( rbind,  unname(sapply(rtn, '[', 'resid.all')) )
@@ -211,7 +219,8 @@ function(aln, prefix="", pdbext="", sel=NULL, rm.wat=TRUE, rm.ligand=FALSE,
   rownames(res.ch) <- aln$id
   rownames(res.id) <- aln$id
   if(!is.null(res.ss)) rownames(res.ss) <- aln$id
-
+  if(!is.null(res.in)) rownames(res.in) <- aln$id
+  
   rownames(coords.all) <- aln$id
   rownames(elety.all) <- aln$id
   rownames(resid.all) <- aln$id
@@ -242,7 +251,7 @@ function(aln, prefix="", pdbext="", sel=NULL, rm.wat=TRUE, rm.ligand=FALSE,
     } 
   } 
 
-  out<-list(xyz=coords, all=coords.all, resno=res.nu, b=res.bf,
+  out<-list(xyz=coords, all=coords.all, resno=res.nu, insert=res.in, b=res.bf,
             chain = res.ch, id=aln$id, ali=aln$ali, resid=res.id, sse=res.ss,
             all.elety=elety.all, all.resid=resid.all, all.resno=resno.all,
             all.grpby=grpby, all.hetatm=hetatm.all, call = cl)

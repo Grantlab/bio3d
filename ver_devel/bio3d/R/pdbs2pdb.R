@@ -37,6 +37,12 @@
         f.inds$res <- which( (pdbs$all.grpby %in% f.inds$res) & !is.gap(pdbs$all.elety[j, ]) )
         f.inds$pos <- atom2xyz(f.inds$res)
         all.chain <- vec2resno(pdbs$chain[j, ], pdbs$all.grpby)
+        if(!is.null(pdbs$insert)) {
+          all.insert <- vec2resno(pdbs$insert[j, ], pdbs$all.grpby)
+          insert <- all.insert[f.inds$res]
+        } else {
+          insert <- rep('', length(f.inds$res))
+        }
         xyz <- pdbs$all[j,f.inds$pos]
         resno <- pdbs$all.resno[j,f.inds$res]
         resid <- pdbs$all.resid[j,f.inds$res]
@@ -51,13 +57,18 @@
           elety <- c(elety, het$atom[, 'elety'])
         }
         write.pdb(pdb=NULL, xyz=xyz, resno=resno, resid=resid, 
-                  chain=chain, elety=elety, file=fname)
+                  chain=chain, insert=insert, elety=elety, file=fname)
       }
       else {
+        if(!is.null(pdbs$insert)) {
+          insert <- pdbs$insert[j, f.inds$res]
+        } else {
+          insert <- rep('', length(f.inds$res))
+        }
         write.pdb(pdb=NULL,
                   xyz  =pdbs$xyz[j,f.inds$pos],   resno=pdbs$resno[j,f.inds$res],
                   resid=pdbs$resid[j,f.inds$res], chain=pdbs$chain[j,f.inds$res],
-                  file=fname)
+                  insert=insert, file=fname)
       }
       read.pdb(fname)
     } 
