@@ -27,10 +27,16 @@ function(aln, id=NULL, profile=NULL,
       stop("profile must be of class 'fasta'")
 
   ## determine path to exefile
-    exefile <- .get.exepath(exefile)
+  test <- try( .get.exepath(exefile), silent=TRUE )
+  if(inherits(test, 'try-error')) {
+    success <- FALSE
+  } else {
+    exefile <- test
+    success <- TRUE
     if(verbose)
-        message(exefile)
-    
+      message(exefile)
+  }
+  
   if(grepl("clustalo", tolower(exefile))) {
     prg <- "clustalo"
     ##ver <- "--version"
@@ -75,9 +81,11 @@ function(aln, id=NULL, profile=NULL,
   }
   
   ## Check if the program is executable
-  os1 <- Sys.info()["sysname"]
-  success <- .test.exefile(exefile)
-    
+  if(success) {
+    os1 <- Sys.info()["sysname"]
+    success <- .test.exefile(exefile)
+  }
+  
   if(!success) {
     if(length(web.args)==0) {
       stop(paste("You do not have ", prg, " installed/working locally on your machine.\n", 
