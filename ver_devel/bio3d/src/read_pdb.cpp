@@ -19,6 +19,10 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
   int natoms = 0;
   int models = 0;
   int nresi = 0;
+
+  // reset this when reading MODEL, END, ENDMDL
+  // bump models when this is 0
+  int natoms_model = 0;
   
   // assign vectors for building final 'atom' object
   vector<string> type;
@@ -73,7 +77,9 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
 
   // counter for seqres while loop
   int i;
-  
+
+  // values from prev 
+  string curr_record_str;
   string prev_eleno_str;
   string curr_eleno_str;
   string prev_resno_str;
@@ -88,7 +94,7 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
   // for reading
   vector<string> raw_lines;
   string line;
-
+  
   igzstream mystream;
   mystream.open(filename.c_str());
   
@@ -104,24 +110,24 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
 	break;
       }
 
+      curr_record_str = trim(line.substr(0,6));
+      //cout << curr_record_str;
+
+      // reset 'natoms_model' when reading END, ENDMDL or MODEL
+      if(curr_record_str == "END" ||
+	 curr_record_str == "ENDMDL" ||
+	 curr_record_str == "MODEL") {
+
+	natoms_model = 0;
+      }
+      
       // output header only if verbose=true
-      if(line.substr(0,6)=="HEADER") {
+      else if(curr_record_str=="HEADER") {
 	header = line;
       }
-      
-      // keep track of number of models in PDB file
-      else if(line.substr(0,5)=="MODEL") {
-	models+=1;
-	
-	// break out of loop if we dont want multi-model
-	if(!multi && models > 1) {
-	  models=1;
-	  break;
-	}
-      }
-      
+
       // store helix info
-      else if(line.substr(0,5)=="HELIX" && !atoms_only) {
+      else if(curr_record_str=="HELIX" && !atoms_only) {
 	helix_chain.push_back(trim(line.substr(19,1)));
 	helix_resno_start.push_back(stringToInt(line.substr(21,4)));
 	helix_resno_end.push_back(stringToInt(line.substr(33,4)));
@@ -133,7 +139,7 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
       }
       
       // store sheet info
-      else if(line.substr(0,5)=="SHEET" && !atoms_only) {
+      else if(curr_record_str=="SHEET" && !atoms_only) {
 	sheet_chain.push_back(trim(line.substr(21,1)));
 	sheet_resno_start.push_back(stringToInt(line.substr(22,4)));
 	sheet_resno_end.push_back(stringToInt(line.substr(33,4)));
@@ -145,7 +151,7 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
       }
       
       // store SEQRES info
-      else if(line.substr(0,6)=="SEQRES" && !atoms_only) {
+      else if(curr_record_str=="SEQRES" && !atoms_only) {
 
 	i=0;
 	while(19+(i*4) < (int) line.length()) {
@@ -165,7 +171,21 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
       }
       
       // store ATOM/HETATM records
-      else if(line.substr(0,4)=="ATOM" || line.substr(0,6)=="HETATM") {
+      else if(curr_record_str=="ATOM" || curr_record_str=="HETATM") {
+	// number of atoms in current model
+	natoms_model++;
+
+	// bump 'models' when reading first atom in model
+	if(natoms_model == 1) {
+	  models++;
+	}
+
+	// break out of loop when visiting 2nd model
+	if(multi == false && models > 1) {
+	  models = 1;
+	  break;
+	}
+	
 	// read coordinates
 	double tmpx = stringToDouble(line.substr(30,8));
 	double tmpy = stringToDouble(line.substr(38,8));
