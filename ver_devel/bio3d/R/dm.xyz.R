@@ -17,6 +17,7 @@ dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, gc.first=FALSE, 
       dmi <- .dm.xyz1(xyz[i,], grpby=grpby, scut=scut, mask.lower=mask.lower)
       out[[j]] <- dmi
       j <- j+1
+      .update.pb(pb)
     }
     return(out)
   }
@@ -39,6 +40,7 @@ dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, gc.first=FALSE, 
     }
 
     ## run calcdm() for each core
+    pb <- .init.pb(ncore, min=0, max=nrow(xyz))
     core.ids <- sort(rep(1:ncore, length.out=d3))
     for( i in 1:ncore ) {
       r.inds <- which(core.ids==i)
@@ -51,7 +53,8 @@ dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, gc.first=FALSE, 
         dm.list <- calcdm(r.inds, i, xyz)
       }
     }
-
+    .close.pb(pb)
+      
     ## Collect all jobs
     if(ncore>1) 
       res <- mccollect(jobs, wait=TRUE)
@@ -65,12 +68,11 @@ dm.xyz <- function(xyz, grpby=NULL, scut=NULL, mask.lower=TRUE, gc.first=FALSE, 
         dms[,,i] <- mat
         i <- i+1
       }
-    }  
+    }
   }
   else {
     dms <- .dm.xyz1(xyz, grpby=grpby, scut=scut, mask.lower=mask.lower)
   }
-  
   class(dms) <- 'dmat'
   return(dms)
 }
