@@ -34,10 +34,10 @@ get.blast <- function(urlget, time.out = NULL, chain.single=TRUE) {
      return(urlget)
   }
   
-  colnames(raw) <- c("queryid", "subjectids", "identity", "positives",
+  colnames(raw) <- c("queryid", "subjectids", "identity", 
                      "alignmentlength", "mismatches", "gapopens",
                      "q.start", "q.end", "s.start", "s.end",
-                     "evalue", "bitscore")
+                     "evalue", "bitscore", "positives")
   
   ##- Expand 'raw' for each hit in 'subjectids' (i.e. split on ";")
   eachsubject <- strsplit(raw$subjectids, ";")
@@ -49,20 +49,24 @@ get.blast <- function(urlget, time.out = NULL, chain.single=TRUE) {
   row.names(df) <- 1:nrow(df)
     
   ##- Parse ids
-  all.ids <- strsplit(subjectids, "\\|")
-  gi.id  <- sapply(all.ids, '[', 2)
+  #all.ids <- strsplit(subjectids, "\\|")
+  #gi.id  <- sapply(all.ids, '[', 2)
+  gi.id <- subjectids
   
-  pdb.4char <- sapply(all.ids, '[', 4)
-  pdb.chain <- sapply(all.ids, '[', 5)
+  all.ids <- strsplit(subjectids, "_")
+  pdb.4char <- sapply(all.ids, '[', 1)
+  pdb.chain <- sapply(all.ids, '[', 2)
 
   ## Catch long chain IDs as in hits from "P12612" (e.g "1WF4_GG" => "1WF4_g")
   if(chain.single) {
-    chain.ind <- which(nchar(pdb.chain) > 1)
+    chain.ind <- which(nchar(pdb.chain) > 1 & nchar(pdb.4char)==4)
     if(length(chain.ind) > 0) {
       pdb.chain[ chain.ind ] <- tolower( substr(pdb.chain[ chain.ind ],1,1 ) )
     }
   }
-  pdb.id <- paste(pdb.4char,"_",pdb.chain,sep="")
+  pdb.id <- rep(NA, length(pdb.4char))
+  tinds <- !is.na(pdb.chain) & nchar(pdb.4char)==4
+  pdb.id[tinds] <- paste(pdb.4char[tinds],"_",pdb.chain[tinds],sep="")
 
 
   ##- Map zero evalues to arbitrarily high value for -log(evalue)

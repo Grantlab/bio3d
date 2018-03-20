@@ -122,7 +122,7 @@ get.blast(urlget, time.out = NULL, chain.single=TRUE)
     with their cluster group number. }
   \item{pdb.id}{ a character vector containing the PDB database identifier of
     each hit above the chosen threshold. }
-  \item{acc}{ a character vector containing the gi database identifier of
+  \item{acc}{ a character vector containing the accession database identifier of
     each hit above the chosen threshold. }
   \item{inds}{ a numeric vector containing the indices of the hits
     relative to the input blast object.}
