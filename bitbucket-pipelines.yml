@@ -31,11 +31,11 @@ pipelines:
                         - if ! git remote -v | awk '{print $1}' | grep -q github; then git remote add github git@github.com:Grantlab/bio3d.git; fi
                         - git push github releases:releases
                         
-    # temporary test (to be deleted after merging into master)
-    bugfix_readpdb:
-      - step:
-              deployment: test
-              script:
-                        - echo "Syncronize bugfix_readpdb branch of bio3d repo at Bitbucket and Githup"
-                        - if ! git remote -v | awk '{print $1}' | grep -q github; then git remote add github git@github.com:Grantlab/bio3d.git; fi
-                        - git push github bugfix_readpdb:bugfix_readpdb
+#    # temporary test (to be deleted after merging into master)
+#    bugfix_readpdb:
+#      - step:
+#              deployment: test
+#              script:
+#                        - echo "Syncronize bugfix_readpdb branch of bio3d repo at Bitbucket and Githup"
+#                        - if ! git remote -v | awk '{print $1}' | grep -q github; then git remote add github git@github.com:Grantlab/bio3d.git; fi
+#                        - git push github bugfix_readpdb:bugfix_readpdb
