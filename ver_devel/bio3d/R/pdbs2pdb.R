@@ -55,6 +55,7 @@
           resid <- c(resid, het$atom[, 'resid'])
           chain <- c(chain, het$atom[, 'chain'])
           elety <- c(elety, het$atom[, 'elety'])
+          insert <- c(insert, rep('', nrow(het$atom)))
         }
         write.pdb(pdb=NULL, xyz=xyz, resno=resno, resid=resid, 
                   chain=chain, insert=insert, elety=elety, file=fname)

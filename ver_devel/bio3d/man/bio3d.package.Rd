@@ -10,8 +10,8 @@ Utilities for the analysis of protein structure and sequence data.
 \tabular{ll}{
 Package: \tab bio3d\cr
 Type: \tab Package\cr
-Version: \tab 2.3-3\cr
-Date: \tab 2017-07-29\cr
+Version: \tab 2.3-4\cr
+Date: \tab 2018-04-01\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab \url{http://thegrantlab.org/bio3d/}\cr
 }
@@ -62,8 +62,8 @@ outputs can be obtained from the bio3d website:\cr
 \url{http://bitbucket.org/Grantlab/bio3d}.
 }
 \author{
-Barry Grant <bjgrant@umich.edu>
-Xin-Qiu Yao <xinqyao@umich.edu>
+Barry Grant <bjgrant@ucsd.edu>
+Xin-Qiu Yao <xinqiu.yao@gmail.com>
 Lars Skjaerven <larsss@gmail.com>
 Julien Ide <julien.ide.fr@gmail.com>
 }

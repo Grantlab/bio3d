@@ -1,8 +1,8 @@
 Package: bio3d
 Title: Biological Structure Analysis
-Version: 2.3-3.9000
+Version: 2.3-4.9000
 Authors@R: c(person("Barry", "Grant", role=c("aut", "cre"),
-                     email="bjgrant@umich.edu"),
+                     email="bjgrant@ucsd.edu"),
              person("Xin-Qiu", "Yao", role="aut"),
              person("Lars", "Skjaerven", role="aut"), 
              person("Julien", "Ide", role="aut"))
@@ -44,7 +44,7 @@ Description: Utilities to process, organize and explore protein structure,
     various utility functions are provided to enable the statistical and graphical
     power of the R environment to work with biological sequence and structural data.
     Please refer to the URLs below for more information.
-Maintainer: Barry Grant <bjgrant@umich.edu>
+Maintainer: Barry Grant <bjgrant@ucsd.edu>
 License: GPL (>= 2)
 URL: http://thegrantlab.org/bio3d/, http://bitbucket.org/Grantlab/bio3d
 RoxygenNote: 5.0.1
