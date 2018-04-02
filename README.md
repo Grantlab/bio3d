@@ -43,4 +43,4 @@ You are welcome to:
 
 * Submit suggestions and bug-reports at: https://bitbucket.org/Grantlab/bio3d/issues
 * Send a pull request on: https://bitbucket.org/Grantlab/bio3d/pull-requests
-* Compose a friendly e-mail to: bjgrant@umich.edu
+* Compose a friendly e-mail to: bjgrant@ucsd.edu

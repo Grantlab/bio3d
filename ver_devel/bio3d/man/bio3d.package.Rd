@@ -62,8 +62,8 @@ outputs can be obtained from the bio3d website:\cr
 \url{http://bitbucket.org/Grantlab/bio3d}.
 }
 \author{
-Barry Grant <bjgrant@umich.edu>
-Xin-Qiu Yao <xinqyao@umich.edu>
+Barry Grant <bjgrant@ucsd.edu>
+Xin-Qiu Yao <xinqiu.yao@gmail.com>
 Lars Skjaerven <larsss@gmail.com>
 Julien Ide <julien.ide.fr@gmail.com>
 }
