@@ -1,5 +1,5 @@
 `chain.pdb` <-
-function(pdb, ca.dist=4, blank="X", rtn.vec=TRUE) {
+function(pdb, ca.dist=4, bond=TRUE, bond.dist=1.5, blank="X", rtn.vec=TRUE) {
   ##- Find possible chian breaks
   ##  i.e. Concetive Caplpa's that are further than 'ca.dist' apart,
   ##        print basic chain info and rtn a vector of chain ids
@@ -15,16 +15,33 @@ function(pdb, ca.dist=4, blank="X", rtn.vec=TRUE) {
   if(length(ca$atom) <=1) {
     d <- 0
   } else {
-    xyz <- matrix(pdb$xyz[ca$xyz], nrow=3)
-    if(length(ca$atom) == 2) 
-      d <- sqrt( sum( apply(xyz , 1, diff)^2 ) )
-    else
-      d <- sqrt( rowSums( apply(xyz , 1, diff)^2 ) )
-    
+    if(bond) {
+      nn <- atom.select(pdb, "protein", elety="N", verbose=FALSE)
+      cc <- atom.select(pdb, "protein", elety="C", verbose=FALSE)
+      if(length(ca$atom) != length(nn$atom) ||
+         length(ca$atom) != length(cc$atom)) {
+        stop("Peptide bond atoms (N/C) and C-alpha atoms mismatch (try bond=FALSE).")
+      } else {
+        xyz1 <- pdb$xyz[cc$xyz]
+        xyz2 <- pdb$xyz[nn$xyz][-c(1:3)]
+        d <- dist.xyz(xyz1, xyz2, all.pairs=FALSE)
+        d <- d[!is.na(d)]
+      }
+    } else { 
+      xyz <- matrix(pdb$xyz[ca$xyz], nrow=3)
+      if(length(ca$atom) == 2) 
+        d <- sqrt( sum( apply(xyz , 1, diff)^2 ) )
+      else
+        d <- sqrt( rowSums( apply(xyz , 1, diff)^2 ) )
+    }
   }
 
   ## Chain break distance check
-  ind <- which(d > ca.dist)
+  if(bond) {
+    ind <- which(d > bond.dist)
+  } else {
+    ind <- which(d > ca.dist)
+  }
   len <- diff( c(1,ind,length(d)) )
 
   cat(paste("\t Found",length(ind), "possible chain breaks\n"))
