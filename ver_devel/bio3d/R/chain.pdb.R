@@ -20,14 +20,16 @@ function(pdb, ca.dist=4, bond=TRUE, bond.dist=1.5, blank="X", rtn.vec=TRUE) {
       cc <- atom.select(pdb, "protein", elety="C", verbose=FALSE)
       if(length(ca$atom) != length(nn$atom) ||
          length(ca$atom) != length(cc$atom)) {
-        stop("Peptide bond atoms (N/C) and C-alpha atoms mismatch (try bond=FALSE).")
+        warning("Peptide bond atoms (N/C) and C-alpha atoms mismatch. Switch to bond=FALSE.")
+        bond <- FALSE
       } else {
         xyz1 <- pdb$xyz[cc$xyz]
         xyz2 <- pdb$xyz[nn$xyz][-c(1:3)]
         d <- dist.xyz(xyz1, xyz2, all.pairs=FALSE)
         d <- d[!is.na(d)]
       }
-    } else { 
+    } 
+    if(!bond) { 
       xyz <- matrix(pdb$xyz[ca$xyz], nrow=3)
       if(length(ca$atom) == 2) 
         d <- sqrt( sum( apply(xyz , 1, diff)^2 ) )
