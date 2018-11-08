@@ -29,7 +29,9 @@ Suggests:
     bigmemory,
     knitr,
     testthat (>= 0.9.1),
-    httr
+    httr,
+    msa,
+    Biostrings
 Depends:
     R (>= 3.1.0)
 LazyData: yes

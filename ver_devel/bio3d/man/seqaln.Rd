@@ -21,7 +21,10 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
     \code{aln} will be added to the profile. }
   \item{exefile}{ file path to the \sQuote{MUSCLE} program on your system (i.e.
     how is \sQuote{MUSCLE} invoked). Alternatively, \sQuote{CLUSTALO} can
-    be used. }
+    be used. Also supported is using the \sQuote{msa} package from Bioconductor
+    (need to install packages using 
+    \code{\link[BiocManager:install]{BiocManager::install}}). To do so, simply
+    set \code{exefile="msa"}. }
   \item{outfile}{ name of \sQuote{FASTA} output file to which alignment
     should be written. }
   \item{protein}{ logical, if TRUE the input sequences are assumed to be
@@ -72,7 +75,12 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   specifiying \code{exefile='clustalo'}. This might be useful e.g. when
   adding several sequences to a profile alignment. 
 
-  If local \sQuote{MUSCLE} or \sQuote{CLUSTALO} program is unavailable, 
+  If local \sQuote{MUSCLE} or \sQuote{CLUSTALO} program is unavailable, the alignment
+  can be performed via the \sQuote{msa} package from the Bioconductor repository.
+  To do so, set \code{exefile="msa"}. Note that both \sQuote{msa} and 
+  \sQuote{Biostrings} packages need to be installed properly using \code{BiocManager::install()}. 
+  
+  If the access to any method metioned above fails, 
   the function will attempt to perform alignment via the EMBL-EBI Web Services 
   (See \url{http://www.ebi.ac.uk}). In this case, the argument \code{web.args} 
   cannot be empty and must contain at least user's E-Mail address. 

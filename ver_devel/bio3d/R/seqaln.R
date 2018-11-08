@@ -52,6 +52,29 @@ function(aln, id=NULL, profile=NULL,
     #else
     #  extra.args <- paste(extra.args,"--seqtype DNA")
   }
+  else if(grepl("msa", tolower(exefile))) {
+    # Use bioconductor MSA package for alignment!
+    
+    if( !requireNamespace("msa", quietly=TRUE) ) { 
+      stop("msa package missing: Please install it from Bioconductor, see: ?BiocManager::install")
+    }
+    if( !requireNamespace("Biostrings", quietly=TRUE) ) {
+      stop("Biostrings package missing: Please install it from Bioconductor, see: ?BiocManager::install")
+    }
+    
+    # Write a temporary FASTA file to disc
+    tf <- tempfile(pattern = "bio3d_aln",fileext = ".fasta")
+    write.fasta(aln, gap=FALSE, file=tf)
+    
+    # Alignmnet and conversion for Bio3D
+    res <- msa::msaMuscle(Biostrings::readAAStringSet(tf), order="input")#type="protein", order="input"
+    #res <- msa::msaMuscle(tf, type="protein",...)
+    naln <- msa::msaConvert(res, type="bio3d::fasta")
+    if(!is.null(outfile)) write.fasta(naln, file=outfile)
+    
+    naln$call=cl
+    return(naln)
+  }
   else {
     prg <- "muscle"
     ver <- "-version"
