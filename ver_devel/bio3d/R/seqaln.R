@@ -7,7 +7,8 @@ function(aln, id=NULL, profile=NULL,
                    refine = FALSE,
                    extra.args = "",
                    verbose = FALSE,
-                   web.args = list()) {
+                   web.args = list(),
+                   ... ) {
 
   ## Log the call
   cl <- match.call()
@@ -67,7 +68,7 @@ function(aln, id=NULL, profile=NULL,
     write.fasta(aln, gap=FALSE, file=tf)
     
     # Alignmnet and conversion for Bio3D
-    res <- msa::msaMuscle(Biostrings::readAAStringSet(tf), order="input")#type="protein", order="input"
+    res <- msa::msaMuscle(Biostrings::readAAStringSet(tf), order="input", ...)#type="protein", order="input"
     #res <- msa::msaMuscle(tf, type="protein",...)
     naln <- msa::msaConvert(res, type="bio3d::fasta")
     if(!is.null(outfile)) write.fasta(naln, file=outfile)

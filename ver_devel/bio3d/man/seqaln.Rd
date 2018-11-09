@@ -8,7 +8,7 @@
 \usage{
 seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa", 
        protein=TRUE, seqgroup=FALSE, refine=FALSE, extra.args="",
-       verbose=FALSE, web.args = list())  
+       verbose=FALSE, web.args = list(), \dots)  
 }
 \arguments{
   \item{aln}{ a sequence character matrix, as obtained from
@@ -40,6 +40,8 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   \item{web.args}{ a \sQuote{list} object containing arguments to perform
     online sequence alignment using EMBL-EBI Web Services. 
     See below for details. } 
+  \item{\dots}{ additional arguments passed to the function
+    \code{\link[msa:msaMuscle]{msa::msaMuscle}}. }
 }
 \details{
   Sequence alignment attempts to arrange the sequences of protein,
