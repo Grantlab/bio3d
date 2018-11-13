@@ -27,7 +27,7 @@ aa321(aa)
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
   
   For a description of IUPAC one-letter codes see:\cr
-  \url{http://www.chem.qmul.ac.uk/iupac/AminoAcid/}
+  \url{http://www.insdc.org/documents/feature_table.html#7.4.3}
   
   For more information on PDB residue codes see:\cr
   \url{http://ligand-expo.rcsb.org/ld-search.html}
