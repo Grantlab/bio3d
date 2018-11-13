@@ -30,6 +30,13 @@ test_that("seqaln works", {
                       c("-", "-", "-", "G", "A", "G", "K", "-"))
   expect_identical(aln$ali, expected$ali)
 
+  ## test 'msa' option
+  seqs <- get.seq(c("4q21_A", "1ftn_A"), outfile=tempfile())
+  aln <- seqaln(seqs, outfile=tempfile())
+  aln2 <- seqaln(seqs, outfile=tempfile(), exefile="msa")
+  aln$call <- NULL; aln2$call <- NULL
+  expect_identical(aln, aln2)
+
 })
 
   
