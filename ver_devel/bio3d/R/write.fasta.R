@@ -2,6 +2,7 @@
 function(alignment=NULL,
          ids=NULL,
          seqs=alignment$ali,
+         gap=TRUE,
          file,
          append = FALSE) {
   
@@ -22,6 +23,10 @@ function(alignment=NULL,
       ids=seq( 1, length=n.ids )
     }
   } 
+
+  if(!gap) {
+     seqs[is.gap(seqs)] <- ""
+  }
 
   if (!append) {
     ##file.remove(file, showWarnings = FALSE)

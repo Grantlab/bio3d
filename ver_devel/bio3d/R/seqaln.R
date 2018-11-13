@@ -7,7 +7,8 @@ function(aln, id=NULL, profile=NULL,
                    refine = FALSE,
                    extra.args = "",
                    verbose = FALSE,
-                   web.args = list()) {
+                   web.args = list(),
+                   ... ) {
 
   ## Log the call
   cl <- match.call()
@@ -62,6 +63,50 @@ function(aln, id=NULL, profile=NULL,
     #  extra.args <- paste(extra.args,"--seqtype Protein")
     #else
     #  extra.args <- paste(extra.args,"--seqtype DNA")
+  }
+  else if(grepl("msa", tolower(exefile))) {
+    # Use bioconductor MSA package for alignment!
+    
+    if( !requireNamespace("msa", quietly=TRUE) ) { 
+      stop("msa package missing: Please install it from Bioconductor, see: ?BiocManager::install")
+    }
+    if( !requireNamespace("Biostrings", quietly=TRUE) ) {
+      stop("Biostrings package missing: Please install it from Bioconductor, see: ?BiocManager::install")
+    }
+   
+    if(!is.null(profile)) {
+       stop("Currently profile based alignment is not supported by 'msa'")
+    }
+
+    if(refine) {
+       warning("Currently 'refine=TRUE' is not supported by 'msa'. Ignored")
+    }
+
+    # Write a temporary FASTA file to disc
+    tf <- tempfile(pattern = "bio3d_aln",fileext = ".fasta")
+    write.fasta(aln, gap=FALSE, file=tf)
+  
+    if(protein) {
+       inputSeqs <- Biostrings::readAAStringSet(tf)
+    } else {
+       inputSeqs <- Biostrings::readDNAStringSet(tf)
+    }
+  
+    # Alignmnet and conversion for Bio3D
+    if(seqgroup) {
+       order <- "aligned"
+    } else {
+       order <- "input"
+    }
+
+    res <- msa::msaMuscle(inputSeqs, order=order, ...)#type="protein", order="input"
+
+    #res <- msa::msaMuscle(tf, type="protein",...)
+    naln <- msa::msaConvert(res, type="bio3d::fasta")
+    if(!is.null(outfile)) write.fasta(naln, file=outfile)
+    
+    naln$call=cl
+    return(naln)
   }
   else {
     prg <- "muscle"
