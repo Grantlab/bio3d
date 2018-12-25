@@ -19,7 +19,7 @@ pipelines:
 #                        - R CMD build ver_devel/bio3d && R CMD check --as-cran --run-donttest bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
   branches:
     master:
-      - step:
+       - step:
           name: Build
           services:
             - docker
