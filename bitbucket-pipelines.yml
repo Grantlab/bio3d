@@ -20,6 +20,12 @@ pipelines:
   branches:
     master:
        - step:
+          name: Sync with Github
+          script:
+            - echo "Syncronize master branch of bio3d repo at Bitbucket and Githup"
+            - git remote add github git@github.com:Grantlab/bio3d.git
+            - git push github master:master
+        - step:
           name: Build
           services:
             - docker
@@ -32,17 +38,12 @@ pipelines:
             
             # build the Docker image (this will use the Dockerfile in the root of the repo)
             - docker build -t $TAG .
-            - docker tag $TAG $DEVEL $BIO3D_VERSION
+            - docker tag $TAG $DEVEL
+            - docker tag $TAG $BIO3D_VERSION
             # authenticate with the Docker Hub registry
             - docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
             # push the new Docker image to the Docker registry
             - docker push $IMAGE_NAME
-       - step:
-          name: Sync with Github
-          script:
-            - echo "Syncronize master branch of bio3d repo at Bitbucket and Githup"
-            - git remote add github git@github.com:Grantlab/bio3d.git
-            - git push github master:master
     releases:
       - step:
           name: Sync with Github
