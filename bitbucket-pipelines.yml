@@ -25,7 +25,7 @@ pipelines:
             - echo "Syncronize master branch of bio3d repo at Bitbucket and Githup"
             - git remote add github git@github.com:Grantlab/bio3d.git
             - git push github master:master
-        - step:
+       - step:
           name: Build
           services:
             - docker
