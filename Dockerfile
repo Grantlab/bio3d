@@ -1,4 +1,4 @@
-FROM rocker/r-ver:3
+FROM r-base
 
 MAINTAINER Lars Skjærven "larsss@gmail.com"
 
@@ -20,9 +20,6 @@ RUN apt-get update && apt-get install -y \
 # Download and install dssp
 RUN wget ftp://ftp.cmbi.ru.nl/pub/software/dssp/dssp-2.0.4-linux-amd64 -O /usr/bin/dssp && \
     chmod +x /usr/bin/dssp
-
-#setup R configs
-RUN echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > ~/.Rprofile
 
 # Install required R packages
 RUN R -e "install.packages('BH')"

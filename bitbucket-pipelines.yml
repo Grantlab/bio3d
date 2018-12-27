@@ -30,16 +30,15 @@ pipelines:
           services:
             - docker
           script:
-            - export IMAGE_NAME=bio3d/bio3d-base
-            - export TAG=$IMAGE_NAME:$BITBUCKET_COMMIT
-            - export DEVEL=$IMAGE_NAME:devel
+            - export IMAGE_NAME=bio3d/bio3d
             - export B3V=`grep "^Version" ver_devel/bio3d/DESCRIPTION | awk '{print $2}'`
-            - export BIO3D_VERSION=$IMAGE_NAME:$B3V
+            #- export TAG=$IMAGE_NAME:$BITBUCKET_COMMIT
+            - export TAG=$IMAGE_NAME:$B3V
+            - export DEVEL=$IMAGE_NAME:devel
             
             # build the Docker image (this will use the Dockerfile in the root of the repo)
             - docker build -t $TAG .
             - docker tag $TAG $DEVEL
-            - docker tag $TAG $BIO3D_VERSION
             # authenticate with the Docker Hub registry
             - docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
             # push the new Docker image to the Docker registry
