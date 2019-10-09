@@ -40,7 +40,7 @@ pipelines:
             - docker build -t $TAG .
             - docker tag $TAG $DEVEL
             # authenticate with the Docker Hub registry
-            - docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
+            - docker login --username $DOCKER_HUB_USERNAME --password-stdin $DOCKER_HUB_PASSWORD
             # push the new Docker image to the Docker registry
             - docker push $IMAGE_NAME
     releases:
