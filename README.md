@@ -32,6 +32,22 @@ install_bitbucket("Grantlab/bio3d", subdir = "ver_devel/bio3d/")
 Alternative installation methods and additional instructions are posted to the [wiki section](https://bitbucket.org/Grantlab/bio3d/wiki/Home) of our bitbucket repository. 
 
 
+## Other packages in the Bio3D familiy ##
+
+With growing functionality in Bio3D we have decided to implement larger Bio3D modules into separate packages:
+
+* [Bio3D-web](https://bitbucket.org/Grantlab/bio3d-web/)
+* [Bio3D-view](https://bitbucket.org/Grantlab/bio3d-view/)
+* [Bio3D-eddm](https://bitbucket.org/Grantlab/bio3d-eddm/)
+ 
+* [Bio3D-mmtf](https://bitbucket.org/Grantlab/bio3d-mmtf/) [In development]
+* [Bio3D-cna](https://bitbucket.org/Grantlab/bio3d-cna/) [In development]
+* [Bio3D-amber](https://bitbucket.org/Grantlab/bio3d-amber/) [In development]
+* [Bio3D-muscle](https://bitbucket.org/Grantlab/bio3d-muscle/) [In development]
+* [Bio3D-nma](https://bitbucket.org/Grantlab/bio3d-nma/) [In development]
+* [Bio3D-cheminf](https://bitbucket.org/larsss/cheminf/src/master/) 
+
+
 ## Contributing to Bio3D ##
 
 We are always interested in adding additional functionality to Bio3D. If you have ideas, suggestions or code that you would like to distribute as part of this package, please contact us (see below). You are also encouraged to contribute your code or issues directly to [this repository](https://bitbucket.org/Grantlab/bio3d/) for incorporation into the development version of the package. For details on how to do this please see the [developer wiki](https://bitbucket.org/Grantlab/bio3d/wiki/Home).  

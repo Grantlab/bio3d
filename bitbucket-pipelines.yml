@@ -19,18 +19,38 @@ pipelines:
 #                        - R CMD build ver_devel/bio3d && R CMD check --as-cran --run-donttest bio3d*.tar.gz && ! grep -q -e ERROR -e WARNING bio3d.Rcheck/00check.log
   branches:
     master:
-      - step:
-              script:
-                        - echo "Syncronize master branch of bio3d repo at Bitbucket and Githup"
-                        - git remote add github git@github.com:Grantlab/bio3d.git
-                        - git push github master:master
+       - step:
+          name: Sync with Github
+          script:
+            - echo "Syncronize master branch of bio3d repo at Bitbucket and Githup"
+            - git remote add github git@github.com:Grantlab/bio3d.git
+            - git push github master:master
+       - step:
+          name: Build
+          services:
+            - docker
+          script:
+            - export IMAGE_NAME=bio3d/bio3d
+            - export B3V=`grep "^Version" ver_devel/bio3d/DESCRIPTION | awk '{print $2}'`
+            #- export TAG=$IMAGE_NAME:$BITBUCKET_COMMIT
+            - export TAG=$IMAGE_NAME:$B3V
+            - export DEVEL=$IMAGE_NAME:devel
+            
+            # build the Docker image (this will use the Dockerfile in the root of the repo)
+            - docker build -t $TAG .
+            - docker tag $TAG $DEVEL
+            # authenticate with the Docker Hub registry
+            - docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
+            # push the new Docker image to the Docker registry
+            - docker push $IMAGE_NAME
     releases:
       - step:
-              script:
-                        - echo "Syncronize releases branch of bio3d repo at Bitbucket and Githup"
-                        - if ! git remote -v | awk '{print $1}' | grep -q github; then git remote add github git@github.com:Grantlab/bio3d.git; fi
-                        - git push github releases:releases
-                        
+          name: Sync with Github
+          script:
+            - echo "Syncronize releases branch of bio3d repo at Bitbucket and Githup"
+            - if ! git remote -v | awk '{print $1}' | grep -q github; then git remote add github git@github.com:Grantlab/bio3d.git; fi
+            - git push github releases:releases
+            
 #    # temporary test (to be deleted after merging into master)
 #    bugfix_readpdb:
 #      - step:
