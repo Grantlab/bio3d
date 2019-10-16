@@ -26,7 +26,7 @@ addons:
    apt:
      packages:
      - libnetcdf-dev
-     - libnetcdff5
+     - libnetcdff6
      - netcdf-bin
      - texlive-fonts-recommended
      - texlive-latex-extra
