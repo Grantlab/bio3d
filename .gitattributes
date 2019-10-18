@@ -11,3 +11,8 @@
 *.rdb      binary
 *.RData    binary
 *.dcd      binary
+
+vignettes_devel/* linguist-vendored
+ver_devel/util/*  linguist-vendored
+release/*         linguist-vendored
+
