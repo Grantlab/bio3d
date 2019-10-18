@@ -1,0 +1,13 @@
+*.R        text
+*.r        text
+*.Rd       text
+*.h        text
+*.c        text
+*.cpp      text
+*.Rmd      text
+*.md       text
+*.rda      binary
+*.rds      binary
+*.rdb      binary
+*.RData    binary
+*.dcd      binary
