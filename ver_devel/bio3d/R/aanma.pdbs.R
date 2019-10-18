@@ -443,7 +443,7 @@ aanma.pdbs <- function(pdbs, fit=TRUE, full=FALSE, subspace=NULL, rm.gaps=TRUE,
    if(inherits(pb, "fifo")) {
       mccollect <- get("mccollect", envir = getNamespace("parallel"))
       mccollect(as.numeric(names(pb)))
-      mccollect(as.numeric(names(pb)))
+#      mccollect(as.numeric(names(pb)))
    }
    close(pb)
 }

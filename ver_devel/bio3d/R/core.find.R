@@ -90,7 +90,7 @@ function(pdbs,
     pdbnum = c(1:(length(xyz.inds)/3))
 
   } else {
-    if( (is.list(pdbs)) && (class(pdbs)=="pdbs") ) {
+    if( (is.list(pdbs)) && (inherits(pdbs, "pdbs")) ) {
       xyz=pdbs$xyz
 
       xyz.inds <- which(apply(is.na( xyz ), 2, sum)==0)

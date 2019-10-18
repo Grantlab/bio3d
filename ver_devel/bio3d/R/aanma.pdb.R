@@ -158,7 +158,7 @@
   ## Log the call
   cl <- match.call()
 
-  if(!outmodes %in% c("calpha", "noh") && !is.select(outmodes))
+  if(!is.select(outmodes) && !outmodes %in% c("calpha", "noh"))
     stop("outmodes must be 'calpha', 'noh', or an atom selection by 'atom.select()'")
 
   if(!is.pdb(pdb))
