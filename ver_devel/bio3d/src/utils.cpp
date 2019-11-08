@@ -7,7 +7,6 @@ using namespace std;
 
 // trim from start
 string ltrim(string s) {
-  //s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
   s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
         return !std::isspace(ch);
       }));
