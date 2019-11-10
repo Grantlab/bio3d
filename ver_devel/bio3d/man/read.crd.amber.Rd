@@ -27,7 +27,7 @@
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
-  \url{http://ambermd.org/formats.html}
+  \url{http://ambermd.org/FileFormats.php}
 }
 \author{ Lars Skjaerven }
 \note{
