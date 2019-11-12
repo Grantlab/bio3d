@@ -43,7 +43,7 @@ read.ncdf(trjfile, headonly = FALSE, verbose = TRUE, time = FALSE,
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
   \url{http://www.unidata.ucar.edu/software/netcdf/}
   \url{http://cirrus.ucsd.edu/~pierce/ncdf/}
-  \url{http://ambermd.org/formats.html#netcdf}
+  \url{http://ambermd.org/FileFormats.php#netcdf}
 }
 \author{ Barry Grant }
 \note{
