@@ -15,6 +15,8 @@ test_that("Fitting still works", {
                        1.792, 0.000, 1.881,
                        1.903, 1.881, 0.000),
                      ncol=3, byrow=TRUE)
+  rownames(rmsd.mat) <- basename.pdb(pdbs$id)
+  colnames(rmsd.mat) <- basename.pdb(pdbs$id)
   
   ## Test rmsd()
   expect_that(rmsd( pdbs ),
@@ -38,6 +40,8 @@ test_that("Fitting still works", {
                        1.659, 0.000, 1.697,
                        1.814, 1.697, 0.000),
                      ncol=3, byrow=TRUE)
+  rownames(rmsd.mat) <- basename.pdb(pdbs$id)
+  colnames(rmsd.mat) <- basename.pdb(pdbs$id)
 
   expect_that(rmsd( xyz[, gaps$f.inds] ),
               equals(rmsd.mat, tolerance  = 1e-6))

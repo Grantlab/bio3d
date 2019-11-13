@@ -1,5 +1,5 @@
 pdbaln <-
-function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
+function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, progress=NULL, ...) {
 
   ## Log the call
   cl <- match.call()
@@ -67,7 +67,13 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
         pdb <- read.pdb(files[i])
       }
       cat(".")
-      
+
+      ## edit for shiny version
+      if(!is.null(progress)) {
+        progress$inc(1/length(files)/2)
+      }
+      ## edit end
+
       return( pdb )
     } , mc.cores = ncore)
   }
@@ -128,8 +134,11 @@ function(files, fit=FALSE, pqr=FALSE, ncore=1, nseg.scale=1, ...) {
   }
 
   cat("\n")
+  ## added progress argument for shiny version
   s <- read.fasta.pdb(s, prefix = "", pdbext = "", pdblist=files,
-                      ncore=ncore, nseg.scale=nseg.scale)
+                      ncore=ncore, nseg.scale=nseg.scale,
+                      progress=progress)
+  ## edit end
   s$call=cl
   
   if(fit)

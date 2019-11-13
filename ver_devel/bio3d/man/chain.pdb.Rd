@@ -2,16 +2,20 @@
 \alias{chain.pdb}
 \title{ Find Possible PDB Chain Breaks }
 \description{
-  Find possible chain breaks based on connective Calpha atom separation.
+  Find possible chain breaks based on connective Calpha or peptide
+  bond (C-N) atom separation.
 }
 \usage{
-chain.pdb(pdb, ca.dist = 4, blank = "X", rtn.vec = TRUE)
+chain.pdb(pdb, ca.dist = 4, bond=TRUE, bond.dist=1.5, blank = "X", rtn.vec = TRUE)
 }
 \arguments{
   \item{pdb}{ a PDB structure object obtained from
     \code{\link{read.pdb}}. }
   \item{ca.dist}{ the maximum distance that separates Calpha atoms
     considered to be in the same chain. }
+  \item{bond}{ logical, if TRUE inspect peptide bond (C-N) instead
+    of Calpha-Calpha distances.}
+  \item{bond.dist}{ cutoff value for C-N distance separation. }
   \item{blank}{ a character to assign non-protein atoms. }
   \item{rtn.vec}{ logical, if TRUE then the one-letter chain vector
     consisting of the 26 upper-case letters of the Roman alphabet is
@@ -20,7 +24,8 @@ chain.pdb(pdb, ca.dist = 4, blank = "X", rtn.vec = TRUE)
 \details{
   This is a basic function for finding possible chain breaks in PDB
   structure files, i.e. connective Calpha atoms that are further than
-  \code{ca.dist} apart.
+  \code{ca.dist} apart or peptide bond (C-N) atoms separated by at 
+  least \code{bond.dist}.
 }
 \value{
   Prints basic chain information and if \code{rtn.vec} is TRUE returns a

@@ -1,20 +1,22 @@
 \name{dccm.pca}
 \alias{dccm.pca}
-\title{ Dynamic Cross-Correlation from Principal Component Analysis }
+\title{ Dynamical Cross-Correlation Matrix from Principal Component Analysis }
 \description{
   Calculate the cross-correlation matrix from principal component analysis (PCA).
 }
 \usage{
-\method{dccm}{pca}(x, pc = NULL, ncore = NULL, \dots)
+\method{dccm}{pca}(x, pc = NULL, method = c("pearson", "lmi"), ncore = NULL, \dots)
 }
 \arguments{
   \item{x}{ an object of class \code{pca} as obtained from
     function \code{pca.xyz}. }
   \item{pc}{ numerical, indices of PCs to be included in the calculation.
     If all negative, PCs complementary to \code{abs(pc)} are included. }
-  \item{ncore }{ number of CPU cores used to do the calculation.
+  \item{method}{ method to calculate the cross-correlation. Currently supports
+    Pearson and linear mutual information (LMI). }
+  \item{ncore}{ number of CPU cores used to do the calculation.
     By default (\code{ncore = NULL}), use all available cores detected. }
-  \item{\dots}{ additional arguments to \code{cov2dccm}. }
+  \item{\dots}{ Additional arguments to be passed (currently ignored). }
 }
 \details{
   This function calculates the cross-correlation matrix from principal 
@@ -22,18 +24,22 @@
   structures. It is an alternative way to calculate correlation in addition
   to the conventional way from xyz coordinates directly. But, in this new 
   way one can freely chooses the PCs to be included in the 
-  calculation (e.g. filter PCs with small eigenvalues).
+  calculation (e.g. for filtering out PCs with small eigenvalues).
 }
 \value{
-  Returns a cross-correlation matrix.
+  Returns a cross-correlation matrix with values in a range from -1 to 1 (Pearson)
+  or from 0 to 1 (LMI).
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 }
 \author{ Xin-Qiu Yao}
-\seealso{ \code{\link{pca.xyz}}, \code{\link{plot.dccm}} }
+\seealso{ \code{\link{pca.xyz}}, \code{\link{plot.dccm}}, \code{\link{dccm}}, 
+  \code{\link{dccm.xyz}}, \code{\link{dccm.nma}}, \code{\link{dccm.enma}}.
+}
 \examples{
-\dontrun{
+\donttest{
+
 ##-- Read example trajectory file
 trtfile <- system.file("examples/hivp.dcd", package="bio3d")
 trj <- read.dcd(trtfile)
@@ -62,6 +68,7 @@ cij <- dccm(pca, pc = -c(1:10))
 
 ## Plot DCCM
 plot(cij)
+
 }
 }
 \keyword{ analysis }

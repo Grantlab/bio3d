@@ -1,8 +1,10 @@
 "dccm.pca" <-
-  function(x, pc = NULL, ncore = NULL, ...) {
+  function(x, pc = NULL, method=c("pearson", "lmi"), ncore = NULL, ...) {
    if (missing(x) || !"pca" %in% class(x))
      stop("dccm.pca: must supply a 'pca' object, i.e. from 'pca.xyz'")
 
+   method = match.arg(method)
+    
    modes = pc
 
    ## Check for multiple cores
@@ -77,6 +79,6 @@
       .close.pb(pb)
    }
    
-   corr.mat <- cov2dccm(vcov, ncore = ncore, ...)
+   corr.mat <- .cov2dccm(vcov, method = method, ncore = ncore)
    return(corr.mat)
 }

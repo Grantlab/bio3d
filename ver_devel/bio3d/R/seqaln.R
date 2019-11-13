@@ -25,11 +25,22 @@ function(aln, id=NULL, profile=NULL,
   }
   
   if(!is.null(profile) & !inherits(profile, "fasta"))
-    stop("profile must be of class 'fasta'")
+      stop("profile must be of class 'fasta'")
 
+  ## determine path to exefile
+  test <- try( .get.exepath(exefile), silent=TRUE )
+  if(inherits(test, 'try-error')) {
+    success <- FALSE
+  } else {
+    exefile <- test
+    success <- TRUE
+    if(verbose)
+      message(exefile)
+  }
+  
   if(grepl("clustalo", tolower(exefile))) {
     prg <- "clustalo"
-    ver <- "--version"
+    ##ver <- "--version"
     
     if(!is.null(profile))
       args <- c("", "--profile1", "--in", "--out")
@@ -99,7 +110,7 @@ function(aln, id=NULL, profile=NULL,
   }
   else {
     prg <- "muscle"
-    ver <- "-version"
+    ##ver <- "-version"
     
     if(!is.null(profile))
       args <- c("-profile", "-in1", "-in2", "-out")
@@ -115,11 +126,12 @@ function(aln, id=NULL, profile=NULL,
   }
   
   ## Check if the program is executable
-  os1 <- .Platform$OS.type
-  status <- system(paste(exefile, ver),
-                   ignore.stderr = TRUE, ignore.stdout = TRUE)
-
-  if(!(status %in% c(0,1))) {
+  if(success) {
+    os1 <- Sys.info()["sysname"]
+    success <- .test.exefile(exefile)
+  }
+  
+  if(!success) {
     if(length(web.args)==0) {
       stop(paste("You do not have ", prg, " installed/working locally on your machine.\n", 
         "  We can attempt to use the EBI webserver if you provide an email address (required by the EBI).\n",
@@ -163,26 +175,31 @@ function(aln, id=NULL, profile=NULL,
 
     ## Build command to external program
     if(is.null(profile)) {
-      cmd <- paste(exefile, args[1], toaln, args[2],
+      cmd <- paste(args[1], toaln, args[2],
                    fa, extra.args, sep=" ")
     }
     else {
-      cmd <- paste(exefile, args[1], args[2], profilealn, args[3], toaln, args[4],
+      cmd <- paste(args[1], args[2], profilealn, args[3], toaln, args[4],
                    fa, extra.args, sep=" ")
     }
-    
+
     if(verbose)
-      cat(paste("Running command:\n ", cmd , "\n"))
+      cat(paste("Running command:\n ", paste(exefile, cmd), "\n"))
     
     ## Run command
-    if (os1 == "windows")
-      success <- shell(shQuote(cmd), ignore.stderr = !verbose, ignore.stdout = !verbose)
-    else
-      success <- system(cmd, ignore.stderr = !verbose, ignore.stdout = !verbose)
-    
-    if(success!=0)
-      stop(paste("An error occurred while running command\n '",
-                 exefile, "'", sep=""))
+    if (os1 == "Windows") {
+        status <- shell(paste(shQuote(exefile), cmd),
+                        ignore.stderr = !verbose, ignore.stdout = !verbose)
+    }
+    else {
+        status <- system(paste(exefile, cmd),
+                         ignore.stderr = !verbose, ignore.stdout = !verbose)
+    }
+
+    if(!(status %in% c(0,1))) {
+        stop(paste("An error occurred while running command\n '",
+                   exefile, "'", sep=""))
+    }
   
     naln <- read.fasta(fa, rm.dup=FALSE)
 

@@ -19,6 +19,10 @@ setup.ncore <- function(ncore, bigmem = FALSE) {
        if(is.null(ncore))
          ncore = parallel::detectCores()
 
+       ## parallel::detectCores() returns 'NA' if the answer is unknown
+       if(is.na(ncore))
+           ncore <- 1
+       
        # Following lines check R internal varible for potential limit on multicore usage
        # Normally it does nothing, but will be helpful in running `R CMD check --as-cran`
        if(ncore > 1) {

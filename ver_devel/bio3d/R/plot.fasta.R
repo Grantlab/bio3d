@@ -21,7 +21,10 @@
         stop("'hc' must be logical, NULL or a 'hclust' object.")
     }
   }
-    
+
+  ##- Setup plot arangment
+  opar <- par(no.readonly = TRUE)
+  on.exit(par(opar))
 
   if(!is.null(hc)) {
     layout(matrix(c(4,2,3,1), ncol=2),

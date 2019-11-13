@@ -26,8 +26,43 @@ function(a, b=NULL,
      }
   }
 
-  if(is.pdb(a) | is.pdbs(a)) a=a$xyz
-  if(is.pdb(b) | is.pdbs(b)) b=b$xyz
+  ## from 'select' object to indices
+  if(is.select(a.inds)) a.inds <- a.inds$xyz
+  if(is.select(b.inds)) b.inds <- b.inds$xyz
+
+  ## function to fetch xyz and ids from input
+  getxyz <- function(x) {
+      xyz <- NULL; ids <- NULL;
+      
+      if(is.pdbs(x)) {
+          ids <- basename.pdb(as.character(x$id))
+          xyz <- x$xyz
+      }
+      
+      if(is.pdb(x)) {
+          xyz <- x$xyz
+          if(!is.null(rownames(xyz)))
+              ids <- rownames(xyz)
+      }
+      
+      if(is.matrix(x) | is.vector(x)) {
+          xyz <- x
+          if(!is.null(rownames(xyz)))
+              ids <- basename.pdb(as.character(rownames(xyz)))
+      }
+      
+      return(list(xyz=xyz, ids=ids))
+  }
+    
+  ## set xyz and ids for a
+  ax <- getxyz(a)
+  a=ax$xyz; ids <- ax$ids;
+
+  ## set xyz and ids for a
+  if(!is.null(b)) {
+      bx <- getxyz(b)
+      b=bx$xyz; ids <- bx$ids;
+  }
 
   if( is.null(a.inds) && is.null(b.inds) ) {
     a.inds <- gap.inspect(a)$f.inds
@@ -98,6 +133,11 @@ function(a, b=NULL,
       } else {
         sm[inds[,c(2,1)]]<-s
       }
+
+      if(!is.null(ids)) {
+          rownames(sm) <- ids
+          colnames(sm) <- ids
+      }
       return(round(sm,3))
 
     } else {
@@ -155,8 +195,10 @@ function(a, b=NULL,
                mc.preschedule=TRUE)
          }
          irmsd <- unlist(irmsd)
+         if(!is.null(ids)) names(irmsd) <- ids
       } else {                  # Single version
          irmsd <- sqrt( apply((apply(b[,b.inds],1,"-",a[a.inds])^2),2,sum)/(length(a[a.inds])/3) )
+         if(!is.null(ids)) names(irmsd) <- ids
       }
       return(round(irmsd,3))
     }

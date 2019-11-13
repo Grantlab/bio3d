@@ -1,5 +1,5 @@
 "dccm.nma" <-
-  function(x, nmodes=NULL, ncore=NULL, ...) {
+  function(x, nmodes=NULL, ncore=NULL, progress = NULL, ...) {
     nma <- x
     if (missing(nma))
       stop("dccm.nma: must supply a 'nma' object, i.e. from 'nma'")
@@ -21,13 +21,20 @@
     }
 
     ## Calc initial correlations for a subset of modes
-    corrmats <- function(r.inds, core.id, nma, corr.mat, freqs) {
+    corrmats <- function(r.inds, core.id, nma, corr.mat, freqs, progress) {
       for ( i in r.inds ) {
         mode <- matrix(nma$U[,i], ncol=3, byrow=TRUE)
         corr.mat <- corr.mat + (cross.inner.prod(mode, mode) / (freqs[i]**2))
-        
-        if(core.id==1)
+    
+        if(core.id==1) {
           setTxtProgressBar(pb, i)
+        }
+
+        if(!is.null(progress)) { 
+            if(i %% 20 == 0) {
+                progress$set(i)
+            }
+        }
       }
       return(corr.mat)
     }
@@ -51,7 +58,8 @@
 
     ## Initialize progress bar
     ##ptm <- proc.time()
-    pb <- txtProgressBar(min=(nma$triv.modes+1), max=nmodes + nma$natoms, style=3)
+    pbmax <- nmodes + nma$natoms
+    pb <- txtProgressBar(min=(nma$triv.modes+1), max=pbmax, style=3)
 
     ## Allocate the correl matrix
     corr.mat <- matrix(0, nma$natoms, nma$natoms)
@@ -65,13 +73,13 @@
     
     for ( i in 1:ncore ) {
       rinds <- mode.inds[ which(core.ids==i) ]
-
+    
       if(ncore>1) {
-        q <- mcparallel(corrmats(rinds, i, nma, corr.mat, freqs))
+        q <- mcparallel(corrmats(rinds, i, nma, corr.mat, freqs, progress))
         jobs[[i]] <- q
       }
       else
-        corr.mat <- corrmats(rinds, i, nma, corr.mat, freqs)
+        corr.mat <- corrmats(rinds, i, nma, corr.mat, freqs, progress)
     }
 
     ## Collect all jobs, and sum matrices
@@ -81,7 +89,7 @@
         corr.mat <- corr.mat + job
       }
     }
-  
+    
     ## Basis for normalization
     a <- vector('numeric', length=nrow(corr.mat))
     k <- length(mode.inds) ## for ProgressBar !
@@ -93,6 +101,12 @@
       
       k <- k+1
       setTxtProgressBar(pb, k)
+      
+      if(!is.null(progress)) {
+          if(j %% 20 == 0) {
+              progress$set(k)
+          }
+      }
     }
     
     close(pb)

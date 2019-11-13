@@ -1,6 +1,6 @@
 pymol.dccm <- function(dccm, pdb, file=NULL,
                        step=0.2, omit=0.2, radius = 0.15,
-                       type="script", exefile = NULL, ...) {
+                       type="script", exefile = "pymol", ...) {
   
   allowed <- c("session", "script", "launch", "pdb")
   if(!type %in% allowed) {
@@ -14,29 +14,20 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
     pymol <- TRUE
 
   ## Check if the program is executable
-  if(type %in% c("session", "launch")) {
-
-    ## Find default path to external program
-    if(is.null(exefile)) {
-      exefile <- 'pymol'
-      if(nchar(Sys.which(exefile)) == 0) {
-        os1 <- Sys.info()["sysname"]
-        exefile <- switch(os1, 
-          Windows = 'C:/python27/PyMOL/pymol.exe',
-          Darwin = '/Applications/MacPyMOL.app/Contents/MacOS/MacPyMOL',
-          'pymol' )
-      }
+    if(type %in% c("session", "launch")) {
+        
+        ## determine path to exefile
+        exefile1 <- .get.exepath(exefile)
+        
+        ## Check if the program is executable
+        success <- .test.exefile(exefile1)
+        
+        if(!success) {
+            stop(paste("Launching external program failed\n",
+                       "  make sure '", exefile, "' is in your search path", sep=""))
+        }
+        exefile <- exefile1
     }
-
-    ver <- "-cq"
-    os1 <- .Platform$OS.type
-    status <- system(paste(exefile, ver),
-                     ignore.stderr = TRUE, ignore.stdout = TRUE)
-    
-    if(!(status %in% c(0,1)))
-      stop(paste("Launching external program failed\n",
-                 "  make sure '", exefile, "' is in your search path", sep=""))
-  }
   
   if(is.pdb(pdb)) {
     ca.inds <- atom.select(pdb, 'calpha', verbose=FALSE)
@@ -215,10 +206,11 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
     }
   }
 
-  if(type == "session")
+  if(type == "session") {
     scr <- c(scr, paste0("cmd.save('", 
       normalizePath(psefile, winslash='/', mustWork=FALSE),
       "')"))
+    }
   
   ## Write python script or PDB with conect records
   if(pymol) {
@@ -242,18 +234,20 @@ pymol.dccm <- function(dccm, pdb, file=NULL,
     
     ## Open pymol
     cmd <- paste(exefile, args, pyfile)
-    
-    os1 <- .Platform$OS.type
-    if (os1 == "windows") {
-      success <- shell(shQuote(cmd))
+
+    os1 <- Sys.info()["sysname"]
+    if (os1 == "Windows") {
+        status <- shell(paste(shQuote(exefile), args, pyfile))
     }
     else {
-      success <- system(cmd)
+        status <- system(cmd)
     }
     
-    if(success!=0)
-      stop(paste("An error occurred while running command\n '",
-                 exefile, "'", sep=""))
+    if(!(status %in% c(0,1))) {
+        stop(paste("An error occurred while running command\n '",
+                   exefile, "'", sep=""))
+    }
+
   }
 
   if(type == "session") {

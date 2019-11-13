@@ -7,7 +7,7 @@
 }
 \usage{
 pdbsplit(pdb.files, ids = NULL, path = "split_chain", overwrite=TRUE,
-         verbose = FALSE, mk4=FALSE, ncore = 1, \dots)
+         verbose = FALSE, mk4=FALSE, ncore = 1, progress = NULL, \dots)
 }
 \arguments{
   \item{pdb.files}{ a character vector of PDB file names. }
@@ -24,6 +24,7 @@ pdbsplit(pdb.files, ids = NULL, path = "split_chain", overwrite=TRUE,
     four characters of the input filename (see \code{basename.pdb} for details).  }   
   \item{ncore}{ number of CPU cores used for the calculation.
     \code{ncore>1} requires package \sQuote{parallel} be installed. }
+  \item{progress}{ progress bar for use with shiny web app. }
   \item{...}{ additional arguments to \code{read.pdb}. Useful e.g. for
     parsing multi model PDB files, including ALT records etc. in the
     output files. }

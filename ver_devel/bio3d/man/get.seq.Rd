@@ -2,8 +2,8 @@
 \alias{get.seq}
 \title{ Download FASTA Sequence Files }
 \description{
-  Downloads FASTA sequence files from the NR, or SWISSPROT/UNIPROT
-  databases.
+  Downloads FASTA sequence files from the NCBI nr, SWISSPROT/UNIPROT,
+  OR RCSB PDB databases.
 }
 \usage{
 get.seq(ids, outfile = "seqs.fasta", db = "nr", verbose = FALSE)
@@ -16,11 +16,11 @@ get.seq(ids, outfile = "seqs.fasta", db = "nr", verbose = FALSE)
   \item{db}{ A single element character vector specifying the database
     from which sequences are to be obtained. }
   \item{verbose}{ logical, if TRUE URL details of the download process
-    are printed, else a progress bar is displayed. }
+    are printed. }
 }
 \details{
-  This is a basic function to automate sequence file download from the
-  NR and SWISSPROT/UNIPROT databases.
+  This is a basic function to automate sequence file download from the 
+  databases including NCBI nr, SWISSPROT/UNIPROT, and RCSB PDB.
 }
 \value{
   If all files are successfully downloaded a list object with two
