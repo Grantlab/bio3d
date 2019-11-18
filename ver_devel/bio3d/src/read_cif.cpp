@@ -78,6 +78,9 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
   vector<string> raw_lines;
   string line;
 
+  // section type
+  string section_type = "";
+  
   igzstream mystream;
   mystream.open(filename.c_str());
   
@@ -91,28 +94,28 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
 	break;
       }
 
-      // should be done reading _loop lines instead I guess
-      /**
-      else if(line.substr(0,6)=="HELX_P") {
-	
-	tmps = trim(line);
-	tmp_vec = split(tmps, ' ');
-	
-	helix_chain.push_back(trim(tmp_vec[4]));
-	helix_resno_start.push_back(stringToInt(tmp_vec[5]));
-	helix_resno_end.push_back(stringToInt(tmp_vec[9]));
-	helix_type.push_back(trim(tmp_vec[17]));
-	helix_inserti.push_back(trim(tmp_vec[6]));
-	helix_inserte.push_back(trim(tmp_vec[10]));
-	
+      // reset section type if we run into "#"
+      else if(line.substr(0,1)=="#") {
+	section_type = "";
+	continue;
       }
-      */
+      
+      // set section type if not set
+      else if(section_type == "") {
+	if(line.substr(0, 10) == "_atom_site") {
+	  section_type = "_atom_site";
+	}
+      }
 
       // store ATOM/HETATM records
-      else if(line.substr(0,4)=="ATOM" || line.substr(0,6)=="HETATM") {
+      else if(section_type == "_atom_site" &&
+	      (line.substr(0,4)=="ATOM" || line.substr(0,6)=="HETATM")) {
 	
 	tmps = trim(line);
 	tmp_vec = split(tmps, ' ');
+
+	//if(tmp_vec.size() < 20) {
+	  
 	//cout << tmps;
 	//cout << "\n";
 

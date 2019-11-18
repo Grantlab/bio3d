@@ -2,7 +2,8 @@ read.cif <- function(file, maxlines = -1, multi=FALSE,
                      rm.insert=FALSE, rm.alt=TRUE, verbose=TRUE) {
 
     cl <- match.call()
-    warning("helix/sheet records will not be parsed in this version of the code")
+    warning("beta version of `read.cif`. please use with caution")
+    warning("helix/sheet records could not be parsed")
     
     if(missing(file)) {
         stop("read.cif: please specify a CIF 'file' for reading")
