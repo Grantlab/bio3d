@@ -80,13 +80,19 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
 
   // section type
   string section_type = "";
+
+  // mapper for column field to index
+  map<string, int> columns_map;
   
   igzstream mystream;
   mystream.open(filename.c_str());
   
   if (mystream.is_open())  {
     while ( getline (mystream, line) ) {
-  
+      
+      //cout << line;
+      //cout << "\n";
+
       // break if user has provided maxlines argument
       counter++;
       
@@ -97,31 +103,25 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
       // reset section type if we run into "#"
       else if(line.substr(0,1)=="#") {
 	section_type = "";
+	columns_map.clear();
 	continue;
       }
       
       // set section type if not set
-      else if(section_type == "") {
-	if(line.substr(0, 10) == "_atom_site") {
-	  section_type = "_atom_site";
-	}
+      else if(line.substr(0, 10) == "_atom_site") {
+	section_type = "_atom_site";
+	columns_map[ trim(line) ] = columns_map.size();
       }
-
+      
       // store ATOM/HETATM records
       else if(section_type == "_atom_site" &&
 	      (line.substr(0,4)=="ATOM" || line.substr(0,6)=="HETATM")) {
 	
 	tmps = trim(line);
 	tmp_vec = split(tmps, ' ');
-
-	//if(tmp_vec.size() < 20) {
-	  
-	//cout << tmps;
-	//cout << "\n";
-
+	
 	// include here check for model number as in read_pdb.cpp
-	// add checks for "?"
-	curr_model = stringToInt(tmp_vec[20]);
+	curr_model = stringToInt(tmp_vec[ columns_map["_atom_site.pdbx_PDB_model_num"] ]);
 
 	if(curr_model != prev_model) {
 	  models++;
@@ -132,12 +132,11 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
 	  models=1;
 	  break;
 	}
-
 	
 	// read coordinates
-	double tmpx = stringToDouble(tmp_vec[10]);
-	double tmpy = stringToDouble(tmp_vec[11]);
-	double tmpz = stringToDouble(tmp_vec[12]);
+	double tmpx = stringToDouble(tmp_vec[ columns_map["_atom_site.Cartn_x"] ]);
+	double tmpy = stringToDouble(tmp_vec[ columns_map["_atom_site.Cartn_y"] ]);
+	double tmpz = stringToDouble(tmp_vec[ columns_map["_atom_site.Cartn_z"] ]);
 	
 	// always store coords in xyz object
 	xyz.push_back(tmpx);
@@ -154,34 +153,34 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
 	  z.push_back(tmpz);
 
 	  //_atom_site.group_PDB
-	  type.push_back(tmp_vec[0]);
+	  type.push_back(tmp_vec[ columns_map["_atom_site.group_PDB"] ]);
 
 	  //_atom_site.id
-	  eleno.push_back(stringToInt(tmp_vec[1]));
+	  eleno.push_back(stringToInt(tmp_vec[ columns_map["_atom_site.id"] ]));
 	
 	  //_atom_site.type_symbol
-	  elesy.push_back(tmp_vec[2]);
+	  elesy.push_back(tmp_vec[ columns_map["_atom_site.type_symbol"] ]);
 	  
 	  //_atom_site.label_atom_id
 	  //_atom_site.label_alt_id
-	  alt.push_back(tmp_vec[4]);
+	  alt.push_back(tmp_vec[ columns_map["_atom_site.label_alt_id"] ]);
 	  
 	  //_atom_site.label_comp_id
 	  //_atom_site.label_asym_id
 	  //_atom_site.label_entity_id
-	  entid.push_back(stringToInt(tmp_vec[7]));
+	  entid.push_back(stringToInt(tmp_vec[ columns_map["_atom_site.label_entity_id"] ]));
 	  
 	  //_atom_site.label_seq_id
 	  //_atom_site.pdbx_PDB_ins_code
-	  insert.push_back(tmp_vec[9]);
+	  insert.push_back(tmp_vec[ columns_map["_atom_site.pdbx_PDB_ins_code"] ]);
 	  
 	  //_atom_site.Cartn_x
 	  //_atom_site.Cartn_y
 	  //_atom_site.Cartn_z
 	  //_atom_site.occupancy
-	  o.push_back(stringToDouble(tmp_vec[13]));
+	  o.push_back(stringToDouble(tmp_vec[ columns_map["_atom_site.occupancy"] ]));
 	  //_atom_site.B_iso_or_equiv
-	  b.push_back(stringToDouble(tmp_vec[14]));
+	  b.push_back(stringToDouble(tmp_vec[ columns_map["_atom_site.B_iso_or_equiv"] ]));
 	  
 	  //_atom_site.Cartn_x_esd
 	  //_atom_site.Cartn_y_esd
@@ -189,18 +188,18 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
 	  //_atom_site.occupancy_esd
 	  //_atom_site.B_iso_or_equiv_esd
 	  //_atom_site.pdbx_formal_charge
-	  charge.push_back(tmp_vec[15]);
+	  charge.push_back(tmp_vec[ columns_map["_atom_site.pdbx_formal_charge"] ]);
 	  
 	  //_atom_site.auth_seq_id
-	  resno.push_back(stringToInt(tmp_vec[16]));
+	  resno.push_back(stringToInt(tmp_vec[ columns_map["_atom_site.auth_seq_id"] ]));
 	  //_atom_site.auth_comp_id
-	  resid.push_back(tmp_vec[17]);
+	  resid.push_back(tmp_vec[ columns_map["_atom_site.auth_comp_id"] ]);
 	  //_atom_site.auth_asym_id
-	  chain.push_back(tmp_vec[18]);
+	  chain.push_back(tmp_vec[ columns_map["_atom_site.auth_asym_id"] ]);
 	  //_atom_site.auth_atom_id
-	  elety.push_back(tmp_vec[19]);
+	  elety.push_back(tmp_vec[ columns_map["_atom_site.auth_atom_id"] ]);
 	  //_atom_site.pdbx_PDB_model_num
-	  model.push_back(stringToInt(tmp_vec[20]));
+	  model.push_back(stringToInt(tmp_vec[ columns_map["_atom_site.pdbx_PDB_model_num"] ]));
 	  
 	} 
       } 
