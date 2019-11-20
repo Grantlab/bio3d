@@ -1,1 +1,1 @@
-devtools::check("/tmp/bio3d", cran=TRUE)
+devtools::check("/tmp/bio3d", run_dont_test=TRUE)
