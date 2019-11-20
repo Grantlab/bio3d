@@ -10,9 +10,7 @@ RUN /tmp/R-devel/bin/R -e "install.packages('devtools', dep=T, repos = 'https://
 # Install Bio3D from source
 COPY ./bio3d /tmp/bio3d
 COPY ./util/check.R /tmp/check.R
-
-RUN rm /tmp/bio3d/src/*.o /tmp/bio3d/src/*.so
-RUN /tmp/R-devel/bin/R CMD INSTALL /tmp/bio3d
+RUN /tmp/R-devel/bin/R -e "devtools::install('/tmp/bio3d')"
 
 #CMD ["/tmp/R-devel/bin/R"]
 CMD ["/tmp/R-devel/bin/Rscript", "/tmp/check.R"]
