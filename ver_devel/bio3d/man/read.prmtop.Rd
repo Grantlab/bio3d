@@ -30,7 +30,7 @@ read.prmtop(file)
   Returns a list of class \sQuote{prmtop} (inherits class
   \sQuote{amber}) with components according to the flags present in the PrmTop
   file. See the AMBER documentation for a complete list of
-  flags/components: \url{http://ambermd.org/formats.html}.
+  flags/components: \url{http://ambermd.org/FileFormats.php}.
 
   Selected components:
   \item{ATOM_NAME}{ a character vector of atom names. }
@@ -44,12 +44,12 @@ read.prmtop(file)
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
-  \url{http://ambermd.org/formats.html}
+  \url{http://ambermd.org/FileFormats.php}
 }
 \author{ Lars Skjaerven }
 \note{
   See AMBER documentation for PrmTop format description:\cr
-  \url{http://ambermd.org/formats.html}.
+  \url{http://ambermd.org/FileFormats.php}.
 }
 \seealso{
   \code{\link{read.crd}}, \code{\link{read.ncdf}},
