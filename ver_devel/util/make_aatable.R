@@ -48,7 +48,7 @@ rawtable <- c(
   "HSP", "H", "C6 H10 N3 O2",   "C6 H8 N3 O1",   "Histidine Positive", 
   "CYX", "C", "C3 H6 N O2 S",   "C3 H4 N O1 S",  "Cystein SSbond", 
   "ASH", "D", "C4 H7 N O4",     "C4 H5 N O3",    "Aspartic acid Neutral", 
-  "GLH", "G", "C5 H9 N O4",     "C5 H7 N O3",    "Glutatmic acid Neutral", 
+  "GLH", "E", "C5 H9 N O4",     "C5 H7 N O3",    "Glutatmic acid Neutral", 
   "LYN", "K", "C6 H14 N2 O2",   "C6 H13 N2 O1",  "Lysine Neutral",
   "CYM", "C", "C3 H6 N O2 S",   "C3 H4 N O1 S",  "Cystein Negative", 
   "TPO", "T", "C4 H10 N O6 P",  "C4 H8 N O5 P",  "phosphothreonine", 

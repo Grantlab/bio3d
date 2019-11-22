@@ -1,6 +1,7 @@
 \name{atom.select}
 \alias{atom.select}
 \alias{atom.select.pdb}
+\alias{atom.select.pdbs}
 \alias{atom.select.mol2}
 \alias{atom.select.prmtop}
 \alias{print.select}
@@ -19,7 +20,10 @@ atom.select(\dots)
                           insert = NULL, segid = NULL, 
                           operator = "AND", inverse = FALSE,
                           value = FALSE, verbose=FALSE, \dots)
-
+\method{atom.select}{pdbs}(pdbs, string = NULL, 
+                           resno = NULL, chain = NULL, resid = NULL,
+                           operator="AND", inverse = FALSE,
+                           value = FALSE, verbose=FALSE, \dots)
 \method{atom.select}{mol2}(mol, string=NULL,
                            eleno = NULL, elena = NULL, elety = NULL,
                            resid = NULL, chain = NULL, resno = NULL,
@@ -36,6 +40,8 @@ atom.select(\dots)
     \code{atom.select.prmtop}, or \code{print}. }
   \item{pdb}{ a structure object of class \code{"pdb"}, obtained from
     \code{\link{read.pdb}}. }
+  \item{pdbs}{ a numeric matrix of aligned C-alpha xyz Cartesian
+    coordinates as obtained with \code{\link{read.fasta.pdb}} or \code{\link{pdbaln}}. }
   \item{string}{ a single selection keyword from \code{calpha}
     \code{cbeta} \code{backbone} \code{sidechain} \code{protein}
     \code{nucleic} \code{ligand} \code{water} \code{h} or \code{noh}. }
