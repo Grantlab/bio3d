@@ -22,8 +22,7 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   \item{exefile}{ file path to the \sQuote{MUSCLE} program on your system (i.e.
     how is \sQuote{MUSCLE} invoked). Alternatively, \sQuote{CLUSTALO} can
     be used. Also supported is using the \sQuote{msa} package from Bioconductor
-    (need to install packages using 
-    \code{\link[BiocManager:install]{BiocManager::install}}). To do so, simply
+    (need to install packages using \code{BiocManager::install()}). To do so, simply
     set \code{exefile="msa"}. }
   \item{outfile}{ name of \sQuote{FASTA} output file to which alignment
     should be written. }
@@ -41,7 +40,7 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
     online sequence alignment using EMBL-EBI Web Services. 
     See below for details. } 
   \item{\dots}{ additional arguments passed to the function
-    \code{\link[msa:msaMuscle]{msa::msaMuscle}}. }
+    \code{msa::msaMuscle()}. }
 }
 \details{
   Sequence alignment attempts to arrange the sequences of protein,
