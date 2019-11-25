@@ -17,7 +17,7 @@
       nmodes <- modes$triv.modes + nmodes
     }
     else {
-      if(class(modes)!="matrix" && class(modes)!="pca.loadings")
+      if(!inherits(modes, c("matrix", "pca.loadings")))
         stop("overlap: 'modes' must be an object of type 'pca', 'nma', or 'matrix'")
       ev <- modes
       mass <- NULL

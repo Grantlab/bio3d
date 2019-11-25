@@ -6,7 +6,7 @@ community.tree <- function(x, rescale=FALSE){
      stop("igraph package missing: Please install, see: ?install.packages")
   }
 
-  if(class(x) != "cna"){
+  if(!inherits(x, "cna")){
     stop("Input should be a 'cna' class object as obtained from cna()")
   }
 

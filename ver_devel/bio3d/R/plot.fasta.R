@@ -17,7 +17,7 @@
   }
   else {
     if(!is.null(hc)) {
-      if(class(hc)!="hclust")
+      if(!inherits(hc, "hclust"))
         stop("'hc' must be logical, NULL or a 'hclust' object.")
     }
   }

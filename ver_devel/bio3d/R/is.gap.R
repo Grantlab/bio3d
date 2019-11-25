@@ -1,6 +1,6 @@
 `is.gap` <-
 function(x, gap.char=c("-",".")) {
-	if(is.pdbs(x) || class(x)=="fasta") {
+	if(is.pdbs(x) || inherits(x, "fasta")) {
 		return( colSums( matrix( as.logical(is.na(x$ali)+(x$ali %in% gap.char)), 
 			ncol=ncol(x$ali)) ) > 0 )
 	} else { 
