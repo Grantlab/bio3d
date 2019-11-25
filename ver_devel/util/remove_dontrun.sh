@@ -49,4 +49,18 @@ for i in ./bio3d/man/*.Rd; do
            bok && n==0 {bok=0}' $i > t.Rd
       mv t.Rd $i
    fi
+   
+   # comment out 'requireNamespace()' in examples, because it will cause
+   #  the loss of some plots.
+#   if [ `basename $i` != "check.utility.Rd" ]; then
+      awk 'BEGIN{bok=0; n=0; bok_inv=0}
+           /requireNamespace/{bok=1}
+           /\!requireNamespace/{bok_inv=1}
+           bok {a=$0; while(sub(/\{/,"",a)) n++; while(sub(/\}/,"",a)) n--}
+           !bok_inv && n>0 && !/requireNamespace/ && !(/else/ && n==1){print} 
+           /else/ && n==1 {bok_inv=0}
+           !bok{print} 
+           bok && n==0 {bok=0}' $i > t.Rd
+      mv t.Rd $i
+#   fi
 done
