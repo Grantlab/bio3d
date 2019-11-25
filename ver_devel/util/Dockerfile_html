@@ -71,7 +71,7 @@ RUN R -e "install.packages('highlight')"
 RUN R -e "install.packages('staticdocs_0.1.tar.gz', repos=NULL)"
 RUN R -e "BiocManager::install(c('msa', 'Biostrings'))"
 
-CMD ["/bin/bash", "-c", "git clone https://bitbucket.org/Grantlab/bio3d.git",\
-     " && cd bio3d/ver_devel/util &&  chmod a+x *.sh  && ", \
-     "./run_generate_html.sh && ", \
-     "cp -r sandbox/* /tmp/bio3d"] 
+CMD ["/bin/bash", "-c", "git clone https://bitbucket.org/Grantlab/bio3d.git; \
+                         cd bio3d/ver_devel/util; chmod a+x *.sh;             \ 
+                         ./run_generate_html.sh;                              \
+                         cp -r sandbox/* /tmp/bio3d; chmod -R a+rw /tmp/bio3d/*"] 
