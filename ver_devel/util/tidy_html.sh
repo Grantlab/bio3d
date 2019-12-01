@@ -63,3 +63,19 @@ mv index.html html/
 # additional output file
 if test -r eg.html; then  mv eg.html html/; fi
 
+# remove messy "skipping download" warning
+for fnm in `grep -in 'Skipping download' html/*.html | awk '{split($0, a, ":"); print a[1]}'`; do
+   l2=$( grep -in -m 1 'Skipping download' $fnm | cut -f1 -d: )
+   let l1=l2-1
+   echo Deleting lines: $fnm, $l1, $l2
+   sed -i "$l1,$l2"d $fnm
+done
+
+
+# remove very messy "cannot wait for child ..." warning because of older version of parallel
+for fnm in `grep -in 'cannot wait for child' html/*.html | awk '{split($0, a, ":"); print a[1]}'`; do
+   l2=$( grep -in -m 1 'cannot wait for child' $fnm | cut -f1 -d: )
+   let l1=l2-1
+   echo Deleting lines: $fnm, $l1, $l2
+   sed -i "$l1,$l2"d $fnm
+done

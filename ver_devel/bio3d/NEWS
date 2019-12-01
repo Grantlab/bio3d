@@ -1,6 +1,43 @@
 NEWS
 ====
 
+v2.4
+Version 2.4, released November 2019, provides a number of new features and 
+enhancements including: new facilities for sequence alignment using the 'msa' 
+package from Bioconductor or alternatively using the online server of the 
+European Bioinformatics Institute (EMBL-EBI) (and so a local MUSCLE program 
+is no longer a mandate), a more robust sequence fetching function supporting 
+both the EMBL-EBI and NCBI (National Center for Biotechnology Information) servers, 
+a new function for "core" detection using contact maps, new and improved 
+functions for processing protein structures and doing structural network analysis, 
+and more advanced system environment checking for automatically locating essential 
+external programs.  
+
+We have also updated online vignettes and other documentations.
+For a fine-grained list of changes, or to report a bug, please consult:
+
+* [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
+* [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+
+For full install instructions see: 
+<http://thegrantlab.org/bio3d/tutorials/installing-bio3d>
+
+Major new/enhanced functions include:
+
+* seqaln:  Supports using 'msa' and the EMBL-EBI server to do sequence alignment
+* get.seq:  More robust to fetch a large number of sequences and supports EMBL-EBI and NCBI servers
+* atom.select.pdbs:  New function for atom selection of a 'pdbs' object
+* core.cmap:  New function for "core" residues detection using contact maps
+* chain.pdb:  Supports inspection on peptide bond (C-N) length
+* community.aln:  Comparison of networks with different numbers of nodes
+* dccm.pca, dccm.xyz:  Tidier interface by merging "lmi()" and providing a new argument "method"
+* core.find, dccm.nma, dm.xyz, nma.pdbs, pdbaln, pdbsplit, read.fasta.pdb:  Improved progress bar
+* dssp.pdb, pdbaln, pymol.dccm, pymol.modes, pymol.pdbs, seqaln:  Exefile argument with OS dependent defaults
+* rmsd, seqidentity:  More sensible output by fetching row and column names from input
+
+Happy Bio3Ding!
+
+
 v2.3
 Version 2.3, released September 2016, provides a number of new features and 
 enhancements including: new facilities for ensemble normal mode analysis (NMA) 

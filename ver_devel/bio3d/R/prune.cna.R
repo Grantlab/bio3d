@@ -10,7 +10,7 @@ prune.cna <- function(x, edges.min=1, size.min=1) {
      stop("igraph package missing: Please install, see: ?install.packages")
   }
   
-  if(class(x)=="cna") {
+  if(inherits(x, "cna")) {
     y <- summary.cna(x)
     network=x$community.network
   } else {

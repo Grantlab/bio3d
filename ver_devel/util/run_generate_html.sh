@@ -30,19 +30,19 @@ ln -s inst/examples ./bio3d/
 ln -s inst/matrices ./bio3d/
 
 # 4. remove dontrun tags to run all example codes
-sh $utildir/remove_dontrun.sh
+/bin/bash $utildir/remove_dontrun.sh
 
 # 5. start an R session and run the commands to generate html files in ./html/
 mkdir html
 if ! Rscript -e "library(staticdocs)" \
         -e "options(device=x11)" \
-        -e "build_site(pkg='bio3d', site_path='html', examples=$example, launch=TRUE)"; then
+        -e "build_site(pkg='bio3d', site_path='html', examples=$example, launch=FALSE)"; then
    echo "Error: running staticdocs"
    exit 1
 fi
 
 # 6. tidy up html files
-utildir=$utildir sh $utildir/tidy_html.sh
+utildir=$utildir /bin/bash $utildir/tidy_html.sh
 # some modification to index.html...
 # - add links to all vignettes
 sed -i 's/<li><a href="vignettes\/bio3d_vignettes.html">bio3d Vignettes<\/a><\/li>/<li><a href="vignettes\/Bio3D_install.pdf">Installing Bio3D<\/a><\/li>\

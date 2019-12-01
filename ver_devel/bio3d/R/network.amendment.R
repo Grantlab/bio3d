@@ -6,7 +6,7 @@ network.amendment <- function(x, membership, minus.log=TRUE){
      stop("igraph package missing: Please install, see: ?install.packages")
   }
 
-  if(class(x) != "cna"){
+  if(!inherits(x, "cna")){
     stop("Input x must be a 'cna' class object as obtained from cna()")
   }
 

@@ -23,7 +23,7 @@
     p[, 1] <- p[, 1] / sqrt(sum(p[, 1]^2))
     for(i in 2:ncol(p)) {
       ov <- apply(p[, 1:(i-1), drop=FALSE], 2, function(x)
-              crossprod(p[, i], x) * x )
+              as.vector(crossprod(p[, i], x)) * x )
       ov <- rowSums(ov)
       p[, i] <- p[, i] - ov
       p[, i] <- p[, i] / sqrt(sum(p[, i]^2))

@@ -70,7 +70,8 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
   int counter = 0;
   int curr_model;
   int prev_model = -1;
-  
+  int colmap_size;
+ 
   string tmps;
   vector<string> tmp_vec;
 
@@ -108,9 +109,10 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
       }
       
       // set section type if not set
-      else if(line.substr(0, 10) == "_atom_site") {
+      else if(line.substr(0, 11) == "_atom_site.") {
 	section_type = "_atom_site";
-	columns_map[ trim(line) ] = columns_map.size();
+        colmap_size = columns_map.size();
+	columns_map[ trim(line) ] = colmap_size;
       }
       
       // store ATOM/HETATM records
@@ -238,7 +240,7 @@ List read_cif(std::string filename, int maxlines=-1, bool multi=false) {
 						   Rcpp::Named("o")=o,
 						   Rcpp::Named("b")=b,
 						   Rcpp::Named("segid")=entid,
-						   Rcpp::Named("elesy")=elesy,
+					   Rcpp::Named("elesy")=elesy,
 						   Rcpp::Named("charge")=charge,
 						   Rcpp::Named("stringsAsFactors")=false
 						   ),
