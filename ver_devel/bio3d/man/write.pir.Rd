@@ -48,7 +48,7 @@ if(check.utility("muscle")) {
 ## transducin G-alpha subunit using the template 3SN6_A
 
 ## Read transducin alpha subunit sequence
-seq <- get.seq("P04695", db = "uniprot", outfile = tempfile())
+seq <- get.seq("P04695", outfile = tempfile())
 
 ## Read structure template
 path = tempdir()

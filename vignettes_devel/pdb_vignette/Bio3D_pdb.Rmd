@@ -477,7 +477,7 @@ ca.inds <- atom.select(pdb, "calpha")
 
 ## Identification of dynamic domains
 Function **geostas()** attempts to identify rigid domains in a protein (or
-nucleic acid) structure based on knoweledge of its structural ensemble (as obtained a from multi-model PDB input file, an ensemble of multiple PDB files (see section below), NMA or MD results). Below we demonstrate the identification of such dynamic domains in a multi-model PDB and use function **fit.xyz()** to fit all models to one of the identified domains. We then use **write.pdb()** to store the aligned structures for further visualization, e.g. in VMD:
+nucleic acid) structure based on knowledge of its structural ensemble (as obtained a from multi-model PDB input file, an ensemble of multiple PDB files (see section below), NMA or MD results). Below we demonstrate the identification of such dynamic domains in a multi-model PDB and use function **fit.xyz()** to fit all models to one of the identified domains. We then use **write.pdb()** to store the aligned structures for further visualization, e.g. in VMD:
 
 
 ```{r eval=TRUE, results='show', fig.width=5, fig.height=5, fig.cap="Plot of atomic movement similarity matrix with domain annotation for PDB ID `1d1d`"}
