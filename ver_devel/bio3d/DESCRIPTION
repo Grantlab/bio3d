@@ -1,6 +1,6 @@
 Package: bio3d
 Title: Biological Structure Analysis
-Version: 2.4-0.9000
+Version: 2.4-1
 Authors@R: c(person("Barry", "Grant", role=c("aut", "cre"),
                      email="bjgrant@ucsd.edu"),
              person("Xin-Qiu", "Yao", role="aut"),
