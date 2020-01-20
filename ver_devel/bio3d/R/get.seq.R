@@ -20,7 +20,7 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
   if(db == "nr") {
     baseUrl <- 'https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?db=protein'
   } else {
-    baseUrl <- 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
+    baseUrl <- 'https://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
  
     # check if API works
     url <- paste(baseUrl, '/dbfetch.databases', sep='')
