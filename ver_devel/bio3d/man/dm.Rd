@@ -11,7 +11,8 @@
 dm(\dots)
 
 \method{dm}{pdb}(pdb, inds = NULL, grp = TRUE, verbose=TRUE, \dots)
-\method{dm}{pdbs}(pdbs, \dots)
+\method{dm}{pdbs}(pdbs, rm.gaps=FALSE, all.atom=FALSE, 
+                        aligned.atoms.only=NULL, \dots)
 
 \method{dm}{xyz}(xyz, grpby = NULL, scut = NULL, mask.lower = TRUE, 
                   gc.first=FALSE, ncore=1, \dots)
@@ -25,8 +26,13 @@ dm(\dots)
   \item{grp}{ logical, if TRUE atomic distances will be grouped according
     to their residue membership. See \sQuote{grpby}. }
   \item{verbose}{ logical, if TRUE possible warnings are printed. }
-  \item{pdbs}{ a \sQuote{pdbs} object as returned by \code{\link{read.fasta.pdb}}
-    or \code{\link{pdbaln}}. }
+  \item{pdbs}{ a \sQuote{pdbs} object as returned by \code{\link{read.fasta.pdb}},
+    \code{\link{read.all}}, or \code{\link{pdbaln}}. }
+  \item{rm.gaps}{ logical, if TRUE gapped positions are removed in the returned value. }
+  \item{all.atom}{ logical, if TRUE all-atom coordinates from \code{\link{read.all}}
+    are used. }
+  \item{aligned.atoms.only}{ logical, if TRUE only equivalent (aligned) atoms are considered. 
+    Only meaningful when \code{all.atom=TRUE}. Default: FALSE. } 
   \item{xyz}{ a numeric vector or matrix of Cartesian coordinates.}
   \item{grpby}{ a vector counting connective duplicated elements that
     indicate the elements of \code{xyz} that should be considered as a group

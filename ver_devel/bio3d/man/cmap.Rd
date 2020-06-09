@@ -15,6 +15,7 @@ cmap(\dots)
             mask.lower = TRUE, collapse=TRUE, gc.first=FALSE, ncore=1, nseg.scale=1, \dots)
 
 \method{cmap}{pdb}(pdb, inds = NULL, verbose = FALSE, \dots)
+\method{cmap}{pdbs}(pdbs, rm.gaps=FALSE, all.atom=FALSE, \dots)
 }
 \arguments{
   \item{xyz}{ numeric vector of xyz coordinates or a numeric matrix of
@@ -47,6 +48,11 @@ cmap(\dots)
     \code{\link{atom.select}}. }
   \item{verbose}{ logical, if TRUE details of the selection are
     printed. }
+  \item{pdbs}{ a \sQuote{pdbs} object as returned by \code{\link{read.fasta.pdb}},
+    \code{\link{read.all}}, or \code{\link{pdbaln}}. }
+  \item{rm.gaps}{ logical, if TRUE gapped positions are removed in the returned value. }
+  \item{all.atom}{ logical, if TRUE all-atom coordinates from \code{\link{read.all}}
+    are used. }
   \item{\dots}{ arguments passed to and from functions. }
 }
 \details{
