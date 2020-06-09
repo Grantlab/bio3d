@@ -3,6 +3,7 @@
 \alias{cmap.default}
 \alias{cmap.xyz}
 \alias{cmap.pdb}
+\alias{cmap.pdbs}
 \title{ Contact Map }
 \description{
   Construct a Contact Map for Given Protein Structure(s).}
@@ -15,6 +16,7 @@ cmap(\dots)
             mask.lower = TRUE, collapse=TRUE, gc.first=FALSE, ncore=1, nseg.scale=1, \dots)
 
 \method{cmap}{pdb}(pdb, inds = NULL, verbose = FALSE, \dots)
+
 \method{cmap}{pdbs}(pdbs, rm.gaps=FALSE, all.atom=FALSE, \dots)
 }
 \arguments{
