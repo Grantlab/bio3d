@@ -19,7 +19,7 @@ pymol <- function(...)
   UseMethod("pymol")
 
 pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
-                       type="script", exefile = "pymol", ...) {
+                       type="script", exefile = "pymol", user.vec=NULL, ...) {
   
   allowed <- c("session", "script", "launch")
   if(!type %in% allowed) {
@@ -35,7 +35,7 @@ pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
 
   if(!is.null(col) & !inherits(col, "core")) {
     if(length(col) == 1) {
-      allowed <- c("index", "index2", "rmsf", "gaps")
+      allowed <- c("index", "index2", "rmsf", "gaps", "user")
       if(!col %in% allowed) {
         stop(paste("input argument 'col' must be either of:",
                    paste(allowed, collapse=", ")))
@@ -75,14 +75,23 @@ pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
         }
         exefile <- exefile1
     }
-    
+  
+  ## add support for "prefix" and "pdbext"
+  dots <- list(...)
+  if("prefix" %in% names(dots)) {
+    pdbs$id <- paste(dots$prefix, pdbs$id, sep="")
+  }
+  if("pdbext" %in% names(dots)) {
+    pdbs$id <- paste(pdbs$id, dots$pdbext, sep="")
+  }
+  
   ## use temp-dir unless we output a PML script
   if(type %in% c("session", "launch"))
     tdir <- tempdir()
   else
     tdir <- "."
 
-  pdbdir <- paste(tdir, "pdbs", sep="/")
+  pdbdir <- paste(tdir, "pymol_pdbs", sep="/")
   if(!file.exists(pdbdir))
     dir.create(pdbdir)
   
@@ -104,6 +113,14 @@ pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
       ## color by index of pdbs$ali
       if(col[1] == "index2") {
         bf <- 1:ncol(pdbs$ali)/ncol(pdbs$ali)
+      }
+      ## color by user defined vector
+      if(col[1] == "user") {
+        if(is.null(user.vec) || !is.numeric(user.vec) ||
+           length(user.vec) != ncol(pdbs$ali)) {
+          stop("User defined color vector must be numeric and the same dimension as pdbs")
+        }
+        bf <- user.vec
       }
     }
   }
@@ -258,6 +275,14 @@ pymol.pdbs <- function(pdbs, col=NULL, as="ribbon", file=NULL,
 
     ## color by index of alignment
     if(col[1] == "index2") {
+      for(i in 1:length(pdbs$id)) {
+        l <- l+1
+        lines[l] <- paste("spectrum b, rainbow,", ids[i])
+      }
+    }
+    
+    ## color by user defined vector
+    if(col[1] == "user") {
       for(i in 1:length(pdbs$id)) {
         l <- l+1
         lines[l] <- paste("spectrum b, rainbow,", ids[i])
