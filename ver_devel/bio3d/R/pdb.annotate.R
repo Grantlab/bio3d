@@ -17,19 +17,28 @@
                      "chainId","entityId","sequence","chainLength","db_id","db_name",
                      "rObserved", "rFree", "spaceGroup")
                      ##"molecularWeight","secondaryStructure","entityMacromoleculeType")
-    
+  
+  anno.basicterms <- c("structureId", "experimentalTechnique", "resolution", "chainId", "ligandId",
+                       "source", "structureTitle", "citation", "chainLength", "rObserved", "rFree", 
+                       "spaceGroup")  
   if(is.null(anno.terms)) {
-    anno.terms <- anno.allterms
-  } else {
-    ## Check and exclude invalid annotation terms
-    term.found <- (anno.terms %in% anno.allterms)
-    if( any(!term.found) ) {
-      warning( paste("Requested annotation term not available:",
+    anno.terms <- anno.basicterms
+  } 
+  else {
+    if(anno.terms == "full") {
+      anno.terms <- anno.allterms
+    }
+    else {
+      ## Check and exclude invalid annotation terms
+      term.found <- (anno.terms %in% anno.allterms)
+      if( any(!term.found) ) {
+        warning( paste("Requested annotation term not available:",
                      paste(anno.terms[!term.found], collapse=", "),
                      "\n  Available terms are:\n\t ",
                      paste(anno.allterms, collapse=", ")) )
+      }
+      anno.terms <- match.arg(anno.terms, anno.allterms, several.ok=TRUE)
     }
-    anno.terms <- match.arg(anno.terms, anno.allterms, several.ok=TRUE)
   }
   
   ## Check if we have any valid terms remaining
