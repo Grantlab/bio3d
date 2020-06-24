@@ -2,6 +2,7 @@
 \alias{cnapath}
 \alias{summary.cnapath}
 \alias{print.cnapath}
+\alias{plot.cnapath}
 \title{ Suboptimal Path Analysis for Correlation Networks }
 \description{
   Find k shortest paths between a pair of nodes, source and sink, in a correlation 
