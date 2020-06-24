@@ -190,3 +190,8 @@ print.cnapath <- function(x, ...) {
          print(o$degeneracy)
    }
 }
+plot.cnapath <- function(x, ...) {
+   arg.default <- list(plot=TRUE)
+   args <- .arg.filter(arg.default, ...)
+   do.call(print.cnapath, c(list(x=x), args))
+}

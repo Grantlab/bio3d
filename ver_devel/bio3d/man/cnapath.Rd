@@ -12,6 +12,7 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
 \method{summary}{cnapath}(object, \dots, pdb = NULL, label = NULL, col = NULL,
    plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE, weight = FALSE)
 \method{print}{cnapath}(x, \dots)
+\method{plot}{cnapath}(x, \dots)
 }
 \arguments{
   \item{cna}{ A \sQuote{cna} object obtained from \code{\link{cna}}. }
