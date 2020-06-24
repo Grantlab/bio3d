@@ -25,7 +25,7 @@
     anno.terms <- anno.basicterms
   } 
   else {
-    if(anno.terms == "full") {
+    if("full" %in% anno.terms) {
       anno.terms <- anno.allterms
     }
     else {
