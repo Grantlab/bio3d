@@ -46,7 +46,7 @@ With growing functionality in Bio3D we have decided to implement larger Bio3D mo
 * [Bio3D-muscle](https://bitbucket.org/Grantlab/bio3d-muscle/) [In development]
 * [Bio3D-nma](https://bitbucket.org/Grantlab/bio3d-nma/) [In development]
 * [Bio3D-cheminf](https://bitbucket.org/larsss/cheminf/src/master/) 
-
+* [Bio3D-dcna](https://bitbucket.org/xinqyao/dcna)[In development]
 
 ## Contributing to Bio3D ##
 
