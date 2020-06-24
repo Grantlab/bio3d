@@ -46,7 +46,7 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
   \item{x}{ A 'cnapath' class object as obtained from function \code{cna}.
   }
   \item{\dots}{ Additional arguments passed to igraph function 
-       \code{\link[igraph:get.shortest.paths]{get.shortest.paths}} (in 
+       \code{\link[igraph:distances]{get.shortest.paths}} (in 
        the function \code{cnapath}), passed to \code{summary.cnapath} 
        (in \code{print.cnapath}), as additional paths for 
        comparison (in \code{summary.cnapath}). }
@@ -70,7 +70,7 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
 \seealso{
   \code{\link{cna}}, \code{\link{cna.dccm}},
   \code{\link{vmd.cna}}, \code{\link{vmd.cnapath}}, 
-  \code{\link[igraph:shortest_paths]{get.shortest.paths}}. }
+  \code{\link[igraph:distances]{get.shortest.paths}}. }
 \examples{
 \donttest{
 # Redundant testing excluded
