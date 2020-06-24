@@ -71,8 +71,8 @@
   \sQuote{layout.cna} function.
 }
 \seealso{ \code{\link[igraph:plot.igraph]{plot.igraph}}, 
-  \code{\link[igraph:plot.communities]{plot.communities}},
-  \code{\link[igraph:igraph.plotting]{igraph.plotting}} }
+  \code{\link[igraph:communities]{plot.communities}},
+  \code{\link[igraph:plot.common]{igraph.plotting}} }
 \examples{
 \donttest{
 # PDB server connection required - testing excluded

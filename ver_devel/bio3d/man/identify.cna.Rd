@@ -36,7 +36,11 @@
 }
 \author{ Guido Scarabelli and Barry Grant }
 
-\seealso{ \code{\link{plot.cna}}, \code{\link{identify}}, \code{\link[igraph:plot.igraph]{plot.igraph}}, \code{\link[igraph:plot.communities]{plot.communities}}, \code{\link[igraph:igraph.plotting]{igraph.plotting}} }
+\seealso{ \code{\link{plot.cna}}, 
+          \code{\link{identify}}, 
+          \code{\link[igraph:plot.igraph]{plot.igraph}}, 
+          \code{\link[igraph:communities]{plot.communities}}, 
+          \code{\link[igraph:plot.common]{igraph.plotting}} }
 \examples{
 \dontrun{
 

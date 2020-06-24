@@ -70,7 +70,7 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
 \seealso{
   \code{\link{cna}}, \code{\link{cna.dccm}},
   \code{\link{vmd.cna}}, \code{\link{vmd.cnapath}}, 
-  \code{\link[igraph:get.shortest.paths]{get.shortest.paths}}. }
+  \code{\link[igraph:shortest_paths]{get.shortest.paths}}. }
 \examples{
 \donttest{
 # Redundant testing excluded
