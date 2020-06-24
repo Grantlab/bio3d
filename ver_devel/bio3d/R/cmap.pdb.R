@@ -28,20 +28,26 @@ cmap.pdbs <- function(pdbs, rm.gaps=FALSE, all.atom=FALSE, ...) {
   
   if(!all.atom) {
     # set a new default value of dcut for CA-CA contact map
-    cmap.default <- list(dcut=10.0)
+    cmap.default <- list(dcut=10.0, collapse=FALSE)
     cmap.args <- .arg.filter(cmap.default, cmap.xyz, ...)
     cm <- do.call("cmap.xyz", c(list(xyz=pdbs$xyz), cmap.args))
   }
   else {
     # set a new default value of grpby for all-atom contact map
-    cmap.default <- list(grpby=pdbs$all.grpby)
+    cmap.default <- list(grpby=pdbs$all.grpby, collapse=FALSE)
     cmap.args <- .arg.filter(cmap.default, cmap.xyz, ...)
     cm <- do.call("cmap.xyz", c(list(xyz=pdbs$all), cmap.args))
   }
   
   if(rm.gaps) {
     gaps.res <- gap.inspect(pdbs$ali)
-    cm <- cm[gaps.res$f.inds, gaps.res$f.inds, ]
+    ndim <- length(dim(cm))
+    if(ndim>2) {
+       cm <- cm[gaps.res$f.inds, gaps.res$f.inds, ]
+    }
+    else {
+       cm <- cm[gaps.res$f.inds, gaps.res$f.inds]
+    }
   }
   return(cm)
 }
