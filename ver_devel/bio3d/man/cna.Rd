@@ -104,11 +104,11 @@
 \author{ Guido Scarabelli and Barry Grant }  
 \seealso{
    \code{\link{plot.cna}},  \code{\link{summary.cna}},
-   \code{\link{vmd.cna}}, \code{\link[igraph:graph.adjacency]{graph.adjacency}},
-   \code{\link[igraph:edge.betweenness.community]{edge.betweenness.community}},
-   \code{\link[igraph:walktrap.community]{walktrap.community}}, 
-   \code{\link[igraph:fastgreedy.community]{fastgreedy.community}},
-   \code{\link[igraph:infomap.community]{infomap.community}}
+   \code{\link{vmd.cna}}, \code{\link[igraph:graph_from_adjacency_matrix]{graph.adjacency}},
+   \code{\link[igraph:cluster_edge_betweenness]{edge.betweenness.community}},
+   \code{\link[igraph:cluster_walktrap]{walktrap.community}}, 
+   \code{\link[igraph:cluster_fast_greedy]{fastgreedy.community}},
+   \code{\link[igraph:cluster_infomap]{infomap.community}}
 }
 \examples{
 \donttest{
