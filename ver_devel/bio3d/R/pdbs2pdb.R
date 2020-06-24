@@ -3,9 +3,6 @@
     stop("Input 'pdbs' should be of class 'pdbs', e.g. from pdbaln() or read.fasta.pdb()")
   }
   
-  if(all.atom && is.null(pdbs$all))
-    stop("With 'all.atom=TRUE', input 'pdbs' must be obtained from read.all()")
-
   if(is.null(inds))
     inds <- seq(1, length(pdbs$id))
 
@@ -15,7 +12,25 @@
   gaps.res <- gap.inspect(pdbs$ali)
   gaps.pos <- gap.inspect(pdbs$xyz)
 
-  
+  if(all.atom) {
+    if(is.null(pdbs$all)) {
+       # check file paths saved in pdbs$id
+       if(all(file.exists(pdbs$id[inds]))) {
+          tpdbs <- read.all(trim(pdbs, row.inds=inds, col.inds=1:ncol(pdbs$ali)), verbose=FALSE)
+          if(rm.gaps) {
+            tpdbs <- trim(tpdbs, col.inds=gaps.res$f.inds)
+          }
+          else {
+            tpdbs <- trim(tpdbs)
+          }
+          return(pdbs2pdb(tpdbs, inds=NULL, rm.gaps=rm.gaps, all.atom=TRUE, ncore=ncore))
+       }
+       else {
+          stop("With 'all.atom=TRUE', input 'pdbs' must be obtained from read.all() or pdbs$id refers to existing files")
+       }
+    }
+  }
+
   all.pdbs <- mclapply(inds, function(j) {    
     ## Temporaray file
     fname <- tempfile(fileext = "pdb")
