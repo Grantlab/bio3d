@@ -11,7 +11,8 @@ pdb.pfam(ids, best.only = TRUE, compact = TRUE)
 }
 \arguments{
   \item{ids}{ A charater vector of one or more 4-letter PDB
-    codes/identifiers of the files for query. }
+    codes/identifiers of the files for query, or a \sQuote{blast}
+    object containing \sQuote{pdb.id}. }
   \item{anno.terms}{ Terms can be used for query. The "anno.terms" can be
     "structureId", "experimentalTechnique", "resolution", "chainId",
     "ligandId", "ligandName", "source",  "scopDomain", "classification",

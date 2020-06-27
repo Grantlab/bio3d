@@ -4,6 +4,8 @@
   oopsb <- requireNamespace("RCurl", quietly = TRUE)
   if(!all(c(oopsa, oopsb)))
     stop("Please install the XML and RCurl package from CRAN")
+
+  if(inherits(ids, "blast")) ids = ids$pdb.id
   
   if(!is.vector(ids)) {
     stop("Input argument 'ids' should be a vector of PDB identifiers/accession codes")
