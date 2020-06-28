@@ -1,4 +1,4 @@
-filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL, 
+filter.dccm <- function(x, cutoff.cij = NULL, cmap = NULL, xyz = NULL, fac = NULL, 
                         cutoff.sims = NULL, collapse = TRUE, extra.filter = NULL, ...) {
 
    # check cij format
@@ -28,6 +28,11 @@ filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL
    if(is.matrix(cmap) && !all.equal(dim(cmap), dim(cij)[1L:2L]))
       stop("Input 'cmap' does not match x")
 
+   ## Check cutoff.cij
+   if(is.null(cutoff.cij)) {
+      cutoff.cij <- .cij.cutoff.guess(cij, p = 0.95)
+   }
+
    ## Inspect cij values with respect to cutoff.cij and contact map
    if(is.matrix(cmap) || isTRUE(cmap)) {
 
@@ -42,9 +47,14 @@ filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL
       if(isTRUE(cmap)) {
          if(is.null(xyz))
             stop("xyz coordinates or a 'pdbs' object must be provided for contact map calculation")
+
+         cmap.args <- list(...)
+
          if(inherits(xyz, "pdbs")) {
             gaps.pos <- gap.inspect(xyz$xyz)
             xyz <- xyz$xyz[, gaps.pos$f.inds]
+            cmap.default <- list(dcut=10.0)
+            cmap.args <- .arg.filter(cmap.default, cmap.xyz, ...)
          }
          if(nrow(xyz) != dim(cij)[3L] && nlevels(fac) > 1)
             stop(paste("Input 'xyz' doesn't match 'x'", 
@@ -59,9 +69,9 @@ filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL
          # contact map
          if(isTRUE(cmap)) { 
             if(nlevels(fac) > 1)
-                cm <- cmap(xyz[i, ], ...) 
+                cm <- do.call("cmap.xyz", c(list(xyz=xyz[i, ]), cmap.args))
             else
-                cm <- cmap(xyz, ...) 
+                cm <- do.call("cmap.xyz", c(list(xyz=xyz), cmap.args)) 
          } else {
             cm <- cmap
          }
@@ -88,6 +98,12 @@ filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL
       if(collapse) ncij <- lapply(ncij, rowMeans, dims = 2) 
       if(nlevels(fac)==1) ncij <- ncij[[1]]
       if(is.matrix(ncij)) class(ncij) = c("dccm", "matrix")
+      if(is.list(ncij)) {
+         ncij <- lapply(ncij, function(x) {
+            class(x) <- c("dccm", "matrix")
+            x
+         })
+      }
 
       return(ncij)
 
@@ -121,4 +137,53 @@ filter.dccm <- function(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL
       class(cij.ave) = c("dccm", "matrix")
       return(cij.ave)
    }
+}
+
+# Estimate cij.cutoff as quantile Pr(cij<=cij.cutoff) = p
+.cij.cutoff.guess <- function(cij, p = NULL, cmap = NULL, collapse = TRUE, collapse.method=c('max', 'median', 'mean')) {
+
+   collapse.method <- match.arg(collapse.method)
+
+   if(is.null(p)) p = seq(0.900, 0.995, 0.005)
+      
+   cijs <- cij
+   if("all.dccm" %in% names(cijs)) cijs <- cijs$all.dccm
+   if(is.array(cijs)) {
+      if(length(dim(cijs))==3)
+         cijs <- do.call("c", apply(cijs, 3, list))
+      else
+         cijs <- list(cijs)
+   }
+   if(!is.list(cijs))
+      stop("cijs should be matrix, array(dim=3), or list")
+   
+   if(!is.null(cmap)) {
+       cijs <- lapply(cijs, function(x) x*cmap)
+   }
+
+   # return quantile Pr(cij <= cij.cutoff) = p
+   out <- sapply(cijs, function(x)
+       quantile(abs(x[upper.tri(x)]), probs = p))
+   out <- matrix(out, ncol=length(cijs))
+
+   c0 <- seq(0, 1, 0.05)
+   if(collapse) {
+      out <- switch(collapse.method, 
+        'mean' = 
+#           sapply(rowMeans(out), function(x) c0[which.min(abs(x-c0))]) ,
+           sapply(rowMeans(out), function(x) c0[sum(x>=c0)]),
+        'median' = 
+           sapply(apply(out, 1, median), function(x) c0[sum(x>=c0)]),
+#           sapply(apply(out, 1, median), function(x) c0[which.min(abs(x-c0))]),
+        'max' = 
+           sapply(apply(out, 1, max), function(x) c0[sum(x>=c0)])
+#           sapply(apply(out, 1, max), function(x) c0[which.min(abs(x-c0))])
+      )
+      names(out) <- paste("Cutoff (p=", round(p, digits=3), ")", sep="")
+   } else {
+      dimnames(out) <- list(paste("Cutoff (p=", round(p, digits=3), ")", sep=""),
+                            paste("Matrix", 1:length(cijs)))
+   }
+
+   return(out) 
 }

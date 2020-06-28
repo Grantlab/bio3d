@@ -5,7 +5,7 @@
   This function builds various cij matrix for correlation network analysis
 }
 \usage{
-  filter.dccm(x, cutoff.cij = 0.4, cmap = NULL, xyz = NULL, fac = NULL, 
+  filter.dccm(x, cutoff.cij = NULL, cmap = NULL, xyz = NULL, fac = NULL, 
       cutoff.sims = NULL, collapse = TRUE, extra.filter = NULL, ...)
 }
 \arguments{
@@ -16,11 +16,12 @@
     The matrix elements should be in between -1 and 1. See \sQuote{dccm} 
     function in bio3d package for further details. }
   \item{cutoff.cij}{ Threshold for each individual correlation value. 
-    See below for details. }
+    If NULL, a guessed value will be used. See below for details. }
   \item{cmap}{ logical or numerical matrix indicating the contact map.
     If logical and TRUE, contact map will be calculated with input
     \code{xyz}. } 
-  \item{xyz}{ XYZ coordinates for distance matrix calculation. }
+  \item{xyz}{ XYZ coordinates, or a \sQuote{pdbs} object obtained from 
+    \code{pdbaln} or \code{read.fasta.pdb}, for contact map calculations. }
   \item{fac}{ factor indicating distinct categories of input correlation matrices. }
   \item{cutoff.sims}{ Threshold for the number of simulations with observed correlation
     value above \code{cutoff.cij} for the same residue/atomic pairs. See below for details. }
@@ -46,7 +47,10 @@
 
      Otherwise, the function filters DCCMs with \code{cutoff.cij} and 
      return the mean of correlations present in at least 
-     \code{cutoff.sims} calculated matrices. 
+     \code{cutoff.sims} calculated matrices.
+
+     An internally guessed \code{cuoff.cij} is used if \code{cutoff.cij=NULL} is provided. 
+     By default, the cutoff is determined by keeping 5\% of all residue pairs connected. 
 }
 \seealso{
    \code{\link{cna}}, \code{\link{dccm}}, \code{\link{dccm.nma}}, \code{\link{dccm.xyz}},
