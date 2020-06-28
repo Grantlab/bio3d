@@ -19,7 +19,7 @@ vmd(\dots)
                 full = FALSE, launch = FALSE, exefile=NULL, \dots)
 
 \method{vmd}{cnapath}(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE, 
-   colors = c("blue", "red"), launch = FALSE, exefile=NULL, \dots)
+   colors = c("blue", "red"), launch = FALSE, exefile=NULL, mag=1.0, \dots)
 
 }
 \arguments{
@@ -73,6 +73,7 @@ vmd(\dots)
   \item{exefile}{ file path to the \sQuote{VMD} program on your system (i.e.
     how is \sQuote{VMD} invoked). If \code{NULL}, use OS-dependent
     default path to the program. }
+  \item{mag}{ A numeric factor to scale the maximal thickness of paths. }
   \item{\dots}{ additional arguments passed to the function
     \code{\link{colorRamp}} (in \code{vmd.cnapath}).
   }

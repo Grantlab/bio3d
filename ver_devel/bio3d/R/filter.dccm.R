@@ -75,6 +75,8 @@ filter.dccm <- function(x, cutoff.cij = NULL, cmap = NULL, xyz = NULL, fac = NUL
          } else {
             cm <- cmap
          }
+
+         cm[is.na(cm)] <- 0
  
          cij.min = apply(abs(pcij[, i, drop=FALSE]), 1, min)
          cij.max = apply(abs(pcij[, i, drop=FALSE]), 1, max)

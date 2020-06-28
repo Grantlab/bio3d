@@ -16,7 +16,8 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
 \method{plot}{cnapath}(x, \dots)
 }
 \arguments{
-  \item{cna}{ A \sQuote{cna} object obtained from \code{\link{cna}}. }
+  \item{cna}{ A \sQuote{cna} object or a list of \sQuote{cna} objects obtained from 
+       \code{\link{cna}}. }
   \item{from}{ Integer vector or matrix indicating node id(s) of source. If is matrix
        and \code{to} is NULL, the first column represents source and the second sink. }
   \item{to}{ Integer vector indicating node id(s) of sink. All combinations of 
@@ -54,8 +55,8 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
        comparison (in \code{summary.cnapath}). }
 }
 \value{
-  The function \code{cnapath} returns a \sQuote{cnapath} class of list containing 
-  following three components:
+  The function \code{cnapath} returns a (or a list of) \sQuote{cnapath} 
+  class of list containing following three components:
   \item{path}{ a list object containing all identified suboptimal paths.  
       Each entry of the list is a sequence of node ids for the path. }
   \item{epath}{ a list object containing all identified suboptimal paths. 

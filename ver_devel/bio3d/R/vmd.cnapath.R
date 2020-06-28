@@ -1,18 +1,41 @@
 vmd.cnapath <- function(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE, 
-        colors = c("blue", "red"), launch = FALSE, exefile=NULL, ...) {
+        colors = c("blue", "red"), launch = FALSE, exefile=NULL, mag=1.0, ...) {
 
-   if(!inherits(x, "cnapath")) 
-      stop("Input x is not a 'cnapath' object")
+   if(!inherits(x, "cnapath")) {
+      if(is.list(x) && inherits(x[[1]], "cnapath")) {
+         if(length(x)==1) {
+            x <- x[[1]]
+         }
+         else {
+            x2 <- do.call(mapply, c(list("c"), x, list(SIMPLIFY=FALSE)))
+            x2$grp <- rep(1:length(x), times=sapply(x, function(x) length(x$path)))
+            class(x2) <- "cnapath"
+            x <- x2
+         }
+      }
+      else {
+         stop("Input x is not a (or a list of) 'cnapath' object(s)")
+      }
+   }
 
    # Check colors
    if(is.character(colors)) {
-      cols <- colorRamp(colors)
-   }
+      cols <- colors
+   } 
    else {
       if(length(colors) == 1 && is.numeric(colors))
-         cols <- colorRamp(vmd_colors()[colors + 1])
+         cols <- vmd_colors()[colors + 1]
       else
          stop("colors should be a character vector or an integer indicating a VMD color ID")
+   }
+   if(!is.null(x$grp)) {
+      if(length(cols) != max(x$grp)) {
+        stop("Color length does not match input x")
+      }
+      cols <- lapply(cols, colorRamp)
+   }
+   else {
+      cols <- colorRamp(cols)
    }
 
    file = paste(out.prefix, ".vmd", sep="")
@@ -88,9 +111,14 @@ mol addrep top
             i1 = match(y[i], res)
             i2 = match(y[i+1], res)
             if(conn[i1, i2] == 0) conn[i1, i2] = conn[i2, i1] = 1
-            r = rad(x$dist[j], rmin, rmax)
+            r = rad(x$dist[j], rmin, rmax, radmax = 0.5*mag)
             ic = (rmax - x$dist[j]) / (rmax - rmin)
-            col = list(cols(ic)[1:3])
+            if(is.list(cols)) {
+              col = list(cols[[x$grp[j]]](ic)[1:3])
+            }
+            else {
+              col = list(cols(ic)[1:3])
+            }
             if(r > rr[i1, i2]) {
                rr[i1, i2] = rr[i2, i1] = r
                col.mat[i1, i2] = col.mat[i2, i1] = col
@@ -127,18 +155,24 @@ mol addrep top
       k = 0
       for(j in 1:length(x$path)) {
          # get spline coordinates
-         # interpolate at five points evenly distributed between two nodes
+         # interpolate at 10 points evenly distributed between two nodes
          xyz = matrix(pdb$xyz[atom2xyz(ca.inds$atom[x$path[[j]]])], nrow=3)
-         spline.x = spline(xyz[1, ], n = ncol(xyz)+(ncol(xyz)-1)*5)$y
-         spline.y = spline(xyz[2, ], n = ncol(xyz)+(ncol(xyz)-1)*5)$y
-         spline.z = spline(xyz[3, ], n = ncol(xyz)+(ncol(xyz)-1)*5)$y
+         spline.x = spline(xyz[1, ], n = ncol(xyz)+(ncol(xyz)-1)*10)$y
+         spline.y = spline(xyz[2, ], n = ncol(xyz)+(ncol(xyz)-1)*10)$y
+         spline.z = spline(xyz[3, ], n = ncol(xyz)+(ncol(xyz)-1)*10)$y
     
          # spline radius
-         r = rad(x$dist[j], rmin, rmax, radmax=0.1)
+         r = rad(x$dist[j], rmin, rmax, radmax=0.5*mag)
 
          # spline color
          ic = (rmax - x$dist[j]) / (rmax - rmin)
-         col = cols(ic)[1:3] / 255
+
+         if(is.list(cols)) {
+            col = cols[[x$grp[j]]](ic)[1:3] / 255
+         }
+         else {
+            col = cols(ic)[1:3] / 255
+         }
 
          if(!is.numeric(colors)) {
             cat("color change rgb [expr ", k, " + $color_start] ", 

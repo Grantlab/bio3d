@@ -6,13 +6,16 @@
   covariance matrices.
 }
 \usage{
-\method{pca}{array}(x, use.svd = TRUE, ...)
+\method{pca}{array}(x, use.svd = TRUE, rm.gaps=TRUE, ...)
 }
 \arguments{
   \item{x}{ an array of matrices, e.g. correlation or covariance
     matrices as obtained from functions \code{dccm} or \code{enma2covs}. }
   \item{use.svd}{ logical, if TRUE singular value decomposition (SVD) is 
     called instead of eigenvalue decomposition. }
+  \item{rm.gaps}{ logical, if TRUE gap cells (with missing
+    coordinate data in any input matrix) are removed before
+    calculation. This is equivalent to removing NA cells from x. }
   \item{\dots}{ . }
 }
 \details{
