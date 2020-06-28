@@ -223,3 +223,10 @@ mol addrep top
       
    }
 }
+
+vmd.ecnapath <- function(x, ...) {
+   if(!inherits(x, "ecnapath")) {
+      stop("The input 'x' must be an object of class 'ecnapath'.")
+   }
+   vmd.cnapath(x, ...)
+}

@@ -3,6 +3,7 @@
 \alias{summary.cnapath}
 \alias{print.cnapath}
 \alias{plot.cnapath}
+\alias{plot.ecnapath}
 \title{ Suboptimal Path Analysis for Correlation Networks }
 \description{
   Find k shortest paths between a pair of nodes, source and sink, in a correlation 
@@ -14,6 +15,7 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
    plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE, weight = FALSE)
 \method{print}{cnapath}(x, \dots)
 \method{plot}{cnapath}(x, \dots)
+\method{plot}{ecnapath}(x, \dots)
 }
 \arguments{
   \item{cna}{ A \sQuote{cna} object or a list of \sQuote{cna} objects obtained from 
@@ -46,7 +48,7 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
        (weighted) number of paths. }
   \item{weight}{ Logical, if TRUE each path is weighted by path length in calculating the
     node degeneracty. }
-  \item{x}{ A 'cnapath' class object as obtained from function \code{cna}.
+  \item{x}{ A 'cnapath' class object, or a list of such objects, as obtained from function \code{cnapath}.
   }
   \item{\dots}{ Additional arguments passed to igraph function 
        \code{\link[igraph:distances]{get.shortest.paths}} (in 

@@ -1,5 +1,6 @@
 \name{plot.cna}
 \alias{plot.cna}
+\alias{plot.ecna}
 \title{ Protein Structure Network Plots in 2D and 3D.  }
 \description{
   Plot a protein dynamic network as obtained from the \emph{cna} function.
@@ -8,9 +9,10 @@
   \method{plot}{cna}(x, pdb = NULL, weights=NULL, vertex.size=NULL,
             layout=NULL, col=NULL, full=FALSE, scale=TRUE, color.edge = FALSE, 
             interactive=FALSE, ...)
+  \method{plot}{ecna}(x, \dots)
 }
 \arguments{
-  \item{x}{ A protein network graph object as obtained from the
+  \item{x}{ A protein network graph object (or a list of such objects) as obtained from the
     \sQuote{cna} function. }
   \item{pdb}{ A PDB structure object obtained from \sQuote{read.pdb}. 
     If supplied this will be used to guide the network plot \sQuote{layout}, 

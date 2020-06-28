@@ -69,6 +69,9 @@
     from \sQuote{cij} via application of  \sQuote{collapse.method}. }
   \item{cij}{ Numeric square matrix containing the absolute values of
     the atomic correlation input matrix. }
+
+  If an ensemble of correlation matrices is provided, a list of \sQuote{cna} 
+  object, of the \sQuote{ecna} class, will be returned.
 }
 \details{
   The input to this function should be a correlation matrix as

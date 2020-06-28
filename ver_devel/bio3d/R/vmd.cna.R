@@ -1,3 +1,15 @@
+vmd.ecna <- function(x, n=1, ...) {
+   if(!inherits(x, "ecna")) {
+      stop("The input 'x' must be an object of class 'ecna'.")
+   }
+   if(!(length(n)==1 && is.numeric(n) && n>0)) {
+      stop("Input 'n' must be an nonzero integer.")
+   }
+   if(n > length(x)) {
+      stop("Wrong index of networks.")
+   }
+   vmd(x[[n]], ...)
+}
 vmd.cna <- function(x, pdb, layout=layout.cna(x, pdb, k=3),
                      col.sphere=NULL, 
                      col.lines="silver",
