@@ -37,16 +37,16 @@ Alternative installation methods and additional instructions are posted to the [
 With growing functionality in Bio3D we have decided to implement larger Bio3D modules into separate packages:
 
 * [Bio3D-web](https://bitbucket.org/Grantlab/bio3d-web/)
-* [Bio3D-view](https://bitbucket.org/Grantlab/bio3d-view/)
+* [Bio3D-nma](https://bitbucket.org/Grantlab/bio3d-nma/)
+* [Bio3D-cna](https://bitbucket.org/Grantlab/bio3d-cna/)
 * [Bio3D-eddm](https://bitbucket.org/Grantlab/bio3d-eddm/)
- 
+* [Bio3D-view](https://bitbucket.org/Grantlab/bio3d-view/)
+
 * [Bio3D-mmtf](https://bitbucket.org/Grantlab/bio3d-mmtf/) [In development]
-* [Bio3D-cna](https://bitbucket.org/Grantlab/bio3d-cna/) [In development]
 * [Bio3D-amber](https://bitbucket.org/Grantlab/bio3d-amber/) [In development]
 * [Bio3D-muscle](https://bitbucket.org/Grantlab/bio3d-muscle/) [In development]
-* [Bio3D-nma](https://bitbucket.org/Grantlab/bio3d-nma/) [In development]
 * [Bio3D-cheminf](https://bitbucket.org/larsss/cheminf/src/master/) 
-* [Bio3D-dcna](https://bitbucket.org/xinqyao/dcna)[In development]
+* [Bio3D-dcna](https://bitbucket.org/xinqyao/dcna)
 
 ## Contributing to Bio3D ##
 
