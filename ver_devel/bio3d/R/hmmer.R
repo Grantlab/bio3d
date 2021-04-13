@@ -174,10 +174,11 @@
         if(actlen%%2 != 0) {
           stop("Bad XML format")
         }
+        rm.inds <- NULL
         for(i in seq(1, actlen, 2)) {
-          hmm <- paste(lines[-seq(actsite.inds[i], actsite.inds[i+1])],
-                       collapse="\n")
+          rm.inds <- c(rm.inds, seq(actsite.inds[i], actsite.inds[i+1]))
         }
+        hmm <- paste(lines[-rm.inds], collapse="\n")
       }
       else {
          hmm <- paste(lines[-seq(actsite.inds[1], actsite.inds[2])],
