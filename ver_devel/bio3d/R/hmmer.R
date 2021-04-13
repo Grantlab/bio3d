@@ -169,8 +169,20 @@
   if(grepl("act_site", hmm)) {
       lines <- unlist(strsplit(hmm, "\n"))
       actsite.inds <- grep("act_site", lines)
-      hmm <- paste(lines[-seq(actsite.inds[1], actsite.inds[2])],
-                   collapse="\n")
+      actlen <- length(actsite.inds)
+      if(actlen>2) {
+        if(actlen%%2 != 0) {
+          stop("Bad XML format")
+        }
+        for(i in seq(1, actlen, 2)) {
+          hmm <- paste(lines[-seq(actsite.inds[i], actsite.inds[i+1])],
+                       collapse="\n")
+        }
+      }
+      else {
+         hmm <- paste(lines[-seq(actsite.inds[1], actsite.inds[2])],
+                      collapse="\n")
+      }
   }
 
   xml <- XML::xmlParse(hmm)
