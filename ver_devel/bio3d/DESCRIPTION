@@ -28,6 +28,7 @@ Suggests:
     igraph,
     bigmemory,
     knitr,
+    rmarkdown,
     testthat (>= 0.9.1),
     httr,
     msa,
