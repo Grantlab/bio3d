@@ -1,205 +1,496 @@
-"pdb.annotate" <- function(ids, anno.terms=NULL, unique=FALSE, verbose=FALSE) {
+"pdb.annotate" <- function(ids, anno.terms=NULL, unique=FALSE, verbose=FALSE, 
+                           extra.terms=NULL) {
   
-  oopsa <- requireNamespace("XML", quietly = TRUE)
-  oopsb <- requireNamespace("RCurl", quietly = TRUE)
-  if(!all(c(oopsa, oopsb)))
-    stop("Please install the XML and RCurl package from CRAN")
-
+  oops <- !requireNamespace("httr", quietly = TRUE)
+  if(oops) {
+    stop("Please install the httr package from CRAN")
+  }
+  
+  if(!is.null(extra.terms)) {
+    message("Currently 'extra.terms' is not supported")
+    extra.terms <- NULL
+  }
+  
   if(inherits(ids, "blast")) ids = ids$pdb.id
   
   if(!is.vector(ids)) {
     stop("Input argument 'ids' should be a vector of PDB identifiers/accession codes")
   }
   
-  ## All available annotation terms (note 'citation' is a meta term)
-  anno.allterms <- c("structureId", "experimentalTechnique", "resolution", "chainId", "ligandId",
-                     "ligandName", "source", "scopDomain", "classification", "compound", "title",
-                     "citation", "citationAuthor", "journalName", "publicationYear",
-                     "structureTitle","depositionDate","structureMolecularWeight","macromoleculeType",
-                     "chainId","entityId","sequence","chainLength","db_id","db_name",
-                     "rObserved", "rFree", "spaceGroup")
-                     ##"molecularWeight","secondaryStructure","entityMacromoleculeType")
-  
-  anno.basicterms <- c("structureId", "experimentalTechnique", "resolution", "chainId", "ligandId",
-                       "source", "structureTitle", "citation", "chainLength", "rObserved", "rFree", 
-                       "spaceGroup")  
+  ## Basic annotation terms (note 'citation' is a meta term)
+  anno.basicterms <- c("structureId", "chainId", "macromoleculeType",
+                       "chainLength", "experimentalTechnique",  "resolution", 
+                       "scopDomain", "ligandId", "ligandName", "source", 
+                       "structureTitle", "citation", "rObserved", "rFree",
+                       "rWork", "spaceGroup")  
   if(is.null(anno.terms)) {
     anno.terms <- anno.basicterms
   } 
   else {
-    if("full" %in% anno.terms) {
-      anno.terms <- anno.allterms
-    }
-    else {
-      ## Check and exclude invalid annotation terms
-      term.found <- (anno.terms %in% anno.allterms)
-      if( any(!term.found) ) {
-        warning( paste("Requested annotation term not available:",
-                     paste(anno.terms[!term.found], collapse=", "),
-                     "\n  Available terms are:\n\t ",
-                     paste(anno.allterms, collapse=", ")) )
-      }
-      anno.terms <- match.arg(anno.terms, anno.allterms, several.ok=TRUE)
-    }
+    anno.terms <- match.arg(anno.terms, anno.basicterms, several.ok=TRUE)
+    anno.terms <- unique(anno.terms)
   }
+  anno.terms.input <- anno.terms
   
   ## Check if we have any valid terms remaining
   if( length(anno.terms) == 0 ) {
     stop( paste("No valid anno.terms specified. Please select from:\n\t ",
-                paste(anno.allterms, collapse=", ")) )
+                paste(anno.basicterms, collapse=", ")) )
   }
   
-  ## force the structureId and chainId term to be present
-  if(any(anno.terms=="citation"))
-    req.terms <- c("structureId", "chainId", "ligandId",
-                   "citationAuthor", "journalName", "publicationYear")
-  else
-    req.terms <- c("structureId", "chainId", "ligandId")
+  ## force the structureId and chainId terms to be present
+  req.terms <- c("structureId", "chainId")
   
-  anno.terms.input <- anno.terms
+  if(any(c("ligandId", "ligandName") %in% anno.terms)) {
+    ## force ligandChainId
+    req.terms <- c(req.terms, "ligandChainId")
+  }
+  
   inds <- req.terms %in% anno.terms
-  if(!all(inds))
-    anno.terms <- c(req.terms[!inds], anno.terms)
 
-  if (missing(ids)) 
+  if(!all(inds)) {
+    anno.terms <- c(req.terms[!inds], anno.terms)
+  }
+  
+  if (missing(ids)) {
     stop("please specify PDB ids for annotating")
+  }
   
   if (any(nchar(ids) != 4)) {
-    warning("ids should be standard 4 character PDB-IDs: trying first 4 characters...")
+#    warning("ids should be standard 4 character PDB-IDs: trying first 4 characters...")
 
-    if(unique)
-      ids <- unique(substr(basename(ids), 1, 4))
-
+#    if(unique) {
+#      ids <- unique(substr(basename(ids), 1, 4))
+#    }
+    
     ## first 4 chars should be upper
     ## any chainId should remain untouched - see e.g. PDB ID 3R1C
     mysplit <- function(x) {
       str <- unlist(strsplit(x, "_"))
-      if(length(str)>1)
+      if(length(str)>1) {
         paste(toupper(str[1]), "_", str[2], sep="")
-      else
+      }
+      else {
         toupper(str[1])
+      }
     }
-    
+  
     ids <- unlist(lapply(ids, mysplit))
   } else {
     ids <- toupper(ids)
   }
-  ids.short <- substr(basename(ids), 1, 4)
-  ids.string <- paste(unique(ids.short), collapse=",")
-  
+  ids.short <- unique( substr(basename(ids), 1, 4) )
+
   ## prepare query
-  query1 = paste(anno.terms, collapse=",")
-  url <- paste('http://www.rcsb.org/pdb/rest/customReport')
+  baseurl <- "https://data.rcsb.org/graphql"
 
-  curl.opts <- list(httpheader = "Expect:",
-                    httpheader = "Accept:text/xml",
-                    verbose = verbose,
-                    followlocation = TRUE
-                    )
+  anno.terms.new <- unlist(sapply(anno.terms, .map_terms))
+  anno.terms.new <- c(anno.terms.new, extra.terms)
   
-  curl <- RCurl::postForm(url, pdbids=ids.string, customReportColumns=query1,
-                   ssa='n', primaryOnly=1,
-                   style = "POST",
-                   .opts = curl.opts,
-                   .contentEncodeFun=RCurl::curlPercentEncode, .checkParams=TRUE )
+  query <- "query($id: [String!]!){
+     entries(entry_ids: $id){
+  "
+  query <- paste(query, 
+    paste( sapply(anno.terms.new, .string2json), collapse="\n"), 
+    "\n}}", sep="")
 
-  ## parse XML
-  xml <- XML::xmlParse(curl)
-  data <- XML::xmlToDataFrame(XML::getNodeSet(xml, "/dataset/record"), stringsAsFactors=FALSE)
+  resp <- httr::POST(baseurl,
+                     httr::accept_json(),
+                     body = list(query=query,
+                                 variables=list(id=ids.short)), 
+                     encode="json")
   
-  if(nrow(data)==0)
-    stop("Retrieving data from the PDB failed")
-  
-  ## change colnames (e.g. dimEntity.structureId -> structureId)
-  for( i in 1:ncol(data)) {
-    a <- unlist(strsplit(colnames(data)[i], "\\."))
-    colnames(data)[i] <- a[2]
+  if(httr::http_error(resp)) {
+    stop('Access to PDB server failed')
+  }
+  else {
+    ret <- httr::content(resp)
   }
   
-  ## merge data for unique structureId_chainId entries
-  if(! (is.null(data$ligandId) & is.null(data$ligandName)) ) {
-    if(unique)
-      pdbc.ids <- data$structureId
-    else
-      pdbc.ids <- paste(data$structureId, data$chainId, sep="_")
-    unq.ids <- unique(pdbc.ids)
-    
-    excl.inds <- NULL
-    for( i in 1:length(unq.ids) ) {
-      inds <- which(pdbc.ids==unq.ids[i])
-
-      if(!is.null(data$ligandId)) {
-        tmp.ligId   <- paste(unique(data$ligandId[inds]), collapse=",")
-        data$ligandId[inds]   <- tmp.ligId
-      }
-      if(!is.null(data$ligandName)) {
-        tmp.ligName <- paste(unique(data$ligandName[inds]), collapse=",")
-        data$ligandName[inds] <- tmp.ligName
-      }
-      if(!is.null(data$chainId)) {
-        tmp.chainId <- paste(unique(data$chainId[inds]), collapse=",")
-        data$chainId[inds] <- tmp.chainId
-      }
-      
-      excl.inds <- c(excl.inds, inds[-1])
-    }
+  if("error" %in% names(ret)) {
+    stop('Retrieving data from PDB failed')
   }
-
-  if(length(excl.inds)>0)
-    data <- data[-excl.inds,]
-
-  if(unique)
+  
+  ## Generate a formatted table
+  ## Also taking care of merging data for unique structureId, 
+  ##   excluding non-requested chain IDs, formatting citation, etc.
+  data <- .format_tbl(ret, ids, anno.terms, unique=unique)
+  
+  if(unique) {
     rownames(data) <- data$structureId
-  else
+  } 
+  else {
     rownames(data) <- paste(data$structureId, data$chainId, sep="_")
-
-  ## include only requested "structureId_chainID"
-  row.inds <- unique(unlist(lapply(ids, function(x) grep(x, rownames(data)))))
-  data <- data[row.inds,, drop=FALSE]
-  
-  ## Format citation information
-  if (any(anno.terms == "citation") ) {
-    citation <- NULL
-    lig.auth <- data[,"citationAuthor"]
-    lig.year <- data[,"publicationYear"]
-    lig.jnal <- data[,"journalName"]
-    
-    for(i in 1:length(lig.auth)) {
-      citation <- c(citation, paste( unlist(strsplit(lig.auth[[i]], ","))[1],
-                                    " et al. ", lig.jnal[i], " (", lig.year[i],")",sep=""))
-    }
-    data <- cbind(data, citation)
   }
-
-  ## include only requested terms
+  
+  ## include only requested terms 
+  ## (NOTE: need to modify for future support of 'extra.terms')
   col.inds <- which(colnames(data) %in% anno.terms.input)
   data <- data[, col.inds, drop=FALSE]
 
-  if(any(data=="null")) {
-    inds <- which(data=="null", arr.ind=TRUE)
-    for(i in 1:nrow(inds))
-      data[ inds[i,"row"], inds[i,"col"] ] = NA
-  }
-
-  ## check for missing entries
-  mygrep <- function(x, y) {
-    inds <- grep(x, y)
-    if(length(inds)==0)
-      return(NA)
-    else
-      return(inds)
-  }
-  
-  collected.ids <- rownames(data)
-  requested.ids <- ids
-  missing <- is.na(unlist(lapply(requested.ids, mygrep, collected.ids)))
-
-  if(any(missing)) {
-    missing.str <- paste(requested.ids[which(missing)], collapse=", ")
-    
-    warning(paste("Annotation data could not be found for PDB ids:\n  ",
-                  missing.str))
-  }
-  
   return(data)
+}
+
+## map a string to JSON-like input parameters
+.string2json <- function(x) {
+  x <- strsplit(x, split="\\.")[[1]]
+  if(length(x)>1) {
+    paste( paste(x, collapse="{"), paste(rep("}", length(x)-1), collapse=""), sep="")
+  }
+  else if(length(x)==0) {
+    ""
+  }
+  else {
+    x
+  }
+}
+
+## map from old terms to the new ones
+.map_terms <- function(x) {
+  switch(x,
+         "structureId" = "entry.id",
+         "chainId" = "polymer_entities.polymer_entity_instances.rcsb_polymer_entity_instance_container_identifiers.auth_asym_id",
+         "macromoleculeType" = "polymer_entities.polymer_entity_instances.polymer_entity.entity_poly.rcsb_entity_polymer_type",
+         "chainLength" = "polymer_entities.polymer_entity_instances.polymer_entity.entity_poly.rcsb_sample_sequence_length",
+         "experimentalTechnique" = "rcsb_entry_info.experimental_method",
+         "resolution" = "rcsb_entry_info.resolution_combined",
+         "scopDomain" = paste(
+           "polymer_entities.polymer_entity_instances.rcsb_polymer_instance_feature", 
+           c("name", "type"), 
+           sep="."),
+         "ligandChainId" = "nonpolymer_entities.nonpolymer_entity_instances.rcsb_nonpolymer_entity_instance_container_identifiers.auth_asym_id",
+         "ligandId" = "nonpolymer_entities.nonpolymer_entity_instances.nonpolymer_entity.nonpolymer_comp.chem_comp.id",
+         "ligandName" = "nonpolymer_entities.nonpolymer_entity_instances.nonpolymer_entity.nonpolymer_comp.chem_comp.name",
+         "source" = "polymer_entities.polymer_entity_instances.polymer_entity.rcsb_entity_source_organism.ncbi_scientific_name", 
+         "structureTitle" = "struct.title",
+         "citation" = paste("rcsb_primary_citation", 
+                            c( "rcsb_authors",
+                               "rcsb_journal_abbrev",
+                               "year"), 
+                            sep="."),
+         "rObserved" = "refine.ls_R_factor_obs", 
+         "rFree" = "refine.ls_R_factor_R_free", 
+         "rWork" = "refine.ls_R_factor_R_work",
+         "spaceGroup" = "symmetry.space_group_name_H_M"
+  )
+}
+
+## Return a formatted table/data.frame
+.format_tbl <- function(x, query.ids, anno.terms, unique=FALSE) {
+  if(!"data" %in% names(x)) {
+    stop("No data retrieved")
+  }
+  x <- x$data$entries
+  pdb.ids <- sapply(x, function(x) x$entry$id)
+  chain.ids <- lapply(x, function(x) {
+    lapply(x$polymer_entities, function(y) {
+      sapply(y$polymer_entity_instances, function(z) {
+        id <- z$rcsb_polymer_entity_instance_container_identifiers$auth_asym_id
+        if(is.null(id)) {
+          id<- NA
+        }
+        id
+      })
+    })
+  })
+  nchains <- sapply(chain.ids, function(x) length(unlist(x)))
+  nchains.entity <- sapply(chain.ids, sapply, length)
+#  ids <- paste(rep(pdb.ids, nchains), unlist(chain.ids), sep="_")
+  
+  ids <- rep(pdb.ids, nchains)
+  chainId <- unlist(chain.ids)
+  out <- data.frame(structureId=ids, chainId=chainId, stringsAsFactors=FALSE)
+
+  ## temporarily add entity column for folding
+#  out$entity <- unlist(lapply(nchains.entity, function(x)
+#    inverse.rle(x=list(values=seq(1, length(x)), lengths=x))))
+    
+  if("chainLength" %in% anno.terms) {
+    cl <- lapply(x, function(x) {
+      lapply(x$polymer_entities, function(y) {
+        sapply(y$polymer_entity_instances, function(z) {
+           cl <- z$polymer_entity$entity_poly$rcsb_sample_sequence_length
+           if(is.null(cl)) {
+              cl <- NA
+           }
+           cl
+        })
+      })
+    })
+
+    #    cl <- rep(unlist(cl), unlist(nchains.entity))
+    cl <- unlist(cl)
+    out$chainLength <- cl
+  }
+  
+  if("experimentalTechnique" %in% anno.terms) {
+    em <- sapply(x, function(x) {
+      em <- x$rcsb_entry_info$experimental_method
+      if(is.null(em)) {
+        em <- NA
+      }
+      em
+    })
+    em <- rep(em, nchains)
+    out$experimentalTechnique <- em
+  }
+  
+  if("resolution" %in% anno.terms) {
+    reso <- sapply(x, function(x) {
+      reso <- x$rcsb_entry_info$resolution_combined[[1]]
+      if(is.null(reso)) {
+        reso <- NA
+      }
+      reso
+    })
+    reso <- rep(reso, nchains)
+    out$resolution <- reso
+  }
+  
+  if("macromoleculeType" %in% anno.terms) {
+    moltype <- lapply(x, function(x) {
+      lapply(x$polymer_entities, function(y) {
+        sapply(y$polymer_entity_instances, function(z) {
+           typ <- z$polymer_entity$entity_poly$rcsb_entity_polymer_type
+           if(is.null(typ)) {
+              typ <- NA
+           }
+           typ
+        })
+      })
+    })
+    #    moltype <- rep(unlist(moltype), unlist(nchains.entity))
+    moltype <- unlist(moltype)
+    out$macromoleculeType <- moltype
+  }
+  
+  if("scopDomain" %in% anno.terms) {
+    scop <- lapply(x, function(x) {
+      lapply(x$polymer_entities, function(y) {
+        sapply(y$polymer_entity_instances, function(z) {
+          types <- sapply(z$rcsb_polymer_instance_feature, "[[", "type")
+          s <- z$rcsb_polymer_instance_feature[[which(types=="SCOP")[1]]]$name
+          if(is.null(s)) {
+            s <- NA
+          }
+          s
+        })
+      })
+    })
+    scop <- unlist(scop)
+    out$scopDomain <- scop
+  }
+
+  if("ligandChainId" %in% anno.terms) {
+    lch <- lapply(x, function(x) {
+      unlist( lapply(x$nonpolymer_entities, function(y) {
+        sapply(y$nonpolymer_entity_instances, function(z) {
+          id <- z$rcsb_nonpolymer_entity_instance_container_identifiers$auth_asym_id
+          if(is.null(id)) {
+             id <- NA
+          }
+          id
+        })
+      }) )
+    })
+  }
+  
+  if("ligandId" %in% anno.terms) {
+    lid <- lapply(1:length(x), function(i) {
+      x <- x[[i]]
+      lch <- lch[[i]]
+      chain.ids <- unlist(chain.ids[[i]])
+      id <- unlist( lapply(x$nonpolymer_entities, function(y) {
+        sapply(y$nonpolymer_entity_instances, function(z) {
+          id <- z$nonpolymer_entity$nonpolymer_comp$chem_comp$id
+          if(is.null(id)) {
+             id <- NA
+          }
+          id
+        })
+      }) )
+      id <- tapply(id, lch, function(x) {
+        count <- table(x)
+        x <- unique(x)
+        count <- count[x]
+        x[count>1] <- paste(x[count>1], " (", count[count>1], ")", sep="")
+        paste(x, collapse=",")
+      })
+      id <- id[chain.ids]
+    })
+    lid <- unlist(lid)
+    out$ligandId <- lid
+  }
+  
+  if("ligandName" %in% anno.terms) {
+    lname <- sapply(1:length(x), function(i) {
+      x <- x[[i]]
+      lch <- lch[[i]]
+      chain.ids <- unlist(chain.ids[[i]])
+      nam <- unlist( lapply(x$nonpolymer_entities, function(y) {
+        sapply(y$nonpolymer_entity_instances, function(z) {
+          nam <- z$nonpolymer_entity$nonpolymer_comp$chem_comp$name
+          if(is.null(nam)) {
+            nam <- NA
+          }
+          nam
+        })
+      }) )
+      nam <- tapply(nam, lch, function(x) {
+        count <- table(x)
+        x <- unique(x)
+        count <- count[x]
+        x[count>1] <- paste(x[count>1], " (", count[count>1], ")", sep="")
+        paste(x, collapse=",")
+      })
+      nam <- nam[chain.ids]
+    })
+    lname <- unlist(lname)
+    out$ligandName <- lname  
+  }
+  
+  if("source" %in% anno.terms) {
+    src <- lapply(x, function(x) {
+      lapply(x$polymer_entities, function(y) {
+        sapply(y$polymer_entity_instances, function(z) {
+           src <- sapply(z$polymer_entity$rcsb_entity_source_organism, function(z2) {
+              src <- z2$ncbi_scientific_name
+              if(is.null(src)) {
+                 src <- NA
+              }
+              src
+           })
+           paste(src, collapse="/")
+        })
+      })
+    })
+    #    src <- rep(unlist(src), unlist(nchains.entity))
+    src <- unlist(src)
+    out$source <- src
+  } 
+  
+  if("structureTitle" %in% anno.terms) {
+    title <- sapply(x, function(x) {
+      title <- x$struct$title
+      if(is.null(title)) {
+        title <- NA
+      }
+      title
+    })
+    title <- rep(title, nchains)
+    out$structureTitle <- title
+  }
+  
+  if("citation" %in% anno.terms) {
+    citation <- sapply(x, function(x) {
+      aut <- x$rcsb_primary_citation$rcsb_authors
+      if(!is.null(aut) && length(aut)>1) {
+        aut <- paste(aut[[1]], ", et al.", sep="")
+      }
+      jrnl <- x$rcsb_primary_citation$rcsb_journal_abbrev
+      year <- x$rcsb_primary_citation$year
+      if(!is.null(year)) {
+        year <- paste("(", year, ")", sep="")
+      }
+      citation <- paste(aut, jrnl, year)
+      if(length(citation)==0) {
+        citation <- NA
+      }
+      citation
+    })
+    citation <- rep(citation, nchains)
+    out$citation <- citation
+  }
+  
+  if("rObserved" %in% anno.terms) {
+    robs <- sapply(x, function(x) {
+      robs <- x$refine[[1]]$ls_R_factor_obs
+      if(is.null(robs)) {
+        robs <- NA
+      }
+      robs
+    })
+    robs <- rep(robs, nchains)
+    out$rObserved <- robs    
+  }
+  
+  if("rFree" %in% anno.terms) {
+    rfree <- sapply(x, function(x) {
+      rfree <- x$refine[[1]]$ls_R_factor_R_free
+      if(is.null(rfree)) {
+        rfree <- NA
+      }
+      rfree
+    })
+    rfree <- rep(rfree, nchains)
+    out$rFree <- rfree       
+  }
+  
+  if("rWork" %in% anno.terms) {
+    rwork <- sapply(x, function(x) {
+      rwork <- x$refine[[1]]$ls_R_factor_R_work
+      if(is.null(rwork)) {
+        rwork <- NA
+      }
+      rwork
+    })
+    rwork <- rep(rwork, nchains)
+    out$rWork <- rwork       
+  }
+  
+  if("spaceGroup" %in% anno.terms) {
+    sg <- sapply(x, function(x) {
+      sg <- x$symmetry$space_group_name_H_M
+      if(is.null(sg)) {
+        sg <- NA
+      }
+      sg
+    })
+    sg <- rep(sg, nchains)
+    out$spaceGroup <- sg     
+  }
+  
+  # Filter the table
+  query.ids <- sub("\\.", "_", query.ids) ## allow PDBId.chainId
+  inds <- lapply(query.ids, function(x) {
+    if(nchar(x)==4) {
+      which(out$structureId %in% x) 
+    }
+    else {
+      which(paste(out$structureId, out$chainId, sep="_") %in% x)
+    }
+  })
+  chk <- sapply(inds, length)
+  if(any(chk==0)) {
+    warning(paste("Annotation data could not be found for PDB ids:\n  ",
+                  paste(unique(query.ids[chk==0]), collapse=", ")))
+  }
+  query.ids <- query.ids[chk>0]
+  out <- out[sort(unique(unlist(inds))), , drop=FALSE]
+  
+  if(unique) {
+    # Fold the table based on PDB IDs
+    out <- tapply(1:nrow(out), factor(out$structureId, levels=unique(out$structureId)),
+     function(i){
+       out <- out[i, , drop=FALSE]
+       labs <- colnames(out); names(labs) <- labs
+       cols <- lapply(labs, function(j) {
+          if(j %in% c("chainId", "macromoleculeType", "chainLength", 
+                      "scopDomain", "ligandId", "ligandName", "source")) {
+            paste(out[, j], collapse=";")
+          }
+          else {
+            out[1, j]
+          }
+       })
+       as.data.frame(do.call(cbind, cols))
+    }, simplify=FALSE)
+    out <- do.call(rbind, out)
+    rownames(out) <- NULL
+  }
+  
+  req.terms <- c("structureId", "chainId")
+  out <- out[, c(req.terms, setdiff(anno.terms, c(req.terms, "ligandChainId"))), 
+             drop=FALSE]
+  out
 }
