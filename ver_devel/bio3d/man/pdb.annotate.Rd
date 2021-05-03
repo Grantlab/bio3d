@@ -16,7 +16,7 @@ pdb.pfam(ids, best.only = TRUE, compact = TRUE)
     object containing \sQuote{pdb.id}. }
   \item{anno.terms}{ Terms can be used for query. The "anno.terms" can be
    "structureId", "chainId", "macromoleculeType", "chainLength", 
-   "experimentalTechnique",  "resolution", "scopDomain", "ligandId", 
+   "experimentalTechnique",  "resolution", "scopDomain", "pfam", "ligandId", 
    "ligandName", "source", "structureTitle", "citation", "rObserved", 
    "rFree", "rWork", and "spaceGroup".
    If anno.terms=NULL, all information would be returned. }
@@ -57,7 +57,7 @@ anno$ligandName
 anno <- pdb.annotate(ids, unique=TRUE)
 
 # Fetch only specific terms
-pdb.annotate(ids, anno.terms = c("ligandId", "citation"))
+pdb.annotate(ids, anno.terms = c("pfam", "ligandId", "citation"))
 
 }
 

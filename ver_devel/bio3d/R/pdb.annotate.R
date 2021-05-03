@@ -20,9 +20,9 @@
   ## Basic annotation terms (note 'citation' is a meta term)
   anno.basicterms <- c("structureId", "chainId", "macromoleculeType",
                        "chainLength", "experimentalTechnique",  "resolution", 
-                       "scopDomain", "ligandId", "ligandName", "source", 
-                       "structureTitle", "citation", "rObserved", "rFree",
-                       "rWork", "spaceGroup")  
+                       "scopDomain", "pfam", "ligandId", "ligandName",
+                       "source", "structureTitle", "citation", "rObserved",
+                       "rFree", "rWork", "spaceGroup")  
   if(is.null(anno.terms)) {
     anno.terms <- anno.basicterms
   } 
@@ -158,6 +158,10 @@
            "polymer_entities.polymer_entity_instances.rcsb_polymer_instance_feature", 
            c("name", "type"), 
            sep="."),
+         "pfam" = paste(
+           "polymer_entities.polymer_entity_instances.polymer_entity.rcsb_polymer_entity_annotation", 
+           c("annotation_id", "name", "type"), 
+           sep="."),
          "ligandChainId" = "nonpolymer_entities.nonpolymer_entity_instances.rcsb_nonpolymer_entity_instance_container_identifiers.auth_asym_id",
          "ligandId" = "nonpolymer_entities.nonpolymer_entity_instances.nonpolymer_entity.nonpolymer_comp.chem_comp.id",
          "ligandName" = "nonpolymer_entities.nonpolymer_entity_instances.nonpolymer_entity.nonpolymer_comp.chem_comp.name",
@@ -280,7 +284,24 @@
     scop <- unlist(scop)
     out$scopDomain <- scop
   }
-
+  
+  if("pfam" %in% anno.terms) {
+    pfam <- lapply(x, function(x) {
+      lapply(x$polymer_entities, function(y) {
+        sapply(y$polymer_entity_instances, function(z) {
+          types <- sapply(z$polymer_entity$rcsb_polymer_entity_annotation, "[[", "type")
+          p <- z$polymer_entity$rcsb_polymer_entity_annotation[[which(types=="Pfam")[1]]]$name
+          if(is.null(p)) {
+            p <- NA
+          }
+          p
+        })
+      })
+    })
+    pfam <- unlist(pfam)
+    out$pfam <- pfam
+  }
+  
   if("ligandChainId" %in% anno.terms) {
     lch <- lapply(x, function(x) {
       unlist( lapply(x$nonpolymer_entities, function(y) {
@@ -476,7 +497,7 @@
        labs <- colnames(out); names(labs) <- labs
        cols <- lapply(labs, function(j) {
           if(j %in% c("chainId", "macromoleculeType", "chainLength", 
-                      "scopDomain", "ligandId", "ligandName", "source")) {
+                      "scopDomain", "pfam", "ligandId", "ligandName", "source")) {
             paste(out[, j], collapse=";")
           }
           else {
