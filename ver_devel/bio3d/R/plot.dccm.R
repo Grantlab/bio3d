@@ -25,18 +25,23 @@ plot.dccm <-function(x, resno=NULL, sse=NULL, colorkey=TRUE,
 
   scales <- NULL
   dots <- list(...)
-  if('scales' %in% names(dots)) scales <- dots$scales
-  xy.at <- pretty(1:ncol(x))
-  xy.at <- xy.at[xy.at <= ncol(x)]
-  xy.at[1] <- 1
-  if(is.null(resno)) {
-     scales$at <- xy.at
-     scales$labels <- xy.at
-  } else {
-     labs <- resno[xy.at]
-     labs[is.na(labs)] <- ""
-     scales$at <- xy.at
-     scales$labels <- labs
+  if('scales' %in% names(dots)) {
+    scales <- dots$scales
+  }
+
+  if(!"at" %in% names(scales)) {
+    xy.at <- pretty(1:ncol(x))
+    xy.at <- xy.at[xy.at <= ncol(x)]
+    xy.at[1] <- 1
+    if(is.null(resno)) {
+      scales$at <- xy.at
+      scales$labels <- xy.at
+    } else {
+      labs <- resno[xy.at]
+      labs[is.na(labs)] <- ""
+      scales$at <- xy.at
+      scales$labels <- labs
+    }
   }
   dots$scales <- scales
 

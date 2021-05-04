@@ -290,9 +290,19 @@ List read_pdb(std::string filename, bool multi=false, bool hex=false, int maxlin
 	  alt.push_back(trim(line.substr(16,1)));
 	  resid.push_back(trim(line.substr(17,4)));
 	  insert.push_back(trim(line.substr(26,1)));
-	  o.push_back(stringToDouble(trim(line.substr(54,6))));
-	  b.push_back(stringToDouble(trim(line.substr(60,6))));
 
+	  try{
+	     o.push_back(stringToDouble(trim(line.substr(54,6))));
+	  } catch(...) {
+	     o.push_back(NA_REAL);
+	  }
+
+	  try{
+	     b.push_back(stringToDouble(trim(line.substr(60,6))));
+	  } catch(...) {
+	     b.push_back(NA_REAL);
+	  }
+	  
 	  try{
 	    segid.push_back(trim(trim(line.substr(72,4))));
 	  } catch(...) {
