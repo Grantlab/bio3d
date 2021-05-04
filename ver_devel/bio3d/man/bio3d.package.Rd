@@ -10,8 +10,8 @@ Utilities for the analysis of protein structure and sequence data.
 \tabular{ll}{
 Package: \tab bio3d\cr
 Type: \tab Package\cr
-Version: \tab 2.4-1\cr
-Date: \tab 2020-01-20\cr
+Version: \tab 2.4-2\cr
+Date: \tab 2021-05-03\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab \url{http://thegrantlab.org/bio3d/}\cr
 }
@@ -70,6 +70,7 @@ Julien Ide <julien.ide.fr@gmail.com>
 \references{
 Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
+Grant, B.J. et al. (2021) \emph{Protein Science} \bold{30}, 20--30.
 }
 \keyword{ documentation }
 \examples{
