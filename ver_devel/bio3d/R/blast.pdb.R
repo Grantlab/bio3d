@@ -36,8 +36,9 @@ function(seq, database="pdb", time.out=NULL, chain.single=TRUE) {
     # mimic the 'Automatically adjust parameters for short input sequences' option on NCBI
     urlput <- paste("https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Put&DATABASE=",
                     database,"&HITLIST_SIZE=500&PROGRAM=blastp&CLIENT=web&",
-                    "MATRIX_NAME=PAM30&EXPECT=200000&WORD_SIZE=2&GAPCOSTS=9 1&",
-                    "THRESHOLD=11&COMPOSITION_BASED_STATISTICS=0&QUERY=",
+                    "MATRIX=PAM30&MATRIX_NAME=PAM30&EXPECT=200000&",
+                    "WORD_SIZE=2&GAPCOSTS=9 1&", "THRESHOLD=11&", 
+                    "COMPOSITION_BASED_STATISTICS=0&QUERY=",
                     paste(seq,collapse=""),
                     sep="")    
   }
