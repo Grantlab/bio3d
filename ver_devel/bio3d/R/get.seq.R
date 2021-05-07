@@ -114,6 +114,11 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
   
   # check if all sequences are downloaded successfully.
   seqs <- read.fasta(outfile)
+  
+  ## DEBUG: take the full-length ID for checking (read.fasta stops at space).
+  lines <- readLines(outfile)
+  seqs_id <- sub("^>", "", lines[grep("^>", lines)])  
+  
   if(db=="nr") {
      if(length(seqs$id) == length(ids)) {
        rtn = FALSE
@@ -121,7 +126,7 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
        rtn <- sapply(ids, function(x) !any(grepl(x, seqs$id)))
      }
   } else {
-    myids <- strsplit(seqs$id, split='\\|')
+    myids <- strsplit(seqs_id, split='\\|')
     myids <- sapply(myids, function(x) {
       ii <- match('pdb', x)
       if(!is.na(ii))
