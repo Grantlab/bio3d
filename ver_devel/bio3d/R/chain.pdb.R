@@ -18,16 +18,51 @@ function(pdb, ca.dist=4, bond=TRUE, bond.dist=1.5, blank="X", rtn.vec=TRUE) {
     if(bond) {
       nn <- atom.select(pdb, "protein", elety="N", verbose=FALSE)
       cc <- atom.select(pdb, "protein", elety="C", verbose=FALSE)
-      if(length(ca$atom) != length(nn$atom) ||
-         length(ca$atom) != length(cc$atom)) {
-        warning("Peptide bond atoms (N/C) and C-alpha atoms mismatch. Switch to bond=FALSE.")
-        bond <- FALSE
-      } else {
-        xyz1 <- pdb$xyz[cc$xyz]
-        xyz2 <- pdb$xyz[nn$xyz][-c(1:3)]
-        d <- dist.xyz(xyz1, xyz2, all.pairs=FALSE)
-        d <- d[!is.na(d)]
+
+      ca.labs <- paste(pdb$atom$chain[ca$atom], pdb$atom$resno[ca$atom], 
+        pdb$atom$insert[ca$atom], sep="_")
+      nn.labs <- paste(pdb$atom$chain[nn$atom], pdb$atom$resno[nn$atom], 
+        pdb$atom$insert[nn$atom], sep="_")
+      cc.labs <- paste(pdb$atom$chain[cc$atom], pdb$atom$resno[cc$atom], 
+        pdb$atom$insert[cc$atom], sep="_")
+
+      # Check if N-C is available; if not, use CA-CA distance
+      hasN <- rep(FALSE, length(ca.labs))
+      hasC <- rep(FALSE, length(ca.labs))
+      hasN[ca.labs %in% nn.labs] <- TRUE
+      hasC[ca.labs %in% cc.labs] <- TRUE
+      hasNC <- hasC[-length(hasC)] & hasN[-1]
+      useC.labs <- ca.labs[which(hasNC)]
+      useN.labs <- ca.labs[which(hasNC)+1]
+      
+      sel1 <- as.select(
+        sort( c(ca$atom[which(!hasNC)], cc$atom[cc.labs %in% useC.labs]) )
+      )
+  
+      sel2 <- as.select(
+        sort( c(ca$atom[which(!hasNC)+1], nn$atom[nn.labs %in% useN.labs]) )
+      )
+
+      if(sum(!hasNC) > 0) {
+         # Use mixed distance cutoff values
+         bond.dist <- rep(bond.dist, length(hasNC))
+         bond.dist[!hasNC] <- ca.dist
       }
+      else if(sum(hasNC) == 0) {
+         warning("No valid N-C bond to check; Use CA-CA distances")
+         bond.dist <- ca.dist
+      }
+
+#      if(length(ca$atom) != length(nn$atom) ||
+#         length(ca$atom) != length(cc$atom)) {
+#        warning("Peptide bond atoms (N/C) and C-alpha atoms mismatch. Switch to bond=FALSE.")
+#        bond <- FALSE
+#      } else {
+        xyz1 <- pdb$xyz[sel1$xyz]
+        xyz2 <- pdb$xyz[sel2$xyz]
+        d <- dist.xyz(xyz1, xyz2, all.pairs=FALSE)
+#        d <- d[!is.na(d)]
+#      }
     } 
     if(!bond) { 
       xyz <- matrix(pdb$xyz[ca$xyz], nrow=3)
