@@ -5,7 +5,9 @@ test_that("clean.pdb() does nothing for 'clean' pdb by default", {
   file <- system.file("examples/1dpx.pdb", package="bio3d")
   invisible(capture.output(pdb <- read.pdb(file)))
 
-  invisible(capture.output(npdb <- clean.pdb(pdb)))
+  suppressWarnings(
+    invisible(capture.output(npdb <- clean.pdb(pdb)))
+  )
  
   expect_true(is.null(npdb$log))
 
@@ -22,7 +24,9 @@ test_that("clean.pdb() does renumbering properly", {
   skip_on_cran()
   skip_on_travis()
 
-  invisible(capture.output(pdb <- read.pdb("1tag")))
+  suppressWarnings(
+    invisible(capture.output(pdb <- read.pdb("1tag")))
+  )
   invisible(capture.output(npdb <- clean.pdb(pdb, force.renumber = TRUE)))
 
   resno <- npdb$atom[npdb$calpha, "resno"]
@@ -61,8 +65,10 @@ test_that("clean.pdb() relabels chains properly (fix.chain = TRUE)", {
   pdb$helix$chain <- "" 
   pdb$sheet$chain <- "" 
 
-  invisible(capture.output(npdb <- clean.pdb(pdb, fix.chain = TRUE)))
-
+  suppressWarnings(
+    invisible(capture.output(npdb <- clean.pdb(pdb, fix.chain = TRUE)))
+  )
+  
   expect_equal(npdb$atom[npdb$calpha, "chain"], rep("A", sum(npdb$calpha)))
 
   # A case with wrong chain labels but consecutive residue numbering
@@ -85,7 +91,9 @@ test_that("clean.pdb() relabels chains properly (fix.chain = TRUE)", {
   pdb$helix$chain[] <- 'A'
   pdb$sheet$chain[] <- 'A'
  
-  invisible(capture.output(npdb <- clean.pdb(pdb, consecutive = FALSE, force.renumber = TRUE, fix.chain = TRUE)))
+  suppressWarnings(
+    invisible(capture.output(npdb <- clean.pdb(pdb, consecutive = FALSE, force.renumber = TRUE, fix.chain = TRUE)))
+  )
   
   pdb0$call <- NULL
   npdb$call <- NULL

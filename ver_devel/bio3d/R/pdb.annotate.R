@@ -191,7 +191,7 @@
       sapply(y$polymer_entity_instances, function(z) {
         id <- z$rcsb_polymer_entity_instance_container_identifiers$auth_asym_id
         if(is.null(id)) {
-          id<- NA
+          id<- as.character(NA)
         }
         id
       })
@@ -205,17 +205,14 @@
   chainId <- unlist(chain.ids)
   out <- data.frame(structureId=ids, chainId=chainId, stringsAsFactors=FALSE)
 
-  ## temporarily add entity column for folding
-#  out$entity <- unlist(lapply(nchains.entity, function(x)
-#    inverse.rle(x=list(values=seq(1, length(x)), lengths=x))))
-    
+
   if("chainLength" %in% anno.terms) {
     cl <- lapply(x, function(x) {
       lapply(x$polymer_entities, function(y) {
         sapply(y$polymer_entity_instances, function(z) {
            cl <- z$polymer_entity$entity_poly$rcsb_sample_sequence_length
            if(is.null(cl)) {
-              cl <- NA
+              cl <- as.integer(NA)
            }
            cl
         })
@@ -231,7 +228,7 @@
     em <- sapply(x, function(x) {
       em <- x$rcsb_entry_info$experimental_method
       if(is.null(em)) {
-        em <- NA
+        em <- as.character(NA)
       }
       em
     })
@@ -243,7 +240,7 @@
     reso <- sapply(x, function(x) {
       reso <- x$rcsb_entry_info$resolution_combined[[1]]
       if(is.null(reso)) {
-        reso <- NA
+        reso <- as.numeric(NA)
       }
       reso
     })
@@ -257,7 +254,7 @@
         sapply(y$polymer_entity_instances, function(z) {
            typ <- z$polymer_entity$entity_poly$rcsb_entity_polymer_type
            if(is.null(typ)) {
-              typ <- NA
+              typ <- as.character(NA)
            }
            typ
         })
@@ -275,7 +272,7 @@
           types <- sapply(z$rcsb_polymer_instance_feature, "[[", "type")
           s <- z$rcsb_polymer_instance_feature[[which(types=="SCOP")[1]]]$name
           if(is.null(s)) {
-            s <- NA
+            s <- as.character(NA)
           }
           s
         })
@@ -292,7 +289,7 @@
           types <- sapply(z$polymer_entity$rcsb_polymer_entity_annotation, "[[", "type")
           p <- z$polymer_entity$rcsb_polymer_entity_annotation[[which(types=="Pfam")[1]]]$name
           if(is.null(p)) {
-            p <- NA
+            p <- as.character(NA)
           }
           p
         })
@@ -308,7 +305,7 @@
         sapply(y$nonpolymer_entity_instances, function(z) {
           id <- z$rcsb_nonpolymer_entity_instance_container_identifiers$auth_asym_id
           if(is.null(id)) {
-             id <- NA
+             id <- as.character(NA)
           }
           id
         })
@@ -325,7 +322,7 @@
         sapply(y$nonpolymer_entity_instances, function(z) {
           id <- z$nonpolymer_entity$nonpolymer_comp$chem_comp$id
           if(is.null(id)) {
-             id <- NA
+             id <- as.character(NA)
           }
           id
         })
@@ -344,7 +341,7 @@
   }
   
   if("ligandName" %in% anno.terms) {
-    lname <- sapply(1:length(x), function(i) {
+    lname <- lapply(1:length(x), function(i) {
       x <- x[[i]]
       lch <- lch[[i]]
       chain.ids <- unlist(chain.ids[[i]])
@@ -352,7 +349,7 @@
         sapply(y$nonpolymer_entity_instances, function(z) {
           nam <- z$nonpolymer_entity$nonpolymer_comp$chem_comp$name
           if(is.null(nam)) {
-            nam <- NA
+            nam <- as.character(NA)
           }
           nam
         })
@@ -377,11 +374,16 @@
            src <- sapply(z$polymer_entity$rcsb_entity_source_organism, function(z2) {
               src <- z2$ncbi_scientific_name
               if(is.null(src)) {
-                 src <- NA
+                 src <- as.character(NA)
               }
               src
            })
-           paste(src, collapse="/")
+           if(length(src)>1) {
+             paste(src, collapse="/")
+           }
+           else {
+             src
+           }
         })
       })
     })
@@ -394,7 +396,7 @@
     title <- sapply(x, function(x) {
       title <- x$struct$title
       if(is.null(title)) {
-        title <- NA
+        title <- as.character(NA)
       }
       title
     })
@@ -415,7 +417,7 @@
       }
       citation <- paste(aut, jrnl, year)
       if(length(citation)==0) {
-        citation <- NA
+        citation <- as.character(NA)
       }
       citation
     })
@@ -427,7 +429,7 @@
     robs <- sapply(x, function(x) {
       robs <- x$refine[[1]]$ls_R_factor_obs
       if(is.null(robs)) {
-        robs <- NA
+        robs <- as.numeric(NA)
       }
       robs
     })
@@ -439,7 +441,7 @@
     rfree <- sapply(x, function(x) {
       rfree <- x$refine[[1]]$ls_R_factor_R_free
       if(is.null(rfree)) {
-        rfree <- NA
+        rfree <- as.numeric(NA)
       }
       rfree
     })
@@ -451,7 +453,7 @@
     rwork <- sapply(x, function(x) {
       rwork <- x$refine[[1]]$ls_R_factor_R_work
       if(is.null(rwork)) {
-        rwork <- NA
+        rwork <- as.numeric(NA)
       }
       rwork
     })
@@ -463,7 +465,7 @@
     sg <- sapply(x, function(x) {
       sg <- x$symmetry$space_group_name_H_M
       if(is.null(sg)) {
-        sg <- NA
+        sg <- as.character(NA)
       }
       sg
     })
@@ -487,7 +489,7 @@
                   paste(unique(query.ids[chk==0]), collapse=", ")))
   }
   query.ids <- query.ids[chk>0]
-  out <- out[sort(unique(unlist(inds))), , drop=FALSE]
+  out <- out[unique(unlist(inds)), , drop=FALSE]
   
   if(unique) {
     # Fold the table based on PDB IDs
@@ -504,7 +506,7 @@
             out[1, j]
           }
        })
-       as.data.frame(do.call(cbind, cols))
+       as.data.frame(cols, stringsAsFactors=FALSE)
     }, simplify=FALSE)
     out <- do.call(rbind, out)
     rownames(out) <- NULL

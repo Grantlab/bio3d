@@ -8,7 +8,7 @@ test_that("get.seq() works properly", {
   
   # NR (use GI/RefSeq Accession)
   ids <- c("829581541", "NP_851365")
-  seqs <- get.seq(ids, outfile=outfile, db='nr')
+  capture.output( seqs <- get.seq(ids, outfile=outfile, db='nr') )
   expect_equal(length(seqs$id), 2)
   expect_identical(head(seqs$ali[1,]), c('M','E','L','E','N','I'))
   expect_identical(head(seqs$ali[2,]), c('M','G','A','G','A','S'))
@@ -17,7 +17,7 @@ test_that("get.seq() works properly", {
   
   # uniprot/swissprot
   ids <- c("P11488", "P62873")
-  seqs <- get.seq(ids, outfile=outfile, db='uniprot')
+  capture.output(seqs <- get.seq(ids, outfile=outfile, db='uniprot'))
   expect_equal(length(seqs$id), 2)
   expect_identical(head(seqs$ali[1, ]), c('M','G','A','G','A','S'))
   expect_identical(head(seqs$ali[2, ]), c('M','S','E','L','D','Q'))
@@ -26,7 +26,7 @@ test_that("get.seq() works properly", {
   
   # pdb
   ids <- c("1tag", "1tnd_B")
-  seqs <- get.seq(ids, outfile=outfile, db='pdb')
+  capture.output(seqs <- get.seq(ids, outfile=outfile, db='pdb'))
   expect_equal(length(seqs$id), 2)
   expect_identical(head(seqs$ali[1,]), c('A','R','T','V','K','L'))
   expect_identical(tail(seqs$ali[2,]), c('K','D','C','G','L','F'))
@@ -34,16 +34,16 @@ test_that("get.seq() works properly", {
   unlink(outfile)
   
   # one of the ids is wrong
-  ids <- c("P11488", "P999", "P62873")
-  expect_warning(seqs <- get.seq(ids, outfile=outfile, db='uniprot'))
+  ids <- c("P11488", "P62873", "P999")
+  expect_warning(capture.output(seqs <- get.seq(ids, outfile=outfile, db='uniprot')))
   expect_true(is.logical(seqs))
-  expect_identical(as.vector(seqs), c(FALSE, TRUE, FALSE))
+  expect_identical(as.vector(seqs), c(FALSE, FALSE, TRUE))
   
   unlink(outfile)
   
   # all ids are wrong (choose wrong database)
   ids <- c("1tag", "1tnd_B")
-  expect_error( seqs <- get.seq(ids, outfile=outfile, db='uniprot') )
+  expect_error( capture.output(seqs <- get.seq(ids, outfile=outfile, db='uniprot')) )
    
   unlink(outfile)
 })

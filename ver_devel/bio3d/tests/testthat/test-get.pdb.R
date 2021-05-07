@@ -6,12 +6,16 @@ test_that("get.pdb() works properly", {
   
    ids <- c("1tag", "1tnd")  # Gt
    tmp <- tempdir()
-   files <- get.pdb(ids, tmp, verbose=FALSE)
+   suppressWarnings(
+     capture.output(files <- get.pdb(ids, tmp, verbose=FALSE))
+   )
    expect_identical(files, paste(tmp, "/", ids, ".pdb", sep=""))
    expect_warning(get.pdb("3c7kxxx", tmp, verbose=FALSE))
    expect_warning(get.pdb("1tag", tmp, verbose=FALSE))
    
-   files <- get.pdb("1as0", tmp, verbose=FALSE, gzip=TRUE)
+   suppressWarnings(
+     capture.output(files <- get.pdb("1as0", tmp, verbose=FALSE, gzip=TRUE))
+   )
    expect_identical(files, paste(tmp, "/1as0.pdb", sep=""))
 #   expect_error(get.pdb("aaaa", tmp, verbose=FALSE))
 })

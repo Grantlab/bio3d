@@ -13,7 +13,9 @@ test_that("read.cif() reads a normal pdb file", {
   invisible(capture.output(get.pdb("1dpx", path=datdir, format="cif",
                                    overwrite = FALSE, verbose = FALSE)))
   
-  invisible(capture.output(p2 <- read.cif(file.path(datdir, "1dpx.cif"))))
+  suppressWarnings(
+    invisible(capture.output(p2 <- read.cif(file.path(datdir, "1dpx.cif"))))
+  )
   
   expect_is(p2$atom, "data.frame")
   expect_true(inherits(p2, "pdb"))
@@ -54,8 +56,10 @@ test_that("read.cif() on a multimodel object", {
                                    overwrite = FALSE, verbose = FALSE)))
   # multi-model structure
   invisible(capture.output(p1 <- read.pdb(file.path(datdir, "1L2Y.pdb"), multi=TRUE)))
-  invisible(capture.output(p2 <- read.cif(file.path(datdir, "1L2Y.cif"), multi=TRUE)))
-
+  suppressWarnings(
+    invisible(capture.output(p2 <- read.cif(file.path(datdir, "1L2Y.cif"), multi=TRUE)))
+  )
+  
   expect_identical(dim(p1$xyz), dim(p2$xyz))
   expect_identical(p1$atom$x, p2$atom$x)
   expect_identical(p1$atom$y, p2$atom$y)

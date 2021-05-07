@@ -19,8 +19,10 @@ test_that("cna() and cnapath() work properly", {
 
   ## network construction
   capture.output(cm <- cmap(pdb, dcut=4.5, scut=1))
-  capture.output(net <- cna(cij, cm=cm, cutoff.cij=0))
-
+  suppressWarnings(
+    capture.output(net <- cna(cij, cm=cm, cutoff.cij=0))
+  )
+  
   expect_equal(net$communities$vcount, 129)
   expect_equal(igraph::ecount(net$network), 608)
   expect_equal(max(net$communities$membership), 5)

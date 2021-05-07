@@ -18,7 +18,7 @@ test_that("aanma based eNMA works", {
   }
   
   pdbdir <- tempdir()
-  invisible( capture.output(pdbfiles <- get.pdb(c("1TND_A", "1TAG", "1AS0", "1AS2"), path=pdbdir, split=TRUE)) )
+  invisible( capture.output( capture.output(pdbfiles <- get.pdb(c("1TND_A", "1TAG", "1AS0", "1AS2"), path=pdbdir, split=TRUE), type="message") ))
   invisible( capture.output(aln <- pdbaln(pdbfiles)) )
   invisible( capture.output(pdbs <- read.all(aln)) )
   gaps <- gap.inspect(pdbs$xyz)
