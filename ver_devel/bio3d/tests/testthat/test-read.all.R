@@ -8,7 +8,9 @@ test_that("read.all() reads all/select PDB atoms properly", {
 
   ## Test with 4 G-alpha PDB structures  
   pdbdir <- tempdir()
-  invisible( capture.output(pdbfiles <- get.pdb(c("1TND_A", "1TAG", "1AS0", "1AS2"), path=pdbdir, split=TRUE)) )
+  suppressWarnings(
+    invisible( capture.output(pdbfiles <- get.pdb(c("1TND_A", "1TAG", "1AS0", "1AS2"), path=pdbdir, split=TRUE)) )
+  )
   invisible( capture.output(aln <- pdbaln(pdbfiles)) )
 
   ## read with default options

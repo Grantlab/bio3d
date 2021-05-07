@@ -52,19 +52,19 @@ test_that("basic atom select and trim of mol2", {
   file <- system.file("examples/aspirin.mol2",package="bio3d")
   invisible(capture.output(mol <- read.mol2(file)))
 
-  sele <- atom.select(mol, "noh")
+  capture.output( sele <- atom.select(mol, "noh") )
   expect_equal(length(sele$atom), 13)
 
-  sele <- atom.select(mol, elety="H")
+  capture.output( sele <- atom.select(mol, elety="H") )
   expect_equal(length(sele$atom), 7)
 
-  sele <- atom.select(mol, elena="C1")
+  capture.output( sele <- atom.select(mol, elena="C1") )
   expect_equal(length(sele$atom), 1)
 
-  sele <- atom.select(mol, resno=1)
+  capture.output( sele <- atom.select(mol, resno=1) )
   expect_equal(length(sele$atom), 20)
 
-  sele <- atom.select(mol, "noh")
+  capture.output( sele <- atom.select(mol, "noh") )
   mol2 <- trim(mol, sele)
 
   expect_equal(nrow(mol2$atom), 13)
@@ -85,7 +85,7 @@ test_that("converting mol2 to pdb works", {
   file <- system.file("examples/aspirin.mol2",package="bio3d")
   invisible(capture.output(mol <- read.mol2(file)))
 
-  pdb <- as.pdb(mol)
+  capture.output( pdb <- as.pdb(mol) )
   expect_equal(nrow(pdb$atom), nrow(mol$atom))
   expect_equal(pdb$xyz, mol$xyz)
 

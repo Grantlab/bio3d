@@ -44,8 +44,10 @@ test_that("read.pdb() reads and stores data properly", {
   skip_on_travis()
   
   datdir <- tempdir()
-  invisible(capture.output(get.pdb(c("3DRC", "1P3Q", "1SVK", "1L2Y"), path=datdir,
+  suppressWarnings(
+    invisible(capture.output(get.pdb(c("3DRC", "1P3Q", "1SVK", "1L2Y"), path=datdir,
                                    overwrite = FALSE, verbose = FALSE)))
+  )
   
    # "3DRC" example PDB has a CA calcium ion and a CA containing ligand. 
    expect_error(read.pdb("nothing"))
@@ -89,9 +91,9 @@ test_that("read.pdb() reads and stores data properly", {
    invisible(capture.output(pdb <- read.pdb(file.path(datdir, "1L2Y.pdb"), multi=TRUE)))
    write.pdb(pdb, file=file.path(datdir, "t2.pdb"))
    invisible(capture.output(pdb2 <- read.pdb(file.path(datdir, "t2.pdb"), multi=TRUE)))
-   # SSE and SEQRES missing in write.pdb()
-   pdb[c("seqres", "helix", "sheet", "call")] <- NULL
-   pdb2[c("seqres", "helix", "sheet", "call")] <- NULL
+   # SSE, SEQRES, and REMARK missing in write.pdb()
+   pdb[c("seqres", "helix", "sheet", "remark", "call")] <- NULL
+   pdb2[c("seqres", "helix", "sheet", "remark", "call")] <- NULL
    expect_identical(pdb, pdb2)
   
 
@@ -115,7 +117,7 @@ test_that("read.pdb() reads and stores data properly", {
 })
 
 
-test_that("read.pdb() reads PDB with , in atom names", {
+test_that("read.pdb() reads PDB with ' in atom names", {
   skip_on_cran()
   skip_on_travis()
 
@@ -128,8 +130,8 @@ test_that("read.pdb() reads PDB with , in atom names", {
   expected <- c("TYD", "DAU", "SO4", "HOH")
   expect_equal(unique(pdb$atom$resid[sele$atom]), expected)
 
-  sele <- atom.select(pdb, elety="C1,")
-  expected <- "C1,"
+  sele <- atom.select(pdb, elety="C1'")
+  expected <- "C1'"
   expect_equal(unique(pdb$atom$elety[sele$atom]), expected)
 })
 
@@ -140,8 +142,11 @@ test_that("read.pdb() (cpp) gives the same results as read.pdb2() (old R version
   skip_on_travis()
 
   datdir <- tempdir()
-  invisible(capture.output(get.pdb("1H5T", path=datdir,
+
+  suppressWarnings(
+   invisible(capture.output(get.pdb("1H5T", path=datdir,
                                    overwrite = FALSE, verbose = FALSE)))
+  )
   
   invisible(capture.output(pdb0 <- read.pdb(file.path(datdir, "1H5T.pdb"))))
   invisible(capture.output(pdb1 <- read.pdb2(file.path(datdir, "1H5T.pdb"))))
@@ -154,8 +159,10 @@ test_that("read.pdb() (cpp) gives the same results as read.pdb2() (old R version
   expect_equal(pdb0$remark, pdb1$remark)
 
   ## 1TOH - more remarks 
-  invisible(capture.output(get.pdb("2TOH", path=datdir,
+  suppressWarnings(
+     invisible(capture.output(get.pdb("2TOH", path=datdir,
                                    overwrite = FALSE, verbose = FALSE)))
+  )
   
   invisible(capture.output(pdb0 <- read.pdb(file.path(datdir, "2TOH.pdb"))))
   invisible(capture.output(pdb1 <- read.pdb2(file.path(datdir, "2TOH.pdb"))))
@@ -177,8 +184,10 @@ test_that("read.pdb() (cpp) gives the same results as read.pdb2() (old R version
   expect_equal(pdb0$atom, pdb1$atom)
   
   ## rm.insert = TRUE
-  invisible(capture.output(get.pdb("1FUJ", path=datdir,
+  suppressWarnings(
+    invisible(capture.output(get.pdb("1FUJ", path=datdir,
                                    overwrite = FALSE, verbose = FALSE)))
+  )
   
   invisible(capture.output(pdb0 <- read.pdb(file.path(datdir, "1FUJ.pdb"), rm.insert=TRUE)))
   invisible(capture.output(pdb1 <- read.pdb2(file.path(datdir, "1FUJ.pdb"), rm.insert=TRUE)))
@@ -201,17 +210,21 @@ test_that("read.pdb() (cpp) gives the same results as read.pdb2() (old R version
 
   ## ATOM.only = TRUE
   if(FALSE) {
-      invisible(capture.output(get.pdb("1FUJ", path=datdir,
+      suppressWarnings(
+        invisible(capture.output(get.pdb("1FUJ", path=datdir,
                                        overwrite = FALSE, verbose = FALSE)))
-      
+      )
+    
       invisible(capture.output(pdb0 <- read.pdb(file.path(datdir, "1FUJ.pdb"), ATOM.only=TRUE)))
       invisible(capture.output(pdb1 <- read.pdb2(file.path(datdir, "1FUJ.pdb"), ATOM.only=TRUE)))
       expect_equal(attributes(pdb0), attributes(pdb1))
   }
 
   ## read PDB with 'insert'
-  invisible(capture.output(get.pdb("1FUJ", path=datdir,
+  suppressWarnings(
+     invisible(capture.output(get.pdb("1FUJ", path=datdir,
                                    overwrite = FALSE, verbose = FALSE)))
+  )
   invisible(capture.output(pdb0 <- read.pdb(file.path(datdir, "1FUJ.pdb"))))
   invisible(capture.output(pdb1 <- read.pdb2(file.path(datdir, "1FUJ.pdb"))))
   for(i in names(pdb1)) {

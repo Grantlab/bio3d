@@ -19,7 +19,7 @@ test_that("Fitting still works", {
   colnames(rmsd.mat) <- basename.pdb(pdbs$id)
   
   ## Test rmsd()
-  expect_that(rmsd( pdbs ),
+  expect_that(suppressWarnings(rmsd( pdbs )),
               equals(rmsd.mat, tolerance  = 1e-6))
 
   ## Test fit.xyz()
@@ -43,10 +43,10 @@ test_that("Fitting still works", {
   rownames(rmsd.mat) <- basename.pdb(pdbs$id)
   colnames(rmsd.mat) <- basename.pdb(pdbs$id)
 
-  expect_that(rmsd( xyz[, gaps$f.inds] ),
+  expect_that(suppressWarnings(rmsd( xyz[, gaps$f.inds] )),
               equals(rmsd.mat, tolerance  = 1e-6))
 
-  expect_that(rmsd( pdbs, fit=TRUE ),
+  expect_that(suppressWarnings(rmsd( pdbs, fit=TRUE )),
               equals(rmsd.mat, tolerance  = 1e-6))
 
   xyz2 <- fit.xyz( fixed  = pdbs$xyz[1,],
@@ -95,7 +95,9 @@ test_that("fit.xyz() gets the same results as VMD", {
       skip('Need MUSCLE installed to run this test')
    }
 
-   invisible(capture.output(pdbs <- pdbaln(c("1tag", "1as0"))))
+   invisible(capture.output(
+     capture.output(pdbs <- pdbaln(c("1tag", "1as0")), type="message"))
+   )
    inds <- gap.inspect(pdbs$xyz)$f.inds
 
    expect_error(fit.xyz("string", pdbs$xyz, inds, inds)) 
