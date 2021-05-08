@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
     pymol
 
 # Download and install dssp
-RUN wget ftp://ftp.cmbi.ru.nl/pub/software/dssp/dssp-2.0.4-linux-amd64 -O /usr/bin/dssp && \
+RUN wget ftp://ftp.cmbi.umcn.nl/pub/software/dssp/dssp-2.0.4-linux-amd64 -O /usr/bin/dssp && \
     chmod +x /usr/bin/dssp
 
 # Install required R packages
