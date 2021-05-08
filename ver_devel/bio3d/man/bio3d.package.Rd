@@ -58,7 +58,7 @@ manipulation and analysis of biological sequence and structural data
 The latest version, package vignettes and documentation with worked example
 outputs can be obtained from the bio3d website:\cr
 \url{http://thegrantlab.org/bio3d/}.\cr
-\url{http://thegrantlab.org/bio3d/html/}.\cr
+\url{http://thegrantlab.org/bio3d/reference/}.\cr
 \url{http://bitbucket.org/Grantlab/bio3d}.
 }
 \author{
@@ -78,13 +78,13 @@ help(package="bio3d")     # list the functions within the package
 #lbio3d()                  # list bio3d function names only
 
 ## Or visit:
-##   http://thegrantlab.org/bio3d/html/
+##   http://thegrantlab.org/bio3d/reference/
 
 ## See the individual functions for further documentation and examples, e.g.
 #help(read.pdb)
 
 ## Or online:
-##    http://thegrantlab.org/bio3d/html/read.pdb.html
+##    http://thegrantlab.org/bio3d/reference/read.pdb.html
 
 \dontrun{
 ##-- See the list of Bio3D demos
@@ -97,6 +97,6 @@ demo(md)  # Molecular Dynamics Trajectory Analysis
 demo(nma) # Normal Mode Analysis
 
 ## See package vignettes and tutorals online:
-##   http://thegrantlab.org/bio3d/tutorials
+##   http://thegrantlab.org/bio3d/articles
 }
 }

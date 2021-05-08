@@ -52,7 +52,7 @@ mustang(files, exefile="mustang", outfile="aln.mustang.fa",
   
   More details of the \sQuote{MUSTANG} algorithm, along with download and
   installation instructions can be obtained from:\cr
-  \url{http://www.csse.monash.edu.au/~karun/Site/mustang.html}.
+  \url{https://lcb.infotech.monash.edu/mustang/}.
 }
 \author{ Lars Skjaerven }
 \note{
