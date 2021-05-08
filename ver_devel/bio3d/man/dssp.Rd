@@ -85,7 +85,7 @@ stride(pdb, exefile = "stride", resno=TRUE)
 \note{
   A system call is made to the \sQuote{DSSP} or \sQuote{STRIDE} program, 
   which must be installed on your system and in the search path for executables.
-  See \url{http://thegrantlab.org/bio3d/articles/online/installing_vignette/Bio3D_install.html} for 
+  See \url{http://thegrantlab.org/bio3d/articles/online/install_vignette/Bio3D_install.html} for 
   instructions of how to install these programs.
   
   For the \code{hbonds} list component the column names can be
