@@ -61,7 +61,7 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
       url <- paste(baseUrl, "&val=", paste(ids1, collapse=','), 
                    "&report=fasta&retmode=text&page_size=",nmax, sep='')
     } else {
-      url <- paste(baseUrl, db, paste(ids1, collapse=','), 'fasta', sep='/')
+      url <- paste(baseUrl, db, paste(ids1, collapse=','), 'fasta?style=raw', sep='/')
     }
     resp <- try(httr::GET(url), silent=TRUE)
     if(inherits(resp, 'try-error')) {
@@ -106,6 +106,11 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
       if(errorCount==n)
         stop('No sequence found. Check the ID(s).')
     } else {
+       ## BUGFIX: remove the space between uniprot ID and acc. no.
+       ## and so both will be read via read.fasta() for checking below.
+       if(db == "uniprotkb") {
+         text <- gsub("(>[^ ]*) ", "\\1|", text)
+       }
        cat(text, file=outfile, append=TRUE)
     }
     cat('.')
@@ -115,26 +120,31 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
   # check if all sequences are downloaded successfully.
   seqs <- read.fasta(outfile)
   if(db=="nr") {
-     if(length(seqs$id) == length(ids)) {
-       rtn = FALSE
-     } else {
-       rtn <- sapply(ids, function(x) !any(grepl(x, seqs$id)))
-     }
-  } else {
     myids <- strsplit(seqs$id, split='\\|')
     myids <- sapply(myids, function(x) {
       ii <- match('pdb', x)
-      if(!is.na(ii))
-        x[ii+1] <- paste(x[ii+1], ifelse(is.na(x[ii+2]), 'A', x[ii+2]), sep='_')
+      if(!is.na(ii)) {
+        x[ii+1] <- paste(x[ii+1], x[ii+2], sep='_')
+      }
       paste(x, collapse='|')
     })
     rtn <- sapply(ids, function(x) !any(grepl(x, myids)))
+    
+    if(length(seqs$id) == length(ids)) {
+      if(any(rtn)) {
+        warning("Returned sequence IDs may be different from query.")
+      }
+      rtn = FALSE
+    }
+  } 
+  else {
+    rtn <- sapply(ids, function(x) !any(grepl(x, seqs$id)))
   }
   
   if(all(!rtn)) {
     return(seqs)
   } else {
-    warning("Not all downloads were successful. See returned values.")
+    warning("Not all downloads were successful. See returned values (TRUE=possibly failed).")
     return(rtn)
   }
 }

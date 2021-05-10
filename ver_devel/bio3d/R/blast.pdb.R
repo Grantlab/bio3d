@@ -26,11 +26,23 @@ function(seq, database="pdb", time.out=NULL, chain.single=TRUE) {
     stop("Option database should be one of pdb, nr or swissprot")
 
   ##- Submit
-  urlput <- paste("https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Put&DATABASE=",
-                  database,"&HITLIST_SIZE=20000&PROGRAM=blastp&CLIENT=web&QUERY=",
-                  paste(seq,collapse=""),
-                  sep="")
-
+  if(nchar(seq)>30) {
+     urlput <- paste("https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Put&DATABASE=",
+                     database,"&HITLIST_SIZE=20000&PROGRAM=blastp&CLIENT=web&QUERY=",
+                     paste(seq,collapse=""),
+                     sep="")
+  }
+  else {
+    # mimic the 'Automatically adjust parameters for short input sequences' option on NCBI
+    urlput <- paste("https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Put&DATABASE=",
+                    database,"&HITLIST_SIZE=500&PROGRAM=blastp&CLIENT=web&",
+                    "MATRIX=PAM30&MATRIX_NAME=PAM30&EXPECT=200000&",
+                    "WORD_SIZE=2&GAPCOSTS=9 1&", "THRESHOLD=11&", 
+                    "COMPOSITION_BASED_STATISTICS=0&QUERY=",
+                    paste(seq,collapse=""),
+                    sep="")    
+  }
+  
   txt <- scan(urlput, what="raw", sep="\n", quiet=TRUE)
   rid <- sub("^.*RID = " ,"",txt[ grep("RID =",txt) ])
 
@@ -40,6 +52,7 @@ function(seq, database="pdb", time.out=NULL, chain.single=TRUE) {
                   "&RESULTS_FILE=on",
                   "&FORMAT_TYPE=CSV",
                   "&ALIGNMENTS=20000",
+                  "&DESCRIPTIONS=20000",
                   "&RID=",rid, sep="")
 
   blast <- get.blast(urlget, time.out = time.out, chain.single=chain.single)

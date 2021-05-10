@@ -10,8 +10,14 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
   if (!oops) 
      stop("igraph package missing: Please install, see: ?install.packages")
   
-  if(!inherits(cna, "cna")) 
+  if(!inherits(cna, "cna")) {
+     if(is.list(cna)) {
+        paths <- lapply(cna, cnapath, from=from, to=to, k=k, collapse=collapse, ncore=ncore, ...)
+        class(paths) <- c("ecnapath", class(paths))
+        return( paths )
+     } 
      stop("Input cna is not a 'cna' object")
+  }
 
   ncore = setup.ncore(ncore)
 

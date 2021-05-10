@@ -36,17 +36,20 @@ Alternative installation methods and additional instructions are posted to the [
 
 With growing functionality in Bio3D we have decided to implement larger Bio3D modules into separate packages:
 
-* [Bio3D-web](https://bitbucket.org/Grantlab/bio3d-web/)
-* [Bio3D-view](https://bitbucket.org/Grantlab/bio3d-view/)
-* [Bio3D-eddm](https://bitbucket.org/Grantlab/bio3d-eddm/)
- 
+* [Bio3D-web](https://bitbucket.org/Grantlab/bio3d-web/) for online interactive analysis of protein structure ensembles
+* [Bio3D-nma](https://bitbucket.org/Grantlab/bio3d-nma/) for Normal Mode Analysis (NMA) of protein structures and ensembles
+* [Bio3D-cna](https://bitbucket.org/Grantlab/bio3d-cna/) for Correlation Network Analysis (CNA) for protein structure ensembles
+* [Bio3D-eddm](https://bitbucket.org/Grantlab/bio3d-eddm/) for Distances matrix analysis for the identification of significant conformational changes underling functional processes
+* [Bio3D-gesostas](https://bitbucket.org/Grantlab/bio3d-geostas/) for the identification of geometrically stable domains in biomolecules
+* [Bio3D-view](https://bitbucket.org/Grantlab/bio3d-view/) for interactive visualization of structures in R
+
+Current ongoing projects entails:
+
 * [Bio3D-mmtf](https://bitbucket.org/Grantlab/bio3d-mmtf/) [In development]
-* [Bio3D-cna](https://bitbucket.org/Grantlab/bio3d-cna/) [In development]
 * [Bio3D-amber](https://bitbucket.org/Grantlab/bio3d-amber/) [In development]
 * [Bio3D-muscle](https://bitbucket.org/Grantlab/bio3d-muscle/) [In development]
-* [Bio3D-nma](https://bitbucket.org/Grantlab/bio3d-nma/) [In development]
 * [Bio3D-cheminf](https://bitbucket.org/larsss/cheminf/src/master/) 
-
+* [Bio3D-dcna](https://bitbucket.org/xinqyao/dcna)
 
 ## Contributing to Bio3D ##
 

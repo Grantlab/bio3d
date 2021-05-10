@@ -12,36 +12,6 @@ function(pdbs,
 
   ncore <- setup.ncore(ncore)
 
-  arg.filter <- function(new.args, FUN=NULL, dots=list(...)) {
-    ##-- Simple list filtering for duplicate 
-    ##    function input argument removal and validation.
-    ##
-    ## new.args = The new default args that can be overwritten 
-    ##              by those in 'dots' (i.e. user supplied "...") 
-    ##               E.G. "new.args=list(col=mydefualtcol, lwd=3)"
-    ##
-    ## FUN      = Function name from which allowed arguments are checked
-    ##              and used to limit output of this function.
-    ##              This is typically only required if there are multiple 
-    ##              (sub)functions to be called each with other specific  
-    ##              things in /dots.
-    ##               E.G. allowed=names(formals( mysubfunction2call ))
-    ##
-    ## dots     = Full user supplied updated values typically 
-    ##               this is the extra /dots values, i.e. list(...) 
-    ##    
-    ##   sse.default <- list(coil="gray", helix="purple", sheet="yellow")
-    ##   sse.args <- arg.filter( sse.default, FUN=sse.vector )
-    ##   col <- do.call('sse.vector', c(list(pdb=pdb), sse.args) )
-    ##
-    ## Returns entries of 'dots' updated with those in 'new.args'
-    ##   that intersect with allowed FUN input args.
-
-    ans <- c(dots, new.args[!names(new.args) %in% names(dots)])
-    if(!is.null(FUN)) { ans <- ans[names(ans) %in% names(formals(FUN))] }
-    return(ans)
-  }
-
   if(is.pdbs(pdbs)) {
      xyz=pdbs$xyz
 
@@ -68,12 +38,12 @@ function(pdbs,
   if(is.null(cutoff)) cutoff <- 1/sqrt(length(res.inds))
 
   cmap.default <- list(dcut=10, scut=3, pcut=1, mask.lower=FALSE, ncore=ncore)
-  cmap.args <- arg.filter( cmap.default, FUN=cmap.xyz)
+  cmap.args <- .arg.filter( cmap.default, FUN=cmap.xyz, ...)
   cm <- do.call(cmap.xyz, c(list(xyz=xyz[, xyz.inds]), cmap.args) )
   cm[is.na(cm)] <- 0
 
   dm.default <- list(scut=3, mask.lower=FALSE, ncore=ncore)
-  dm.args <- arg.filter( dm.default, FUN=dm.xyz )
+  dm.args <- .arg.filter( dm.default, FUN=dm.xyz, ... )
   distmat <- do.call(dm.xyz, c(list(xyz=xyz[, xyz.inds]), dm.args) )
   distmat[is.na(distmat)] <- 0
 

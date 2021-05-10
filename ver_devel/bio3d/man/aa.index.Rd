@@ -26,9 +26,9 @@
 }
 \source{
 \sQuote{AAIndex} was obtained from:\cr
-\url{http://www.genome.jp/aaindex/}\cr
+\url{https://www.genome.jp/aaindex/}\cr
 For a description of the \sQuote{AAindex} database see:\cr 
-\url{http://www.genome.jp/aaindex/aaindex_help.html}.
+\url{https://www.genome.jp/aaindex/aaindex_help.html}.
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.

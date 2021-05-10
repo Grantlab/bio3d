@@ -6,7 +6,9 @@ test_that("pdbsplit works", {
   skip_on_travis()
   
   path <- tempdir()
-  invisible(capture.output(rawfiles <- get.pdb("3R1C", path=path)))
+  invisible(capture.output(
+    capture.output(rawfiles <- get.pdb("3R1C", path=path), type="message")
+  ))
   invisible(capture.output(files <- pdbsplit(rawfiles, ids=NULL, path=path)))
   
   expected <- c('3R1C_A.pdb', '3R1C_B.pdb', '3R1C_C.pdb', '3R1C_D.pdb',
@@ -29,13 +31,16 @@ test_that("pdbsplit works", {
   expected <- c("3R1C_e.pdb", "3R1C_E.pdb")
   expect_that(expected, equals(basename(files)))
 
+  ## ID does not exist - expect warning
   ids <- c('3R1C_XX')
-  invisible(capture.output(files <- pdbsplit(rawfiles, ids=ids , path=path)))
+  expect_warning(capture.output(files <- pdbsplit(rawfiles, ids=ids , path=path)))
   expected <- NULL
   expect_that(expected, equals(files))
 
   ## multi=TRUE
-  invisible(capture.output(rawfiles <- get.pdb("1UD7", path=path)))
+  invisible(capture.output(
+    capture.output(rawfiles <- get.pdb("1UD7", path=path), type="message")
+  ))
   invisible(capture.output(files <- pdbsplit(rawfiles, ids=NULL, path=path, multi=TRUE)))
   expected <- c('1UD7_A.01.pdb', '1UD7_A.02.pdb', '1UD7_A.03.pdb', '1UD7_A.04.pdb',
                 '1UD7_A.05.pdb', '1UD7_A.06.pdb', '1UD7_A.07.pdb', '1UD7_A.08.pdb',
@@ -50,7 +55,9 @@ test_that("pdbsplit works", {
 
 
   ## non standard amino acids:
-  invisible(capture.output(rawfiles <- get.pdb("1cdk", path=path)))
+  invisible(capture.output(
+    capture.output(rawfiles <- get.pdb("1cdk", path=path), type="message")
+  ))
   invisible(capture.output(files <- pdbsplit(rawfiles, path=path)))
   invisible(capture.output(pdb <- read.pdb(files[1])))
   invisible(capture.output(inds <- atom.select(pdb, resno=197)$atom))

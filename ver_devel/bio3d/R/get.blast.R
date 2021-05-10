@@ -76,11 +76,13 @@ get.blast <- function(urlget, time.out = NULL, chain.single=TRUE) {
   df$acc <- gi.id
   
   cat(paste("\n Reporting",length(pdb.id),"hits\n"))
-  
+
+  # sort hit table according to mlog.evalue
+  df <- df[order(df$mlog.evalue, decreasing = TRUE), ]  
   output <- list(hit.tbl = df,
                  raw = raw,
                  url = urlget)
-    
+  
   class(output) <- "blast"
   return(output)
 }

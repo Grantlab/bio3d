@@ -1,4 +1,4 @@
-"pca.array" <- function(x, use.svd=TRUE, ...) {
+"pca.array" <- function(x, use.svd=TRUE, rm.gaps=TRUE, ...) {
   if(!is.array(x))
     stop("provide an array of matrices")
   
@@ -7,7 +7,25 @@
   
   ## Construct the input matrix for PCA
   x <- t(apply(x, 3, function(y) y[upper.tri(y)]))
-  
+
+  if (any(!is.finite(x))) {
+    ## Check for GAP positions in input
+    if(rm.gaps) {
+       gapC <- colSums(is.na(x)) == 0
+      if (sum(gapC) > 1) {
+        x <- x[,gapC]
+        cat(paste("NOTE: Removing", sum(!gapC), "upper triangular gap cells with missing data\n",
+            "     retaining", sum(gapC), "upper triangular non-gap cells for analysis.\n"))
+      } else {
+        stop("No non-gap containing cell available for analysis.")
+      }
+    } else {
+       stop( paste("  Infinite or missing values in 'x' input.",
+      "\t Likely solution is to remove gap cells with rm.gaps=TRUE",
+      "\t or remove gap containing matrices from input.", sep="\n") )
+    }
+  }
+
   dx <- dim(x)
   n <- dx[1]; p <- dx[2]
   mean <- colMeans(x)

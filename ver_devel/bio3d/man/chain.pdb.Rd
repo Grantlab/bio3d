@@ -14,7 +14,7 @@ chain.pdb(pdb, ca.dist = 4, bond=TRUE, bond.dist=1.5, blank = "X", rtn.vec = TRU
   \item{ca.dist}{ the maximum distance that separates Calpha atoms
     considered to be in the same chain. }
   \item{bond}{ logical, if TRUE inspect peptide bond (C-N) instead
-    of Calpha-Calpha distances.}
+    of Calpha-Calpha distances whenever possible.}
   \item{bond.dist}{ cutoff value for C-N distance separation. }
   \item{blank}{ a character to assign non-protein atoms. }
   \item{rtn.vec}{ logical, if TRUE then the one-letter chain vector

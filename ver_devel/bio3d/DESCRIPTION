@@ -1,6 +1,6 @@
 Package: bio3d
 Title: Biological Structure Analysis
-Version: 2.4-1
+Version: 2.4-2
 Authors@R: c(person("Barry", "Grant", role=c("aut", "cre"),
                      email="bjgrant@ucsd.edu"),
              person("Xin-Qiu", "Yao", role="aut"),
@@ -28,6 +28,7 @@ Suggests:
     igraph,
     bigmemory,
     knitr,
+    rmarkdown,
     testthat (>= 0.9.1),
     httr,
     msa,
@@ -48,5 +49,5 @@ Description: Utilities to process, organize and explore protein structure,
     Please refer to the URLs below for more information.
 Maintainer: Barry Grant <bjgrant@ucsd.edu>
 License: GPL (>= 2)
-URL: http://thegrantlab.org/bio3d/, http://bitbucket.org/Grantlab/bio3d
-RoxygenNote: 5.0.1
+URL: http://thegrantlab.org/bio3d/, https://bitbucket.org/Grantlab/bio3d/
+RoxygenNote: 7.1.1

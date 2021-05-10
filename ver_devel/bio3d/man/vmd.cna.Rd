@@ -1,7 +1,9 @@
 \name{vmd}
 \alias{vmd}
 \alias{vmd.cna}
+\alias{vmd.ecna}
 \alias{vmd.cnapath}
+\alias{vmd.ecnapath}
 \title{ View CNA Protein Structure Network Community Output in VMD }
 \description{
   This function generates a VMD scene file and a PDB file that can be 
@@ -17,15 +19,16 @@ vmd(\dots)
 		radius = table(x$communities$membership)/5, alpha = 1,
 		vmdfile = "network.vmd", pdbfile = "network.pdb", 
                 full = FALSE, launch = FALSE, exefile=NULL, \dots)
-
+\method{vmd}{ecna}(x, n=1, \dots)
 \method{vmd}{cnapath}(x, pdb, out.prefix = "vmd.cnapath", spline = FALSE, 
-   colors = c("blue", "red"), launch = FALSE, exefile=NULL, \dots)
-
+   colors = c("blue", "red"), launch = FALSE, exefile=NULL, mag=1.0, \dots)
+\method{vmd}{ecnapath}(x, \dots)
 }
 \arguments{
-  \item{x}{A 'cna' or 'cnapath' class object as obtained from functions
-    \code{cna} or \code{cnapath}.
+  \item{x}{A 'cna' or 'cnapath' class object, or a list of such objects, as 
+    obtained from functions \code{cna} or \code{cnapath}.
   }
+  \item{n}{ The index to indicate which network or path to view with \code{vmd}. }
   \item{pdb}{A 'pdb' class object such as obtained from \sQuote{read.pdb} function.
   }
   \item{layout}{ A numeric matrix of Nx3 XYZ coordinate matrix, where N is the 
@@ -73,6 +76,7 @@ vmd(\dots)
   \item{exefile}{ file path to the \sQuote{VMD} program on your system (i.e.
     how is \sQuote{VMD} invoked). If \code{NULL}, use OS-dependent
     default path to the program. }
+  \item{mag}{ A numeric factor to scale the maximal thickness of paths. }
   \item{\dots}{ additional arguments passed to the function
     \code{\link{colorRamp}} (in \code{vmd.cnapath}).
   }

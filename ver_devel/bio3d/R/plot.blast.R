@@ -45,7 +45,7 @@ function(x, cutoff=NULL, cut.seed=NULL, cluster=TRUE, mar=c(2, 5, 1, 1), cex=1.5
     if(cluster) {
       ## Ask USER whether to continue with clustering with many hits  
       nhit <- length(x$mlog.evalue)
-      if(nhit > 1500) {
+      if(nhit > 9999) {
         cluster <- readline( paste0(" Note: ", nhit, 
           " hits, continue with TIME-CONSUMING clustering [y/n/q](n): ") )
 

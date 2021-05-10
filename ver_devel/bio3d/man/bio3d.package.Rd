@@ -10,8 +10,8 @@ Utilities for the analysis of protein structure and sequence data.
 \tabular{ll}{
 Package: \tab bio3d\cr
 Type: \tab Package\cr
-Version: \tab 2.4-1\cr
-Date: \tab 2020-01-20\cr
+Version: \tab 2.4-2\cr
+Date: \tab 2021-05-03\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab \url{http://thegrantlab.org/bio3d/}\cr
 }
@@ -58,8 +58,8 @@ manipulation and analysis of biological sequence and structural data
 The latest version, package vignettes and documentation with worked example
 outputs can be obtained from the bio3d website:\cr
 \url{http://thegrantlab.org/bio3d/}.\cr
-\url{http://thegrantlab.org/bio3d/html/}.\cr
-\url{http://bitbucket.org/Grantlab/bio3d}.
+\url{http://thegrantlab.org/bio3d/reference/}.\cr
+\url{https://bitbucket.org/Grantlab/bio3d/}.
 }
 \author{
 Barry Grant <bjgrant@ucsd.edu>
@@ -70,6 +70,7 @@ Julien Ide <julien.ide.fr@gmail.com>
 \references{
 Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
 Skjaerven, L. et al. (2014) \emph{BMC Bioinformatics} \bold{15}, 399.
+Grant, B.J. et al. (2021) \emph{Protein Science} \bold{30}, 20--30.
 }
 \keyword{ documentation }
 \examples{
@@ -77,13 +78,13 @@ help(package="bio3d")     # list the functions within the package
 #lbio3d()                  # list bio3d function names only
 
 ## Or visit:
-##   http://thegrantlab.org/bio3d/html/
+##   http://thegrantlab.org/bio3d/reference/
 
 ## See the individual functions for further documentation and examples, e.g.
 #help(read.pdb)
 
 ## Or online:
-##    http://thegrantlab.org/bio3d/html/read.pdb.html
+##    http://thegrantlab.org/bio3d/reference/read.pdb.html
 
 \dontrun{
 ##-- See the list of Bio3D demos
@@ -96,6 +97,6 @@ demo(md)  # Molecular Dynamics Trajectory Analysis
 demo(nma) # Normal Mode Analysis
 
 ## See package vignettes and tutorals online:
-##   http://thegrantlab.org/bio3d/tutorials
+##   http://thegrantlab.org/bio3d/articles/
 }
 }

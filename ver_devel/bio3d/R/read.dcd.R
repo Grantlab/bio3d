@@ -290,7 +290,7 @@ function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
   for(i in 1:nframes) {
     curr.pos <- seek(trj, where=0, origin= "current")
     if (curr.pos <= head$end.pos) {
-      to.return[i,]<-dcd.frame(trj,head,cell)
+      to.return[i,]<- as.vector( dcd.frame(trj,head,cell) )
       if (verbose) {
         setTxtProgressBar(pb, i)
 #        if(i %% 100==0) { cat(".") }
@@ -310,6 +310,12 @@ function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
   close(trj)
 
   ##class(to.return) = "xyz"
-  return( as.xyz(to.return) ) 
+  if(big) {
+     warning("Returned a 'big.memory' matrix that is not fully supported by some Bio3D functions.")
+     return(to.return)
+  }
+  else {
+     return( as.xyz(to.return) )
+  }
 }
 

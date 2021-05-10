@@ -193,7 +193,9 @@ test_that("NMA", {
   ###################################################################
 
   mc <- list(ALA=500, SER=1000)
-  invisible(capture.output(modes <- nma(pdb, mass.custom=mc)))
+  suppressWarnings(
+    invisible(capture.output(modes <- nma(pdb, mass.custom=mc)))
+  )
 
   mass.expected <- c(500.000, 500.000, 500.000, 131.196, 129.180, 157.194)
   expect_that(modes$mass[9:14], equals(mass.expected, tolerance=1e-6))

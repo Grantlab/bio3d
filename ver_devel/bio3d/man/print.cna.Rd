@@ -39,8 +39,8 @@
 }
 \seealso{
   \code{\link{cna}}, \code{\link[igraph:print.igraph]{print.igraph}},
-  \code{\link[igraph:str.igraph]{str.igraph}}, 
-  \code{\link[igraph:igraph.plotting]{igraph.plotting}}
+  \code{\link[igraph:print.igraph]{str.igraph}}, 
+  \code{\link[igraph:plot.common]{igraph.plotting}}
 }
 \examples{
 

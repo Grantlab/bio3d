@@ -110,7 +110,7 @@ hmmer(seq, type="phmmer", db = NULL, verbose = TRUE, timeout = 90)
     target belongs to - based on placing in the NCBI taxonomy tree. }
 
   More details can be found at the HMMER website:\cr
-  \url{http://www.ebi.ac.uk/Tools/hmmer/help/api}
+  \url{https://www.ebi.ac.uk/Tools/hmmer/help/api}
 }
 \note{
   Note that the chained \sQuote{pdbs} HMMER field (used for redundant

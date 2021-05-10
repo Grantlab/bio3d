@@ -16,3 +16,4 @@ tmp*
 html*
 
 *.vmd
+.Rproj.user

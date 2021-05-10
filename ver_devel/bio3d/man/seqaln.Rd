@@ -83,11 +83,11 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   
   If the access to any method metioned above fails, 
   the function will attempt to perform alignment via the EMBL-EBI Web Services 
-  (See \url{http://www.ebi.ac.uk}). In this case, the argument \code{web.args} 
+  (See \url{https://www.ebi.ac.uk/}). In this case, the argument \code{web.args} 
   cannot be empty and must contain at least user's E-Mail address. 
   Note that as stated by EBI, a fake email address may result 
   in your jobs being killed and your IP, organisation or entire domain being 
-  black-listed (See \url{http://www.ebi.ac.uk/Tools/webservices/help/faq}). 
+  black-listed (See FAQs on \url{https://www.ebi.ac.uk/}). 
   Possible parameters to be passed via \code{web.args} include:
   \describe{
     \item{email}{ a string containing a valid E-Mail address. Required. }
@@ -113,13 +113,13 @@ seqaln(aln, id=NULL, profile=NULL, exefile="muscle", outfile="aln.fa",
   
   Full details of the \sQuote{MUSCLE} algorithm, along with download and
   installation instructions can be obtained from:\cr
-  \url{http://www.drive5.com/muscle}.
+  \url{http://www.drive5.com/muscle/}.
 }
 \author{ Barry Grant }
 \note{
   A system call is made to the \sQuote{MUSCLE} program, which must be
   installed on your system and in the search path for executables.
-  See \url{http://thegrantlab.org/bio3d/tutorials/installing-bio3d} for 
+  See \url{http://thegrantlab.org/bio3d/articles/online/install_vignette/Bio3D_install.html} for 
   instructions of how to install this program.
 }
 \seealso{ \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}},

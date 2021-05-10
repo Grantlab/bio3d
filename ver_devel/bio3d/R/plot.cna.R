@@ -1,3 +1,40 @@
+plot.ecna <- function(x, ...) {
+
+   if(!inherits(x, "ecna")) {
+      stop("The input 'x' must be an object of class 'ecna'.")
+   }
+   n <- length(x)
+   if(n == 1) {
+      return( plot(x[[1]], ...) )
+   }
+   if(n > 9) {
+      stop("Plotting for more than 9 networks is not supported.")
+   }
+
+   opar <- par(no.readonly = TRUE)
+   on.exit(par(opar))
+  
+   if(n<=6) {
+      # N x 2
+      nr <- floor( (n-1) / 2 ) + 1
+      layout(matrix(1:(nr*2), ncol=2, byrow=TRUE), respect = TRUE)
+   }
+   else {
+      # 3 x 3
+      layout(matrix(1:9, ncol=3, byrow=TRUE), respect = TRUE)    
+   }
+
+   par(mar=c(0,0,2,0))
+   invisible( 
+    sapply(1:n, function(i) {
+      x <- x[[i]]
+      arg.default <- list(main=paste("Network", i))
+      arg <- .arg.filter(arg.default, FUN=NULL, ...)
+      do.call("plot", c(list(x=x), arg))
+    })
+   )
+}
+
 plot.cna <- function(x, pdb=NULL, weights=NULL, vertex.size=NULL,
                      layout=NULL, col=NULL, full=FALSE, scale = TRUE, 
                      color.edge = FALSE, interactive = FALSE, ...) {

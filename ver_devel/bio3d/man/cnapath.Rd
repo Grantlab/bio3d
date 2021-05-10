@@ -2,6 +2,8 @@
 \alias{cnapath}
 \alias{summary.cnapath}
 \alias{print.cnapath}
+\alias{plot.cnapath}
+\alias{plot.ecnapath}
 \title{ Suboptimal Path Analysis for Correlation Networks }
 \description{
   Find k shortest paths between a pair of nodes, source and sink, in a correlation 
@@ -12,9 +14,12 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
 \method{summary}{cnapath}(object, \dots, pdb = NULL, label = NULL, col = NULL,
    plot = FALSE, concise = FALSE, cutoff = 0.1, normalize = TRUE, weight = FALSE)
 \method{print}{cnapath}(x, \dots)
+\method{plot}{cnapath}(x, \dots)
+\method{plot}{ecnapath}(x, \dots)
 }
 \arguments{
-  \item{cna}{ A \sQuote{cna} object obtained from \code{\link{cna}}. }
+  \item{cna}{ A \sQuote{cna} object or a list of \sQuote{cna} objects obtained from 
+       \code{\link{cna}}. }
   \item{from}{ Integer vector or matrix indicating node id(s) of source. If is matrix
        and \code{to} is NULL, the first column represents source and the second sink. }
   \item{to}{ Integer vector indicating node id(s) of sink. All combinations of 
@@ -43,17 +48,17 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
        (weighted) number of paths. }
   \item{weight}{ Logical, if TRUE each path is weighted by path length in calculating the
     node degeneracty. }
-  \item{x}{ A 'cnapath' class object as obtained from function \code{cna}.
+  \item{x}{ A 'cnapath' class object, or a list of such objects, as obtained from function \code{cnapath}.
   }
   \item{\dots}{ Additional arguments passed to igraph function 
-       \code{\link[igraph:get.shortest.paths]{get.shortest.paths}} (in 
+       \code{\link[igraph:distances]{get.shortest.paths}} (in 
        the function \code{cnapath}), passed to \code{summary.cnapath} 
        (in \code{print.cnapath}), as additional paths for 
        comparison (in \code{summary.cnapath}). }
 }
 \value{
-  The function \code{cnapath} returns a \sQuote{cnapath} class of list containing 
-  following three components:
+  The function \code{cnapath} returns a (or a list of) \sQuote{cnapath} 
+  class of list containing following three components:
   \item{path}{ a list object containing all identified suboptimal paths.  
       Each entry of the list is a sequence of node ids for the path. }
   \item{epath}{ a list object containing all identified suboptimal paths. 
@@ -70,7 +75,7 @@ cnapath(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, \dots)
 \seealso{
   \code{\link{cna}}, \code{\link{cna.dccm}},
   \code{\link{vmd.cna}}, \code{\link{vmd.cnapath}}, 
-  \code{\link[igraph:get.shortest.paths]{get.shortest.paths}}. }
+  \code{\link[igraph:distances]{get.shortest.paths}}. }
 \examples{
 \donttest{
 # Redundant testing excluded

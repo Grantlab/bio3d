@@ -7,7 +7,7 @@ test_that("seqaln works", {
 
   ## seqaln with one sequence. should remove gaps
   seqs <- c("X", "-", "-", "A", "C", "A", "G", "K", "-")
-  aln <- seqaln(seqs)
+  suppressWarnings( aln <- seqaln(seqs) )
   expected <- c("X", "A", "C", "A", "G", "K")
   expect_identical(c(aln$ali), expected)
   
@@ -31,7 +31,7 @@ test_that("seqaln works", {
   expect_identical(aln$ali, expected$ali)
 
   ## test 'msa' option
-  seqs <- get.seq(c("4q21_A", "1ftn_A"), outfile=tempfile())
+  capture.output( seqs <- get.seq(c("4q21_A", "1ftn_A"), outfile=tempfile()) )
   aln <- seqaln(seqs, outfile=tempfile())
   aln2 <- seqaln(seqs, outfile=tempfile(), exefile="msa")
   aln$call <- NULL; aln2$call <- NULL

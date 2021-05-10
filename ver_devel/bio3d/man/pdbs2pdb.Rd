@@ -17,7 +17,8 @@ pdbs2pdb(pdbs, inds = NULL, rm.gaps = FALSE, all.atom=FALSE, ncore=NULL)
   \item{rm.gaps}{ logical, if TRUE atoms in gap containing columns are
     removed in the output \code{pdb} objects. }
   \item{all.atom}{ logical, if TRUE all atom data are converted (the 
-    \sQuote{pdbs} object must be obtained from \code{read.all}). }
+    \sQuote{pdbs} object must be obtained from \code{read.all} or 
+    \code{pdbs$id} refers to existing PDB files). }
   \item{ncore}{ number of CPU cores used to do the calculation. }
 }
 \details{

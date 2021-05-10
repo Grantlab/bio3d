@@ -28,7 +28,7 @@ read.fasta(file, rm.dup = TRUE, to.upper = FALSE, to.dash=TRUE)
 \author{ Barry Grant }
 \note{  
   For a description of FASTA format see:
-  \url{http://www.ncbi.nlm.nih.gov/BLAST/blastcgihelp.shtml}.
+  \url{https://www.ncbi.nlm.nih.gov/BLAST/blastcgihelp.shtml}.
   When reading alignment files, the dash \sQuote{-} is interpreted as
   the gap character.
 }

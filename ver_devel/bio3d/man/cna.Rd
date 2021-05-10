@@ -69,6 +69,9 @@
     from \sQuote{cij} via application of  \sQuote{collapse.method}. }
   \item{cij}{ Numeric square matrix containing the absolute values of
     the atomic correlation input matrix. }
+
+  If an ensemble of correlation matrices is provided, a list of \sQuote{cna} 
+  object, of the \sQuote{ecna} class, will be returned.
 }
 \details{
   The input to this function should be a correlation matrix as
@@ -104,11 +107,11 @@
 \author{ Guido Scarabelli and Barry Grant }  
 \seealso{
    \code{\link{plot.cna}},  \code{\link{summary.cna}},
-   \code{\link{vmd.cna}}, \code{\link[igraph:graph.adjacency]{graph.adjacency}},
-   \code{\link[igraph:edge.betweenness.community]{edge.betweenness.community}},
-   \code{\link[igraph:walktrap.community]{walktrap.community}}, 
-   \code{\link[igraph:fastgreedy.community]{fastgreedy.community}},
-   \code{\link[igraph:infomap.community]{infomap.community}}
+   \code{\link{vmd.cna}}, \code{\link[igraph:graph_from_adjacency_matrix]{graph.adjacency}},
+   \code{\link[igraph:cluster_edge_betweenness]{edge.betweenness.community}},
+   \code{\link[igraph:cluster_walktrap]{walktrap.community}}, 
+   \code{\link[igraph:cluster_fast_greedy]{fastgreedy.community}},
+   \code{\link[igraph:cluster_infomap]{infomap.community}}
 }
 \examples{
 \donttest{

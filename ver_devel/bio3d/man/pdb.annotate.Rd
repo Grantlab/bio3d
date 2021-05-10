@@ -6,22 +6,25 @@
   Get customizable annotations for query results from PDB or PFAM.  
 }
 \usage{
-pdb.annotate(ids, anno.terms = NULL, unique = FALSE, verbose = FALSE)
+pdb.annotate(ids, anno.terms = NULL, unique = FALSE, verbose = FALSE,
+             extra.terms = NULL)
 pdb.pfam(ids, best.only = TRUE, compact = TRUE)
 }
 \arguments{
   \item{ids}{ A charater vector of one or more 4-letter PDB
-    codes/identifiers of the files for query. }
+    codes/identifiers of the files for query, or a \sQuote{blast}
+    object containing \sQuote{pdb.id}. }
   \item{anno.terms}{ Terms can be used for query. The "anno.terms" can be
-    "structureId", "experimentalTechnique", "resolution", "chainId",
-    "ligandId", "ligandName", "source",  "scopDomain", "classification",
-    "compound","title",  "citation", "citationAuthor", "journalName",
-    "publicationYear", "rObserved", "rFree" or "spaceGroup".  
-    If anno.terms=NULL, all information would be returned. }
+   "structureId", "chainId", "macromoleculeType", "chainLength", 
+   "experimentalTechnique",  "resolution", "scopDomain", "pfam", "ligandId", 
+   "ligandName", "source", "structureTitle", "citation", "rObserved", 
+   "rFree", "rWork", and "spaceGroup".
+   If anno.terms=NULL, all information would be returned. }
   \item{unique}{ logical, if TRUE only unique PDB entries are
     returned. Alternatively data for each chain ID is provided. }
-  \item{verbose}{ logical, if TRUE details of the RCurl \code{postForm}
-    routine is printed. }
+  \item{verbose}{ logical, if TRUE more details are printed. }
+  \item{extra.terms}{ Additional annotation terms to retrieve from PDB.
+    Currently not supported. }
   \item{best.only}{ logical, if TRUE only the lowest eValue match for a 
     given input id will be reported. Otherwise all significant matches 
     will be returned. }
@@ -38,7 +41,7 @@ pdb.pfam(ids, best.only = TRUE, compact = TRUE)
   Returns a data frame of query results with a row for each PDB record,
   and annotation terms column-wise. 
 }
-\author{ Hongyang Li, Barry Grant, Lars Skjaerven}
+\author{ Hongyang Li, Barry Grant, Lars Skjaerven, Xin-Qiu Yao}
 \examples{
 \donttest{
 # PDB server connection required - testing excluded
@@ -54,7 +57,7 @@ anno$ligandName
 anno <- pdb.annotate(ids, unique=TRUE)
 
 # Fetch only specific terms
-pdb.annotate(ids, anno.terms = c("ligandId", "citation"))
+pdb.annotate(ids, anno.terms = c("pfam", "ligandId", "citation"))
 
 }
 

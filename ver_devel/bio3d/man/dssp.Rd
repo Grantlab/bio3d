@@ -72,7 +72,7 @@ stride(pdb, exefile = "stride", resno=TRUE)
   Kabsch and Sander (1983) \emph{Biopolymers.}  \bold{12}, 2577--2637.
 
   For information on obtaining \sQuote{DSSP}, see:\cr
-  \url{http://swift.cmbi.ru.nl/gv/dssp/}.
+  \url{https://swift.cmbi.umcn.nl/gv/dssp/}.
 
   \sQuote{STRIDE} is the work of Frishman and Argos:
   Frishman and Argos (1995) \emph{Proteins.}  \bold{3}, 566--579.
@@ -85,7 +85,7 @@ stride(pdb, exefile = "stride", resno=TRUE)
 \note{
   A system call is made to the \sQuote{DSSP} or \sQuote{STRIDE} program, 
   which must be installed on your system and in the search path for executables.
-  See \url{http://thegrantlab.org/bio3d/tutorials/installing-bio3d} for 
+  See \url{http://thegrantlab.org/bio3d/articles/online/install_vignette/Bio3D_install.html} for 
   instructions of how to install these programs.
   
   For the \code{hbonds} list component the column names can be

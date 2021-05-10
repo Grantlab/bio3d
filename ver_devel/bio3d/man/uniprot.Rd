@@ -31,7 +31,7 @@ uniprot(accid)
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.
   
   See also the UniProt web-site for more information:\cr
-  \url{http://www.uniprot.org/}.
+  \url{https://www.uniprot.org/}.
 }
 \author{ Lars Skjaerven }
 \seealso{ \code{\link{blast.pdb}}, \code{\link{get.seq}} }

@@ -101,6 +101,7 @@ summary.cnapath <- function(object, ..., pdb = NULL, label = NULL, col = NULL,
         xlim = range(unlist(lapply(y1, "[[", "breaks"))),
         ylim = c(0, max(unlist(lapply(y1, "[[", "density")))), 
         xlab = "Path length", ylab = "Probability density")
+      box()
 
       if(length(y1) > 1) 
          for(i in 2:length(y1))  {
@@ -127,7 +128,8 @@ summary.cnapath <- function(object, ..., pdb = NULL, label = NULL, col = NULL,
         xlim = range(unlist(lapply(y2, "[[", "breaks"))),
         ylim = c(0, max(unlist(lapply(y2, "[[", "counts")))), 
         xlab = "Node no", ylab = "Number of paths")
-
+      box()
+      
       if(length(y2) > 1) 
          for(i in 2:length(y2)) 
             plot(y2[[i]], freq = TRUE, col = do.call(rgb, as.list(rgbcolors[,i])), 
@@ -189,4 +191,15 @@ print.cnapath <- function(x, ...) {
       else 
          print(o$degeneracy)
    }
+}
+plot.cnapath <- function(x, ...) {
+   arg.default <- list(plot=TRUE)
+   args <- .arg.filter(arg.default, ...)
+   do.call(print.cnapath, c(list(x=x), args))
+}
+plot.ecnapath <- function(x, ...) {
+   if(!inherits(x, "ecnapath")) {
+      stop("The input 'x' must be an object of class 'ecnapath'.")
+   }
+   plot.cnapath(x, ...)
 }

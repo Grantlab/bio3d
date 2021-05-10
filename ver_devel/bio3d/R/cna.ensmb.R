@@ -8,6 +8,7 @@ cna.ensmb <- function(cij, ..., ncore = NULL) {
       cijs <- do.call("c", apply(cijs, 3, list))
    if(is.list(cijs)) {
       net <- mclapply(cijs, cna.dccm, ...)
+      class(net) <- c("ecna", class(net))
    } else {
       warning("cijs should be matrix, array(dim=3), or list")
       net <- NULL 

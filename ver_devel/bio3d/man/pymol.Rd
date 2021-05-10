@@ -13,7 +13,7 @@
 pymol(\dots)
 
 \method{pymol}{pdbs}(pdbs, col=NULL, as="ribbon", file=NULL, type="script",
-                     exefile="pymol", \dots)
+                     exefile="pymol", user.vec=NULL, \dots)
 
 \method{pymol}{nma}(\dots)
 
@@ -33,12 +33,13 @@ pymol(\dots)
     \code{\link{read.fasta.pdb}} or \code{\link{pdbaln}}. }
   \item{col}{ a single element character vector specifying the coloring
     of the structures. Options are: \sQuote{index}, \sQuote{index2},
-    \sQuote{gaps}, \sQuote{rmsf}.
+    \sQuote{gaps}, \sQuote{rmsf}, \sQuote{user}.
 
     Special cases: Provide a \sQuote{core} object as obtained by
     \code{core.find} to color on the invariant core. Alternatively,
     provide a vector containing the color code for each structure in the
     \sQuote{pdbs} object. }
+  \item{user.vec}{ User defined vector for coloring. Only used if \code{col="user"}. }
   \item{as}{ show as \sQuote{ribbon}, \sQuote{cartoon}, \sQuote{lines}, \sQuote{putty}. }
   \item{file}{ a single element character vector specifying the file name
     of the PyMOL session/script file. }
@@ -120,6 +121,12 @@ pymol(pdbs, col=core)
 
 # color by RMSF
 pymol(pdbs, col="rmsf")
+
+# color by a user defined vector
+# For example, colored by averaged contact density around each residue
+cm <- cmap(pdbs, binary=FALSE)
+vec <- rowSums(cm, na.rm=TRUE)
+pymol(pdbs, col="user", user.vec=vec)
 
 # color by clustering
 rd <- rmsd(pdbs$xyz)
