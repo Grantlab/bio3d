@@ -49,5 +49,5 @@ Description: Utilities to process, organize and explore protein structure,
     Please refer to the URLs below for more information.
 Maintainer: Barry Grant <bjgrant@ucsd.edu>
 License: GPL (>= 2)
-URL: http://thegrantlab.org/bio3d/, http://bitbucket.org/Grantlab/bio3d
+URL: http://thegrantlab.org/bio3d/, https://bitbucket.org/Grantlab/bio3d/
 RoxygenNote: 7.1.1

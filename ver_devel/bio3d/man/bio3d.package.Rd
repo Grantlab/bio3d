@@ -59,7 +59,7 @@ The latest version, package vignettes and documentation with worked example
 outputs can be obtained from the bio3d website:\cr
 \url{http://thegrantlab.org/bio3d/}.\cr
 \url{http://thegrantlab.org/bio3d/reference/}.\cr
-\url{http://bitbucket.org/Grantlab/bio3d}.
+\url{https://bitbucket.org/Grantlab/bio3d/}.
 }
 \author{
 Barry Grant <bjgrant@ucsd.edu>
@@ -97,6 +97,6 @@ demo(md)  # Molecular Dynamics Trajectory Analysis
 demo(nma) # Normal Mode Analysis
 
 ## See package vignettes and tutorals online:
-##   http://thegrantlab.org/bio3d/articles
+##   http://thegrantlab.org/bio3d/articles/
 }
 }

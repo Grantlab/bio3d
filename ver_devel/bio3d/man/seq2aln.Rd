@@ -40,7 +40,7 @@ seq2aln(seq2add, aln, id = "seq", file = "aln.fa", \dots)
   
   Full details of the \sQuote{MUSCLE} algorithm, along with download and
   installation instructions can be obtained from:\cr
-  \url{http://www.drive5.com/muscle}.
+  \url{http://www.drive5.com/muscle/}.
 }
 \author{ Barry Grant }
 \note{

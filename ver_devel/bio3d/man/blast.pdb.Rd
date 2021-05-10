@@ -135,7 +135,7 @@ get.blast(urlget, time.out = NULL, chain.single=TRUE)
   
   Full details of the \sQuote{BLAST} algorithm, along with download and
   installation instructions can be obtained from:\cr
-  \url{http://www.ncbi.nlm.nih.gov/BLAST/}.
+  \url{https://www.ncbi.nlm.nih.gov/BLAST/}.
 }
 \author{ Barry Grant }
 \note{
