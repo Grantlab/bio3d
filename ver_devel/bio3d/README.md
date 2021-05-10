@@ -41,6 +41,6 @@ We also distribute a number of extended **Bio3D vignettes** that provide worked 
 
 - Online Normal Mode Analysis with Bio3D WebApps ( PDF | HTML )
 
-There is also extensive [on-line documentation](http://thegrantlab.org/bio3d/reference/) with worked examples (and their output) for all functions and a package manual (in [PDF](https://cran.r-project.org/web/packages/bio3d/bio3d.pdf) format) that is a concatenation of each functions documentation (without example output). 
+There is also extensive [on-line documentation](http://thegrantlab.org/bio3d/reference/) with worked examples (and their output) for all functions and a package manual (in [PDF](https://CRAN.R-project.org/package=bio3d/bio3d.pdf) format) that is a concatenation of each functions documentation (without example output). 
 
 Note that for information on Bio3D development status or to report a bug, please refer to: https://bitbucket.org/Grantlab/bio3d 

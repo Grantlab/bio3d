@@ -32,7 +32,7 @@ Tomii and Kanehisa (1996) \emph{Protein Eng.} \bold{9}, 27--36;
 Nakai, Kidera and Kanehisa (1988) \emph{Protein Eng.} \bold{2}, 93--100.
 
 For a description of the \sQuote{AAindex} database see:\cr 
-\url{http://www.genome.jp/aaindex/} or the \code{\link{aa.index}} documentation.
+\url{https://www.genome.jp/aaindex/} or the \code{\link{aa.index}} documentation.
 }
 \author{ Ana Rodrigues }
 \seealso{ \code{\link{aa.index}}, \code{\link{read.fasta}} }

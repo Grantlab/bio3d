@@ -106,7 +106,8 @@ xyz <- fit.xyz( fixed  = pdbs$xyz[1,],
 
 #rmsd( xyz[, gaps$f.inds] )
 #rmsd( pdbs$xyz[, gaps$f.inds] )
-
+}
+\dontrun{
 ##-- Superpose again this time outputing PDBs
 xyz <- fit.xyz( fixed = pdbs$xyz[1,],
                mobile = pdbs,
@@ -114,7 +115,8 @@ xyz <- fit.xyz( fixed = pdbs$xyz[1,],
                mobile.inds = gaps$f.inds,
                outpath = "rough_fit",
                full.pdbs = TRUE)
-
+}
+\donttest{
 ##--- Fit two PDBs
 A <- read.pdb("1bg2")
 A.ind <- atom.select(A, resno=c(256:269), elety='CA')
@@ -125,12 +127,12 @@ B.ind <- atom.select(B, resno=c(257:270), elety='CA')
 xyz <- fit.xyz(fixed=A$xyz, mobile=B$xyz,
                fixed.inds=A.ind$xyz,
                mobile.inds=B.ind$xyz)
-
+}
+\dontrun{
 # Write out moved PDB
 C <- B; C$xyz = xyz
 write.pdb(pdb=C, file = "moved.pdb")
 }
-
 }
 \keyword{ utilities }
 
