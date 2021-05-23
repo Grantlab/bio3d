@@ -318,23 +318,28 @@
       x <- x[[i]]
       lch <- lch[[i]]
       chain.ids <- unlist(chain.ids[[i]])
-      id <- unlist( lapply(x$nonpolymer_entities, function(y) {
-        sapply(y$nonpolymer_entity_instances, function(z) {
-          id <- z$nonpolymer_entity$nonpolymer_comp$chem_comp$id
-          if(is.null(id)) {
-             id <- as.character(NA)
-          }
-          id
+      if(!is.null(x$nonpolymer_entities)) {
+        id <- unlist( lapply(x$nonpolymer_entities, function(y) {
+          sapply(y$nonpolymer_entity_instances, function(z) {
+            id <- z$nonpolymer_entity$nonpolymer_comp$chem_comp$id
+            if(is.null(id)) {
+              id <- as.character(NA)
+            }
+            id
+          })
+        }) )
+        id <- tapply(id, lch, function(x) {
+          count <- table(x)
+          x <- unique(x)
+          count <- count[x]
+          x[count>1] <- paste(x[count>1], " (", count[count>1], ")", sep="")
+          paste(x, collapse=",")
         })
-      }) )
-      id <- tapply(id, lch, function(x) {
-        count <- table(x)
-        x <- unique(x)
-        count <- count[x]
-        x[count>1] <- paste(x[count>1], " (", count[count>1], ")", sep="")
-        paste(x, collapse=",")
-      })
-      id <- id[chain.ids]
+        id <- id[chain.ids]
+      }
+      else {
+        id <- rep(as.character(NA), length(chain.ids))
+      }
     })
     lid <- unlist(lid)
     out$ligandId <- lid
@@ -345,23 +350,28 @@
       x <- x[[i]]
       lch <- lch[[i]]
       chain.ids <- unlist(chain.ids[[i]])
-      nam <- unlist( lapply(x$nonpolymer_entities, function(y) {
-        sapply(y$nonpolymer_entity_instances, function(z) {
-          nam <- z$nonpolymer_entity$nonpolymer_comp$chem_comp$name
-          if(is.null(nam)) {
-            nam <- as.character(NA)
-          }
-          nam
+      if(!is.null(x$nonpolymer_entities)) {
+        nam <- unlist( lapply(x$nonpolymer_entities, function(y) {
+          sapply(y$nonpolymer_entity_instances, function(z) {
+            nam <- z$nonpolymer_entity$nonpolymer_comp$chem_comp$name
+            if(is.null(nam)) {
+              nam <- as.character(NA)
+            }
+            nam
+          })
+        }) )
+        nam <- tapply(nam, lch, function(x) {
+          count <- table(x)
+          x <- unique(x)
+          count <- count[x]
+          x[count>1] <- paste(x[count>1], " (", count[count>1], ")", sep="")
+          paste(x, collapse=",")
         })
-      }) )
-      nam <- tapply(nam, lch, function(x) {
-        count <- table(x)
-        x <- unique(x)
-        count <- count[x]
-        x[count>1] <- paste(x[count>1], " (", count[count>1], ")", sep="")
-        paste(x, collapse=",")
-      })
-      nam <- nam[chain.ids]
+        nam <- nam[chain.ids]
+      }
+      else {
+        nam <- rep(as.character(NA), length(chain.ids))
+      }
     })
     lname <- unlist(lname)
     out$ligandName <- lname  

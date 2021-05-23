@@ -59,5 +59,9 @@ test_that("PDB annotation works", {
   invisible(capture.output(anno <- pdb.annotate(c('1cdk_A', '1cdk_B'), anno.terms="ligandId")))
   expect_identical(sort(unlist(strsplit(anno$ligandId, ","))), expected)
 
-  
+  ids <- c("6AXG_B", "1AA9_A", "7L0F_A", "6AMB_A", "121P_A", "5E95_A")
+  invisible(capture.output(anno <- pdb.annotate(ids)))
+  expect_identical(paste(anno[, "structureId"], anno[, "chainId"], sep="_"), ids)
+  expect_true(is.na(anno[1, "ligandId"]))
+  expect_identical(anno[2, "experimentalTechnique"], "NMR")
 })
