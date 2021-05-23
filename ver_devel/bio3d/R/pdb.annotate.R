@@ -110,6 +110,10 @@
   if("error" %in% names(ret)) {
     stop('Retrieving data from PDB failed')
   }
+
+  if((!"data" %in% names(ret)) || (length(ret$data$entries)==0)) {
+    stop("No data retrieved")
+  }
   
   ## Generate a formatted table
   ## Also taking care of merging data for unique structureId, 
@@ -181,9 +185,6 @@
 
 ## Return a formatted table/data.frame
 .format_tbl <- function(x, query.ids, anno.terms, unique=FALSE) {
-  if(!"data" %in% names(x)) {
-    stop("No data retrieved")
-  }
   x <- x$data$entries
   pdb.ids <- sapply(x, function(x) x$entry$id)
   chain.ids <- lapply(x, function(x) {

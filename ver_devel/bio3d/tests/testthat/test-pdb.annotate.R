@@ -64,4 +64,6 @@ test_that("PDB annotation works", {
   expect_identical(paste(anno[, "structureId"], anno[, "chainId"], sep="_"), ids)
   expect_true(is.na(anno[1, "ligandId"]))
   expect_identical(anno[2, "experimentalTechnique"], "NMR")
+
+  expect_error(pdb.annotate("1234"), regexp="No data retrieved")
 })
