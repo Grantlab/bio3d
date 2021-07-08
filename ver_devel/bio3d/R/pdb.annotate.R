@@ -395,6 +395,12 @@
            else {
              src
            }
+           if(length(src)==0) {
+             src <- NA
+           }
+           else {
+             src
+           }
         })
       })
     })
