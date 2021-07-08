@@ -59,11 +59,21 @@ test_that("PDB annotation works", {
   invisible(capture.output(anno <- pdb.annotate(c('1cdk_A', '1cdk_B'), anno.terms="ligandId")))
   expect_identical(sort(unlist(strsplit(anno$ligandId, ","))), expected)
 
+  ## Test cases without ligands
   ids <- c("6AXG_B", "1AA9_A", "7L0F_A", "6AMB_A", "121P_A", "5E95_A")
   invisible(capture.output(anno <- pdb.annotate(ids)))
   expect_identical(paste(anno[, "structureId"], anno[, "chainId"], sep="_"), ids)
   expect_true(is.na(anno[1, "ligandId"]))
   expect_identical(anno[2, "experimentalTechnique"], "NMR")
 
+  ## Test cases without 'source'
+  ids <- c("1P79", "4os7")
+  invisible(capture.output(anno <- pdb.annotate(ids)))
+  expect_true(is.na(anno[1, "source"]))
+  expect_true(is.na(anno[3, "source"]))
+  expect_identical(anno[1, "macromoleculeType"], "RNA")
+  expect_identical(anno[3, "macromoleculeType"], "Protein")
+  
+  ## Test error handling
   expect_error(pdb.annotate("1234"), regexp="No data retrieved")
 })
