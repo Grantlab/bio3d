@@ -31,8 +31,17 @@ install_bitbucket("Grantlab/bio3d", subdir = "ver_devel/bio3d/")
 
 Alternative installation methods and additional instructions are posted to the [wiki section](https://bitbucket.org/Grantlab/bio3d/wiki/Home) of our bitbucket repository. 
 
+## Installing the bio3d.core package of the Bio3D family ##
 
-## Other packages in the Bio3D familiy ##
+Since 2020, we have started a new way to develop and implement Bio3D: Instead of maintaining a single R package (bio3d), we put main modules into separate packages. The **bio3d.core** package provides functionality for data processing and basic sequence, structure and dynamics analyses. This package is required for other packages of the Bio3D family (See below). To install it, use the `install_bitbucket()` function from the **devtools** package:
+
+```
+#!r
+library(devtools)
+install_bitbucket("Grantlab/bio3d/bio3d-core", "core")
+```
+
+## Other packages in the Bio3D family ##
 
 With growing functionality in Bio3D we have decided to implement larger Bio3D modules into separate packages:
 

@@ -110,6 +110,10 @@
   if("error" %in% names(ret)) {
     stop('Retrieving data from PDB failed')
   }
+
+  if((!"data" %in% names(ret)) || (length(ret$data$entries)==0)) {
+    stop("No data retrieved")
+  }
   
   ## Generate a formatted table
   ## Also taking care of merging data for unique structureId, 
@@ -181,9 +185,6 @@
 
 ## Return a formatted table/data.frame
 .format_tbl <- function(x, query.ids, anno.terms, unique=FALSE) {
-  if(!"data" %in% names(x)) {
-    stop("No data retrieved")
-  }
   x <- x$data$entries
   pdb.ids <- sapply(x, function(x) x$entry$id)
   chain.ids <- lapply(x, function(x) {
@@ -318,23 +319,28 @@
       x <- x[[i]]
       lch <- lch[[i]]
       chain.ids <- unlist(chain.ids[[i]])
-      id <- unlist( lapply(x$nonpolymer_entities, function(y) {
-        sapply(y$nonpolymer_entity_instances, function(z) {
-          id <- z$nonpolymer_entity$nonpolymer_comp$chem_comp$id
-          if(is.null(id)) {
-             id <- as.character(NA)
-          }
-          id
+      if(!is.null(x$nonpolymer_entities)) {
+        id <- unlist( lapply(x$nonpolymer_entities, function(y) {
+          sapply(y$nonpolymer_entity_instances, function(z) {
+            id <- z$nonpolymer_entity$nonpolymer_comp$chem_comp$id
+            if(is.null(id)) {
+              id <- as.character(NA)
+            }
+            id
+          })
+        }) )
+        id <- tapply(id, lch, function(x) {
+          count <- table(x)
+          x <- unique(x)
+          count <- count[x]
+          x[count>1] <- paste(x[count>1], " (", count[count>1], ")", sep="")
+          paste(x, collapse=",")
         })
-      }) )
-      id <- tapply(id, lch, function(x) {
-        count <- table(x)
-        x <- unique(x)
-        count <- count[x]
-        x[count>1] <- paste(x[count>1], " (", count[count>1], ")", sep="")
-        paste(x, collapse=",")
-      })
-      id <- id[chain.ids]
+        id <- id[chain.ids]
+      }
+      else {
+        id <- rep(as.character(NA), length(chain.ids))
+      }
     })
     lid <- unlist(lid)
     out$ligandId <- lid
@@ -345,23 +351,28 @@
       x <- x[[i]]
       lch <- lch[[i]]
       chain.ids <- unlist(chain.ids[[i]])
-      nam <- unlist( lapply(x$nonpolymer_entities, function(y) {
-        sapply(y$nonpolymer_entity_instances, function(z) {
-          nam <- z$nonpolymer_entity$nonpolymer_comp$chem_comp$name
-          if(is.null(nam)) {
-            nam <- as.character(NA)
-          }
-          nam
+      if(!is.null(x$nonpolymer_entities)) {
+        nam <- unlist( lapply(x$nonpolymer_entities, function(y) {
+          sapply(y$nonpolymer_entity_instances, function(z) {
+            nam <- z$nonpolymer_entity$nonpolymer_comp$chem_comp$name
+            if(is.null(nam)) {
+              nam <- as.character(NA)
+            }
+            nam
+          })
+        }) )
+        nam <- tapply(nam, lch, function(x) {
+          count <- table(x)
+          x <- unique(x)
+          count <- count[x]
+          x[count>1] <- paste(x[count>1], " (", count[count>1], ")", sep="")
+          paste(x, collapse=",")
         })
-      }) )
-      nam <- tapply(nam, lch, function(x) {
-        count <- table(x)
-        x <- unique(x)
-        count <- count[x]
-        x[count>1] <- paste(x[count>1], " (", count[count>1], ")", sep="")
-        paste(x, collapse=",")
-      })
-      nam <- nam[chain.ids]
+        nam <- nam[chain.ids]
+      }
+      else {
+        nam <- rep(as.character(NA), length(chain.ids))
+      }
     })
     lname <- unlist(lname)
     out$ligandName <- lname  
@@ -380,6 +391,12 @@
            })
            if(length(src)>1) {
              paste(src, collapse="/")
+           }
+           else {
+             src
+           }
+           if(length(src)==0) {
+             src <- NA
            }
            else {
              src

@@ -63,29 +63,52 @@ function(pdb, type = c("original", "pdb", "charmm", "amber", "gromacs"),
 
       ## SSE
       if(length(pdb$helix)>0) {
-         chs = unique(pdb$helix$chain)
+#         chs = unique(pdb$helix$chain)
+         ch = pdb$atom$chain[s.ind][i]
+         if(ch %in% pdb$helix$chain) {
+            h.start <- pdb$helix$start[pdb$helix$chain %in% ch]
+            h.insert <- names(h.start)
+            t.inds = match(paste0(h.start, h.insert), unique(resno0))
+            pdb$helix$start[pdb$helix$chain %in% ch] = new.nums[t.inds]
 
-         t.inds = match(pdb$helix$start[pdb$helix$chain %in% chs[i]], unique(resno0))
-         pdb$helix$start[pdb$helix$chain %in% chs[i]] = new.nums[t.inds]
-
-         t.inds = match(pdb$helix$end[pdb$helix$chain %in% chs[i]], unique(resno0))
-         pdb$helix$end[pdb$helix$chain %in% chs[i]] = new.nums[t.inds]
+            h.end <- pdb$helix$end[pdb$helix$chain %in% ch]
+            h.insert <- names(h.end)
+            t.inds = match(paste0(h.end, h.insert), unique(resno0))
+            pdb$helix$end[pdb$helix$chain %in% ch] = new.nums[t.inds]
+         }
       }
 
       if(length(pdb$sheet)>0) {
-         chs = unique(pdb$sheet$chain)
-
-         t.inds = match(pdb$sheet$start[pdb$sheet$chain %in% chs[i]], unique(resno0))
-         pdb$sheet$start[pdb$sheet$chain %in% chs[i]] = new.nums[t.inds]
-
-         t.inds = match(pdb$sheet$end[pdb$sheet$chain %in% chs[i]], unique(resno0))
-         pdb$sheet$end[pdb$sheet$chain %in% chs[i]] = new.nums[t.inds]
+#         chs = unique(pdb$sheet$chain)
+         ch = pdb$atom$chain[s.ind][i]
+         if(ch %in% pdb$sheet$chain) {
+            s.start <- pdb$sheet$start[pdb$sheet$chain %in% ch]
+            s.insert <- names(s.start)
+            t.inds = match(paste0(s.start, s.insert), unique(resno0))
+            pdb$sheet$start[pdb$sheet$chain %in% ch] = new.nums[t.inds]
+            
+            s.end <- pdb$sheet$end[pdb$sheet$chain %in% ch]
+            s.insert <- names(s.end)
+            t.inds = match(paste0(s.end, s.insert), unique(resno0))
+            pdb$sheet$end[pdb$sheet$chain %in% ch] = new.nums[t.inds]
+         }
       }
     
       if(consecutive) {
         ## Update prev.chain.res for next iteration 
         prev.chain.res = prev.chain.res + n.chain.res
       }
+    }
+    
+    ## clean up 'insert'
+    pdb$atom$insert <- as.character(NA)
+    if(length(pdb$helix)>0) {
+      names(pdb$helix$start) <- NULL
+      names(pdb$helix$end) <- NULL
+    }
+    if(length(pdb$sheet)>0) {
+      names(pdb$sheet$start) <- NULL
+      names(pdb$sheet$end) <- NULL
     }
   }
 
