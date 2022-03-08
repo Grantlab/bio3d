@@ -18,7 +18,7 @@ get.blast <- function(urlget, time.out = NULL, chain.single=TRUE) {
     raw  <- try(read.csv(urlget,
                      header = FALSE, sep = ",", quote="", dec=".",
                      fill = TRUE, comment.char="", stringsAsFactors=FALSE), silent=TRUE)
-    if(class(raw)=="try-error") { stop("No hits found: thus no output generated") }
+    if(inherits(raw, "try-error")) { stop("No hits found: thus no output generated") }
     html <- grep("DOCTYPE", raw[1,])
     
     if(!is.null(time.out) && (t.count > time.out) || (length(html) != 1))

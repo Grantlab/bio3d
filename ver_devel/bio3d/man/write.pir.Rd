@@ -34,7 +34,7 @@ write.pir(alignment=NULL, ids=NULL, seqs=alignment$ali,
 \note{
   PIR is required format for input alignment file to use Modeller. 
   For a description of PIR format see:
-  \url{https://salilab.org/modeller/manual/node488.html}.
+  \url{https://salilab.org/modeller/manual/node501.html}.
 }
 \seealso{ \code{\link{read.fasta}}, \code{\link{read.fasta.pdb}}, 
    \code{\link{write.fasta}} }
