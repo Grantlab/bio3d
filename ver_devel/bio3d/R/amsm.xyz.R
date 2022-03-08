@@ -11,7 +11,7 @@
   M <- .amsm.distCalc(xyz, ncore=ncore)
 
   ## we use 'list' in this version of the code
-  if(class(M)=="list")
+  if(inherits(M, "list"))
     Mlist <- TRUE
   else
     Mlist <- FALSE

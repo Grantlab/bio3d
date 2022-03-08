@@ -120,7 +120,7 @@ function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
     }
     # OR: title<- readChar(trj, (ntitle*80))
 
-    if(class(ll)=="try-error") {
+    if(inherits(ll, "try-error")) {
       warning("Check DCD header data is correct, particulary natom")
       ##cur.pos <- seek(trj, where=260, origin= "start") # pos 260
       cur.pos <- seek(trj, where=(80*ntitle+cur.pos), origin= "start")
