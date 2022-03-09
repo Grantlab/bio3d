@@ -74,6 +74,11 @@ test_that("PDB annotation works", {
   expect_identical(anno[1, "macromoleculeType"], "RNA")
   expect_identical(anno[3, "macromoleculeType"], "Protein")
   
+  ## Test cases with duplicated 'sources'
+  ids <- c("5TOK")
+  invisible(capture.output(anno <- pdb.annotate(ids)))
+  expect_identical(anno[1, "source"], "Human orthopneumovirus")
+
   ## Test error handling
   expect_error(pdb.annotate("1234"), regexp="No data retrieved")
 })
