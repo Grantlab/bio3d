@@ -390,17 +390,14 @@
               src
            })
            if(length(src)>1) {
-             paste(src, collapse="/")
+             src <- paste(unique(src), collapse="/")
            }
            else {
-             src
+             if(length(src)==0) {
+                src <- as.character(NA)
+             }
            }
-           if(length(src)==0) {
-             src <- NA
-           }
-           else {
-             src
-           }
+           src
         })
       })
     })
