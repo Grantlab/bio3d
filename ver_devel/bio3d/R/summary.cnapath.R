@@ -30,8 +30,14 @@ summary.cnapath <- function(object, ..., pdb = NULL, label = NULL, col = NULL,
       node.deg <- lapply(y, table)
    }
 
+   num.paths <- sapply(pa, function(x) length(x$path))
+   
    if(normalize) {
-      node.deg <- lapply(node.deg, function(x) x/max(x))
+#      node.deg <- lapply(node.deg, function(x) x/max(x))
+      node.deg <- lapply(1:length(node.deg), function(i) {
+        x <- node.deg[[i]]
+        x/num.paths[i]
+      })
    }
 
    # find on-path node by the cutoff
@@ -75,7 +81,7 @@ summary.cnapath <- function(object, ..., pdb = NULL, label = NULL, col = NULL,
 
    names(o) <- label
    out$network <- label
-   out$num.paths <- sapply(pa, function(x) length(x$path))
+   out$num.paths <- num.paths
    out$hist <- lapply(pa, function(x) table(cut(x$dist, breaks=5, include.lowest = TRUE)))
    if(length(out$hist)==1) out$hist = out$hist[[1]]
    out$degeneracy <- do.call(rbind, o)
