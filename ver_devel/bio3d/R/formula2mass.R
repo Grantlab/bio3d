@@ -4,7 +4,7 @@
     errmsg <- paste("error while parsing formula. \n",
                     " provide input on the form: 'C3 H5 N O1'")
     
-    if(class(form)!="character" || missing(form))
+    if(!is.character(form) || missing(form))
       stop(errmsg)
     
     eles <- unlist(strsplit(form, " "))
