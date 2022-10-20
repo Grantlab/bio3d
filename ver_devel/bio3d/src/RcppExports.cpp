@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // read_cif
 List read_cif(std::string filename, int maxlines, bool multi);
 RcppExport SEXP _bio3d_read_cif(SEXP filenameSEXP, SEXP maxlinesSEXP, SEXP multiSEXP) {

@@ -61,7 +61,7 @@ function(ids, outfile="seqs.fasta", db="nr", verbose=FALSE) {
       url <- paste(baseUrl, "&val=", paste(ids1, collapse=','), 
                    "&report=fasta&retmode=text&page_size=",nmax, sep='')
     } else {
-      url <- paste(baseUrl, db, paste(ids1, collapse=','), 'fasta?style=raw', sep='/')
+      url <- paste(baseUrl, '?db=', db, '&id=', paste(ids1, collapse=','), '&format=fasta&style=raw', sep='')
     }
     resp <- try(httr::GET(url), silent=TRUE)
     if(inherits(resp, 'try-error')) {

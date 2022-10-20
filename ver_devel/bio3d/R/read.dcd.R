@@ -116,7 +116,7 @@ function(trjfile, big=FALSE, verbose=TRUE, cell = FALSE){
     cur.pos <- seek(trj, where=NA)  ## 100
     for (i in 1:ntitle) {
 ### ==> !!!nasty hack due to invalid UTF-8 input (Jun 5th 07) !!! <=== ###    
-      ll<-try(title<-c( title, readChar(trj,80) ),silent=TRUE)
+      ll<-try(title<-c( title, suppressWarnings(readChar(trj,80)) ),silent=TRUE)
     }
     # OR: title<- readChar(trj, (ntitle*80))
 

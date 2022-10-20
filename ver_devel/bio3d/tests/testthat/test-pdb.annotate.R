@@ -29,7 +29,8 @@ test_that("PDB annotation works", {
                 '3R1C_W', '3R1C_X', '3R1C_V', '3R1C_Z')
   
   invisible(capture.output(anno <- pdb.annotate('3R1C')))
-  expect_identical(rownames(anno), expected)
+  # 'sort' because sometimes PDB returns chain IDs in an uncertain way...
+  expect_identical(sort(rownames(anno)), sort(expected))
 
   expected <- c('3R1C_A', '3R1C_a', '3R1C_B', '3R1C_b',
                 '3R1C_C', '3R1C_c', '3R1C_D', '3R1C_d',
@@ -43,7 +44,8 @@ test_that("PDB annotation works", {
                 '1CDK_A', '1CDK_B', '1CDK_I', '1CDK_J')
   
   invisible(capture.output(anno <- pdb.annotate(c('3R1C', '1CDK'))))
-  expect_identical(rownames(anno), expected)
+  # 'sort' because sometimes PDB returns chain IDs in an uncertain way...
+  expect_identical(sort(rownames(anno)), sort(expected))
 
   expect_warning(  
     invisible(capture.output(anno <- pdb.annotate(c('3R1C_A', '3r1c_a', '3r1c_q'))))
