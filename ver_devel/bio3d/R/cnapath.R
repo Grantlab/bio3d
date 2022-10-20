@@ -134,7 +134,7 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
        # Remove all edges that link to nodes on the root path (excluding the spur node)
        if(i > 1) {
           for(j in rootPath[-(length(rootPath))]) {
-             ee = igraph::E(g)[from(j)] 
+             ee = igraph::incident(g, j) 
              if(length(ee)>0) g <- igraph::delete.edges(g, ee)
           }
        }

@@ -27,7 +27,7 @@ core.find(\dots)
   \item{shortcut}{ if TRUE, remove more than one position at a time. }
   \item{rm.island}{ remove isolated fragments of less than three
     residues. }
-  \item{verbose}{ logical, if TRUE a \dQuote{core\_pruned} directory
+  \item{verbose}{ logical, if TRUE a \dQuote{core_pruned} directory
     containing \sQuote{core structures} for each iteraction is written 
     to the current directory. }
   \item{stop.at}{ minimal core size at which iterations should be
@@ -84,17 +84,17 @@ core.find(\dots)
   \item{atom }{atom indices of core positions in the last round.}
   \item{xyz }{xyz indices of core positions in the last round.}
   \item{c1A.atom }{atom indices of core positions with a total volume
-    under 1 Angstrom\^3.}
+    under 1 Angstrom^3.}
   \item{c1A.xyz }{xyz indices of core positions with a total volume
-    under 1 Angstrom\^3.}
+    under 1 Angstrom^3.}
   \item{c1A.resno }{residue numbers of core positions with a total volume
-    under 1 Angstrom\^3.}
+    under 1 Angstrom^3.}
   \item{c0.5A.atom }{atom indices of core positions with a total volume
-    under 0.5 Angstrom\^3.}
+    under 0.5 Angstrom^3.}
   \item{c0.5A.xyz }{xyz indices of core positions with a total volume
-    under 0.5 Angstrom\^3.}
+    under 0.5 Angstrom^3.}
   \item{c0.5A.resno }{residue numbers of core positions with a total volume
-    under 0.5 Angstrom\^3.}
+    under 0.5 Angstrom^3.}
 }
 \references{
   Grant, B.J. et al. (2006) \emph{Bioinformatics} \bold{22}, 2695--2696.

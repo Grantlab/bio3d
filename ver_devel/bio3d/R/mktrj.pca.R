@@ -8,7 +8,7 @@
                         ... ) {     # args for write.pdb
 
   ## make a trjactory of atomic displacments along a given pc
-  if(class(pca)!="pca") {
+  if(!inherits(pca, "pca")) {
     stop("input should be a list object of class 'pca' (from 'pca.xyz')")
   }
 
