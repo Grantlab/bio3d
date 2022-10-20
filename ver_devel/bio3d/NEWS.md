@@ -1,30 +1,28 @@
-NEWS
-====
+# v2.4 (Version 2.4, released November 2019)
 
-v2.4
-Version 2.4, released November 2019, provides a number of new features and 
-enhancements including: new facilities for sequence alignment using the 'msa' 
-package from Bioconductor or alternatively using the online server of the 
-European Bioinformatics Institute (EMBL-EBI) (and so a local MUSCLE program 
-is no longer a mandate), a more robust sequence fetching function supporting 
-both the EMBL-EBI and NCBI (National Center for Biotechnology Information) servers, 
-a new function for "core" detection using contact maps, new and improved 
-functions for processing protein structures and doing structural network analysis, 
-and more advanced system environment checking for automatically locating essential 
-external programs.  
+## Overview of new features and enhancements
 
-We have also updated online vignettes and other documentations.
-For a fine-grained list of changes, or to report a bug, please consult:
+* New facilities for sequence alignment using the 'msa' package from Bioconductor or alternatively using the online server of the European Bioinformatics Institute (EMBL-EBI) (and so a local MUSCLE program is no longer a mandate).
 
-* [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
-* [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+* A more robust sequence fetching function supporting both the EMBL-EBI and NCBI (National Center for Biotechnology Information) servers.
 
-For full install instructions see: 
-<http://thegrantlab.org/bio3d/tutorials/installing-bio3d>
+* A new function for "core" detection using contact maps, new and improved functions for processing protein structures and doing structural network analysis.
 
-Major new/enhanced functions include:
+* More advanced system environment checking for automatically locating essential external programs.  
 
-* seqaln:  Supports using 'msa' and the EMBL-EBI server to do sequence alignment
+## Other updates
+
+* We have also updated online vignettes and other documentations. For a fine-grained list of changes, or to report a bug, please consult:
+
+    * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
+    * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+
+* For full install instructions see: 
+    * <http://thegrantlab.org/bio3d/tutorials/installing-bio3d>
+
+## Major new/enhanced functions
+
+* seqaln:  Supports using 'msa' and the EMBL-EBI server to do sequence alignment 
 * get.seq:  More robust to fetch a large number of sequences and supports EMBL-EBI and NCBI servers
 * atom.select.pdbs:  New function for atom selection of a 'pdbs' object
 * core.cmap:  New function for "core" residues detection using contact maps
@@ -35,28 +33,34 @@ Major new/enhanced functions include:
 * dssp.pdb, pdbaln, pymol.dccm, pymol.modes, pymol.pdbs, seqaln:  Exefile argument with OS dependent defaults
 * rmsd, seqidentity:  More sensible output by fetching row and column names from input
 
-Happy Bio3Ding!
+### Happy Bio3Ding!
 
 
-v2.3
-Version 2.3, released September 2016, provides a number of new features and 
-enhancements including: new facilities for ensemble normal mode analysis (NMA) 
-with all-atom elastic network model (ENM) and Gaussian network model (GNM), 
-enhanced NMA calculations with the rotation-translation block (RTB) method, 
-new "4-bead" coarse-grained ENM, more efficient reading of large PDB files 
-using Rcpp, PDB annotation from the PFAM database, and more supported I/O file 
-formats.  
+# v2.3 (Version 2.3, released September 2016)
 
-We have also updated online vignettes and other documentations.
-For a fine-grained list of changes, or to report a bug, please consult:
+## Overview of new features and enhancements
 
-* [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
-* [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+* New facilities for ensemble normal mode analysis (NMA) with all-atom elastic network model (ENM) and Gaussian network model (GNM).
 
-For full install instructions see: 
-<http://thegrantlab.org/bio3d/tutorials/installing-bio3d>
+* Enhanced NMA calculations with the rotation-translation block (RTB) method and the new "4-bead" coarse-grained ENM.
 
-Major new/enhanced functions include:
+* More efficient reading of large PDB files using Rcpp.
+
+* PDB annotation from the PFAM database.
+
+* More supported I/O file formats.  
+
+## Other updates
+
+* We have also updated online vignettes and other documentations. For a fine-grained list of changes, or to report a bug, please consult:
+
+    * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
+    * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+
+* For full install instructions see: 
+    * <http://thegrantlab.org/bio3d/tutorials/installing-bio3d>
+
+## Major new/enhanced functions
 
 * aanma:  All-atom ENM normal mode analysis (with RTB and 4-bead ENM supported)
 * aanma.pdbs:  Ensemble NMA with all-atom ENM
@@ -82,23 +86,30 @@ Major new/enhanced functions include:
 * plot.fasta: Improved plotting function for multiple sequence alignment
 * read.mol2, write.mol2, atom.select, trim, as.pdb:  Read, write and manipulate mol2 files with functions  
 
-Happy Bio3Ding!
+### Happy Bio3Ding!
 
 
-v2.2
-Version 2.2, released in Feb 2015, contains new facilities for
-sub-optimal path analysis of biomolecular correlation networks,
-constructing biological units, identification and tidying of
-malformed PDB files, and improved secondary structure annotation of
-'pdbs' objects and various plots.  We have also updated and enhanced
-atom selection functionality and developed a new vignette detailing
-PDB structure manipulation and analysis facilities. For a fine-
-grained list of changes, or to report a bug, please consult:
+# v2.2 (Version 2.2, released in Feb 2015) 
 
-* [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
-* [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+## Added new facilities for:
 
-Major new functions include:
+* sub-optimal path analysis of biomolecular correlation networks
+
+* constructing biological units
+
+* identification and tidying of malformed PDB files
+
+* improved secondary structure annotation of 'pdbs' objects and various plots.
+
+## Other updates
+
+* We have also updated and enhanced atom selection functionality and developed a new vignette detailing PDB structure manipulation and analysis facilities. For a fine-grained list of changes, or to report a bug, please consult:
+
+    * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
+    * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+
+## Major new functions
+
 * cnapath: Suboptimal Path Analysis for Correlation Networks
 * biounit: Biological Unit Construction
 * clean.pdb: Inspect And Clean Up A PDB Object
@@ -135,20 +146,23 @@ Major new functions include:
 * print:  New print methods for cnapath, enma, geostas, mol2, nma, pca, pdb, prmtop, rle2,  select and sse objects.
 
 
-v2.1
-----
-Version 2.1, released in Sep 2014,  contains new facilities for Correlation
-Network Analysis (cna) and Geometrically Stable Domain finding (geostas).
-We have also changed 'PDB object data' storage from a matrix to a data.frame
-format. Improved methods and functionality for ensemble NMA are now also
-included along with extensive improvements to package vignettes and function
-documentation. For a fine-grained list of changes, or to report a bug,
+# v2.1 (Version 2.1, released in Sep 2014)
+
+## Overview of major changes
+
+* Added new facilities for correlation Network Analysis (cna) and Geometrically Stable Domain finding (geostas).
+
+* We have also changed 'PDB object data' storage from a matrix to a data.frame
+format. 
+
+* Improved methods and functionality for ensemble NMA are now also included along with extensive improvements to package vignettes and function documentation. For a fine-grained list of changes, or to report a bug,
 please consult:
 
-* [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
-* [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+    * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
+    * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
 
-Major new functions include:
+## Major new functions
+
 * cna: Protein Dynamic Correlation Network Construction and Community Analysis.
 * plot.cna: Protein Structure Network Plots in 2D and 3D.
 * print.cna: Summarize and Print Features of a cna Network Graph
@@ -185,17 +199,15 @@ Major new functions include:
 * is.xyz(as.xyz, print.xyz): Is an Object of Class
 * setup.ncore: Setup for Running Bio3D Functions using Multiple CPU Cores
 
-v2.0
-----
-Version 2.0, released in Nov 2013, contains over 30 new functions including
-enhanced Normal Mode Analysis facilities as well extensive improvements to
-existing code and documentation. For a fine-grained list of changes or to
-report a bug, please consult:
+# v2.0 (Version 2.0, released in Nov 2013)
 
-* [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
-* [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+* Contains over 30 new functions including enhanced Normal Mode Analysis facilities as well extensive improvements to existing code and documentation. For a fine-grained list of changes or to report a bug, please consult:
 
-Major new functions include:
+    * [The issues log](https://bitbucket.org/Grantlab/bio3d/issues)
+    * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
+
+## Major new functions
+
 * aa2mass: Amino Acid Residues to Mass Converter
 * atom.index: Index of Atomic Masses
 * atom2mass(atom2ele, formula2mass): Atom Names to Mass Converter
@@ -234,27 +246,22 @@ Major new functions include:
 * vmd.colors: Color as in VMD Molecular Viewer
 
 
-Versioning
-----------
+## Versioning
 
-Releases will be numbered with the following semantic versioning format:
+* Releases will be numbered with the following semantic versioning format:
 
-<major>.<minor>-<patch>
+    * \<major\>.\<minor\>-\<patch\>
 
-E.g.: 2.0-1
+    * E.g.: 2.0-1
 
-And constructed with the following guidelines:
+* And constructed with the following guidelines:
 
-* Breaking backward compatibility bumps the major (and resets the minor
-  and patch)
-* New additions without breaking backward compatibility bumps the minor
-  (and resets the patch)
-* Bug fixes and misc changes bumps the patch
+    * Breaking backward compatibility bumps the major (and resets the minor and patch)
+    * New additions without breaking backward compatibility bumps the minor (and resets the patch)
+    * Bug fixes and misc changes bumps the patch
 
-For more information on SemVer, please visit http://semver.org/.
+### For more information on SemVer, please visit http://semver.org/.
 
 
------
-
-For changes prior to v1.1-6 (Apr 2013) please see the bio3d wki:
+# For changes prior to v1.1-6 (Apr 2013) please see the bio3d wki:
 * [Whats new wki page](http://bio3d.pbworks.com/w/page/7824486/WhatsNew)

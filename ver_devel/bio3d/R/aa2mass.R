@@ -43,7 +43,7 @@
     
     ## Data frame with column names: aa3, aa1, mass, formula, name
     if (!is.null(mass.custom)) {
-      if(class(mass.custom) != "list")
+      if(!is.list(mass.custom))
         stop("'mass.custom' must be of class 'list'")
       
       new.aas <- names(mass.custom)

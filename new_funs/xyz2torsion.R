@@ -2,7 +2,7 @@
 function(pdb, xyz, tbl = c("basic", "mainchain", "sidechain", 
     "all", "phi", "psi", paste("chi", 1:5, sep="")), ncore = NULL) {
 
-  if(length(pdb$xyz) != ncol(xyz)) 
+  if(ncol(pdb$xyz) != ncol(xyz)) 
      stop("Number of atoms in PDB doesn't match xyz")
   ncore <- setup.ncore(ncore, bigmem = TRUE)
   

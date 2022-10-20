@@ -31,12 +31,13 @@ test_that("seqaln works", {
   expect_identical(aln$ali, expected$ali)
 
   ## test 'msa' option
-  capture.output( seqs <- get.seq(c("4q21_A", "1ftn_A"), outfile=tempfile()) )
-  aln <- seqaln(seqs, outfile=tempfile())
-  aln2 <- seqaln(seqs, outfile=tempfile(), exefile="msa")
-  aln$call <- NULL; aln2$call <- NULL
-  expect_identical(aln, aln2)
-
+  if( requireNamespace("msa", quietly=TRUE) ) { 
+     capture.output( seqs <- get.seq(c("4q21_A", "1ftn_A"), outfile=tempfile()) )
+     aln <- seqaln(seqs, outfile=tempfile())
+     aln2 <- seqaln(seqs, outfile=tempfile(), exefile="msa")
+     aln$call <- NULL; aln2$call <- NULL
+     expect_identical(aln, aln2)
+  }
 })
 
   
