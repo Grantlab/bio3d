@@ -18,7 +18,7 @@
     * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
 
 * For full install instructions see: 
-    * <http://thegrantlab.org/bio3d/tutorials/installing-bio3d>
+    * <http://thegrantlab.org/bio3d/articles/online/install_vignette/Bio3D_install.html>
 
 ## Major new/enhanced functions
 
@@ -58,7 +58,7 @@
     * [The commit log](https://bitbucket.org/Grantlab/bio3d/commits/all)
 
 * For full install instructions see: 
-    * <http://thegrantlab.org/bio3d/tutorials/installing-bio3d>
+    * <http://thegrantlab.org/bio3d/articles/online/install_vignette/Bio3D_install.html>
 
 ## Major new/enhanced functions
 
@@ -264,4 +264,4 @@ please consult:
 
 
 # For changes prior to v1.1-6 (Apr 2013) please see the bio3d wki:
-* [Whats new wki page](http://bio3d.pbworks.com/w/page/7824486/WhatsNew)
+## [Whats new wki page](http://bio3d.pbworks.com/w/page/7824486/WhatsNew)
