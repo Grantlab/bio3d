@@ -60,6 +60,13 @@ cnapath <- function(cna, from, to=NULL, k=10, collapse=TRUE, ncore=NULL, ...) {
          coms <- names(paths[[1]])
          paths <- lapply(coms, function(x) do.call(c, lapply(paths, "[[", x)) )
          names(paths) <- coms 
+         if(length(from)>1 || length(to)>1) {
+           # sort paths
+           ordered.ind <- order(paths$dist)
+           paths$path <- paths$path[ordered.ind]
+           paths$epath <- paths$epath[ordered.ind]
+           paths$dist <- paths$dist[ordered.ind]
+         }
          class(paths) <- cls
       }
       if(sum(rm.inds)>0) {
