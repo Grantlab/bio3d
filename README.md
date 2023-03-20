@@ -1,3 +1,11 @@
+# !!! IMPORTANT NOTE !!! #
+Access to the **Issues tracker** is temporarily restricted due to a technical problem.
+
+Please send a request to **xinqiu.yao@gmail.com** for permission to visit.
+
+We hope the problem will be resolved and the situation will get back to normal soon.
+
+
 # Bio3D Package for Biological Structure Analysis #
 
 Utilities to analyze, process, organize and explore biomolecular structure, sequence and dynamics data.
